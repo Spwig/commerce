@@ -1,0 +1,78 @@
+name: Feature request
+description: Suggest an enhancement or a new capability for Spwig.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! Before you file this — small changes are
+        often best filed as PRs directly. Use this template when a
+        change is large enough to warrant discussion first.
+
+        For open-ended ideas or "would it be cool if…" posts, please
+        use [Discussions](https://github.com/Spwig/commerce/discussions)
+        instead.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: >-
+        The specific merchant / developer pain point. Not "add feature
+        X" but "merchants have to do Y manually today" or "there's no
+        way to Z from the admin".
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should Spwig behave differently?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: >-
+        Workarounds, third-party integrations, custom code — anything
+        that gets close today. Helps us understand whether an
+        in-platform change is really the right answer.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: Which repo is this feature really in?
+      options:
+        - Core platform (Spwig/commerce — this repo)
+        - Component (theme / provider / widget) — belongs in Spwig/components
+        - SDK (Spwig/theme-sdk, provider-sdks, headless-sdk, react)
+        - Installer (Spwig/spwig)
+        - Documentation
+        - Unsure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Who benefits?
+      options:
+        - Merchants (admin experience)
+        - Customers (storefront / checkout experience)
+        - Developers (extension authors, forkers)
+        - Operators (hosting, deployment, monitoring)
+        - Multiple audiences
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I'd be willing to work on a PR for this.

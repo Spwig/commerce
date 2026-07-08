@@ -1,0 +1,105 @@
+name: Bug report
+description: Report a reproducible bug in the Spwig core platform.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug! **A clear reproduction gets
+        a fix much faster than a description.**
+
+        - For questions or ideas, please use
+          [Discussions](https://github.com/Spwig/commerce/discussions).
+        - For security issues, follow [SECURITY.md](../../SECURITY.md) —
+          please do **not** file a public issue.
+
+  - type: input
+    id: spwig-version
+    attributes:
+      label: Spwig version
+      description: >-
+        Run `docker compose exec web ./manage.py --version` or check
+        `core/version.py`.
+      placeholder: e.g. 1.5.7
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install-mode
+    attributes:
+      label: Install mode
+      description: How did you install Spwig?
+      options:
+        - Installer-based (via Spwig/spwig)
+        - Source (git clone + docker compose build)
+        - Managed hosting (myspwig.com)
+        - Other (please describe)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: edition
+    attributes:
+      label: Edition
+      options:
+        - Community
+        - Pro
+        - Enterprise
+        - Trial / Dev
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: A minimal recipe to reproduce the bug.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: >-
+        Paste any relevant server logs, browser console errors, or
+        stack traces. **Redact secrets first.**
+      render: shell
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & OS (if UI issue)
+      placeholder: e.g. Chrome 121 on macOS Sonoma
+
+  - type: input
+    id: server-os
+    attributes:
+      label: Server OS
+      placeholder: e.g. Ubuntu 22.04 LTS
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I've searched existing issues to avoid duplicates.
+          required: true
+        - label: >-
+            I've verified this is a bug in the OSS core platform (not
+            in a proprietary component, custom fork, or the managed
+            hosting fleet).
+          required: true
