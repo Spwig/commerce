@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        # pgvector/pgvector image = postgres 16 + pgvector extension
+        # pre-installed. core/models.py uses pgvector.django.VectorField
+        # for semantic-search embeddings, so migrations `CREATE EXTENSION
+        # vector` on first apply. The plain postgres:16 image doesn't
+        # have the .so, and migrations fail before any test runs.
+        image: pgvector/pgvector:pg16
         env:
           POSTGRES_USER: spwig
           POSTGRES_PASSWORD: spwig
