@@ -1,0 +1,134 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Point Transactions" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltytransaction_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if cl.formset and cl.formset.errors %}
+        <p class="errornote">
+            {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+        {{ cl.formset.management_form }}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-exchange-alt"></i>
+                {% trans "Point Transactions" %}
+            </h1>
+            <p class="subtitle">{% trans "Track loyalty point movements and history" %}</p>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filters-panel"
+         class="filters-panel"
+         data-filter-endpoint="{% url 'loyalty:filter_transactions' %}"
+         data-error-message="{% trans 'An error occurred while filtering. Please try again.' %}">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filter Transactions" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+                <span class="filters-toggle-text">{% trans "Toggle Filters" %}</span>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <div class="admin-search-input">
+                    <input type="text"
+                           id="filter-search"
+                           placeholder="{% trans 'Member name, email, or description...' %}"
+                           autocomplete="off">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-type">
+                    <i class="fas fa-tag"></i> {% trans "Type" %}
+                </label>
+                <select id="filter-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="earn">{% trans "Earned" %}</option>
+                    <option value="redeem">{% trans "Redeemed" %}</option>
+                    <option value="bonus">{% trans "Bonus" %}</option>
+                    <option value="adjustment">{% trans "Adjustment" %}</option>
+                    <option value="expire">{% trans "Expired" %}</option>
+                    <option value="revoke">{% trans "Revoked" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="available">{% trans "Available" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                    <option value="expired">{% trans "Expired" %}</option>
+                    <option value="redeemed">{% trans "Redeemed" %}</option>
+                    <option value="revoked">{% trans "Revoked" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-member">
+                    <i class="fas fa-user"></i> {% trans "Member" %}
+                </label>
+                <input type="text"
+                       id="filter-member"
+                       placeholder="{% trans 'Member ID' %}"
+                       autocomplete="off">
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button button-secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="filter-results-summary">
+        <span id="results-count">{{ cl.result_count }}</span>
+        {% blocktranslate count counter=cl.result_count %}transaction found{% plural %}transactions found{% endblocktranslate %}
+    </div>
+
+    <!-- Card-Based Results Container -->
+    <div id="results-container">
+        {% include "admin/loyalty/partials/transaction_cards.html" with transactions=cl.result_list %}
+    </div>
+
+    {% block pagination %}{% pagination cl %}{% endblock %}
+</div>
+
+
+<div id="list-filter-config"
+     data-filter-url="{% url 'loyalty:filter_transactions' %}"
+     data-results-container="results-container"
+     data-results-count="results-count"
+     class="hidden"></div>
+{% endblock %}

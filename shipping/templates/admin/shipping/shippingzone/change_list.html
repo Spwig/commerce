@@ -1,0 +1,176 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Shipping Zones" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'shipping/css/admin_shipping_zone.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-globe-americas"></i>
+                {% trans "Shipping Zones" %}
+            </h1>
+            <p class="subtitle">{% trans "Define shipping zones and regional delivery areas" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'shipping:zone_wizard_step1' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Zone" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Toolbar -->
+    <div class="zone-toolbar">
+        <div class="toolbar-left">
+            <!-- Bulk Actions -->
+            <div class="bulk-actions">
+                <select id="bulk-action-select" class="bulk-action-dropdown">
+                    <option value="">{% trans "Bulk Actions" %}</option>
+                    <option value="enable">{% trans "Enable Selected" %}</option>
+                    <option value="disable">{% trans "Disable Selected" %}</option>
+                    <option value="delete">{% trans "Delete Selected" %}</option>
+                </select>
+                <button id="apply-bulk-action" class="button" disabled>{% trans "Apply" %}</button>
+                <span id="selected-count" class="selected-count shipping-zone-hidden">
+                    <span id="selected-number">0</span> {% trans "selected" %}
+                </span>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- Filters -->
+            <div class="filter-group">
+                <!-- Status Filter -->
+                <select id="status-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Status" %}</option>
+                    <option value="active" {% if request.GET.is_active == '1' %}selected{% endif %}>
+                        {% trans "Active" %} ({{ active_count }})
+                    </option>
+                    <option value="inactive" {% if request.GET.is_active == '0' %}selected{% endif %}>
+                        {% trans "Inactive" %} ({{ inactive_count }})
+                    </option>
+                </select>
+
+                <!-- Priority Filter -->
+                <select id="priority-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Priorities" %}</option>
+                    <option value="high" {% if request.GET.priority == 'high' %}selected{% endif %}>
+                        {% trans "High Priority" %} ({{ high_priority_count }})
+                    </option>
+                    <option value="medium" {% if request.GET.priority == 'medium' %}selected{% endif %}>
+                        {% trans "Medium Priority" %} ({{ medium_priority_count }})
+                    </option>
+                    <option value="low" {% if request.GET.priority == 'low' %}selected{% endif %}>
+                        {% trans "Low Priority" %} ({{ low_priority_count }})
+                    </option>
+                </select>
+
+                <!-- Methods Filter -->
+                <select id="methods-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Zones" %}</option>
+                    <option value="with-methods" {% if request.GET.has_methods == '1' %}selected{% endif %}>
+                        {% trans "With Methods" %} ({{ zones_with_methods }})
+                    </option>
+                    <option value="without-methods" {% if request.GET.has_methods == '0' %}selected{% endif %}>
+                        {% trans "Without Methods" %} ({{ zones_without_methods }})
+                    </option>
+                </select>
+
+                <!-- Clear Filters Button -->
+                <button type="button" id="clear-filters-btn" class="button secondary clear-filters-btn" title="{% trans 'Clear all filters' %}">
+                    <i class="fas fa-times-circle"></i> {% trans "Clear Filters" %}
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="admin-search-input">
+                <input type="text"
+                       id="zone-search"
+                       placeholder="{% trans 'Search zones...' %}"
+                       value="{{ request.GET.q|default:'' }}">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Select All -->
+    <div class="select-all-bar">
+        <label>
+            <input type="checkbox" id="select-all-zones">
+            {% trans "Select All" %}
+        </label>
+    </div>
+
+    <!-- Zones Grid -->
+    <div class="zones-container">
+        {% if cl.result_list %}
+            <div class="zones-grid">
+                {% for zone in cl.result_list %}
+                    {% include "admin/shipping/shippingzone/zone_card.html" %}
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if cl.result_count > 20 %}
+                <div class="pagination-container">
+                    {% if cl.result_count %}
+                        <p class="pagination-info">
+                            {% blocktrans count counter=cl.result_count %}{{ counter }} zone{% plural %}{{ counter }} zones{% endblocktrans %}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <i class="fas fa-globe-americas"></i>
+                <h2>{% trans "No shipping zones found" %}</h2>
+                <p>
+                    {% if request.GET.q or request.GET.is_active or request.GET.priority or request.GET.has_methods %}
+                        {% trans "Try adjusting your filters or search query." %}
+                    {% else %}
+                        {% trans "Get started by creating your first shipping zone." %}
+                    {% endif %}
+                </p>
+                {% if not request.GET.q %}
+                    <a href="{% url 'shipping:zone_wizard_step1' %}" class="button default">
+                        <i class="fas fa-plus"></i> {% trans "Add First Zone" %}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay shipping-zone-hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading..." %}</p>
+        </div>
+    </div>
+
+<!-- Notification Container -->
+<div id="notification-container" class="notification-container"></div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'shipping/js/admin_shipping_zone.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{# Support Block Component #}
+{# Usage: {% include 'email_system/mjml_components/support_block.mjml' %} #}
+{# Theme tokens: Uses theme.color.background_secondary, theme.color.text, theme.color.text_muted, theme.color.primary #}
+
+<mj-section background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}" padding="30px 20px">
+  <mj-column>
+    <mj-text
+      align="center"
+      font-size="18px"
+      font-weight="600"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      padding-bottom="15px"
+    >
+      Need Help?
+    </mj-text>
+
+    <mj-text
+      align="center"
+      font-size="14px"
+      color="{{ theme.color.text_muted|default:'#6b7280' }}"
+      line-height="1.6"
+    >
+      Our support team is here to assist you
+    </mj-text>
+
+    <mj-text
+      align="center"
+      font-size="14px"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      padding-top="10px"
+    >
+      <strong>Email:</strong>
+      <a href="mailto:{{ support_email }}" style="color: {{ theme.color.primary|default:'#2563eb' }}; text-decoration: none;">
+        {{ support_email }}
+      </a>
+    </mj-text>
+
+    <mj-text
+      align="center"
+      font-size="14px"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+    >
+      <strong>Phone:</strong>
+      <a href="tel:{{ support_phone }}" style="color: {{ theme.color.primary|default:'#2563eb' }}; text-decoration: none;">
+        {{ support_phone }}
+      </a>
+    </mj-text>
+  </mj-column>
+</mj-section>

@@ -1,0 +1,139 @@
+{% extends "page_builder/product/_base.html" %}
+{% load i18n static merchant_trans currency_tags %}
+{# Designer Product Template - Full-width design editor with compact product header #}
+{# Optimized for customizable products where the visual editor is the primary interaction #}
+
+{% block product_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-designer.css' %}">
+{% endblock %}
+
+{% block product_layout %}
+<section class="product-section product-section--designer">
+    <div class="container">
+        {# Compact product header: title, price, variants, add-to-cart in one row #}
+        <div class="designer-header">
+            <div class="designer-header__info">
+                <h1 class="designer-header__title">{{ product.name }}</h1>
+                {% if template_options.show_short_description and product.short_description %}
+                <p class="designer-header__desc">{{ product.short_description|striptags|truncatewords:20 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="designer-header__actions">
+                <div class="designer-header__price" id="product-price">
+                    {% if product.is_on_sale %}
+                    <span class="price price--sale">{{ product|product_price:current_currency.code }}</span>
+                    <span class="price price--compare">{{ product|product_compare_price:current_currency.code }}</span>
+                    {% else %}
+                    <span class="price">{{ product|product_price:current_currency.code }}</span>
+                    {% endif %}
+                </div>
+
+                {# Inline variant selectors (compact dropdowns) #}
+                {% if attribute_assignments %}
+                <div class="designer-header__variants" id="variant-selector" data-mode="attributes">
+                    {% for assignment in attribute_assignments %}
+                    <div class="variant-group" data-attribute="{{ assignment.attribute.slug }}" data-type="{{ assignment.attribute.type }}">
+                        {% if assignment.attribute.type == 'color' %}
+                        <div class="variant-group__options">
+                            {% for value in assignment.allowed_values.all %}
+                            <button type="button"
+                                    class="variant-swatch variant-swatch--color variant-swatch--sm"
+                                    data-attribute="{{ assignment.attribute.slug }}"
+                                    data-value="{{ value.slug }}"
+                                    data-display="{{ value.value }}"
+                                    {% if value.color_hex %}style="--swatch-color: {{ value.color_hex }}"{% endif %}
+                                    title="{{ value.value }}"
+                                    aria-label="{{ value.value }}">
+                                <span class="variant-swatch__check"><i class="fas fa-check"></i></span>
+                            </button>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <select class="variant-select designer-header__variant-select"
+                                data-attribute="{{ assignment.attribute.slug }}">
+                            <option value="">{{ assignment.attribute.name }}</option>
+                            {% for value in assignment.allowed_values.all %}
+                            <option value="{{ value.slug }}" data-display="{{ value.value }}">{{ value.value }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% elif variants.count > 1 %}
+                <div class="designer-header__variants" id="variant-selector" data-mode="direct">
+                    <div class="variant-group">
+                        <div class="variant-group__options">
+                            {% for variant in variants %}
+                            {% if variant.is_active %}
+                            <button type="button"
+                                    class="variant-swatch {% if variant.color_swatch %}variant-swatch--color{% else %}variant-swatch--text{% endif %} variant-swatch--sm"
+                                    data-variant-id="{{ variant.id }}"
+                                    {% if variant.color_swatch %}style="--swatch-color: {{ variant.color_swatch }}"{% endif %}
+                                    title="{{ variant.name }}"
+                                    aria-label="{{ variant.name }}">
+                                {% if variant.color_swatch %}
+                                <span class="variant-swatch__check"><i class="fas fa-check"></i></span>
+                                {% else %}
+                                {{ variant.name }}
+                                {% endif %}
+                            </button>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if not region_unavailable %}
+                <div class="designer-header__cart">
+                    <div class="quantity-selector quantity-selector--compact">
+                        <button type="button" class="quantity-selector__btn" id="qty-decrease"
+                                aria-label="{% mtrans 'Decrease quantity' %}">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1"
+                               max="{{ product.max_quantity|default:99 }}"
+                               class="quantity-selector__input"
+                               aria-label="{% mtrans 'Quantity' %}">
+                        <button type="button" class="quantity-selector__btn" id="qty-increase"
+                                aria-label="{% mtrans 'Increase quantity' %}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn--primary btn--add-to-cart"
+                            id="add-to-cart" data-product-id="{{ product.id }}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>{% mtrans 'Add to Cart' %}</span>
+                    </button>
+                </div>
+                {% else %}
+                <div class="designer-header__unavailable">
+                    <i class="fas fa-globe"></i>
+                    <span>{% mtrans 'Not available in your region' %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Stock Status -->
+        {% include "catalog/includes/stock_status.html" %}
+
+        {# Full-width design editor #}
+        {% if has_design_editor %}
+        <div class="designer-editor-wrapper">
+            {% include "customizable_product/editor.html" %}
+        </div>
+        {% else %}
+        {# Fallback: show gallery if no editor configured #}
+        <div class="designer-fallback-gallery">
+            {% include "page_builder/product/_gallery.html" %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}

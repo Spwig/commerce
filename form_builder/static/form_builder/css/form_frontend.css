@@ -1,0 +1,1988 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Form Builder - Frontend Form Styles
+ * Provides styling for rendered forms on the frontend
+ */
+
+/* ==========================================================================
+   CSS Variables
+   ========================================================================== */
+
+:root {
+    /* Theme token integration - fallbacks for standalone usage */
+    --form-primary-color: var(--theme-element-form-primary-color, var(--theme-color-primary, #3b82f6));
+    --form-primary-hover: var(--theme-element-form-primary-hover, var(--theme-color-primary-hover, #2563eb));
+    --form-success-color: var(--theme-element-form-success-color, var(--theme-color-success, #22c55e));
+    --form-error-color: var(--theme-element-form-error-color, var(--theme-color-error, #ef4444));
+    --form-warning-color: var(--theme-element-form-warning-color, var(--theme-color-warning, #f59e0b));
+    --form-text-color: var(--theme-element-form-text-color, var(--theme-color-text, #374151));
+    --form-text-muted: var(--theme-element-form-text-muted, var(--theme-color-text-muted, #6b7280));
+    --form-border-color: var(--theme-element-form-border-color, var(--theme-color-border, #d1d5db));
+    --form-bg-color: var(--theme-element-form-bg-color, var(--theme-color-surface, #ffffff));
+    --form-bg-light: var(--theme-element-form-bg-light, var(--theme-color-background-secondary, #f3f4f6));
+    --form-input-bg: var(--theme-element-form-input-bg, var(--theme-color-surface, #ffffff));
+    --form-input-border: var(--theme-element-form-input-border, var(--theme-color-border, #d1d5db));
+    --form-input-focus-border: var(--theme-element-form-input-focus-border, var(--theme-color-primary, #3b82f6));
+    --form-input-disabled-bg: var(--theme-element-form-input-disabled-bg, var(--theme-color-background-secondary, #f3f4f6));
+    --form-radius: var(--theme-element-form-input-radius, var(--theme-radius-md, 0.5rem));
+    --form-shadow: var(--theme-element-form-shadow, var(--theme-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1)));
+    --form-transition: var(--theme-element-form-transition, all 0.2s ease);
+    --form-focus-shadow: var(--theme-element-form-focus-shadow, 0 0 0 3px var(--theme-color-primary-light, rgba(59, 130, 246, 0.1)));
+    --form-label-color: var(--theme-element-form-label-color, var(--theme-color-text, #374151));
+    --form-label-size: var(--theme-element-form-label-size, var(--theme-font-size-sm, 0.875rem));
+    --form-help-color: var(--theme-element-form-help-color, var(--theme-color-text-muted, #6b7280));
+    --form-title-size: var(--theme-element-form-title-size, var(--theme-font-size-xl, 1.75rem));
+    --form-heading-size: var(--theme-element-form-heading-size, var(--theme-font-size-lg, 1.25rem));
+    --form-font-weight-bold: var(--theme-element-form-font-weight-bold, var(--theme-font-weight-semibold, 600));
+    --form-font-weight-medium: var(--theme-element-form-font-weight-medium, var(--theme-font-weight-medium, 500));
+    --form-spacing-lg: var(--theme-element-form-spacing-lg, var(--theme-space-6, 1.5rem));
+    --form-spacing-md: var(--theme-element-form-spacing-md, var(--theme-space-4, 1rem));
+    --form-spacing-sm: var(--theme-element-form-spacing-sm, var(--theme-space-3, 0.75rem));
+    --form-spacing-xs: var(--theme-element-form-spacing-xs, var(--theme-space-2, 0.5rem));
+    --form-container-max-width: var(--theme-element-form-container-max-width, 720px);
+    --form-container-padding: var(--theme-element-form-container-padding, var(--theme-space-6, 2rem));
+    --form-button-padding-x: var(--theme-element-form-button-padding-x, var(--theme-space-6, 1.5rem));
+    --form-button-padding-y: var(--theme-element-form-button-padding-y, var(--theme-space-3, 0.75rem));
+    --form-button-radius: var(--theme-element-form-button-radius, var(--theme-radius-md, 0.5rem));
+    --form-checkbox-size: var(--theme-element-form-checkbox-size, 1.25rem);
+    --form-star-empty-color: var(--theme-element-form-star-empty-color, var(--theme-color-border, #d1d5db));
+    --form-star-filled-color: var(--theme-element-form-star-filled-color, #fbbf24);
+    --form-progress-height: var(--theme-element-form-progress-height, 8px);
+    --form-step-circle-size: var(--theme-element-form-step-circle-size, 36px);
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.fb-hidden {
+    display: none;
+}
+
+/* ==========================================================================
+   Form Container
+   ========================================================================== */
+
+.form-container {
+    max-width: var(--form-container-max-width);
+    margin: 0 auto;
+    padding: var(--form-container-padding);
+}
+
+.spwig-form {
+    background: var(--form-bg-color);
+    border-radius: var(--form-radius);
+    box-shadow: var(--form-shadow);
+    padding: var(--form-container-padding);
+}
+
+.form-title {
+    font-size: var(--form-title-size);
+    font-weight: var(--form-font-weight-bold);
+    color: var(--form-text-color);
+    margin: 0 0 var(--form-spacing-xs) 0;
+}
+
+.form-description {
+    color: var(--form-text-muted);
+    margin: 0 0 2rem 0;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   Preview Banner
+   ========================================================================== */
+
+.preview-banner {
+    background: linear-gradient(135deg, var(--form-primary-color) 0%, var(--form-primary-hover) 100%);
+    color: white;
+    padding: var(--form-spacing-md) var(--form-spacing-md);
+    border-radius: var(--form-radius);
+    margin-bottom: var(--form-spacing-lg);
+}
+
+.preview-banner-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.preview-banner-title i {
+    font-size: 0.9rem;
+}
+
+.preview-banner-info {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   Form Fields
+   ========================================================================== */
+
+.form-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.form-field {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.form-field.field-width-half {
+    width: calc(50% - 0.75rem);
+}
+
+.form-field.field-width-third {
+    width: calc(33.333% - 1rem);
+}
+
+@media (max-width: 640px) {
+    .form-field.field-width-half,
+    .form-field.field-width-third {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   Labels & Help Text
+   ========================================================================== */
+
+.field-label {
+    display: block;
+    font-weight: var(--form-font-weight-medium);
+    font-size: var(--form-label-size);
+    color: var(--form-label-color);
+    margin-bottom: var(--form-spacing-xs);
+}
+
+.required-indicator {
+    color: var(--form-error-color);
+    margin-left: 0.25rem;
+}
+
+.field-help-text {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+    margin-top: 0.375rem;
+}
+
+.field-error {
+    display: none;
+    font-size: 0.875rem;
+    color: var(--form-error-color);
+    margin-top: 0.375rem;
+}
+
+.field-error:not(:empty) {
+    display: block;
+}
+
+/* ==========================================================================
+   Input Styles
+   ========================================================================== */
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: var(--form-text-color);
+    background: var(--form-input-bg);
+    border: 1px solid var(--form-border-color);
+    border-radius: var(--form-radius);
+    transition: var(--form-transition);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--form-primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input:disabled,
+.form-textarea:disabled,
+.form-select:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.form-input.error,
+.form-textarea.error,
+.form-select.error {
+    border-color: var(--form-error-color);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ==========================================================================
+   Checkbox & Radio Styles
+   ========================================================================== */
+
+.checkbox-wrapper,
+.checkbox-item,
+.radio-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-checkbox,
+.form-radio {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    accent-color: var(--form-primary-color);
+    cursor: pointer;
+}
+
+.checkbox-label,
+.radio-label {
+    color: var(--form-text-color);
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.checkbox-group,
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* ==========================================================================
+   Star Rating
+   ========================================================================== */
+
+.rating-stars-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stars-container {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.stars-container.size-sm .star-btn { font-size: 1rem; }
+.stars-container.size-md .star-btn { font-size: 1.25rem; }
+.stars-container.size-lg .star-btn { font-size: 1.5rem; }
+.stars-container.size-xl .star-btn { font-size: 2rem; }
+
+.star-btn {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--form-star-empty-color);
+    transition: var(--form-transition);
+    position: relative;
+}
+
+.star-btn:hover,
+.star-btn.active {
+    color: var(--star-color, var(--form-star-filled-color));
+}
+
+.star-btn .star-icon-empty {
+    display: block;
+}
+
+.star-btn .star-icon {
+    display: none;
+}
+
+.star-btn.active .star-icon-empty {
+    display: none;
+}
+
+.star-btn.active .star-icon {
+    display: block;
+}
+
+.rating-value-display {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+}
+
+/* ==========================================================================
+   Likert Scale
+   ========================================================================== */
+
+.rating-likert-wrapper {
+    width: 100%;
+}
+
+.likert-scale {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.rating-likert-wrapper.layout-vertical .likert-scale {
+    flex-direction: column;
+}
+
+.likert-option {
+    flex: 1;
+    text-align: center;
+}
+
+.rating-likert-wrapper.layout-vertical .likert-option {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.likert-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.likert-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0.5rem;
+    border: 2px solid var(--form-border-color);
+    border-radius: var(--form-radius);
+    cursor: pointer;
+    transition: var(--form-transition);
+}
+
+.rating-likert-wrapper.layout-vertical .likert-option label {
+    flex-direction: row;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+}
+
+.likert-option input[type="radio"]:checked + label {
+    border-color: var(--form-primary-color);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.likert-option input[type="radio"]:focus + label {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.likert-value {
+    font-weight: 600;
+    color: var(--form-text-color);
+}
+
+.likert-label {
+    font-size: 0.75rem;
+    color: var(--form-text-muted);
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+    .likert-option label {
+        padding: 0.75rem 0.25rem;
+    }
+
+    .likert-label {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   NPS Scale
+   ========================================================================== */
+
+.rating-nps-wrapper {
+    width: 100%;
+}
+
+.nps-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+}
+
+.nps-scale {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.nps-option {
+    flex: 1;
+}
+
+.nps-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.nps-option label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    border: 2px solid var(--form-border-color);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--form-transition);
+}
+
+.nps-option.detractor label { border-color: #fecaca; }
+.nps-option.passive label { border-color: #fef08a; }
+.nps-option.promoter label { border-color: #bbf7d0; }
+
+.nps-option input[type="radio"]:checked + label {
+    color: white;
+}
+
+.nps-option.detractor input[type="radio"]:checked + label {
+    background: var(--form-error-color);
+    border-color: var(--form-error-color);
+}
+
+.nps-option.passive input[type="radio"]:checked + label {
+    background: var(--form-warning-color);
+    border-color: var(--form-warning-color);
+}
+
+.nps-option.promoter input[type="radio"]:checked + label {
+    background: var(--form-success-color);
+    border-color: var(--form-success-color);
+}
+
+.nps-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.legend-item::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-item.detractor::before { background: var(--form-error-color); }
+.legend-item.passive::before { background: var(--form-warning-color); }
+.legend-item.promoter::before { background: var(--form-success-color); }
+
+@media (max-width: 640px) {
+    .nps-option label {
+        height: 40px;
+        font-size: 0.875rem;
+    }
+
+    .nps-legend {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+/* ==========================================================================
+   File Upload
+   ========================================================================== */
+
+.file-upload-wrapper {
+    width: 100%;
+}
+
+.file-dropzone {
+    position: relative;
+    border: 2px dashed var(--form-border-color);
+    border-radius: var(--form-radius);
+    padding: 2rem;
+    text-align: center;
+    transition: var(--form-transition);
+    cursor: pointer;
+}
+
+.file-dropzone:hover,
+.file-dropzone.dragover {
+    border-color: var(--form-primary-color);
+    background: rgba(59, 130, 246, 0.02);
+}
+
+.file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.dropzone-icon {
+    font-size: 2.5rem;
+    color: var(--form-primary-color);
+    margin-bottom: 1rem;
+}
+
+.dropzone-text {
+    color: var(--form-text-color);
+    margin: 0 0 0.5rem 0;
+}
+
+.browse-link {
+    color: var(--form-primary-color);
+    font-weight: 500;
+}
+
+.dropzone-hint {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+    margin: 0;
+}
+
+.file-list {
+    margin-top: 1rem;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: var(--form-radius);
+    margin-bottom: 0.5rem;
+}
+
+.file-item-icon {
+    color: var(--form-primary-color);
+}
+
+.file-item-info {
+    flex: 1;
+}
+
+.file-item-name {
+    font-weight: 500;
+    color: var(--form-text-color);
+}
+
+.file-item-size {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+}
+
+.file-item-remove {
+    background: none;
+    border: none;
+    color: var(--form-error-color);
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+/* ==========================================================================
+   Product Select
+   ========================================================================== */
+
+.product-select-wrapper {
+    width: 100%;
+}
+
+.product-search {
+    position: relative;
+}
+
+.product-search-input {
+    padding-left: 2.5rem;
+}
+
+.product-search .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--form-text-muted);
+}
+
+.selected-products {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.selected-product {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f3f4f6;
+    border-radius: var(--form-radius);
+}
+
+.selected-product-remove {
+    background: none;
+    border: none;
+    color: var(--form-text-muted);
+    cursor: pointer;
+    padding: 0;
+}
+
+.product-results {
+    margin-top: 0.5rem;
+    border: 1px solid var(--form-border-color);
+    border-radius: var(--form-radius);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.product-result-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: var(--form-transition);
+}
+
+.product-result-item:hover {
+    background: #f9fafb;
+}
+
+.product-result-image {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}
+
+.product-result-name {
+    font-weight: 500;
+    color: var(--form-text-color);
+}
+
+.product-result-price {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+}
+
+/* ==========================================================================
+   Layout Elements
+   ========================================================================== */
+
+.field-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--form-text-color);
+    margin: 1.5rem 0 0.5rem 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--form-border-color);
+}
+
+.form-field:first-child .field-heading {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.field-heading-description {
+    color: var(--form-text-muted);
+    margin: 0;
+}
+
+.field-paragraph {
+    color: var(--form-text-color);
+    line-height: 1.6;
+}
+
+.field-divider {
+    border: none;
+    border-top: 1px solid var(--form-border-color);
+    margin: 1.5rem 0;
+}
+
+/* ==========================================================================
+   Multi-Step Progress
+   ========================================================================== */
+
+.form-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.form-progress::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--form-border-color);
+    z-index: 0;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--form-bg-color);
+    border: 2px solid var(--form-border-color);
+    border-radius: 50%;
+    font-weight: 600;
+    color: var(--form-text-muted);
+    transition: var(--form-transition);
+}
+
+.progress-step.active .step-number,
+.progress-step.completed .step-number {
+    border-color: var(--form-primary-color);
+    background: var(--form-primary-color);
+    color: white;
+}
+
+.progress-step.completed .step-number::after {
+    content: '\2713';
+}
+
+.step-title {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+    white-space: nowrap;
+}
+
+.progress-step.active .step-title {
+    color: var(--form-primary-color);
+    font-weight: 500;
+}
+
+@media (max-width: 640px) {
+    .step-title {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Form Steps
+   ========================================================================== */
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.form-step .step-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--form-text-color);
+    margin: 0 0 0.5rem 0;
+}
+
+.form-step .step-description {
+    color: var(--form-text-muted);
+    margin: 0 0 1.5rem 0;
+}
+
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--form-border-color);
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.form-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--form-border-color);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: var(--form-radius);
+    cursor: pointer;
+    transition: var(--form-transition);
+    border: none;
+}
+
+.btn-primary {
+    background: var(--form-primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--form-primary-hover);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--form-text-color);
+    border: 1px solid var(--form-border-color);
+}
+
+.btn-secondary:hover {
+    background: #f9fafb;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Messages
+   ========================================================================== */
+
+.form-messages {
+    display: none;
+    padding: 1.5rem;
+    border-radius: var(--form-radius);
+    text-align: center;
+}
+
+.form-messages.success,
+.form-messages.error {
+    display: block;
+}
+
+.success-message {
+    display: none;
+    color: var(--form-success-color);
+}
+
+.error-message {
+    display: none;
+    color: var(--form-error-color);
+}
+
+.form-messages.success {
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.form-messages.success .success-message {
+    display: block;
+}
+
+.form-messages.error {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.form-messages.error .error-message {
+    display: block;
+}
+
+/* ==========================================================================
+   Honeypot
+   ========================================================================== */
+
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Page Builder Form Element
+   ========================================================================== */
+
+.fb-form {
+    width: 100%;
+}
+
+.fb-form-wrapper {
+    position: relative;
+}
+
+/* Form Header */
+.fb-form-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.fb-form-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--form-text-color);
+    margin: 0 0 0.5rem 0;
+}
+
+.fb-form-description {
+    color: var(--form-text-muted);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   Step Indicators - Progress Bar
+   ========================================================================== */
+
+.fb-step-indicator--progress-bar {
+    margin-bottom: 2rem;
+}
+
+.fb-progress-bar {
+    height: 8px;
+    background: var(--form-border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.fb-progress-bar-fill {
+    height: 100%;
+    background: var(--form-primary-color);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.fb-progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+}
+
+.fb-progress-step {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+    text-align: center;
+    flex: 1;
+}
+
+.fb-progress-step.active,
+.fb-progress-step.completed {
+    color: var(--form-primary-color);
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   Step Indicators - Numbered Circles
+   ========================================================================== */
+
+.fb-step-indicator--numbered-circles {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    position: relative;
+    padding: 0 1rem;
+}
+
+/* Connecting line */
+.fb-step-indicator--numbered-circles::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: var(--form-border-color);
+    z-index: 0;
+}
+
+.fb-numbered-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    max-width: 150px;
+}
+
+.fb-step-number {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--form-bg-color);
+    border: 2px solid var(--form-border-color);
+    border-radius: 50%;
+    font-weight: 600;
+    color: var(--form-text-muted);
+    transition: var(--form-transition);
+}
+
+.fb-numbered-step.active .fb-step-number {
+    border-color: var(--form-primary-color);
+    background: var(--form-primary-color);
+    color: white;
+}
+
+.fb-numbered-step.completed .fb-step-number {
+    border-color: var(--form-success-color);
+    background: var(--form-success-color);
+    color: white;
+}
+
+.fb-numbered-step.completed .fb-step-number::after {
+    content: '\2713';
+    font-size: 1rem;
+}
+
+.fb-step-label {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+    text-align: center;
+    line-height: 1.3;
+}
+
+.fb-numbered-step.active .fb-step-label {
+    color: var(--form-primary-color);
+    font-weight: 500;
+}
+
+@media (max-width: 640px) {
+    .fb-step-label {
+        font-size: 0.75rem;
+    }
+}
+
+/* ==========================================================================
+   Step Indicators - Page Builder Form Element Styles
+   These styles support the page builder form element template
+   ========================================================================== */
+
+/* Container for step circles - horizontal layout */
+.fb-step-circles {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+/* Individual step circle */
+.fb-step-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.fb-step-circle__number {
+    display: block;
+}
+
+.fb-step-circle__label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.5rem;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Connector line between circles */
+.fb-step-connector {
+    flex: 1;
+    min-width: 20px;
+    max-width: 100px;
+}
+
+/* Progress bar container */
+.fb-progress-bar {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.fb-progress-bar__fill {
+    transition: width 0.3s ease;
+}
+
+.fb-progress-bar__text {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--form-text-muted, #6b7280);
+    margin-bottom: 1.5rem;
+}
+
+/* Step indicator container */
+.fb-form__step-indicator {
+    margin-bottom: 1.5rem;
+}
+
+/* Hide required indicator */
+.fb-form--hide-required .fb-field__required,
+.fb-form--hide-required .required-indicator,
+.fb-form--hide-required .fb-required {
+    display: none !important;
+}
+
+/* Hide help text */
+.fb-form--hide-help .fb-field__help,
+.fb-form--hide-help .help-text,
+.fb-form--hide-help .fb-help-text {
+    display: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .fb-step-circles {
+        gap: 0;
+    }
+
+    .fb-step-circle {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        font-size: 0.875rem;
+    }
+
+    .fb-step-circle__label {
+        font-size: 0.75rem;
+    }
+
+    .fb-step-connector {
+        min-width: 10px;
+    }
+}
+
+/* ==========================================================================
+   Step Indicators - Breadcrumb
+   ========================================================================== */
+
+.fb-step-indicator--breadcrumb {
+    margin-bottom: 2rem;
+}
+
+.fb-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #f9fafb;
+    border-radius: var(--form-radius);
+}
+
+.fb-breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+}
+
+.fb-breadcrumb-item.active {
+    color: var(--form-primary-color);
+    font-weight: 500;
+}
+
+.fb-breadcrumb-item.completed {
+    color: var(--form-success-color);
+}
+
+.fb-breadcrumb-item:not(:last-child)::after {
+    content: '\203A';
+    margin-left: 0.25rem;
+    color: var(--form-border-color);
+}
+
+.fb-breadcrumb-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.fb-breadcrumb-link:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Step Indicators - Steps Text
+   ========================================================================== */
+
+.fb-step-indicator--steps-text {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.fb-steps-text {
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+}
+
+.fb-steps-text strong {
+    color: var(--form-primary-color);
+}
+
+/* ==========================================================================
+   Form Steps Container
+   ========================================================================== */
+
+.fb-form-steps {
+    position: relative;
+    overflow: hidden;
+}
+
+.fb-form-step {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.fb-form-step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Step Header */
+.fb-step-header {
+    margin-bottom: 1.5rem;
+}
+
+.fb-step-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--form-text-color);
+    margin: 0 0 0.5rem 0;
+}
+
+.fb-step-description {
+    color: var(--form-text-muted);
+    margin: 0;
+}
+
+/* ==========================================================================
+   Form Fields - Page Builder Integration
+   ========================================================================== */
+
+.fb-form-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.fb-field {
+    width: 100%;
+}
+
+.fb-field--full {
+    width: 100%;
+}
+
+.fb-field--half {
+    width: calc(50% - 0.75rem);
+}
+
+.fb-field--third {
+    width: calc(33.333% - 1rem);
+}
+
+@media (max-width: 640px) {
+    .fb-field--half,
+    .fb-field--third {
+        width: 100%;
+    }
+}
+
+/* Hidden fields (conditional logic) */
+.fb-field[data-hidden="true"] {
+    display: none;
+}
+
+/* Required indicator */
+.form-required {
+    color: var(--form-error-color);
+    margin-left: 0.25rem;
+}
+
+/* ==========================================================================
+   Field Styles - Minimal
+   ========================================================================== */
+
+.fb-form--style-minimal .form-input,
+.fb-form--style-minimal .form-textarea,
+.fb-form--style-minimal .form-select {
+    border: none;
+    border-bottom: 2px solid var(--form-border-color);
+    border-radius: 0;
+    padding: 0.75rem 0;
+    background: transparent;
+}
+
+.fb-form--style-minimal .form-input:focus,
+.fb-form--style-minimal .form-textarea:focus,
+.fb-form--style-minimal .form-select:focus {
+    border-color: var(--form-primary-color);
+    box-shadow: none;
+}
+
+.fb-form--style-minimal .form-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Field Styles - Filled
+   ========================================================================== */
+
+.fb-form--style-filled .form-input,
+.fb-form--style-filled .form-textarea,
+.fb-form--style-filled .form-select {
+    background: #f3f4f6;
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+
+.fb-form--style-filled .form-input:focus,
+.fb-form--style-filled .form-textarea:focus,
+.fb-form--style-filled .form-select:focus {
+    background: #e5e7eb;
+    border-bottom-color: var(--form-primary-color);
+    box-shadow: none;
+}
+
+/* ==========================================================================
+   Field Styles - Outlined (Default)
+   ========================================================================== */
+
+/* Default outlined style is already in base styles */
+
+/* ==========================================================================
+   Form Actions - Step Navigation
+   ========================================================================== */
+
+.fb-form-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--form-border-color);
+}
+
+.fb-step-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fb-step-navigation .fb-btn-back {
+    order: 1;
+}
+
+.fb-step-navigation .fb-btn-next,
+.fb-step-navigation .fb-btn-submit {
+    order: 2;
+    margin-left: auto;
+}
+
+/* ==========================================================================
+   Button Styles
+   ========================================================================== */
+
+.fb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: var(--form-radius);
+    cursor: pointer;
+    transition: var(--form-transition);
+    border: none;
+    text-decoration: none;
+}
+
+.fb-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Full Width */
+.fb-form--button-full-width .fb-form-actions {
+    display: block;
+}
+
+.fb-form--button-full-width .fb-btn {
+    width: 100%;
+}
+
+.fb-form--button-full-width .fb-step-navigation {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+}
+
+.fb-form--button-full-width .fb-step-navigation .fb-btn {
+    width: 100%;
+    margin-left: 0;
+}
+
+/* Button Style - Primary */
+.fb-btn--primary {
+    background: var(--form-primary-color);
+    color: white;
+}
+
+.fb-btn--primary:hover {
+    background: var(--form-primary-hover);
+}
+
+/* Button Style - Secondary */
+.fb-btn--secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.fb-btn--secondary:hover {
+    background: #4b5563;
+}
+
+/* Button Style - Outline */
+.fb-btn--outline {
+    background: transparent;
+    color: var(--form-primary-color);
+    border: 2px solid var(--form-primary-color);
+}
+
+.fb-btn--outline:hover {
+    background: var(--form-primary-color);
+    color: white;
+}
+
+/* Button Style - Ghost */
+.fb-btn--ghost {
+    background: transparent;
+    color: var(--form-primary-color);
+}
+
+.fb-btn--ghost:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* ==========================================================================
+   Messages - Success & Error
+   ========================================================================== */
+
+.fb-form-messages {
+    display: none;
+}
+
+.fb-form-messages.show {
+    display: block;
+}
+
+.fb-message-success,
+.fb-message-error {
+    padding: 1.5rem;
+    border-radius: var(--form-radius);
+    text-align: center;
+}
+
+.fb-message-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--form-success-color);
+}
+
+.fb-message-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--form-error-color);
+}
+
+.fb-message-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.fb-message-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.fb-message-text {
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   Loading State
+   ========================================================================== */
+
+.fb-form--loading {
+    pointer-events: none;
+}
+
+.fb-form--loading .fb-btn-submit,
+.fb-form--loading .fb-btn-next {
+    position: relative;
+    color: transparent;
+}
+
+.fb-form--loading .fb-btn-submit::after,
+.fb-form--loading .fb-btn-next::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Validation Display
+   ========================================================================== */
+
+/* Inline validation */
+.fb-form--validation-inline .form-error {
+    display: none;
+    font-size: 0.875rem;
+    color: var(--form-error-color);
+    margin-top: 0.375rem;
+}
+
+.fb-form--validation-inline .fb-field.has-error .form-error {
+    display: block;
+}
+
+.fb-form--validation-inline .fb-field.has-error .form-input,
+.fb-form--validation-inline .fb-field.has-error .form-textarea,
+.fb-form--validation-inline .fb-field.has-error .form-select {
+    border-color: var(--form-error-color);
+}
+
+/* Tooltip validation */
+.fb-form--validation-tooltip .form-error {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: var(--form-error-color);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--form-radius);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 100;
+    margin-bottom: 0.25rem;
+}
+
+.fb-form--validation-tooltip .form-error::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 1rem;
+    border: 6px solid transparent;
+    border-top-color: var(--form-error-color);
+}
+
+.fb-form--validation-tooltip .fb-field {
+    position: relative;
+}
+
+.fb-form--validation-tooltip .fb-field.has-error .form-error {
+    display: block;
+}
+
+/* Summary validation */
+.fb-form--validation-summary .fb-validation-summary {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--form-error-color);
+    border-radius: var(--form-radius);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.fb-form--validation-summary .fb-validation-summary-title {
+    font-weight: 600;
+    color: var(--form-error-color);
+    margin: 0 0 0.5rem 0;
+}
+
+.fb-form--validation-summary .fb-validation-summary-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--form-error-color);
+}
+
+.fb-form--validation-summary .fb-validation-summary-list li {
+    margin-bottom: 0.25rem;
+}
+
+/* ==========================================================================
+   Form Placeholder / Empty State
+   ========================================================================== */
+
+.fb-form-placeholder {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--form-text-muted);
+}
+
+.fb-form-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.fb-form-placeholder p {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Rating Fields - Page Builder
+   ========================================================================== */
+
+.form-star-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.form-star {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--form-star-empty-color);
+    font-size: 1.5rem;
+    transition: var(--form-transition);
+}
+
+.form-star:hover,
+.form-star.active {
+    color: var(--form-star-filled-color);
+}
+
+.form-star.active i.far {
+    display: none;
+}
+
+.form-star.active i.fas {
+    display: inline;
+}
+
+.form-star i.fas {
+    display: none;
+}
+
+/* NPS Rating */
+.form-nps-rating {
+    width: 100%;
+}
+
+.form-nps-scale {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.form-nps-btn {
+    flex: 1;
+    padding: 0.75rem 0.5rem;
+    border: 2px solid var(--form-border-color);
+    background: var(--form-bg-color);
+    border-radius: 0.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--form-transition);
+}
+
+.form-nps-btn:hover {
+    border-color: var(--form-primary-color);
+}
+
+.form-nps-btn.active {
+    background: var(--form-primary-color);
+    border-color: var(--form-primary-color);
+    color: white;
+}
+
+.form-nps-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--form-text-muted);
+}
+
+/* Likert Scale */
+.form-likert-scale {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.form-likert-option {
+    flex: 1;
+    min-width: 80px;
+}
+
+.form-likert-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.form-likert-label {
+    display: block;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    border: 2px solid var(--form-border-color);
+    border-radius: var(--form-radius);
+    cursor: pointer;
+    transition: var(--form-transition);
+    font-size: 0.875rem;
+}
+
+.form-likert-option input[type="radio"]:checked + .form-likert-label {
+    border-color: var(--form-primary-color);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.form-likert-option input[type="radio"]:focus + .form-likert-label {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ==========================================================================
+   File Upload - Page Builder
+   ========================================================================== */
+
+.form-file-upload {
+    position: relative;
+}
+
+.form-file-input {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.form-file-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 2px dashed var(--form-border-color);
+    border-radius: var(--form-radius);
+    cursor: pointer;
+    transition: var(--form-transition);
+    color: var(--form-text-muted);
+}
+
+.form-file-label:hover {
+    border-color: var(--form-primary-color);
+    background: rgba(59, 130, 246, 0.02);
+}
+
+.form-file-label i {
+    font-size: 1.5rem;
+    color: var(--form-primary-color);
+}
+
+.form-file-info {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--form-text-muted);
+}
+
+/* ==========================================================================
+   Checkbox & Radio - Page Builder
+   ========================================================================== */
+
+.form-checkbox,
+.form-radio {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.form-checkbox__input,
+.form-radio__input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    accent-color: var(--form-primary-color);
+    cursor: pointer;
+}
+
+.form-checkbox__label,
+.form-radio__label {
+    color: var(--form-text-color);
+    line-height: 1.5;
+}
+
+.form-checkbox-group,
+.form-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* ==========================================================================
+   Layout Elements - Page Builder
+   ========================================================================== */
+
+.fb-field__heading {
+    margin: 1.5rem 0 1rem 0;
+}
+
+.fb-field__heading h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--form-text-color);
+    margin: 0 0 0.25rem 0;
+}
+
+.fb-field__heading p {
+    color: var(--form-text-muted);
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.fb-field__paragraph {
+    color: var(--form-text-color);
+    line-height: 1.6;
+}
+
+.fb-field__paragraph p {
+    margin: 0;
+}
+
+.fb-field__divider {
+    border: none;
+    border-top: 1px solid var(--form-border-color);
+    margin: 1.5rem 0;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .fb-form-header {
+        text-align: left;
+    }
+
+    .fb-form-title {
+        font-size: 1.5rem;
+    }
+
+    .fb-step-indicator--numbered-circles {
+        padding: 0;
+    }
+
+    .fb-step-indicator--numbered-circles::before {
+        left: 5%;
+        right: 5%;
+    }
+
+    .fb-step-number {
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+
+    .form-nps-btn {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .form-likert-scale {
+        flex-direction: column;
+    }
+
+    .form-likert-option {
+        min-width: 100%;
+    }
+}
+
+/* ==========================================================================
+   Form Visibility Toggle Classes (for live preview)
+   ========================================================================== */
+
+/* Hide required indicators when toggled off */
+.fb-form--hide-required .form-required {
+    display: none !important;
+}
+
+/* Hide help text when toggled off */
+.fb-form--hide-help .form-help-text {
+    display: none !important;
+}

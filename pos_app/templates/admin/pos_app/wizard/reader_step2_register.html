@@ -1,0 +1,217 @@
+{% extends "admin/pos_app/wizard/reader_base.html" %}
+{% load i18n static %}
+
+{% block wizard_header %}
+<h1>
+    <div class="wizard-icon-large">
+        {% if method == 'register' %}
+            <i class="fas fa-qrcode"></i>
+        {% else %}
+            <i class="fas fa-search"></i>
+        {% endif %}
+    </div>
+    {% if method == 'register' %}
+        {% trans "Register New Device" %}
+    {% else %}
+        {% trans "Discover Existing Readers" %}
+    {% endif %}
+</h1>
+<p class="wizard-subtitle">
+    {% if method == 'register' %}
+        {% trans "Enter the registration code displayed on your card reader device." %}
+    {% else %}
+        {% trans "Select readers from your provider account to import into your POS system." %}
+    {% endif %}
+</p>
+{% endblock %}
+
+{% block wizard_content %}
+{% if method == 'register' %}
+<!-- Registration Code Mode -->
+<form method="post" id="register-form">
+    {% csrf_token %}
+
+    <div class="register-container">
+        <div class="register-form-panel">
+            <div class="form-section">
+                <div class="form-field">
+                    <label for="registration_code">{% trans "Registration Code" %}</label>
+                    <input type="text"
+                           id="registration_code"
+                           name="registration_code"
+                           class="code-input"
+                           placeholder="simulated-serf-mash"
+                           autocomplete="off"
+                           autofocus
+                           required>
+                    <p class="help-text">
+                        {% trans "Find this code on your device screen. It looks like:" %} <code>word-word-word</code>
+                    </p>
+                </div>
+
+                <div class="form-field">
+                    <label for="reader_label">{% trans "Reader Label" %}</label>
+                    <input type="text"
+                           id="reader_label"
+                           name="reader_label"
+                           placeholder="{% trans 'e.g., Front Counter Reader' %}"
+                           maxlength="200">
+                    <p class="help-text">{% trans "A friendly name to identify this reader. Optional." %}</p>
+                </div>
+            </div>
+
+            <!-- Registration Result Area -->
+            <div id="register-result" class="register-result pos-hidden">
+                <div class="result-content"></div>
+            </div>
+        </div>
+
+        <div class="register-instructions-panel">
+            <div class="instructions-card">
+                <div class="instructions-icon">
+                    <i class="fas fa-tablet-alt"></i>
+                </div>
+                <h3>{% trans "Where to find the code" %}</h3>
+                <ol>
+                    <li>{% trans "Power on your card reader device" %}</li>
+                    <li>{% trans "Connect it to your WiFi network" %}</li>
+                    <li>{% trans "The registration code will appear on screen" %}</li>
+                    <li>{% trans "Enter the code in the field to the left" %}</li>
+                </ol>
+                <p class="instructions-note">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "If you're using a simulated reader for testing, use:" %} <code>simulated-serf-mash</code>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="wizard-actions">
+        <a href="{% url 'pos_admin:reader_wizard_step1' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        <button type="submit" class="btn btn-primary" id="register-btn">
+            <i class="fas fa-plug"></i> {% trans "Register Reader" %}
+        </button>
+    </div>
+</form>
+
+{% else %}
+<!-- Discovery Mode -->
+<form method="post" id="discover-form">
+    {% csrf_token %}
+
+    {% if discover_error %}
+    <div class="error-banner">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% trans "Failed to fetch readers" %}</strong>
+            <p>{{ discover_error }}</p>
+        </div>
+        <a href="{% url 'pos_admin:reader_wizard_step2' %}" class="retry-btn">
+            <i class="fas fa-sync"></i> {% trans "Retry" %}
+        </a>
+    </div>
+    {% elif available_readers %}
+    <div class="discover-container">
+        <p class="discover-intro">
+            {% blocktrans count count=available_readers|length %}
+                Found {{ count }} unregistered reader in your {{ provider.display_name }} account.
+            {% plural %}
+                Found {{ count }} unregistered readers in your {{ provider.display_name }} account.
+            {% endblocktrans %}
+        </p>
+
+        <div class="reader-selection-list">
+            {% for reader in available_readers %}
+            <label class="reader-select-card">
+                <input type="checkbox" name="selected_readers" value="{{ reader.id }}">
+                <div class="reader-select-card-inner">
+                    <div class="reader-icon">
+                        {% if reader.type == 'stripe_s700' %}
+                            <i class="fas fa-tablet-alt"></i>
+                        {% elif reader.type == 'bbpos_wisepos_e' %}
+                            <i class="fas fa-mobile-alt"></i>
+                        {% else %}
+                            <i class="fas fa-wifi"></i>
+                        {% endif %}
+                    </div>
+                    <div class="reader-info">
+                        <h3>{{ reader.label|default:reader.id }}</h3>
+                        <div class="reader-meta">
+                            <span><i class="fas fa-microchip"></i> {{ reader.type }}</span>
+                            {% if reader.serial_number %}
+                                <span><i class="fas fa-barcode"></i> {{ reader.serial_number }}</span>
+                            {% endif %}
+                            <span class="reader-status {% if reader.status == 'online' %}online{% else %}offline{% endif %}">
+                                <span class="status-dot"></span>
+                                {{ reader.status|capfirst }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="reader-checkbox">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="select-actions">
+            <button type="button" class="select-btn" data-action="select-all">
+                {% trans "Select All" %}
+            </button>
+            <button type="button" class="select-btn" data-action="select-none">
+                {% trans "Select None" %}
+            </button>
+        </div>
+    </div>
+
+    <div class="wizard-actions">
+        <a href="{% url 'pos_admin:reader_wizard_step1' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        <button type="submit" class="btn btn-primary" id="import-btn" disabled>
+            <i class="fas fa-download"></i> {% trans "Import Selected" %}
+        </button>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>{% trans "All readers already imported" %}</h3>
+        <p>{% trans "All readers from your provider account are already registered in your POS system." %}</p>
+        <div class="empty-actions">
+            <a href="{% url 'pos_admin:reader_wizard_step1' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+            </a>
+            <a href="{% url 'admin:pos_app_posterminalreader_changelist' %}" class="btn btn-primary">
+                {% trans "View Readers" %}
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</form>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<div id="reader-wizard-config"
+     data-mode="{{ method }}"
+     data-step3-url="{% url 'pos_admin:reader_wizard_step3' %}"
+     hidden></div>
+<script type="application/json" id="reader-wizard-translations">
+{
+    "enterCode": "{% trans 'Please enter a registration code.' %}",
+    "registering": "{% trans 'Registering...' %}",
+    "registered": "{% trans 'Reader registered successfully!' %}",
+    "failed": "{% trans 'Registration failed' %}",
+    "registerReader": "{% trans 'Register Reader' %}",
+    "import": "{% trans 'Import' %}",
+    "importSelected": "{% trans 'Import Selected' %}"
+}
+</script>
+<script src="{% static 'pos_app/admin/js/reader-wizard.js' %}" defer></script>
+{% endblock %}

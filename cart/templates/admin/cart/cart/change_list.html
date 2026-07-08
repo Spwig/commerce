@@ -1,0 +1,215 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Shopping Carts" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'cart/css/admin-cart-list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-shopping-cart"></i>
+                {% trans "Shopping Carts" %}
+            </h1>
+            <p class="subtitle">{% trans "Monitor active and abandoned customer carts" %}</p>
+        </div>
+    </div>
+
+    <!-- Object tools (Add button, etc.) -->
+    {% block object-tools %}
+        {% if has_add_permission %}
+        <ul class="object-tools">
+            {% block object-tools-items %}
+            <li>
+                <a href="{% url 'admin:cart_cart_add' %}" class="addlink">
+                    {% trans 'Add' %} {% trans 'cart' %}
+                </a>
+            </li>
+            {% endblock %}
+        </ul>
+        {% endif %}
+    {% endblock %}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by user, session, or email...' %}"
+                    value="">
+            </div>
+
+            <!-- User Type -->
+            <div class="filter-field">
+                <label for="filter-user_type">
+                    <i class="fas fa-user"></i> {% trans "User Type" %}
+                </label>
+                <select id="filter-user_type">
+                    <option value="">{% trans "All Carts" %}</option>
+                    <option value="registered">{% trans "Registered Users" %}</option>
+                    <option value="guest">{% trans "Guest Carts" %}</option>
+                </select>
+            </div>
+
+            <!-- Cart Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-info-circle"></i> {% trans "Cart Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active (< 24h)" %}</option>
+                    <option value="abandoned">{% trans "Abandoned (> 24h)" %}</option>
+                    <option value="empty">{% trans "Empty" %}</option>
+                </select>
+            </div>
+
+            <!-- Shipping Method -->
+            <div class="filter-field">
+                <label for="filter-shipping">
+                    <i class="fas fa-truck"></i> {% trans "Shipping Method" %}
+                </label>
+                <select id="filter-shipping">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="has_shipping">{% trans "Has Shipping" %}</option>
+                    <option value="no_shipping">{% trans "No Shipping" %}</option>
+                </select>
+            </div>
+
+            <!-- Cart Value Range -->
+            <div class="filter-field">
+                <label for="filter-min_value">
+                    <i class="fas fa-dollar-sign"></i> {% trans "Min Cart Value" %}
+                </label>
+                <input
+                    type="number"
+                    id="filter-min_value"
+                    placeholder="{% trans 'Min value' %}"
+                    min="0"
+                    step="0.01">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-max_value">
+                    <i class="fas fa-dollar-sign"></i> {% trans "Max Cart Value" %}
+                </label>
+                <input
+                    type="number"
+                    id="filter-max_value"
+                    placeholder="{% trans 'Max value' %}"
+                    min="0"
+                    step="0.01">
+            </div>
+
+            <!-- Date Range -->
+            <div class="filter-field">
+                <label for="filter-date_from">
+                    <i class="fas fa-calendar"></i> {% trans "Created From" %}
+                </label>
+                <input
+                    type="date"
+                    id="filter-date_from">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-date_to">
+                    <i class="fas fa-calendar"></i> {% trans "Created To" %}
+                </label>
+                <input
+                    type="date"
+                    id="filter-date_to">
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-cart" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Shopping Carts" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count">{{ cl.result_count }}</span> {% trans "cart" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="cart-results">
+        {% include "admin/cart/partials/cart_cards.html" with carts=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 cart{% plural %}{{ counter }} carts{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'carts' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'cart_admin:filter_carts' %}"
+         data-results-container="cart-results"
+         data-results-count="cart-count"></div>
+</div>
+{% endblock %}

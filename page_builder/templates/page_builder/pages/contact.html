@@ -1,0 +1,170 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'Contact Us' %} - {% mtrans 'Shop' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/pages/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'Contact' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% mtrans 'Contact Us' %}</h1>
+        <p class="page-header__subtitle">{% mtrans "We'd love to hear from you. Get in touch with our team." %}</p>
+    </div>
+</section>
+
+<!-- Contact Content -->
+<section class="section">
+    <div class="container">
+        <div class="contact-layout">
+            <!-- Contact Form -->
+            <div class="contact-form-wrapper">
+                <h2 class="contact-form__title">{% mtrans 'Send us a Message' %}</h2>
+                <form class="contact-form" method="post" action="">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name" class="form-label">{% mtrans 'Your Name' %}</label>
+                            <input type="text" id="name" name="name" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">{% mtrans 'Email Address' %}</label>
+                            <input type="email" id="email" name="email" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject" class="form-label">{% mtrans 'Subject' %}</label>
+                        <select id="subject" name="subject" class="form-input">
+                            <option value="">{% mtrans 'Select a topic' %}</option>
+                            <option value="order">{% mtrans 'Order Inquiry' %}</option>
+                            <option value="product">{% mtrans 'Product Question' %}</option>
+                            <option value="return">{% mtrans 'Returns & Refunds' %}</option>
+                            <option value="shipping">{% mtrans 'Shipping' %}</option>
+                            <option value="feedback">{% mtrans 'Feedback' %}</option>
+                            <option value="other">{% mtrans 'Other' %}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="order_number" class="form-label">{% mtrans 'Order Number' %} <span class="form-hint">({% mtrans 'optional' %})</span></label>
+                        <input type="text" id="order_number" name="order_number" class="form-input" placeholder="e.g. ORD-12345">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message" class="form-label">{% mtrans 'Message' %}</label>
+                        <textarea id="message" name="message" class="form-input form-textarea" rows="6" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--lg">
+                        <i class="fas fa-paper-plane"></i>
+                        {% mtrans 'Send Message' %}
+                    </button>
+                </form>
+            </div>
+
+            <!-- Contact Info -->
+            <aside class="contact-info">
+                <div class="contact-info__card">
+                    <h3 class="contact-info__title">{% mtrans 'Get in Touch' %}</h3>
+
+                    <div class="contact-info__item">
+                        <div class="contact-info__icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <p class="contact-info__label">{% mtrans 'Email' %}</p>
+                            <a href="mailto:support@example.com" class="contact-info__value">support@example.com</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-info__item">
+                        <div class="contact-info__icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <p class="contact-info__label">{% mtrans 'Phone' %}</p>
+                            <a href="tel:+1234567890" class="contact-info__value">+1 (234) 567-890</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-info__item">
+                        <div class="contact-info__icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <p class="contact-info__label">{% mtrans 'Address' %}</p>
+                            <p class="contact-info__value">123 Example Street<br>City, Country 12345</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info__item">
+                        <div class="contact-info__icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <p class="contact-info__label">{% mtrans 'Business Hours' %}</p>
+                            <p class="contact-info__value">{% mtrans 'Monday - Friday: 9AM - 6PM' %}<br>{% mtrans 'Saturday: 10AM - 4PM' %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="contact-quick-links">
+                    <h3 class="contact-quick-links__title">{% mtrans 'Quick Links' %}</h3>
+                    <a href="/page/faq/" class="contact-quick-link">
+                        <i class="fas fa-question-circle"></i>
+                        {% mtrans 'FAQ' %}
+                    </a>
+                    <a href="/page/returns/" class="contact-quick-link">
+                        <i class="fas fa-undo"></i>
+                        {% mtrans 'Returns Policy' %}
+                    </a>
+                    <a href="/page/shipping/" class="contact-quick-link">
+                        <i class="fas fa-truck"></i>
+                        {% mtrans 'Shipping Info' %}
+                    </a>
+                    <a href="/orders/" class="contact-quick-link">
+                        <i class="fas fa-search"></i>
+                        {% mtrans 'Track Order' %}
+                    </a>
+                </div>
+
+                <!-- Social Links -->
+                <div class="contact-social">
+                    <h3 class="contact-social__title">{% mtrans 'Follow Us' %}</h3>
+                    <div class="contact-social__links">
+                        <a href="#" class="contact-social__link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="contact-social__link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="contact-social__link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="contact-social__link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

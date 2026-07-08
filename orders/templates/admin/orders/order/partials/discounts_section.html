@@ -1,0 +1,81 @@
+{% load i18n %}
+<div class="discounts-content">
+    <h4>{% trans "Vouchers & Discounts" %}</h4>
+
+    {# Applied Vouchers #}
+    {% if applied_vouchers %}
+        <div class="applied-vouchers-list">
+            {% for applied in applied_vouchers %}
+                <div class="voucher-item">
+                    <div class="voucher-info">
+                        <span class="voucher-code"><i class="fas fa-tag"></i> {{ applied.voucher.code }}</span>
+                        <span class="voucher-description">{{ applied.voucher.name }}</span>
+                        <span class="voucher-amount">
+                            {% if applied.voucher.discount_type == 'percentage' %}
+                                {{ applied.voucher.discount_value }}% {% trans "off" %}
+                            {% elif applied.voucher.discount_type == 'fixed' %}
+                                {{ applied.voucher.discount_value }} {% trans "off" %}
+                            {% else %}
+                                {% trans "Gift Card" %}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <button type="button" class="btn-remove-voucher" data-voucher-id="{{ applied.voucher.id }}" data-order-id="{{ order.id }}" title="{% trans 'Remove voucher' %}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-vouchers-message">{% trans "No vouchers applied" %}</p>
+    {% endif %}
+
+    {# Apply Voucher Form #}
+    <div class="apply-voucher-form">
+        <form id="voucher-apply-form" data-order-id="{{ order.id }}">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text" name="voucher_code" id="voucher-code-input" class="form-control" placeholder="{% trans 'Enter voucher code' %}" autocomplete="off">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">{% trans "Apply" %}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div id="voucher-message" class="voucher-message d-none"></div>
+    </div>
+
+    {# Manual Discount (Admin Override) #}
+    <div class="manual-discount-section">
+        <button type="button" class="btn btn-link" data-action="toggle-manual-discount">
+            <i class="fas fa-percent"></i> {% trans "Apply manual discount" %}
+        </button>
+
+        <div class="manual-discount-form d-none">
+            <form id="manual-discount-form" data-order-id="{{ order.id }}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <select name="discount_type" class="form-control">
+                            <option value="percentage">{% trans "Percentage" %}</option>
+                            <option value="fixed">{% trans "Fixed Amount" %}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="number" name="discount_value" class="form-control" placeholder="{% trans 'Value' %}" step="0.01" min="0">
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <button type="submit" class="btn btn-secondary">{% trans "Apply" %}</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" name="reason" class="form-control" placeholder="{% trans 'Reason for discount (optional)' %}">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

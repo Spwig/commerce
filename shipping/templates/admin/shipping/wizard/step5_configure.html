@@ -1,0 +1,74 @@
+{% extends "admin/shipping/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Configure Provider" %}</h2>
+    <p class="step-description">
+        {% blocktrans with provider=component.name %}
+        Almost done! Configure the display name and default settings for {{ provider }}.
+        {% endblocktrans %}
+    </p>
+
+    <form method="post" id="configure-form" class="configure-form">
+        {% csrf_token %}
+
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-cog"></i> {% trans "Provider Settings" %}
+            </h3>
+
+            <div class="form-group">
+                <label for="id_display_name">
+                    {% trans "Display Name" %}
+                    <span class="required">*</span>
+                </label>
+                <input type="text"
+                       name="display_name"
+                       id="id_display_name"
+                       class="form-control"
+                       value="{{ component.name }}"
+                       required
+                       placeholder="{% trans 'e.g., My Shipping Account' %}">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "This name will be used to identify this provider account in your admin panel." %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox"
+                           name="is_default"
+                           id="id_is_default"
+                           value="on">
+                    <span>{% trans "Set as default provider" %}</span>
+                </label>
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "The default provider will be automatically selected when creating new shipments." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="success-preview">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>{% trans "Ready to Connect!" %}</h3>
+            <p>{% trans "Click 'Finish' to save your provider configuration and start using it for shipments." %}</p>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:wizard_step4' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="configure-form" class="btn btn-primary btn-success">
+        <i class="fas fa-check"></i> {% trans "Finish" %}
+    </button>
+</div>
+{% endblock %}

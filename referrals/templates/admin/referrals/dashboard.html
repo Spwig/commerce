@@ -1,0 +1,470 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Referral Program Dashboard" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'referrals/css/referral-dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header with Stats -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-users-between-lines"></i>
+            {% trans "Referral Program Dashboard" %}
+        </h1>
+        <p class="subtitle">
+            {% blocktrans with start=start_date|date:"M d, Y" end=end_date|date:"M d, Y" %}
+            Analytics and program management ({{ start }} - {{ end }})
+            {% endblocktrans %}
+        </p>
+
+    </div>
+
+        <!-- KPI Statistics Cards -->
+    <div class="dashboard-stats-grid">
+        <!-- Total Referrals -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-handshake"></i></div>
+            <div class="value">{{ total_referrals|default:0 }}</div>
+            <div class="label">{% trans "Total Referrals" %}</div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div class="dashboard-stat-card stat-card-warning">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ pending_approvals|default:0 }}</div>
+            <div class="label">{% trans "Pending Approvals" %}</div>
+        </div>
+
+        <!-- Success Rate -->
+        <div class="dashboard-stat-card stat-card-success">
+            <div class="icon"><i class="fas fa-percentage"></i></div>
+            <div class="value">{{ success_rate|default:0 }}%</div>
+            <div class="label">{% trans "Success Rate" %}</div>
+        </div>
+
+        <!-- Top Referrer -->
+        {% if top_referrer %}
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-trophy"></i></div>
+            <div class="value">{{ top_referrer.count }}</div>
+            <div class="label">
+                {% trans "Top Referrer" %}<br>
+                <small>{{ top_referrer.name|truncatechars:25 }}</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-trophy"></i></div>
+            <div class="value">-</div>
+            <div class="label">{% trans "Top Referrer" %}</div>
+        </div>
+        {% endif %}
+
+        <!-- Total Rewards Issued -->
+        <div class="dashboard-stat-card stat-card-primary">
+            <div class="icon"><i class="fas fa-gift"></i></div>
+            <div class="value">{{ total_rewards_issued|default:0 }}</div>
+            <div class="label">{% trans "Total Rewards Issued" %}</div>
+        </div>
+
+        <!-- Conversion Rate -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <div class="value">{{ conversion_rate|default:0 }}%</div>
+            <div class="label">{% trans "Conversion Rate" %}</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+
+
+        <!-- Quick Actions -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>{% trans "Attributions" %}</h3>
+                    <p class="description">{% trans "Manage referral attributions and approvals" %}</p>
+                    <a href="{% url 'admin:referrals_referralattribution_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3>{% trans "Rewards" %}</h3>
+                    <p class="description">{% trans "View and manage referral rewards" %}</p>
+                    <a href="{% url 'admin:referrals_referralreward_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>{% trans "Referrers" %}</h3>
+                    <p class="description">{% trans "View referrer identities and stats" %}</p>
+                    <a href="{% url 'admin:referrals_referralidentity_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3>{% trans "Settings" %}</h3>
+                    <p class="description">{% trans "Configure referral program" %}</p>
+                    <a href="#settings-section" class="button scroll-link">
+                        <i class="fas fa-arrow-right"></i> {% trans "Configure" %}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="charts-grid">
+
+                <!-- Referrals Over Time Chart -->
+                <div class="chart-card chart-card-wide">
+                    <h3>
+                        <i class="fas fa-chart-line"></i>
+                        {% trans "Referrals Over Time (Last 30 Days)" %}
+                    </h3>
+                    <canvas id="referralsTrendChart"></canvas>
+                </div>
+
+                <!-- Conversion Funnel Chart -->
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-filter"></i>
+                        {% trans "Conversion Funnel" %}
+                    </h3>
+                    <canvas id="conversionFunnelChart"></canvas>
+                </div>
+
+                <!-- Reward Distribution Chart -->
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-chart-pie"></i>
+                        {% trans "Rewards by Status" %}
+                    </h3>
+                    <canvas id="rewardDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Grid -->
+        <div class="tables-grid">
+            <!-- Top Referrers Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-ranking-star"></i>
+                    {% trans "Top 10 Referrers" %}
+                </h2>
+                {% if top_referrers %}
+                <div class="table-responsive">
+                    <table class="referral-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Rank" %}</th>
+                                <th>{% trans "Referrer" %}</th>
+                                <th>{% trans "Successful Referrals" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for referrer in top_referrers %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-trophy trophy-gold"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-trophy trophy-silver"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-trophy trophy-bronze"></i> #{{ forloop.counter }}
+                                    {% else %}
+                                        #{{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin:auth_user_change' referrer.id %}" class="content-link">
+                                        {{ referrer.name|truncatechars:30 }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <strong>{{ referrer.count }}</strong> {% trans "referrals" %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No referrers yet." %}</p>
+                {% endif %}
+            </div>
+
+            <!-- Fraud Flags Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-shield-halved"></i>
+                    {% trans "Fraud Flags Queue" %}
+                </h2>
+                {% if fraud_flags %}
+                <div class="table-responsive">
+                    <table class="referral-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Risk Score" %}</th>
+                                <th>{% trans "Referrer" %}</th>
+                                <th>{% trans "Referee" %}</th>
+                                <th>{% trans "Date" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attribution in fraud_flags %}
+                            <tr class="fraud-risk-{{ attribution.risk_score|floatformat:0 }}">
+                                <td>
+                                    <span class="risk-badge risk-{{ attribution.get_risk_level }}">
+                                        {{ attribution.risk_score|floatformat:0 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if attribution.referrer_identity %}
+                                        {{ attribution.referrer_identity.customer.get_full_name|default:attribution.referrer_identity.customer.email|truncatechars:30 }}
+                                    {% else %}
+                                        <em>{% trans "Unknown" %}</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ attribution.referee_customer.get_full_name|default:attribution.referee_customer.email|truncatechars:30 }}
+                                </td>
+                                <td>{{ attribution.created_at|date:"M d, Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No fraud flags." %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Additional Tables Grid -->
+        <div class="tables-grid">
+            <!-- Pending Attributions Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-clock"></i>
+                    {% trans "Pending Attributions (Last 10)" %}
+                </h2>
+                {% if pending_attributions %}
+                <div class="table-responsive">
+                    <table class="referral-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Date" %}</th>
+                                <th>{% trans "Referrer" %}</th>
+                                <th>{% trans "Referee" %}</th>
+                                <th>{% trans "Order Value" %}</th>
+                                <th>{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attribution in pending_attributions %}
+                            <tr>
+                                <td>{{ attribution.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if attribution.referrer_identity %}
+                                        <a href="{% url 'admin:auth_user_change' attribution.referrer_identity.customer.id %}" class="content-link">
+                                            {{ attribution.referrer_identity.customer.get_full_name|default:attribution.referrer_identity.customer.email|truncatechars:30 }}
+                                        </a>
+                                    {% else %}
+                                        <em>{% trans "Unknown" %}</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin:auth_user_change' attribution.referee_customer.id %}" class="content-link">
+                                        {{ attribution.referee_customer.get_full_name|default:attribution.referee_customer.email|truncatechars:30 }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if attribution.first_order %}
+                                        {{ attribution.first_order.total_amount }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin:referrals_referralattribution_change' attribution.id %}" class="button">
+                                        {% trans "Review" %}
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No pending attributions." %}</p>
+                {% endif %}
+
+                <!-- View All Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:referrals_referralattribution_changelist' %}" class="button">
+                        <i class="fas fa-list"></i> {% trans "View All Attributions" %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Rewards Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-gift"></i>
+                    {% trans "Recent Rewards (Last 10)" %}
+                </h2>
+                {% if recent_rewards %}
+                <div class="table-responsive">
+                    <table class="referral-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Issued" %}</th>
+                                <th>{% trans "Customer" %}</th>
+                                <th>{% trans "Amount" %}</th>
+                                <th>{% trans "Type" %}</th>
+                                <th>{% trans "Status" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reward in recent_rewards %}
+                            <tr>
+                                <td>{{ reward.issued_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'admin:auth_user_change' reward.customer.id %}" class="content-link">
+                                        {{ reward.customer.get_full_name|default:reward.customer.email|truncatechars:30 }}
+                                    </a>
+                                </td>
+                                <td>{{ reward.amount }}</td>
+                                <td>
+                                    <span class="kind-badge kind-{{ reward.kind }}">
+                                        {{ reward.get_kind_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ reward.status }}">
+                                        {{ reward.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No recent rewards." %}</p>
+                {% endif %}
+
+                <!-- View All Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:referrals_referralreward_changelist' %}" class="button">
+                        <i class="fas fa-gift"></i> {% trans "View All Rewards" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="settings-section" id="settings-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-cog"></i>
+                {% trans "Referral Program Settings" %}
+            </h2>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" class="settings-form">
+                {% csrf_token %}
+
+                <!-- Program Status -->
+                <div class="settings-group">
+                    <h3>{% trans "Program Status" %}</h3>
+                    <div class="settings-row">
+                        <div class="setting-item">
+                            <label>{% trans "Status" %}</label>
+                            <select name="status">
+                                {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if program.status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>{% trans "Program Name" %}</label>
+                            <input type="text" name="name" value="{{ program.name }}" maxlength="100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="settings-actions">
+                    <button type="submit" class="button">
+                        <i class="fas fa-save"></i> {% trans "Save Settings" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    
+</div>
+
+<script type="application/json" id="referrals-dashboard-data">
+{
+    "referralsTrendData": {{ referrals_trend_json|safe }},
+    "funnelData": {{ funnel_data_json|safe }},
+    "rewardDistributionData": {{ reward_distribution_json|safe }},
+    "i18n": {
+        "referrals": "{% trans "Referrals" %}",
+        "referral_singular": "{% trans "referral" %}",
+        "referral_plural": "{% trans "referrals" %}",
+        "clicks": "{% trans "Clicks" %}",
+        "signups": "{% trans "Signups" %}",
+        "orders": "{% trans "Orders" %}",
+        "approved": "{% trans "Approved" %}",
+        "count": "{% trans "Count" %}"
+    }
+}
+</script>
+<script src="{% static 'referrals/admin/js/referrals-dashboard.js' %}"></script>
+{% endblock %}

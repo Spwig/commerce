@@ -1,0 +1,59 @@
+{% extends "admin/email_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Send Test Email" %}</h2>
+    <p class="step-description">{% trans "Verify your configuration by sending a test email" %}</p>
+
+    <form method="post" id="test-form" class="wizard-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="test_recipient">{% trans "Test Recipient Email" %} *</label>
+            <input type="email"
+                   name="test_recipient"
+                   id="test_recipient"
+                   class="form-control"
+                   value="{{ wizard_data.test_recipient }}"
+                   required>
+            <p class="help-text">{% trans "Enter your email address to receive the test message" %}</p>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>{% trans "What to expect" %}</strong>
+            <p>{% trans "A real test email will be sent to verify your configuration. You should receive it within a few minutes." %}</p>
+            <p>{% trans "Check your inbox (and spam folder). The test email will show your provider configuration details." %}</p>
+        </div>
+
+        <div class="test-preview">
+            <h4>{% trans "Test Email Preview" %}</h4>
+            <div class="preview-box">
+                <p><strong>{% trans "From:" %}</strong> {{ wizard_data.from_name }} &lt;{{ wizard_data.from_email }}&gt;</p>
+                {% if wizard_data.reply_to %}
+                <p><strong>{% trans "Reply-To:" %}</strong> {{ wizard_data.reply_to }}</p>
+                {% endif %}
+                <p><strong>{% trans "Subject:" %}</strong> {% trans "Test Email from" %} {{ wizard_data.component_name }}</p>
+                <p><strong>{% trans "Body:" %}</strong> {% trans "This is a test email to verify your email provider configuration is working correctly." %}</p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'email_system:wizard_step4' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="test-form" class="btn btn-primary">
+        <i class="fas fa-paper-plane"></i> {% trans "Send Test & Continue" %}
+    </button>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+{# Styles moved to provider-wizard.css #}
+{% endblock %}

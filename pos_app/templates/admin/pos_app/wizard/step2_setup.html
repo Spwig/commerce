@@ -1,0 +1,48 @@
+{% extends "admin/pos_app/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_header %}
+<h1>
+    <div class="wizard-icon-large">
+        <i class="fas fa-book-open"></i>
+    </div>
+    {% trans "Setup Instructions" %}
+</h1>
+<p class="wizard-subtitle">{% blocktrans with name=provider.component.name %}Follow these steps to set up {{ name }} for your store.{% endblocktrans %}</p>
+{% endblock %}
+
+{% block wizard_content %}
+<div class="setup-content">
+    {% if provider.signup_url %}
+    <div class="signup-banner">
+        <div class="signup-icon">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="signup-text">
+            <strong>{% trans "Don't have an account?" %}</strong>
+            <p>{% blocktrans with name=provider.component.name %}Create a {{ name }} account to get started.{% endblocktrans %}</p>
+        </div>
+        <a href="{{ provider.signup_url }}" target="_blank" rel="noopener" class="signup-btn">
+            {% trans "Sign Up" %} <i class="fas fa-external-link-alt"></i>
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="instructions-box">
+        {{ setup_instructions }}
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="wizard-actions">
+        <a href="{% url 'pos_admin:wizard_step1' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        <button type="submit" class="btn btn-primary">
+            {% trans "I've completed setup" %} <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+{% include "providers_common/includes/manifest_i18n.html" %}
+{% endblock %}

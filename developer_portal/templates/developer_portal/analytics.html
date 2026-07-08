@@ -1,0 +1,121 @@
+{% extends "developer_portal/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Analytics" %}{% endblock %}
+
+{% block content %}
+<div class="dev-page">
+    <div class="dev-page-header">
+        <h1>{% trans "Analytics" %}</h1>
+    </div>
+
+    {# Summary Cards #}
+    <div class="dev-stats-grid">
+        <div class="dev-stat-card">
+            <div class="dev-stat-card-icon"><i class="fas fa-download"></i></div>
+            <div class="dev-stat-card-content">
+                <span class="dev-stat-card-value">{{ total_downloads }}</span>
+                <span class="dev-stat-card-label">{% trans "Total Downloads" %}</span>
+            </div>
+        </div>
+        <div class="dev-stat-card">
+            <div class="dev-stat-card-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="dev-stat-card-content">
+                <span class="dev-stat-card-value">{{ total_downloads_period }}</span>
+                <span class="dev-stat-card-label">{% trans "Downloads (30d)" %}</span>
+            </div>
+        </div>
+        <div class="dev-stat-card">
+            <div class="dev-stat-card-icon"><i class="fas fa-star"></i></div>
+            <div class="dev-stat-card-content">
+                <span class="dev-stat-card-value">{{ average_rating }}</span>
+                <span class="dev-stat-card-label">{% trans "Average Rating" %}</span>
+            </div>
+        </div>
+        <div class="dev-stat-card">
+            <div class="dev-stat-card-icon"><i class="fas fa-comments"></i></div>
+            <div class="dev-stat-card-content">
+                <span class="dev-stat-card-value">{{ total_reviews }}</span>
+                <span class="dev-stat-card-label">{% trans "Reviews" %}</span>
+            </div>
+        </div>
+    </div>
+
+    {# Download Trend Chart #}
+    <div class="dev-section">
+        <h2>{% trans "Download Trends" %} <small>({% trans "last 30 days" %})</small></h2>
+        <div class="dev-chart-container">
+            <canvas id="downloadsChart"></canvas>
+        </div>
+    </div>
+
+    {# Per-Component Stats Table #}
+    {% if component_stats %}
+    <div class="dev-section">
+        <h2>{% trans "Component Performance" %}</h2>
+        <div class="dev-table-wrapper">
+            <table class="dev-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Component" %}</th>
+                        <th>{% trans "Version" %}</th>
+                        <th>{% trans "Downloads" %}</th>
+                        <th>{% trans "Downloads (30d)" %}</th>
+                        <th>{% trans "Rating" %}</th>
+                        <th>{% trans "Versions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comp in component_stats %}
+                    <tr>
+                        <td><strong>{{ comp.component_name }}</strong></td>
+                        <td><code>{{ comp.current_version }}</code></td>
+                        <td>{{ comp.downloads_total }}</td>
+                        <td>{{ comp.downloads_period }}</td>
+                        <td>
+                            {% if comp.rating_count > 0 %}
+                                <span class="dev-inline-rating">
+                                    <i class="fas fa-star"></i>
+                                    {{ comp.average_rating }}
+                                    <small>({{ comp.rating_count }})</small>
+                                </span>
+                            {% else %}
+                                <span class="dev-text-muted">{% trans "No ratings" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ comp.versions_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="dev-empty-state">
+        <i class="fas fa-chart-bar"></i>
+        <p>{% trans "Analytics will appear here once your components have been published and synced." %}</p>
+    </div>
+    {% endif %}
+
+    {# Reviews Quick Link #}
+    {% if unresponded_reviews > 0 %}
+    <div class="dev-notice dev-notice-warning dev-mt-lg">
+        <i class="fas fa-exclamation-triangle"></i>
+        {% blocktrans count count=unresponded_reviews %}
+            You have {{ count }} review awaiting your response.
+        {% plural %}
+            You have {{ count }} reviews awaiting your response.
+        {% endblocktrans %}
+        <a href="{% url 'developer_portal:reviews' %}?status=unresponded" class="dev-link">{% trans "View Reviews" %}</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="application/json" id="analytics-chart-data">
+{"labels": {{ chart_labels|safe }}, "values": {{ chart_data|safe }}, "downloadsLabel": "{% trans 'Downloads' %}"}
+</script>
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+<script src="{% static 'developer_portal/js/analytics.js' %}"></script>
+{% endblock %}

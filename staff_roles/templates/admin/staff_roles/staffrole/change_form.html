@@ -1,0 +1,289 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Staff Role" %}{% else %}{% trans "Add Staff Role" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'staff_roles/css/role_management.css' %}">
+{% endblock %}
+
+{% block content %}
+<form method="post" action="" id="staffrole_form">
+{% csrf_token %}
+
+{% if adminform.form.errors %}
+<div class="site-settings-error-summary role-error-summary">
+    <div class="error-summary-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="error-summary-content">
+        <h3>{% trans "Please correct the errors below" %}</h3>
+        <ul class="errorlist">
+            {% for field, errors in adminform.form.errors.items %}
+                {% for error in errors %}
+                <li>{{ field }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<!-- Tabs (AdminTabs auto-initializes on .admin-tabs) -->
+<div class="admin-tabs" role="tablist" data-storage-key="staffrole_tab">
+    <button type="button" class="admin-tab-btn active" data-tab="general" role="tab" aria-selected="true">
+        <i class="fas fa-cog"></i>
+        <span class="label">{% trans "General" %}</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="permissions" role="tab" aria-selected="false">
+        <i class="fas fa-shield-alt"></i>
+        <span class="label">{% trans "Admin Permissions" %}</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="pos" role="tab" aria-selected="false">
+        <i class="fas fa-cash-register"></i>
+        <span class="label">{% trans "POS Permissions" %}</span>
+    </button>
+    {% if original %}
+    <button type="button" class="admin-tab-btn" data-tab="members" role="tab" aria-selected="false">
+        <i class="fas fa-users"></i>
+        <span class="label">{% trans "Members" %} ({{ role_members.count|default:"0" }})</span>
+    </button>
+    {% endif %}
+</div>
+
+<!-- ============================================================
+     Tab 1: General
+     ============================================================ -->
+<div class="tab-panel active" data-panel="general" role="tabpanel">
+    <fieldset class="module">
+        <h2>{% trans "Role Settings" %}</h2>
+
+        <div class="role-form-grid">
+            <div class="role-form-group">
+                <label for="id_display_name">{% trans "Display Name" %} *</label>
+                <input type="text" id="id_display_name" name="display_name"
+                       value="{{ adminform.form.initial.display_name|default:original.display_name|default:'' }}"
+                       required maxlength="100"
+                       placeholder="{% trans 'e.g. Store Manager' %}">
+            </div>
+
+            <div class="role-form-group">
+                <label for="id_sort_order">{% trans "Sort Order" %}</label>
+                <input type="text" id="id_sort_order" name="sort_order"
+                       value="{{ original.sort_order|default:'0' }}"
+                       class="role-input-narrow">
+            </div>
+
+            <div class="role-form-group role-form-full">
+                <label for="id_description">{% trans "Description" %}</label>
+                <textarea id="id_description" name="description"
+                          placeholder="{% trans 'What is this role for?' %}">{{ original.description|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <h2>{% trans "Appearance" %}</h2>
+
+        <div class="role-form-grid">
+            <div class="role-form-group">
+                <label>{% trans "Icon" %}</label>
+                <input type="hidden" id="id_icon" name="icon" value="{{ original.icon|default:'fas fa-user' }}">
+                <div class="icon-selector" id="icon-selector" data-current="{{ original.icon|default:'fas fa-user' }}">
+                    <!-- Icons populated by JS -->
+                </div>
+            </div>
+
+            <div class="role-form-group">
+                <label>{% trans "Badge Color" %}</label>
+                <input type="hidden" id="id_color" name="color" value="{{ original.color|default:'primary' }}">
+                <div class="color-selector">
+                    <div class="color-option{% if original.color|default:'primary' == 'primary' %} selected{% endif %}" data-color="primary" title="{% trans 'Blue' %}"></div>
+                    <div class="color-option{% if original.color == 'success' %} selected{% endif %}" data-color="success" title="{% trans 'Green' %}"></div>
+                    <div class="color-option{% if original.color == 'warning' %} selected{% endif %}" data-color="warning" title="{% trans 'Orange' %}"></div>
+                    <div class="color-option{% if original.color == 'error' %} selected{% endif %}" data-color="error" title="{% trans 'Red' %}"></div>
+                    <div class="color-option{% if original.color == 'info' %} selected{% endif %}" data-color="info" title="{% trans 'Teal' %}"></div>
+                    <div class="color-option{% if original.color == 'default' %} selected{% endif %}" data-color="default" title="{% trans 'Gray' %}"></div>
+                </div>
+            </div>
+        </div>
+
+        <h2>{% trans "Access Control" %}</h2>
+
+        <div class="access-toggles">
+            <label class="access-toggle{% if original.can_access_admin|default:True %} active{% endif %}">
+                <input type="checkbox" id="id_can_access_admin" name="can_access_admin"
+                       {% if original.can_access_admin|default:True %}checked{% endif %}>
+                <span class="toggle-icon"><i class="fas fa-desktop"></i></span>
+                <div>
+                    <div class="toggle-label">{% trans "Admin Panel" %}</div>
+                    <div class="toggle-desc">{% trans "Can log into the admin backend" %}</div>
+                </div>
+            </label>
+
+            <label class="access-toggle{% if original.can_access_pos %} active{% endif %}">
+                <input type="checkbox" id="id_can_access_pos" name="can_access_pos"
+                       {% if original.can_access_pos %}checked{% endif %}>
+                <span class="toggle-icon"><i class="fas fa-cash-register"></i></span>
+                <div>
+                    <div class="toggle-label">{% trans "POS Terminals" %}</div>
+                    <div class="toggle-desc">{% trans "Can use point of sale" %}</div>
+                </div>
+            </label>
+        </div>
+    </fieldset>
+</div>
+
+<!-- ============================================================
+     Tab 2: Admin Permissions
+     ============================================================ -->
+<div class="tab-panel" data-panel="permissions" role="tabpanel">
+    <fieldset class="module">
+        <h2>{% trans "Permission Categories" %}</h2>
+        <p class="role-section-hint">
+            {% trans "Control what this role can access in the admin panel. 'View' grants read-only access, 'Full' grants read, write, and delete." %}
+        </p>
+
+        <div class="categories-grid">
+            {% for cat in permission_categories %}
+            <div class="category-row" data-category="{{ cat.key }}">
+                <input type="hidden" name="cat_{{ cat.key }}" id="cat_{{ cat.key }}" value="none">
+                <div class="category-info">
+                    <div class="category-icon"><i class="{{ cat.icon }}"></i></div>
+                    <div class="category-details">
+                        <div class="category-name">{{ cat.label }}</div>
+                        <div class="category-desc">{{ cat.description }}</div>
+                    </div>
+                </div>
+                <div class="category-level-selector">
+                    <button type="button" class="level-option active" data-level="none">{% trans "None" %}</button>
+                    <button type="button" class="level-option" data-level="view">{% trans "View" %}</button>
+                    <button type="button" class="level-option" data-level="full">{% trans "Full" %}</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+
+<!-- ============================================================
+     Tab 3: POS Permissions
+     ============================================================ -->
+<div class="tab-panel" data-panel="pos" role="tabpanel">
+    <fieldset class="module">
+        <h2>{% trans "POS Permission Flags" %}</h2>
+        <p class="role-section-hint">
+            {% trans "Control what POS operations staff with this role can perform." %}
+        </p>
+
+        <div class="pos-perms-grid">
+            {% for grp in pos_groups %}
+            <div class="pos-perm-group">
+                <div class="pos-perm-group-header">
+                    <i class="{{ grp.icon }}"></i> {{ grp.label }}
+                </div>
+                {% for flag in pos_flags %}
+                {% if flag.group == grp.key %}
+                <div class="pos-perm-row">
+                    <div class="pos-perm-info">
+                        <div class="pos-perm-label">{{ flag.label }}</div>
+                        <div class="pos-perm-desc">{{ flag.description }}</div>
+                    </div>
+                    <div class="pos-perm-control">
+                        {% if flag.type == "integer" %}
+                        <input type="number" name="pos_{{ flag.key }}"
+                               id="pos_{{ flag.key }}"
+                               value="{{ flag.default }}"
+                               min="{{ flag.min }}" max="{{ flag.max }}"
+                               class="role-input-narrow">
+                        <span class="role-percent-suffix">%</span>
+                        {% else %}
+                        <input type="checkbox" name="pos_{{ flag.key }}"
+                               id="pos_{{ flag.key }}">
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+
+<!-- ============================================================
+     Tab 4: Members (only for existing roles)
+     ============================================================ -->
+{% if original %}
+<div class="tab-panel" data-panel="members" role="tabpanel">
+    <fieldset class="module">
+        <h2>{% trans "Assigned Members" %}</h2>
+
+        <div class="members-section">
+            <div class="member-add-bar">
+                <select id="member-select">
+                    <option value="">{% trans "— Select a staff member —" %}</option>
+                    {% for user in available_staff %}
+                    <option value="{{ user.id }}">{{ user.get_full_name|default:user.username }} ({{ user.email }})</option>
+                    {% endfor %}
+                </select>
+                <button type="button" id="add-member-btn" data-role-id="{{ original.pk }}">
+                    <i class="fas fa-plus"></i> {% trans "Add" %}
+                </button>
+            </div>
+
+            <div class="members-list" data-empty-text="{% trans 'No members assigned to this role' %}">
+                {% if role_members %}
+                {% for member in role_members %}
+                <div class="member-row">
+                    <div class="member-info">
+                        <div class="member-avatar">
+                            {{ member.first_name|default:member.username|make_list|first|upper }}
+                        </div>
+                        <div class="member-details">
+                            <div class="member-name">{{ member.get_full_name|default:member.username }}</div>
+                            <div class="member-email">{{ member.email }}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="member-remove-btn"
+                            data-user-id="{{ member.id }}"
+                            data-role-id="{{ original.pk }}"
+                            data-user-name="{{ member.get_full_name|default:member.username }}">
+                        <i class="fas fa-times"></i> {% trans "Remove" %}
+                    </button>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="members-empty">
+                    <i class="fas fa-user-slash"></i>
+                    <p>{% trans "No members assigned to this role" %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </fieldset>
+</div>
+{% endif %}
+
+<!-- Submit -->
+<div class="submit-row role-submit-row">
+    <input type="submit" value="{% if original %}{% trans 'Save' %}{% else %}{% trans 'Create Role' %}{% endif %}" class="default">
+    {% if original %}
+    <button type="button" id="clone-role-btn" class="button role-clone-action"
+            data-url="{% url 'admin:staff_roles_staffrole_clone' original.pk %}">
+        <i class="fas fa-clone"></i> {% trans "Clone Role" %}
+    </button>
+    {% endif %}
+    {% if original and not original.is_predefined %}
+    <p class="deletelink-box">
+        <a href="{% url 'admin:staff_roles_staffrole_delete' original.pk %}" class="deletelink">{% trans "Delete" %}</a>
+    </p>
+    {% endif %}
+</div>
+
+</form>
+
+<!-- Initialize with current values (json_script safely escapes </script> etc.) -->
+{{ current_categories|json_script:"staff-role-categories" }}
+{{ current_pos_permissions|json_script:"staff-role-pos-permissions" }}
+
+<script src="{% static 'staff_roles/js/role_init.js' %}"></script>
+<script src="{% static 'staff_roles/js/role_editor.js' %}"></script>
+{% endblock %}

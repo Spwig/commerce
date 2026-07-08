@@ -1,0 +1,121 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Management - Database Browser
+ *
+ * Description: Admin interface styles for database_browser.html
+ * Template: management/templates/admin/management/database_browser.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+.db-info {
+        background: var(--darkened-bg);
+        padding: 15px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 4px;
+        margin: 20px 0;
+    }
+    .db-info h3 {
+        margin-top: 0;
+        color: var(--body-fg);
+    }
+    .db-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 10px 0;
+    }
+    .db-stat {
+        background: var(--body-bg);
+        padding: 10px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 3px;
+    }
+    .db-stat strong {
+        color: var(--link-fg, #417690);
+    }
+    .tables-container {
+        margin: 20px 0;
+    }
+    .tables-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    .table-card {
+        background: var(--body-bg);
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 4px;
+        padding: 15px;
+        transition: box-shadow 0.2s ease;
+    }
+    .table-card:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .table-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--link-fg, #417690);
+        margin-bottom: 8px;
+    }
+    .table-name a {
+        color: var(--link-fg, #417690);
+        text-decoration: none;
+    }
+    .table-name a:hover {
+        text-decoration: underline;
+    }
+    .table-stats {
+        color: var(--body-quiet-color);
+        font-size: 14px;
+    }
+    .table-stats div {
+        margin: 2px 0;
+    }
+    .browse-btn {
+        background: var(--primary, #417690);
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 3px;
+        text-decoration: none;
+        font-size: 12px;
+        margin-top: 8px;
+        display: inline-block;
+    }
+    .browse-btn:hover {
+        background: var(--primary-fg, #205067);
+        color: white;
+    }
+    .search-box {
+        margin: 20px 0;
+        padding: 15px;
+        background: var(--selected-bg);
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 4px;
+    }
+    .search-box input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid var(--border-color, #ddd);
+        border-radius: 3px;
+        background: var(--body-bg);
+        color: var(--body-fg);
+    }
+    .table-count {
+        color: var(--link-fg, #0f5132);
+        font-weight: bold;
+    }
+    
+    /* Dark theme specific adjustments */
+    [data-theme="dark"] .table-card:hover {
+        box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+    }

@@ -1,0 +1,294 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Payment Methods Admin CSS
+ * Styles for the payment methods admin interface
+ */
+
+/* Payment Gateway Configuration Status */
+.configuration-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+}
+
+.configuration-status.configured {
+    color: #28a745;
+}
+
+.configuration-status.not-configured {
+    color: #dc3545;
+}
+
+/* Gateway Type Badges */
+.gateway-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.gateway-badge.stripe {
+    background-color: #635bff;
+    color: white;
+}
+
+.gateway-badge.paypal {
+    background-color: #0070ba;
+    color: white;
+}
+
+.gateway-badge.square {
+    background-color: #000000;
+    color: white;
+}
+
+.gateway-badge.braintree {
+    background-color: #2196f3;
+    color: white;
+}
+
+/* Environment Indicators */
+.environment-indicator {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-left: 5px;
+}
+
+.environment-indicator.sandbox {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.environment-indicator.production {
+    background-color: #28a745;
+    color: white;
+}
+
+/* JSON Configuration Field Styling */
+.configuration-field {
+    font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.configuration-field:focus {
+    background-color: #ffffff;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Webhook URL Display */
+.webhook-url {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    border: 1px solid #dee2e6;
+    word-break: break-all;
+}
+
+/* Transaction Status Indicators */
+.transaction-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.transaction-status.completed {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.transaction-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.transaction-status.failed {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.transaction-status.refunded {
+    background-color: #cce7ff;
+    color: #004085;
+    border: 1px solid #b3d7ff;
+}
+
+/* Gateway Response JSON Display */
+.gateway-response {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    border: 1px solid #dee2e6;
+}
+
+/* Payment Method Icon Preview */
+.payment-icon-preview {
+    max-width: 64px;
+    max-height: 64px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+/* Configuration Help Text */
+.config-help {
+    background: #e7f3ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.config-help .help-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #004085;
+}
+
+.config-help .help-content {
+    color: #004085;
+}
+
+/* Required Fields Indicator */
+.required-field {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Collapsible Sections Enhancement */
+.collapse .form-row {
+    border-left: 3px solid #007cba;
+    padding-left: 15px;
+    margin-left: 10px;
+}
+
+/* Feature Checkboxes */
+.feature-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.feature-checkbox input[type="checkbox"] {
+    transform: scale(1.2);
+}
+
+/* Test Connection Button */
+.test-connection-btn {
+    background: #17a2b8;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.test-connection-btn:hover {
+    background: #138496;
+}
+
+.test-connection-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Connection Status */
+.connection-status {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.connection-status.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.connection-status.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .webhook-url {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+    
+    .configuration-field {
+        font-size: 11px;
+        padding: 8px;
+    }
+    
+    .gateway-response {
+        font-size: 10px;
+        padding: 8px;
+        max-height: 200px;
+    }
+}
+
+/* Dark theme support */
+[data-theme="dark"] .configuration-field {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .webhook-url {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .gateway-response {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .config-help {
+    background-color: #1a365d;
+    border-color: #2c5282;
+    color: #bee3f8;
+}
+
+[data-theme="dark"] .config-help .help-title,
+[data-theme="dark"] .config-help .help-content {
+    color: #bee3f8;
+}

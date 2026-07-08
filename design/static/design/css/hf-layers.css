@@ -1,0 +1,19 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * CSS Layer Declaration for Header/Footer Builder
+ *
+ * This file MUST be loaded before any other CSS in the header/footer builder.
+ * Layers define the cascade priority order - later layers have higher priority.
+ *
+ * Layer Order (lowest to highest priority):
+ * 1. hf-reset     - Admin theme isolation, admin variable resets
+ * 2. hf-base      - Base widget styling
+ * 3. hf-theme     - Theme tokens (colors, fonts from active theme)
+ * 4. hf-builder-ui - Builder chrome (widget wrappers, controls, drop zones)
+ *
+ * Unlayered CSS (like admin-base.css) has LOWER priority than any layer.
+ * This is how we block admin CSS from bleeding into the preview.
+ */
+
+@layer hf-reset, hf-base, hf-theme, hf-builder-ui;

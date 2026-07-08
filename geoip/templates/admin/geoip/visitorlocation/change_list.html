@@ -1,0 +1,151 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block title %}{% trans "Visitor Locations" %} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+    <script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-users"></i>
+            {% trans "Visitor Locations" %}
+        </h1>
+        <p class="subtitle">{% trans "Track visitor locations and accuracy feedback" %}</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-card">
+        <h3><i class="fas fa-chart-bar"></i> {% trans "Overview" %}</h3>
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-globe"></i></div>
+                <div class="value">{{ total_visitors|default:"0" }}</div>
+                <div class="label">{% trans "Total Visitors" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="value">{{ corrected_count|default:"0" }}</div>
+                <div class="label">{% trans "Corrected" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-desktop"></i></div>
+                <div class="value">{{ desktop_count|default:"0" }}</div>
+                <div class="label">{% trans "Desktop" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="value">{{ mobile_count|default:"0" }}</div>
+                <div class="label">{% trans "Mobile" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-tablet-alt"></i></div>
+                <div class="value">{{ tablet_count|default:"0" }}</div>
+                <div class="label">{% trans "Tablet" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Session key or IP address...' %}">
+            </div>
+
+            <!-- Country -->
+            <div class="filter-field">
+                <label for="filter-country">
+                    <i class="fas fa-flag"></i> {% trans "Country" %}
+                </label>
+                <input type="text" id="filter-country" placeholder="{% trans 'Country code (e.g., US)' %}" maxlength="2" class="filter-uppercase">
+            </div>
+
+            <!-- Device Type -->
+            <div class="filter-field">
+                <label for="filter-device_type">
+                    <i class="fas fa-laptop"></i> {% trans "Device Type" %}
+                </label>
+                <select id="filter-device_type">
+                    <option value="">{% trans "All Devices" %}</option>
+                    <option value="desktop">{% trans "Desktop" %}</option>
+                    <option value="mobile">{% trans "Mobile" %}</option>
+                    <option value="tablet">{% trans "Tablet" %}</option>
+                    <option value="unknown">{% trans "Unknown" %}</option>
+                </select>
+            </div>
+
+            <!-- Corrected -->
+            <div class="filter-field">
+                <label for="filter-corrected">
+                    <i class="fas fa-exchange-alt"></i> {% trans "Corrected" %}
+                </label>
+                <select id="filter-corrected">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Yes" %}</option>
+                    <option value="false">{% trans "No" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Visitor Locations" %}</h2>
+        <span class="results-count" id="results-count-info">
+            <i class="fas fa-users"></i>
+            <span id="results-count">{{ total_visitors }}</span> {% trans "entries" %}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="visitor-results">
+        <div class="list-row-cards">
+            <div class="list-row-card geoip-loading-card">
+                <i class="fas fa-spinner fa-spin geoip-loading-icon"></i>
+                <p class="geoip-loading-text">{% trans "Loading visitors..." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'geoip_admin:visitors_filter' %}"
+         data-results-container="visitor-results"
+         data-results-count="results-count"
+         data-auto-load="true"
+         class="geoip-hidden"></div>
+
+    <script src="{% static 'geoip/admin/js/visitor-filters.js' %}"></script>
+</div>
+{% endblock %}

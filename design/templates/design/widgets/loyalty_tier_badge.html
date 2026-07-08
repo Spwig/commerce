@@ -1,0 +1,79 @@
+{% load i18n merchant_trans %}
+
+{# Only show for authenticated users #}
+{% if user.is_authenticated %}
+    {# Try to get loyalty member - widget will be hidden if not enrolled #}
+    {% with member=user.loyalty_member %}
+        {% if member and member.is_active and member.current_tier %}
+            <div class="loyalty-tier-badge-widget loyalty-tier-{{ config.display_style|default:'badge' }} loyalty-tier-style-{{ config.badge_style|default:'solid' }} {{ widget.css_classes }}"
+                 data-widget-type="loyalty_tier_badge"
+                 {% if not config.show_on_mobile %}data-hide-mobile="true"{% endif %}
+                 style="--tier-color: {{ member.current_tier.color|default:'#2563EB' }};">
+
+                {% if config.link_to_tiers %}
+                <a href="{% url 'loyalty:customer_tiers' %}" class="tier-badge-link" aria-label="{% mtrans 'View tier information' %} - {{ member.current_tier.name }}">
+                {% else %}
+                <div class="tier-badge-display">
+                {% endif %}
+
+                    {# Icon (hidden in name_only style) #}
+                    {% if config.display_style != 'name_only' %}
+                    <span class="tier-icon" aria-hidden="true">
+                        <i class="fas fa-crown"></i>
+                    </span>
+                    {% endif %}
+
+                    {# Tier Name (hidden in icon_only style) #}
+                    {% if config.display_style != 'icon_only' %}
+                    <span class="tier-name">{{ member.current_tier.name }}</span>
+                    {% endif %}
+
+                {% if config.link_to_tiers %}
+                </a>
+                {% else %}
+                </div>
+                {% endif %}
+
+                {# Progress Bar (only shown in 'full' style with show_progress enabled) #}
+                {% if config.display_style == 'full' and config.show_progress %}
+                    {# Calculate progress to next tier using actual tier model fields #}
+                    {% with next_tier=member.get_next_tier %}
+                        {% if next_tier %}
+                            {% if next_tier.min_points_earned > 0 %}
+                                {# Points-based progress with bar #}
+                                {% widthratio member.balance.lifetime_earned next_tier.min_points_earned 100 as progress_pct %}
+                                <div class="tier-progress-container">
+                                    <div class="tier-progress-bar">
+                                        <div class="tier-progress-fill" style="width: {{ progress_pct }}%;"></div>
+                                    </div>
+                                    <div class="tier-progress-text">
+                                        {% blocktrans with tier=next_tier.name %}{{ progress_pct }}% to {{ tier }}{% endblocktrans %}
+                                    </div>
+                                </div>
+                            {% elif next_tier.min_spend > 0 %}
+                                {# Spend-based criteria #}
+                                <div class="tier-progress-container">
+                                    <div class="tier-progress-text">
+                                        {% blocktrans with spend=next_tier.min_spend tier=next_tier.name %}Spend {{ spend }} to reach {{ tier }}{% endblocktrans %}
+                                    </div>
+                                </div>
+                            {% elif next_tier.min_orders > 0 %}
+                                {# Order count criteria #}
+                                <div class="tier-progress-container">
+                                    <div class="tier-progress-text">
+                                        {% blocktrans with orders=next_tier.min_orders tier=next_tier.name %}{{ orders }} orders to reach {{ tier }}{% endblocktrans %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="tier-max-badge">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{% mtrans "Max Tier" %}</span>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endif %}

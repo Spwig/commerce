@@ -1,0 +1,170 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Return Requests" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'orders/css/admin-return-request.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-undo-alt"></i>
+                {% trans "Return Requests" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage customer return requests and RMA workflow" %}</p>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats Summary -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon text-warning"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ pending_count }}</div>
+            <div class="label">{% trans "Pending" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-info"><i class="fas fa-check"></i></div>
+            <div class="value">{{ approved_count }}</div>
+            <div class="label">{% trans "Approved" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-purple"><i class="fas fa-shipping-fast"></i></div>
+            <div class="value">{{ in_transit_count }}</div>
+            <div class="label">{% trans "In Transit" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-success"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ completed_count }}</div>
+            <div class="label">{% trans "Completed" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Order number, customer, tracking...' %}"
+                    value="">
+            </div>
+
+            <!-- Status Filter -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-tasks"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="pending">{% trans "Pending Approval" %}</option>
+                    <option value="approved">{% trans "Approved" %}</option>
+                    <option value="rejected">{% trans "Rejected" %}</option>
+                    <option value="label_sent">{% trans "Label Sent" %}</option>
+                    <option value="in_transit">{% trans "In Transit" %}</option>
+                    <option value="received">{% trans "Received" %}</option>
+                    <option value="inspected">{% trans "Inspected" %}</option>
+                    <option value="completed">{% trans "Completed" %}</option>
+                    <option value="cancelled">{% trans "Cancelled" %}</option>
+                </select>
+            </div>
+
+            <!-- Reason Filter -->
+            <div class="filter-field">
+                <label for="filter-reason">
+                    <i class="fas fa-question-circle"></i> {% trans "Reason" %}
+                </label>
+                <select id="filter-reason">
+                    <option value="">{% trans "All Reasons" %}</option>
+                    <option value="defective">{% trans "Defective Product" %}</option>
+                    <option value="wrong_item">{% trans "Wrong Item" %}</option>
+                    <option value="not_as_described">{% trans "Not as Described" %}</option>
+                    <option value="changed_mind">{% trans "Changed Mind" %}</option>
+                    <option value="sizing">{% trans "Wrong Size/Fit" %}</option>
+                    <option value="damaged_shipping">{% trans "Damaged in Shipping" %}</option>
+                    <option value="other">{% trans "Other" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+                <button type="button" class="button default" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-undo-alt"></i>
+            <span id="request-count">{{ cl.result_count }}</span> {% trans "return request" %}{{ cl.result_count|pluralize:"s" }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="return-results">
+        {% include "admin/orders/returnrequest/request_cards.html" with requests=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 return request{% plural %}{{ counter }} return requests{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'return requests' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'orders_admin:filter_return_requests' %}"
+         data-results-container="return-results"
+         data-results-count="request-count"
+         class="d-none"></div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,126 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Divider Element Styles
+ *
+ * Theme tokens provide defaults. Merchant overrides are applied as
+ * direct inline styles on the element (margins, width, height).
+ * Color uses --divider-color CSS variable due to gradient usage.
+ *
+ * Theme Element Tokens (from tokens.json):
+ *   --element-divider-color     Theme default line color
+ *   --element-divider-thickness Theme default thickness
+ *   --element-divider-spacing   Theme default vertical spacing
+ */
+
+/* Base divider container */
+.pb-divider {
+    display: flex;
+    width: 100%;
+    margin-top: var(--element-divider-spacing, var(--theme-space-5, 1.25rem));
+    margin-bottom: var(--element-divider-spacing, var(--theme-space-5, 1.25rem));
+}
+
+/* The divider line itself */
+.pb-divider__line {
+    display: block;
+    flex-shrink: 0;
+    width: 100%;
+    height: var(--element-divider-thickness, 1px);
+    min-height: 1px;
+    background-color: var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb)));
+    border: none;
+}
+
+/* ==========================================================================
+   Style Variants
+   ========================================================================== */
+
+/* Style: Solid (default) */
+.pb-divider--solid .pb-divider__line {
+    background: var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb)));
+}
+
+/* Style: Dashed - horizontal repeating gradient */
+.pb-divider--dashed .pb-divider__line {
+    background: repeating-linear-gradient(
+        to right,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 0,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 8px,
+        transparent 8px,
+        transparent 16px
+    );
+}
+
+/* Style: Dotted - small segments */
+.pb-divider--dotted .pb-divider__line {
+    background: repeating-linear-gradient(
+        to right,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 0,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 2px,
+        transparent 2px,
+        transparent 6px
+    );
+}
+
+/* Style: Double - two lines with gap */
+.pb-divider--double .pb-divider__line {
+    height: 3px;
+    background: linear-gradient(
+        to bottom,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 0,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 1px,
+        transparent 1px,
+        transparent 2px,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 2px,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 3px
+    );
+}
+
+/* Style: Gradient Fade - transparent edges */
+.pb-divider--gradient .pb-divider__line {
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 20%,
+        var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 80%,
+        transparent
+    );
+    border-radius: 1px;
+}
+
+/* Style: Shadow Line - solid with shadow */
+.pb-divider--shadow .pb-divider__line {
+    background: var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb)));
+    box-shadow: var(--theme-shadow-md, 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Style: Groove - 3D inset effect */
+.pb-divider--groove .pb-divider__line {
+    height: 2px;
+    background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 60%, black),
+        color-mix(in srgb, var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 60%, white)
+    );
+}
+
+/* Style: Ridge - 3D raised effect */
+.pb-divider--ridge .pb-divider__line {
+    height: 2px;
+    background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 60%, white),
+        color-mix(in srgb, var(--divider-color, var(--element-divider-color, var(--theme-color-border, #e5e7eb))) 60%, black)
+    );
+}
+
+/* Fallback for browsers without color-mix support (Safari < 15) */
+@supports not (background: color-mix(in srgb, red 50%, blue)) {
+    .pb-divider--groove .pb-divider__line {
+        background: linear-gradient(to bottom, var(--theme-color-text-muted, #666), var(--theme-color-border, #ccc));
+    }
+    .pb-divider--ridge .pb-divider__line {
+        background: linear-gradient(to bottom, var(--theme-color-border, #ccc), var(--theme-color-text-muted, #666));
+    }
+}

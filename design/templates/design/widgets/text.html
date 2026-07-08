@@ -1,0 +1,9 @@
+{% load i18n %}
+<div class="widget-text {{ widget.css_classes }}">
+    {% if config.title %}
+    <h3 class="text-widget-title">{{ config.title }}</h3>
+    {% endif %}
+    <div class="text-widget-content">
+        {{ content|safe }}
+    </div>
+</div>

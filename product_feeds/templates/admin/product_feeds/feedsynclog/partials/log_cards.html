@@ -1,0 +1,162 @@
+{% load i18n humanize static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for log in logs %}
+    <div class="list-row-card{% if log.status == 'failed' %} disabled{% endif %}">
+        {# No checkbox - read-only admin #}
+
+        <div class="list-row-card-icon">
+            {% if log.status == 'pending' %}
+                <i class="fas fa-clock text-muted icon-size-32"></i>
+            {% elif log.status == 'running' %}
+                <i class="fas fa-spinner fa-spin text-primary icon-size-32"></i>
+            {% elif log.status == 'success' %}
+                <i class="fas fa-check-circle text-success icon-size-32"></i>
+            {% elif log.status == 'partial' %}
+                <i class="fas fa-exclamation-triangle text-warning icon-size-32"></i>
+            {% elif log.status == 'failed' %}
+                <i class="fas fa-times-circle text-error icon-size-32"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:product_feeds_feedsynclog_change' log.pk %}">
+                    {{ log.account.name }} - {{ log.get_sync_type_display }}
+                </a>
+            </h3>
+
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-clock"></i>
+                {% trans "Started" %} {{ log.started_at|timesince }} {% trans "ago" %}
+                {% if log.completed_at %}
+                    <span class="text-muted"> • {% trans "Completed" %}: {{ log.completed_at|date:"M d, Y H:i" }}</span>
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {# Status Badge #}
+                {% if log.status == 'pending' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif log.status == 'running' %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-spinner fa-spin"></i> {% trans "Running" %}
+                    </span>
+                {% elif log.status == 'success' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Success" %}
+                    </span>
+                {% elif log.status == 'partial' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Partial" %}
+                    </span>
+                {% elif log.status == 'failed' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times-circle"></i> {% trans "Failed" %}
+                    </span>
+                {% endif %}
+
+                {# Sync Type Badge #}
+                <span class="list-row-card-badge">
+                    {% if log.sync_type == 'full' %}
+                        <i class="fas fa-database"></i> {% trans "Full" %}
+                    {% elif log.sync_type == 'incremental' %}
+                        <i class="fas fa-sync"></i> {% trans "Incremental" %}
+                    {% elif log.sync_type == 'manual' %}
+                        <i class="fas fa-hand-pointer"></i> {% trans "Manual" %}
+                    {% elif log.sync_type == 'scheduled' %}
+                        <i class="fas fa-calendar-check"></i> {% trans "Scheduled" %}
+                    {% else %}
+                        {{ log.get_sync_type_display }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Synced" %}</span>
+                    <span class="list-row-card-stat-value text-success font-weight-600">
+                        {{ log.products_synced }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Failed" %}</span>
+                    <span class="list-row-card-stat-value text-error">
+                        {{ log.products_failed }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Skipped" %}</span>
+                    <span class="list-row-card-stat-value">{{ log.products_skipped }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Duration" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if log.duration_display %}
+                            {{ log.duration_display }}
+                        {% else %}
+                            <span class="text-muted">{% trans "In Progress" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Started" %}: {{ log.started_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if log.completed_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>{% trans "Completed" %}: {{ log.completed_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            {# Error Details (expandable if error exists) #}
+            {% if log.error_message %}
+            <div class="list-row-card-meta mt-12">
+                <div class="error-box">
+                    <div class="error-box-header">
+                        <i class="fas fa-exclamation-circle text-error"></i>
+                        <strong class="text-error">{% trans "Error Details" %}:</strong>
+                    </div>
+                    <div class="error-box-message">
+                        {{ log.error_message }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:product_feeds_feedsynclog_change' log.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            {% if log.status == 'failed' %}
+            <a href="{% url 'admin:product_feeds_feedprovideraccount_change' log.account.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Retry sync from account page' %}">
+                <i class="fas fa-redo"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-history"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No sync logs found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

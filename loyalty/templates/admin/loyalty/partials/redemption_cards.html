@@ -1,0 +1,190 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/redemption_cards.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for redemption in redemptions %}
+    <div class="list-row-card redemption-card {{ redemption.status }}">
+        <!-- Status Icon -->
+        <div class="list-row-card-icon {{ redemption.status }}">
+            {% if redemption.status == 'pending' %}
+                <i class="fas fa-clock"></i>
+            {% elif redemption.status == 'fulfilled' %}
+                <i class="fas fa-check-circle"></i>
+            {% elif redemption.status == 'cancelled' %}
+                <i class="fas fa-ban"></i>
+            {% elif redemption.status == 'expired' %}
+                <i class="fas fa-hourglass-end"></i>
+            {% else %}
+                <i class="fas fa-ticket-alt"></i>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:loyalty_loyaltyredemption_change' redemption.id %}"
+                   title="{% trans 'Edit redemption' %}">
+                    {{ redemption.redemption_code }}
+                </a>
+            </h3>
+
+            <!-- Member and Reward Info -->
+            <p class="list-row-card-subtitle">
+                <strong>{% trans "Member:" %}</strong>
+                {% if redemption.member.customer %}
+                    {{ redemption.member.customer.get_full_name|default:redemption.member.customer.username }}
+                {% else %}
+                    {{ redemption.member.email }}
+                {% endif %}
+                <br>
+                <strong>{% trans "Reward:" %}</strong> {{ redemption.reward.name }}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if redemption.status == 'pending' %}
+                    <span class="list-row-card-badge info"
+                          title="{% trans 'This redemption is pending fulfillment' %}">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif redemption.status == 'fulfilled' %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'This redemption has been fulfilled' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Fulfilled" %}
+                    </span>
+                {% elif redemption.status == 'cancelled' %}
+                    <span class="list-row-card-badge badge-muted"
+                          title="{% trans 'This redemption has been cancelled' %}">
+                        <i class="fas fa-ban"></i> {% trans "Cancelled" %}
+                    </span>
+                {% elif redemption.status == 'expired' %}
+                    <span class="list-row-card-badge error"
+                          title="{% trans 'This redemption has expired' %}">
+                        <i class="fas fa-hourglass-end"></i> {% trans "Expired" %}
+                    </span>
+                {% endif %}
+
+                <!-- Expiration Warning Badge -->
+                {% if redemption.status == 'pending' and redemption.expires_at %}
+                    {% now "U" as current_timestamp %}
+                    {% if redemption.expires_at|date:"U"|add:"-604800" <= current_timestamp %}
+                        <span class="list-row-card-badge warning"
+                              title="{% trans 'This redemption expires within 7 days' %}">
+                            <i class="fas fa-exclamation-triangle"></i> {% trans "Expiring Soon" %}
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Points Cost" %}</span>
+                    <span class="list-row-card-stat-value text-primary">
+                        {{ redemption.reward.points_cost }}
+                    </span>
+                </div>
+
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Created" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ redemption.created_at|date:"M d, Y" }}
+                    </span>
+                </div>
+
+                {% if redemption.expires_at %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Expires" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% now "U" as current_timestamp %}
+                        {% if redemption.expires_at|date:"U" < current_timestamp %}
+                            <span class="text-error">{{ redemption.expires_at|date:"M d, Y" }}</span>
+                        {% elif redemption.expires_at|date:"U"|add:"-604800" <= current_timestamp %}
+                            <span class="text-warning">{{ redemption.expires_at|date:"M d, Y" }}</span>
+                        {% else %}
+                            {{ redemption.expires_at|date:"M d, Y" }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+
+                {% if redemption.fulfilled_at %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Fulfilled" %}</span>
+                    <span class="list-row-card-stat-value text-success">
+                        {{ redemption.fulfilled_at|date:"M d, Y" }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Meta Information -->
+        <div class="list-row-card-meta">
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Member who redeemed this reward' %}">
+                <i class="fas fa-user"></i>
+                <a href="{% url 'admin:loyalty_loyaltymember_change' redemption.member.id %}"
+                   class="no-decoration">
+                    {% if redemption.member.customer %}
+                        {{ redemption.member.customer.get_full_name|default:redemption.member.customer.username }}
+                    {% else %}
+                        {{ redemption.member.email }}
+                    {% endif %}
+                </a>
+            </div>
+
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Redeemed reward' %}">
+                <i class="fas fa-gift"></i>
+                <a href="{% url 'admin:loyalty_loyaltyreward_change' redemption.reward.id %}"
+                   class="no-decoration">
+                    {{ redemption.reward.name }}
+                </a>
+            </div>
+
+            {% if redemption.reward.reward_type %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Reward type' %}">
+                <i class="fas fa-tag"></i>
+                <span>{{ redemption.reward.get_reward_type_display }}</span>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Internal redemption ID' %}">
+                <i class="fas fa-key"></i>
+                <code class="code-small">{{ redemption.id }}</code>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltyredemption_change' redemption.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit redemption' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% if redemption.status == 'pending' %}
+            <button type="button"
+                    class="list-row-card-action text-success"
+                    data-action="confirm-fulfill"
+                    data-confirm-msg="{% trans 'Mark this redemption as fulfilled?' %}"
+                    title="{% trans 'Mark as fulfilled' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-ticket-alt"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No redemptions found." %}</p>
+    </div>
+    {% endfor %}
+</div>

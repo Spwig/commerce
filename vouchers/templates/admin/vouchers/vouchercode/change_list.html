@@ -1,0 +1,181 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Voucher Codes" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'vouchers/css/admin-voucher-list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-ticket-alt"></i>
+                {% trans "Voucher Codes" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage discount codes, coupons, and gift cards" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            {% if perms.vouchers.add_vouchercode %}
+            <a href="{% url 'admin:vouchers_vouchercode_import' %}" class="button change-list-action-button">
+                <i class="fas fa-file-import"></i> {% trans "Import" %}
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:vouchers_vouchercode_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Voucher" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats Summary -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon text-success"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ active_count }}</div>
+            <div class="label">{% trans "Active" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-warning"><i class="fas fa-pause-circle"></i></div>
+            <div class="value">{{ inactive_count }}</div>
+            <div class="label">{% trans "Inactive" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-info"><i class="fas fa-receipt"></i></div>
+            <div class="value">{{ total_redemptions }}</div>
+            <div class="label">{% trans "Redemptions" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-ticket-alt"></i></div>
+            <div class="value">{{ cl.result_count }}</div>
+            <div class="label">{% trans "Total" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Code, name, description...' %}"
+                    value="{{ request.GET.q|default:'' }}">
+            </div>
+
+            <!-- Discount Type Filter -->
+            <div class="filter-field">
+                <label for="filter-type">
+                    <i class="fas fa-tag"></i> {% trans "Type" %}
+                </label>
+                <select id="filter-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="percentage" {% if request.GET.discount_type__exact == 'percentage' %}selected{% endif %}>{% trans "Percentage" %}</option>
+                    <option value="fixed" {% if request.GET.discount_type__exact == 'fixed' %}selected{% endif %}>{% trans "Fixed Amount" %}</option>
+                    <option value="gift_card" {% if request.GET.discount_type__exact == 'gift_card' %}selected{% endif %}>{% trans "Gift Card" %}</option>
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="1" {% if request.GET.is_active__exact == '1' %}selected{% endif %}>{% trans "Active" %}</option>
+                    <option value="0" {% if request.GET.is_active__exact == '0' %}selected{% endif %}>{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- Scope Filter -->
+            <div class="filter-field">
+                <label for="filter-scope">
+                    <i class="fas fa-crosshairs"></i> {% trans "Scope" %}
+                </label>
+                <select id="filter-scope">
+                    <option value="">{% trans "All Scopes" %}</option>
+                    <option value="cart" {% if request.GET.application_scope__exact == 'cart' %}selected{% endif %}>{% trans "Entire Cart" %}</option>
+                    <option value="products" {% if request.GET.application_scope__exact == 'products' %}selected{% endif %}>{% trans "Specific Products" %}</option>
+                    <option value="categories" {% if request.GET.application_scope__exact == 'categories' %}selected{% endif %}>{% trans "Specific Categories" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+                <button type="button" class="button default" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-ticket-alt"></i>
+            <span id="voucher-count">{{ cl.result_count }}</span> {% trans "voucher" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="voucher-results">
+        {% include "admin/vouchers/vouchercode/voucher_cards.html" with vouchers=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 voucher{% plural %}{{ counter }} vouchers{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'vouchers' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<div id="list-filter-config"
+     data-filter-url="{% url 'vouchers_admin:filter_voucher_codes' %}"
+     data-results-container="voucher-results"
+     data-results-count="voucher-count"
+     hidden></div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "admin/blog/social_connectors/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Select a Social Platform" %}</h2>
+    <p class="step-description">{% trans "Choose the social media platform you want to connect for automatic blog post sharing." %}</p>
+
+    {% if providers %}
+    <form method="post" id="provider-select-form">
+        {% csrf_token %}
+
+        <div class="providers-grid">
+            {% for provider in providers %}
+            <label class="provider-card" for="provider-{{ provider.component.id }}">
+                <input type="radio"
+                       name="component_id"
+                       value="{{ provider.component.id }}"
+                       id="provider-{{ provider.component.id }}"
+                       required>
+
+                <div class="provider-card-content">
+                    {% if provider.component.thumbnail_url %}
+                    <div class="provider-logo">
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.component.thumbnail_url }}" alt="{{ provider.component.name }}" crossorigin="anonymous">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="provider-logo provider-logo-placeholder">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    {% endif %}
+
+                    <h3 class="provider-name">{{ provider.component.name }}</h3>
+
+                    {% if provider.component.description %}
+                    <p class="provider-description">{{ provider.component.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    <!-- Capability Badges -->
+                    {% if provider.capabilities %}
+                    <div class="provider-capabilities">
+                        {% if provider.capabilities.text_posts %}
+                        <span class="capability-badge">
+                            <i class="fas fa-font"></i> {% trans "Text" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.image_posts %}
+                        <span class="capability-badge">
+                            <i class="fas fa-image"></i> {% trans "Images" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.video_posts %}
+                        <span class="capability-badge">
+                            <i class="fas fa-video"></i> {% trans "Video" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.link_preview %}
+                        <span class="capability-badge">
+                            <i class="fas fa-link"></i> {% trans "Links" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.scheduling %}
+                        <span class="capability-badge">
+                            <i class="fas fa-clock"></i> {% trans "Scheduling" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.hashtags %}
+                        <span class="capability-badge">
+                            <i class="fas fa-hashtag"></i> {% trans "Hashtags" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="provider-check">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>{% trans "No Providers Available" %}</h3>
+        <p>{% trans "No social connector provider components are currently installed." %}</p>
+        <p>{% trans "Please download and install social connector components from the component registry." %}</p>
+        <a href="{% url 'blog_admin:provider_browse' %}" class="btn btn-primary">
+            <i class="fas fa-download"></i> {% trans "Browse Providers" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+{% if providers %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:blog_socialconnectoraccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="provider-select-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

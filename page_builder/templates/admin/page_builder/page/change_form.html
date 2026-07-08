@@ -1,0 +1,447 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_urls %}
+
+{% block title %}
+{% if original %}
+    {% trans "Edit Page" %}: {{ original.title }}
+{% else %}
+    {% trans "Add New Page" %}
+{% endif %} | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'seo_generator/admin/seo_generator.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+{{ form.media }}
+<link rel="stylesheet" href="{% static 'page_builder/admin/css/page-change-form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if original %}
+    <!-- Page Admin Header -->
+    <div class="page-admin-header">
+        <div class="header-title">
+            <h1>
+                {% if original.page_type == 'home' %}
+                    <i class="fas fa-home"></i>
+                {% elif original.page_type == 'cart' %}
+                    <i class="fas fa-shopping-cart"></i>
+                {% elif original.page_type == 'checkout' %}
+                    <i class="fas fa-credit-card"></i>
+                {% elif original.page_type == 'contact' %}
+                    <i class="fas fa-envelope"></i>
+                {% elif original.page_type == 'about' %}
+                    <i class="fas fa-info-circle"></i>
+                {% elif original.page_type == 'blog' %}
+                    <i class="fas fa-blog"></i>
+                {% elif original.page_type == 'product' %}
+                    <i class="fas fa-box"></i>
+                {% elif original.page_type == 'category' %}
+                    <i class="fas fa-folder"></i>
+                {% else %}
+                    <i class="fas fa-file-alt"></i>
+                {% endif %}
+                {{ original.title }}
+            </h1>
+            <div class="header-meta">
+                {% if original.status == 'published' %}
+                    <span class="page-status-badge published">
+                        <i class="fas fa-check-circle"></i> {% trans "Published" %}
+                    </span>
+                {% elif original.status == 'draft' %}
+                    <span class="page-status-badge draft">
+                        <i class="fas fa-pencil-alt"></i> {% trans "Draft" %}
+                    </span>
+                {% else %}
+                    <span class="page-status-badge archived">
+                        <i class="fas fa-archive"></i> {% trans "Archived" %}
+                    </span>
+                {% endif %}
+
+                {% if original.is_system_page %}
+                    <span class="page-status-badge system">
+                        <i class="fas fa-shield-alt"></i> {% trans "System Page" %}
+                    </span>
+                {% endif %}
+
+                <span class="meta-item">
+                    <i class="fas fa-link"></i> /{{ original.slug }}/
+                </span>
+
+                <span class="meta-item">
+                    <i class="fas fa-th-large"></i> {{ original.get_page_type_display }}
+                </span>
+
+                {% if original.is_default_for_type %}
+                    <span class="meta-item">
+                        <i class="fas fa-star" style="color: var(--primary);"></i> {% trans "Default" %}
+                    </span>
+                {% endif %}
+
+                <span class="meta-item">
+                    <i class="fas fa-calendar"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}
+                </span>
+
+                <span class="meta-item">
+                    <i class="fas fa-cubes"></i> {{ original.elements.count }} {% trans "elements" %}
+                </span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <a href="{% url 'page_builder_admin:visual_builder' page_id=original.pk %}" class="page-builder-btn" target="_blank">
+                <i class="fas fa-magic"></i> {% trans "Edit Page Design" %}
+            </a>
+            {% if original.slug %}
+                <a href="{% url 'page_builder_admin:page_preview' slug=original.slug %}" class="preview-btn" target="_blank">
+                    <i class="fas fa-eye"></i> {% trans "Preview" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Form -->
+    <form method="post" id="page_form" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- Display Form Errors -->
+        {% if adminform.form.errors or adminform.form.non_field_errors %}
+        <div class="form-errors-banner" style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <i class="fas fa-exclamation-circle" style="color: #721c24; font-size: 20px;"></i>
+                <div>
+                    <h3 style="margin: 0 0 8px 0; color: #721c24;">{% trans "Please correct the errors below" %}</h3>
+                    {% if adminform.form.non_field_errors %}
+                        <ul class="errorlist" style="margin: 0; padding-left: 20px; color: #721c24;">
+                            {% for error in adminform.form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if adminform.form.errors %}
+                        <ul class="errorlist" style="margin: 0; padding-left: 20px; color: #721c24;">
+                            {% for field, errors in adminform.form.errors.items %}
+                                {% if field != '__all__' %}
+                                    <li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Basic Information -->
+        <div class="form-card">
+            <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row">
+                        {{ adminform.form.title.label_tag }}
+                        {{ adminform.form.title }}
+                        {% if adminform.form.title.help_text %}
+                            <p class="help">{{ adminform.form.title.help_text }}</p>
+                        {% endif %}
+                        {% if adminform.form.title.errors %}
+                            <p class="error">{{ adminform.form.title.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.slug.label_tag }}
+                        {{ adminform.form.slug }}
+                        {% if adminform.form.slug.help_text %}
+                            <p class="help">{{ adminform.form.slug.help_text }}</p>
+                        {% endif %}
+                        {% if adminform.form.slug.errors %}
+                            <p class="error">{{ adminform.form.slug.errors }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row">
+                        {{ adminform.form.page_type.label_tag }}
+                        {{ adminform.form.page_type }}
+                        {% if adminform.form.page_type.help_text %}
+                            <p class="help">{{ adminform.form.page_type.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.status.label_tag }}
+                        {{ adminform.form.status }}
+                        {% if adminform.form.status.help_text %}
+                            <p class="help">{{ adminform.form.status.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content & Design -->
+        <div class="form-card">
+            <h2><i class="fas fa-palette"></i> {% trans "Content & Design" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row">
+                        {{ adminform.form.theme.label_tag }}
+                        {{ adminform.form.theme }}
+                        {% if adminform.form.theme.help_text %}
+                            <p class="help">{{ adminform.form.theme.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.template_variant.label_tag }}
+                        {{ adminform.form.template_variant }}
+                        {% if adminform.form.template_variant.help_text %}
+                            <p class="help">{{ adminform.form.template_variant.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.is_default_for_type }}
+                        {{ adminform.form.is_default_for_type.label_tag }}
+                        {% if adminform.form.is_default_for_type.help_text %}
+                            <p class="help">{{ adminform.form.is_default_for_type.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.is_system_page }}
+                        {{ adminform.form.is_system_page.label_tag }}
+                        {% if adminform.form.is_system_page.help_text %}
+                            <p class="help">{{ adminform.form.is_system_page.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO & Metadata -->
+        <div class="form-card">
+            <h2><i class="fas fa-search"></i> {% trans "SEO & Metadata" %}</h2>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Optimize how your page appears in search engine results. Click the globe icon to translate into other languages." %}
+            </p>
+
+            <!-- SEO Generator Button Container -->
+            <div id="seo-generator-container"></div>
+
+            <div class="form-row">
+                {{ adminform.form.meta_title.label_tag }}
+                {{ adminform.form.meta_title }}
+                {% if adminform.form.meta_title.help_text %}
+                    <p class="help">{{ adminform.form.meta_title.help_text }}</p>
+                {% endif %}
+                {% if adminform.form.meta_title.errors %}
+                    <p class="error">{{ adminform.form.meta_title.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                {{ adminform.form.meta_description.label_tag }}
+                {{ adminform.form.meta_description }}
+                {% if adminform.form.meta_description.help_text %}
+                    <p class="help">{{ adminform.form.meta_description.help_text }}</p>
+                {% endif %}
+                {% if adminform.form.meta_description.errors %}
+                    <p class="error">{{ adminform.form.meta_description.errors }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                {{ adminform.form.meta_keywords.label_tag }}
+                {{ adminform.form.meta_keywords }}
+                {% if adminform.form.meta_keywords.help_text %}
+                    <p class="help">{{ adminform.form.meta_keywords.help_text }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                {{ adminform.form.og_image.label_tag }}
+                {{ adminform.form.og_image }}
+                <p class="help">
+                    {% trans "Open Graph image displayed when this page is shared on social media (Facebook, LinkedIn, Twitter, etc.). Recommended size: 1200x630 pixels." %}
+                </p>
+            </div>
+
+            <div class="form-row checkbox-row">
+                {{ adminform.form.seo_auto_generated }}
+                {{ adminform.form.seo_auto_generated.label_tag }}
+                {% if adminform.form.seo_auto_generated.help_text %}
+                    <p class="help">{{ adminform.form.seo_auto_generated.help_text }}</p>
+                {% endif %}
+            </div>
+
+            <!-- SEO Preview -->
+            <div class="seo-preview-card">
+                <h3><i class="fas fa-desktop"></i> {% trans "Search Engine Preview" %}</h3>
+                <div class="seo-preview">
+                    <div class="seo-preview-title" id="seo-preview-title">
+                        {% if original %}{{ original.meta_title|default:original.title }}{% else %}{% trans "Page Title" %}{% endif %}
+                    </div>
+                    <div class="seo-preview-url">
+                        {{ request.scheme }}://{{ request.get_host }}/page/{% if original %}{{ original.slug }}{% else %}page-slug{% endif %}/
+                    </div>
+                    <div class="seo-preview-description" id="seo-preview-description">
+                        {% if original %}{{ original.meta_description|default:"Your page description will appear here. Add a meta description to improve how your page appears in search results."|truncatewords:25 }}{% else %}{% trans "Your page description will appear here..." %}{% endif %}
+                    </div>
+                </div>
+                <p class="seo-preview-disclaimer">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "This is a preview of how your page might appear in search results. Actual appearance may vary by search engine." %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Advanced Settings -->
+        <div class="form-card">
+            <h2><i class="fas fa-cog"></i> {% trans "Advanced Settings" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.requires_auth }}
+                        {{ adminform.form.requires_auth.label_tag }}
+                        {% if adminform.form.requires_auth.help_text %}
+                            <p class="help">{{ adminform.form.requires_auth.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row">
+                        {{ adminform.form.cache_timeout.label_tag }}
+                        {{ adminform.form.cache_timeout }}
+                        {% if adminform.form.cache_timeout.help_text %}
+                            <p class="help">{{ adminform.form.cache_timeout.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Customization -->
+        <div class="form-card">
+            <h2><i class="fas fa-code"></i> {% trans "Design Customization" %}</h2>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Advanced settings for developers. These fields accept JSON data for custom styling and layout." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row">
+                        {{ adminform.form.css_classes.label_tag }}
+                        {{ adminform.form.css_classes }}
+                        {% if adminform.form.css_classes.help_text %}
+                            <p class="help">{{ adminform.form.css_classes.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.layout_config.label_tag }}
+                        {{ adminform.form.layout_config }}
+                        {% if adminform.form.layout_config.help_text %}
+                            <p class="help">{{ adminform.form.layout_config.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row">
+                        {{ adminform.form.style_overrides.label_tag }}
+                        {{ adminform.form.style_overrides }}
+                        {% if adminform.form.style_overrides.help_text %}
+                            <p class="help">{{ adminform.form.style_overrides.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.responsive_config.label_tag }}
+                        {{ adminform.form.responsive_config }}
+                        {% if adminform.form.responsive_config.help_text %}
+                            <p class="help">{{ adminform.form.responsive_config.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Publishing Info (Read-only) -->
+        {% if original %}
+        <div class="form-card">
+            <h2><i class="fas fa-clock"></i> {% trans "Publishing Info" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row">
+                        <label>{% trans "Created by" %}</label>
+                        <div class="readonly-value">
+                            {% if original.created_by %}{{ original.created_by.get_full_name|default:original.created_by.username }}{% else %}—{% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>{% trans "Created at" %}</label>
+                        <div class="readonly-value">{{ original.created_at|date:"N j, Y, P" }}</div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row">
+                        <label>{% trans "Updated at" %}</label>
+                        <div class="readonly-value">{{ original.updated_at|date:"N j, Y, P" }}</div>
+                    </div>
+                    <div class="form-row">
+                        <label>{% trans "Published at" %}</label>
+                        <div class="readonly-value">
+                            {% if original.published_at %}{{ original.published_at|date:"N j, Y, P" }}{% else %}{% trans "Not published" %}{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Submit Row -->
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+            {% if show_save_and_add_another %}
+                <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+            {% endif %}
+            {% if show_save_and_continue %}
+                <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+            {% endif %}
+            {% if show_delete_link and original %}
+                <p class="deletelink-box">
+                    <a href="{% url opts|admin_urlname:'delete' original.pk|admin_urlquote %}" class="deletelink">{% trans "Delete" %}</a>
+                </p>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<!-- SEO Generator -->
+<script src="{% static 'seo_generator/admin/seo_generator.js' %}"></script>
+
+<script type="application/json" id="page-change-form-config">
+{
+    "i18n": {
+        "pageTitle": "{% trans "Page Title" %}",
+        "pageDescPlaceholder": "{% trans "Your page description will appear here. Add a meta description to improve how your page appears in search results." %}"
+    }
+}
+</script>
+<script src="{% static 'page_builder/js/admin/page-change-form.js' %}"></script>
+
+{# Translation Editor Initialization #}
+{% include "admin/includes/translation_editor_init.html" %}
+
+{% if capture_thumbnail_page_id %}
+<script src="{% static 'page_builder/js/admin/page-thumbnail-trigger.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    PageThumbnailCapture.trigger({{ capture_thumbnail_page_id }}, '{{ capture_thumbnail_page_slug|escapejs }}');
+});
+</script>
+{% endif %}
+{% endblock %}

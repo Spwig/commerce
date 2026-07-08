@@ -1,0 +1,242 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Core Frontend - Maintenance Page
+ *
+ * Template: core/templates/maintenance/maintenance.html
+ */
+
+:root {
+    --maintenance-primary: #3b82f6;
+    --maintenance-primary-dark: #2563eb;
+    --maintenance-accent: #60a5fa;
+    --maintenance-bg: #0f172a;
+    --maintenance-bg-secondary: #1e293b;
+    --maintenance-text: #f8fafc;
+    --maintenance-text-muted: #94a3b8;
+    --maintenance-border: #334155;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--maintenance-bg);
+    color: var(--maintenance-text);
+    overflow: hidden;
+}
+
+/* RTL Support */
+html[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    position: relative;
+}
+
+/* Animated gradient background */
+.bg-gradient {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+    animation: gradientShift 15s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes gradientShift {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 600px;
+}
+
+/* Store Logo */
+.logo {
+    margin-bottom: 2rem;
+}
+
+.logo img {
+    max-width: 200px;
+    max-height: 80px;
+    object-fit: contain;
+}
+
+/* Maintenance icon */
+.maintenance-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--maintenance-primary), var(--maintenance-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: var(--maintenance-text-muted);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.custom-message {
+    font-size: 1rem;
+    color: var(--maintenance-text);
+    background: var(--maintenance-bg-secondary);
+    border: 1px solid var(--maintenance-border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* Progress bar animation */
+.progress-container {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 2rem;
+}
+
+.progress-bar {
+    height: 4px;
+    background: var(--maintenance-bg-secondary);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 30%;
+    background: linear-gradient(90deg, var(--maintenance-primary), var(--maintenance-accent));
+    border-radius: 2px;
+    animation: progress 2s ease-in-out infinite;
+}
+
+@keyframes progress {
+    0% { width: 10%; transform: translateX(-100%); }
+    50% { width: 50%; }
+    100% { width: 10%; transform: translateX(1000%); }
+}
+
+/* RTL progress animation */
+html[dir="rtl"] .progress-fill {
+    animation: progress-rtl 2s ease-in-out infinite;
+}
+
+@keyframes progress-rtl {
+    0% { width: 10%; transform: translateX(100%); }
+    50% { width: 50%; }
+    100% { width: 10%; transform: translateX(-1000%); }
+}
+
+/* Divider */
+.divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--maintenance-border), transparent);
+    margin: 2rem auto;
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.powered-by {
+    font-size: 0.875rem;
+    color: var(--maintenance-text-muted);
+}
+
+.powered-by a {
+    color: var(--maintenance-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.powered-by a:hover {
+    color: var(--maintenance-accent);
+}
+
+/* Store name badge */
+.store-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--maintenance-bg-secondary);
+    border: 1px solid var(--maintenance-border);
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    color: var(--maintenance-text);
+    margin-bottom: 2rem;
+}
+
+.store-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--maintenance-primary);
+    border-radius: 50%;
+    animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .maintenance-icon {
+        font-size: 3rem;
+    }
+
+    .logo img {
+        max-width: 160px;
+    }
+}

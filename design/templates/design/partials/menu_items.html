@@ -1,0 +1,56 @@
+{% load i18n %}
+{# Reusable menu items partial - used by both widget and builder preview #}
+{# Context: menu (optional for global_style), menu_items, display_type, preview_mode (optional) #}
+{# This ensures identical HTML structure between frontend and preview #}
+
+{% with global=menu.global_style %}
+<ul class="menu-list menu-{{ display_type|default:'horizontal' }}" role="menubar"{% if global %}
+    style="{% if global.item_spacing %}--menu-item-gap: {{ global.item_spacing }};{% endif %}{% if global.default_text_color %}--menu-text-color: {{ global.default_text_color }};{% endif %}{% if global.default_hover_color %}--menu-text-hover-color: {{ global.default_hover_color }};{% endif %}{% if global.dropdown_background %}--menu-dropdown-background: {{ global.dropdown_background }};{% endif %}{% if global.font_family %}--menu-font-family: {{ global.font_family }};{% endif %}"{% endif %}>
+    {% for item in menu_items %}
+    {% with style=item.style_config %}
+    <li class="menu-item {% if item.has_children %}has-dropdown{% endif %} {{ item.css_classes }}" role="none"{% if style %}
+        style="{% if style.text_color %}--item-text-color: {{ style.text_color }};{% endif %}{% if style.hover_color %}--item-hover-color: {{ style.hover_color }};{% endif %}{% if style.background %}--item-bg: {{ style.background }};{% endif %}{% if style.font_weight %}--item-font-weight: {{ style.font_weight }};{% endif %}{% if style.padding %}--menu-link-padding-y: {{ style.padding }};--menu-link-padding-x: {{ style.padding }};{% endif %}"{% endif %}>
+        <a href="{{ item.url|default:'#' }}"
+           target="{{ item.target|default:'_self' }}"
+           class="menu-link"
+           role="menuitem"
+           {% if item.has_children %}aria-haspopup="true" aria-expanded="false"{% endif %}
+           {% if preview_mode %}data-preview-link{% endif %}>
+            {% if item.icon %}
+                <i class="{{ item.icon }}" aria-hidden="true"></i>
+            {% endif %}
+            <span>{{ item.title }}</span>
+            {% if item.badge_text %}
+                <span class="menu-badge" {% if item.badge_color %}style="background-color: {{ item.badge_color }};"{% endif %}>
+                    {{ item.badge_text }}
+                </span>
+            {% endif %}
+            {% if item.has_children %}
+                <i class="menu-chevron fas fa-chevron-down" aria-hidden="true"></i>
+            {% endif %}
+        </a>
+        {% if item.has_children %}
+        <ul class="dropdown-menu" role="menu" aria-label="{{ item.title }}">
+            {% for child in item.get_children %}
+            {% with child_style=child.style_config %}
+            <li class="dropdown-item {{ child.css_classes }}" role="none"{% if child_style %}
+                style="{% if child_style.text_color %}--item-text-color: {{ child_style.text_color }};{% endif %}{% if child_style.hover_color %}--item-hover-color: {{ child_style.hover_color }};{% endif %}{% if child_style.background %}--item-bg: {{ child_style.background }};{% endif %}"{% endif %}>
+                <a href="{{ child.url|default:'#' }}"
+                   target="{{ child.target|default:'_self' }}"
+                   role="menuitem"
+                   {% if preview_mode %}data-preview-link{% endif %}>
+                    {% if child.icon %}
+                        <i class="{{ child.icon }}" aria-hidden="true"></i>
+                    {% endif %}
+                    {{ child.title }}
+                </a>
+            </li>
+            {% endwith %}
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </li>
+    {% endwith %}
+    {% endfor %}
+</ul>
+{% endwith %}

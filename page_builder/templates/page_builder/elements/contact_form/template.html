@@ -1,0 +1,180 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Contact Form Element -->
+<section class="contact-form-section section{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+data-element-id="{{ element.id }}"
+data-contact-form
+{% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+{% hover_animation_attrs element %}
+style="{% base_styles element %}">
+    <div class="container container--narrow">
+        {% if element.content.title %}
+        <h3 class="section-header__title text-center">{{ element.content.title }}</h3>
+        {% else %}
+        <h3 class="section-header__title text-center">{% mtrans 'Contact Us' %}</h3>
+        {% endif %}
+
+        {% if element.content.description %}
+        <p class="section-header__subtitle text-center mb-8">{{ element.content.description }}</p>
+        {% else %}
+        <p class="section-header__subtitle text-center mb-8">{% mtrans "Get in touch with us. We'd love to hear from you." %}</p>
+        {% endif %}
+
+        <form class="contact-form card"
+              action="{% if element.content.action %}{{ element.content.action }}{% else %}/api/messages/contact/{% endif %}"
+              method="post">
+
+            {% csrf_token %}
+
+            <!-- Name Fields -->
+            <div class="form-row">
+                {% if element.content.show_first_name != False %}
+                <div class="form-group">
+                    <label class="form-label" for="first_name">
+                        {% mtrans 'First Name' %}
+                        {% if element.content.required_first_name %}<span class="form-required">*</span>{% endif %}
+                    </label>
+                    <input type="text"
+                           id="first_name"
+                           name="first_name"
+                           class="form-input"
+                           {% if element.content.required_first_name %}required{% endif %}
+                           {% if element.content.placeholder_first_name %}placeholder="{{ element.content.placeholder_first_name }}"{% else %}placeholder="{% mtrans 'Enter your first name' %}"{% endif %}>
+                </div>
+                {% endif %}
+
+                {% if element.content.show_last_name != False %}
+                <div class="form-group">
+                    <label class="form-label" for="last_name">
+                        {% mtrans 'Last Name' %}
+                        {% if element.content.required_last_name %}<span class="form-required">*</span>{% endif %}
+                    </label>
+                    <input type="text"
+                           id="last_name"
+                           name="last_name"
+                           class="form-input"
+                           {% if element.content.required_last_name %}required{% endif %}
+                           {% if element.content.placeholder_last_name %}placeholder="{{ element.content.placeholder_last_name }}"{% else %}placeholder="{% mtrans 'Enter your last name' %}"{% endif %}>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Email + Phone Row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        {% mtrans 'Email Address' %}
+                        <span class="form-required">*</span>
+                    </label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           class="form-input"
+                           required
+                           {% if element.content.placeholder_email %}placeholder="{{ element.content.placeholder_email }}"{% else %}placeholder="{% mtrans 'Enter your email address' %}"{% endif %}>
+                </div>
+
+                {% if element.content.show_phone %}
+                <div class="form-group">
+                    <label class="form-label" for="phone">
+                        {% mtrans 'Phone Number' %}
+                        {% if element.content.required_phone %}<span class="form-required">*</span>{% endif %}
+                    </label>
+                    <input type="tel"
+                           id="phone"
+                           name="phone"
+                           class="form-input"
+                           {% if element.content.required_phone %}required{% endif %}
+                           {% if element.content.placeholder_phone %}placeholder="{{ element.content.placeholder_phone }}"{% else %}placeholder="{% mtrans 'Enter your phone number' %}"{% endif %}>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Subject Field (Optional) -->
+            {% if element.content.show_subject %}
+            <div class="form-group">
+                <label class="form-label" for="subject">
+                    {% mtrans 'Subject' %}
+                    {% if element.content.required_subject %}<span class="form-required">*</span>{% endif %}
+                </label>
+                <input type="text"
+                       id="subject"
+                       name="subject"
+                       class="form-input"
+                       {% if element.content.required_subject %}required{% endif %}
+                       {% if element.content.placeholder_subject %}placeholder="{{ element.content.placeholder_subject }}"{% else %}placeholder="{% mtrans 'What is this regarding?' %}"{% endif %}>
+            </div>
+            {% endif %}
+
+            <!-- Message Field -->
+            <div class="form-group">
+                <label class="form-label" for="message">
+                    {% mtrans 'Message' %}
+                    <span class="form-required">*</span>
+                </label>
+                <textarea rows="{% if element.content.message_rows %}{{ element.content.message_rows }}{% else %}5{% endif %}"
+                          id="message"
+                          name="message"
+                          class="form-input form-textarea"
+                          required
+                          {% if element.content.placeholder_message %}placeholder="{{ element.content.placeholder_message }}"{% else %}placeholder="{% mtrans 'Tell us how we can help you...' %}"{% endif %}></textarea>
+            </div>
+
+            <!-- Privacy/Terms Checkbox (Optional) -->
+            {% if element.content.show_privacy_checkbox %}
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox"
+                           name="privacy_agreement"
+                           class="form-checkbox__input"
+                           {% if element.content.required_privacy %}required{% endif %}>
+                    <span class="form-checkbox__label">
+                        {% if element.content.privacy_text %}
+                            {{ element.content.privacy_text }}
+                        {% else %}
+                            {% mtrans 'I agree to the' %}
+                            <a href="{% if element.content.privacy_url %}{{ element.content.privacy_url }}{% else %}/privacy{% endif %}"
+                               class="link"
+                               target="_blank">{% mtrans 'Privacy Policy' %}</a>
+                            {% mtrans 'and' %}
+                            <a href="{% if element.content.terms_url %}{{ element.content.terms_url }}{% else %}/terms{% endif %}"
+                               class="link"
+                               target="_blank">{% mtrans 'Terms of Service' %}</a>.
+                        {% endif %}
+                        {% if element.content.required_privacy %}<span class="form-required">*</span>{% endif %}
+                    </span>
+                </label>
+            </div>
+            {% endif %}
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn--primary btn--full btn--lg">
+                {% if element.content.submit_text %}
+                    {{ element.content.submit_text }}
+                {% else %}
+                    {% mtrans 'Send Message' %}
+                {% endif %}
+            </button>
+
+            <!-- Success/Error Messages -->
+            {% if element.content.show_success_message %}
+            <div class="alert alert--success mt-4 hidden" id="success-message">
+                {% if element.content.success_message %}
+                    {{ element.content.success_message }}
+                {% else %}
+                    {% mtrans "Thank you for your message! We'll get back to you soon." %}
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if element.content.show_error_message %}
+            <div class="alert alert--error mt-4 hidden" id="error-message">
+                {% if element.content.error_message %}
+                    {{ element.content.error_message }}
+                {% else %}
+                    {% mtrans 'Sorry, there was an error sending your message. Please try again.' %}
+                {% endif %}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</section>

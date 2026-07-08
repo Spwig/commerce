@@ -1,0 +1,2796 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Italian <LL@li.org>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Action and method IDs required"
+msgstr "ID azione e metodo richiesti"
+
+msgid "{} method(s) enabled"
+msgstr "{} metodo(i) abilitato(i)"
+
+msgid "{} method(s) disabled"
+msgstr "{} metodo(i) disabilitato(i)"
+
+msgid "{} method(s) deleted"
+msgstr "{} metodo(i) eliminato(i)"
+
+msgid "Unknown action"
+msgstr "Azione sconosciuta"
+
+msgid "Invalid request data"
+msgstr "Dati della richiesta non validi"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "È verificato un errore inaspettato. Per favore, riprova."
+
+msgid "Basic Information"
+msgstr "Informazioni di base"
+
+msgid "Geographic Scope"
+msgstr "Ambito geografico"
+
+msgid "Application Rules"
+msgstr "Regole di applicazione"
+
+msgid "Product Exemptions"
+msgstr "Esenzioni per prodotti"
+
+msgid "Timestamps"
+msgstr "Timestamp"
+
+msgid "Rate %"
+msgstr "Aliquota %"
+
+msgid "Cart"
+msgstr "Carrello"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "Inserisci come percentuale (es. 8.25 per 8.25%)"
+
+msgid "Rate (%)"
+msgstr "Aliquota (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "Completare prima il passo 1"
+
+msgid "Please complete the wizard steps"
+msgstr "Completare i passaggi del wizard"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "Metodo di spedizione \"%(name)s\" creato con successo!"
+
+msgid "Please configure rate tables for this method."
+msgstr "Configura le tabelle di tariffe per questo metodo."
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "Impossibile creare il metodo di spedizione: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "Ottieni dati mini-carrello"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    Recupera il contenuto corrente del carrello formattato per il componente "
+"mini-carrello. Funziona per gli utenti autenticati (carrello collegato "
+"all'account utente) e per gli utenti anonimi (carrello collegato alla "
+"sessione). I dati del carrello includono tutti gli elementi con dettagli del "
+"prodotto, quantità, prezzi e immagini. **Utilizzo:** - Caricamento iniziale "
+"del mini-carrello sulla pagina - Aggiornamento del carrello dopo modifiche "
+"esterne - Verifica dello stato del carrello prima del checkout "
+"**Autenticazione:** Nessuna richiesta (usa la sessione per gli utenti "
+"anonimi)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "Dati del carrello recuperati con successo"
+
+msgid "Update cart item quantity"
+msgstr "Aggiorna quantità articolo carrello"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    Aggiorna la quantità di un elemento nel carrello. Impostare la quantità "
+"su 0 per rimuovere completamente l'elemento. L'endpoint verifica la "
+"disponibilità di stock prima dell'aggiornamento e restituisce il carrello "
+"aggiornato. **Utilizzo:** - Pulsanti per incrementare/decrementare la "
+"quantità nel mini-carrello - Modifiche dirette all'input della quantità - "
+"Rimozione di elementi (quantità=0) **Autenticazione:** Nessuna richiesta "
+"(verifica che l'elemento appartenga al carrello dell'utente) **Validazione:"
+"** - L'elemento deve esistere nel carrello dell'utente - La quantità deve "
+"essere un intero non negativo - Viene verificata la disponibilità di stock "
+"per i prodotti tracciati in magazzino\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "Carrello aggiornato con successo"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "Dati della richiesta non validi o stock insufficiente"
+
+msgid "Cart item not found"
+msgstr "Articolo carrello non trovato"
+
+msgid "Remove item from cart"
+msgstr "Rimuovi articolo dal carrello"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    Rimuovi un articolo dal carrello completamente. Restituisce i dati del "
+"carrello aggiornati dopo la rimozione. **Casi d'uso:** - Pulsante elimina "
+"sugli articoli del carrello - Pulizia di articoli specifici **Autenticazione:"
+"** Nessuna richiesta (verifica che l'articolo appartenga al carrello "
+"dell'utente)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "Articolo rimosso con successo"
+
+msgid "Get empty cart recommendations"
+msgstr "Ottieni raccomandazioni carrello vuoto"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    Ottieni raccomandazioni intelligenti di prodotti per lo stato del "
+"carrello vuoto. Restituisce suggerimenti personalizzati organizzati in "
+"sezioni etichettate in base a: - **Recentemente visualizzati**: Prodotti che "
+"l'utente ha navigato (basati sulla sessione per gli utenti anonimi) - "
+"**Correlati**: Prodotti nelle stesse categorie dei prodotti recentemente "
+"visualizzati - **In vendita**: Prodotti attualmente in sconto - **Di "
+"tendenza**: Prodotti popolari in base a visualizzazioni/vendite - **In "
+"evidenza**: Prodotti selezionati dagli editori come alternativa Tutti i "
+"prodotti restituiti sono verificati come disponibili in stock e "
+"acquistabili. **Casi d'uso:** - Stato del carrello vuoto nel mini-carrello - "
+"Sezioni \"Potresti voler vedere\" - Opportunità di cross-selling "
+"**Autenticazione:** Nessuna richiesta (usa la sessione per gli utenti "
+"anonimi) **Personalizzazione:** - Utenti anonimi: Basati sui prodotti "
+"recentemente visualizzati nella sessione - Utenti autenticati: Basati sulla "
+"storia dell'account e sulle preferenze\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "Numero massimo di prodotti da restituire (predefinito: 6, massimo: 12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "Raccomandazioni recuperate con successo"
+
+msgid "User"
+msgstr "Utente"
+
+msgid "Session Key"
+msgstr "Chiave di sessione"
+
+msgid "Cart Currency"
+msgstr "Valuta del carrello"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"Codice valuta per tutti gli elementi in questo carrello (es. EUR, NZD). "
+"Vuoto significa valuta predefinita del negozio."
+
+msgid "Default Layout"
+msgstr "Layout predefinito"
+
+msgid "Compact View"
+msgstr "Visualizzazione compatta"
+
+msgid "Detailed View"
+msgstr "Visualizzazione dettagliata"
+
+msgid "Minimal View"
+msgstr "Visualizzazione minima"
+
+msgid "Sidebar Cart"
+msgstr "Carrello laterale"
+
+msgid "Overlay Cart"
+msgstr "Carrello sovrapposto"
+
+msgid "How the cart is displayed"
+msgstr "Come viene visualizzato il carrello"
+
+msgid "Cart Layout"
+msgstr "Layout del carrello"
+
+msgid "Show Product Images"
+msgstr "Mostra immagini del prodotto"
+
+msgid "Show Product Variants"
+msgstr "Mostra varianti del prodotto"
+
+msgid "Show Remove Button"
+msgstr "Mostra pulsante di rimozione"
+
+msgid "Show Quantity Controls"
+msgstr "Mostra controlli della quantità"
+
+msgid "Show Item Totals"
+msgstr "Mostra totali per elemento"
+
+msgid "Show Cart Summary"
+msgstr "Mostra riepilogo del carrello"
+
+msgid "Show Savings"
+msgstr "Mostra risparmi"
+
+msgid "Single Page Checkout"
+msgstr "Checkout su singola pagina"
+
+msgid "Multi-Step Checkout"
+msgstr "Checkout multi-passo"
+
+msgid "Accordion Style"
+msgstr "Stile a accordion"
+
+msgid "Wizard Style"
+msgstr "Stile wizard"
+
+msgid "Checkout Flow"
+msgstr "Flusso di checkout"
+
+msgid "Shipping Address"
+msgstr "Indirizzo di spedizione"
+
+msgid "Shipping Method"
+msgstr "Metodo di spedizione"
+
+msgid "Calculated shipping cost"
+msgstr "Costo di spedizione calcolato"
+
+msgid "Shipping Cost"
+msgstr "Costo di spedizione"
+
+msgid "Estimated Delivery Date"
+msgstr "Data stimata di consegna"
+
+msgid "Shipping Notes"
+msgstr "Note sulla spedizione"
+
+msgid "None"
+msgstr "Nessuno"
+
+msgid "Percentage"
+msgstr "Percentuale"
+
+msgid "Fixed Amount"
+msgstr "Importo fisso"
+
+msgid "POS manual discount type"
+msgstr "Tipo di sconto manuale POS"
+
+msgid "POS manual discount value"
+msgstr "Valore dello sconto manuale POS"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "Valore dello sconto (percentuale o importo fisso)"
+
+msgid "POS discount applied by"
+msgstr "Applicato da (sconto POS)"
+
+msgid "POS discount approved by"
+msgstr "Approvato da (sconto POS)"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr ""
+"Responsabile che ha approvato lo sconto se superato il limite dello staff"
+
+msgid "POS discount reason"
+msgstr "Motivo dello sconto POS"
+
+msgid "Created At"
+msgstr "Creato il"
+
+msgid "Updated At"
+msgstr "Aggiornato il"
+
+msgid "Shopping Cart"
+msgstr "Carrello di acquisto"
+
+msgid "Shopping Carts"
+msgstr "Carrelli di acquisto"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "Carrello per {username}"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "Carrello (Sessione: {session})"
+
+msgid "No shipping required"
+msgstr "Nessuna spedizione richiesta"
+
+msgid "Shipping address required"
+msgstr "Indirizzo di spedizione richiesto"
+
+msgid "Available shipping methods retrieved"
+msgstr "Metodi di spedizione disponibili recuperati"
+
+msgid "Shipping calculated successfully"
+msgstr "Calcolo della spedizione riuscito"
+
+msgid "Invalid gift card code"
+msgstr "Codice carta regalo non valido"
+
+msgid "Gift card already applied"
+msgstr "Carta regalo già applicata"
+
+msgid "Gift card is not active"
+msgstr "La carta regalo non è attiva"
+
+msgid "Gift card has expired"
+msgstr "La carta regalo è scaduta"
+
+msgid "Gift card has been fully redeemed"
+msgstr "La gift card è stata completamente utilizzata"
+
+msgid "Gift card cannot be used"
+msgstr "La carta regalo non può essere utilizzata"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"Discrepanza di valuta. La gift card è in {card_currency}, il carrello è in "
+"{cart_currency}"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"Questo buono regalo è in {card_currency}. Passa alla valuta {card_currency} "
+"per utilizzarlo."
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr ""
+"Le gift card non possono essere utilizzate per acquistare altre gift card"
+
+msgid "Cart total is already covered"
+msgstr "Il totale del carrello è già coperto"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "Impossibile elaborare la conversione della valuta della gift card"
+
+msgid "Gift card applied successfully"
+msgstr "Carta regalo applicata con successo"
+
+msgid "Product"
+msgstr "Prodotto"
+
+msgid "Variant"
+msgstr "Variante"
+
+msgid "Quantity"
+msgstr "Quantità"
+
+msgid "Unit Price"
+msgstr "Prezzo unitario"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"Personalizzazioni del prodotto con prezzi calcolati: "
+"{customization_option_id: {'value': '...', 'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "Personalizzazioni"
+
+msgid "Is Subscription"
+msgstr "È un abbonamento"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "Se questo articolo verrà acquistato come abbonamento"
+
+msgid "Subscription Plan"
+msgstr "Piano di abbonamento"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "Piano di abbonamento selezionato per fatturazione ricorrente"
+
+msgid "Pricing Tier"
+msgstr "Livello di prezzo"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr ""
+"Livello di prezzo selezionato (frequenza di fatturazione) per l'abbonamento"
+
+msgid "Payment Token"
+msgstr "Token di pagamento"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr ""
+"Metodo di pagamento salvato per la fatturazione dell'abbonamento (richiesto "
+"per gli abbonamenti)"
+
+msgid "Parent Bundle"
+msgstr "Bundle principale"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr ""
+"Se si tratta di un componente di un pacchetto, riferimento all'elemento del "
+"carrello del pacchetto"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"Dettagli prenotazione: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+
+msgid "Booking Data"
+msgstr "Dati della prenotazione"
+
+msgid "Customer notes for this item"
+msgstr "Note del cliente per questo articolo"
+
+msgid "Notes"
+msgstr "Note"
+
+msgid "manual discount type"
+msgstr "tipo di sconto manuale"
+
+msgid "manual discount value"
+msgstr "valore dello sconto manuale"
+
+msgid "discount applied by"
+msgstr "sconto applicato da"
+
+msgid "discount approved by"
+msgstr "sconto approvato da"
+
+msgid "discount reason"
+msgstr "motivo dello sconto"
+
+msgid "Cart Item"
+msgstr "Articolo del carrello"
+
+msgid "Cart Items"
+msgstr "Articoli del carrello"
+
+msgid "My Wishlist"
+msgstr "La mia lista dei desideri"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Grid Layout"
+msgstr "Layout a griglia"
+
+msgid "List Layout"
+msgstr "Layout a elenco"
+
+msgid "How wishlist items are displayed"
+msgstr "Come vengono visualizzati gli elementi della lista dei desideri"
+
+msgid "Wishlist Layout"
+msgstr "Layout della lista dei desideri"
+
+msgid "Is Public"
+msgstr "È pubblica"
+
+msgid "Share Slug"
+msgstr "Condividi slug"
+
+msgid "Show Prices"
+msgstr "Mostra prezzi"
+
+msgid "Show Availability"
+msgstr "Mostra disponibilità"
+
+msgid "Show Add to Cart"
+msgstr "Mostra 'Aggiungi al carrello'"
+
+msgid "Wishlist"
+msgstr "Lista dei desideri"
+
+msgid "Wishlists"
+msgstr "Liste dei desideri"
+
+msgid "Low"
+msgstr "Bassa"
+
+msgid "Medium"
+msgstr "Media"
+
+msgid "High"
+msgstr "Alta"
+
+msgid "Priority"
+msgstr "Priorità"
+
+msgid "Notify When Available"
+msgstr "Notifica quando disponibile"
+
+msgid "Notify When On Sale"
+msgstr "Notifica quando in offerta"
+
+msgid "Wishlist Item"
+msgstr "Articolo della lista dei desideri"
+
+msgid "Wishlist Items"
+msgstr "Articoli della lista dei desideri"
+
+msgid "Viewed At"
+msgstr "Visualizzato il"
+
+msgid "View Count"
+msgstr "Conteggio visualizzazioni"
+
+msgid "Recently Viewed Product"
+msgstr "Prodotto recentemente visualizzato"
+
+msgid "Recently Viewed Products"
+msgstr "Prodotti recentemente visualizzati"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "Sessione: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{product} visualizzato da {user}"
+
+msgid "Description"
+msgstr "Descrizione"
+
+msgid "Flat Rate"
+msgstr "Tariffa fissa"
+
+msgid "Free Shipping"
+msgstr "Spedizione gratuita"
+
+msgid "Weight Based"
+msgstr "In base al peso"
+
+msgid "Price Based"
+msgstr "In base al prezzo"
+
+msgid "Real-Time Carrier Rates"
+msgstr "Tariffe del corriere in tempo reale"
+
+msgid "Local Pickup"
+msgstr "Ritiro in loco"
+
+msgid "Table Rate"
+msgstr "Tariffa tabellare"
+
+msgid "Method Type"
+msgstr "Tipo di metodo"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "Costo fisso di spedizione (per il tipo flat_rate)"
+
+msgid "Flat Rate Cost"
+msgstr "Costo tariffa fissa"
+
+msgid "Minimum cart value to qualify"
+msgstr "Valore minimo del carrello per essere idoneo"
+
+msgid "Minimum Order Value"
+msgstr "Valore minimo dell'ordine"
+
+msgid "Maximum cart value to qualify"
+msgstr "Valore massimo del carrello per essere idoneo"
+
+msgid "Maximum Order Value"
+msgstr "Valore massimo dell'ordine"
+
+msgid "Minimum cart weight (kg)"
+msgstr "Peso minimo del carrello (kg)"
+
+msgid "Minimum Weight"
+msgstr "Peso minimo"
+
+msgid "Maximum cart weight (kg)"
+msgstr "Peso massimo del carrello (kg)"
+
+msgid "Maximum Weight"
+msgstr "Peso massimo"
+
+msgid "Shipping Zones"
+msgstr "Zone di spedizione"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"Zone in cui questo metodo di spedizione è disponibile. Se vuoto, vengono "
+"applicate le restrizioni legacy per paese/stato."
+
+msgid "Pickup Locations"
+msgstr "Luoghi di ritiro"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"Luoghi in cui i clienti possono ritirare gli ordini utilizzando questo "
+"metodo di spedizione. Si applica solo al tipo di metodo 'local_pickup'."
+
+msgid "Minimum delivery time in business days"
+msgstr "Tempo minimo di consegna in giorni lavorativi"
+
+msgid "Minimum Delivery Days"
+msgstr "Giorni minimi di consegna"
+
+msgid "Maximum delivery time in business days"
+msgstr "Tempo massimo di consegna in giorni lavorativi"
+
+msgid "Maximum Delivery Days"
+msgstr "Giorni massimi di consegna"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "Classe icona Font Awesome (es. 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "Icona"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"Immagine personalizzata del metodo di spedizione dalla libreria media. Se "
+"fornita, ha la precedenza sull'icona."
+
+msgid "Image"
+msgstr "Immagine"
+
+msgid "Sort Order"
+msgstr "Ordine di ordinamento"
+
+msgid "Is Active"
+msgstr "È attivo"
+
+msgid "Custom Carrier"
+msgstr "Corriere personalizzato"
+
+msgid "Carrier"
+msgstr "Corriere"
+
+msgid "Carrier-specific service code"
+msgstr "Codice servizio specifico del corriere"
+
+msgid "Carrier Service Code"
+msgstr "Codice servizio del corriere"
+
+msgid "Shipping Methods"
+msgstr "Metodi di spedizione"
+
+msgid "Shipping method is not active"
+msgstr "Il metodo di spedizione non è attivo"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "Valore minimo dell'ordine {value} richiesto"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "Valore massimo dell'ordine {value} superato"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "Peso minimo {weight}kg richiesto"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "Peso massimo {weight}kg superato"
+
+msgid "Cart contains only digital products"
+msgstr "Il carrello contiene solo prodotti digitali"
+
+msgid "Available"
+msgstr "Disponibile"
+
+msgid "No geographic restrictions"
+msgstr "Nessuna restrizione geografica"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "Disponibile in {zone}"
+
+msgid "Not available in your location"
+msgstr "Non disponibile nella tua ubicazione"
+
+msgid "Available worldwide"
+msgstr "Disponibile in tutto il mondo"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "Codice paese ISO 3166-1 alpha-2"
+
+msgid "Country"
+msgstr "Paese"
+
+msgid "State/Province/Region"
+msgstr "Stato/Provincia/Regione"
+
+msgid "State"
+msgstr "Stato"
+
+msgid "City name (optional)"
+msgstr "Nome della città (opzionale)"
+
+msgid "City"
+msgstr "Città"
+
+msgid "List of specific postal codes (optional)"
+msgstr "Elenco di codici postali specifici (opzionale)"
+
+msgid "Postal Codes"
+msgstr "Codici postali"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "Aliquota fiscale come decimale (es. 0.0825 per 8.25%)"
+
+msgid "Rate"
+msgstr "Tariffa"
+
+msgid "Sales Tax"
+msgstr "Imposta sulle vendite"
+
+msgid "Custom Tax"
+msgstr "Imposta personalizzata"
+
+msgid "Tax Type"
+msgstr "Tipo di imposta"
+
+msgid "Apply tax to shipping costs"
+msgstr "Applica l'imposta ai costi di spedizione"
+
+msgid "Applies to Shipping"
+msgstr "Si applica alla spedizione"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "Calcolare sopra ad altre tasse (imposta composta)"
+
+msgid "Compound Tax"
+msgstr "Imposta composta"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "Tipi di prodotto esenti da questa tassa (es. ['digital', 'service'])"
+
+msgid "Exempt Product Types"
+msgstr "Tipi di prodotti esenti"
+
+msgid "Categories exempt from this tax"
+msgstr "Categorie esenti da questa imposta"
+
+msgid "Exempt Categories"
+msgstr "Categorie esenti"
+
+msgid "Higher priority rules take precedence"
+msgstr "Le regole con priorità più alta hanno la precedenza"
+
+msgid "Tax Rate"
+msgstr "Aliquota fiscale"
+
+msgid "Tax Rates"
+msgstr "Aliquote fiscali"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "Europa"
+
+msgid "North America"
+msgstr "America settentrionale"
+
+msgid "Asia Pacific"
+msgstr "Asia-Pacifico"
+
+msgid "Middle East"
+msgstr "Medio Oriente"
+
+msgid "Africa"
+msgstr "Africa"
+
+msgid "Latin America"
+msgstr "America Latina"
+
+msgid "Oceania"
+msgstr "Oceania"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "Identificatore univoco (es. eu_vat, us_sales_tax)"
+
+msgid "Key"
+msgstr "Chiave"
+
+msgid "Font Awesome icon class"
+msgstr "Classe icona Font Awesome"
+
+msgid "Default Tax Type"
+msgstr "Tipo di imposta predefinito"
+
+msgid "Region"
+msgstr "Regione"
+
+msgid "Version for tracking rate updates"
+msgstr "Versione per il tracciamento degli aggiornamenti delle tariffe"
+
+msgid "Version"
+msgstr "Versione"
+
+msgid "Last Updated"
+msgstr "Ultimo aggiornamento"
+
+msgid "Tax Preset Group"
+msgstr "Gruppo di preset delle tasse"
+
+msgid "Tax Preset Groups"
+msgstr "Gruppi di preset delle tasse"
+
+msgid "Preset Group"
+msgstr "Gruppo di preset"
+
+msgid "Country Code"
+msgstr "Codice del paese"
+
+msgid "Country Name"
+msgstr "Nome del paese"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "Codice stato/provincia (per preset US/CA)"
+
+msgid "State Code"
+msgstr "Codice stato"
+
+msgid "State Name"
+msgstr "Nome dello stato"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "Aliquota fiscale come decimale (es. 0.20 per 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "Note opzionali (es. 'Aumentato dal 22% a luglio 2025')"
+
+msgid "Tax Preset Rate"
+msgstr "Tariffa di preset delle tasse"
+
+msgid "Tax Preset Rates"
+msgstr "Tariffe di preset delle tasse"
+
+msgid "Billing Address"
+msgstr "Indirizzo di fatturazione"
+
+msgid "Billing Same as Shipping"
+msgstr "Fatturazione uguale a spedizione"
+
+msgid "Shipping Address Data"
+msgstr "Dati indirizzo di spedizione"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Dati temporanei per l'indirizzo di spedizione (non salvati nel modello "
+"Address fino al momento del completamento dell'ordine)"
+
+msgid "Billing Address Data"
+msgstr "Dati indirizzo di fatturazione"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Dati temporanei per l'indirizzo di fatturazione (non salvati nel modello "
+"Address fino al momento del completamento dell'ordine)"
+
+msgid "Selected Shipping Method"
+msgstr "Metodo di spedizione selezionato"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr ""
+"Elenco memorizzato dei metodi di spedizione disponibili con le relative "
+"tariffe"
+
+msgid "Available Shipping Methods"
+msgstr "Metodi di spedizione disponibili"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "Dettaglio delle tasse per giurisdizione"
+
+msgid "Tax Breakdown"
+msgstr "Dettaglio delle tasse"
+
+msgid "Tax Amount"
+msgstr "Importo delle tasse"
+
+msgid "Payment Provider"
+msgstr "Fornitore di pagamento"
+
+msgid "Subtotal"
+msgstr "Subtotale"
+
+msgid "Discount Amount"
+msgstr "Importo dello sconto"
+
+msgid "Gift Card Discount"
+msgstr "Sconto con carta regalo"
+
+msgid "Total discount from applied gift cards"
+msgstr "Totale sconto derivante dalle gift card applicate"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "Totale finale: sottototale + spedizione + tasse - sconti"
+
+msgid "Total Amount"
+msgstr "Importo totale"
+
+msgid "Cart Review"
+msgstr "Rivedi il carrello"
+
+msgid "Billing Information"
+msgstr "Informazioni di fatturazione"
+
+msgid "Payment Method"
+msgstr "Metodo di pagamento"
+
+msgid "Order Review"
+msgstr "Rivedi l'ordine"
+
+msgid "Step Completed"
+msgstr "Passo completato"
+
+msgid "Expires At"
+msgstr "Scade il"
+
+msgid "Metadata"
+msgstr "Metadati"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "Metadati aggiuntivi (es. informazioni sull'acquisto nel marketplace)"
+
+msgid "Checkout Session"
+msgstr "Sessione di checkout"
+
+msgid "Checkout Sessions"
+msgstr "Sessioni di checkout"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "Checkout per {cart}"
+
+msgid "Gift Card"
+msgstr "Carta regalo"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "Importo in valuta base (utilizzato per i calcoli del carrello)"
+
+msgid "Original Currency Amount"
+msgstr "Importo in Valuta Originale"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Sconto in valuta nativa della gift card (per gift card in valuta estera)"
+
+msgid "Exchange Rate"
+msgstr "Tasso di Cambio"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr ""
+"Tasso: valuta della gift card -> valuta base al momento dell'applicazione"
+
+msgid "Applied At"
+msgstr "Applicato il"
+
+msgid "Applied Gift Card"
+msgstr "Carta regalo applicata"
+
+msgid "Applied Gift Cards"
+msgstr "Carte regalo applicate"
+
+msgid "This gift card cannot be used"
+msgstr "Questa gift card non può essere utilizzata"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "L'importo dello sconto supera il saldo della gift card"
+
+msgid "Total customization price (per unit)"
+msgstr "Prezzo totale di personalizzazione (per unità)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr ""
+"'instant' per gli articoli digitali, 'shipping' per gli articoli fisici"
+
+msgid "True if this item is a component of a bundle"
+msgstr "Vero se questo elemento è un componente di un pacchetto"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr ""
+"ID dell'elemento padre del bundle CartItem se si tratta di un componente"
+
+msgid "Child items if this is a bundle parent"
+msgstr "Elementi figlio se si tratta di un padre di bundle"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr ""
+"Mappa da bundle_item_id a variant_id per le varianti selezionate dal cliente"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr ""
+"Elenco di bundle_item_ids da escludere (per gli articoli opzionali che il "
+"cliente non desidera)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"Mappa da slot_id all'elenco degli option_ids selezionati per i prodotti "
+"configurabili"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "ID del preset di configurazione utilizzato come punto di partenza"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"Dettagli della prenotazione: start_datetime, end_datetime, resource_id, "
+"persons, timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "La quantità deve essere almeno 1"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "È richiesto un piano di abbonamento per gli acquisti di abbonamento"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "È richiesto un token di pagamento per gli acquisti di abbonamento"
+
+msgid "Product not found"
+msgstr "Prodotto non trovato"
+
+msgid "This product does not support subscriptions"
+msgstr "Questo prodotto non supporta gli abbonamenti"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "Piano di abbonamento non valido o inattivo"
+
+msgid "This plan is not available for this product"
+msgstr "Questo piano non è disponibile per questo prodotto"
+
+msgid "Invalid or inactive payment token"
+msgstr "Token di pagamento non valido o inattivo"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "Livello di prezzo non trovato o non appartiene al piano selezionato"
+
+msgid "No pricing tier available for this plan"
+msgstr "Nessun livello di prezzo disponibile per questo piano"
+
+msgid "Quantity cannot be negative"
+msgstr "La quantità non può essere negativa"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "Codice carta regalo (es. GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "Importo applicato da questa gift card (in valuta base)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "Saldo residuo sulla gift card dopo questa applicazione"
+
+msgid "Base currency code"
+msgstr "Codice Valuta Base"
+
+msgid "Gift card's native currency code"
+msgstr "Codice Valuta Nativa della Carta Regalo"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Sconto in valuta nativa della gift card (per gift card in valuta estera)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr ""
+"È richiesto un address_id o i dettagli completi dell'indirizzo. Mancanti: "
+"{fields}"
+
+msgid "This product requires customization"
+msgstr "Questo prodotto richiede personalizzazione"
+
+msgid "Invalid design token"
+msgstr "Token di progettazione non valido"
+
+msgid "Design not found or expired"
+msgstr "Progettazione non trovata o scaduta"
+
+msgid "This product does not support customization"
+msgstr "Questo prodotto non supporta la personalizzazione"
+
+msgid "Invalid customization option"
+msgstr "Opzione di personalizzazione non valida"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "Personalizzazione '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "Personalizzazione obbligatoria '{name}' mancante"
+
+msgid "Insufficient stock"
+msgstr "Scorte insufficienti"
+
+msgid "Bundle has no components configured"
+msgstr "Il bundle non ha componenti configurati"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr ""
+"Non è possibile escludere un componente del bundle non opzionale: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "Selezione della variante richiesta per: {name}"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "Variante selezionata non valida per: {name}"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr ""
+"Quantità disponibile insufficiente per il componente del bundle: {name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "Quantità del bundle aggiornata nel carrello"
+
+msgid "Bundle added to cart"
+msgstr "Bundle aggiunto al carrello"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "Slot obbligatorio '{name}' non ha alcuna selezione."
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "Lo slot '{name}' richiede almeno {min} selezione/i."
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "Lo slot '{name}' permette al massimo {max} selezione/i."
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "ID slot non valido: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "L'opzione {opt_id} non è valida per lo slot '{slot}'."
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr ""
+"Selezione non compatibile nello slot '{slot}'. Alcune opzioni non sono "
+"compatibili con le tue altre scelte."
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"Selezione esclusa nello slot '{slot}'. Alcune opzioni sono in conflitto con "
+"le tue altre scelte."
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "Quantità disponibile insufficiente per il componente: {name}"
+
+msgid "Configured product added to cart"
+msgstr "Prodotto configurato aggiunto al carrello"
+
+msgid "Either user or session_key must be provided"
+msgstr "Deve essere fornito l'utente o la session_key"
+
+msgid "This product is no longer available"
+msgstr "Questo prodotto non è più disponibile"
+
+msgid "You must be logged in to purchase this product."
+msgstr "Devi essere connesso per acquistare questo prodotto."
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "Questo prodotto richiede che tu possieda già \"%(required)s\"."
+
+msgid "Product variant not found"
+msgstr "Variante del prodotto non trovata"
+
+msgid "Configuration is required for configurable products"
+msgstr "È richiesta la configurazione per i prodotti configurabili"
+
+msgid "Booking added to cart"
+msgstr "Prenotazione aggiunta al carrello"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "Scorte insufficienti per la quantità richiesta"
+
+msgid "Cart item quantity updated"
+msgstr "Quantità dell'elemento del carrello aggiornata"
+
+msgid "Item added to cart"
+msgstr "Elemento aggiunto al carrello"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr ""
+"Le quantità dei componenti non possono essere modificate direttamente. "
+"Aggiorna invece il prodotto principale."
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"Prodotto rimosso dal carrello. È stato anche rimosso %(names)s (prodotto "
+"richiesto non presente più nel carrello)."
+
+msgid "Item removed from cart"
+msgstr "Elemento rimosso dal carrello"
+
+msgid "Cart item updated"
+msgstr "Elemento del carrello aggiornato"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr ""
+"Gli elementi dei componenti non possono essere rimossi direttamente. Rimuovi "
+"invece il prodotto principale."
+
+msgid "Cart cleared"
+msgstr "Carrello svuotato"
+
+msgid "Voucher removed"
+msgstr "Buono rimosso"
+
+msgid "Voucher not found in cart"
+msgstr "Buono non trovato nel carrello"
+
+msgid "Gift card removed"
+msgstr "Carta regalo rimossa"
+
+msgid "Gift card not found in cart"
+msgstr "Gift card non trovata nel carrello"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count} articoli aggiunti al carrello"
+
+msgid "Account creation required to proceed"
+msgstr "Creazione account richiesta per procedere"
+
+msgid "Address not found"
+msgstr "Indirizzo non trovato"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "Deve essere fornito address_id o address_data"
+
+msgid "Shipping address set"
+msgstr "Indirizzo di spedizione impostato"
+
+msgid "Billing address must be provided"
+msgstr "Deve essere fornito l'indirizzo di fatturazione"
+
+msgid "Billing address set"
+msgstr "Indirizzo di fatturazione impostato"
+
+msgid "Shipping address must be set first"
+msgstr "L'indirizzo di spedizione deve essere impostato per primo"
+
+msgid "Shipping method not found"
+msgstr "Metodo di spedizione non trovato"
+
+msgid "Shipping method selected"
+msgstr "Metodo di spedizione selezionato"
+
+msgid "Payment provider not found"
+msgstr "Fornitore di pagamento non trovato"
+
+msgid "Payment provider is not properly configured"
+msgstr "Il fornitore di pagamento non è configurato correttamente"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr ""
+"Il fornitore di pagamento non è disponibile per la tua ubicazione o valuta"
+
+msgid "Payment method selected"
+msgstr "Metodo di pagamento selezionato"
+
+msgid "Cart is empty"
+msgstr "Il carrello è vuoto"
+
+msgid "Shipping address is required"
+msgstr "È richiesto l'indirizzo di spedizione"
+
+msgid "Shipping method is required"
+msgstr "È richiesto il metodo di spedizione"
+
+msgid "Billing address is required"
+msgstr "È richiesto l'indirizzo di fatturazione"
+
+msgid "Payment method is required"
+msgstr "È richiesto il metodo di pagamento"
+
+msgid "Checkout session has expired"
+msgstr "La sessione di checkout è scaduta"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "Quantità disponibile insufficiente per {product}"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\" richiede la precedente proprietà di \"%(required)s\"."
+
+msgid "Customer email is required"
+msgstr "L'email del cliente è richiesta"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "Impossibile allocare il magazzino per l'ordine. Contatta il supporto."
+
+msgid "Insufficient stock to complete order"
+msgstr "Scorte insufficienti per completare l'ordine"
+
+msgid "Error processing order. Please try again."
+msgstr "Errore durante l'elaborazione dell'ordine. Riprova."
+
+msgid "Order created successfully"
+msgstr "Ordine creato con successo"
+
+msgid "Wishlist item updated"
+msgstr "Elemento della lista dei desideri aggiornato"
+
+msgid "Item added to wishlist"
+msgstr "Elemento aggiunto alla lista dei desideri"
+
+msgid "Item removed from wishlist"
+msgstr "Elemento rimosso dalla lista dei desideri"
+
+msgid "Item moved to cart"
+msgstr "Elemento spostato nel carrello"
+
+msgid "Wishlist cleared"
+msgstr "Lista dei desideri svuotata"
+
+msgid "Wishlist with this name already exists"
+msgstr "La lista dei desideri con questo nome esiste già"
+
+msgid "Wishlist created"
+msgstr "Lista dei desideri creata"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "Monitora i carrelli attivi e abbandonati dei clienti"
+
+msgid "Add"
+msgstr "Aggiungi"
+
+msgid "cart"
+msgstr "carrello"
+
+msgid "Filters"
+msgstr "Filtri"
+
+msgid "Search"
+msgstr "Cerca"
+
+msgid "Search by user, session, or email..."
+msgstr "Cerca per utente, sessione o email..."
+
+msgid "User Type"
+msgstr "Tipo di utente"
+
+msgid "All Carts"
+msgstr "Tutti i carrelli"
+
+msgid "Registered Users"
+msgstr "Utenti registrati"
+
+msgid "Guest Carts"
+msgstr "Carrelli degli ospiti"
+
+msgid "Cart Status"
+msgstr "Stato del carrello"
+
+msgid "All"
+msgstr "Tutti"
+
+msgid "Active (< 24h)"
+msgstr "Attivo (< 24h)"
+
+msgid "Abandoned (> 24h)"
+msgstr "Abbandonato (> 24h)"
+
+msgid "Empty"
+msgstr "Vuoto"
+
+msgid "Has Shipping"
+msgstr "Ha spedizione"
+
+msgid "No Shipping"
+msgstr "Nessuna spedizione"
+
+msgid "Min Cart Value"
+msgstr "Minimo valore del carrello"
+
+msgid "Min value"
+msgstr "Minimo valore"
+
+msgid "Max Cart Value"
+msgstr "Massimo valore del carrello"
+
+msgid "Max value"
+msgstr "Massimo valore"
+
+msgid "Created From"
+msgstr "Creato da"
+
+msgid "Created To"
+msgstr "Creato a"
+
+msgid "Apply Filters"
+msgstr "Applica filtri"
+
+msgid "Clear All"
+msgstr "Cancella tutto"
+
+msgid "Run the selected action"
+msgstr "Esegui l'azione selezionata"
+
+msgid "Go"
+msgstr "Vai"
+
+msgid "of"
+msgstr "di"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s carrello"
+msgstr[1] "%(counter)s carrelli"
+
+msgid "carts"
+msgstr "carrelli"
+
+msgid "Show all"
+msgstr "Mostra tutto"
+
+msgid "Save"
+msgstr "Salva"
+
+msgid "Add Shipping Method"
+msgstr "Aggiungi metodo di spedizione"
+
+msgid "Configure a new shipping method for your store"
+msgstr "Configura un nuovo metodo di spedizione per il tuo negozio"
+
+msgid "Method Basics"
+msgstr "Informazioni di base del metodo"
+
+msgid "Eligibility"
+msgstr "Qualificazione"
+
+msgid "Coverage"
+msgstr "Copertura"
+
+msgid "Features"
+msgstr "Funzionalità"
+
+msgid "Review"
+msgstr "Rivedi"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr ""
+"Definisci l'identità principale e il tipo di questo metodo di spedizione."
+
+msgid "Method Name"
+msgstr "Nome del metodo"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "es. Spedizione standard, Consegna espressa"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "Nome del metodo di spedizione rivolto al cliente"
+
+msgid "Optional description of this shipping method"
+msgstr "Descrizione opzionale di questo metodo di spedizione"
+
+msgid "Display Icon"
+msgstr "Icona da visualizzare"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"Seleziona un'immagine dalla libreria media o scegli un'icona da Font "
+"Awesome. L'immagine ha la precedenza se entrambe vengono fornite."
+
+msgid "Custom Image"
+msgstr "Immagine personalizzata"
+
+msgid "Font Awesome Icon"
+msgstr "Icona Font Awesome"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "Scegli un'icona dalla libreria Font Awesome"
+
+msgid "Active"
+msgstr "Attivo"
+
+msgid "Make this method available to customers immediately"
+msgstr "Rendi disponibile immediatamente questo metodo per i clienti"
+
+msgid "Method Type & Pricing"
+msgstr "Tipo di metodo e prezzo"
+
+msgid "Select method type..."
+msgstr "Seleziona tipo di metodo..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "Tariffa fissa - Costo di spedizione fisso"
+
+msgid "Free Shipping - No charge"
+msgstr "Spedizione gratuita - Nessun costo"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "Basato sul peso - Calcolato in base al peso del carrello"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "Basato sul prezzo - Calcolato in base al sottototale del carrello"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "Tariffe in tempo reale del carrier - Tariffe live dai carrier"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "Ritiro locale - Il cliente ritira presso la location"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr ""
+"Tariffa tabellare - Regole complesse basate su peso/prezzo/destinazione"
+
+msgid "Method Types:"
+msgstr "Tipi di metodo:"
+
+msgid "Flat Rate:"
+msgstr "Tariffa fissa:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "Costo di spedizione fisso indipendentemente dall'ordine"
+
+msgid "Free Shipping:"
+msgstr "Spedizione gratuita:"
+
+msgid "No shipping charge"
+msgstr "Nessun costo di spedizione"
+
+msgid "Weight/Price Based:"
+msgstr "Basato su peso/prezzo:"
+
+msgid "Calculate using rate tables"
+msgstr "Calcola utilizzando tabelle di tariffa"
+
+msgid "Real-Time:"
+msgstr "In tempo reale:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "Ottieni tariffe live da USPS, FedEx, UPS o DHL"
+
+msgid "Local Pickup:"
+msgstr "Ritiro in loco:"
+
+msgid "Customer picks up at your location"
+msgstr "Il cliente ritira presso la tua location"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "Costo di spedizione fisso addebitato al cliente"
+
+msgid "No Configured Providers"
+msgstr "Nessun fornitore configurato"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"Devi configurare almeno un provider di spedizione che supporta le tariffe in "
+"tempo reale prima di poter utilizzare questo tipo di metodo."
+
+msgid "Connect Provider"
+msgstr "Connetti fornitore"
+
+msgid "Manage Providers"
+msgstr "Gestisci fornitori"
+
+msgid "Select a configured shipping provider"
+msgstr "Seleziona un fornitore di spedizione configurato"
+
+msgid "Tip:"
+msgstr "Suggerimento:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"Solo i provider configurati che supportano le tariffe in tempo reale vengono "
+"mostrati sopra."
+
+msgid "Manage providers"
+msgstr "Gestisci fornitori"
+
+msgid "Service Code"
+msgstr "Codice servizio"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "Codice di servizio specifico dal carrier (opzionale)"
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Next Step"
+msgstr "Passo successivo"
+
+msgid "Eligibility Conditions"
+msgstr "Condizioni di qualificazione"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr ""
+"Definisci quando questo metodo di spedizione dovrebbe essere disponibile in "
+"base al valore del carrello e al peso."
+
+msgid "Order Value Restrictions"
+msgstr "Limiti del valore dell'ordine"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr ""
+"Imposta i requisiti minimi o massimi per il sottototale del carrello per "
+"questo metodo."
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr ""
+"Il metodo è disponibile solo se il sottototale del carrello è almeno questo "
+"importo"
+
+msgid "No maximum"
+msgstr "Nessun massimo"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr ""
+"Il metodo è disponibile solo se il sottototale del carrello è inferiore a "
+"questo importo"
+
+msgid "Examples:"
+msgstr "Esempi:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr ""
+"Spedizione gratuita per ordini superiori a $50: Imposta il minimo a 50.00"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr ""
+"Spedizione economica per ordini inferiori a $100: Imposta il massimo a 100.00"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr ""
+"Spedizione standard per $25-$200: Imposta entrambi i minimi e i massimi"
+
+msgid "Weight Restrictions"
+msgstr "Limiti di peso"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr ""
+"Imposta i requisiti minimi o massimi per il peso totale del carrello per "
+"questo metodo."
+
+msgid "Minimum Weight (kg)"
+msgstr "Peso minimo (kg)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr ""
+"Il metodo è disponibile solo se il peso totale del carrello è almeno questo "
+"valore"
+
+msgid "Maximum Weight (kg)"
+msgstr "Peso massimo (kg)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr ""
+"Il metodo è disponibile solo se il peso totale del carrello è inferiore a "
+"questo valore"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr ""
+"Spedizione per pacchi leggeri per pacchi inferiori a 2kg: Imposta il massimo "
+"a 2.00"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr ""
+"Spedizione per carichi pesanti per pacchi superiori a 20kg: Imposta il "
+"minimo a 20.00"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr ""
+"Spedizione standard per 0.5kg-10kg: Imposta entrambi i minimi e i massimi"
+
+msgid "Additional Options"
+msgstr "Opzioni aggiuntive"
+
+msgid "Requires Shipping Address"
+msgstr "Richiede indirizzo di spedizione"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"Il cliente deve fornire un indirizzo di spedizione per questo metodo "
+"(disattivare per prodotti digitali o ritiro locale)"
+
+msgid "Previous"
+msgstr "Precedente"
+
+msgid "Geographic Coverage"
+msgstr "Copertura geografica"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr ""
+"Definisci dove questo metodo di spedizione è disponibile utilizzando le zone "
+"di spedizione."
+
+msgid "Zone-Based Coverage:"
+msgstr "Copertura basata sulla zona:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"Utilizza le zone di spedizione per una copertura geografica flessibile "
+"basata su regole. Questo approccio funziona in modo fluido con le regole di "
+"spedizione e consente un controllo preciso su dove sono disponibili i tuoi "
+"metodi."
+
+msgid "Select Shipping Zones"
+msgstr "Seleziona le aree di spedizione"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"Scegli quali zone di spedizione sono disponibili per questo metodo. Lascia "
+"vuoto per rendere disponibile a livello globale."
+
+msgid "Available Zones"
+msgstr "Aree disponibili"
+
+msgid "Add selected zones"
+msgstr "Aggiungi aree selezionate"
+
+msgid "Add all zones"
+msgstr "Aggiungi tutte le aree"
+
+msgid "Remove selected zones"
+msgstr "Rimuovi aree selezionate"
+
+msgid "Remove all zones"
+msgstr "Rimuovi tutte le aree"
+
+msgid "Selected Zones"
+msgstr "Aree selezionate"
+
+msgid "No shipping zones found!"
+msgstr "Nessuna area di spedizione trovata!"
+
+msgid "You need to create shipping zones first."
+msgstr "Devi creare le zone di spedizione prima."
+
+msgid "Create a shipping zone"
+msgstr "Crea un'area di spedizione"
+
+msgid "Method Features"
+msgstr "Caratteristiche del metodo"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr ""
+"Configura le stime di consegna, l'ordine di visualizzazione e le "
+"funzionalità specifiche del metodo."
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr ""
+"Seleziona le ubicazioni fisiche dove i clienti possono ritirare gli ordini."
+
+msgid "Available Pickup Locations"
+msgstr "Posizioni di ritiro disponibili"
+
+msgid "Available Locations"
+msgstr "Posizioni disponibili"
+
+msgid "Selected Locations"
+msgstr "Posizioni selezionate"
+
+msgid "No pickup locations found!"
+msgstr "Nessuna posizione di ritiro trovata!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr ""
+"Devi creare le ubicazioni di ritiro prima per i metodi di ritiro locale."
+
+msgid "Create a pickup location"
+msgstr "Crea una posizione di ritiro"
+
+msgid "Carrier API Status"
+msgstr "Stato API del vettore"
+
+msgid "Carrier:"
+msgstr "Vettore:"
+
+msgid "Service Code:"
+msgstr "Codice servizio:"
+
+msgid "API Configuration Status"
+msgstr "Stato configurazione API"
+
+msgid "Checking API credentials..."
+msgstr "Verifica delle credenziali API..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr ""
+"Assicurati che le credenziali API del carrier siano configurate nelle "
+"impostazioni del provider di spedizione."
+
+msgid "Enable Rate Caching"
+msgstr "Abilita caching delle tariffe"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"Cachizza le tariffe del carrier per 15 minuti per migliorare le prestazioni "
+"e ridurre le chiamate API"
+
+msgid "Rate Table Configuration"
+msgstr "Configurazione tabella tariffe"
+
+msgid "Weight-Based Rates:"
+msgstr "Tariffe basate sul peso:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr ""
+"Dopo la creazione del metodo, potrai configurare tariffe a livelli basate "
+"sul peso del carrello."
+
+msgid "Price-Based Rates:"
+msgstr "Tariffe basate sul prezzo:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"Dopo la creazione del metodo, potrai configurare tariffe a livelli basate "
+"sul sottototale del carrello."
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr ""
+"Le tabelle delle tariffe possono essere gestite dalla pagina di modifica del "
+"metodo dopo la creazione."
+
+msgid "Delivery Time Estimate"
+msgstr "Stima tempo di consegna"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "Fornisci ai clienti un intervallo stimato di consegna."
+
+msgid "Fastest delivery time in business days"
+msgstr "Tempo di consegna più veloce in giorni lavorativi"
+
+msgid "Slowest delivery time in business days"
+msgstr "Tempo di consegna più lento in giorni lavorativi"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "Spedizione standard: 3-5 giorni lavorativi"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "Spedizione espressa: 1-2 giorni lavorativi"
+
+msgid "International shipping: 7-14 business days"
+msgstr "Spedizione internazionale: 7-14 giorni lavorativi"
+
+msgid "Display Settings"
+msgstr "Impostazioni di visualizzazione"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr ""
+"I numeri più bassi appaiono per primi. Usa questo per controllare l'ordine "
+"in cui i metodi vengono visualizzati ai clienti."
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"Assegna ordini di sorteggio in incrementi di 10 (0, 10, 20) per permettere "
+"l'inserimento facile di nuovi metodi tra quelli esistenti."
+
+msgid "Review & Create"
+msgstr "Rivedi e crea"
+
+msgid "API credentials verified successfully"
+msgstr "Credenziali API verificate con successo"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "Rivedi la configurazione del metodo di spedizione e crealo."
+
+msgid "Edit"
+msgstr "Modifica"
+
+msgid "Name:"
+msgstr "Nome:"
+
+msgid "Method Type:"
+msgstr "Tipo di metodo:"
+
+msgid "Description:"
+msgstr "Descrizione:"
+
+msgid "Display Icon:"
+msgstr "Icona da visualizzare:"
+
+msgid "Status:"
+msgstr "Stato:"
+
+msgid "Inactive"
+msgstr "Inattivo"
+
+msgid "Flat Rate Cost:"
+msgstr "Costo a tariffa piatta:"
+
+msgid "Min Order Value:"
+msgstr "Valore minimo dell'ordine:"
+
+msgid "Max Order Value:"
+msgstr "Valore massimo dell'ordine:"
+
+msgid "Min Weight:"
+msgstr "Peso minimo:"
+
+msgid "Max Weight:"
+msgstr "Peso massimo:"
+
+msgid "Requires Shipping Address:"
+msgstr "Richiede indirizzo di spedizione:"
+
+msgid "Yes"
+msgstr "Sì"
+
+msgid "No"
+msgstr "No"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr ""
+"Nessuna condizione di idoneità impostata - il metodo è disponibile per tutti "
+"i valori del carrello e i pesi"
+
+msgid "Shipping Zones:"
+msgstr "Aree di spedizione:"
+
+msgid "Coverage:"
+msgstr "Copertura:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "A livello globale (nessuna area selezionata)"
+
+msgid "Pickup Locations:"
+msgstr "Posizioni di ritiro:"
+
+msgid "location"
+msgstr "posizione"
+
+msgid "Delivery Time:"
+msgstr "Tempo di consegna:"
+
+msgid "Instant Pickup"
+msgstr "Ritiro immediato"
+
+msgid "Delivery Estimate:"
+msgstr "Stima consegna:"
+
+msgid "business days"
+msgstr "giorni lavorativi"
+
+msgid "Sort Order:"
+msgstr "Ordine di ordinamento:"
+
+msgid "Rate Caching:"
+msgstr "Caching delle tariffe:"
+
+msgid "Enabled"
+msgstr "Abilitato"
+
+msgid "What happens next:"
+msgstr "Cosa accadrà successivamente:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr ""
+"Il tuo metodo di spedizione verrà creato con le impostazioni sopra indicate"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr ""
+"Verrai reindirizzato per configurare le tabelle di tariffa per questo metodo"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr ""
+"Il metodo sarà immediatamente disponibile per i clienti (se vengono "
+"soddisfatte le condizioni di idoneità)"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr "Il metodo verrà creato come non attivo - attivalo quando sei pronto"
+
+msgid "Create Shipping Method"
+msgstr "Crea metodo di spedizione"
+
+msgid "Creating..."
+msgstr "Creazione in corso..."
+
+msgid "Session"
+msgstr "Sessione"
+
+msgid "Registered"
+msgstr "Registrato"
+
+msgid "Guest"
+msgstr "Ospite"
+
+msgid "item"
+msgstr "articolo"
+
+msgid "Shipping Set"
+msgstr "Set di spedizione"
+
+msgid "Cart Total"
+msgstr "Totale carrello"
+
+msgid "Items"
+msgstr "Articoli"
+
+msgid "Savings"
+msgstr "Risparmi"
+
+msgid "Shipping"
+msgstr "Spedizione"
+
+msgid "Grand Total"
+msgstr "Totale complessivo"
+
+msgid "Updated"
+msgstr "Aggiornato"
+
+msgid "ago"
+msgstr "fa"
+
+msgid "Created"
+msgstr "Creato"
+
+msgid "Est. Delivery"
+msgstr "Consegna stimata"
+
+msgid "View cart details"
+msgstr "Visualizza dettagli del carrello"
+
+msgid "Edit cart"
+msgstr "Modifica carrello"
+
+msgid "Delete cart"
+msgstr "Elimina carrello"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "Sei sicuro di voler svuotare questo carrello?"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "Nessun carrello di acquisto trovato che corrisponda ai tuoi criteri."
+
+msgid "Try adjusting your filters or search terms."
+msgstr "Prova a modificare i filtri o i termini di ricerca."
+
+msgid "Edit Shipping Method"
+msgstr "Modifica metodo di spedizione"
+
+msgid "Save and continue editing"
+msgstr "Salva e continua a modificare"
+
+msgid "Please correct the errors below"
+msgstr "Per favore correggi gli errori segnalati"
+
+msgid "Basic"
+msgstr "Base"
+
+msgid "Pricing"
+msgstr "Prezzi"
+
+msgid "Display"
+msgstr "Visualizzazione"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr ""
+"Opzionale: Limitare la disponibilità in base al valore dell'ordine o al peso."
+
+msgid "Delivery Time"
+msgstr "Tempo di consegna"
+
+msgid "Display Options"
+msgstr "Opzioni di visualizzazione"
+
+msgid "Carrier Integration"
+msgstr "Integrazione del trasportatore"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr ""
+"Configura le impostazioni specifiche del vettore per le ricerche in tempo "
+"reale sui tariffe."
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "Configura le opzioni di spedizione, le tariffe e i metodi di consegna"
+
+msgid "method"
+msgstr "metodo"
+
+msgid "active"
+msgstr "attivo"
+
+msgid "Add Method"
+msgstr "Aggiungi metodo"
+
+msgid "Bulk Actions"
+msgstr "Azioni di massa"
+
+msgid "Enable Selected"
+msgstr "Abilita selezionati"
+
+msgid "Disable Selected"
+msgstr "Disabilita selezionati"
+
+msgid "Delete Selected"
+msgstr "Elimina selezionati"
+
+msgid "Apply"
+msgstr "Applica"
+
+msgid "selected"
+msgstr "selezionati"
+
+msgid "All Status"
+msgstr "Tutti gli stati"
+
+msgid "All Types"
+msgstr "Tutti i tipi"
+
+msgid "Real-Time Rates"
+msgstr "Tariffe in tempo reale"
+
+msgid "Clear all filters"
+msgstr "Cancella tutti i filtri"
+
+msgid "Clear Filters"
+msgstr "Cancella filtri"
+
+msgid "Search methods..."
+msgstr "Cerca metodi..."
+
+msgid "Select All"
+msgstr "Seleziona tutto"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s metodo"
+msgstr[1] "%(counter)s metodi"
+
+msgid "No shipping methods found"
+msgstr "Nessun metodo di spedizione trovato"
+
+msgid "Try adjusting your filters or search query."
+msgstr "Prova a modificare i filtri o la query di ricerca."
+
+msgid "Get started by creating your first shipping method."
+msgstr "Inizia creando il tuo primo metodo di spedizione."
+
+msgid "Add First Method"
+msgstr "Aggiungi primo metodo"
+
+msgid "Loading..."
+msgstr "Caricamento..."
+
+msgid "Order Value:"
+msgstr "Valore dell'ordine:"
+
+msgid "Weight:"
+msgstr "Peso:"
+
+msgid "Zones:"
+msgstr "Zone:"
+
+msgid "zone"
+msgstr "zona"
+
+msgid "Countries:"
+msgstr "Paesi:"
+
+msgid "country"
+msgstr "paese"
+
+msgid "Worldwide"
+msgstr "In tutto il mondo"
+
+msgid "Pickup:"
+msgstr "Ritiro:"
+
+msgid "Delivery:"
+msgstr "Consegna:"
+
+msgid "Edit method"
+msgstr "Modifica metodo"
+
+msgid "Toggle active status"
+msgstr "Attiva/disattiva lo stato"
+
+msgid "Delete method"
+msgstr "Elimina metodo"
+
+msgid "Edit Tax Rate"
+msgstr "Modifica aliquota fiscale"
+
+msgid "Add Tax Rate"
+msgstr "Aggiungi aliquota fiscale"
+
+msgid "Geography"
+msgstr "Geografia"
+
+msgid "Rules"
+msgstr "Regole"
+
+msgid "Exemptions"
+msgstr "Esenzioni"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"Definisci dove si applica questa aliquota fiscale. Lascia vuoto stato/città "
+"per le aliquote a livello nazionale."
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr ""
+"Escludi determinati tipi o categorie di prodotti da questa aliquota fiscale."
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"Configura le regole fiscali per il tuo negozio. Le aliquote fiscali vengono "
+"abbinate agli indirizzi dei clienti durante il checkout."
+
+msgid "Load Presets"
+msgstr "Carica preset"
+
+msgid "Total Rules"
+msgstr "Regole totali"
+
+msgid "Countries"
+msgstr "Paesi"
+
+msgid "Tax Types"
+msgstr "Tipi di tassazione"
+
+msgid "Search by name, country, state..."
+msgstr "Cerca per nome, paese, stato..."
+
+msgid "All Countries"
+msgstr "Tutti i paesi"
+
+msgid "Custom"
+msgstr "Personalizzato"
+
+msgid "Status"
+msgstr "Stato"
+
+msgid "Clear"
+msgstr "Cancella"
+
+msgid "Tax Rules"
+msgstr "Regole fiscali"
+
+msgid "rules"
+msgstr "regole"
+
+msgid "Load Tax Rate Presets"
+msgstr "Carica preset tasse"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr ""
+"Aggiungi rapidamente aliquote fiscali standard per la tua regione. Le "
+"aliquote esistenti non verranno duplicate."
+
+msgid "rates"
+msgstr "tasse"
+
+msgid "Load"
+msgstr "Carica"
+
+msgid "Close"
+msgstr "Chiudi"
+
+msgid "postal codes"
+msgstr "codici postali"
+
+msgid "Shipping Taxed"
+msgstr "Tasse sulle spedizioni"
+
+msgid "Compound"
+msgstr "Composto"
+
+msgid "Delete"
+msgstr "Elimina"
+
+msgid "No tax rates configured"
+msgstr "Nessuna tariffa delle tasse configurata"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"Utilizza 'Carica preset' per aggiungere rapidamente aliquote standard per la "
+"tua regione, o aggiungi le aliquote manualmente."
+
+msgid "Get current cart"
+msgstr "Ottieni carrello corrente"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"Ottieni il carrello corrente per l'utente autenticato o la sessione. "
+"Restituisce gli articoli del carrello, sottototale, sconti, tasse e totale. "
+"Crea automaticamente il carrello se non esiste."
+
+msgid "Add item to cart"
+msgstr "Aggiungi articolo al carrello"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"Aggiungi un prodotto al carrello con una quantità specificata. Opzionalmente "
+"includi l'ID della variante, personalizzazioni e note. Verifica la "
+"disponibilità in stock e unisciti all'elemento esistente del carrello se si "
+"tratta dello stesso prodotto/variante. Per i prodotti di abbonamento, "
+"include is_subscription=true con subscription_plan_id, payment_token_id e "
+"opzionalmente pricing_tier_id."
+
+msgid "Update cart item"
+msgstr "Aggiorna articolo del carrello"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"Aggiorna la quantità, le personalizzazioni o le note di un articolo del "
+"carrello. Verifica la disponibilità di stock per la nuova quantità. "
+"Restituisce il carrello aggiornato con i totali ricalcolati."
+
+msgid "Remove cart item"
+msgstr "Rimuovi articolo dal carrello"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"Rimuovi un elemento specifico dal carrello. Ridisponi i totali del carrello "
+"e riconvalida eventuali buoni applicati rispetto al nuovo totale del "
+"carrello."
+
+msgid "Clear cart"
+msgstr "Pulisci carrello"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"Rimuovi tutti gli elementi dal carrello. Rimuove anche eventuali buoni "
+"applicati. L'oggetto carrello persiste ma diventa vuoto."
+
+msgid "Apply voucher code"
+msgstr "Applica codice voucher"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"Applica un codice buono al carrello. Verifica l'idoneità del buono, i "
+"requisiti minimi di acquisto e i limiti di utilizzo. Calcola e applica lo "
+"sconto al totale del carrello."
+
+msgid "Remove voucher"
+msgstr "Rimuovi buono"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"Rimuovi un buono specifico dal carrello tramite codice. Ri-calcola il totale "
+"del carrello senza lo sconto del buono. L'utente può riapplicare il buono in "
+"seguito se idoneo."
+
+msgid "Apply gift card"
+msgstr "Applica carta regalo"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"Applica un codice di carta regalo al carrello. Verifica lo stato, il saldo e "
+"la valuta della carta regalo. Le carte regalo non possono essere utilizzate "
+"per acquistare altre carte regalo. L'importo applicato è limitato al saldo "
+"della carta regalo o al totale rimanente del carrello."
+
+msgid "Remove gift card"
+msgstr "Rimuovi carta regalo"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"Rimuovi una carta regalo specifica dal carrello tramite codice. Il saldo "
+"della carta regalo non è influenzato fino al completamento del checkout. "
+"L'utente può riapplicare la carta regalo."
+
+msgid "Get cart summary"
+msgstr "Ottieni riepilogo carrello"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"Ottieni un riepilogo leggero del carrello con il numero di articoli, il "
+"sottototale e il totale. Più veloce dell'endpoint del carrello completo. "
+"Utile per il badge del carrello nell'intestazione o per un rapido display "
+"del totale."
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"Gli elementi componenti non possono essere modificati direttamente. Aggiorna "
+"invece il prodotto principale."
+
+msgid "List user wishlists"
+msgstr "Elenca liste desideri utente"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"Ottieni tutte le liste dei desideri dell'utente autenticato. Gli utenti "
+"possono avere più liste dei desideri per scopi diversi (es. 'Compleanno', "
+"'Matrimonio', 'Idee'). Restituisce i nomi delle liste dei desideri, i "
+"conteggi degli articoli e le impostazioni di privacy."
+
+msgid "Create wishlist"
+msgstr "Crea lista desideri"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"Crea una nuova lista dei desideri per l'utente autenticato. Specifica nome, "
+"descrizione e impostazione di privacy (pubblica/privata). Le liste dei "
+"desideri pubbliche possono essere condivise tramite URL."
+
+msgid "Get wishlist details"
+msgstr "Ottieni dettagli lista desideri"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"Ottieni informazioni dettagliate su una specifica lista dei desideri, "
+"inclusi tutti gli elementi, i prezzi, la disponibilità e le impostazioni di "
+"condivisione. Accessibile solo al proprietario della lista dei desideri a "
+"meno che non sia condivisa pubblicamente."
+
+msgid "Update wishlist"
+msgstr "Aggiorna lista desideri"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"Aggiorna le informazioni della lista dei desideri, inclusi nome, descrizione "
+"o impostazioni sulla privacy. È possibile rendere la lista dei desideri "
+"pubblica o privata. Solo il proprietario può aggiornarla."
+
+msgid "Partially update wishlist"
+msgstr "Aggiorna parzialmente lista desideri"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"Aggiorna campi specifici della lista dei desideri senza inviare i dati "
+"completi della lista. Utile per attivare/disattivare la privacy o rinominare "
+"la lista dei desideri."
+
+msgid "Delete wishlist"
+msgstr "Elimina lista desideri"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"Elimina definitivamente una lista dei desideri e tutti i suoi elementi. Non "
+"è possibile annullare. Solo il proprietario può eliminarla."
+
+msgid "Add item to wishlist"
+msgstr "Aggiungi articolo alla lista desideri"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"Aggiungi un prodotto alla lista dei desideri con variante, quantità e note "
+"opzionali. Impedisce duplicati. Puoi aggiungerlo alla lista dei desideri "
+"predefinita o specificare l'ID della lista dei desideri."
+
+msgid "Remove item from wishlist"
+msgstr "Rimuovi articolo dalla lista desideri"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"Rimuovi un elemento specifico dalla lista dei desideri. L'elemento può "
+"essere aggiunto nuovamente in un secondo momento. Non influisce sulla "
+"disponibilità del prodotto."
+
+msgid "Move item to cart"
+msgstr "Sposta articolo nel carrello"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"Sposta un elemento della lista dei desideri direttamente nel carrello. "
+"Verifica la disponibilità delle scorte. L'elemento viene rimosso dalla lista "
+"dei desideri dopo l'aggiunta corretta al carrello."
+
+msgid "Get public wishlist by share slug"
+msgstr "Ottieni la lista dei desideri pubblica tramite slug di condivisione"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"Visualizza una lista dei desideri pubblica utilizzando il suo slug URL di "
+"condivisione. Chiunque abbia il link può visualizzare le liste dei desideri "
+"pubbliche. Utile per registri dei regali e liste dei desideri condivise con "
+"familiari/amici."
+
+msgid "ID of the wishlist item to remove"
+msgstr "ID dell'elemento della lista dei desideri da rimuovere"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "ID dell'elemento della lista dei desideri da spostare nel carrello"
+
+msgid "Share slug of the public wishlist"
+msgstr "Condividi lo slug della lista dei desideri pubblica"
+
+msgid "Wishlist not found"
+msgstr "Elenco dei desideri non trovato"
+
+msgid "Get checkout session"
+msgstr "Ottieni sessione di checkout"
+
+msgid "Set shipping address"
+msgstr "Imposta indirizzo di spedizione"
+
+msgid "Set billing address"
+msgstr "Imposta indirizzo di fatturazione"
+
+msgid "Get available shipping methods"
+msgstr "Ottieni metodi di spedizione disponibili"
+
+msgid "Get available payment providers"
+msgstr "Ottieni fornitori di pagamento disponibili"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"Restituisce i fornitori di pagamento disponibili per il paese e la valuta "
+"del cliente. I filtri sono basati sui paesi di spedizione, sulle capacità "
+"del fornitore e sulla configurazione del commerciante."
+
+msgid "Set shipping method"
+msgstr "Imposta metodo di spedizione"
+
+msgid "Set payment method"
+msgstr "Imposta metodo di pagamento"
+
+msgid "Validate checkout"
+msgstr "Conferma checkout"
+
+msgid "Complete checkout"
+msgstr "Completa checkout"
+
+msgid "Get recently viewed products"
+msgstr "Ottieni prodotti visualizzati di recente"
+
+msgid "Get recently viewed details"
+msgstr "Ottieni dettagli prodotti visualizzati di recente"
+
+msgid "List shipping methods"
+msgstr "Elenca metodi di spedizione"
+
+msgid "Get shipping method details"
+msgstr "Ottieni dettagli metodo di spedizione"
+
+msgid "List tax rates"
+msgstr "Elenca tasse"
+
+msgid "Get tax rate details"
+msgstr "Ottieni dettagli tassa"
+
+msgid "Create tax rate"
+msgstr "Crea tassa"
+
+msgid "Update tax rate"
+msgstr "Aggiorna tassa"
+
+msgid "Partial update tax rate"
+msgstr "Aggiorna parzialmente aliquota IVA"
+
+msgid "Delete tax rate"
+msgstr "Elimina tassa"
+
+msgid "Calculate applicable taxes"
+msgstr "Calcola tasse applicabili"
+
+msgid "Tax rates grouped by country"
+msgstr "Aliquote IVA raggruppate per paese"
+
+msgid "Load preset tax rates"
+msgstr "Carica tasse predefinite"
+
+msgid "List tax preset groups"
+msgstr "Elenca gruppi tasse predefinite"
+
+msgid "Get preset group details"
+msgstr "Ottieni dettagli gruppo predefinito"
+
+msgid "List rates in a preset group"
+msgstr "Elenca le tariffe in un gruppo predefinito"

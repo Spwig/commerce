@@ -1,0 +1,280 @@
+{% extends "page_builder/checkout/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Express Checkout Template - Streamlined checkout for returning customers with saved details #}
+
+{% block checkout_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/checkout-express.css' %}">
+{% endblock %}
+
+{% block checkout_layout %}
+<div class="checkout-container checkout-container--express"
+     data-fallback-template="{{ template_options.fallback_template|default:'accordion' }}">
+
+    <div class="express__wrapper">
+
+        <!-- Saved Shipping Address -->
+        <div class="express__section" id="express-address-section">
+            <div class="express__section-header">
+                <h2 class="express__section-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {% mtrans 'Shipping Address' %}
+                </h2>
+                <button type="button" class="express__change-link" id="express-change-address"
+                        data-target="express-address-picker">
+                    {% mtrans 'Change' %}
+                </button>
+            </div>
+
+            <!-- Default address card (populated by JS from saved_addresses) -->
+            <div class="express__saved-card" id="express-default-address">
+                {% if default_address %}
+                <div class="express__saved-card-content">
+                    <p class="express__saved-card-name">{{ default_address.name }}</p>
+                    <p>{{ default_address.address1 }}{% if default_address.address2 %}, {{ default_address.address2 }}{% endif %}</p>
+                    <p>{{ default_address.city }}, {{ default_address.state }} {{ default_address.postal_code }}</p>
+                    <p>{{ default_address.country }}</p>
+                    {% if default_address.phone %}<p>{{ default_address.phone }}</p>{% endif %}
+                </div>
+                {% else %}
+                <div class="express__empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>{% mtrans 'Loading saved address...' %}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Address picker (hidden, shown on "Change" click) -->
+            <div class="express__change-panel" id="express-address-picker" hidden>
+                {% if saved_addresses %}
+                <div class="saved-addresses" id="saved-addresses">
+                    {% for addr in saved_addresses %}
+                    <label class="saved-address-card{% if addr.is_default %} saved-address-card--selected{% endif %}">
+                        <input type="radio" name="saved_address" value="{{ addr.id }}"
+                               {% if addr.is_default %}checked{% endif %}>
+                        <div class="saved-address-card__info">
+                            <div>
+                                <span class="saved-address-card__name">{{ addr.name }}</span>
+                                {% if addr.is_default %}<span class="saved-address-card__default">{% mtrans 'Default' %}</span>{% endif %}
+                            </div>
+                            <div>{{ addr.address1 }}{% if addr.address2 %}, {{ addr.address2 }}{% endif %}</div>
+                            <div>{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</div>
+                            <div>{{ addr.country }}</div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <button type="button" class="new-address-toggle" id="express-new-address-toggle">
+                    <i class="fas fa-plus"></i> {% mtrans 'Use a different address' %}
+                </button>
+
+                <!-- New Address Form -->
+                <div id="new-address-form" hidden>
+                    <div class="checkout-form-group">
+                        <label for="address-search">{% mtrans 'Search Address' %}</label>
+                        <input type="text" id="address-search" class="checkout-input"
+                               placeholder="{% mtrans 'Start typing your address...' %}"
+                               autocomplete="off">
+                    </div>
+
+                    <div class="checkout-form-group">
+                        <label for="shipping-name">{% mtrans 'Full Name' %} <span class="required">*</span></label>
+                        <input type="text" id="shipping-name" class="checkout-input" required>
+                    </div>
+
+                    <div class="checkout-form-group">
+                        <label for="shipping-company">{% mtrans 'Company' %}</label>
+                        <input type="text" id="shipping-company" class="checkout-input">
+                    </div>
+
+                    <div class="checkout-form-group">
+                        <label for="shipping-address1">{% mtrans 'Address Line 1' %} <span class="required">*</span></label>
+                        <input type="text" id="shipping-address1" class="checkout-input" required>
+                    </div>
+
+                    <div class="checkout-form-group">
+                        <label for="shipping-address2">{% mtrans 'Address Line 2' %}</label>
+                        <input type="text" id="shipping-address2" class="checkout-input">
+                    </div>
+
+                    <div class="checkout-form-row">
+                        <div class="checkout-form-group">
+                            <label for="shipping-city">{% mtrans 'City' %} <span class="required">*</span></label>
+                            <input type="text" id="shipping-city" class="checkout-input" required>
+                        </div>
+                        <div class="checkout-form-group">
+                            <label for="shipping-state">{% mtrans 'State / Province' %} <span class="required">*</span></label>
+                            <input type="text" id="shipping-state" class="checkout-input" required>
+                        </div>
+                    </div>
+
+                    <div class="checkout-form-row">
+                        <div class="checkout-form-group">
+                            <label for="shipping-postal-code">{% mtrans 'Postal Code' %} <span class="required">*</span></label>
+                            <input type="text" id="shipping-postal-code" class="checkout-input" required>
+                        </div>
+                        <div class="checkout-form-group">
+                            <label for="shipping-country">{% mtrans 'Country' %} <span class="required">*</span></label>
+                            <input type="text" id="shipping-country" class="checkout-input" required>
+                        </div>
+                    </div>
+
+                    <div class="checkout-form-group">
+                        <label for="shipping-phone">{% mtrans 'Phone' %}</label>
+                        <input type="tel" id="shipping-phone" class="checkout-input">
+                    </div>
+                </div>
+
+                <div class="express__change-panel-actions">
+                    <button type="button" class="btn btn--sm" id="express-confirm-address">
+                        {% mtrans 'Use this address' %}
+                    </button>
+                    <button type="button" class="btn btn--sm btn--ghost" id="express-cancel-address">
+                        {% mtrans 'Cancel' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Method -->
+        <div class="express__section" id="express-shipping-method-section">
+            <div class="express__section-header">
+                <h2 class="express__section-title">
+                    <i class="fas fa-truck"></i>
+                    {% mtrans 'Shipping Method' %}
+                </h2>
+                <button type="button" class="express__change-link" id="express-change-shipping-method"
+                        data-target="express-shipping-method-picker">
+                    {% mtrans 'Change' %}
+                </button>
+            </div>
+
+            <!-- Selected shipping method (populated by JS) -->
+            <div class="express__saved-card" id="express-selected-shipping-method">
+                <div class="express__empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>{% mtrans 'Loading shipping methods...' %}</p>
+                </div>
+            </div>
+
+            <!-- Shipping method picker (hidden, shown on "Change" click) -->
+            <div class="express__change-panel" id="express-shipping-method-picker" hidden>
+                <div class="shipping-methods" id="shipping-methods-list">
+                    <div class="checkout-empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>{% mtrans 'Loading shipping methods...' %}</p>
+                    </div>
+                </div>
+                <div class="express__change-panel-actions">
+                    <button type="button" class="btn btn--sm" id="express-confirm-shipping-method">
+                        {% mtrans 'Use this method' %}
+                    </button>
+                    <button type="button" class="btn btn--sm btn--ghost" id="express-cancel-shipping-method">
+                        {% mtrans 'Cancel' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="express__section" id="express-payment-section">
+            <div class="express__section-header">
+                <h2 class="express__section-title">
+                    <i class="fas fa-credit-card"></i>
+                    {% mtrans 'Payment' %}
+                </h2>
+                <button type="button" class="express__change-link" id="express-change-payment"
+                        data-target="express-payment-picker">
+                    {% mtrans 'Change' %}
+                </button>
+            </div>
+
+            <!-- Last used payment method (populated by JS) -->
+            <div class="express__saved-card" id="express-selected-payment">
+                <div class="express__empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>{% mtrans 'Loading payment methods...' %}</p>
+                </div>
+            </div>
+
+            <!-- Payment picker (hidden, shown on "Change" click) -->
+            <div class="express__change-panel" id="express-payment-picker" hidden>
+                {% include "page_builder/checkout/_step_payment.html" %}
+                <div class="express__change-panel-actions">
+                    <button type="button" class="btn btn--sm" id="express-confirm-payment">
+                        {% mtrans 'Use this method' %}
+                    </button>
+                    <button type="button" class="btn btn--sm btn--ghost" id="express-cancel-payment">
+                        {% mtrans 'Cancel' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact / Email (hidden field, auto-populated for returning customers) -->
+        <input type="hidden" id="checkout-email" value="{{ user_email }}">
+
+        <!-- Compact Order Summary -->
+        {% if template_options.show_order_summary %}
+        <div class="express__section" id="express-summary-section">
+            <div class="express__section-header">
+                <h2 class="express__section-title">
+                    <i class="fas fa-receipt"></i>
+                    {% mtrans 'Order Summary' %}
+                </h2>
+            </div>
+
+            <div class="express__order-summary">
+                <!-- Items list (populated by JS) -->
+                <div class="express__items" id="express-items"></div>
+
+                <div class="express__totals">
+                    <div class="express__totals-row" id="summary-subtotal-row">
+                        <span>{% mtrans 'Subtotal' %}</span>
+                        <span id="summary-subtotal"></span>
+                    </div>
+                    <div class="express__totals-row" id="summary-shipping-row">
+                        <span>{% mtrans 'Shipping' %}</span>
+                        <span id="summary-shipping">{% mtrans 'Calculated next' %}</span>
+                    </div>
+                    <div class="express__totals-row express__totals-row--discount" id="summary-discount-row" hidden>
+                        <span>{% mtrans 'Discount' %}</span>
+                        <span id="summary-discount"></span>
+                    </div>
+                    <div class="express__totals-row" id="summary-tax-row" hidden>
+                        <span>{% mtrans 'Tax' %}</span>
+                        <span id="summary-tax"></span>
+                    </div>
+                    <div class="express__totals-row express__totals-row--total">
+                        <span>{% mtrans 'Total' %}</span>
+                        <span id="summary-total"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Trust Badges -->
+        {% if template_options.show_trust_badges and checkout_trust_badges %}
+        <div class="express__trust-badges">
+            {% include "page_builder/includes/_trust_badges.html" with trust_badges=checkout_trust_badges %}
+        </div>
+        {% endif %}
+
+        <!-- Place Order -->
+        <div class="express__place-order">
+            <button type="button" class="btn btn--primary btn--lg btn--full" data-action="place-order" id="place-order-btn">
+                <i class="fas fa-lock"></i>
+                {% mtrans 'Place Order' %}
+            </button>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block checkout_scripts %}
+<script src="{% static 'page_builder/js/checkout.js' %}" defer></script>
+<script src="{% static 'page_builder/js/checkout-express.js' %}" defer></script>
+{% endblock %}

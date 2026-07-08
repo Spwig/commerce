@@ -1,0 +1,19 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * CSS Layer Declaration
+ *
+ * This file MUST be loaded before any other CSS in the page builder.
+ * Layers define the cascade priority order - later layers have higher priority.
+ *
+ * Layer Order (lowest to highest priority):
+ * 1. canvas-reset   - Admin theme isolation, basic canvas defaults
+ * 2. canvas-base    - Scoped base.css utilities (typography, spacing)
+ * 3. canvas-theme   - Theme tokens (colors, fonts from active theme)
+ * 4. canvas-brand   - Merchant brand overrides
+ * 5. builder-ui     - Builder chrome (wrappers, controls, drop zones)
+ *
+ * Inline styles always override all layers (merchant customization).
+ */
+
+@layer canvas-reset, canvas-base, canvas-theme, canvas-brand, builder-ui;

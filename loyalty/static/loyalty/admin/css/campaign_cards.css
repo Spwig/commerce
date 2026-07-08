@@ -1,0 +1,162 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Campaign Cards
+ *
+ * Description: Card layout styles for loyalty campaign_cards
+ * Template: loyalty/templates/admin/loyalty/partials/campaign_cards.html
+ * Extracted: 2026-02-13
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css (list-row-card system)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Campaign card styles using CSS variables */
+.campaign-card {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Quiet text helper */
+.quiet-text {
+    color: var(--body-quiet-color);
+}
+
+/* Campaign type icon colors */
+.list-row-card-icon.campaign {
+    color: var(--button-fg);
+}
+
+.list-row-card-icon.campaign.trigger_based,
+.list-row-card-icon.campaign.trigger-based {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-fg) 100%);
+}
+
+.list-row-card-icon.campaign.scheduled {
+    background: linear-gradient(135deg, var(--info-color) 0%, var(--accent) 100%);
+}
+
+.list-row-card-icon.campaign.manual {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-fg) 100%);
+}
+
+.list-row-card-icon.campaign.behavioral {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--purple-accent) 100%);
+}
+
+/* Status badge variants */
+.campaign-status-draft {
+    background: var(--body-quiet-color);
+    color: var(--body-bg);
+}
+
+.campaign-status-archived {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+    border: 1px solid var(--border-color);
+}
+
+/* Completion rate colors */
+.completion-rate-high {
+    color: var(--success-fg);
+    font-weight: 600;
+}
+
+.completion-rate-medium {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+.completion-rate-low {
+    color: var(--error-fg);
+    font-weight: 600;
+}
+
+/* Empty state styling */
+.campaign-empty-state {
+    text-align: center;
+    padding: 60px 40px;
+    background: var(--darkened-bg);
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+}
+
+.campaign-empty-state-icon {
+    font-size: 64px;
+    color: var(--body-quiet-color);
+    margin-bottom: 24px;
+}
+
+.campaign-empty-state-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 12px 0;
+}
+
+.campaign-empty-state-subtitle {
+    font-size: 16px;
+    color: var(--body-quiet-color);
+    margin: 0 0 24px 0;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.campaign-empty-state-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px 0;
+    display: inline-block;
+    text-align: left;
+}
+
+.campaign-empty-state-benefits li {
+    padding: 8px 0;
+    color: var(--body-fg);
+    font-size: 14px;
+}
+
+.campaign-empty-state-benefits li i {
+    color: var(--success-fg);
+    margin-right: 10px;
+    width: 16px;
+}
+
+.campaign-empty-state-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--default-button-bg);
+    color: var(--button-fg);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s ease;
+}
+
+.campaign-empty-state-cta:hover {
+    background: var(--default-button-hover-bg);
+    color: var(--button-fg);
+}
+
+/* Responsive - Campaign-specific empty state rules only */
+@media (max-width: 768px) {
+    .campaign-empty-state {
+        padding: 40px 20px;
+    }
+
+    .campaign-empty-state-icon {
+        font-size: 48px;
+    }
+
+    .campaign-empty-state-title {
+        font-size: 20px;
+    }
+}

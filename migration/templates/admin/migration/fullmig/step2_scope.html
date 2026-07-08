@@ -1,0 +1,77 @@
+{% extends "admin/migration/sync/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-th-list"></i>
+        {% trans "Select Migration Scope" %}
+    </h3>
+    <p>{% trans "Choose which data categories to include in the migration. Dependencies will be automatically included." %}</p>
+</div>
+
+<form method="post" id="scope-form">
+    {% csrf_token %}
+
+    <div class="content-box">
+        <div class="category-select-all">
+            <label class="checkbox-label">
+                <input type="checkbox" id="select-all-categories" checked>
+                <strong>{% trans "Select All Categories" %}</strong>
+            </label>
+        </div>
+
+        {% for group_key, group in grouped_categories.items %}
+        <div class="category-group">
+            <div class="category-group-header">
+                <i class="{{ group.icon }}"></i>
+                <strong>{{ group.label }}</strong>
+                <span class="category-group-description">{{ group.description }}</span>
+            </div>
+            <div class="category-group-items">
+                {% for cat_key, cat in group.categories.items %}
+                <label class="category-item">
+                    <input type="checkbox" name="categories" value="{{ cat_key }}"
+                           {% if not job.selected_categories or cat_key in job.selected_categories %}checked{% endif %}>
+                    <div class="category-item-info">
+                        <strong>{{ cat.label }}</strong>
+                        <span class="category-description">{{ cat.description }}</span>
+                        {% if cat.large_data %}
+                        <span class="category-badge large-data-badge">
+                            <i class="fas fa-database"></i> {% trans "Large Data" %}
+                        </span>
+                        {% endif %}
+                        {% if cat.has_credentials %}
+                        <span class="category-badge credential-badge">
+                            <i class="fas fa-key"></i> {% trans "Has Credentials" %}
+                        </span>
+                        {% endif %}
+                        {% if cat.dependencies %}
+                        <span class="category-badge dependency-badge">
+                            <i class="fas fa-link"></i> {% trans "Requires:" %} {{ cat.dependencies|join:", " }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="wizard-actions">
+        <a href="{% url 'admin:fullmig_wizard_step1' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back" %}
+        </a>
+        <button type="submit" class="btn btn-primary">
+            {% trans "Next: Pre-flight Check" %}
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'migration/js/sync_categories.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% load static i18n element_tags merchant_trans %}
+{# Container Element v3.0.0 - Unified template for visual builder and frontend #}
+{% with has_children=element.child_elements.exists %}
+
+<div class="pb-container"
+     id="container-{{ element.id }}"
+     data-element-id="{{ element.id }}"
+     data-element-type="container"
+     {% if element.content.custom_class %}class="{{ element.content.custom_class }}"{% endif %}
+     {% hover_animation_attrs element %}
+     {% if is_visual_builder %}data-builder{% endif %}
+     {% if element.content.mobile_stack %}data-mobile-stack{% endif %}
+     {% if element.content.background %}data-has-bg{% endif %}
+     {% if element.content.data_attributes %}
+       {% for key, value in element.content.data_attributes.items %}
+         data-{{ key }}="{{ value }}"
+       {% endfor %}
+     {% endif %}
+     style="
+       {% if element.content.mobile_stack %}--mobile-gap: {{ element.content.mobile_gap|default:element.content.gap|default:'16px' }};{% endif %}
+       {# Layout Display - Only set on pb-container for frontend (no pb-container-content wrapper) #}
+       {# In visual builder, pb-container-content handles the flex/grid layout #}
+       {% if not is_visual_builder %}
+         display: {{ element.content.layout|default:'flex' }};
+         {% if element.content.layout == 'flex' %}
+           flex-direction: {{ element.content.direction|default:'row' }};
+           flex-wrap: {{ element.content.wrap|default:'wrap' }};
+           justify-content: {{ element.content.justify_content|default:'flex-start' }};
+           align-items: {{ element.content.align_items|default:'stretch' }};
+         {% elif element.content.layout == 'grid' %}
+           grid-template-columns: {{ element.content.grid_columns|default:'1fr' }};
+         {% endif %}
+         gap: {{ element.content.gap|default:'16px' }};
+       {% endif %}
+
+       {# Sizing #}
+       width: {{ element.content.width|default:'100%' }};
+       {% if element.content.max_width %}max-width: {{ element.content.max_width }};{% endif %}
+       {% if element.content.min_height %}min-height: {{ element.content.min_height }};{% endif %}
+
+       {# Overflow #}
+       overflow: {{ element.content.overflow|default:'visible' }};
+
+       {# Flex properties when container is a child of another flex container #}
+       {% if element.content.flex %}flex: {{ element.content.flex }};{% endif %}
+       {% if element.content.min_width %}min-width: {{ element.content.min_width }};{% endif %}
+       {% if element.content.flex_grow %}flex-grow: {{ element.content.flex_grow }};{% endif %}
+       {% if element.content.flex_shrink %}flex-shrink: {{ element.content.flex_shrink }};{% endif %}
+       {% if element.content.flex_basis %}flex-basis: {{ element.content.flex_basis }};{% endif %}
+
+       {# Utility Editor Outputs - these are complete CSS from editors #}
+       {% if element.content.background %}{{ element.content.background }}{% endif %}
+       {% if element.content.border %}{{ element.content.border }}{% endif %}
+       {% if element.content.spacing %}{{ element.content.spacing }}{% endif %}
+       {% if element.content.box_shadow %}box-shadow: {{ element.content.box_shadow }};{% endif %}
+
+       {# Z-Index and Opacity #}
+       {% if element.content.z_index %}z-index: {{ element.content.z_index }};{% endif %}
+       {% if element.content.opacity %}opacity: {{ element.content.opacity }};{% endif %}
+
+       {# Custom Styles #}
+       {% if element.content.custom_styles %}{{ element.content.custom_styles }}{% endif %}
+     ">
+
+  {# Layout Picker - Only shown in builder for new containers without children #}
+  {% if is_visual_builder and not has_children and not element.content.layout_initialized %}
+    {% include 'page_builder/elements/container/_layout_picker.html' %}
+  {% else %}
+
+    {# Container Content - Must mirror parent's flex settings for proper child layout #}
+    <div class="pb-container-content" style="
+      display: {{ element.content.layout|default:'flex' }};
+      {% if element.content.layout == 'flex' %}
+        flex-direction: {{ element.content.direction|default:'row' }};
+        flex-wrap: {{ element.content.wrap|default:'wrap' }};
+        justify-content: {{ element.content.justify_content|default:'flex-start' }};
+        align-items: {{ element.content.align_items|default:'stretch' }};
+      {% elif element.content.layout == 'grid' %}
+        grid-template-columns: {{ element.content.grid_columns|default:'1fr' }};
+      {% endif %}
+      gap: {{ element.content.gap|default:'16px' }};
+      width: 100%;
+      flex: 1 1 100%;
+    ">
+      {# Render child elements #}
+      {% for child in element.child_elements.all|dictsort:"order" %}
+        {% if is_visual_builder %}
+          {# Visual Builder: Wrap in flex container for layout control #}
+          <div class="container-child-wrapper"
+               data-child-id="{{ child.id }}"
+               style="
+                 {# For column layouts: don't grow vertically, use content height #}
+                 {# For row layouts: expand to fill available horizontal space #}
+                 {% if element.content.direction == 'column' or element.content.direction == 'column-reverse' %}
+                   flex: {{ child.content.flex|default:'0 0 auto' }};
+                   width: 100%;
+                 {% else %}
+                   flex: {{ child.content.flex|default:'1 1 auto' }};
+                   min-width: {{ child.content.min_width|default:'0' }};
+                 {% endif %}
+               ">
+            {% include 'page_builder/partials/visual_builder_element.html' with element=child %}
+          </div>
+        {% else %}
+          {# Frontend: Direct render with render_element tag #}
+          {% render_element child %}
+        {% endif %}
+      {% endfor %}
+
+      {# Drop Zone - Only in builder mode for empty containers #}
+      {# When container has children, we use hidden insert zones between elements (via JS) #}
+      {% if is_visual_builder and not has_children %}
+        <div class="container-drop-zone container-empty-zone"
+             data-container-id="{{ element.id }}"
+             style="
+               min-height: 80px;
+               border: 2px dashed var(--primary, #3b82f6);
+               border-radius: 8px;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               color: var(--primary, #3b82f6);
+               font-size: 14px;
+               background: rgba(59, 130, 246, 0.05);
+               transition: all 0.2s ease;
+               width: 100%;
+             ">
+          <div style="text-align: center; pointer-events: none;">
+            <i class="fas fa-plus-circle" style="font-size: 20px; margin-bottom: 4px; display: block;"></i>
+            {% mtrans "Drop elements here" %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+
+{% endwith %}

@@ -1,0 +1,386 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with name=original.name %}Edit Webhook: {{ name }}{% endblocktrans %}
+    {% else %}
+        {% trans "Add Webhook Endpoint" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'webhooks/admin/css/webhookendpoint_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'webhooks/admin/js/webhookendpoint_form.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="webhookendpoint-change-form">
+
+{% if original %}
+    {# === EDIT MODE === #}
+
+    {# --- BANNER HEADER (Style A) --- #}
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-plug"></i>
+                    {% trans "Edit Webhook:" %} {{ original.name }}
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item" title="{{ original.url }}">
+                        <i class="fas fa-link"></i>
+                        {% if original.url|length > 50 %}
+                            {{ original.url|truncatechars:50 }}
+                        {% else %}
+                            {{ original.url }}
+                        {% endif %}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-fingerprint"></i>
+                        {{ original.id|truncatechars:12 }}
+                    </span>
+                    {% if original.is_disabled_by_failures %}
+                    <span class="status-badge disabled">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Disabled" %}
+                    </span>
+                    {% elif original.is_active %}
+                    <span class="status-badge active">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% else %}
+                    <span class="status-badge inactive">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+                    <span class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        {% blocktrans with date=original.created_at|date:"N j, Y" %}Created {{ date }}{% endblocktrans %}
+                    </span>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="wh-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="wh-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- FORM --- #}
+    <form method="post" id="webhookendpoint_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {# --- TAB NAVIGATION --- #}
+        {% if not is_popup %}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="events" role="tab" aria-selected="false">
+                <i class="fas fa-bolt"></i>
+                <span class="label">{% trans "Events" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="config" role="tab" aria-selected="false">
+                <i class="fas fa-cog"></i>
+                <span class="label">{% trans "Configuration" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="security" role="tab" aria-selected="false">
+                <i class="fas fa-shield-alt"></i>
+                <span class="label">{% trans "Security" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="health" role="tab" aria-selected="false">
+                <i class="fas fa-heartbeat"></i>
+                <span class="label">{% trans "Health & Status" %}</span>
+            </button>
+        </div>
+        {% endif %}
+
+        {# === TAB: BASIC === #}
+        <div class="admin-tab-content active" id="tab-basic" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-basic' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                    <p class="form-card-description">{% trans "Configure the endpoint name, URL, and activation status." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.field.name == 'is_active' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: EVENTS === #}
+        <div class="admin-tab-content" id="tab-events" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-events' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-bolt"></i> {% trans "Event Subscriptions" %}</h2>
+                    <p class="form-card-description">{% trans "Select the events this endpoint should receive. Use [\"*\"] to receive all events." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: CONFIGURATION === #}
+        <div class="admin-tab-content" id="tab-config" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-config' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-cog"></i> {% trans "Delivery Configuration" %}</h2>
+                    <p class="form-card-description">{% trans "Configure retry behavior and request timeout for this endpoint." %}</p>
+                    <div class="two-column-layout">
+                        {% for line in fieldset %}
+                            {% for field in line %}
+                                <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                    {{ field.field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: SECURITY === #}
+        <div class="admin-tab-content" id="tab-security" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-security' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-shield-alt"></i> {% trans "Security" %}</h2>
+                    <p class="form-card-description">{% trans "The secret is used to sign webhook payloads. Use the API to rotate the secret if needed." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: HEALTH & STATUS === #}
+        <div class="admin-tab-content" id="tab-health" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-health' in fieldset.classes or 'tab-timestamps' in fieldset.classes %}
+                <div class="form-card">
+                    {% if 'tab-health' in fieldset.classes %}
+                    <h2><i class="fas fa-heartbeat"></i> {% trans "Health & Status" %}</h2>
+                    <p class="form-card-description">{% trans "Delivery statistics and failure tracking for the last 24 hours." %}</p>
+                    {% else %}
+                    <h2><i class="fas fa-clock"></i> {% trans "Timestamps" %}</h2>
+                    {% endif %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# --- HIDDEN FIELDSETS for Django form processing --- #}
+        <div class="d-none">
+            {% for fieldset in adminform %}
+                {% if 'tab-basic' not in fieldset.classes and 'tab-events' not in fieldset.classes and 'tab-config' not in fieldset.classes and 'tab-security' not in fieldset.classes and 'tab-health' not in fieldset.classes and 'tab-timestamps' not in fieldset.classes %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row">{{ field.field }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# --- HIDDEN SUBMIT ROW --- #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% else %}
+    {# === ADD MODE (fallback — normally redirected to wizard) === #}
+
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-plug"></i>
+                    {% trans "Add Webhook Endpoint" %}
+                </h1>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="wh-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="wh-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- ADD MODE FORM --- #}
+    <form method="post" id="webhookendpoint_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {% for fieldset in adminform %}
+            {% if 'tab-health' not in fieldset.classes and 'tab-timestamps' not in fieldset.classes %}
+            <div class="form-card">
+                {% if fieldset.name %}
+                <h2>{{ fieldset.name }}</h2>
+                {% endif %}
+                {% if fieldset.description %}
+                <p class="form-card-description">{{ fieldset.description }}</p>
+                {% endif %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                        {% if not field.is_readonly %}
+                        {% if field.field.name == 'is_active' %}
+                        <div class="form-row field-{{ field.field.name }}">
+                            <label class="checkbox-label">
+                                {{ field.field }} {{ field.field.label }}
+                            </label>
+                            {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                        </div>
+                        {% else %}
+                        <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                            {{ field.field.errors }}
+                            {{ field.label_tag }}
+                            {{ field.field }}
+                            {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        {# --- HIDDEN SUBMIT ROW --- #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Loyaltycampaign List
+ *
+ * Description: Changelist styles for loyalty loyaltycampaign
+ * Template: loyalty/templates/admin/loyalty/loyaltycampaign/change_list.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ * - core/static/core/admin/css/changelist-utilities.css (shared changelist patterns)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Campaign-specific styles using CSS variables only */
+.campaign-card {
+    transition: all 0.2s ease;
+}
+
+.campaign-card.inactive {
+    opacity: 0.7;
+}
+
+/* Campaign type icon backgrounds */
+.list-row-card-icon.campaign {
+    color: var(--button-fg);
+}
+
+.list-row-card-icon.campaign.trigger {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-fg) 100%);
+}
+
+.list-row-card-icon.campaign.scheduled {
+    background: linear-gradient(135deg, var(--info-color) 0%, var(--accent) 100%);
+}
+
+.list-row-card-icon.campaign.manual {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-fg) 100%);
+}
+
+.list-row-card-icon.campaign.behavioral {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--purple-accent) 100%);
+}
+
+/* Status-specific styling */
+.campaign-status-draft {
+    background: var(--body-quiet-color);
+    color: var(--body-bg);
+}
+
+.campaign-status-archived {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+/* Completion rate colors */
+.completion-rate-high {
+    color: var(--success-fg);
+}
+
+.completion-rate-medium {
+    color: var(--warning-color);
+}
+
+.completion-rate-low {
+    color: var(--error-fg);
+}
+
+/* Hide default table view */
+#result_list {
+    display: none;
+}

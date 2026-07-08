@@ -1,0 +1,128 @@
+{% load i18n %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards" id="results-container">
+    {% for shift in shifts %}
+    <div class="list-row-card">
+        <div class="list-row-card-icon">
+            <i class="fas fa-user-clock text-primary icon-medium"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:pos_app_posshift_change' shift.pk %}">
+                    {{ shift.cashier.get_full_name|default:shift.cashier.username }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-cash-register"></i>
+                {{ shift.terminal.name }} &mdash;
+                {{ shift.terminal.warehouse.pos_display_name|default:shift.terminal.warehouse.name }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if shift.is_open %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-door-open"></i> {% trans "Open" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-door-closed"></i> {% trans "Closed" %}
+                    </span>
+                {% endif %}
+
+                {% if not shift.is_open and shift.cash_difference is not None %}
+                    {% if shift.cash_difference == 0 %}
+                        <span class="list-row-card-badge list-row-card-badge-success">
+                            <i class="fas fa-check"></i> {% trans "Balanced" %}
+                        </span>
+                    {% elif shift.cash_difference > -5 and shift.cash_difference < 5 %}
+                        <span class="list-row-card-badge list-row-card-badge-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ shift.cash_difference|floatformat:2 }}
+                        </span>
+                    {% else %}
+                        <span class="list-row-card-badge list-row-card-badge-error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ shift.cash_difference|floatformat:2 }}
+                        </span>
+                    {% endif %}
+                {% endif %}
+
+                {% if shift.total_transactions > 0 %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-receipt"></i> {{ shift.total_transactions }} {% trans "txns" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Sales" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-semibold">
+                        {{ shift.total_sales|floatformat:2 }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Transactions" %}</span>
+                    <span class="list-row-card-stat-value">{{ shift.total_transactions }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Refunds" %}</span>
+                    <span class="list-row-card-stat-value">{{ shift.total_refunds|floatformat:2 }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Opening Cash" %}</span>
+                    <span class="list-row-card-stat-value">{{ shift.opening_cash|floatformat:2 }}</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-play-circle"></i>
+                    <span>{% trans "Started" %}: {{ shift.started_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if shift.ended_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-stop-circle"></i>
+                    <span>{% trans "Ended" %}: {{ shift.ended_at|date:"M d, Y H:i" }}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span class="shift-duration">{{ shift.started_at|timesince:shift.ended_at }}</span>
+                </div>
+                {% else %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span class="shift-duration">{% trans "Still open" %} ({{ shift.started_at|timesince }})</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:pos_app_posshift_change' shift.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit shift' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:pos_app_posterminal_change' shift.terminal_id %}"
+               class="list-row-card-action"
+               title="{% trans 'View terminal' %}">
+                <i class="fas fa-cash-register"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-user-clock"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No shifts found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

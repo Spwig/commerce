@@ -1,0 +1,1487 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "POS API"
+msgstr "POS API"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "จำเป็นต้องมีใบอนุญาต POS ที่ถูกต้องเพื่อเข้าถึงจุดปลายทางนี้"
+
+msgid "POS access requires a staff account."
+msgstr "การเข้าถึง POS จำเป็นต้องใช้บัญชีพนักงาน"
+
+msgid "You are not assigned to this terminal."
+msgstr "คุณไม่ได้รับมอบหมายให้ใช้เทอร์มินัลนี้"
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "คุณไม่มีสิทธิ์: %(label)s."
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "การเลือกตัวแปรของ Bundle: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "รายการ ID BundleItem ที่ต้องการยกเว้น (เป็นตัวเลือก)"
+
+msgid "Search by email, phone, or name"
+msgstr "ค้นหาตามอีเมล โทรศัพท์ หรือชื่อ"
+
+msgid "ID of the product to adjust stock for."
+msgstr "ID ของสินค้าที่ต้องการปรับปรุงสต็อก"
+
+msgid "ID of the variant (required for variable products)."
+msgstr "ID ของตัวแปร (จำเป็นสำหรับสินค้าที่สามารถปรับแต่งได้)"
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"ประเภทของการปรับปรุง: \"receive\" เพิ่มสต็อก (เช่น การส่งของใหม่), "
+"\"damage\" ลดสต็อก (เช่น สินค้าชำรุด), \"recount\" "
+"ตั้งค่าจำนวนสต็อกที่มีอยู่เป็นค่าสัมบูรณ์, \"return\" เพิ่มสต็อกกลับ (เช่น "
+"การคืนสินค้าจากลูกค้า)"
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"สำหรับ receive/return: จำนวนหน่วยที่จะเพิ่ม. สำหรับ damage: "
+"จำนวนหน่วยที่จะลบ. สำหรับ recount: จำนวนสต็อกที่มีอยู่ใหม่เป็นค่าสัมบูรณ์."
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "คำอธิบายที่จำเป็นสำหรับการปรับแต่งนี้ (บันทึกการตรวจสอบ)"
+
+msgid "Optional UUID for offline deduplication."
+msgstr "UUID ที่เป็นทางเลือกสำหรับการกำจัดรายการซ้ำในโหมดออฟไลน์"
+
+msgid "Signed quantity delta."
+msgstr "ตัวแปรจำนวนสินค้าที่มีการลงนาม"
+
+msgid "Last four digits of card number (digits only)"
+msgstr "เลขสุดท้ายสี่หลักของหมายเลขบัตร (เฉพาะตัวเลขเท่านั้น)"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr ""
+"จำนวนเงินที่ต้องการเรียกเก็บ หากไม่ได้ระบุ จะเรียกเก็บยอดคงเหลือทั้งหมด"
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr ""
+"ID การชำระเงินจากผู้ให้บริการปลายทาง (เช่น ID PaymentIntent จาก Stripe)"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr ""
+"ID ของเครื่องอ่านที่เฉพาะเจาะจงต่อผู้ให้บริการ (เช่น Adyen POIID, Square "
+"device_id)"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "รหัสธุรกรรมเฉพาะผู้ให้บริการสำหรับการตรวจสอบสถานะ"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr ""
+"สถานะเริ่มต้น -- โดยทั่วไปเป็น \"pending\" สำหรับผู้ให้บริการแบบ async และ "
+"\"succeeded\" สำหรับ sync (Adyen)"
+
+msgid "Current payment status"
+msgstr "สถานะการชำระเงินปัจจุบัน"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "ไอดีการชำระเงินของผู้ให้บริการ (เมื่อสำเร็จ)"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "เหตุผลของการยกเลิก (เมื่อถูกยกเลิก)"
+
+msgid "POS staff login"
+msgstr "การเข้าสู่ระบบพนักงาน POS"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr ""
+"ยืนยันตัวตนของพนักงานเพื่อเข้าถึง POS คืนโทเค็นการเข้าถึงและโทเค็นรีเฟรช "
+"ใช้ระบบโทเค็นเดียวกับ Admin API (MobileTokenAuthentication)"
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "เข้าสู่ระบบสำเร็จ คืนค่า token และการตั้งค่าปลายทาง"
+
+msgid "Invalid credentials"
+msgstr "ข้อมูลไม่ถูกต้อง"
+
+msgid "User is not a staff member"
+msgstr "ผู้ใช้ไม่ใช่สมาชิกสตัฟฟ์"
+
+msgid "Refresh POS access token"
+msgstr "รีเฟรชโทเคนเข้าถึง POS"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "แลกโทเคนรีเฟรชเพื่อขอโทเคนเข้าถึงใหม่"
+
+msgid "New access token"
+msgstr "โทเคนเข้าถึงใหม่"
+
+msgid "Invalid or expired refresh token"
+msgstr "โทเคนรีเฟรชไม่ถูกต้องหรือหมดอายุ"
+
+msgid "POS logout"
+msgstr "ออกจากระบบ POS"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "ทำให้โทเคนเข้าถึงและโทเคนรีเฟรชปัจจุบันเป็นโมฆะ"
+
+msgid "Logged out successfully"
+msgstr "ออกจากระบบสำเร็จ"
+
+msgid "Get current POS cart"
+msgstr "ดึงตะกร้า POS ปัจจุบัน"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr ""
+"คืนตะกร้าสินค้าปัจจุบันสำหรับแคชิเยอร์ที่ได้รับการยืนยันตัวตน "
+"สร้างตะกร้าใหม่หากยังไม่มี จำเป็นต้องมีการยืนยันตัวตนของพนักงานและใบอนุญาต "
+"POS ที่ถูกต้อง"
+
+msgid "Add item to POS cart"
+msgstr "เพิ่มสินค้าลงในตะกร้า POS"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"เพิ่มสินค้าลงในตะกร้าของแคชเชียร์ รองรับการเพิ่มโดยใช้ ID สินค้าหรือบาร์โค้ด"
+" เมื่อระบุบาร์โค้ดโดยไม่มี product_id ระบบจะค้นหาสินค้าโดยอัตโนมัติ "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "สินค้าไม่ถูกต้อง รุ่นสินค้า หรือสต็อกไม่เพียงพอ"
+
+msgid "Update cart item quantity"
+msgstr "อัปเดตจำนวนสินค้าในตะกร้า"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"ปรับปรุงปริมาณของสินค้าในตะกร้า ตั้งค่าปริมาณเป็น 0 เพื่อลบสินค้า "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "จำนวนไม่ถูกต้องหรือสต็อกไม่เพียงพอ"
+
+msgid "Cart item not found"
+msgstr "ไม่พบสินค้าในตะกร้า"
+
+msgid "Remove item from cart"
+msgstr "ลบสินค้าออกจากตะกร้า"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"ลบสินค้าชิ้นหนึ่งออกจากตะกร้า ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต"
+" POS ที่ถูกต้อง"
+
+msgid "Apply voucher to cart"
+msgstr "ใช้คูปองในตะกร้า"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr ""
+"ใช้คูปอง/โค้ดส่วนลดกับตะกร้าสินค้า สามารถใช้คูปองได้เพียงหนึ่งใบเท่านั้น "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Invalid or expired voucher code"
+msgstr "รหัสคูปองไม่ถูกต้องหรือหมดอายุ"
+
+msgid "Remove voucher from cart"
+msgstr "ลบคูปองออกจากตะกร้า"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"ลบคูปองที่ใช้แล้วออกจากตะกร้า ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต"
+" POS ที่ถูกต้อง"
+
+msgid "No voucher applied"
+msgstr "ไม่มีคูปองที่ใช้งาน"
+
+msgid "Apply gift card to cart"
+msgstr "ใช้บัตรของขวัญในตะกร้า"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"ใช้โค้ดบัตรของขวัญกับตะกร้าสินค้าเพื่อครอบคลุมส่วนหนึ่งหรือทั้งหมดของยอดรวม "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "บัตรของขวัญไม่ถูกต้องหรือยอดเงินไม่เพียงพอ"
+
+msgid "Clear all items from cart"
+msgstr "ล้างสินค้าทั้งหมดในตะกร้า"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ลบสินค้า คูปอง และบัตรของขวัญทั้งหมดออกจากตะกร้า "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Apply manual discount to cart item"
+msgstr "ใช้ส่วนลดแบบมือถือกับรายการในตะกร้า"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ใช้ส่วนลดแบบมือถือของพนักงานกับสินค้าในตะกร้าเฉพาะ "
+"หากส่วนลดเกินข้อจำกัดของพนักงาน จะคืนค่า requires_approval=true "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Discount applied or requires approval"
+msgstr "ส่วนลดถูกใช้งานแล้วหรือต้องการการอนุมัติ"
+
+msgid "Invalid discount or not authorized"
+msgstr "ส่วนลดไม่ถูกต้องหรือไม่มีสิทธิ์"
+
+msgid "Remove manual discount from cart item"
+msgstr "ลบส่วนลดแบบมือถือออกจากรายการในตะกร้า"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ลบส่วนลดมืออาชีพจากสินค้าในตะกร้าเฉพาะ "
+"ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Discount removed"
+msgstr "ลบส่วนลดออก"
+
+msgid "Apply manual discount to cart"
+msgstr "ใช้ส่วนลดแบบมือถือกับตะกร้า"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ใช้ส่วนลดมืออาชีพกับตะกร้าทั้งหมด หากส่วนลดเกินขีดจำกัดของพนักงาน จะคืนค่า "
+"requires_approval=true ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS "
+"ที่ถูกต้อง"
+
+msgid "Remove manual discount from cart"
+msgstr "ลบส่วนลดแบบมือถือออกจากตะกร้า"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ลบส่วนลดมือของเจ้าหน้าที่ออกจากตะกร้าสินค้า "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Verify manager PIN"
+msgstr "ตรวจสอบ PIN ผู้จัดการ"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"ตรวจสอบว่า PIN ที่ให้มาเป็น PIN ของผู้จัดการที่สามารถอนุมัติส่วนลดได้หรือไม่"
+" หากเป็น PIN ที่ถูกต้อง จะคืนชื่อของผู้จัดการ "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "PIN verification result"
+msgstr "ผลการตรวจสอบ PIN"
+
+msgid "Approve discount with manager PIN"
+msgstr "อนุมัติส่วนลดด้วย PIN ผู้จัดการ"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"ใช้ส่วนลดที่เกินขีดจำกัดของพนักงานโดยต้องได้รับการอนุมัติจากผู้จัดการ "
+"ต้องใช้ PIN ของผู้จัดการที่ถูกต้องเพื่อดำเนินการ "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Discount approved and applied"
+msgstr "ส่วนลดได้รับการอนุมัติและใช้งานแล้ว"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "PIN หรือพารามิเตอร์ส่วนลดไม่ถูกต้อง"
+
+msgid "Park current cart"
+msgstr "จอดรถตะกร้าสินค้าปัจจุบัน"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"บันทึกสถานะตะกร้าสินค้าปัจจุบันเพื่อให้สามารถกู้คืนได้ในภายหลัง "
+"ใช้เมื่อลูกค้าต้องการหยุดพัก และลูกค้ารายอื่นต้องการรับบริการ "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Cart parked successfully"
+msgstr "เพิ่มตะกร้าไว้สำเร็จ"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "ตะกร้าสินค้าว่างหรือไม่สามารถจอดได้"
+
+msgid "List parked carts"
+msgstr "รายการตะกร้าที่ถูกเก็บไว้"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr ""
+"ดึงตะกร้าสินค้าที่จอดไว้ทั้งหมดสำหรับเทอร์มินัลปัจจุบัน "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "List of parked carts"
+msgstr "รายการตะกร้าที่ถูกเก็บไว้"
+
+msgid "Restore parked cart"
+msgstr "กู้คืนตะกร้าที่ถูกเก็บไว้"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr ""
+"กู้คืนตะกร้าสินค้าที่ถูกจอดไว้ โดยจะแทนที่เนื้อหาตะกร้าสินค้าปัจจุบัน "
+"ตะกร้าสินค้าปัจจุบันจะถูกลบออกก่อนการกู้คืน "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Cart restored successfully"
+msgstr "กู้คืนตะกร้าสำเร็จ"
+
+msgid "Current cart is not empty"
+msgstr "ตะกร้าปัจจุบันไม่ว่าง"
+
+msgid "Parked cart not found"
+msgstr "ไม่พบตะกร้าที่จอด"
+
+msgid "Delete parked cart"
+msgstr "ลบตะกร้าที่จอด"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ลบตะกร้าที่จอดไว้ถาวร ไม่สามารถยกเลิกได้ "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Parked cart deleted"
+msgstr "ตะกร้าที่จอดถูกลบแล้ว"
+
+msgid "List POS products"
+msgstr "รายการสินค้า POS"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"แสดงสินค้าที่สามารถขายได้ในร้าน หลังจากกรองตามช่องทางการขาย "
+"รวมระดับสต็อกเฉพาะคลังเมื่อระบุได้ถึงอุปกรณ์ปลายทาง "
+"สินค้าที่มีรูปภาพจะปรากฏก่อน จัดเรียงตามความนิยมในแต่ละคลัง"
+
+msgid "Search by name, SKU, or barcode"
+msgstr "ค้นหาตามชื่อ, SKU หรือบาร์โค้ด"
+
+msgid "Filter by category ID"
+msgstr "กรองตาม ID หมวดหมู่"
+
+msgid "Warehouse for stock levels"
+msgstr "คลังสินค้าสำหรับระดับสต็อก"
+
+msgid "Page number (default: 1)"
+msgstr "หมายเลขหน้า (ค่าเริ่มต้น: 1)"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 50, ค่าสูงสุด: 200)"
+
+msgid "Get product detail"
+msgstr "ดูรายละเอียดสินค้า"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr "คืนค่ารายละเอียดสินค้าทั้งหมด รวมถึงตัวเลือกและสต็อกในคลังสินค้า"
+
+msgid "Barcode lookup"
+msgstr "ค้นหาบาร์โค้ด"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr ""
+"ค้นหาสินค้าหรือตัวแปรโดยใช้บาร์โค้ด "
+"ค้นหาที่รวดเร็วและมีการจัดทำดัชนีสำหรับการสแกน"
+
+msgid "No product found with this barcode"
+msgstr "ไม่พบสินค้าที่มีบาร์โค้ดนี้"
+
+msgid "List categories"
+msgstr "รายการหมวดหมู่"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "แสดงโครงสร้างประเภทสินค้าสำหรับการนำทางสินค้า POS"
+
+msgid "Process cash payment"
+msgstr "ดำเนินการชำระเงินสด"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"ดำเนินการชำระเงินสดสำหรับธุรกรรม POS "
+"ตรวจสอบว่าจำนวนเงินที่ชำระครอบคลุมยอดรวมคำสั่งซื้อและคำนวณเงินทอน "
+"สร้างคำสั่งซื้อที่มีช่องทางเป็น 'pos' และบันทึกข้อมูลการชำระเงิน POS "
+"ต้องการให้มีการเปิดชิft บนเครื่องจ่ายเงิน "
+"ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "ตะกร้าว่างหรือเงินสดที่จ่ายไม่เพียงพอ"
+
+msgid "Process card payment"
+msgstr "ดำเนินการชำระเงินด้วยบัตร"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"ดำเนินการชำระเงินด้วยบัตรสำหรับธุรกรรม POS "
+"การประมวลผลบัตรถือว่าได้รับการจัดการโดยเครื่องปลายทางภายนอก "
+"จุดปลายทางนี้บันทึกข้อมูลอ้างอิงบัตรและตัวเลขสุดท้าย 4 หลัก "
+"ต้องการให้มีการเปิดชิft บนเครื่องจ่ายเงิน "
+"ต้องการการตรวจสอบสิทธิ์ของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Empty cart"
+msgstr "ตะกร้าว่าง"
+
+msgid "Check gift card balance"
+msgstr "ตรวจสอบยอดคงเหลือบัตรของขวัญ"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr ""
+"ตรวจสอบยอดคงเหลือของบัตรของขวัญสำหรับการชำระเงิน POS "
+"คืนยอดคงเหลือปัจจุบันหากบัตรมีความถูกต้อง "
+"หรือแสดงข้อความแสดงข้อผิดพลาดหากบัตรไม่ถูกต้อง "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่"
+
+msgid "Gift card balance info"
+msgstr "ข้อมูลยอดคงเหลือบัตรของขวัญ"
+
+msgid "Invalid gift card or missing code"
+msgstr "บัตรของขวัญไม่ถูกต้องหรือไม่มีรหัส"
+
+msgid "Process gift card payment"
+msgstr "ดำเนินการชำระเงินด้วยบัตรของขวัญ"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"ดำเนินการชำระเงิน POS โดยใช้บัตรของขวัญ "
+"ตรวจสอบว่าบัตรของขวัญมียอดคงเหลือเพียงพอ "
+"หากยอดคงเหลือของบัตรของขวัญน้อยกว่ายอดรวมคำสั่งซื้อ ให้ใช้ปลายทาง split "
+"tender แทน ต้องการการเปิด shift บนเครื่องจ่ายเงิน "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "ตะกร้าว่าง บัตรของขวัญไม่ถูกต้อง หรือยอดเงินไม่เพียงพอ"
+
+msgid "Process split tender payment"
+msgstr "ดำเนินการชำระเงินแบบแบ่งชำระ"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"ดำเนินการชำระเงินผ่าน POS โดยใช้วิธีการชำระเงินหลายแบบ (split tender) "
+"ยอดรวมของทุกการชำระเงินต้องครอบคลุมยอดรวมคำสั่งซื้อ "
+"หากยอดรวมสูงกว่ายอดรวมคำสั่งซื้อ จะคำนวณเงินทอนจากชำระเงินสดครั้งสุดท้าย "
+"ต้องมีการเปิดชิft บนเครื่อง POS "
+"และต้องการการตรวจสอบตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "ตะกร้าว่าง วิธีชำระเงินไม่ถูกต้อง หรือยอดเงินไม่เพียงพอ"
+
+msgid "Process terminal card payment"
+msgstr "ดำเนินการชำระเงินด้วยบัตรที่ตู้ขาย"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"ดำเนินการชำระเงินผ่าน POS ด้วยการชำระเงินผ่านเครื่องปลายทางบัตรที่ผสานรวม "
+"ต้องมีการรวบรวมการชำระเงินผ่าน SDK ของเครื่องปลายทางและได้รับ "
+"provider_payment_id (เช่น Stripe PaymentIntent) ก่อนหน้านี้ "
+"จุดปลายทางนี้จะตรวจสอบว่าการชำระเงินสำเร็จก่อนที่จะสร้างคำสั่งซื้อ "
+"ต้องมีการเปิดชิft บนเครื่อง POS "
+"และต้องการการตรวจสอบตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Empty cart or payment verification failed"
+msgstr "ตะกร้าว่าง หรือการตรวจสอบวิธีชำระเงินล้มเหลว"
+
+msgid "Search customers"
+msgstr "ค้นหาลูกค้า"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ค้นหาลูกค้าตามอีเมล โทรศัพท์ ชื่อ หรือนามสกุล แสดงผลได้สูงสุด 20 รายการ "
+"ต้องมีอย่างน้อย 2 ตัวอักษร ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต "
+"POS ที่ถูกต้อง"
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "ค้นหา (อีเมล หมายเลขโทรศัพท์ หรือชื่อ). ต้องมีอย่างน้อย 2 ตัวอักษร."
+
+msgid "Search query too short"
+msgstr "คำค้นหาสั้นเกินไป"
+
+msgid "Create walk-in customer"
+msgstr "สร้างลูกค้าที่มาถึงโดยตรง"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"สร้างลูกค้าใหม่สำหรับการขายลูกค้าที่มาที่ร้าน "
+"หากมีลูกค้าที่มีอีเมลเดียวกันอยู่แล้ว "
+"จะแสดงลูกค้าที่มีอยู่แทนที่จะสร้างลูกค้าซ้ำ "
+"อีเมลเป็นตัวเลือกสำหรับลูกค้าที่มาที่ร้านที่ไม่ต้องการระบุตัวตน "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Existing customer found with this email"
+msgstr "พบลูกค้าที่มีอยู่แล้วด้วยอีเมลนี้"
+
+msgid "Get customer details"
+msgstr "ดูรายละเอียดลูกค้า"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"ดึงข้อมูลลูกค้า รวมถึงข้อมูลการติดต่อและประวัติการสั่งซื้อล่าสุด "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "List stock levels for warehouse"
+msgstr "รายการระดับสต็อกสำหรับคลังสินค้า"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"คืนระดับสต็อกที่แบ่งหน้าสำหรับคลังสินค้าของเทอร์มินัล "
+"รองรับการค้นหาตามชื่อสินค้าหรือ SKU "
+"และการกรองสินค้าที่มีสต็อกต่ำหรือไม่มีสต็อก "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Search by product name or SKU"
+msgstr "ค้นหาตามชื่อสินค้าหรือ SKU"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "คืนรายการสินค้าที่มีจำนวนคงเหลือเท่ากับหรือต่ำกว่าระดับต่ำสุด"
+
+msgid "Only return items with zero available stock"
+msgstr "คืนรายการสินค้าที่มีสต็อกคงเหลือเป็นศูนย์เท่านั้น"
+
+msgid "Warehouse not determined"
+msgstr "ยังไม่กำหนดคลังสินค้า"
+
+msgid "Get product stock detail"
+msgstr "ดูรายละเอียดสต็อกสินค้า"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr ""
+"แสดงระดับสต็อกสำหรับสินค้าเฉพาะในคลังของเทอร์มินัล "
+"รวมถึงการแยกตามระดับตัวแปร ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต "
+"POS ที่ถูกต้อง"
+
+msgid "Check stock across all locations"
+msgstr "ตรวจสอบสต็อกทั่วทั้งสาขา"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"แสดงระดับสต็อกสำหรับสินค้าที่ทุกสถานที่คลังสินค้า "
+"มีประโยชน์ในการตรวจสอบว่าสินค้าที่หมดสต็อกสามารถหาได้ที่สถานที่อื่นหรือไม่ "
+"คลังของเทอร์มินัลปัจจุบันจะถูกทำเครื่องหมายด้วย is_current=true "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Adjust stock levels"
+msgstr "ปรับปรุงระดับสต็อก"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"ปรับปรุงสต็อกของสินค้าในคลังของเตอร์มินัล มีการปรับปรุง 4 ประเภท ได้แก่ "
+"'receive' (เพิ่มสต็อกจากสินค้าที่ส่งมา), 'damage' "
+"(ลบสต็อกที่เสียหายหรือสูญหาย), 'recount' (ตั้งค่า on_hand "
+"ที่แน่นอนจากนับสต็อกจริง), 'return' (เพิ่มสต็อกกลับจากสินค้าคืนของลูกค้า) "
+"สร้างบันทึกการตรวจสอบ StockMovement ที่ไม่สามารถแก้ไขได้ "
+"ต้องการการยืนยันตัวตนของพนักงาน ใบอนุญาต POS ที่ถูกต้อง และสิทธิ์ "
+"pos_stock_adjustment"
+
+msgid "Stock adjusted successfully"
+msgstr "ปรับปรุงสต็อกสำเร็จ"
+
+msgid "Validation error or warehouse not determined"
+msgstr "เกิดข้อผิดพลาดในการตรวจสอบ หรือไม่สามารถระบุคลังสินค้าได้"
+
+msgid "Permission denied or POS license required"
+msgstr "ไม่สามารถเข้าถึงได้ หรือต้องการใบอนุญาต POS"
+
+msgid "Product or stock item not found"
+msgstr "ไม่พบสินค้าหรือรายการสต็อก"
+
+msgid "List stock movement history"
+msgstr "รายการประวัติการเคลื่อนไหวสต็อก"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"คืนบันทึกการเคลื่อนไหวสต็อกที่แบ่งหน้าสำหรับคลังสินค้าของเทอร์มินัล "
+"ใช้ได้ดีสำหรับตรวจสอบการเปลี่ยนแปลงสต็อกล่าสุด (การปรับปรุง การเสียหาย "
+"การนับใหม่ การคืนสินค้า) รองรับการกรองตามสินค้าและประเภทการเคลื่อนไหว "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Filter movements by product ID"
+msgstr "กรองการเคลื่อนไหวโดยใช้ ID สินค้า"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr ""
+"ประเภทการเคลื่อนไหวที่ควรรวมกันด้วยเครื่องหมายจุลภาค (เช่น 'damage,recount')"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 20, ค่าสูงสุด: 100)"
+
+msgid "Get customer loyalty info"
+msgstr "ดึงข้อมูลความภักดีของลูกค้า"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"ดึงสถานะสมาชิก, ระดับ, และยอดคะแนนสะสมของลูกค้า คืนค่า `is_member: false` "
+"หากลูกค้าไม่มีสมาชิกความภักดีที่ใช้งานอยู่ "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"ข้อมูลสมาชิกความภักดี `is_member` "
+"บ่งบอกว่าลูกค้ามีสมาชิกที่ใช้งานอยู่หรือไม่ เมื่อเป็นจริง จะรวม `tier_name`,"
+" `tier_color`, และ `available_points`"
+
+msgid "Preview loyalty points for cart"
+msgstr "แสดงคะแนนความภักดีสำหรับตะกร้าสินค้า"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"คำนวณคะแนนความภักดีที่ลูกค้าจะได้รับสำหรับยอดตะกร้าที่กำหนด "
+"หากลูกค้าไม่มีสมาชิกความภักดีที่ใช้งานอยู่จะคืนค่า 0 "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr "ค่ารวมตะกร้าในรูปแบบทศนิยม (เช่น '49.99') ค่าเริ่มต้นคือ '0'"
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr ""
+"การดูตัวอย่างคะแนน. `points_preview` "
+"คือจำนวนคะแนนที่ลูกค้าจะได้รับสำหรับยอดตะกร้าที่กำหนด"
+
+msgid "List POS orders"
+msgstr "รายการคำสั่งซื้อ POS"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"คืนคำสั่งซื้อพร้อมการกรองขั้นสูงสำหรับช่วงเวลา ที่มา ลูกค้า แคชเชียร์ "
+"และการค้นหา รองรับการดูคำสั่งซื้อออนไลน์สำหรับสถานการณ์คืนสินค้า "
+"ค่าเริ่มต้น: คำสั่งซื้อในวันนี้จากเตอร์มินัลนี้เท่านั้น โหมดค้นหา: เมื่อระบุ"
+" 'search' การกรองวันที่/ที่มา/แคชเชียร์จะถูกข้ามเพื่อค้นหาคำสั่งซื้อใด ๆ "
+"ตามหมายเลข ชื่อลูกค้า อีเมล หรือเบอร์โทรศัพท์ "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr ""
+"วันเริ่มต้นสำหรับการกรองช่วงเวลา (รูปแบบ ISO, ค่าเริ่มต้น: วันนี้) "
+"จะถูกมองข้ามเมื่อมีการค้นหา"
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr ""
+"วันสิ้นสุดสำหรับการกรองช่วงเวลา (รูปแบบ ISO, ค่าเริ่มต้น: วันนี้) "
+"จะถูกมองข้ามเมื่อมีการค้นหา"
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr ""
+"ตัวกรองแหล่งที่มาของคำสั่งซื้อ: this_terminal (ค่าเริ่มต้น), all_pos, all "
+"(รวมเว็บ). จะถูกเพิกเฉยเมื่อมีการค้นหา"
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr "กรองตาม ID ผู้ใช้ลูกค้า ถ้ามีการค้นหา จะถูกมองข้าม"
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr "กรองตาม ID พนักงานแคชเชียร์ ถ้ามีการค้นหา จะถูกมองข้าม"
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr ""
+"ค้นหาคำสั่งซื้อทั้งหมดได้โดยใช้หมายเลขคำสั่งซื้อ ชื่อลูกค้า อีเมล "
+"หรือเบอร์โทรศัพท์ ข้ามการกรองตามวันที่/แหล่งที่มา"
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "กรองตามสถานะคำสั่งซื้อ (ใช้ได้ในทั้งสองโหมด)"
+
+msgid "Get order details"
+msgstr "ดึงรายละเอียดคำสั่งซื้อ"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"แสดงรายละเอียดคำสั่งซื้อทั้งหมด รวมถึงรายการสินค้าและการชำระเงิน "
+"รองรับทั้งคำสั่งซื้อจาก POS และเว็บไซต์ (สำหรับสถานการณ์คืนสินค้า) "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Get receipt data for printing"
+msgstr "ดึงข้อมูลใบเสร็จสำหรับการพิมพ์"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"ส่งข้อมูลที่จัดรูปแบบเป็นใบเสร็จสำหรับคำสั่งซื้อ POS รวมถึงข้อมูลร้านค้า "
+"รายการสินค้า การชำระเงิน และข้อความในส่วนท้าย "
+"ออกแบบมาสำหรับเครื่องพิมพ์ความร้อน ESC/POS "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Process order refund"
+msgstr "ดำเนินการคืนเงินคำสั่งซื้อ"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"ดำเนินการคืนเงินเต็มจำนวนหรือบางส่วนสำหรับคำสั่งซื้อ POS "
+"สำหรับการคืนเงินบางส่วน โปรดระบุรายการและจำนวนสินค้าที่ต้องคืนเงิน "
+"สร้างบันทึกคืนเงินและอัปเดตยอดรวมคำสั่งซื้อและยอดรวมช่วงเวลา "
+"ต้องการมีช่วงเวลาที่เปิดอยู่บนเทอร์มินัล "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Refund processed successfully"
+msgstr "ดำเนินการคืนเงินสำเร็จ"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "คำขอคืนเงินไม่ถูกต้อง หรือคำสั่งซื้อได้รับการคืนเงินแล้ว"
+
+msgid "Void a POS order"
+msgstr "ยกเลิกคำสั่งซื้อ POS"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"ยกเลิกคำสั่งซื้อ POS จากช่วงเวลาการทำงานปัจจุบัน "
+"สามารถยกเลิกได้เฉพาะคำสั่งซื้อที่ถูกวางในช่วงเวลาทำงานปัจจุบันเท่านั้น "
+"การยกเลิกนี้จะทำให้เกิดการคืนเงินเต็มจำนวนและยกเลิกการเปลี่ยนแปลงด้านการชำระเงินและสต็อกสินค้าทั้งหมด"
+" ต้องมีช่วงเวลาทำงานเปิดอยู่บนเครื่องเทอร์มินัล "
+"ต้องมีการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Order voided successfully"
+msgstr "ยกเลิกคำสั่งซื้อสำเร็จ"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "ไม่สามารถยกเลิกคำสั่งซื้อได้ (ไม่ได้มาจากช่วงเวลาปัจจุบัน)"
+
+msgid "List POS cashiers"
+msgstr "รายการแคชเชียร์ POS"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"แสดงรายการพนักงานที่เคยดำเนินการคำสั่งซื้อ POS "
+"ใช้ในการเติมข้อมูลในเมนูกรองแคชเชียร์ "
+"ต้องมีการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "List of cashiers"
+msgstr "รายการแคชเชียร์"
+
+msgid "Send digital receipt"
+msgstr "ส่งใบเสร็จดิจิทัล"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ส่งใบเสร็จแบบดิจิทัลให้ลูกค้าผ่านทางอีเมล เว็บแชนแนล หรือ WhatsApp "
+"ใบเสร็จจะถูกส่งแบบอะซิงโครนัสผ่านงาน Celery "
+"ต้องการการตรวจสอบสิทธิ์ของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Receipt queued for sending"
+msgstr "ใบเสร็จกำลังรอการส่ง"
+
+msgid "Get receipt sending status"
+msgstr "ดึงสถานะการส่งใบเสร็จ"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr ""
+"ตรวจสอบว่าใบเสร็จแบบดิจิทัลใดที่ถูกส่งสำหรับคำสั่งซื้อ "
+"คืนค่าเวลาที่ส่งสำหรับอีเมลและ SMS/WhatsApp"
+
+msgid "Receipt status"
+msgstr "สถานะใบเสร็จ"
+
+msgid "Get current shift summary"
+msgstr "ดึงสรุปช่วงเวลาปัจจุบัน"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"แสดงสรุปช่วงเวลาทำงานที่เปิดอยู่ของพนักงานขายปัจจุบันบนเครื่อง POS "
+"รวมถึงยอดรวม จำนวนธุรกรรม และการแบ่งประเภทตามวิธีการชำระเงิน "
+"หากไม่มีช่วงเวลาทำงานที่เปิดอยู่ จะคืนค่า null "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Open a new shift"
+msgstr "เปิดช่วงเวลาใหม่"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"เริ่มช่วงเวลาทำงานใหม่บนเครื่อง POS "
+"อนุญาตให้มีช่วงเวลาทำงานที่เปิดอยู่ได้เพียงหนึ่งช่วงต่อเครื่อง POS ทุกครั้ง "
+"บันทึกจำนวนเงินสดที่เริ่มต้น ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS "
+"ที่ถูกต้อง"
+
+msgid "Invalid opening cash amount"
+msgstr "จำนวนเงินเริ่มต้นไม่ถูกต้อง"
+
+msgid "A shift is already open on this terminal"
+msgstr "มีช่วงเวลาทำงานเปิดอยู่แล้วบนเครื่องนี้"
+
+msgid "Close current shift"
+msgstr "ปิดกะปัจจุบัน"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"ปิดรอบการทำงานที่เปิดอยู่ "
+"บันทึกจำนวนเงินสดที่เหลือและคำนวณความแตกต่างระหว่างเงินสดที่คาดการณ์กับเงินสดจริง"
+" ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Record cash movement"
+msgstr "บันทึกการเคลื่อนไหวของเงินสด"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"บันทึกการเคลื่อนไหวของเงินสด เช่น การเพิ่มเงินทอน การถอนเงินสำหรับการฝาก "
+"หรือเงินสดเล็กน้อย ต้องการรอบการทำงานที่เปิดอยู่บนเครื่องปลายทาง "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Cash movement recorded"
+msgstr "บันทึกการเคลื่อนไหวของเงินสดเรียบร้อยแล้ว"
+
+msgid "Invalid movement data"
+msgstr "ข้อมูลการเคลื่อนไหวไม่ถูกต้อง"
+
+msgid "Get daily sales report"
+msgstr "รับรายงานยอดขายรายวัน"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"ส่งรายงานยอดขายรายวันแบบรวมสำหรับเครื่องจุดขาย รวมถึงยอดรวม จำนวนธุรกรรม "
+"ค่าเฉลี่ยของธุรกรรม และการแยกประเภทตามวิธีการชำระเงิน "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Report date (ISO format, default: today)"
+msgstr "วันที่รายงาน (รูปแบบ ISO, ค่าเริ่มต้น: วันนี้)"
+
+msgid "Get top selling products"
+msgstr "รับรายการสินค้าขายดี"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr ""
+"ส่งรายการสินค้าขายดีที่สุดสำหรับเครื่องจุดขายในวันที่กำหนด "
+"จัดอันดับตามปริมาณการขาย ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS "
+"ที่ถูกต้อง"
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "จำนวนสินค้าที่จะคืน (ค่าเริ่มต้น: 10, สูงสุด: 50)"
+
+msgid "Sync products since timestamp"
+msgstr "ซิงค์สินค้าตั้งแต่เวลาที่ระบุ"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"คืนรายการสินค้าที่ถูกสร้างหรืออัปเดตตั้งแต่เวลาที่กำหนดไว้ ใช้สำหรับการส "
+"同步สินค้าแบบเพิ่มเติมไปยังฐานข้อมูลท้องถิ่นของเทอร์มินัล POS คืน sync_token "
+"สำหรับคำขอการส 同步ครั้งต่อไป ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต "
+"POS ที่ถูกต้อง"
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr ""
+"เวลาสติมแสตมป์ ISO เพื่อดึงการเปลี่ยนแปลงตั้งแต่เวลาที่ระบุ "
+"ไม่ระบุเพื่อซิงค์ทั้งหมด"
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "จำนวนรายการต่อหน้า (ค่าเริ่มต้น: 100, สูงสุด: 200)"
+
+msgid "Sync customers since timestamp"
+msgstr "ซิงค์ลูกค้าตั้งแต่เวลาที่ระบุ"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"คืนลูกค้าที่ถูกสร้างหรือสั่งซื้อตั้งแต่เวลาที่กำหนดไว้ "
+"ใช้สำหรับการค้นหาลูกค้าแบบออฟไลน์ "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Customer sync data"
+msgstr "ข้อมูลซิงค์ลูกค้า"
+
+msgid "Upload offline transactions"
+msgstr "อัปโหลดธุรกรรมออฟไลน์"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"อัปโหลดรายการธุรกรรมแบบแบตช์ที่ถูกประมวลผลขณะที่เทอร์มินัลออฟไลน์ "
+"แต่ละรายการธุรกรรมจะสร้างคำสั่งซื้อพร้อมสินค้าและการชำระเงิน ใช้ local_id "
+"เพื่อความสม่ำเสมอ -- การอัปโหลดซ้ำจะถูกตรวจจับและข้ามไป "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Upload results with success/failure per transaction"
+msgstr "อัปโหลดผลลัพธ์พร้อมสถานะสำเร็จ/ล้มเหลวต่อรายการธุรกรรม"
+
+msgid "Get sync status"
+msgstr "ดูสถานะการซิงค์"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"คืนค่าเวลาของเซิร์ฟเวอร์และจำนวนข้อมูลในฐานข้อมูลสำหรับการวางแผนการซิงค์ "
+"ต้องการการยืนยันตัวตนของพนักงานและใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "Get sync version info"
+msgstr "ดูข้อมูลเวอร์ชันการซิงค์"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr ""
+"คืนค่าเวอร์ชัน API "
+"และเวอร์ชันโครงสร้างข้อมูลสำหรับการตรวจสอบความเข้ากันได้ของไคลเอนต์ "
+"ไคลเอนต์ควรล้างข้อมูลและซิงค์อีกครั้งเมื่อเวอร์ชันโครงสร้างข้อมูลเพิ่มขึ้น"
+
+msgid "Version information"
+msgstr "ข้อมูลเวอร์ชัน"
+
+msgid "Upload offline stock adjustments"
+msgstr "อัปโหลดการปรับปรุงสต็อกแบบออฟไลน์"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"อัปโหลดปรับปรุงสต็อกแบบแบตช์ที่ถูกคิวไว้ขณะที่เทอร์มินัลออฟไลน์ "
+"แต่ละการปรับปรุงใช้คีย์ความไม่ซ้ำกันเพื่อป้องกันการซ้ำกัน "
+"ต้องการการยืนยันตัวตนของเจ้าหน้าที่ ใบอนุญาต POS ที่ถูกต้อง "
+"และสิทธิ์ในการปรับปรุงสต็อก"
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "อัปโหลดผลลัพธ์พร้อมสถานะสำเร็จ/ล้มเหลวต่อการปรับปรุง"
+
+msgid "POS license or permission required"
+msgstr "ต้องการใบอนุญาตหรือสิทธิ์ POS"
+
+msgid "Sync orders for offline cache"
+msgstr "ซิงค์คำสั่งซื้อสำหรับแคชออฟไลน์"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"ส่งคำสั่งซื้อสำหรับการแคชออฟไลน์บนเทอร์มินัล POS เทอร์มินัล POS "
+"จะได้รับความสำคัญมากกว่าคำสั่งซื้อจากเว็บไซต์ภายในขีดจำกัดการซิงค์ของเทอร์มินัล"
+" รองรับการซิงค์แบบ delta ผ่านพารามิเตอร์ 'since' "
+"ต้องการการตรวจสอบความถูกต้องของเจ้าหน้าที่และใบอนุญาต POS ที่ถูกต้อง"
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr ""
+"ตัวอย่างเวลา ISO สำหรับการซิงค์แบบ delta ไม่ต้องใส่หากต้องการซิงค์แบบเต็ม"
+
+msgid "Register POS terminal"
+msgstr "ลงทะเบียนอุปกรณ์ POS"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr ""
+"ลงทะเบียนอุปกรณ์ใหม่เป็นเทอร์มินัล POS โดยใช้รหัสคู่กัน "
+"รหัสคู่กันจะถูกสร้างขึ้นในแดชบอร์ดผู้ดูแลเมื่อสร้างเทอร์มินัล"
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "อุปกรณ์ปลายทางได้ลงทะเบียนสำเร็จ คืนค่าการตั้งค่าอุปกรณ์ปลายทาง"
+
+msgid "Invalid or expired pairing code"
+msgstr "รหัสคู่ที่ไม่ถูกต้องหรือหมดอายุ"
+
+msgid "Get terminal configuration"
+msgstr "ดึงการตั้งค่าอุปกรณ์ปลายทาง"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr "คืนค่าการตั้งค่าของอุปกรณ์ปลายทางในปัจจุบัน รวมถึงการตั้งค่าฮาร์ดแวร์"
+
+msgid "Terminal heartbeat"
+msgstr "การตรวจสอบชีพจรของอุปกรณ์ปลายทาง"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr "รายงานว่าอุปกรณ์ปลายทางออนไลน์ ควรเรียกทุก 60 วินาที"
+
+msgid "Heartbeat recorded"
+msgstr "การตรวจสอบชีพจรถูกบันทึก"
+
+msgid "Get receipt template"
+msgstr "ดึงแม่แบบใบเสร็จ"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr ""
+"คืนแม่แบบใบเสร็จสำหรับคลังสินค้าของปลายทาง หากคลังสินค้าไม่มีแม่แบบเฉพาะ "
+"จะคืนแม่แบบเริ่มต้น (ไม่มีคลังสินค้าที่กำหนด) หากไม่มีแม่แบบใด ๆ ทั้งสิ้น "
+"จะคืนค่าเริ่มต้นที่เหมาะสม"
+
+msgid "Receipt template data"
+msgstr "ข้อมูลแม่แบบใบเสร็จ"
+
+msgid "Get promo slides"
+msgstr "ดึงสไลด์โปรโมชัน"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr ""
+"คืนสไลด์โปรโมชั่นสำหรับคลังสินค้าของปลายทาง "
+"สไลด์จะแสดงบนหน้าจอที่ติดตั้งเพื่อให้ลูกค้าเห็นในช่วงเวลาที่ไม่มีการใช้งาน"
+
+msgid "List of promo slides with image URLs"
+msgstr "รายการสไลด์โปรโมชันพร้อม URL รูปภาพ"
+
+msgid "Generate display pairing code"
+msgstr "สร้างรหัสคู่กับแสดงผล"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr ""
+"สร้างรหัสคู่ที่มีอายุสั้น 6 หลักสำหรับการยืนยันตัวตนของลูกค้า "
+"รหัสจะหมดอายุหลังจาก 5 นาทีและสามารถใช้ได้เพียงครั้งเดียว "
+"การสร้างรหัสใหม่จะทำให้รหัสที่ยังไม่ได้ใช้ในครั้งก่อนสำหรับเครื่องนี้เป็นโมฆะ"
+
+msgid "Pairing code generated"
+msgstr "สร้างรหัสคู่กับแล้ว"
+
+msgid "List managers for unlock override"
+msgstr "รายการผู้จัดการสำหรับการยกเลิกการล็อก"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr ""
+"คืนรายการผู้จัดการ (id และชื่อ) สำหรับกระบวนการปลดล็อกการทับหลังผู้จัดการ"
+
+msgid "List of managers"
+msgstr "รายการผู้จัดการ"
+
+msgid "Verify unlock PIN"
+msgstr "ยืนยัน PIN สำหรับการยกเลิกการล็อก"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr ""
+"ตรวจสอบ PIN ของพนักงานแคชเชียร์หรือผู้จัดการเพื่อปลดล็อกเครื่อง "
+"หลังจากพยายามล้มเหลว 3 ครั้ง จะยอมรับเฉพาะ PIN ของผู้จัดการเท่านั้น "
+"ทุกครั้งที่พยายามจะถูกบันทึกเพื่อวัตถุประสงค์ในการตรวจสอบ"
+
+msgid "PIN verified successfully"
+msgstr "ยืนยัน PIN สำเร็จ"
+
+msgid "Invalid PIN"
+msgstr "PIN ไม่ถูกต้อง"
+
+msgid "Log terminal lock event"
+msgstr "บันทึกเหตุการณ์การล็อกอุปกรณ์"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr ""
+"บันทึกเมื่อเทอร์มินัลถูกล็อก "
+"(ทำได้ทั้งแบบมือและผ่านการตั้งค่าการล็อกอัตโนมัติ) จุดปลายของ API "
+"นี้ใช้เพียงแค่การบันทึกสำหรับการตรวจสอบและไม่เปลี่ยนสถานะของเทอร์มินัล"
+
+msgid "Event logged successfully"
+msgstr "บันทึกเหตุการณ์สำเร็จ"
+
+msgid "Invalid event type"
+msgstr "ประเภทเหตุการณ์ไม่ถูกต้อง"
+
+msgid "Verify unlock card"
+msgstr "ตรวจสอบการปลดล็อกบัตร"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr ""
+"ตรวจสอบการสแกนบัตรประจำตัวพนักงานเพื่อปลดล็อกเทอร์มินัล "
+"ข้อมูลบัตรจะถูกแฮชและเปรียบเทียบกับแฮชบัตรที่เก็บไว้ หลังจากลอง PIN ล้มเหลว "
+"3 ครั้ง จะยอมรับเฉพาะบัตรของผู้จัดการเท่านั้น"
+
+msgid "Card verified successfully"
+msgstr "ตรวจสอบบัตรสำเร็จ"
+
+msgid "Card not recognized"
+msgstr "บัตรไม่ถูกยอมรับ"
+
+msgid "Register staff unlock card"
+msgstr "ลงทะเบียนบัตรปลดล็อกพนักงาน"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr ""
+"ลงทะเบียนการสแกนบัตรสำหรับการปลดล็อกเทอร์มินัลแบบเร็วของผู้ใช้ปัจจุบัน"
+
+msgid "Card registered successfully"
+msgstr "บัตรลงทะเบียนสำเร็จ"
+
+msgid "Card already registered to another user"
+msgstr "บัตรนี้ได้ลงทะเบียนไว้กับผู้ใช้อื่นแล้ว"
+
+msgid "Remove staff unlock card"
+msgstr "ลบบัตรปลดล็อกพนักงาน"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "ลบบัตรที่ลงทะเบียนไว้สำหรับการปลดล็อกของผู้ใช้ปัจจุบัน"
+
+msgid "Card removed successfully"
+msgstr "ลบบัตรสำเร็จ"
+
+msgid "Set cashier PIN"
+msgstr "ตั้งค่า PIN แคชเชียร์"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"ตั้งค่าหรืออัปเดต PIN ของผู้ใช้ปัจจุบันสำหรับการล็อก/ปลดล็อกตู้จ่ายเงิน PIN "
+"ต้องมี 4-6 หลัก ทั้ง pin และ pin_confirm ต้องตรงกัน"
+
+msgid "PIN set successfully"
+msgstr "ตั้งค่า PIN สำเร็จ"
+
+msgid "Get terminal provider config"
+msgstr "ดึงการตั้งค่าของผู้ให้บริการตู้ขาย"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"คืนค่าการตั้งค่าผู้ให้บริการตู้จ่ายเงินสำหรับตู้จ่ายเงินปัจจุบัน "
+"รวมถึงโหมดการผสาน (sdk, cloud หรือ manual) และรายละเอียดตัวอ่านที่เชื่อมต่อ "
+"ใช้โดยหน้า frontend POS "
+"ตอนเริ่มต้นเพื่อตรวจสอบว่าตัวอ่านบัตรแบบผสานมีอยู่หรือไม่ "
+"และใช้ขั้นตอนการชำระเงินแบบใด"
+
+msgid "Create connection token"
+msgstr "สร้างโทเคนการเชื่อมต่อ"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"สร้างโทเค็นการเชื่อมต่อที่มีอายุสั้นสำหรับผู้ให้บริการปลายทางในโหมด SDK "
+"(เช่น Stripe Terminal JS SDK) ฟรอนตเอนด์จะเรียกใช้ปลายทางนี้เมื่อเริ่มต้น "
+"SDK เพื่อจัดตั้งการเชื่อมต่อโดยตรงกับอุปกรณ์อ่าน ใช้ได้เฉพาะ SDK เท่านั้น "
+"ผู้ให้บริการคลาวด์ไม่ได้ใช้โทเค็นการเชื่อมต่อ คืนค่า 400 "
+"หากผู้ให้บริการไม่รองรับโทเค็น SDK"
+
+msgid "List card readers"
+msgstr "รายการเครื่องอ่านบัตร"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"รายการเครื่องอ่านบัตรที่สามารถใช้งานได้จากผู้ให้บริการเทอร์มินัล "
+"ใช้งานได้กับผู้ให้บริการทั้งในโหมด SDK และโหมดคลาวด์ "
+"แต่ละวัตถุของเครื่องอ่านจะประกอบด้วย: id, label, type, serial_number และ "
+"status"
+
+msgid "Create payment intent for terminal"
+msgstr "สร้างเจตนาการชำระเงินสำหรับตู้ขาย"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"สร้าง PaymentIntent สำหรับการรวบรวมการชำระเงินแบบ card_present "
+"บนเครื่องอ่านเทอร์มินัล หน้าหน้าจอกลางจะใช้ client_secret "
+"ที่คืนค่ามาเพื่อรวบรวมการชำระเงินผ่าน SDK เฉพาะ SDK เท่านั้น "
+"ผู้ให้บริการคลาวด์ควรใช้ initiate-cloud-payment หากไม่ได้ระบุสกุลเงิน "
+"จะใช้สกุลเงินที่กำหนดไว้ในเทอร์มินัลเป็นค่าเริ่มต้น"
+
+msgid "Capture/verify terminal payment"
+msgstr "จับ/ตรวจสอบการชำระเงินผ่านตู้ขาย"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr ""
+"ตรวจสอบว่า PaymentIntent ถูกประมวลผลอย่างสำเร็จบนอุปกรณ์อ่านบัตร "
+"และคืนรายละเอียดบัตร (แบรนด์, ตัวเลขสุดท้าย 4 ตัว) จากผู้ให้บริการ "
+"ใช้ได้เฉพาะ SDK เท่านั้น"
+
+msgid "Cancel terminal payment"
+msgstr "ยกเลิกการชำระเงินที่ตู้"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"ยกเลิก PaymentIntent ที่ยังอยู่ระหว่างการประมวลผลบนอุปกรณ์อ่านบัตร (เช่น "
+"ลูกค้ายกเลิก) ใช้ได้เฉพาะ SDK เท่านั้น ผู้ให้บริการคลาวด์ควรใช้คำสั่ง "
+"cancel-cloud-payment"
+
+msgid "Initiate cloud payment on reader"
+msgstr "เริ่มต้นการชำระเงินแบบคลาวด์บนอุปกรณ์อ่านบัตร"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"ส่งคำขอการชำระเงินไปยังอุปกรณ์อ่านบัตรผ่าน API คลาวด์ของผู้ให้บริการ "
+"สำหรับผู้ให้บริการปลายทางแบบคลาวด์เท่านั้น (Adyen, Square, SumUp, Zettle) "
+"ใช้ได้เฉพาะในโหมดคลาวด์ หากผู้ให้บริการใช้โหมด SDK จะคืนค่า 400 "
+"หากไม่ระบุสกุลเงิน จะใช้สกุลเงินที่ตั้งค่าไว้ในอุปกรณ์ปลายทางเป็นค่าเริ่มต้น"
+
+msgid "Check cloud payment status"
+msgstr "ตรวจสอบสถานะการชำระเงินแบบคลาวด์"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"ตรวจสอบสถานะการชำระเงินที่เริ่มต้นโดยคลาวด์ คืนค่าสถานะปัจจุบัน: "
+"รอการดำเนินการ, สำเร็จ, ล้มเหลว, หรือถูกยกเลิก เมื่อสถานะเป็น 'succeeded' "
+"คำตอบจะรวมข้อมูล card_brand, last4 และ payment_id ของผู้ให้บริการ "
+"เมื่อสถานะเป็น 'canceled' จะรวมข้อมูล cancel_reason "
+"ฟรอนตเอนด์ควรตรวจสอบสถานะทุก 2 วินาทีจนกว่าสถานะจะไม่ใช่ 'pending' อีกต่อไป"
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr "ไอดีการดำเนินการเฉพาะผู้ให้บริการที่คืนค่าโดย initiate-cloud-payment"
+
+msgid "Cancel cloud payment"
+msgstr "ยกเลิกการชำระเงินแบบคลาวด์"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr ""
+"ยกเลิกการชำระเงินที่ยังไม่ได้รับการอนุมัติซึ่งเริ่มต้นจากคลาวด์บนอุปกรณ์อ่านข้อมูล"
+" ใช้ได้เฉพาะคลาวด์เท่านั้น ผลลัพธ์อาจแตกต่างกันไปตามผู้ให้บริการ"
+
+msgid "Begin WebAuthn registration"
+msgstr "เริ่มการลงทะเบียน WebAuthn"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr ""
+"สร้างตัวเลือกการลงทะเบียนสำหรับการลงทะเบียนชีวภาพ "
+"คืนค่าตัวเลือกการท้าทายและสร้างข้อมูลยืนยันตัวตน"
+
+msgid "Registration options"
+msgstr "ตัวเลือกการลงทะเบียน"
+
+msgid "Complete WebAuthn registration"
+msgstr "สมัครสมาชิก WebAuthn ให้สมบูรณ์"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr ""
+"ตรวจสอบการยืนยันและจัดเก็บข้อมูลประจำตัวสำหรับการปลดล็อกด้วยระบบชีวภาพ"
+
+msgid "Credential registered"
+msgstr "การรับรองถูกจัดเก็บแล้ว"
+
+msgid "Verification failed"
+msgstr "การตรวจสอบล้มเหลว"
+
+msgid "Begin WebAuthn authentication"
+msgstr "เริ่มต้นการตรวจสอบ WebAuthn"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"สร้างความท้าทายในการรับรองตัวตนสำหรับการปลดล็อกแบบชีวภาพ คืนค่า "
+"allowCredentials สำหรับผู้ใช้ที่ถูกล็อกและผู้จัดการทั้งหมด หาก "
+"failed_attempts >= 3 จะรวมเพียงข้อมูลผู้จัดการเท่านั้น"
+
+msgid "Authentication options"
+msgstr "ตัวเลือกการตรวจสอบ"
+
+msgid "No credentials registered"
+msgstr "ยังไม่มีการรับรองที่จัดเก็บ"
+
+msgid "Complete WebAuthn authentication"
+msgstr "สมบูรณ์การยืนยัน WebAuthn"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "ตรวจสอบข้อความยืนยันทางชีวภาพและปลดล็อกเทอร์มินัล"
+
+msgid "Authentication successful"
+msgstr "การยืนยันสำเร็จ"

@@ -1,0 +1,69 @@
+{% load i18n static element_tags merchant_trans %}
+<!-- Modal Popup Element - Frontend -->
+<div class="pb-modal pb-modal--{{ element.content.size|default:'medium' }} pb-modal--{{ element.content.position|default:'center' }} pb-modal--{{ element.content.animation|default:'fade' }}"
+     id="pb-modal-{{ element.id }}"
+     data-modal-id="{{ element.id }}"
+     data-trigger="{{ element.content.trigger_type|default:'time_delay' }}"
+     data-trigger-selector="{{ element.content.trigger_button_id|default:'' }}"
+     data-delay="{{ element.content.trigger_delay|default:5 }}"
+     data-scroll-percent="{{ element.content.trigger_scroll_percent|default:50 }}"
+     data-once-session="{{ element.content.show_once_per_session|yesno:'true,false' }}"
+     data-once-visitor="{{ element.content.show_once_per_visitor|yesno:'true,false' }}"
+     data-close-on-backdrop="{{ element.content.close_on_backdrop_click|default:True|yesno:'true,false' }}"
+     data-close-on-escape="{{ element.content.close_on_escape|default:True|yesno:'true,false' }}"
+     data-animation-duration="{{ element.content.animation_duration|default:300 }}"
+     role="dialog"
+     aria-modal="true"
+     aria-hidden="true"
+     aria-labelledby="pb-modal-title-{{ element.id }}"
+     style="--modal-bg: {{ element.content.content_background|default:'#ffffff' }};
+            --modal-radius: {{ element.content.border_radius|default:'12px' }};
+            --modal-padding: {{ element.content.content_padding|default:'24px' }};
+            --modal-animation-duration: {{ element.content.animation_duration|default:300 }}ms;
+            {% if element.content.max_width %}--modal-max-width: {{ element.content.max_width }};{% endif %}
+            --backdrop-color: {{ element.content.backdrop_color|default:'#000000' }};
+            --backdrop-opacity: {{ element.content.backdrop_opacity|default:0.5 }};">
+
+    {# Backdrop #}
+    {% if element.content.show_backdrop|default:True %}
+    <div class="pb-modal__backdrop" aria-hidden="true"></div>
+    {% endif %}
+
+    {# Modal Dialog #}
+    <div class="pb-modal__dialog">
+        {# Close Button #}
+        {% if element.content.show_close_button|default:True %}
+        <button type="button"
+                class="pb-modal__close pb-modal__close--{{ element.content.close_button_position|default:'inside_right' }}"
+                aria-label="{% mtrans 'Close modal' %}"
+                data-modal-close>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        {% endif %}
+
+        {# Modal Content #}
+        <div class="pb-modal__content">
+            {# Hidden title for accessibility #}
+            <h2 id="pb-modal-title-{{ element.id }}" class="sr-only">{{ element.content.name|default:"Popup" }}</h2>
+
+            {# Render child elements #}
+            {% for child in element.child_elements.all %}
+            {% render_element child %}
+            {% endfor %}
+
+            {# Empty state (shouldn't normally appear on frontend) #}
+            {% if not element.child_elements.exists %}
+            <div class="pb-modal__empty">
+                <p>{% mtrans "Modal content" %}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# Styles loaded via config.json css_files — modal-popup.css #}
+
+{# PBModal JS loaded via config.json scripts — pb-modal.js auto-discovers .pb-modal[data-modal-id] elements #}

@@ -1,0 +1,130 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for category in categories %}
+    <div class="list-row-card{% if not category.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ category.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if category.image_asset %}
+                <img src="{{ category.image_asset.thumbnail_small }}" alt="{{ category.name }}" class="category-thumbnail">
+            {% else %}
+                <i class="fas fa-folder text-primary icon-size-32"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:blog_blogcategory_change' category.pk %}">
+                    {{ category.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if category.parent %}
+                    <i class="fas fa-level-up-alt"></i> {% trans "Parent" %}: {{ category.parent.name }}
+                {% else %}
+                    <i class="fas fa-sitemap"></i> {% trans "Top Level Category" %}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if category.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if category.children.exists %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-folder-tree"></i> {{ category.children.count }} {% trans "subcategor" %}{{ category.children.count|pluralize:"y,ies" }}
+                    </span>
+                {% endif %}
+
+                {% if category.posts.exists %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-newspaper"></i> {{ category.posts.count }} {% trans "post" %}{{ category.posts.count|pluralize }}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if category.description %}
+            <div class="list-row-card-description">
+                {{ category.description|truncatewords:20 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Posts" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        {{ category.posts.count }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Subcategories" %}</span>
+                    <span class="list-row-card-stat-value">{{ category.children.count }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Sort Order" %}</span>
+                    <span class="list-row-card-stat-value">{{ category.sort_order }}</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ category.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ category.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:blog_blogcategory_change' category.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit category' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if category.posts.count > 0 %}
+            <a href="{% url 'admin:blog_blogpost_changelist' %}?category__id__exact={{ category.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View posts in category' %}">
+                <i class="fas fa-newspaper"></i>
+            </a>
+            {% endif %}
+            {% if category.children.count > 0 %}
+            <a href="{% url 'admin:blog_blogcategory_changelist' %}?parent__id__exact={{ category.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View subcategories' %}">
+                <i class="fas fa-folder-tree"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:blog_blogcategory_delete' category.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete category' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-folder-open"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No categories found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

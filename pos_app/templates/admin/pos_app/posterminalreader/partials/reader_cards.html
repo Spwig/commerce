@@ -1,0 +1,139 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'pos_app/admin/css/reader_cards.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards" id="results-container">
+    {% for reader in readers %}
+    <div class="list-row-card{% if reader.status == 'offline' %} disabled{% endif %}" data-reader-id="{{ reader.pk }}">
+        <div class="list-row-card-icon">
+            {% if reader.reader_type == 'stripe_m2' %}
+                <i class="fas fa-mobile-alt text-primary icon-medium"></i>
+            {% elif reader.reader_type == 'stripe_s700' %}
+                <i class="fas fa-tablet-alt text-primary icon-medium"></i>
+            {% elif reader.reader_type == 'manual' %}
+                <i class="fas fa-keyboard text-primary icon-medium"></i>
+            {% else %}
+                <i class="fas fa-wifi text-primary icon-medium"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:pos_app_posterminalreader_change' reader.pk %}">
+                    {{ reader.reader_label|default:reader.provider_reader_id }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-credit-card"></i>
+                {{ reader.provider.display_name }}
+                {% if reader.serial_number %}
+                    <span class="quiet"> &middot; S/N: {{ reader.serial_number }}</span>
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <span class="list-row-card-badge reader-status-badge {% if reader.status == 'online' %}list-row-card-badge-success{% elif reader.status == 'busy' %}list-row-card-badge-warning{% endif %}" data-reader-id="{{ reader.pk }}">
+                    <span class="terminal-status-dot {{ reader.status }}"></span>
+                    {% if reader.status == 'online' %}
+                        {% trans "Online" %}
+                    {% elif reader.status == 'busy' %}
+                        {% trans "Busy" %}
+                    {% else %}
+                        {% trans "Offline" %}
+                    {% endif %}
+                </span>
+
+                {% if reader.reader_type %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-microchip"></i> {{ reader.get_reader_type_display|default:reader.reader_type }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Quick Assign Terminal -->
+            <div class="quick-assign-row">
+                <label class="quick-assign-label">
+                    <i class="fas fa-cash-register"></i> {% trans "Terminal:" %}
+                </label>
+                <select class="quick-assign-select"
+                        data-reader-id="{{ reader.pk }}"
+                        data-action="quick-assign-terminal">
+                    <option value="">{% trans "— Unassigned" %}</option>
+                    {% for terminal in terminals %}
+                    <option value="{{ terminal.id }}"{% if reader.terminal_id == terminal.id %} selected{% endif %}>
+                        {{ terminal.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Provider ID" %}</span>
+                    <span class="list-row-card-stat-value reader-id">{{ reader.provider_reader_id|truncatechars:16 }}</span>
+                </div>
+                {% if reader.ip_address %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "IP Address" %}</span>
+                    <span class="list-row-card-stat-value">{{ reader.ip_address }}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Last Seen" %}</span>
+                    <span class="list-row-card-stat-value reader-last-seen" data-reader-id="{{ reader.pk }}">
+                        {% if reader.last_seen_at %}
+                            {{ reader.last_seen_at|timesince }}
+                        {% else %}
+                            {% trans "Never" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Registered" %}: {{ reader.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if reader.terminal %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-store"></i>
+                    <span>{{ reader.terminal.warehouse.pos_display_name|default:reader.terminal.warehouse.name }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <button type="button"
+                    class="list-row-card-action"
+                    title="{% trans 'Refresh status' %}"
+                    data-action="refresh-reader-status"
+                    data-reader-id="{{ reader.pk }}">
+                <i class="fas fa-sync"></i>
+            </button>
+            <a href="{% url 'admin:pos_app_posterminalreader_change' reader.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit reader' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:pos_app_posterminalreader_delete' reader.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete reader' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-wifi"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No card readers found." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Readers are discovered through your terminal provider or can be added manually." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>
+

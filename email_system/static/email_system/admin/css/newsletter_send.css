@@ -1,0 +1,246 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Email System - Newsletter Send
+ *
+ * Description: Admin interface styles for newsletter_send.html
+ * Template: email_system/templates/admin/email_system/newsletter_send.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+.newsletter-header {
+        padding: 24px;
+        background: var(--body-bg);
+        border-bottom: 1px solid var(--border-color);
+    }
+    .newsletter-header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        color: var(--body-fg);
+    }
+    .newsletter-header .subtitle {
+        font-size: 14px;
+        color: var(--body-quiet-color);
+        margin: 0;
+    }
+    .send-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 24px;
+    }
+    .newsletter-preview {
+        background: var(--darkened-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 32px;
+    }
+    .newsletter-preview h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        color: var(--body-fg);
+    }
+    .newsletter-preview .subject {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--primary);
+        margin-bottom: 8px;
+    }
+    .newsletter-preview .meta {
+        font-size: 12px;
+        color: var(--body-quiet-color);
+    }
+    .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--body-fg);
+        margin: 0 0 16px 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border-color);
+    }
+    .form-section {
+        margin-bottom: 32px;
+    }
+    .recipient-options {
+        background: var(--body-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 20px;
+    }
+    .option-group {
+        margin-bottom: 24px;
+    }
+    .option-group:last-child {
+        margin-bottom: 0;
+    }
+    .option-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--body-fg);
+        margin-bottom: 12px;
+    }
+    .checkbox-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+    }
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .checkbox-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+    .checkbox-item label {
+        font-size: 13px;
+        font-weight: normal;
+        margin: 0;
+        cursor: pointer;
+        color: var(--body-fg);
+    }
+    .radio-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .radio-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .radio-item input[type="radio"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+    .radio-item label {
+        font-size: 13px;
+        font-weight: normal;
+        margin: 0;
+        cursor: pointer;
+        color: var(--body-fg);
+    }
+    .file-upload {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .file-upload input[type="file"] {
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 13px;
+        background: var(--body-bg);
+        color: var(--body-fg);
+    }
+    .help-text {
+        font-size: 12px;
+        color: var(--body-quiet-color);
+        margin-top: 4px;
+    }
+    .recipient-count-card {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 6px;
+        padding: 24px;
+        margin-bottom: 24px;
+        text-align: center;
+        color: white;
+    }
+    .recipient-count-card .count {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .recipient-count-card .label {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+    .recipient-count-card.loading {
+        opacity: 0.6;
+    }
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+    .btn-primary {
+        padding: 12px 32px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        color: white;
+    }
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .btn-secondary {
+        padding: 12px 32px;
+        background: transparent;
+        color: var(--body-fg);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-secondary:hover {
+        background: var(--darkened-bg);
+        color: var(--body-fg);
+    }
+    .info-box {
+        background: var(--darkened-bg);
+        border-left: 4px solid var(--primary);
+        padding: 16px;
+        border-radius: 4px;
+        margin-top: 24px;
+    }
+    .info-box p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--body-quiet-color);
+        line-height: 1.6;
+    }
+    .csv-format-info {
+        background: var(--darkened-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 12px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--body-quiet-color);
+    }
+    .csv-format-info code {
+        background: var(--body-bg);
+        padding: 2px 6px;
+        border-radius: 2px;
+        font-family: monospace;
+    }

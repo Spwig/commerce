@@ -1,0 +1,45 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Modal Popup Element - Builder Preview -->
+<div class="pb-modal-preview pb-modal-preview--{{ element.content.size|default:'medium' }}"
+     {% hover_animation_attrs element %}
+     style="--modal-bg: {{ element.content.content_background|default:'#ffffff' }};
+            --modal-radius: {{ element.content.border_radius|default:'12px' }};
+            --modal-padding: {{ element.content.content_padding|default:'24px' }};
+            {% base_styles element %}">
+
+    <div class="pb-modal-preview__header">
+        <div class="pb-modal-preview__info">
+            <i class="fas fa-window-restore"></i>
+            <span class="pb-modal-preview__name">{{ element.content.name|default:"Modal Popup" }}</span>
+        </div>
+        <div class="pb-modal-preview__trigger">
+            <i class="fas fa-bolt"></i>
+            {% if element.content.trigger_type == 'button_click' %}
+            {% mtrans "Button Click" %}
+            {% elif element.content.trigger_type == 'time_delay' %}
+            {% mtrans "After" %} {{ element.content.trigger_delay|default:5 }}s
+            {% elif element.content.trigger_type == 'exit_intent' %}
+            {% mtrans "Exit Intent" %}
+            {% elif element.content.trigger_type == 'scroll_percent' %}
+            {% mtrans "Scroll" %} {{ element.content.trigger_scroll_percent|default:50 }}%
+            {% elif element.content.trigger_type == 'page_load' %}
+            {% mtrans "Page Load" %}
+            {% else %}
+            {% mtrans "Time Delay" %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="pb-modal-preview__content">
+        {% for child in element.child_elements.all %}
+        {% render_element child %}
+        {% empty %}
+        <div class="pb-modal-preview__empty">
+            <i class="fas fa-plus-circle"></i>
+            <p>{% mtrans "Drop elements here to build your modal content" %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{# Styles loaded via config.json css_files — modal-popup.css #}

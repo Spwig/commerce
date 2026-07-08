@@ -1,0 +1,597 @@
+{
+  "element_type": "container",
+  "name": "Container",
+  "description": "Flexible layout container with visual layout presets and nested child containers",
+  "version": "3.0.0",
+  "category": "layout",
+  "icon": "fas fa-th-large",
+  "author": "Spwig",
+  "element_builder_primitive": true,
+  "tags": ["container", "layout", "flexbox", "grid", "columns", "rows"],
+  "supports_translation": true,
+  "translation_domain": "container_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/container.css"],
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "layout": {
+      "label": "Layout",
+      "icon": "fas fa-columns",
+      "order": 1,
+      "properties": {
+        "layout_type_group": {
+          "type": "property_group",
+          "label": "Layout Type",
+          "columns": 1,
+          "properties": {
+            "layout": {
+              "type": "select",
+              "label": "Display Mode",
+              "options": [
+                {"value": "flex", "label": "Flexbox"},
+                {"value": "grid", "label": "CSS Grid"},
+                {"value": "block", "label": "Block"}
+              ],
+              "default": "flex"
+            }
+          }
+        },
+        "flex_group": {
+          "type": "property_group",
+          "label": "Flexbox Settings",
+          "show_when": {"property": "layout", "value": "flex"},
+          "properties": {
+            "direction": {
+              "type": "select",
+              "label": "Direction",
+              "options": [
+                {"value": "row", "label": "Row (Horizontal)"},
+                {"value": "column", "label": "Column (Vertical)"},
+                {"value": "row-reverse", "label": "Row Reverse"},
+                {"value": "column-reverse", "label": "Column Reverse"}
+              ],
+              "default": "row"
+            },
+            "justify_content": {
+              "type": "select",
+              "label": "Justify Content",
+              "options": [
+                {"value": "flex-start", "label": "Start"},
+                {"value": "flex-end", "label": "End"},
+                {"value": "center", "label": "Center"},
+                {"value": "space-between", "label": "Space Between"},
+                {"value": "space-around", "label": "Space Around"},
+                {"value": "space-evenly", "label": "Space Evenly"}
+              ],
+              "default": "flex-start"
+            },
+            "align_items": {
+              "type": "select",
+              "label": "Align Items",
+              "options": [
+                {"value": "flex-start", "label": "Start"},
+                {"value": "flex-end", "label": "End"},
+                {"value": "center", "label": "Center"},
+                {"value": "baseline", "label": "Baseline"},
+                {"value": "stretch", "label": "Stretch"}
+              ],
+              "default": "stretch"
+            },
+            "wrap": {
+              "type": "select",
+              "label": "Wrap",
+              "options": [
+                {"value": "nowrap", "label": "No Wrap"},
+                {"value": "wrap", "label": "Wrap"},
+                {"value": "wrap-reverse", "label": "Wrap Reverse"}
+              ],
+              "default": "wrap"
+            },
+            "flex": {
+              "type": "string",
+              "label": "Flex Grow/Shrink",
+              "placeholder": "e.g., 1 or 2",
+              "help_text": "Controls how this container grows relative to siblings"
+            }
+          }
+        },
+        "grid_group": {
+          "type": "property_group",
+          "label": "Grid Settings",
+          "columns": 1,
+          "show_when": {"property": "layout", "value": "grid"},
+          "properties": {
+            "grid_columns": {
+              "type": "select",
+              "label": "Columns",
+              "options": [
+                {"value": "1fr", "label": "1 Column"},
+                {"value": "repeat(2, 1fr)", "label": "2 Equal Columns"},
+                {"value": "repeat(3, 1fr)", "label": "3 Equal Columns"},
+                {"value": "repeat(4, 1fr)", "label": "4 Equal Columns"},
+                {"value": "1fr 2fr", "label": "1:2 Ratio"},
+                {"value": "2fr 1fr", "label": "2:1 Ratio"},
+                {"value": "1fr 2fr 1fr", "label": "1:2:1 Ratio"},
+                {"value": "repeat(auto-fit, minmax(250px, 1fr))", "label": "Auto-fit (Min 250px)"},
+                {"value": "repeat(auto-fit, minmax(300px, 1fr))", "label": "Auto-fit (Min 300px)"}
+              ],
+              "default": "repeat(2, 1fr)"
+            }
+          }
+        },
+        "gap_group": {
+          "type": "property_group",
+          "label": "Gap Between Items",
+          "columns": 1,
+          "properties": {
+            "gap": {
+              "type": "select",
+              "label": "Gap Size",
+              "options": [
+                {"value": "0", "label": "None"},
+                {"value": "8px", "label": "Small (8px)"},
+                {"value": "16px", "label": "Medium (16px)"},
+                {"value": "24px", "label": "Large (24px)"},
+                {"value": "32px", "label": "Extra Large (32px)"},
+                {"value": "48px", "label": "Huge (48px)"}
+              ],
+              "default": "16px"
+            }
+          }
+        }
+      }
+    },
+    "style": {
+      "label": "Style",
+      "icon": "fas fa-palette",
+      "order": 2,
+      "properties": {
+        "background_group": {
+          "type": "property_group",
+          "label": "Background",
+          "columns": 1,
+          "properties": {
+            "background": {
+              "type": "background",
+              "label": "Background",
+              "help_text": "Configure background with color, gradient, or image",
+              "utility": "background_editor",
+              "default": ""
+            }
+          }
+        },
+        "border_group": {
+          "type": "property_group",
+          "label": "Border",
+          "columns": 1,
+          "properties": {
+            "border": {
+              "type": "border_advanced",
+              "label": "Border",
+              "help_text": "Configure border width, style, color and radius",
+              "utility": "border_editor",
+              "default": ""
+            }
+          }
+        },
+        "spacing_group": {
+          "type": "property_group",
+          "label": "Spacing",
+          "columns": 1,
+          "properties": {
+            "spacing": {
+              "type": "spacing",
+              "label": "Margin & Padding",
+              "help_text": "Configure margin and padding with visual editor",
+              "utility": "spacing_editor",
+              "default": ""
+            }
+          }
+        },
+        "effects_group": {
+          "type": "property_group",
+          "label": "Effects",
+          "properties": {
+            "box_shadow": {
+              "type": "shadow",
+              "label": "Box Shadow",
+              "help_text": "Configure box shadow for the container",
+              "utility": "shadow_editor",
+              "shadow_type": "box",
+              "default": ""
+            },
+            "opacity": {
+              "type": "range",
+              "label": "Opacity",
+              "min": 0,
+              "max": 1,
+              "step": 0.1,
+              "default": 1
+            }
+          }
+        }
+      }
+    },
+    "sizing": {
+      "label": "Sizing",
+      "icon": "fas fa-expand",
+      "order": 3,
+      "properties": {
+        "width_group": {
+          "type": "property_group",
+          "label": "Width",
+          "properties": {
+            "width": {
+              "type": "select",
+              "label": "Width",
+              "options": [
+                {"value": "100%", "label": "Full Width (100%)"},
+                {"value": "auto", "label": "Auto"},
+                {"value": "fit-content", "label": "Fit Content"},
+                {"value": "50%", "label": "Half (50%)"},
+                {"value": "33.333%", "label": "Third (33%)"},
+                {"value": "66.666%", "label": "Two Thirds (66%)"},
+                {"value": "25%", "label": "Quarter (25%)"},
+                {"value": "75%", "label": "Three Quarters (75%)"}
+              ],
+              "default": "100%"
+            },
+            "max_width": {
+              "type": "select",
+              "label": "Max Width",
+              "options": [
+                {"value": "", "label": "None"},
+                {"value": "800px", "label": "Narrow (800px)"},
+                {"value": "1024px", "label": "Medium (1024px)"},
+                {"value": "1200px", "label": "Standard (1200px)"},
+                {"value": "1400px", "label": "Wide (1400px)"},
+                {"value": "1600px", "label": "Extra Wide (1600px)"}
+              ],
+              "default": ""
+            }
+          }
+        },
+        "height_group": {
+          "type": "property_group",
+          "label": "Height",
+          "properties": {
+            "min_height": {
+              "type": "select",
+              "label": "Min Height",
+              "options": [
+                {"value": "", "label": "None"},
+                {"value": "100px", "label": "Small (100px)"},
+                {"value": "200px", "label": "Medium (200px)"},
+                {"value": "300px", "label": "Large (300px)"},
+                {"value": "400px", "label": "Extra Large (400px)"},
+                {"value": "50vh", "label": "Half Viewport"},
+                {"value": "100vh", "label": "Full Viewport"}
+              ],
+              "default": ""
+            }
+          }
+        }
+      }
+    },
+    "responsive": {
+      "label": "Responsive",
+      "icon": "fas fa-mobile-alt",
+      "order": 4,
+      "properties": {
+        "mobile_group": {
+          "type": "property_group",
+          "label": "Mobile Behavior",
+          "columns": 1,
+          "properties": {
+            "mobile_stack": {
+              "type": "boolean",
+              "label": "Stack on Mobile",
+              "default": true,
+              "help_text": "Convert horizontal layout to vertical stack on screens smaller than 768px"
+            },
+            "mobile_gap": {
+              "type": "select",
+              "label": "Mobile Gap",
+              "options": [
+                {"value": "", "label": "Same as Desktop"},
+                {"value": "8px", "label": "Small (8px)"},
+                {"value": "16px", "label": "Medium (16px)"},
+                {"value": "24px", "label": "Large (24px)"}
+              ],
+              "default": "",
+              "help_text": "Optional different gap size on mobile"
+            }
+          }
+        }
+      }
+    },
+    "advanced": {
+      "label": "Advanced",
+      "icon": "fas fa-cog",
+      "order": 10,
+      "properties": {
+        "behavior_group": {
+          "type": "property_group",
+          "label": "Behavior",
+          "properties": {
+            "overflow": {
+              "type": "select",
+              "label": "Overflow",
+              "options": [
+                {"value": "visible", "label": "Visible"},
+                {"value": "hidden", "label": "Hidden"},
+                {"value": "scroll", "label": "Scroll"},
+                {"value": "auto", "label": "Auto"}
+              ],
+              "default": "visible"
+            },
+            "z_index": {
+              "type": "number",
+              "label": "Z-Index",
+              "help_text": "Stacking order (higher numbers appear on top)"
+            }
+          }
+        },
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Visibility",
+          "columns": 1,
+          "properties": {
+            "visibility_rules": {
+              "type": "visibility_rules",
+              "label": "Visibility Rules",
+              "help_text": "Control when this container is shown based on conditions",
+              "utility": "visibility_rules_editor",
+              "default": []
+            }
+          }
+        },
+        "html_group": {
+          "type": "property_group",
+          "label": "HTML Attributes",
+          "columns": 1,
+          "properties": {
+            "id": {
+              "type": "string",
+              "label": "Element ID",
+              "help_text": "Unique identifier for this container"
+            },
+            "custom_class": {
+              "type": "string",
+              "label": "Custom CSS Classes",
+              "help_text": "Additional CSS classes to apply"
+            },
+            "custom_styles": {
+              "type": "textarea",
+              "label": "Custom CSS Styles",
+              "help_text": "Additional inline CSS styles",
+              "rows": 3,
+              "full_width": true
+            },
+            "data_attributes": {
+              "type": "object",
+              "label": "Data Attributes",
+              "help_text": "Custom data-* attributes as key-value pairs"
+            }
+          }
+        },
+        "internal_group": {
+          "type": "property_group",
+          "label": "Internal",
+          "internal": true,
+          "properties": {
+            "layout_initialized": {
+              "type": "boolean",
+              "label": "Layout Initialized",
+              "default": false,
+              "internal": true
+            },
+            "layout_preset": {
+              "type": "string",
+              "label": "Layout Preset Used",
+              "internal": true
+            },
+            "min_width": {
+              "type": "string",
+              "label": "Min Width",
+              "internal": true,
+              "help_text": "Used for flex child sizing"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "layout": {
+      "type": "select",
+      "label": "Display Mode",
+      "options": [
+        {"value": "flex", "label": "Flexbox"},
+        {"value": "grid", "label": "CSS Grid"},
+        {"value": "block", "label": "Block"}
+      ],
+      "default": "flex"
+    },
+    "direction": {
+      "type": "select",
+      "label": "Direction",
+      "options": [
+        {"value": "row", "label": "Row (Horizontal)"},
+        {"value": "column", "label": "Column (Vertical)"},
+        {"value": "row-reverse", "label": "Row Reverse"},
+        {"value": "column-reverse", "label": "Column Reverse"}
+      ],
+      "default": "row"
+    },
+    "justify_content": {
+      "type": "select",
+      "label": "Justify Content",
+      "default": "flex-start"
+    },
+    "align_items": {
+      "type": "select",
+      "label": "Align Items",
+      "default": "stretch"
+    },
+    "wrap": {
+      "type": "select",
+      "label": "Wrap",
+      "default": "wrap"
+    },
+    "flex": {
+      "type": "string",
+      "label": "Flex"
+    },
+    "grid_columns": {
+      "type": "select",
+      "label": "Grid Columns",
+      "default": "repeat(2, 1fr)"
+    },
+    "gap": {
+      "type": "select",
+      "label": "Gap",
+      "default": "16px"
+    },
+    "background": {
+      "type": "background",
+      "label": "Background",
+      "utility": "background_editor",
+      "default": ""
+    },
+    "border": {
+      "type": "border_advanced",
+      "label": "Border",
+      "utility": "border_editor",
+      "default": ""
+    },
+    "spacing": {
+      "type": "spacing",
+      "label": "Spacing",
+      "utility": "spacing_editor",
+      "default": ""
+    },
+    "box_shadow": {
+      "type": "shadow",
+      "label": "Box Shadow",
+      "utility": "shadow_editor",
+      "default": ""
+    },
+    "opacity": {
+      "type": "range",
+      "label": "Opacity",
+      "default": 1
+    },
+    "width": {
+      "type": "select",
+      "label": "Width",
+      "default": "100%"
+    },
+    "max_width": {
+      "type": "select",
+      "label": "Max Width",
+      "default": ""
+    },
+    "min_height": {
+      "type": "select",
+      "label": "Min Height",
+      "default": ""
+    },
+    "mobile_stack": {
+      "type": "boolean",
+      "label": "Stack on Mobile",
+      "default": true
+    },
+    "mobile_gap": {
+      "type": "select",
+      "label": "Mobile Gap",
+      "default": ""
+    },
+    "overflow": {
+      "type": "select",
+      "label": "Overflow",
+      "default": "visible"
+    },
+    "z_index": {
+      "type": "number",
+      "label": "Z-Index"
+    },
+    "visibility_rules": {
+      "type": "visibility_rules",
+      "label": "Visibility Rules",
+      "default": []
+    },
+    "id": {
+      "type": "string",
+      "label": "Element ID"
+    },
+    "custom_class": {
+      "type": "string",
+      "label": "Custom CSS Classes"
+    },
+    "custom_styles": {
+      "type": "textarea",
+      "label": "Custom CSS Styles"
+    },
+    "data_attributes": {
+      "type": "object",
+      "label": "Data Attributes"
+    },
+    "layout_initialized": {
+      "type": "boolean",
+      "label": "Layout Initialized",
+      "default": false,
+      "internal": true
+    },
+    "layout_preset": {
+      "type": "string",
+      "label": "Layout Preset",
+      "internal": true
+    },
+    "min_width": {
+      "type": "string",
+      "label": "Min Width",
+      "internal": true
+    }
+  },
+  "translations": {
+    "en": {
+      "name": "Container",
+      "description": "Flexible layout container with visual layout presets and nested child containers"
+    },
+    "es": {
+      "name": "Contenedor",
+      "description": "Contenedor de diseno flexible con presets visuales y contenedores hijos anidados"
+    },
+    "fr": {
+      "name": "Conteneur",
+      "description": "Conteneur de mise en page flexible avec presets visuels et conteneurs enfants imbriques"
+    },
+    "de": {
+      "name": "Container",
+      "description": "Flexibler Layout-Container mit visuellen Vorlagen und verschachtelten Kind-Containern"
+    },
+    "pt": {
+      "name": "Container",
+      "description": "Container de layout flexivel com presets visuais e containers filhos aninhados"
+    },
+    "zh-hans": {
+      "name": "Container",
+      "description": "Flexible layout container with visual layout presets and nested child containers"
+    },
+    "ja": {
+      "name": "Container",
+      "description": "Flexible layout container with visual layout presets and nested child containers"
+    }
+  },
+  "defaults": {
+    "layout": "flex",
+    "direction": "row",
+    "wrap": "wrap",
+    "gap": "16px",
+    "width": "100%",
+    "mobile_stack": true,
+    "layout_initialized": false
+  }
+}

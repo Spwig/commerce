@@ -1,0 +1,232 @@
+{% extends "blog/blog_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block blog_title %}{% if search_query %}{% mtrans "Search results" %}{% else %}{% mtrans "Blog" %}{% endif %}{% endblock %}
+
+{% block blog_meta %}
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+<meta name="description" content="{% mtrans 'Latest articles and news' %} - {{ site_settings.site_name|default:'Shop' }}">
+<meta property="og:title" content="{% mtrans 'Blog' %} - {{ site_settings.site_name|default:'Shop' }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% endblock %}
+
+{% block blog_css %}
+<link rel="stylesheet" href="{% static 'blog/css/blog_list.css' %}">
+<style>
+    .blog-layout { max-width: none; }
+    .blog-minimal-list {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+    .blog-minimal-list__item {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        padding: 1.25rem 0;
+        border-bottom: 1px solid var(--border-color, #e0e0e0);
+    }
+    .blog-minimal-list__item:first-child {
+        padding-top: 0;
+    }
+    .blog-minimal-list__date {
+        flex-shrink: 0;
+        font-size: 0.85rem;
+        color: var(--body-quiet-color, #999);
+        min-width: 100px;
+    }
+    .blog-minimal-list__body {
+        flex: 1;
+        min-width: 0;
+    }
+    .blog-minimal-list__title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+    }
+    .blog-minimal-list__title a {
+        color: var(--body-fg, #1a1a1a);
+        text-decoration: none;
+    }
+    .blog-minimal-list__title a:hover {
+        color: var(--theme-color-primary, #2563eb);
+    }
+    .blog-minimal-list__meta {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.25rem;
+        font-size: 0.8rem;
+        color: var(--body-quiet-color, #999);
+    }
+    .blog-minimal-list__category {
+        color: var(--theme-color-primary, #2563eb);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .blog-minimal-list__category:hover {
+        text-decoration: underline;
+    }
+    .blog-minimal-list__empty {
+        text-align: center;
+        padding: 4rem 1rem;
+        color: var(--body-quiet-color, #999);
+    }
+    .blog-minimal-list__empty i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    .blog-minimal-header {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+    .blog-minimal-pagination {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+    @media (max-width: 640px) {
+        .blog-minimal-list__item {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .blog-minimal-list__date {
+            min-width: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block blog_breadcrumb %}
+<nav class="blog-breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <ol class="blog-breadcrumb__list">
+        <li class="blog-breadcrumb__item">
+            <a href="/" class="blog-breadcrumb__link">{% mtrans "Home" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item blog-breadcrumb__item--active">{% mtrans "Blog" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block blog_content %}
+<div class="blog-minimal-header">
+    <div class="blog-page-header">
+        {% if search_query %}
+            <h1 class="blog-page-header__title">{% blocktrans with query=search_query %}Search results for "{{ query }}"{% endblocktrans %}</h1>
+            <p class="blog-page-header__subtitle">{% blocktrans count count=page_obj.paginator.count %}{{ count }} result found{% plural %}{{ count }} results found{% endblocktrans %}</p>
+        {% else %}
+            <h1 class="blog-page-header__title">{% mtrans "Blog" %}</h1>
+        {% endif %}
+    </div>
+
+    <!-- Active filter chips -->
+    {% if current_category or current_tag or search_query %}
+    <div class="blog-filters">
+        {% if current_category %}
+            {% for cat in categories %}
+                {% if cat.slug == current_category %}
+                <span class="blog-filter-chip">
+                    <i class="fas fa-folder"></i> {{ cat.name }}
+                    <a href="{% url 'blog:list' %}" class="blog-filter-chip__remove" aria-label="{% mtrans 'Remove filter' %}">&times;</a>
+                </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if current_tag %}
+            {% for t in tags %}
+                {% if t.slug == current_tag %}
+                <span class="blog-filter-chip">
+                    <i class="fas fa-tag"></i> {{ t.name }}
+                    <a href="{% url 'blog:list' %}" class="blog-filter-chip__remove" aria-label="{% mtrans 'Remove filter' %}">&times;</a>
+                </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if search_query %}
+            <span class="blog-filter-chip">
+                <i class="fas fa-search"></i> {{ search_query }}
+                <a href="{% url 'blog:list' %}" class="blog-filter-chip__remove" aria-label="{% mtrans 'Clear search' %}">&times;</a>
+            </span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Blog Posts Minimal List -->
+<section class="blog-minimal-list">
+    {% for post in posts %}
+    <article class="blog-minimal-list__item">
+        {% if template_options.show_date and post.published_at %}
+            <time class="blog-minimal-list__date" datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"M d, Y" }}</time>
+        {% endif %}
+        <div class="blog-minimal-list__body">
+            <h2 class="blog-minimal-list__title">
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+            </h2>
+            <div class="blog-minimal-list__meta">
+                {% if template_options.show_category and post.category %}
+                    <a href="{% url 'blog:category' slug=post.category.slug %}" class="blog-minimal-list__category">{{ post.category.name }}</a>
+                {% endif %}
+                {% if template_options.show_reading_time and blog_settings.show_reading_time and post.reading_time_minutes %}
+                    <span><i class="far fa-clock"></i> {{ post.reading_time_minutes }} {% mtrans "min read" %}</span>
+                {% endif %}
+            </div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="blog-minimal-list__empty">
+        <i class="fas fa-newspaper"></i>
+        {% if search_query %}
+            <p>{% mtrans "No posts found matching your search." %}</p>
+        {% else %}
+            <p>{% mtrans "No posts published yet. Check back soon!" %}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</section>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="blog-minimal-pagination">
+<nav class="blog-pagination" aria-label="{% mtrans 'Blog pagination' %}">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+           class="blog-pagination__link blog-pagination__prev"
+           aria-label="{% mtrans 'Previous page' %}">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="blog-pagination__current" aria-current="page">{{ num }}</span>
+        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+            <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+               class="blog-pagination__link">{{ num }}</a>
+        {% elif num == 1 or num == page_obj.paginator.num_pages %}
+            <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+               class="blog-pagination__link">{{ num }}</a>
+        {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+            <span class="blog-pagination__ellipsis">&hellip;</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+           class="blog-pagination__link blog-pagination__next"
+           aria-label="{% mtrans 'Next page' %}">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    {% endif %}
+</nav>
+</div>
+{% endif %}
+{% endblock %}
+
+{# No sidebar for minimal template #}
+{% block blog_sidebar_wrapper %}{% endblock %}
+
+{% block blog_scripts %}{% endblock %}

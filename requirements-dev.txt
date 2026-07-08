@@ -1,0 +1,25 @@
+# Development-only dependencies
+# These are NOT deployed to merchant installations
+
+# Include base requirements
+-r requirements.txt
+
+# API Documentation (Internal Use Only)
+# drf-spectacular is already in requirements.txt (0.28.0) - no need to override
+
+# Testing
+pytest>=8.0                    # Test framework
+pytest-django>=4.8             # Django integration for pytest
+pytest-cov>=5.0                # Code coverage
+pytest-timeout>=2.3            # Test timeout protection
+pytest-playwright>=0.5         # Playwright browser automation
+factory-boy>=3.3               # Test data factories
+pytest-xdist>=3.5              # Parallel test execution
+
+# Development Tools
+ipython==8.29.0                # Enhanced Python shell
+ipdb==0.13.13                  # IPython debugger
+django-debug-toolbar==4.4.6    # Development debugging toolbar
+
+# Build Tools
+pip-licenses==5.5.1            # Third-party license extraction for THIRD_PARTY_NOTICES.txt

@@ -1,0 +1,118 @@
+{% load i18n static merchant_trans %}
+{% mtrans "Search..." as default_search_placeholder %}
+<div class="widget-search {{ widget.css_classes }}"
+     data-autocomplete="{{ config.autocomplete_enabled|default:True }}"
+     data-autocomplete-url="{{ config.autocomplete_url }}"
+     data-min-chars="{{ config.min_chars|default:2 }}"
+     data-max-results="{{ config.max_results|default:8 }}"
+     data-show-recent="{{ config.show_recent|default:True }}"
+     data-show-images="{{ config.show_image_preview|default:True }}"
+     {% if config.autocomplete_enabled|default:True %}data-search-widget{% endif %}>
+
+    <!-- Mobile trigger (icon-only, hidden on desktop) -->
+    <button type="button" class="search-mobile-trigger" aria-label="{% mtrans 'Search' %}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+    </button>
+
+    <!-- Mobile backdrop (shown when search overlay is open) -->
+    <div class="search-mobile-backdrop" aria-hidden="true"></div>
+
+    <form action="{{ config.search_url|default:'/search/' }}" method="get" class="search-form" role="search">
+        <div class="search-container">
+            {% if config.show_categories %}
+            <select name="category" class="search-category" aria-label="{% mtrans 'Search category' %}">
+                <option value="">{% mtrans "All Categories" %}</option>
+                {% for category in search_categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+
+            <div class="search-input-wrapper">
+                <input type="search"
+                       name="{{ config.param_name|default:'q' }}"
+                       class="search-input"
+                       placeholder="{{ config.placeholder|default:default_search_placeholder }}"
+                       autocomplete="off"
+                       aria-label="{% mtrans 'Search' %}"
+                       aria-autocomplete="list"
+                       aria-controls="search-results-{{ widget.id }}"
+                       aria-expanded="false"
+                       {% if config.autocomplete_enabled|default:True %}
+                       data-search-autocomplete
+                       data-search-engine="{{ config.search_engine|default:'shop' }}"
+                       data-search-max-results="{{ config.max_results|default:8 }}"
+                       data-search-debounce="{{ config.debounce_ms|default:300 }}"
+                       {% endif %}
+                       {% if config.autofocus %}autofocus{% endif %}>
+
+                {% if config.voice_search %}
+                <button type="button" class="voice-search-button" aria-label="{% mtrans 'Voice search' %}">
+                    <svg class="voice-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
+                {% endif %}
+
+                <button type="submit" class="search-button" aria-label="{% mtrans 'Submit search' %}">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    {% if config.show_text %}
+                        <span>{% mtrans "Search" %}</span>
+                    {% endif %}
+                </button>
+
+                <button type="button" class="clear-search-button" aria-label="{% mtrans 'Clear search' %}" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile close button (hidden on desktop, shown in overlay) -->
+        <button type="button" class="search-mobile-close" aria-label="{% mtrans 'Close search' %}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <!-- Autocomplete Results -->
+        <div class="search-results" id="search-results-{{ widget.id }}" role="listbox" style="display: none;">
+            <div class="search-results-inner">
+                <!-- Recent Searches -->
+                <div class="recent-searches" style="display: none;">
+                    <div class="results-section-header">
+                        <span>{% mtrans "Recent Searches" %}</span>
+                        <button type="button" class="clear-recent-button">{% mtrans "Clear" %}</button>
+                    </div>
+                    <ul class="recent-list" role="group"></ul>
+                </div>
+
+                <!-- Autocomplete Suggestions -->
+                <div class="autocomplete-results">
+                    <div class="results-loading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <span>{% mtrans "Searching..." %}</span>
+                    </div>
+                    <ul class="suggestions-list" role="group"></ul>
+                    <div class="no-results" style="display: none;">
+                        {% mtrans "No results found" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="{% static 'design/js/widgets/search.js' %}"></script>

@@ -1,0 +1,105 @@
+{% extends "page_builder/checkout/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Single-Page Checkout Template - All sections visible at once in a two-column layout #}
+
+{% block checkout_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/checkout-single-page.css' %}">
+{% endblock %}
+
+{% block checkout_layout %}
+<div class="checkout-container checkout-container--single-page">
+
+    <!-- Express Checkout -->
+    {% if template_options.show_express_checkout and express_checkout_methods %}
+    <div class="single-page__express-checkout">
+        <div class="express-checkout__divider">
+            <span>{% mtrans 'Express Checkout' %}</span>
+        </div>
+        <div class="express-checkout__buttons">
+            {% for method in express_checkout_methods %}
+            <button type="button"
+                    class="express-btn {{ method.button_class }}"
+                    id="checkout-{{ method.slug }}"
+                    data-action="express-checkout"
+                    data-provider="{{ method.provider_slug|escapejs }}"
+                    data-method="{{ method.slug|escapejs }}"
+                    {% if method.requires_js_check %}style="display: none;" data-js-check="{{ method.js_check }}"{% endif %}>
+                <i class="{{ method.icon }}"></i>
+                {% if method.slug == 'apple_pay' or method.slug == 'google_pay' %}
+                    Pay
+                {% else %}
+                    {{ method.name }}
+                {% endif %}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="single-page__columns">
+
+        <!-- Left Column: All Form Sections -->
+        <div class="single-page__forms" id="checkout-steps">
+
+            <!-- Section 1: Contact -->
+            <div class="single-page__section" id="section-contact" data-step="contact">
+                <h2 class="single-page__section-heading">{% mtrans 'Contact' %}</h2>
+                {% include "page_builder/checkout/_step_contact.html" %}
+            </div>
+
+            {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}
+
+            <!-- Section 2: Shipping Address -->
+            <div class="single-page__section" id="section-shipping" data-step="shipping">
+                <h2 class="single-page__section-heading">{% mtrans 'Shipping Address' %}</h2>
+                {% include "page_builder/checkout/_step_shipping.html" %}
+            </div>
+
+            {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}
+
+            <!-- Section 3: Shipping Method -->
+            <div class="single-page__section" id="section-shipping-method" data-step="shipping-method">
+                <h2 class="single-page__section-heading">{% mtrans 'Shipping Method' %}</h2>
+                {% include "page_builder/checkout/_step_shipping_method.html" %}
+            </div>
+
+            {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}
+
+            <!-- Section 4: Payment -->
+            <div class="single-page__section" id="section-payment" data-step="payment">
+                <h2 class="single-page__section-heading">{% mtrans 'Payment' %}</h2>
+                {% include "page_builder/checkout/_step_payment.html" %}
+            </div>
+
+            {% if template_options.show_section_dividers %}<hr class="single-page__divider">{% endif %}
+
+            <!-- Section 5: Review -->
+            <div class="single-page__section" id="section-review" data-step="review">
+                <h2 class="single-page__section-heading">{% mtrans 'Review' %}</h2>
+                {% include "page_builder/checkout/_step_review.html" %}
+            </div>
+
+            <!-- Trust Badges -->
+            {% if template_options.show_trust_badges and checkout_trust_badges %}
+            <div class="checkout-trust-badges">
+                {% include "page_builder/includes/_trust_badges.html" with trust_badges=checkout_trust_badges %}
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Right Column: Order Summary Sidebar -->
+        {% if template_options.show_order_summary_sidebar %}
+        <div class="single-page__sidebar{% if template_options.sticky_summary %} checkout-summary--sticky{% endif %}">
+            {% include "page_builder/checkout/_order_summary.html" %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block checkout_scripts %}
+<script src="{% static 'page_builder/js/checkout.js' %}" defer></script>
+<script src="{% static 'page_builder/js/checkout-single-page.js' %}" defer></script>
+{% endblock %}

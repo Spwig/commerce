@@ -1,0 +1,212 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Design Tokens" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<style>
+    .actions {
+        margin-bottom: 20px;
+    }
+
+    .results-info {
+        padding: 15px 20px;
+        background: var(--darkened-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .results-info h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--body-fg);
+    }
+
+    .results-count {
+        font-size: 14px;
+        color: var(--body-quiet-color);
+        background: var(--selected-bg);
+        padding: 6px 12px;
+        border-radius: 4px;
+    }
+
+    .token-value-preview {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        vertical-align: middle;
+        margin-right: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-palette"></i>
+                {% trans "Design Tokens" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage design tokens for consistent styling across your store" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:design_designtoken_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Token" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or value...' %}"
+                    value="">
+            </div>
+
+            <!-- Token Type -->
+            <div class="filter-field">
+                <label for="filter-token_type">
+                    <i class="fas fa-tags"></i> {% trans "Token Type" %}
+                </label>
+                <select id="filter-token_type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for type_value, type_label in token_types %}
+                    <option value="{{ type_value }}">{{ type_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Source -->
+            <div class="filter-field">
+                <label for="filter-source">
+                    <i class="fas fa-code-branch"></i> {% trans "Source" %}
+                </label>
+                <select id="filter-source">
+                    <option value="">{% trans "All Sources" %}</option>
+                    {% for source_value, source_label in sources %}
+                    <option value="{{ source_value }}">{{ source_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Priority -->
+            <div class="filter-field">
+                <label for="filter-priority">
+                    <i class="fas fa-sort-amount-up"></i> {% trans "Priority" %}
+                </label>
+                <select id="filter-priority">
+                    <option value="">{% trans "All Priorities" %}</option>
+                    {% for priority_value, priority_label in priorities %}
+                    <option value="{{ priority_value }}">{{ priority_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-designtoken" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Tokens" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-palette"></i>
+            <span id="token-count">{{ cl.result_count }}</span> {% trans "token" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="token-results">
+        {% include "admin/design/partials/designtoken_cards.html" with tokens=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 token{% plural %}{{ counter }} tokens{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'tokens' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'design_admin:filter_design_tokens' %}"
+         data-results-container="token-results"
+         data-results-count="token-count"
+         style="display:none;"></div>
+</div>
+{% endblock %}

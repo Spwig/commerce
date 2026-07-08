@@ -1,0 +1,161 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* CKEditor Media Library — action buttons & video menu */
+
+.ck-media-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.ck-media-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 6px;
+    background: var(--body-bg, #fff);
+    color: var(--primary, #417690);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.ck-media-action-btn:hover {
+    background: var(--darkened-bg, #f0f4f8);
+    border-color: var(--primary, #417690);
+}
+
+.ck-media-action-btn i {
+    font-size: 0.875rem;
+}
+
+/* Video dropdown menu */
+.ck-video-menu {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    z-index: 1000;
+    min-width: 220px;
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ck-video-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    color: var(--body-fg, #333);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.ck-video-menu__item:hover {
+    background: var(--darkened-bg, #f0f4f8);
+}
+
+.ck-video-menu__item i {
+    width: 16px;
+    text-align: center;
+    color: var(--primary, #417690);
+    font-size: 0.875rem;
+}
+
+/* Embed preview notice */
+.ck-embed-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 10px 14px;
+    border: 1px solid #b8daff;
+    border-radius: 6px;
+    background: #e8f4fd;
+    color: #31708f;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    transition: opacity 0.3s;
+}
+
+.ck-embed-notice i {
+    flex-shrink: 0;
+    font-size: 0.875rem;
+}
+
+.ck-embed-notice--fade {
+    opacity: 0;
+}
+
+/* ============================================================================
+   CKEDITOR TOOLBAR RESPONSIVENESS
+   Ensure toolbar wraps on smaller screens instead of clipping outside viewport
+   ============================================================================ */
+
+.ck.ck-editor {
+    max-width: 100%;
+}
+
+.ck.ck-toolbar {
+    flex-wrap: wrap !important;
+}
+
+.ck.ck-toolbar .ck-toolbar__items {
+    flex-wrap: wrap !important;
+}
+
+/* Constrain sticky panel width without clipping dropdown panels */
+.ck.ck-sticky-panel__content {
+    max-width: 100%;
+    overflow: visible;
+}
+
+/* Dark mode */
+[data-theme="dark"] .ck-media-action-btn {
+    background: #1e1e1e;
+    border-color: #3a3a3a;
+    color: #5a9fd4;
+}
+
+[data-theme="dark"] .ck-media-action-btn:hover {
+    background: #2a2a2a;
+    border-color: #5a9fd4;
+}
+
+[data-theme="dark"] .ck-video-menu {
+    background: #1e1e1e;
+    border-color: #3a3a3a;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .ck-video-menu__item {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .ck-video-menu__item:hover {
+    background: #2a2a2a;
+}
+
+[data-theme="dark"] .ck-video-menu__item i {
+    color: #5a9fd4;
+}
+
+[data-theme="dark"] .ck-embed-notice {
+    background: #1a2a3a;
+    border-color: #2a4a6a;
+    color: #8abfdf;
+}

@@ -1,0 +1,193 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/badge_cards.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for badge in badges %}
+    <div class="list-row-card badge-card {% if not badge.is_active %}inactive{% endif %}" class="relative">
+        <!-- Visibility Badge -->
+        {% if not badge.is_visible %}
+        <div class="badge-visibility-indicator" title="{% trans 'Hidden achievement' %}">
+            <i class="fas fa-eye-slash"></i>
+        </div>
+        {% endif %}
+
+        <!-- Badge Icon/Image -->
+        <div class="list-row-card-icon badge">
+            {% if badge.image and badge.image.file %}
+                <img src="{{ badge.image.file.url }}"
+                     alt="{{ badge.name }}"
+                     class="img-contain">
+            {% elif badge.icon %}
+                <i class="fas {{ badge.icon }}"></i>
+            {% else %}
+                <i class="fas fa-medal"></i>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:loyalty_loyaltybadge_change' badge.id %}"
+                   title="{% trans 'Edit badge' %}">
+                    {{ badge.name }}
+                </a>
+            </h3>
+
+            <!-- Description -->
+            <p class="list-row-card-subtitle">
+                {% if badge.description %}
+                    {% if badge.description|length > 100 %}
+                        {{ badge.description|truncatewords:15 }}
+                    {% else %}
+                        {{ badge.description }}
+                    {% endif %}
+                {% else %}
+                    <em class="text-muted">{% trans "No description provided" %}</em>
+                {% endif %}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if badge.is_active %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'This badge is active' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge"
+                          class="badge-muted"
+                          title="{% trans 'This badge is inactive' %}">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <!-- Visibility Badge -->
+                {% if not badge.is_visible %}
+                    <span class="list-row-card-badge warning"
+                          title="{% trans 'Hidden from members until earned' %}">
+                        <i class="fas fa-eye-slash"></i> {% trans "Hidden" %}
+                    </span>
+                {% endif %}
+
+                <!-- Points Reward Badge -->
+                {% if badge.points_reward > 0 %}
+                    <span class="list-row-card-badge primary"
+                          title="{% trans 'Points awarded when earned' %}">
+                        <i class="fas fa-coins"></i> {{ badge.points_reward }} {% trans "pts" %}
+                    </span>
+                {% endif %}
+
+                <!-- Criteria Type Badge -->
+                <span class="list-row-card-badge info"
+                      title="{% trans 'Achievement criteria type' %}">
+                    <i class="fas fa-tag"></i>
+                    {{ badge.get_criteria_type_display|default:badge.criteria_type }}
+                </span>
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <!-- Criteria -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Criteria" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ badge.criteria_type|title }}: {{ badge.criteria_value }}
+                    </span>
+                </div>
+
+                <!-- Times Earned -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Times Earned" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% with earned_count=badge.earned_by.count %}
+                            {% if earned_count > 0 %}
+                                <span class="text-primary">
+                                    <i class="fas fa-medal"></i> {{ earned_count }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">
+                                    <i class="fas fa-medal"></i> 0
+                                </span>
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+                </div>
+
+                <!-- Display Order -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Display Order" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ badge.display_order }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta Information -->
+        <div class="list-row-card-meta">
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Achievement criteria' %}">
+                <i class="fas fa-bullseye"></i>
+                <span>{{ badge.criteria_type|title }}: {{ badge.criteria_value }}</span>
+            </div>
+
+            {% if badge.points_reward > 0 %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Points reward' %}">
+                <i class="fas fa-coins"></i>
+                <span>+{{ badge.points_reward }} {% trans "points" %}</span>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Internal badge ID' %}">
+                <i class="fas fa-key"></i>
+                <code class="code-small">{{ badge.id }}</code>
+            </div>
+
+            {% if badge.created_at %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Date created' %}">
+                <i class="fas fa-clock"></i>
+                <span>{{ badge.created_at|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltybadge_change' badge.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit badge' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% with earned_count=badge.earned_by.count %}
+            {% if earned_count > 0 %}
+            <a href="#"
+               class="list-row-card-action"
+               class="text-primary"
+               title="{% trans 'View members who earned this badge' %}">
+                <i class="fas fa-users"></i>
+            </a>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-medal"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No badges found." %}</p>
+        <p class="card-empty-state-subtitle">
+            <a href="{% url 'admin:loyalty_loyaltybadge_add' %}"
+               class="text-link">
+                {% trans "Create your first badge" %}
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+</div>

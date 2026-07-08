@@ -1,0 +1,389 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Shipping Method Wizard - Method-Specific Styles
+ * Only contains styles specific to shipping method wizard
+ * Base wizard styles come from wizard-base.css
+ */
+
+/* ==========================================================================
+   Method Type Badges (for review page)
+   ========================================================================== */
+
+.method-type-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.method-type-badge.flat_rate {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.method-type-badge.free_shipping {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.method-type-badge.weight_based,
+.method-type-badge.price_based,
+.method-type-badge.table_rate {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.method-type-badge.real_time {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.method-type-badge.local_pickup {
+    background: #ccfbf1;
+    color: #115e59;
+}
+
+/* ==========================================================================
+   Review Page Styles
+   ========================================================================== */
+
+.review-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--hairline-color);
+}
+
+.review-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.review-header h3 i {
+    color: var(--primary);
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.review-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.review-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.review-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--body-loud-color);
+}
+
+.cost-highlight {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.no-conditions {
+    color: var(--body-quiet-color);
+    font-style: italic;
+    padding: 10px;
+}
+
+/* Zone Badges (for review page) */
+.zone-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.zone-badge {
+    padding: 4px 12px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body-loud-color);
+}
+
+/* Status Badges (for review page) */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-badge.status-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.status-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* ==========================================================================
+   Status Check Box (for real-time carrier API check)
+   ========================================================================== */
+
+.status-check-box {
+    background: var(--darkened-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+.status-item.success {
+    color: #10b981;
+}
+
+.status-item.error {
+    color: #ef4444;
+}
+
+.status-icon {
+    font-size: 16px;
+}
+
+/* ==========================================================================
+   Tabs Container (for coverage step)
+   ========================================================================== */
+
+.tabs-container {
+    margin-top: 15px;
+}
+
+.tabs-header {
+    display: flex;
+    gap: 5px;
+    border-bottom: 2px solid var(--hairline-color);
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--body-quiet-color);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-button:hover {
+    color: var(--body-fg);
+    background: var(--darkened-bg);
+}
+
+.tab-button.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ==========================================================================
+   Dual Listbox Styles
+   ========================================================================== */
+
+.dual-listbox {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 15px;
+    align-items: center;
+}
+
+.listbox-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.listbox-panel label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+.dual-select {
+    width: 100%;
+    height: 200px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 13px;
+}
+
+.dual-select option {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.dual-select option:hover {
+    background: var(--selected-bg);
+}
+
+.listbox-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.listbox-controls .btn {
+    min-width: 40px;
+    padding: 8px;
+}
+
+/* ==========================================================================
+   CSP-Compliant: Inline style replacements
+   ========================================================================== */
+
+/* Info box list styling (replaces inline margin on <ul> in info-box) */
+.info-box ul {
+    margin: 8px 0 0 20px;
+}
+
+/* Alert paragraph spacing */
+.alert p {
+    margin: 8px 0 0 0;
+}
+
+/* Alert action link spacing */
+.alert-action-link {
+    margin-right: 8px;
+}
+
+/* Hidden sections (shown by JS based on method type) */
+#flat-rate-section {
+    display: none;
+}
+
+#carrier-section {
+    display: none;
+}
+
+#api-status-result {
+    display: none;
+}
+
+/* Display icon section spacing */
+.wizard-display-section-title {
+    margin-top: 20px;
+}
+
+.wizard-display-section-help {
+    margin-bottom: 15px;
+}
+
+/* Review page: icon image preview */
+.review-value img {
+    max-height: 32px;
+    vertical-align: middle;
+}
+
+.review-image-label {
+    margin-left: 8px;
+}
+
+/* Review page: yes/no indicator icons */
+.review-icon-yes {
+    color: #10b981;
+}
+
+.review-icon-no {
+    color: #6b7280;
+}
+
+/* Carrier API status success icon */
+.status-icon-success {
+    color: #10b981;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .dual-listbox {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .listbox-controls {
+        flex-direction: row;
+        justify-content: center;
+        order: 2;
+    }
+
+    .listbox-panel:last-child {
+        order: 3;
+    }
+
+    .review-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .review-item.full-width {
+        grid-column: 1;
+    }
+}

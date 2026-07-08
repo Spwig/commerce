@@ -1,0 +1,367 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Webhook Endpoint" %} | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'webhooks/css/webhook_wizard.css' %}">
+<script src="{% static 'webhooks/js/webhook_wizard.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:webhooks_webhookendpoint_changelist' %}">{% trans 'Webhook Endpoints' %}</a>
+    &rsaquo; {% trans 'Create Endpoint' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Header -->
+    <div class="wizard-header">
+        <h1>
+            <i class="fas fa-broadcast-tower"></i>
+            {% trans "Create Webhook Endpoint" %}
+        </h1>
+        <p class="wizard-subtitle">
+            {% trans "Set up a new webhook endpoint to receive real-time notifications" %}
+        </p>
+    </div>
+
+    <!-- Step Indicators -->
+    <div class="wizard-steps" id="wizard-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Endpoint Details" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Select Events" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Configuration" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Review" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <form id="wizard-form" method="post">
+            {% csrf_token %}
+
+            <!-- Step 1: Endpoint Details -->
+            <div class="wizard-step" id="step-1">
+                <h2 class="step-title">
+                    <i class="fas fa-server"></i>
+                    {% trans "Endpoint Details" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Enter the basic information for your webhook endpoint." %}
+                </p>
+
+                <div class="info-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong>{% trans "Tip:" %}</strong>
+                        {% trans "Use a descriptive name like 'Order Sync - ERP' or 'Inventory Updates'. The URL should point to your webhook receiver endpoint." %}
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="endpoint-name">
+                            {% trans "Endpoint Name" %} <span class="required">*</span>
+                        </label>
+                        <input type="text" id="endpoint-name" name="name" class="form-control" required
+                               placeholder="{% trans 'e.g., Order Notifications, Inventory Sync' %}">
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "A friendly name to identify this endpoint" %}
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endpoint-url">
+                            {% trans "Webhook URL" %} <span class="required">*</span>
+                        </label>
+                        <input type="url" id="endpoint-url" name="url" class="form-control" required
+                               placeholder="https://your-domain.com/webhooks/receive">
+                        <p class="help-text">
+                            <i class="fas fa-lock"></i>
+                            {% trans "Must be HTTPS in production. This is where webhook payloads will be sent." %}
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endpoint-description">
+                            {% trans "Description" %}
+                        </label>
+                        <textarea id="endpoint-description" name="description" class="form-control" rows="3"
+                                  placeholder="{% trans 'Optional: Describe what this endpoint is used for...' %}"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Select Events -->
+            <div class="wizard-step hidden" id="step-2">
+                <h2 class="step-title">
+                    <i class="fas fa-bell"></i>
+                    {% trans "Select Events" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Choose which events this endpoint should receive. You can select individual events or subscribe to all events." %}
+                </p>
+
+                <div class="event-selection-header">
+                    <div class="select-all-container">
+                        <label class="checkbox-label select-all-checkbox">
+                            <input type="checkbox" id="select-all-events">
+                            <span>{% trans "Subscribe to all events" %}</span>
+                        </label>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Includes all current and future event types" %}
+                        </p>
+                    </div>
+                    <div class="selected-count">
+                        <span id="selected-events-count">0</span> {% trans "events selected" %}
+                    </div>
+                </div>
+
+                <div class="event-categories" id="event-categories">
+                    {% for category, events in events_by_category.items %}
+                    <div class="event-category">
+                        <div class="category-header" data-category="{{ category }}">
+                            <div class="category-info">
+                                <i class="fas {{ category_icons|default_if_none:'' }}"></i>
+                                <span class="category-name">{{ category|title }}</span>
+                                <span class="category-count">({{ events|length }})</span>
+                            </div>
+                            <label class="checkbox-label category-checkbox">
+                                <input type="checkbox" class="select-category" data-category="{{ category }}">
+                                <span>{% trans "Select all" %}</span>
+                            </label>
+                        </div>
+                        <div class="category-events">
+                            {% for event in events %}
+                            <label class="event-item">
+                                <input type="checkbox" name="events" value="{{ event.event }}" class="event-checkbox" data-category="{{ category }}">
+                                <div class="event-info">
+                                    <span class="event-name">{{ event.event }}</span>
+                                    <span class="event-description">{{ event.description }}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Hidden field for "all events" selection -->
+                <input type="hidden" id="all-events-selected" name="all_events" value="false">
+            </div>
+
+            <!-- Step 3: Configuration -->
+            <div class="wizard-step hidden" id="step-3">
+                <h2 class="step-title">
+                    <i class="fas fa-cog"></i>
+                    {% trans "Configuration" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Configure retry behavior and timeout settings for this endpoint." %}
+                </p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-redo"></i>
+                        {% trans "Retry Settings" %}
+                    </h3>
+
+                    <div class="form-group">
+                        <label for="max-retries">
+                            {% trans "Maximum Retries" %}
+                        </label>
+                        <input type="number" id="max-retries" name="max_retries" class="form-control"
+                               value="5" min="0" max="10">
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Number of times to retry if delivery fails (0-10). Uses exponential backoff." %}
+                        </p>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>{% trans "Retry Schedule:" %}</strong>
+                            {% trans "Failed deliveries are retried with exponential backoff: 1 minute, 2 minutes, 4 minutes, 8 minutes, etc." %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-hourglass-half"></i>
+                        {% trans "Timeout Settings" %}
+                    </h3>
+
+                    <div class="form-group">
+                        <label for="timeout-seconds">
+                            {% trans "Request Timeout (seconds)" %}
+                        </label>
+                        <input type="number" id="timeout-seconds" name="timeout_seconds" class="form-control"
+                               value="30" min="5" max="60">
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "How long to wait for a response before timing out (5-60 seconds)." %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-toggle-on"></i>
+                        {% trans "Status" %}
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="is-active" name="is_active" checked>
+                            <span>{% trans "Active" %}</span>
+                        </label>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Inactive endpoints will not receive webhook deliveries." %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>{% trans "Auto-Disable Protection:" %}</strong>
+                        {% trans "Endpoints are automatically disabled after 10 consecutive failures to protect your system. You can re-enable them from the endpoint list." %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Review & Create -->
+            <div class="wizard-step hidden" id="step-4">
+                <h2 class="step-title">
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Review & Create" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Review your webhook endpoint configuration before creating it." %}
+                </p>
+
+                <div class="review-sections">
+                    <div class="review-section">
+                        <div class="review-section-header">
+                            <i class="fas fa-server"></i>
+                            {% trans "Endpoint Details" %}
+                        </div>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Name:" %}</span>
+                                <span class="review-value" id="review-name">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "URL:" %}</span>
+                                <span class="review-value review-url" id="review-url">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Description:" %}</span>
+                                <span class="review-value" id="review-description">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <div class="review-section-header">
+                            <i class="fas fa-bell"></i>
+                            {% trans "Subscribed Events" %}
+                        </div>
+                        <div id="review-events" class="review-events">-</div>
+                    </div>
+
+                    <div class="review-section">
+                        <div class="review-section-header">
+                            <i class="fas fa-cog"></i>
+                            {% trans "Configuration" %}
+                        </div>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Max Retries:" %}</span>
+                                <span class="review-value" id="review-retries">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Timeout:" %}</span>
+                                <span class="review-value" id="review-timeout">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Status:" %}</span>
+                                <span class="review-value" id="review-status">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-key"></i>
+                    <div>
+                        <strong>{% trans "Secret Key:" %}</strong>
+                        {% trans "A unique secret key will be generated automatically. You'll see it once after creation - make sure to save it for signature verification." %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="wizard-navigation">
+                <div class="nav-buttons">
+                    <a href="{% url 'admin:webhooks_webhookendpoint_changelist' %}" class="btn btn-secondary" id="cancel-btn">
+                        <i class="fas fa-times"></i>
+                        {% trans "Cancel" %}
+                    </a>
+                    <button type="button" class="btn btn-secondary" id="prev-btn" style="display: none;">
+                        <i class="fas fa-arrow-left"></i>
+                        {% trans "Previous" %}
+                    </button>
+                    <button type="button" class="btn btn-primary" id="next-btn">
+                        {% trans "Next" %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submit-btn" style="display: none;">
+                        <i class="fas fa-check"></i>
+                        {% trans "Create Endpoint" %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="application/json" id="webhook-wizard-translations">
+{
+    "all": "{% trans 'All' %}",
+    "nameRequired": "{% trans 'Endpoint name is required' %}",
+    "urlRequired": "{% trans 'Webhook URL is required' %}",
+    "urlMustStartWith": "{% trans 'URL must start with http:// or https://' %}",
+    "selectOneEvent": "{% trans 'Please select at least one event' %}",
+    "none": "{% trans 'None' %}",
+    "allEvents": "{% trans 'All Events' %}",
+    "noneSelected": "{% trans 'None selected' %}",
+    "active": "{% trans 'Active' %}",
+    "inactive": "{% trans 'Inactive' %}"
+}
+</script>
+{% endblock %}

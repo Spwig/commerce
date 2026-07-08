@@ -1,0 +1,230 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Component Manifest Schema",
+  "description": "Schema for Spwig component package manifests",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "display_name",
+    "description",
+    "author",
+    "tier_compatibility",
+    "regions"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "minLength": 2,
+      "maxLength": 50,
+      "description": "Component identifier (lowercase, alphanumeric with underscores)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "description": "Semantic version (e.g., 1.0.0)"
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Human-readable component name"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 500,
+      "description": "Component description for marketplace listing"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Component author/vendor name"
+    },
+    "tier_compatibility": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["A", "B", "C"]
+      },
+      "description": "Security tiers this component is compatible with"
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "description": "Page regions this component can be placed in"
+    },
+    "props_schema": {
+      "type": "object",
+      "description": "JSON Schema defining component properties",
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "const": "object"
+        },
+        "properties": {
+          "type": "object"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "properties": {
+        "css": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^assets/.*\\.css$"
+          },
+          "description": "CSS files relative to component root"
+        },
+        "js": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^assets/.*\\.js$"
+          },
+          "description": "JavaScript files relative to component root"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^assets/.*\\.(png|jpg|jpeg|svg|gif|webp)$"
+          },
+          "description": "Image files relative to component root"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "min_version"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "min_version": {
+            "type": "string",
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+          },
+          "max_version": {
+            "type": "string",
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+          }
+        }
+      },
+      "description": "Component dependencies on other components"
+    },
+    "locales": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]{2}(_[A-Z]{2})?$"
+      },
+      "description": "Supported locale codes (e.g., en, es, fr, en_US)"
+    },
+    "preview": {
+      "type": "string",
+      "pattern": "^preview\\.(png|jpg|jpeg|webp)$",
+      "description": "Preview image filename"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "hero",
+        "header",
+        "footer",
+        "content",
+        "product",
+        "collection",
+        "cart",
+        "checkout",
+        "marketing",
+        "social",
+        "navigation",
+        "utility"
+      ],
+      "description": "Component category for marketplace organization"
+    },
+    "tags": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$",
+        "maxLength": 30
+      },
+      "description": "Searchable tags for marketplace"
+    },
+    "license": {
+      "type": "string",
+      "enum": [
+        "AGPL-3.0-or-later",
+        "AGPL-3.0",
+        "GPL-3.0",
+        "MPL-2.0",
+        "Apache-2.0",
+        "MIT",
+        "BSD-3-Clause",
+        "Proprietary"
+      ],
+      "default": "AGPL-3.0-or-later",
+      "description": "SPDX licence identifier. First-party components should default to AGPL-3.0-or-later; third-party authors may declare any licence, including Proprietary."
+    },
+    "changelog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "changes"],
+        "properties": {
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+          },
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "changes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "description": "Version history and changes"
+    },
+    "min_platform_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "description": "Minimum platform version required"
+    },
+    "max_platform_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "description": "Maximum platform version supported"
+    }
+  },
+  "additionalProperties": false
+}

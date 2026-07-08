@@ -1,0 +1,177 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Enhanced Branding Admin Styles */
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .form-row.field-primary_color,
+    .form-row.field-secondary_color,
+    .form-row.field-accent_color,
+    .form-row.field-success_color,
+    .form-row.field-warning_color,
+    .form-row.field-error_color {
+        display: inline-flex;
+        width: auto;
+        margin-right: 30px;
+    }
+
+    .form-row input[type="color"] {
+        cursor: pointer;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .form-row input[type="color"]:hover {
+        border-color: #007bff;
+        transform: scale(1.1);
+    }
+
+    .color-group {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .typography-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .spacing-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    /* Color preview */
+    .color-preview {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        vertical-align: middle;
+        margin-left: 10px;
+    }
+
+    /* Section headers with icons */
+    .module h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white !important;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
+    .module h2:before {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        font-size: 1.3rem;
+    }
+
+    .module:nth-child(1) h2:before { content: "\f1fc"; } /* Theme icon */
+    .module:nth-child(2) h2:before { content: "\f53f"; } /* Palette icon */
+    .module:nth-child(3) h2:before { content: "\f031"; } /* Font icon */
+    .module:nth-child(4) h2:before { content: "\f424"; } /* Ruler icon */
+    .module:nth-child(5) h2:before { content: "\f1b3"; } /* Cube icon */
+    .module:nth-child(6) h2:before { content: "\f5cb"; } /* Component icon */
+    .module:nth-child(7) h2:before { content: "\f121"; } /* Code icon */
+
+    /* Live preview section */
+    .preview-section {
+        position: sticky;
+        top: 20px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .preview-section h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    /* Help text styling */
+    .help {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+
+    /* Submit row styling */
+    .submit-row {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        position: sticky;
+        bottom: 20px;
+        box-shadow: 0 -5px 10px rgba(0,0,0,0.1);
+    }
+
+    .submit-row input[type="submit"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .submit-row input[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+</style>
+
+<script src="{% static 'design/admin/js/branding_change_form.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="branding-admin-wrapper">
+    {{ block.super }}
+
+    {% if object %}
+    <div class="preview-section">
+        <h3><i class="fas fa-eye"></i> Live Preview</h3>
+        <p>Changes will be reflected after saving.</p>
+        <a href="{% url 'design:branding_preview' %}" target="_blank" class="button">
+            <i class="fas fa-external-link-alt"></i> Open Full Preview
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

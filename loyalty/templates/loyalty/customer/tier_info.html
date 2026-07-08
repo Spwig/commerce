@@ -1,0 +1,131 @@
+{% extends "themes/base.html" %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% mtrans "Tier Information" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'loyalty/css/customer.css' %}">
+<link rel="stylesheet" href="{% static 'loyalty/css/customer/tier_info.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'loyalty/js/customer.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-dashboard">
+    <div class="container">
+        {# Breadcrumb #}
+        <nav class="breadcrumb">
+            <a href="{% url 'loyalty:customer_dashboard' %}">{% mtrans "Loyalty Dashboard" %}</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>{% mtrans "Tier Information" %}</span>
+        </nav>
+
+        {# Header #}
+        <div class="tier-info-header">
+            <h1>{% mtrans "Loyalty Tiers" %}</h1>
+            <p>{% mtrans "Unlock exclusive benefits as you earn more points" %}</p>
+        </div>
+
+        {# Current Tier Highlight #}
+        {% if member.current_tier %}
+        <div class="tier-current-highlight" data-tier-color="{{ member.current_tier.color|default:'' }}">
+            <div class="tier-current-label">{% mtrans "Your Current Tier" %}</div>
+            <div class="tier-current-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h2 class="tier-current-name">{{ member.current_tier.name }}</h2>
+            <p class="tier-current-description">{{ member.current_tier.description }}</p>
+        </div>
+        {% endif %}
+
+        {# All Tiers #}
+        <div class="tier-grid">
+            {% for tier in all_tiers %}
+            <div class="dashboard-section tier-card {% if member.current_tier and member.current_tier.id == tier.id %}tier-card-active{% endif %}" data-tier-color="{{ tier.color|default:'' }}">
+                {# Current Tier Badge #}
+                {% if member.current_tier and member.current_tier.id == tier.id %}
+                <div class="tier-current-badge">
+                    <i class="fas fa-check-circle"></i> {% mtrans "Current" %}
+                </div>
+                {% endif %}
+
+                {# Tier Header #}
+                <div class="tier-card-header">
+                    <div class="tier-icon-circle">
+                        <i class="fas {% if tier.rank == 1 %}fa-star{% elif tier.rank == 2 %}fa-gem{% elif tier.rank == 3 %}fa-crown{% else %}fa-trophy{% endif %}"></i>
+                    </div>
+
+                    <h3 class="tier-card-name">{{ tier.name }}</h3>
+
+                    <div class="tier-card-criteria">
+                        {% if tier.min_points_earned > 0 %}
+                        {% blocktrans with points=tier.min_points_earned %}{{ points }} points required{% endblocktrans %}
+                        {% elif tier.min_spend > 0 %}
+                        {% blocktrans with amount=tier.min_spend %}${{ amount }} total spend required{% endblocktrans %}
+                        {% elif tier.min_orders > 0 %}
+                        {% blocktrans with orders=tier.min_orders %}{{ orders }} orders required{% endblocktrans %}
+                        {% endif %}
+                    </div>
+
+                    <p class="tier-card-description">{{ tier.description }}</p>
+                </div>
+
+                {# Progress Bar #}
+                {% if tier.is_achieved %}
+                <div class="tier-achieved-section">
+                    <div class="tier-achieved-badge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>{% mtrans "Achieved" %}</span>
+                    </div>
+                </div>
+                {% elif tier.progress > 0 %}
+                <div class="tier-progress-section">
+                    <div class="tier-progress-header">
+                        <span>{% mtrans "Progress" %}</span>
+                        <span>{{ tier.progress }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-progress="{{ tier.progress }}"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Benefits List #}
+                {% if tier.benefits %}
+                <div class="tier-benefits-section">
+                    <h4 class="tier-benefits-title">{% mtrans "Benefits" %}</h4>
+
+                    <ul class="tier-benefits-list">
+                        {% for benefit in tier.benefits %}
+                        <li class="tier-benefits-item">
+                            <i class="fas fa-check tier-benefit-check"></i>
+                            <span>{{ benefit }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {# Multiplier Badge #}
+                {% if tier.points_multiplier and tier.points_multiplier > 1 %}
+                <div class="tier-multiplier-badge">
+                    <div class="tier-multiplier-value">{{ tier.points_multiplier }}x</div>
+                    <div class="tier-multiplier-label">{% mtrans "Points Multiplier" %}</div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {# CTA #}
+        <div class="tier-cta-section">
+            <a href="{% url 'loyalty:customer_dashboard' %}" class="tier-cta-btn">
+                <i class="fas fa-arrow-left"></i> {% mtrans "Back to Dashboard" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{{ product.name }} - {{ site_settings.site_name|default:'Shop' }}{% endblock %}
+
+{% block extra_head %}
+<meta property="og:title" content="{{ product.name }}">
+<meta property="og:description" content="{{ product.short_description|default:product.full_description|striptags|truncatewords:30 }}">
+{% if product.primary_image_url %}
+<meta property="og:image" content="{{ product.primary_image_url }}">
+{% endif %}
+<meta property="product:price:amount" content="{{ product.price }}">
+<meta property="product:price:currency" content="{{ site_settings.currency_code|default:'USD' }}">
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-base.css' %}">
+<link rel="stylesheet" href="{% static 'page_builder/css/product-dependency.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/includes/stock_status.css' %}">
+{% if has_design_editor %}
+<link rel="stylesheet" href="{% static 'core/css/storefront-modal.css' %}">
+<link rel="stylesheet" href="{% static 'customizable_product/css/design-editor.css' %}">
+{% endif %}
+{% block product_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+{% block product_breadcrumb %}
+{% if template_options.show_breadcrumb %}
+<nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <div class="container">
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+            </li>
+            {% if product.category %}
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="breadcrumb__link">{{ product.category.name }}</a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                {{ product.name }}
+            </li>
+        </ol>
+    </div>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block product_layout %}
+<!-- Override in child templates -->
+{% endblock %}
+
+<!-- Hidden variant data for JavaScript -->
+<script id="variants-data" type="application/json">{{ variants_json|safe }}</script>
+
+{% if template_options.floating_add_to_cart %}
+{% include "page_builder/product/_floating_add_to_cart.html" %}
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'catalog/js/stock_status.js' %}"></script>
+<script src="{% static 'page_builder/js/product-base.js' %}" defer></script>
+{% if template_options.floating_add_to_cart %}
+<script src="{% static 'page_builder/js/product-floating-cart.js' %}" defer></script>
+{% endif %}
+{% if has_design_editor %}
+<script src="{% static 'core/js/storefront-modal.js' %}" defer></script>
+<script src="{% static 'core/vendor/js/fabric.min.js' %}" defer></script>
+<script src="{% static 'customizable_product/js/design-editor-canvas.js' %}" defer></script>
+<script src="{% static 'customizable_product/js/design-editor-history.js' %}" defer></script>
+<script src="{% static 'customizable_product/js/design-editor-tools.js' %}" defer></script>
+<script src="{% static 'customizable_product/js/design-editor-mobile.js' %}" defer></script>
+<script src="{% static 'customizable_product/js/design-editor.js' %}" defer></script>
+{% endif %}
+{% block product_scripts %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Promo Slides" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-images"></i>
+                {% trans "Promo Slides" %}
+            </h1>
+            <p class="subtitle">{% trans "Promotional slides for customer-facing POS displays" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:pos_app_promoslide_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Slide" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Scope Filter -->
+            <div class="filter-field">
+                <label for="filter-scope">
+                    <i class="fas fa-store"></i> {% trans "Scope" %}
+                </label>
+                <select id="filter-scope">
+                    <option value="">{% trans "All Stores" %}</option>
+                    {% if store_groups %}
+                    <optgroup label="{% trans 'Store Groups' %}">
+                        {% for group in store_groups %}
+                        <option value="group:{{ group.id }}">{{ group.name }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endif %}
+                    {% if warehouses %}
+                    <optgroup label="{% trans 'Individual Stores' %}">
+                        {% for warehouse in warehouses %}
+                        <option value="store:{{ warehouse.id }}">{{ warehouse.pos_display_name|default:warehouse.name }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endif %}
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Slides" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-images"></i>
+            <span id="slide-count">{{ cl.result_count }}</span> {% trans "slide" %}{{ cl.result_count|pluralize:"s" }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="slide-results">
+        {% include "admin/pos_app/promoslide/partials/slide_cards.html" with slides=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {{ cl.result_count }} {% trans "slide" %}{{ cl.result_count|pluralize:"s" }}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url 'pos_admin:promoslide_filter' %}"
+     data-results-container="slide-results"
+     data-results-count="slide-count"
+     class="pos-hidden"></div>
+</div>
+{% endblock %}

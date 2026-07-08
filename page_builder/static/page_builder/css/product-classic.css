@@ -1,0 +1,65 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ==========================================================================
+   Product Classic Template
+   Two-column layout: gallery left (50%), product info right (50%)
+   Extends product-base.css - only classic-specific overrides here
+   ========================================================================== */
+
+/* Section wrapper */
+.product-section--classic {
+    padding: var(--theme-space-10, 2.5rem) 0;
+}
+
+/* Classic two-column grid */
+.product-layout--classic {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--theme-space-12, 3rem);
+    align-items: start;
+}
+
+/* Gallery column */
+.product-layout--classic .product-gallery {
+    position: sticky;
+    top: var(--theme-space-6, 1.5rem);
+    z-index: 1;
+}
+
+.product-layout--classic .product-gallery__zoom-container {
+    border-radius: var(--theme-radius-lg, 0.75rem);
+    background: var(--theme-color-background-secondary, #f9fafb);
+}
+
+.product-layout--classic .product-gallery__thumbnails {
+    margin-top: var(--theme-space-3, 0.75rem);
+}
+
+/* Info column */
+.product-layout--classic .product-info {
+    padding-top: var(--theme-space-1, 0.25rem);
+}
+
+/* ---- Responsive: Tablet ---- */
+@media (max-width: 968px) {
+    .product-layout--classic {
+        grid-template-columns: 1fr;
+        gap: var(--theme-space-8, 2rem);
+    }
+
+    .product-layout--classic .product-gallery {
+        position: static;
+        z-index: auto;
+    }
+}
+
+/* ---- Responsive: Mobile ---- */
+@media (max-width: 768px) {
+    .product-section--classic {
+        padding: var(--theme-space-6, 1.5rem) 0;
+    }
+
+    .product-layout--classic {
+        gap: var(--theme-space-6, 1.5rem);
+    }
+}

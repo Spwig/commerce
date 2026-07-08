@@ -1,0 +1,234 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/theme_package.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="theme-package-container">
+
+    <!-- Header -->
+    <div class="package-header">
+        <div class="package-header-content">
+            <h1>
+                <i class="fas fa-box-open"></i>
+                {% trans "Theme Packager" %}
+            </h1>
+            <p class="package-subtitle">
+                {% trans "Package your theme for distribution and installation" %}
+            </p>
+        </div>
+
+        <div class="package-header-actions">
+            <a href="{% url 'admin:design_theme_changelist' %}" class="package-action-btn secondary">
+                <i class="fas fa-arrow-left"></i>
+                {% trans "Back to Themes" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+        <div class="info-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="info-content">
+            <h3>{% trans "How Theme Packaging Works" %}</h3>
+            <ul>
+                <li>{% trans "Select a theme directory from the list or enter a custom path" %}</li>
+                <li>{% trans "Validate your theme to check for errors and warnings" %}</li>
+                <li>{% trans "Review validation results and fix any issues" %}</li>
+                <li>{% trans "Package your theme into a distributable ZIP file" %}</li>
+                <li>{% trans "Download the package and share it with merchants" %}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Theme Selection -->
+    <div class="package-section">
+        <div class="section-header">
+            <h2>
+                <i class="fas fa-folder-open"></i>
+                {% trans "Select Theme" %}
+            </h2>
+        </div>
+
+        <div class="section-content">
+            {% if available_themes %}
+            <div class="theme-selection">
+                <label for="theme-select">{% trans "Available Themes" %}:</label>
+                <select id="theme-select" class="theme-select">
+                    <option value="">{% trans "-- Select a theme --" %}</option>
+                    {% for theme in available_themes %}
+                    <option value="{{ theme.absolute_path }}"
+                            data-name="{{ theme.name }}"
+                            data-version="{{ theme.version }}"
+                            data-author="{{ theme.author }}">
+                        {{ theme.display_name }} (v{{ theme.version }}) - {{ theme.author }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% else %}
+            <div class="no-themes-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>{% trans "No themes found in the themes directory." %}</p>
+                <p>{% trans "Create a theme directory with a manifest.json file to get started." %}</p>
+            </div>
+            {% endif %}
+
+            <div class="or-separator">
+                <span>{% trans "OR" %}</span>
+            </div>
+
+            <div class="custom-path">
+                <label for="theme-path-input">{% trans "Custom Theme Path" %}:</label>
+                <input
+                    type="text"
+                    id="theme-path-input"
+                    class="theme-path-input"
+                    placeholder="{% trans 'Enter absolute or relative path to theme directory' %}"
+                >
+                <button id="validate-btn" class="package-btn primary" disabled>
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Validate Theme" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation Results -->
+    <div id="validation-section" class="package-section" style="display: none;">
+        <div class="section-header">
+            <h2>
+                <i class="fas fa-clipboard-check"></i>
+                {% trans "Validation Results" %}
+            </h2>
+        </div>
+
+        <div class="section-content">
+            <!-- Theme Info Card -->
+            <div id="theme-info-card" class="theme-info-card" style="display: none;">
+                <div class="theme-info-header">
+                    <h3 id="theme-info-name"></h3>
+                    <span id="theme-info-version" class="theme-info-version"></span>
+                </div>
+                <p id="theme-info-author" class="theme-info-author"></p>
+                <p id="theme-info-description" class="theme-info-description"></p>
+            </div>
+
+            <!-- Validation Status -->
+            <div id="validation-status" class="validation-status"></div>
+
+            <!-- Errors -->
+            <div id="errors-container" class="validation-messages" style="display: none;">
+                <h4 class="validation-messages-header error">
+                    <i class="fas fa-times-circle"></i>
+                    <span id="errors-count"></span> {% trans "Error" %}<span id="errors-plural">s</span>
+                </h4>
+                <ul id="errors-list" class="validation-list error"></ul>
+            </div>
+
+            <!-- Warnings -->
+            <div id="warnings-container" class="validation-messages" style="display: none;">
+                <h4 class="validation-messages-header warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="warnings-count"></span> {% trans "Warning" %}<span id="warnings-plural">s</span>
+                </h4>
+                <ul id="warnings-list" class="validation-list warning"></ul>
+            </div>
+
+            <!-- Actions -->
+            <div id="validation-actions" class="validation-actions" style="display: none;">
+                <button id="package-btn" class="package-btn success" disabled>
+                    <i class="fas fa-box"></i>
+                    {% trans "Create Package" %}
+                </button>
+                <button id="revalidate-btn" class="package-btn secondary">
+                    <i class="fas fa-redo"></i>
+                    {% trans "Re-validate" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Package Results -->
+    <div id="package-section" class="package-section" style="display: none;">
+        <div class="section-header">
+            <h2>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Package Created" %}
+            </h2>
+        </div>
+
+        <div class="section-content">
+            <div class="package-success">
+                <div class="package-success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>{% trans "Theme Package Created Successfully!" %}</h3>
+
+                <div class="package-details">
+                    <div class="package-detail-item">
+                        <span class="package-detail-label">{% trans "Package File" %}:</span>
+                        <span id="package-filename" class="package-detail-value"></span>
+                    </div>
+                    <div class="package-detail-item">
+                        <span class="package-detail-label">{% trans "Files" %}:</span>
+                        <span id="package-file-count" class="package-detail-value"></span>
+                    </div>
+                    <div class="package-detail-item">
+                        <span class="package-detail-label">{% trans "Size" %}:</span>
+                        <span id="package-size" class="package-detail-value"></span>
+                    </div>
+                    <div class="package-detail-item">
+                        <span class="package-detail-label">{% trans "Checksum" %}:</span>
+                        <span id="package-checksum" class="package-detail-value"></span>
+                    </div>
+                </div>
+
+                <div class="package-actions">
+                    <a id="download-link" href="#" class="package-btn success large" download>
+                        <i class="fas fa-download"></i>
+                        {% trans "Download Package" %}
+                    </a>
+                    <button id="package-another-btn" class="package-btn secondary">
+                        <i class="fas fa-plus"></i>
+                        {% trans "Package Another Theme" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p id="loading-message">{% trans "Processing..." %}</p>
+    </div>
+</div>
+
+<!-- Translation strings for JavaScript -->
+<script type="application/json" id="package-messages">
+{
+    "validating": "{% trans 'Validating theme...' %}",
+    "packaging": "{% trans 'Creating package...' %}",
+    "error": "{% trans 'Error' %}",
+    "validationFailed": "{% trans 'Validation failed' %}",
+    "validationPassed": "{% trans 'Validation passed! Ready to package.' %}",
+    "packagingFailed": "{% trans 'Packaging failed' %}",
+    "selectTheme": "{% trans 'Please select a theme or enter a path' %}"
+}
+</script>
+
+<!-- External JS for theme packaging -->
+<script src="{% static 'design/js/theme_package.js' %}"></script>
+
+</div>
+{% endblock %}

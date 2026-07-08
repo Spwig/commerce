@@ -1,0 +1,2626 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Action and method IDs required"
+msgstr "需要操作和方法 ID"
+
+msgid "{} method(s) enabled"
+msgstr "\"{} 方法已启用\""
+
+msgid "{} method(s) disabled"
+msgstr "\"{} 方法已禁用\""
+
+msgid "{} method(s) deleted"
+msgstr "{} 种方法已删除"
+
+msgid "Unknown action"
+msgstr "未知操作"
+
+msgid "Invalid request data"
+msgstr "请求数据无效"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "发生意外错误。请重试。"
+
+msgid "Basic Information"
+msgstr "基本信息"
+
+msgid "Geographic Scope"
+msgstr "地理范围"
+
+msgid "Application Rules"
+msgstr "应用规则"
+
+msgid "Product Exemptions"
+msgstr "产品豁免"
+
+msgid "Timestamps"
+msgstr "时间戳"
+
+msgid "Rate %"
+msgstr "费率（%）"
+
+msgid "Cart"
+msgstr "购物车"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "请输入百分比（例如，8.25 表示 8.25%）"
+
+msgid "Rate (%)"
+msgstr "费率（%）"
+
+msgid "Please complete Step 1 first"
+msgstr "请先完成第一步"
+
+msgid "Please complete the wizard steps"
+msgstr "请完成向导步骤"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "运费方式“%(name)s”创建成功！"
+
+msgid "Please configure rate tables for this method."
+msgstr "请为此方法配置费率表。"
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "创建运费方式失败：%(error)s"
+
+msgid "Get mini-cart data"
+msgstr "获取迷你购物车数据"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    获取当前购物车内容并格式化为迷你购物车组件使用。适用于已认证用户（购物车"
+"与用户账户关联）和匿名用户（购物车与会话关联）。购物车数据包括所有商品的详细"
+"信息、数量、价格和图片。**使用场景：** - 页面初始加载迷你购物车 - 在外部更改"
+"后刷新购物车 - 结账前检查购物车状态 **认证：** 不需要（对匿名用户使用会话）\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "购物车数据获取成功"
+
+msgid "Update cart item quantity"
+msgstr "更新购物车商品数量"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    更新购物车中某商品的数量。将数量设置为 0 可完全移除该商品。该接口在更新前"
+"验证库存可用性，并返回完整的更新后的购物车。**使用场景：** - 迷你购物车中的增"
+"减数量按钮 - 直接输入数量更改 - 移除商品（数量=0） **认证：** 不需要（验证商"
+"品是否属于用户的购物车） **验证：** - 商品必须存在于用户的购物车中 - 数量必须"
+"是非负整数 - 对于库存跟踪商品会检查库存可用性\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "购物车更新成功"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "请求数据无效或库存不足"
+
+msgid "Cart item not found"
+msgstr "未找到购物车商品"
+
+msgid "Remove item from cart"
+msgstr "从购物车中移除商品"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    从购物车中完全移除一个商品。移除后返回更新后的购物车数据。**使用场景：** "
+"- 购物车商品的删除按钮 - 清除特定商品 **认证：** 无需认证（验证商品是否属于用"
+"户的购物车）\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "商品已成功移除"
+
+msgid "Get empty cart recommendations"
+msgstr "获取空购物车推荐"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    为购物车为空的状态获取智能产品推荐。返回的个性化建议按标签分组，基于以下"
+"内容：- **最近浏览**：用户浏览过的产品（对匿名用户基于会话）- **相关产品**："
+"与最近浏览产品处于同一类别的产品- **促销中**：当前正在打折的产品- **热销产品"
+"**：按浏览量/销量排序的热门产品- **精选产品**：编辑推荐的产品作为后备所有返回"
+"的产品均经过验证，确认有库存并可供购买。**使用场景**：- 小型购物车中购物车为"
+"空的状态- \"您可能喜欢\"部分- 跨卖机会**认证**：无需认证（对匿名用户使用会"
+"话）**个性化**：- 匿名用户：基于会话中最近浏览的产品- 认证用户：基于账户历史"
+"记录和偏好\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "返回产品的最大数量（默认：6，最大：12）"
+
+msgid "Recommendations retrieved successfully"
+msgstr "推荐已成功获取"
+
+msgid "User"
+msgstr "用户"
+
+msgid "Session Key"
+msgstr "会话密钥"
+
+msgid "Cart Currency"
+msgstr "购物车货币"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"此购物车中所有商品的货币代码（例如 EUR, NZD）。留空表示使用商店默认货币。"
+
+msgid "Default Layout"
+msgstr "默认布局"
+
+msgid "Compact View"
+msgstr "紧凑视图"
+
+msgid "Detailed View"
+msgstr "详细视图"
+
+msgid "Minimal View"
+msgstr "最小视图"
+
+msgid "Sidebar Cart"
+msgstr "侧边栏购物车"
+
+msgid "Overlay Cart"
+msgstr "覆盖购物车"
+
+msgid "How the cart is displayed"
+msgstr "购物车的展示方式"
+
+msgid "Cart Layout"
+msgstr "购物车布局"
+
+msgid "Show Product Images"
+msgstr "显示产品图片"
+
+msgid "Show Product Variants"
+msgstr "显示产品变体"
+
+msgid "Show Remove Button"
+msgstr "显示移除按钮"
+
+msgid "Show Quantity Controls"
+msgstr "显示数量控制"
+
+msgid "Show Item Totals"
+msgstr "显示项目总计"
+
+msgid "Show Cart Summary"
+msgstr "显示购物车摘要"
+
+msgid "Show Savings"
+msgstr "显示节省"
+
+msgid "Single Page Checkout"
+msgstr "单页结账"
+
+msgid "Multi-Step Checkout"
+msgstr "多步骤结账"
+
+msgid "Accordion Style"
+msgstr "手风琴样式"
+
+msgid "Wizard Style"
+msgstr "向导样式"
+
+msgid "Checkout Flow"
+msgstr "结账流程"
+
+msgid "Shipping Address"
+msgstr "收货地址"
+
+msgid "Shipping Method"
+msgstr "配送方式"
+
+msgid "Calculated shipping cost"
+msgstr "计算运费"
+
+msgid "Shipping Cost"
+msgstr "运费"
+
+msgid "Estimated Delivery Date"
+msgstr "预计送达日期"
+
+msgid "Shipping Notes"
+msgstr "配送备注"
+
+msgid "None"
+msgstr "无"
+
+msgid "Percentage"
+msgstr "百分比"
+
+msgid "Fixed Amount"
+msgstr "固定金额"
+
+msgid "POS manual discount type"
+msgstr "POS手动折扣类型"
+
+msgid "POS manual discount value"
+msgstr "POS手动折扣值"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "折扣值（百分比或固定金额）"
+
+msgid "POS discount applied by"
+msgstr "POS折扣应用者"
+
+msgid "POS discount approved by"
+msgstr "POS折扣批准者"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "如果折扣超出员工权限，则由批准折扣的经理填写"
+
+msgid "POS discount reason"
+msgstr "POS折扣原因"
+
+msgid "Created At"
+msgstr "创建于"
+
+msgid "Updated At"
+msgstr "更新于"
+
+msgid "Shopping Cart"
+msgstr "购物车"
+
+msgid "Shopping Carts"
+msgstr "购物车列表"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "购物车（用户名：{username}）"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "购物车（会话：{session}）"
+
+msgid "No shipping required"
+msgstr "无需配送"
+
+msgid "Shipping address required"
+msgstr "需要收货地址"
+
+msgid "Available shipping methods retrieved"
+msgstr "可用的配送方式已获取"
+
+msgid "Shipping calculated successfully"
+msgstr "运费计算成功"
+
+msgid "Invalid gift card code"
+msgstr "无效的礼品卡代码"
+
+msgid "Gift card already applied"
+msgstr "礼品卡已应用"
+
+msgid "Gift card is not active"
+msgstr "礼品卡未启用"
+
+msgid "Gift card has expired"
+msgstr "礼品卡已过期"
+
+msgid "Gift card has been fully redeemed"
+msgstr "礼品卡已全部兑换"
+
+msgid "Gift card cannot be used"
+msgstr "礼品卡无法使用"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"货币不匹配。礼品卡的货币为{card_currency}，购物车的货币为{cart_currency}"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"此礼品卡的货币为 {card_currency}。请将您的货币切换为 {card_currency} 以使用"
+"它。"
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "礼品卡不能用于购买其他礼品卡"
+
+msgid "Cart total is already covered"
+msgstr "购物车总价已覆盖"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "无法处理礼品卡货币转换"
+
+msgid "Gift card applied successfully"
+msgstr "礼品卡应用成功"
+
+msgid "Product"
+msgstr "产品"
+
+msgid "Variant"
+msgstr "变体"
+
+msgid "Quantity"
+msgstr "数量"
+
+msgid "Unit Price"
+msgstr "单价"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"具有计算价格的产品定制：{customization_option_id: {'value': '...', "
+"'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "定制选项"
+
+msgid "Is Subscription"
+msgstr "是否订阅"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "此项目是否将作为订阅购买"
+
+msgid "Subscription Plan"
+msgstr "订阅计划"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "选择的订阅计划用于定期账单"
+
+msgid "Pricing Tier"
+msgstr "定价层级"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "所选订阅的定价层级（计费频率）"
+
+msgid "Payment Token"
+msgstr "支付令牌"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr "为订阅账单保存的支付方式（订阅时必需）"
+
+msgid "Parent Bundle"
+msgstr "父捆绑包"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "如果这是捆绑组件，请参考捆绑购物车项"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"预订详情: {start_datetime, end_datetime, resource_id, persons, timezone}"
+
+msgid "Booking Data"
+msgstr "预订数据"
+
+msgid "Customer notes for this item"
+msgstr "此商品的客户备注"
+
+msgid "Notes"
+msgstr "备注"
+
+msgid "manual discount type"
+msgstr "手动折扣类型"
+
+msgid "manual discount value"
+msgstr "手动折扣值"
+
+msgid "discount applied by"
+msgstr "折扣应用者"
+
+msgid "discount approved by"
+msgstr "折扣批准者"
+
+msgid "discount reason"
+msgstr "折扣原因"
+
+msgid "Cart Item"
+msgstr "购物车商品"
+
+msgid "Cart Items"
+msgstr "购物车商品列表"
+
+msgid "My Wishlist"
+msgstr "我的愿望清单"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "Grid Layout"
+msgstr "网格布局"
+
+msgid "List Layout"
+msgstr "列表布局"
+
+msgid "How wishlist items are displayed"
+msgstr "愿望清单项的展示方式"
+
+msgid "Wishlist Layout"
+msgstr "愿望清单布局"
+
+msgid "Is Public"
+msgstr "是否公开"
+
+msgid "Share Slug"
+msgstr "分享标识符"
+
+msgid "Show Prices"
+msgstr "显示价格"
+
+msgid "Show Availability"
+msgstr "显示库存情况"
+
+msgid "Show Add to Cart"
+msgstr "显示添加到购物车按钮"
+
+msgid "Wishlist"
+msgstr "愿望清单"
+
+msgid "Wishlists"
+msgstr "愿望清单列表"
+
+msgid "Low"
+msgstr "低"
+
+msgid "Medium"
+msgstr "中"
+
+msgid "High"
+msgstr "高"
+
+msgid "Priority"
+msgstr "优先级"
+
+msgid "Notify When Available"
+msgstr "当有货时通知"
+
+msgid "Notify When On Sale"
+msgstr "当打折时通知"
+
+msgid "Wishlist Item"
+msgstr "愿望清单项"
+
+msgid "Wishlist Items"
+msgstr "愿望清单项列表"
+
+msgid "Viewed At"
+msgstr "查看时间"
+
+msgid "View Count"
+msgstr "查看次数"
+
+msgid "Recently Viewed Product"
+msgstr "最近查看的产品"
+
+msgid "Recently Viewed Products"
+msgstr "最近查看的产品"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "会话：{session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{product}被{user}查看"
+
+msgid "Description"
+msgstr "描述"
+
+msgid "Flat Rate"
+msgstr "固定费率"
+
+msgid "Free Shipping"
+msgstr "免运费"
+
+msgid "Weight Based"
+msgstr "基于重量"
+
+msgid "Price Based"
+msgstr "基于价格"
+
+msgid "Real-Time Carrier Rates"
+msgstr "实时承运商费率"
+
+msgid "Local Pickup"
+msgstr "本地自提"
+
+msgid "Table Rate"
+msgstr "表格费率"
+
+msgid "Method Type"
+msgstr "方法类型"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "固定的运费（适用于 flat_rate 类型）"
+
+msgid "Flat Rate Cost"
+msgstr "固定费率成本"
+
+msgid "Minimum cart value to qualify"
+msgstr "最低购物车价值以符合资格"
+
+msgid "Minimum Order Value"
+msgstr "最低订单金额"
+
+msgid "Maximum cart value to qualify"
+msgstr "最高购物车价值以符合资格"
+
+msgid "Maximum Order Value"
+msgstr "最高订单金额"
+
+msgid "Minimum cart weight (kg)"
+msgstr "最低购物车重量（千克）"
+
+msgid "Minimum Weight"
+msgstr "最低重量"
+
+msgid "Maximum cart weight (kg)"
+msgstr "最高购物车重量（千克）"
+
+msgid "Maximum Weight"
+msgstr "最重重量"
+
+msgid "Shipping Zones"
+msgstr "配送区域"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr "此运输方式可用的区域。如果为空，则适用旧版国家/州限制。"
+
+msgid "Pickup Locations"
+msgstr "自提地点"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr "客户可以使用此运输方式取货的位置。仅适用于 'local_pickup' 方法类型。"
+
+msgid "Minimum delivery time in business days"
+msgstr "业务日中的最短交货时间"
+
+msgid "Minimum Delivery Days"
+msgstr "最少交货天数"
+
+msgid "Maximum delivery time in business days"
+msgstr "业务日中的最长交货时间"
+
+msgid "Maximum Delivery Days"
+msgstr "最多交货天数"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "Font Awesome 图标类（例如，'fa-truck'，'fa-box'）"
+
+msgid "Icon"
+msgstr "图标"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr "来自媒体库的自定义运输方法图像。如果提供，则优先于图标。"
+
+msgid "Image"
+msgstr "图片"
+
+msgid "Sort Order"
+msgstr "排序顺序"
+
+msgid "Is Active"
+msgstr "是否有效"
+
+msgid "Custom Carrier"
+msgstr "自定义承运商"
+
+msgid "Carrier"
+msgstr "承运商"
+
+msgid "Carrier-specific service code"
+msgstr "承运商特定服务代码"
+
+msgid "Carrier Service Code"
+msgstr "承运商服务代码"
+
+msgid "Shipping Methods"
+msgstr "运输方式"
+
+msgid "Shipping method is not active"
+msgstr "运输方式无效"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "最低订单金额要求为{value}"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "最高订单金额超过{value}"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "最低重量要求为{weight}千克"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "最大重量超过{weight}千克"
+
+msgid "Cart contains only digital products"
+msgstr "购物车仅包含数字产品"
+
+msgid "Available"
+msgstr "可用"
+
+msgid "No geographic restrictions"
+msgstr "无地域限制"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "在{zone}可用"
+
+msgid "Not available in your location"
+msgstr "您所在地区不可用"
+
+msgid "Available worldwide"
+msgstr "全球可用"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "ISO 3166-1 alpha-2 国家代码"
+
+msgid "Country"
+msgstr "国家"
+
+msgid "State/Province/Region"
+msgstr "州/省/地区"
+
+msgid "State"
+msgstr "州"
+
+msgid "City name (optional)"
+msgstr "城市名称（可选）"
+
+msgid "City"
+msgstr "城市"
+
+msgid "List of specific postal codes (optional)"
+msgstr "特定邮政编码列表（可选）"
+
+msgid "Postal Codes"
+msgstr "邮政编码"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "税率为小数（例如，0.0825 表示 8.25%）"
+
+msgid "Rate"
+msgstr "费率"
+
+msgid "Sales Tax"
+msgstr "销售税"
+
+msgid "Custom Tax"
+msgstr "自定义税"
+
+msgid "Tax Type"
+msgstr "税种"
+
+msgid "Apply tax to shipping costs"
+msgstr "将税应用于运输成本"
+
+msgid "Applies to Shipping"
+msgstr "适用于运输"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "在其他税费基础上计算（复合税）"
+
+msgid "Compound Tax"
+msgstr "复合税"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "免除此税的产品类型（例如，['digital', 'service']）"
+
+msgid "Exempt Product Types"
+msgstr "豁免产品类型"
+
+msgid "Categories exempt from this tax"
+msgstr "免征税的分类"
+
+msgid "Exempt Categories"
+msgstr "豁免分类"
+
+msgid "Higher priority rules take precedence"
+msgstr "优先级较高的规则优先"
+
+msgid "Tax Rate"
+msgstr "税率"
+
+msgid "Tax Rates"
+msgstr "税率列表"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name}（{location}）-{rate}%"
+
+msgid "Europe"
+msgstr "欧洲"
+
+msgid "North America"
+msgstr "北美洲"
+
+msgid "Asia Pacific"
+msgstr "亚太地区"
+
+msgid "Middle East"
+msgstr "中东"
+
+msgid "Africa"
+msgstr "非洲"
+
+msgid "Latin America"
+msgstr "拉丁美洲"
+
+msgid "Oceania"
+msgstr "大洋洲"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "唯一标识符（例如，eu_vat，us_sales_tax）"
+
+msgid "Key"
+msgstr "键"
+
+msgid "Font Awesome icon class"
+msgstr "Font Awesome图标类"
+
+msgid "Default Tax Type"
+msgstr "默认税率类型"
+
+msgid "Region"
+msgstr "区域"
+
+msgid "Version for tracking rate updates"
+msgstr "用于跟踪费率更新的版本"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Last Updated"
+msgstr "最后更新"
+
+msgid "Tax Preset Group"
+msgstr "税率预设组"
+
+msgid "Tax Preset Groups"
+msgstr "税率预设组列表"
+
+msgid "Preset Group"
+msgstr "预设组"
+
+msgid "Country Code"
+msgstr "国家代码"
+
+msgid "Country Name"
+msgstr "国家名称"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "州/省份代码（适用于美国/加拿大的预设）"
+
+msgid "State Code"
+msgstr "州代码"
+
+msgid "State Name"
+msgstr "州名称"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "税率为小数（例如，0.20 表示 20%）"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "可选备注（例如：'2025年7月从22%提升'）"
+
+msgid "Tax Preset Rate"
+msgstr "税率预设值"
+
+msgid "Tax Preset Rates"
+msgstr "税率预设值列表"
+
+msgid "Billing Address"
+msgstr "账单地址"
+
+msgid "Billing Same as Shipping"
+msgstr "账单地址与配送地址相同"
+
+msgid "Shipping Address Data"
+msgstr "配送地址数据"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr "临时送货地址数据（下单前不会保存到地址模型）"
+
+msgid "Billing Address Data"
+msgstr "账单地址数据"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr "临时账单地址数据（下单前不会保存到地址模型）"
+
+msgid "Selected Shipping Method"
+msgstr "选择的配送方式"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "缓存的可用运输方法及其费率列表"
+
+msgid "Available Shipping Methods"
+msgstr "可用的配送方式"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "按管辖区域详细列出的税费"
+
+msgid "Tax Breakdown"
+msgstr "税费明细"
+
+msgid "Tax Amount"
+msgstr "税费金额"
+
+msgid "Payment Provider"
+msgstr "支付提供商"
+
+msgid "Subtotal"
+msgstr "小计"
+
+msgid "Discount Amount"
+msgstr "折扣金额"
+
+msgid "Gift Card Discount"
+msgstr "礼品卡折扣"
+
+msgid "Total discount from applied gift cards"
+msgstr "应用的礼品卡总折扣"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "最终总额：小计 + 运费 + 税费 - 折扣"
+
+msgid "Total Amount"
+msgstr "总计金额"
+
+msgid "Cart Review"
+msgstr "购物车审核"
+
+msgid "Billing Information"
+msgstr "账单信息"
+
+msgid "Payment Method"
+msgstr "支付方式"
+
+msgid "Order Review"
+msgstr "订单审核"
+
+msgid "Step Completed"
+msgstr "步骤完成"
+
+msgid "Expires At"
+msgstr "过期时间"
+
+msgid "Metadata"
+msgstr "元数据"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "额外元数据（例如，市场购买信息）"
+
+msgid "Checkout Session"
+msgstr "结账会话"
+
+msgid "Checkout Sessions"
+msgstr "结账会话列表"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "结账（购物车：{cart}）"
+
+msgid "Gift Card"
+msgstr "礼品卡"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "基础货币金额（用于购物车计算）"
+
+msgid "Original Currency Amount"
+msgstr "原始货币金额"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr "礼品卡原生货币的折扣（适用于外币礼品卡）"
+
+msgid "Exchange Rate"
+msgstr "汇率"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "汇率：礼品卡货币 -> 应用时的基础货币"
+
+msgid "Applied At"
+msgstr "应用时间"
+
+msgid "Applied Gift Card"
+msgstr "已应用的礼品卡"
+
+msgid "Applied Gift Cards"
+msgstr "已应用的礼品卡"
+
+msgid "This gift card cannot be used"
+msgstr "此礼品卡不能使用"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "折扣金额超过礼品卡余额"
+
+msgid "Total customization price (per unit)"
+msgstr "总定制价格（每单位）"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "数字商品使用 'instant'，实物商品使用 'shipping'"
+
+msgid "True if this item is a component of a bundle"
+msgstr "如果此物品是捆绑包的组件，则为真"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "如果是组件，请填写父级捆绑包 CartItem 的 ID"
+
+msgid "Child items if this is a bundle parent"
+msgstr "如果这是捆绑包父级，则为子项目"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr "客户选定变体的 bundle_item_id 到 variant_id 的映射"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr "要排除的 bundle_item_ids 列表（客户不想要的可选项目）"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr "可配置产品中slot_id到所选option_ids列表的映射"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "用作起点的配置预设ID"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr "预订详情: 开始时间, 结束时间, 资源ID, 人数, 时区"
+
+msgid "Quantity must be at least 1"
+msgstr "数量必须至少为1"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "订阅购买需要订阅计划"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "订阅购买需要支付令牌"
+
+msgid "Product not found"
+msgstr "未找到产品"
+
+msgid "This product does not support subscriptions"
+msgstr "此产品不支持订阅"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "无效或未激活的订阅计划"
+
+msgid "This plan is not available for this product"
+msgstr "此计划不可用于此产品"
+
+msgid "Invalid or inactive payment token"
+msgstr "无效或未激活的支付令牌"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "未找到定价层级或该层级不属于所选计划"
+
+msgid "No pricing tier available for this plan"
+msgstr "此计划没有可用的定价层级"
+
+msgid "Quantity cannot be negative"
+msgstr "数量不能为负数"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "礼品卡代码（例如：GC-XXXX-XXXX-XXXX）"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "从该礼品卡中扣除的金额（以基础货币计算）"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "在此次应用后礼品卡剩余的余额"
+
+msgid "Base currency code"
+msgstr "基础货币代码"
+
+msgid "Gift card's native currency code"
+msgstr "礼品卡原生货币代码"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr "礼品卡原生货币的折扣（适用于外币礼品卡）"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr "需要address_id或完整的地址详情。缺少：{fields}"
+
+msgid "This product requires customization"
+msgstr "此产品需要定制"
+
+msgid "Invalid design token"
+msgstr "无效的设计令牌"
+
+msgid "Design not found or expired"
+msgstr "设计未找到或已过期"
+
+msgid "This product does not support customization"
+msgstr "此产品不支持定制"
+
+msgid "Invalid customization option"
+msgstr "无效的定制选项"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "自定义'{name}'：{error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "所需的自定义'{name}'缺失"
+
+msgid "Insufficient stock"
+msgstr "库存不足"
+
+msgid "Bundle has no components configured"
+msgstr "捆绑包未配置组件"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "无法排除非必需捆绑组件：{name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "需要选择变体：{name}"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "无效的变体选择：{name}"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "捆绑组件库存不足：{name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "购物车中的捆绑包数量已更新"
+
+msgid "Bundle added to cart"
+msgstr "捆绑包已添加到购物车"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "所需槽位'{name}'没有选择。"
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "槽位'{name}'至少需要{min}个选择。"
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "槽位'{name}'最多允许{max}个选择。"
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "无效的槽ID：{id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "选项 {opt_id} 对于插槽 '{slot}' 不有效。"
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr "插槽 '{slot}' 中的不兼容选择。某些选项与您的其他选择不兼容。"
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr "插槽 '{slot}' 中的排除选择。某些选项与您的其他选择冲突。"
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "组件 {name} 库存不足"
+
+msgid "Configured product added to cart"
+msgstr "已配置的产品已添加到购物车"
+
+msgid "Either user or session_key must be provided"
+msgstr "必须提供用户或会话密钥"
+
+msgid "This product is no longer available"
+msgstr "此产品已不可用"
+
+msgid "You must be logged in to purchase this product."
+msgstr "您必须登录才能购买此产品。"
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "您需要先拥有 \"\" 才能购买此产品。 %(required)s"
+
+msgid "Product variant not found"
+msgstr "未找到产品变体"
+
+msgid "Configuration is required for configurable products"
+msgstr "可配置产品需要配置"
+
+msgid "Booking added to cart"
+msgstr "预订已加入购物车"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "所请求的数量库存不足"
+
+msgid "Cart item quantity updated"
+msgstr "购物车商品数量已更新"
+
+msgid "Item added to cart"
+msgstr "商品已添加到购物车"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr "组件数量不能直接更改。请更新父产品。"
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr "已从购物车中移除。同时移除了 %(names)s（所需商品已不在购物车中）。"
+
+msgid "Item removed from cart"
+msgstr "商品已从购物车移除"
+
+msgid "Cart item updated"
+msgstr "购物车商品已更新"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr "组件项目不能直接移除。请移除父产品。"
+
+msgid "Cart cleared"
+msgstr "购物车已清空"
+
+msgid "Voucher removed"
+msgstr "优惠券已移除"
+
+msgid "Voucher not found in cart"
+msgstr "购物车中未找到优惠券"
+
+msgid "Gift card removed"
+msgstr "礼品卡已移除"
+
+msgid "Gift card not found in cart"
+msgstr "购物车内未找到礼品卡"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count} 项合并到购物车中"
+
+msgid "Account creation required to proceed"
+msgstr "需要创建账户才能继续"
+
+msgid "Address not found"
+msgstr "未找到地址"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "必须提供地址ID或地址数据"
+
+msgid "Shipping address set"
+msgstr "收货地址已设置"
+
+msgid "Billing address must be provided"
+msgstr "必须提供账单地址"
+
+msgid "Billing address set"
+msgstr "账单地址已设置"
+
+msgid "Shipping address must be set first"
+msgstr "必须先设置收货地址"
+
+msgid "Shipping method not found"
+msgstr "未找到配送方式"
+
+msgid "Shipping method selected"
+msgstr "已选择配送方式"
+
+msgid "Payment provider not found"
+msgstr "未找到支付提供商"
+
+msgid "Payment provider is not properly configured"
+msgstr "支付提供商未正确配置"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "支付提供商不适用于您的位置或货币"
+
+msgid "Payment method selected"
+msgstr "已选择支付方式"
+
+msgid "Cart is empty"
+msgstr "购物车为空"
+
+msgid "Shipping address is required"
+msgstr "需要收货地址"
+
+msgid "Shipping method is required"
+msgstr "需要配送方式"
+
+msgid "Billing address is required"
+msgstr "需要账单地址"
+
+msgid "Payment method is required"
+msgstr "需要支付方式"
+
+msgid "Checkout session has expired"
+msgstr "结账会话已过期"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "{product} 库存不足"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\" 需要先拥有 \"%(required)s\"。"
+
+msgid "Customer email is required"
+msgstr "需要客户电子邮件"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "无法为订单分配仓库。请联系支持。"
+
+msgid "Insufficient stock to complete order"
+msgstr "库存不足以完成订单"
+
+msgid "Error processing order. Please try again."
+msgstr "处理订单时出错。请重试。"
+
+msgid "Order created successfully"
+msgstr "订单创建成功"
+
+msgid "Wishlist item updated"
+msgstr "心愿单项目已更新"
+
+msgid "Item added to wishlist"
+msgstr "已将商品添加到心愿单"
+
+msgid "Item removed from wishlist"
+msgstr "已将商品从心愿单移除"
+
+msgid "Item moved to cart"
+msgstr "已将商品移到购物车"
+
+msgid "Wishlist cleared"
+msgstr "心愿单已清空"
+
+msgid "Wishlist with this name already exists"
+msgstr "已存在具有此名称的收藏夹"
+
+msgid "Wishlist created"
+msgstr "心愿单已创建"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "监控活跃和被放弃的客户购物车"
+
+msgid "Add"
+msgstr "添加"
+
+msgid "cart"
+msgstr "购物车"
+
+msgid "Filters"
+msgstr "筛选器"
+
+msgid "Search"
+msgstr "搜索"
+
+msgid "Search by user, session, or email..."
+msgstr "通过用户、会话或电子邮件搜索..."
+
+msgid "User Type"
+msgstr "用户类型"
+
+msgid "All Carts"
+msgstr "所有购物车"
+
+msgid "Registered Users"
+msgstr "注册用户"
+
+msgid "Guest Carts"
+msgstr "访客购物车"
+
+msgid "Cart Status"
+msgstr "购物车状态"
+
+msgid "All"
+msgstr "全部"
+
+msgid "Active (< 24h)"
+msgstr "有效（少于24小时）"
+
+msgid "Abandoned (> 24h)"
+msgstr "被遗弃（超过24小时）"
+
+msgid "Empty"
+msgstr "空的"
+
+msgid "Has Shipping"
+msgstr "包含运费"
+
+msgid "No Shipping"
+msgstr "不包含运费"
+
+msgid "Min Cart Value"
+msgstr "最低购物车金额"
+
+msgid "Min value"
+msgstr "最低金额"
+
+msgid "Max Cart Value"
+msgstr "最高购物车金额"
+
+msgid "Max value"
+msgstr "最高金额"
+
+msgid "Created From"
+msgstr "创建起始日期"
+
+msgid "Created To"
+msgstr "创建结束日期"
+
+msgid "Apply Filters"
+msgstr "应用筛选器"
+
+msgid "Clear All"
+msgstr "清除所有"
+
+msgid "Run the selected action"
+msgstr "运行选定的操作"
+
+msgid "Go"
+msgstr "前往"
+
+msgid "of"
+msgstr "共"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s 购物车"
+msgstr[1] "%(counter)s 购物车"
+
+msgid "carts"
+msgstr "购物车"
+
+msgid "Show all"
+msgstr "显示全部"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Add Shipping Method"
+msgstr "添加运费方式"
+
+msgid "Configure a new shipping method for your store"
+msgstr "为您的商店配置新的配送方式"
+
+msgid "Method Basics"
+msgstr "方法基础"
+
+msgid "Eligibility"
+msgstr "资格"
+
+msgid "Coverage"
+msgstr "覆盖范围"
+
+msgid "Features"
+msgstr "功能"
+
+msgid "Review"
+msgstr "查看"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "定义此配送方式的核心标识和类型。"
+
+msgid "Method Name"
+msgstr "方法名称"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "例如：标准运输，快递"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "面向客户的配送方式名称"
+
+msgid "Optional description of this shipping method"
+msgstr "此配送方式的可选描述"
+
+msgid "Display Icon"
+msgstr "展示图标"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"从媒体库中选择一张图片或选择一个Font Awesome图标。如果同时提供，则图片优先。"
+
+msgid "Custom Image"
+msgstr "自定义图片"
+
+msgid "Font Awesome Icon"
+msgstr "Font Awesome图标"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "从Font Awesome库中选择一个图标"
+
+msgid "Active"
+msgstr "有效"
+
+msgid "Make this method available to customers immediately"
+msgstr "立即将此方法提供给客户"
+
+msgid "Method Type & Pricing"
+msgstr "方法类型及定价"
+
+msgid "Select method type..."
+msgstr "选择方法类型..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "固定费率 - 固定运费"
+
+msgid "Free Shipping - No charge"
+msgstr "免运费 - 不收费"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "基于重量 - 根据购物车重量计算"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "基于价格 - 根据购物车小计计算"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "实时承运商费率 - 实时承运商报价"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "本地自提 - 客户在指定地点取货"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "表格费率 - 基于重量/价格/目的地的复杂规则"
+
+msgid "Method Types:"
+msgstr "方法类型:"
+
+msgid "Flat Rate:"
+msgstr "固定费率:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "无论订单如何，固定运费"
+
+msgid "Free Shipping:"
+msgstr "免运费:"
+
+msgid "No shipping charge"
+msgstr "不收取运费"
+
+msgid "Weight/Price Based:"
+msgstr "基于重量/价格:"
+
+msgid "Calculate using rate tables"
+msgstr "使用费率表计算"
+
+msgid "Real-Time:"
+msgstr "实时:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "从USPS、FedEx、UPS或DHL获取实时费率"
+
+msgid "Local Pickup:"
+msgstr "本地取货:"
+
+msgid "Customer picks up at your location"
+msgstr "客户在您的位置取货"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "向客户收取的固定运费"
+
+msgid "No Configured Providers"
+msgstr "没有配置的提供商"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr "您需要配置至少一个支持实时费率的承运商，然后才能使用此方法类型。"
+
+msgid "Connect Provider"
+msgstr "连接提供商"
+
+msgid "Manage Providers"
+msgstr "管理提供商"
+
+msgid "Select a configured shipping provider"
+msgstr "选择一个已配置的运输提供商"
+
+msgid "Tip:"
+msgstr "提示:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr "仅显示已配置并支持实时费率的承运商。"
+
+msgid "Manage providers"
+msgstr "管理提供商"
+
+msgid "Service Code"
+msgstr "服务代码"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "来自承运商的具体服务代码（可选）"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Next Step"
+msgstr "下一步"
+
+msgid "Eligibility Conditions"
+msgstr "资格条件"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr "根据购物车价值和重量定义此配送方式何时可用。"
+
+msgid "Order Value Restrictions"
+msgstr "订单金额限制"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr "为此方法设置购物车小计的最小或最大要求。"
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "只有当购物车小计至少为该金额时，此方法才可用"
+
+msgid "No maximum"
+msgstr "无最大值"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "只有当购物车小计低于该金额时，此方法才可用"
+
+msgid "Examples:"
+msgstr "示例:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr "对于超过$50的订单免费配送：将最低值设为50.00"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr "对于低于$100的订单经济配送：将最大值设为100.00"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr "标准运费适用于$25-$200：设置最小值和最大值"
+
+msgid "Weight Restrictions"
+msgstr "重量限制"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr "为该方法设置最小或最大购物车总重量要求。"
+
+msgid "Minimum Weight (kg)"
+msgstr "最小重量（千克）"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr "只有当购物车总重量至少达到此值时，该方法才可用"
+
+msgid "Maximum Weight (kg)"
+msgstr "最大重量（千克）"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "只有当购物车总重量低于此值时，该方法才可用"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "轻包裹运输适用于2公斤以下的包裹：将最大值设为2.00"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr "重货运输适用于超过20公斤的包裹：将最小值设为20.00"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr "标准运费适用于0.5公斤-10公斤：设置最小值和最大值"
+
+msgid "Additional Options"
+msgstr "附加选项"
+
+msgid "Requires Shipping Address"
+msgstr "需要收货地址"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr "客户必须为此方法提供一个收货地址（对于数字商品或本地提货，请禁用）"
+
+msgid "Previous"
+msgstr "上一页"
+
+msgid "Geographic Coverage"
+msgstr "地理覆盖范围"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr "使用配送区域定义此配送方式的可用范围。"
+
+msgid "Zone-Based Coverage:"
+msgstr "基于区域的覆盖:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"使用配送区域实现灵活、基于规则的地理覆盖。这种方法与配送规则无缝集成，并允许"
+"您精确控制配送方式的可用范围。"
+
+msgid "Select Shipping Zones"
+msgstr "选择配送区域"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr "选择此方法适用的配送区域。留空表示全球适用。"
+
+msgid "Available Zones"
+msgstr "可用区域"
+
+msgid "Add selected zones"
+msgstr "添加选定区域"
+
+msgid "Add all zones"
+msgstr "添加所有区域"
+
+msgid "Remove selected zones"
+msgstr "移除选定区域"
+
+msgid "Remove all zones"
+msgstr "移除所有区域"
+
+msgid "Selected Zones"
+msgstr "已选区域"
+
+msgid "No shipping zones found!"
+msgstr "未找到任何配送区域!"
+
+msgid "You need to create shipping zones first."
+msgstr "您需要先创建配送区域。"
+
+msgid "Create a shipping zone"
+msgstr "创建一个配送区域"
+
+msgid "Method Features"
+msgstr "方法特性"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr "配置交货预估、显示顺序以及特定于方法的功能。"
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "选择客户可以提货的实际地点。"
+
+msgid "Available Pickup Locations"
+msgstr "可选提货地点"
+
+msgid "Available Locations"
+msgstr "可用地点"
+
+msgid "Selected Locations"
+msgstr "已选地点"
+
+msgid "No pickup locations found!"
+msgstr "未找到任何提货地点!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr "您需要先为本地提货方法创建提货点。"
+
+msgid "Create a pickup location"
+msgstr "创建提货点"
+
+msgid "Carrier API Status"
+msgstr "承运商API状态"
+
+msgid "Carrier:"
+msgstr "承运商:"
+
+msgid "Service Code:"
+msgstr "服务代码:"
+
+msgid "API Configuration Status"
+msgstr "API配置状态"
+
+msgid "Checking API credentials..."
+msgstr "检查API凭据..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr "确保您的承运商API凭据已配置在配送提供商设置中。"
+
+msgid "Enable Rate Caching"
+msgstr "启用费率缓存"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr "缓存承运商费率15分钟以提高性能并减少API调用"
+
+msgid "Rate Table Configuration"
+msgstr "费率表配置"
+
+msgid "Weight-Based Rates:"
+msgstr "基于重量的费率:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr "方法创建后，您可以根据购物车重量配置分层费率。"
+
+msgid "Price-Based Rates:"
+msgstr "基于价格的费率:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr "方法创建后，您可以根据购物车小计配置分层费率。"
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr "费率表可以在方法创建后从编辑页面管理。"
+
+msgid "Delivery Time Estimate"
+msgstr "交货时间预估"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "向客户提供预计交货时间范围。"
+
+msgid "Fastest delivery time in business days"
+msgstr "工作日最快交货时间"
+
+msgid "Slowest delivery time in business days"
+msgstr "工作日最慢交货时间"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "标准运输：3-5个工作日"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "快递：1-2个工作日"
+
+msgid "International shipping: 7-14 business days"
+msgstr "国际运输：7-14个工作日"
+
+msgid "Display Settings"
+msgstr "展示设置"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr "较小的数字首先出现。使用此功能来控制向客户展示的方法顺序。"
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"分配排序顺序，每次增加10（0, 10, 20），以便轻松插入新方法到现有方法之间。"
+
+msgid "Review & Create"
+msgstr "审核并创建"
+
+msgid "API credentials verified successfully"
+msgstr "API凭据验证成功"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "请检查您的配送方式配置并创建它。"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Name:"
+msgstr "名称:"
+
+msgid "Method Type:"
+msgstr "方法类型:"
+
+msgid "Description:"
+msgstr "描述:"
+
+msgid "Display Icon:"
+msgstr "展示图标:"
+
+msgid "Status:"
+msgstr "状态:"
+
+msgid "Inactive"
+msgstr "无效"
+
+msgid "Flat Rate Cost:"
+msgstr "固定费率成本:"
+
+msgid "Min Order Value:"
+msgstr "最小订单金额:"
+
+msgid "Max Order Value:"
+msgstr "最大订单金额:"
+
+msgid "Min Weight:"
+msgstr "最小重量:"
+
+msgid "Max Weight:"
+msgstr "最大重量:"
+
+msgid "Requires Shipping Address:"
+msgstr "需要收货地址:"
+
+msgid "Yes"
+msgstr "是"
+
+msgid "No"
+msgstr "否"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr "未设置资格条件 - 方法适用于所有购物车金额和重量"
+
+msgid "Shipping Zones:"
+msgstr "配送区域:"
+
+msgid "Coverage:"
+msgstr "覆盖范围:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "全球（未选择任何区域）"
+
+msgid "Pickup Locations:"
+msgstr "取件地点:"
+
+msgid "location"
+msgstr "地点"
+
+msgid "Delivery Time:"
+msgstr "交货时间:"
+
+msgid "Instant Pickup"
+msgstr "即时取件"
+
+msgid "Delivery Estimate:"
+msgstr "预计交货时间:"
+
+msgid "business days"
+msgstr "工作日"
+
+msgid "Sort Order:"
+msgstr "排序顺序:"
+
+msgid "Rate Caching:"
+msgstr "费率缓存:"
+
+msgid "Enabled"
+msgstr "已启用"
+
+msgid "What happens next:"
+msgstr "接下来会发生什么:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "您的配送方式将使用上述设置创建"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "您将被重定向以配置此方法的费率表"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr "该方法将在满足资格条件时立即对客户可用"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr "该方法将作为不活跃状态创建 - 准备好时激活它"
+
+msgid "Create Shipping Method"
+msgstr "创建配送方式"
+
+msgid "Creating..."
+msgstr "正在创建..."
+
+msgid "Session"
+msgstr "会话"
+
+msgid "Registered"
+msgstr "已注册"
+
+msgid "Guest"
+msgstr "访客"
+
+msgid "item"
+msgstr "项目"
+
+msgid "Shipping Set"
+msgstr "配送集"
+
+msgid "Cart Total"
+msgstr "购物车总计"
+
+msgid "Items"
+msgstr "项目"
+
+msgid "Savings"
+msgstr "节省"
+
+msgid "Shipping"
+msgstr "运费"
+
+msgid "Grand Total"
+msgstr "总计"
+
+msgid "Updated"
+msgstr "更新时间"
+
+msgid "ago"
+msgstr "前"
+
+msgid "Created"
+msgstr "创建时间"
+
+msgid "Est. Delivery"
+msgstr "预计送达"
+
+msgid "View cart details"
+msgstr "查看购物车详情"
+
+msgid "Edit cart"
+msgstr "编辑购物车"
+
+msgid "Delete cart"
+msgstr "删除购物车"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "您确定要清空这个购物车吗？"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "未找到符合您标准的购物车。"
+
+msgid "Try adjusting your filters or search terms."
+msgstr "尝试调整您的筛选器或搜索词。"
+
+msgid "Edit Shipping Method"
+msgstr "编辑配送方式"
+
+msgid "Save and continue editing"
+msgstr "保存并继续编辑"
+
+msgid "Please correct the errors below"
+msgstr "请更正以下错误"
+
+msgid "Basic"
+msgstr "基本"
+
+msgid "Pricing"
+msgstr "定价"
+
+msgid "Display"
+msgstr "显示"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "可选：根据订单价值或重量限制可用性。"
+
+msgid "Delivery Time"
+msgstr "配送时间"
+
+msgid "Display Options"
+msgstr "显示选项"
+
+msgid "Carrier Integration"
+msgstr "承运商集成"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr "配置承运商特定设置以进行实时费率查询。"
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "配置配送选项、费率和配送方式"
+
+msgid "method"
+msgstr "方法"
+
+msgid "active"
+msgstr "有效"
+
+msgid "Add Method"
+msgstr "添加方法"
+
+msgid "Bulk Actions"
+msgstr "批量操作"
+
+msgid "Enable Selected"
+msgstr "启用所选"
+
+msgid "Disable Selected"
+msgstr "禁用所选"
+
+msgid "Delete Selected"
+msgstr "删除所选"
+
+msgid "Apply"
+msgstr "应用"
+
+msgid "selected"
+msgstr "已选中"
+
+msgid "All Status"
+msgstr "所有状态"
+
+msgid "All Types"
+msgstr "所有类型"
+
+msgid "Real-Time Rates"
+msgstr "实时费率"
+
+msgid "Clear all filters"
+msgstr "清除所有筛选条件"
+
+msgid "Clear Filters"
+msgstr "清除筛选条件"
+
+msgid "Search methods..."
+msgstr "搜索方法..."
+
+msgid "Select All"
+msgstr "全选"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s 方法"
+msgstr[1] "%(counter)s 方法"
+
+msgid "No shipping methods found"
+msgstr "未找到运输方法"
+
+msgid "Try adjusting your filters or search query."
+msgstr "尝试调整您的筛选器或搜索查询。"
+
+msgid "Get started by creating your first shipping method."
+msgstr "通过创建第一个配送方式开始。"
+
+msgid "Add First Method"
+msgstr "添加第一个方法"
+
+msgid "Loading..."
+msgstr "加载中..."
+
+msgid "Order Value:"
+msgstr "订单价值:"
+
+msgid "Weight:"
+msgstr "重量:"
+
+msgid "Zones:"
+msgstr "区域:"
+
+msgid "zone"
+msgstr "区域"
+
+msgid "Countries:"
+msgstr "国家:"
+
+msgid "country"
+msgstr "国家"
+
+msgid "Worldwide"
+msgstr "全球"
+
+msgid "Pickup:"
+msgstr "自提:"
+
+msgid "Delivery:"
+msgstr "送货:"
+
+msgid "Edit method"
+msgstr "编辑方法"
+
+msgid "Toggle active status"
+msgstr "切换有效状态"
+
+msgid "Delete method"
+msgstr "删除方法"
+
+msgid "Edit Tax Rate"
+msgstr "编辑税率"
+
+msgid "Add Tax Rate"
+msgstr "添加税率"
+
+msgid "Geography"
+msgstr "地理"
+
+msgid "Rules"
+msgstr "规则"
+
+msgid "Exemptions"
+msgstr "豁免"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr "定义此税率适用的地区。若要适用于全国范围，请留空州/城市。"
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "将特定产品类型或类别排除在此税率之外。"
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr "为您的商店配置税收规则。在结账期间，税率与客户的地址匹配。"
+
+msgid "Load Presets"
+msgstr "加载预设"
+
+msgid "Total Rules"
+msgstr "总规则"
+
+msgid "Countries"
+msgstr "国家"
+
+msgid "Tax Types"
+msgstr "税种"
+
+msgid "Search by name, country, state..."
+msgstr "按名称、国家、州搜索..."
+
+msgid "All Countries"
+msgstr "所有国家"
+
+msgid "Custom"
+msgstr "自定义"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Clear"
+msgstr "清除"
+
+msgid "Tax Rules"
+msgstr "税规则"
+
+msgid "rules"
+msgstr "规则"
+
+msgid "Load Tax Rate Presets"
+msgstr "加载税率预设"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr "快速添加您所在地区的标准税率。现有税率不会重复。"
+
+msgid "rates"
+msgstr "税率"
+
+msgid "Load"
+msgstr "加载"
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "postal codes"
+msgstr "邮政编码"
+
+msgid "Shipping Taxed"
+msgstr "运输征税"
+
+msgid "Compound"
+msgstr "复合"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "No tax rates configured"
+msgstr "未配置税率"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr "使用“加载预设”快速添加您所在地区的标准税率，或者手动添加税率。"
+
+msgid "Get current cart"
+msgstr "获取当前购物车"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"获取已认证用户或会话的当前购物车。返回购物车商品、小计、折扣、税费和总额。如"
+"果购物车不存在，会自动创建购物车。"
+
+msgid "Add item to cart"
+msgstr "将商品添加到购物车"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"将指定数量的产品添加到购物车。可选地包含变体ID、自定义选项和备注。验证库存可"
+"用性，如果产品/变体相同，则与现有购物车项合并。对于订阅产品，请包含 "
+"is_subscription=true，并附带 subscription_plan_id、payment_token_id，以及可选"
+"的 pricing_tier_id。"
+
+msgid "Update cart item"
+msgstr "更新购物车商品"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"更新购物车中的商品数量、定制选项或备注。验证新数量是否符合库存可用性。返回带"
+"有重新计算总金额的更新后的购物车。"
+
+msgid "Remove cart item"
+msgstr "移除购物车商品"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"从购物车中移除特定商品。重新计算购物车总金额，并根据新的购物车总金额重新验证"
+"已应用的优惠券。"
+
+msgid "Clear cart"
+msgstr "清空购物车"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"从购物车中移除所有商品。同时移除已应用的优惠券。购物车对象仍然存在但内容为"
+"空。"
+
+msgid "Apply voucher code"
+msgstr "应用优惠码"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"将优惠券代码应用到购物车。验证优惠券的适用性、最低购买要求和使用限制。计算并"
+"应用购物车总额的折扣。"
+
+msgid "Remove voucher"
+msgstr "移除优惠券"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"通过代码从购物车中移除特定优惠券。重新计算不包含优惠券折扣的购物车总额。如果"
+"符合条件，用户之后可以重新应用该优惠券。"
+
+msgid "Apply gift card"
+msgstr "应用礼品卡"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"将礼品卡代码应用于购物车。验证礼品卡的状态、余额和货币。礼品卡不能用于购买其"
+"他礼品卡。应用的金额受限于礼品卡余额或剩余购物车总额。"
+
+msgid "Remove gift card"
+msgstr "移除礼品卡"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"通过代码从购物车中移除特定礼品卡。在完成结账之前，礼品卡余额不会受到影响。用"
+"户可以重新应用该礼品卡。"
+
+msgid "Get cart summary"
+msgstr "获取购物车摘要"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"获取包含商品数量、小计和总计的轻量级购物车摘要。比完整的购物车接口更快。适用"
+"于页头购物车徽标或快速显示总计。"
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr "组件项目不能直接修改。更新父产品即可。"
+
+msgid "List user wishlists"
+msgstr "列出用户心愿单"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"获取已认证用户的全部心愿清单。用户可以为不同用途创建多个心愿清单（例如：'生"
+"日'、'婚礼'、'想法'）。返回心愿清单名称、物品数量和隐私设置。"
+
+msgid "Create wishlist"
+msgstr "创建心愿单"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"为已认证用户创建新的心愿清单。请指定名称、描述和隐私设置（公开/私密）。公开的"
+"心愿清单可通过URL分享。"
+
+msgid "Get wishlist details"
+msgstr "获取心愿单详情"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"获取特定心愿单的详细信息，包括所有商品、价格、库存情况和共享设置。除非心愿单"
+"已公开共享，否则仅心愿单所有者可访问。"
+
+msgid "Update wishlist"
+msgstr "更新心愿单"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"更新心愿单信息，包括名称、描述或隐私设置。可将心愿单设为公开或私密。仅所有者"
+"可进行更新。"
+
+msgid "Partially update wishlist"
+msgstr "部分更新心愿单"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"更新特定心愿单字段，而无需发送完整的心愿单数据。适用于切换隐私设置或重命名心"
+"愿单。"
+
+msgid "Delete wishlist"
+msgstr "删除心愿单"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr "永久删除心愿单及其所有项目。此操作无法撤销。仅所有者可以删除。"
+
+msgid "Add item to wishlist"
+msgstr "将商品添加到心愿单"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"将产品添加到心愿单，可选变体、数量和备注。防止重复添加。可以添加到默认心愿单"
+"或指定心愿单ID。"
+
+msgid "Remove item from wishlist"
+msgstr "从心愿单中移除商品"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"从心愿单中移除特定商品。该商品之后可以重新添加。不会影响商品的库存情况。"
+
+msgid "Move item to cart"
+msgstr "将商品移动到购物车"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"直接将心愿单中的商品移动到购物车。验证库存可用性。成功添加到购物车后，该商品"
+"将从心愿单中移除。"
+
+msgid "Get public wishlist by share slug"
+msgstr "通过分享slug获取公共心愿单"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"通过分享的URL slug查看公开的购物清单。拥有链接的任何人都可以查看公开的购物清"
+"单。适用于礼品注册和与家人/朋友共享的购物清单。"
+
+msgid "ID of the wishlist item to remove"
+msgstr "要删除的愿望清单项目的ID"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "要移动到购物车的愿望清单项目的ID"
+
+msgid "Share slug of the public wishlist"
+msgstr "公开愿望清单的分享链接"
+
+msgid "Wishlist not found"
+msgstr "心愿单未找到"
+
+msgid "Get checkout session"
+msgstr "获取结账会话"
+
+msgid "Set shipping address"
+msgstr "设置送货地址"
+
+msgid "Set billing address"
+msgstr "设置账单地址"
+
+msgid "Get available shipping methods"
+msgstr "获取可用的配送方式"
+
+msgid "Get available payment providers"
+msgstr "获取可用支付提供商"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"返回适用于客户所在国家和货币的支付提供商。根据发货国家、提供商功能和商家配置"
+"进行过滤。"
+
+msgid "Set shipping method"
+msgstr "设置配送方式"
+
+msgid "Set payment method"
+msgstr "设置支付方式"
+
+msgid "Validate checkout"
+msgstr "验证结账"
+
+msgid "Complete checkout"
+msgstr "完成结账"
+
+msgid "Get recently viewed products"
+msgstr "获取最近查看的产品"
+
+msgid "Get recently viewed details"
+msgstr "获取最近查看的详情"
+
+msgid "List shipping methods"
+msgstr "列出配送方式"
+
+msgid "Get shipping method details"
+msgstr "获取配送方式详情"
+
+msgid "List tax rates"
+msgstr "列出税率"
+
+msgid "Get tax rate details"
+msgstr "获取税率详情"
+
+msgid "Create tax rate"
+msgstr "创建税率"
+
+msgid "Update tax rate"
+msgstr "更新税率"
+
+msgid "Partial update tax rate"
+msgstr "部分更新税率"
+
+msgid "Delete tax rate"
+msgstr "删除税率"
+
+msgid "Calculate applicable taxes"
+msgstr "计算适用税款"
+
+msgid "Tax rates grouped by country"
+msgstr "按国家分组的税率"
+
+msgid "Load preset tax rates"
+msgstr "加载预设税率"
+
+msgid "List tax preset groups"
+msgstr "列出税率预设组"
+
+msgid "Get preset group details"
+msgstr "获取预设组详情"
+
+msgid "List rates in a preset group"
+msgstr "在预设组中列出费率"

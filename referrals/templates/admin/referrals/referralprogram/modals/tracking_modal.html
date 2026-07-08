@@ -1,0 +1,97 @@
+{% load i18n %}
+
+<!-- Tracking Configuration Modal -->
+<div class="admin-modal-overlay" id="tracking-modal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title"><i class="fas fa-chart-line"></i> {% trans "Configure Tracking" %}</h2>
+            <button type="button" class="admin-modal-close" data-modal="tracking-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="admin-modal-section">
+                <h3>{% trans "Link Generation" %}</h3>
+
+                <div class="form-row">
+                    <label for="tracking-param-name">{% trans "URL Parameter Name" %}</label>
+                    <input type="text" id="tracking-param-name" placeholder="ref" value="ref">
+                    <p class="help">{% trans "Query parameter used in referral URLs (e.g. ?ref=CODE)" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="tracking-code-format">{% trans "Referral Code Format" %}</label>
+                    <select id="tracking-code-format">
+                        <option value="user-id">{% trans "User ID (e.g. USER123)" %}</option>
+                        <option value="custom-slug" selected>{% trans "Custom Slug (user chooses)" %}</option>
+                        <option value="random">{% trans "Random Code (8 characters)" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="tracking-allow-custom-codes">
+                        <input type="checkbox" id="tracking-allow-custom-codes" checked>
+                        {% trans "Allow referrers to create custom codes" %}
+                    </label>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Conversion Events" %}</h3>
+
+                <div class="form-row">
+                    <label for="tracking-conversion-event">{% trans "Primary Conversion Event" %}</label>
+                    <select id="tracking-conversion-event">
+                        <option value="signup">{% trans "Account Signup" %}</option>
+                        <option value="first-order" selected>{% trans "First Order Placed" %}</option>
+                        <option value="order-paid">{% trans "Order Payment Confirmed" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="tracking-count-clicks">
+                        <input type="checkbox" id="tracking-count-clicks" checked>
+                        {% trans "Track referral link clicks" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="tracking-count-signups">
+                        <input type="checkbox" id="tracking-count-signups" checked>
+                        {% trans "Track referred signups" %}
+                    </label>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Advanced Tracking" %}</h3>
+
+                <div class="form-row">
+                    <label for="tracking-use-ip-fingerprint">
+                        <input type="checkbox" id="tracking-use-ip-fingerprint">
+                        {% trans "Use IP address fingerprinting (fraud prevention)" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="tracking-cross-device">
+                        <input type="checkbox" id="tracking-cross-device">
+                        {% trans "Enable cross-device tracking (requires login)" %}
+                    </label>
+                    <p class="help">{% trans "Track conversions even if customer switches devices" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="tracking-analytics-integration">
+                        <input type="checkbox" id="tracking-analytics-integration">
+                        {% trans "Send events to analytics platforms (GA, etc.)" %}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="referral-modal-btn-secondary" data-modal="tracking-modal">{% trans "Cancel" %}</button>
+            <button type="button" class="referral-modal-btn-primary" id="save-tracking-config">{% trans "Save Configuration" %}</button>
+        </div>
+    </div>
+</div>

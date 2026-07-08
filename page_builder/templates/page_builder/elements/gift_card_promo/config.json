@@ -1,0 +1,404 @@
+{
+  "element_type": "gift_card_promo",
+  "name": "Gift Card Promo",
+  "version": "1.0.1",
+  "category": "ecommerce",
+  "icon": "fas fa-gift",
+  "description": "Promote gift card purchases",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/gift-card-promo.css"],
+  "tabs": {
+    "content": {
+      "label": "Content",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "content_group": {
+          "type": "property_group",
+          "label": "Content",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Title",
+              "default": "Give the Gift of Choice",
+              "translatable": true
+            },
+            "description": {
+              "type": "textarea",
+              "label": "Description",
+              "default": "Our digital gift cards are perfect for any occasion. Delivered instantly via email.",
+              "translatable": true,
+              "full_width": true
+            }
+          }
+        },
+        "button_group": {
+          "type": "property_group",
+          "label": "Button",
+          "properties": {
+            "button_text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "Buy Gift Card",
+              "translatable": true
+            },
+            "button_url": {
+              "type": "link_selector",
+              "label": "Button URL",
+              "default": "/gift-cards/"
+            }
+          }
+        }
+      }
+    },
+    "denominations": {
+      "label": "Denominations",
+      "icon": "fas fa-money-bill",
+      "order": 2,
+      "properties": {
+        "display_group": {
+          "type": "property_group",
+          "label": "Display Settings",
+          "properties": {
+            "show_denominations": {
+              "type": "boolean",
+              "label": "Show Denominations",
+              "default": true
+            },
+            "denominations_display": {
+              "type": "select",
+              "label": "Denomination Display",
+              "default": "buttons",
+              "options": [
+                {
+                  "value": "buttons",
+                  "label": "Buttons"
+                },
+                {
+                  "value": "dropdown",
+                  "label": "Dropdown"
+                },
+                {
+                  "value": "cards",
+                  "label": "Cards"
+                }
+              ],
+              "show_if": {
+                "show_denominations": true
+              }
+            }
+          }
+        },
+        "amounts_group": {
+          "type": "property_group",
+          "label": "Denominations",
+          "columns": 1,
+          "properties": {
+            "denominations": {
+              "type": "array",
+              "label": "Denominations",
+              "item_type": "object",
+              "full_width": true,
+              "show_if": {
+                "show_denominations": true
+              },
+              "default": [
+                {
+                  "value": 25,
+                  "label": "$25"
+                },
+                {
+                  "value": 50,
+                  "label": "$50"
+                },
+                {
+                  "value": 100,
+                  "label": "$100"
+                },
+                {
+                  "value": 200,
+                  "label": "$200"
+                }
+              ],
+              "item_properties": {
+                "value": {
+                  "type": "number",
+                  "label": "Value"
+                },
+                "label": {
+                  "type": "string",
+                  "label": "Display Label"
+                }
+              }
+            }
+          }
+        },
+        "custom_amount_group": {
+          "type": "property_group",
+          "label": "Custom Amount",
+          "properties": {
+            "allow_custom_amount": {
+              "type": "boolean",
+              "label": "Allow Custom Amount",
+              "default": true
+            },
+            "min_amount": {
+              "type": "number",
+              "label": "Minimum Amount",
+              "default": 10,
+              "show_if": {
+                "allow_custom_amount": true
+              }
+            },
+            "max_amount": {
+              "type": "number",
+              "label": "Maximum Amount",
+              "default": 500,
+              "show_if": {
+                "allow_custom_amount": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "label": "Appearance",
+      "icon": "fas fa-palette",
+      "order": 3,
+      "properties": {
+        "style_group": {
+          "type": "property_group",
+          "label": "Style",
+          "properties": {
+            "style": {
+              "type": "select",
+              "label": "Display Style",
+              "default": "card",
+              "options": [
+                {
+                  "value": "card",
+                  "label": "Card"
+                },
+                {
+                  "value": "banner",
+                  "label": "Banner"
+                },
+                {
+                  "value": "inline",
+                  "label": "Inline"
+                },
+                {
+                  "value": "minimal",
+                  "label": "Minimal"
+                }
+              ]
+            },
+            "image": {
+              "type": "image",
+              "label": "Gift Card Image",
+              "default": ""
+            }
+          }
+        },
+        "colors_group": {
+          "type": "property_group",
+          "label": "Colors",
+          "properties": {
+            "primary_color": {
+              "type": "color",
+              "label": "Primary Color",
+              "default": "#6366f1"
+            },
+            "secondary_color": {
+              "type": "color",
+              "label": "Secondary Color",
+              "default": "#ec4899"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {
+      "type": "string",
+      "label": "Title",
+      "default": "Give the Gift of Choice",
+      "translatable": true
+    },
+    "description": {
+      "type": "textarea",
+      "label": "Description",
+      "default": "Our digital gift cards are perfect for any occasion. Delivered instantly via email.",
+      "translatable": true
+    },
+    "button_text": {
+      "type": "string",
+      "label": "Button Text",
+      "default": "Buy Gift Card",
+      "translatable": true
+    },
+    "button_url": {
+      "type": "link_selector",
+      "label": "Button URL",
+      "default": "/gift-cards/"
+    },
+    "show_denominations": {
+      "type": "boolean",
+      "label": "Show Denominations",
+      "default": true
+    },
+    "denominations_display": {
+      "type": "select",
+      "label": "Denomination Display",
+      "default": "buttons",
+      "options": [
+        {
+          "value": "buttons",
+          "label": "Buttons"
+        },
+        {
+          "value": "dropdown",
+          "label": "Dropdown"
+        },
+        {
+          "value": "cards",
+          "label": "Cards"
+        }
+      ],
+      "show_if": {
+        "show_denominations": true
+      }
+    },
+    "denominations": {
+      "type": "array",
+      "label": "Denominations",
+      "item_type": "object",
+      "show_if": {
+        "show_denominations": true
+      },
+      "default": [
+        {
+          "value": 25,
+          "label": "$25"
+        },
+        {
+          "value": 50,
+          "label": "$50"
+        },
+        {
+          "value": 100,
+          "label": "$100"
+        },
+        {
+          "value": 200,
+          "label": "$200"
+        }
+      ],
+      "item_properties": {
+        "value": {
+          "type": "number",
+          "label": "Value"
+        },
+        "label": {
+          "type": "string",
+          "label": "Display Label"
+        }
+      }
+    },
+    "allow_custom_amount": {
+      "type": "boolean",
+      "label": "Allow Custom Amount",
+      "default": true
+    },
+    "min_amount": {
+      "type": "number",
+      "label": "Minimum Amount",
+      "default": 10,
+      "show_if": {
+        "allow_custom_amount": true
+      }
+    },
+    "max_amount": {
+      "type": "number",
+      "label": "Maximum Amount",
+      "default": 500,
+      "show_if": {
+        "allow_custom_amount": true
+      }
+    },
+    "style": {
+      "type": "select",
+      "label": "Display Style",
+      "default": "card",
+      "options": [
+        {
+          "value": "card",
+          "label": "Card"
+        },
+        {
+          "value": "banner",
+          "label": "Banner"
+        },
+        {
+          "value": "inline",
+          "label": "Inline"
+        },
+        {
+          "value": "minimal",
+          "label": "Minimal"
+        }
+      ]
+    },
+    "image": {
+      "type": "image",
+      "label": "Gift Card Image",
+      "default": ""
+    },
+    "primary_color": {
+      "type": "color",
+      "label": "Primary Color",
+      "default": "#6366f1"
+    },
+    "secondary_color": {
+      "type": "color",
+      "label": "Secondary Color",
+      "default": "#ec4899"
+    }
+  },
+  "scripts": [
+    "/static/page_builder/js/elements/gift-card-promo.js"
+  ],
+  "translations": {
+    "en": {
+      "name": "Gift Card Promo",
+      "description": "Promote gift card purchases"
+    },
+    "es": {
+      "name": "Promoci\u00f3n de Tarjeta Regalo",
+      "description": "Promover compras de tarjetas regalo"
+    },
+    "fr": {
+      "name": "Promo Carte Cadeau",
+      "description": "Promouvoir l'achat de cartes cadeaux"
+    },
+    "de": {
+      "name": "Geschenkkarten-Werbung",
+      "description": "Geschenkkartenk\u00e4ufe bewerben"
+    },
+    "pt": {
+      "name": "Promo\u00e7\u00e3o de Vale-Presente",
+      "description": "Promover compras de vale-presente"
+    },
+    "zh-hans": {
+      "name": "\u793c\u54c1\u5361\u4fc3\u9500",
+      "description": "\u63a8\u5e7f\u793c\u54c1\u5361\u8d2d\u4e70"
+    },
+    "ja": {
+      "name": "\u30ae\u30d5\u30c8\u30ab\u30fc\u30c9\u30d7\u30ed\u30e2",
+      "description": "\u30ae\u30d5\u30c8\u30ab\u30fc\u30c9\u306e\u8cfc\u5165\u3092\u4fc3\u9032"
+    }
+  }
+}

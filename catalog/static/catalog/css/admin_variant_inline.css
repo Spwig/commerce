@@ -1,0 +1,1341 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Admin Variant Inline Styles
+ * Styles for enhanced variant inline with media manager, color picker, and structured layout
+ */
+
+/* =====================================
+   VARIANT INLINE CONTAINER - UNIFIED HEADER
+   ===================================== */
+
+.variant-inline-group {
+    margin: 0;
+}
+
+/* Remove default fieldset.module styling for cleaner appearance */
+.variant-inline-group > fieldset.module {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+/* Main section header - unified with no gaps */
+.variant-inline-group > fieldset.module > h2.inline-heading,
+.variant-inline-group > fieldset.module > details > summary > h2.inline-heading {
+    background: linear-gradient(135deg, var(--accent-primary, #6366f1) 0%, #4f46e5 100%);
+    color: #fff;
+    padding: 16px 20px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 8px 8px 0 0;
+    border: none;
+}
+
+.variant-inline-group > fieldset.module > h2.inline-heading i,
+.variant-inline-group > fieldset.module > details > summary > h2.inline-heading i {
+    color: #fff;
+    opacity: 0.9;
+}
+
+/* Variant count badge in header */
+.variant-count-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-left: auto;
+}
+
+/* When collapsible details is used */
+.variant-inline-group > fieldset.module > details {
+    border: none;
+    background: transparent;
+}
+
+.variant-inline-group > fieldset.module > details > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.variant-inline-group > fieldset.module > details > summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Individual Variant Item Cards */
+.variant-inline-item {
+    background: var(--surface-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.variant-inline-item:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Deleting state - shown while AJAX request is in progress */
+.variant-inline-item.deleting {
+    opacity: 0.5;
+    border-color: #ef4444;
+    background: #fef2f2;
+    pointer-events: none;
+}
+
+.variant-inline-item.deleting summary.variant-header {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+/* Fade out animation for deleted variant */
+.variant-inline-item.deleted {
+    animation: fadeOutSlide 0.3s ease-out forwards;
+}
+
+@keyframes fadeOutSlide {
+    0% {
+        opacity: 0.5;
+        transform: translateX(0);
+        max-height: 500px;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(20px);
+        max-height: 0;
+        margin-bottom: 0;
+        padding: 0;
+        border-width: 0;
+    }
+}
+
+/* Variant Header (individual variant card) - Unified colorful header */
+summary.variant-header {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+    padding: 0 12px;
+    margin: 0;
+    border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    gap: 8px;
+    border-radius: 8px 8px 0 0;
+}
+
+/* When collapsed, full border radius */
+details.variant-inline-item:not([open]) summary.variant-header {
+    border-radius: 8px;
+}
+
+/* Collapse indicator in header */
+.variant-header .variant-collapse-indicator {
+    flex-shrink: 0;
+}
+
+/* H3 inside header - NO background, takes remaining space */
+summary.variant-header h3,
+summary.variant-header h3.inline-heading,
+.variant-header h3.inline-heading {
+    margin: 0;
+    padding: 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0; /* Allow text truncation */
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+.variant-header h3 i {
+    color: rgba(255, 255, 255, 0.8);
+    flex-shrink: 0;
+}
+
+.variant-header h3 b {
+    font-weight: 600;
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+.variant-label {
+    font-weight: 500;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.variant-label a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: underline;
+    margin-left: 8px;
+}
+
+/* Delete button styled as trash icon */
+.variant-delete {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.delete-variant-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    transition: all 0.2s ease;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.delete-variant-btn:hover {
+    background: rgba(239, 68, 68, 0.9);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.delete-variant-btn:active {
+    transform: scale(0.95);
+}
+
+.delete-variant-btn i {
+    pointer-events: none;
+}
+
+/* Deleting state - show spinner */
+.delete-variant-btn.deleting {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.delete-variant-btn.deleting i::before {
+    content: "\f110"; /* Font Awesome spinner */
+    animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Variant Content */
+.variant-content {
+    padding: 20px;
+}
+
+/* Variant Sections */
+.variant-section {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.variant-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.variant-section h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.variant-section h4 i {
+    color: var(--accent-primary);
+    font-size: 16px;
+}
+
+/* Variant Fields */
+.variant-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Basic Info Section - Name, SKU, is_active on one row */
+.variant-basic-info .variant-fields {
+    grid-template-columns: 2fr 2fr 1fr;
+}
+
+/* Attributes Section - Each field on separate row */
+.variant-attributes .variant-fields {
+    grid-template-columns: 1fr;
+}
+
+.variant-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-label label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 13px;
+}
+
+.field-widget input[type="text"],
+.field-widget input[type="number"],
+.field-widget select,
+.field-widget textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.field-widget input:focus,
+.field-widget select:focus,
+.field-widget textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.field-help {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.field-errors {
+    color: var(--danger);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Attributes Widget */
+.attributes-widget .selector {
+    background: var(--surface-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.attributes-widget .selector select {
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    border: none;
+}
+
+.attributes-widget .selector-chosen h2,
+.attributes-widget .selector-available h2 {
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Color Swatch Widget */
+.color-swatch-widget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-swatch-widget input[type="text"] {
+    flex: 1;
+    max-width: 150px;
+}
+
+.color-picker-trigger {
+    padding: 8px 16px;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.color-picker-trigger:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.color-picker-trigger i {
+    font-size: 14px;
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    border: 2px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.color-preview:hover {
+    transform: scale(1.1);
+}
+
+/* Variant Images Manager */
+.variant-images-manager {
+    width: 100%;
+}
+
+.variant-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+    min-height: 100px;
+}
+
+.variant-image-card {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    cursor: move;
+}
+
+.variant-image-card:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image-card-header {
+    background: var(--surface-tertiary);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.drag-handle {
+    color: var(--text-secondary);
+    cursor: grab;
+    font-size: 14px;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.primary-badge {
+    background: var(--accent-primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.primary-badge i {
+    font-size: 10px;
+}
+
+.image-card-delete {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.image-card-delete:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+.image-card-preview {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--surface-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-card-details {
+    padding: 12px;
+}
+
+.image-card-details .form-row {
+    margin-bottom: 10px;
+}
+
+.image-card-details label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.image-alt-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    font-size: 12px;
+}
+
+.image-card-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.toggle-label input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.toggle-label span {
+    user-select: none;
+}
+
+.no-images-placeholder {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.no-images-placeholder i {
+    font-size: 48px;
+    color: var(--text-tertiary);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.no-images-placeholder p {
+    margin: 5px 0;
+}
+
+.no-images-placeholder .help {
+    font-size: 13px;
+    font-style: italic;
+}
+
+.add-variant-media-btn {
+    padding: 10px 20px;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.add-variant-media-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.add-variant-media-btn i {
+    font-size: 14px;
+}
+
+/* Readonly Fields */
+.readonly-fields {
+    background: var(--surface-secondary);
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.field-readonly {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.field-readonly:last-child {
+    margin-bottom: 0;
+}
+
+.field-value {
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+/* Sortable Ghost Class */
+.sortable-ghost {
+    opacity: 0.5;
+    background: var(--accent-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .variant-fields,
+    .variant-basic-info .variant-fields,
+    .variant-attributes .variant-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .variant-images-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .color-swatch-widget {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .color-swatch-widget input[type="text"] {
+        max-width: 100%;
+    }
+}
+
+/* Dark Theme Specific */
+[data-theme="dark"] .variant-inline-item {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+[data-theme="dark"] summary.variant-header {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
+}
+
+[data-theme="dark"] summary.variant-header:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
+}
+
+[data-theme="dark"] summary.variant-header h3,
+[data-theme="dark"] summary.variant-header h3.inline-heading {
+    background: none !important;
+}
+
+[data-theme="dark"] .variant-section h4 {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .image-card-header {
+    background: #252526;
+}
+
+[data-theme="dark"] .variant-image-card {
+    background: #2d2d30;
+}
+
+[data-theme="dark"] .readonly-fields {
+    background: #2d2d30;
+}
+
+/* Light Theme Specific */
+[data-theme="light"] .variant-inline-item {
+    background: #ffffff;
+    border-color: #e0e0e0;
+}
+
+[data-theme="light"] summary.variant-header {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+}
+
+[data-theme="light"] summary.variant-header:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+}
+
+[data-theme="light"] summary.variant-header h3,
+[data-theme="light"] summary.variant-header h3.inline-heading {
+    background: none !important;
+}
+
+[data-theme="light"] .variant-section h4 {
+    color: #2c3e50;
+}
+
+[data-theme="light"] .image-card-header {
+    background: #f8f9fa;
+}
+
+[data-theme="light"] .variant-image-card {
+    background: #ffffff;
+}
+
+[data-theme="light"] .readonly-fields {
+    background: #f8f9fa;
+}
+
+/* =====================================
+   COLLAPSIBLE VARIANT STYLES
+   ===================================== */
+
+/* Make variant-inline-item a details element */
+details.variant-inline-item {
+    cursor: default;
+}
+
+/* Summary (variant-header) styling for collapse */
+summary.variant-header {
+    cursor: pointer;
+    list-style: none;  /* Remove default marker */
+    user-select: none;
+}
+
+/* Remove default details marker */
+summary.variant-header::-webkit-details-marker {
+    display: none;
+}
+
+summary.variant-header::marker {
+    display: none;
+}
+
+/* Collapse indicator */
+.variant-collapse-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.variant-collapse-indicator:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.variant-collapse-indicator i {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+}
+
+/* Rotate indicator when details is open */
+details.variant-inline-item[open] .variant-collapse-indicator {
+    transform: rotate(90deg);
+}
+
+details.variant-inline-item[open] .variant-collapse-indicator i {
+    color: #fff;
+}
+
+/* Hover effect on summary */
+summary.variant-header:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+}
+
+summary.variant-header:hover .variant-collapse-indicator {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+summary.variant-header:hover .variant-collapse-indicator i {
+    color: #fff;
+}
+
+summary.variant-header:hover h3,
+summary.variant-header:hover h3.inline-heading {
+    background: none !important;
+}
+
+/* Smooth transition for content */
+details.variant-inline-item .variant-content {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Collapse Control Buttons */
+.variant-collapse-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--surface-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.variant-collapse-btn,
+.variant-expand-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--button-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.variant-collapse-btn:hover,
+.variant-expand-btn:hover {
+    background: var(--button-hover-bg);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.variant-collapse-btn:active,
+.variant-expand-btn:active {
+    transform: translateY(0);
+}
+
+.variant-collapse-btn i,
+.variant-expand-btn i {
+    font-size: 12px;
+}
+
+/* Collapsed state styling */
+details.variant-inline-item:not([open]) {
+    border-color: var(--border-light);
+}
+
+details.variant-inline-item:not([open]) .variant-header {
+    border-bottom: none;
+}
+
+/* Focus styles for accessibility */
+summary.variant-header:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+/* Ensure delete checkbox doesn't trigger collapse */
+.variant-delete {
+    pointer-events: all;
+}
+
+.variant-delete * {
+    pointer-events: all;
+}
+
+/* Prevent collapse when clicking delete checkbox */
+summary.variant-header .variant-delete {
+    z-index: 10;
+    position: relative;
+}
+
+/* Light theme overrides for collapse controls */
+[data-theme="light"] .variant-collapse-controls {
+    background: #f8f9fa;
+}
+
+[data-theme="light"] .variant-collapse-btn,
+[data-theme="light"] .variant-expand-btn {
+    background: #ffffff;
+}
+
+[data-theme="light"] .variant-collapse-btn:hover,
+[data-theme="light"] .variant-expand-btn:hover {
+    background: #f1f3f5;
+}
+
+/* =====================================
+   STOCK MANAGEMENT STYLES
+   ===================================== */
+
+/* Stock Status Badge */
+.stock-status-container {
+    margin-bottom: 20px;
+}
+
+.stock-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 2px solid;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stock-status-badge i {
+    font-size: 16px;
+}
+
+.stock-quantity {
+    margin-left: 4px;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+/* Stock Status Variants */
+.stock-badge-in_stock {
+    background: #d1fae5;
+    border-color: #10b981;
+    color: #065f46;
+}
+
+.stock-badge-low_stock {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    color: #92400e;
+}
+
+.stock-badge-out_of_stock {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+}
+
+/* Stock Items Table */
+.variant-stock-items {
+    margin: 20px 0;
+    overflow-x: auto;
+}
+
+.variant-stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface-primary);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.variant-stock-table thead {
+    background: var(--surface-secondary);
+}
+
+.variant-stock-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.variant-stock-table tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.2s ease;
+}
+
+.variant-stock-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+.variant-stock-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.variant-stock-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.warehouse-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.warehouse-name i {
+    color: var(--accent-primary);
+}
+
+.warehouse-code {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: normal;
+}
+
+/* Stock Input Fields */
+.stock-input {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.stock-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.stock-input:hover {
+    border-color: var(--accent-primary);
+}
+
+/* Stock Values */
+.stock-allocated {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.stock-available {
+    color: var(--accent-primary);
+}
+
+/* Stock Totals Footer */
+.stock-totals {
+    background: var(--surface-tertiary);
+    border-top: 2px solid var(--border-color);
+    font-weight: 600;
+}
+
+.stock-totals td {
+    padding: 14px 16px;
+    font-size: 14px;
+}
+
+/* No Stock Placeholder */
+.no-stock-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.no-stock-placeholder i {
+    font-size: 48px;
+    color: var(--text-tertiary);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.no-stock-placeholder p {
+    margin: 5px 0;
+}
+
+.no-stock-placeholder .help-text {
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* New Variant Stock Info */
+.new-variant-stock-info {
+    padding: 20px;
+    background: var(--surface-secondary);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.new-variant-stock-info .help-text {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0;
+}
+
+.new-variant-stock-info i {
+    margin-right: 8px;
+    color: var(--accent-primary);
+}
+
+/* Stock Readonly Info */
+.stock-readonly-info {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-light);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .variant-stock-table {
+        font-size: 12px;
+    }
+
+    .variant-stock-table th,
+    .variant-stock-table td {
+        padding: 8px 10px;
+    }
+
+    .stock-input {
+        width: 60px;
+        font-size: 12px;
+    }
+
+    .stock-status-badge {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] .variant-stock-table {
+    background: #1e1e1e;
+}
+
+[data-theme="dark"] .variant-stock-table thead {
+    background: #2d2d30;
+}
+
+[data-theme="dark"] .stock-totals {
+    background: #252526;
+}
+
+[data-theme="dark"] .new-variant-stock-info {
+    background: #2d2d30;
+}
+
+[data-theme="dark"] .stock-badge-in_stock {
+    background: #064e3b;
+    border-color: #10b981;
+    color: #d1fae5;
+}
+
+[data-theme="dark"] .stock-badge-low_stock {
+    background: #78350f;
+    border-color: #f59e0b;
+    color: #fef3c7;
+}
+
+[data-theme="dark"] .stock-badge-out_of_stock {
+    background: #7f1d1d;
+    border-color: #ef4444;
+    color: #fee2e2;
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .variant-stock-table {
+    background: #ffffff;
+}
+
+[data-theme="light"] .variant-stock-table thead {
+    background: #f8f9fa;
+}
+
+[data-theme="light"] .stock-totals {
+    background: #f8f9fa;
+}
+
+[data-theme="light"] .new-variant-stock-info {
+    background: #f8f9fa;
+}
+
+/* =====================================
+   TOOLTIP STYLES
+   ===================================== */
+
+/* Help Tooltip Styling */
+.help-tooltip {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    cursor: help;
+}
+
+.help-tooltip i {
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.help-tooltip:hover i {
+    color: var(--accent-primary);
+    transform: scale(1.15);
+}
+
+/* Section header tooltips */
+.variant-section h4 .help-tooltip {
+    margin-left: auto;
+}
+
+.variant-section h4 .help-tooltip i {
+    font-size: 15px;
+}
+
+/* Table header tooltips */
+.variant-stock-table th .help-tooltip {
+    margin-left: 4px;
+}
+
+.variant-stock-table th .help-tooltip i {
+    font-size: 12px;
+}
+
+/* Field label tooltips */
+.field-label .help-tooltip i {
+    font-size: 13px;
+}
+
+/* =====================================
+   INHERIT INDICATORS
+   ===================================== */
+
+/* Inherit indicator for showing parent product values */
+.inherit-indicator {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: normal;
+    font-style: italic;
+}
+
+[data-theme="dark"] .inherit-indicator {
+    color: #8b8fa6;
+}
+
+[data-theme="light"] .inherit-indicator {
+    color: #666;
+}
+
+/* =====================================
+   PHYSICAL ATTRIBUTES SECTION
+   ===================================== */
+
+.variant-physical .variant-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+/* Group dimension fields together */
+.variant-physical .field-wrapper {
+    min-width: 0;
+}
+
+/* Styling for barcode field */
+.variant-physical input[type="text"] {
+    font-family: 'Courier New', monospace;
+}
+
+/* =====================================
+   VARIANT ITEMS CONTAINER - CLEAN LAYOUT
+   ===================================== */
+
+/* Container for all variant items - sits below the unified header */
+.variant-inline-group .variant-items-wrapper {
+    background: var(--surface-primary, #fff);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 20px;
+}
+
+/* First variant item should have no top margin */
+.variant-inline-group .variant-inline-item:first-child {
+    margin-top: 0;
+}
+
+/* Empty form should be hidden */
+.variant-inline-group .variant-inline-item.empty-form {
+    display: none;
+}
+
+/* Add new variant row styling */
+.variant-inline-group .add-row {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--border-color, #e0e0e0);
+}
+
+.variant-inline-group .add-row a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--accent-primary, #6366f1);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.variant-inline-group .add-row a:hover {
+    background: var(--accent-hover, #4f46e5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.25);
+}
+
+/* Theme Overrides for Unified Header */
+[data-theme="dark"] .variant-inline-group > fieldset.module > h2.inline-heading,
+[data-theme="dark"] .variant-inline-group > fieldset.module > details > summary > h2.inline-heading {
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+}
+
+[data-theme="dark"] .variant-inline-group .variant-items-wrapper {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+[data-theme="light"] .variant-inline-group > fieldset.module > h2.inline-heading,
+[data-theme="light"] .variant-inline-group > fieldset.module > details > summary > h2.inline-heading {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+[data-theme="light"] .variant-inline-group .variant-items-wrapper {
+    background: #ffffff;
+    border-color: #e0e0e0;
+}

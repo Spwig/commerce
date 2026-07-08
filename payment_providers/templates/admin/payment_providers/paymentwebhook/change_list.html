@@ -1,0 +1,146 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Payment Webhooks" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+    <script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-exchange-alt"></i>
+            {% trans "Payment Webhooks" %}
+        </h1>
+        <p class="subtitle">{% trans "Monitor incoming payment provider webhooks" %}</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-card">
+        <h3><i class="fas fa-chart-bar"></i> {% trans "Overview" %}</h3>
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-exchange-alt"></i></div>
+                <div class="value">{{ total_webhooks|default:"0" }}</div>
+                <div class="label">{% trans "Total Webhooks" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="value">{{ processed_count|default:"0" }}</div>
+                <div class="label">{% trans "Processed" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <div class="value">{{ unprocessed_count|default:"0" }}</div>
+                <div class="label">{% trans "Unprocessed" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="value">{{ verified_count|default:"0" }}</div>
+                <div class="label">{% trans "Verified" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Event ID / Type" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Search by event ID or type...' %}">
+            </div>
+
+            <!-- Provider Slug -->
+            <div class="filter-field">
+                <label for="filter-provider-slug">
+                    <i class="fas fa-plug"></i> {% trans "Provider" %}
+                </label>
+                <select id="filter-provider-slug">
+                    <option value="">{% trans "All Providers" %}</option>
+                    {% for slug in provider_slugs %}
+                    <option value="{{ slug }}">{{ slug }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Processed -->
+            <div class="filter-field">
+                <label for="filter-processed">
+                    <i class="fas fa-check-circle"></i> {% trans "Processed" %}
+                </label>
+                <select id="filter-processed">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Yes" %}</option>
+                    <option value="false">{% trans "No" %}</option>
+                </select>
+            </div>
+
+            <!-- Signature Verified -->
+            <div class="filter-field">
+                <label for="filter-verified">
+                    <i class="fas fa-shield-alt"></i> {% trans "Signature Verified" %}
+                </label>
+                <select id="filter-verified">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Yes" %}</option>
+                    <option value="false">{% trans "No" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Webhooks" %}</h2>
+        <span class="results-count" id="results-count-info">
+            <i class="fas fa-exchange-alt"></i>
+            <span id="results-count">{{ total_webhooks|default:"0" }}</span> {% trans "entries" %}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="webhook-results">
+        <div class="list-row-cards">
+            <div class="list-row-card loading-state">
+                <i class="fas fa-spinner fa-spin icon-size-24 mb-12"></i>
+                <p class="m-0">{% trans "Loading webhooks..." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="list-filter-config"
+     class="pp-hidden"
+     data-filter-url="{% url 'payment_providers:webhooks_filter' %}"
+     data-results-container="webhook-results"
+     data-results-count="results-count"></div>
+</div>
+{% endblock %}

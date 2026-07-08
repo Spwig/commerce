@@ -1,0 +1,147 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Restore from Backup" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/system_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'management/css/restore-list.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; {% trans 'Restore' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="restore-container">
+        <div class="restore-header">
+            <h1>
+                <i class="fas fa-upload"></i>
+                {% trans "Restore from Backup" %}
+            </h1>
+            <p>{% trans "Select a backup to restore your system" %}</p>
+        </div>
+
+        <!-- Backup List -->
+        <div class="backup-list">
+            <div class="backup-list-header">
+                <h3>
+                    <i class="fas fa-archive"></i>
+                    {% trans "Available Backups" %}
+                </h3>
+                <span class="backup-count">{{ backups|length }} {% trans "backups" %}</span>
+            </div>
+
+            {% if backups %}
+                {% for backup in backups %}
+                <div class="backup-item">
+                    <div class="backup-icon {{ backup.backup_type }}">
+                        <i class="fas {% if backup.backup_type == 'full' %}fa-box{% elif backup.backup_type == 'db' %}fa-database{% elif backup.backup_type == 'media' %}fa-images{% else %}fa-cog{% endif %}"></i>
+                    </div>
+                    <div class="backup-info">
+                        <div class="name">{{ backup.name|default:_("Unnamed Backup") }}</div>
+                        <div class="meta">
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                {{ backup.created_at|date:"M j, Y H:i" }}
+                            </span>
+                            <span>
+                                <i class="fas fa-layer-group"></i>
+                                {{ backup.get_backup_type_display }}
+                            </span>
+                            {% if backup.file_size %}
+                            <span>
+                                <i class="fas fa-weight"></i>
+                                {{ backup.file_size|filesizeformat }}
+                            </span>
+                            {% endif %}
+                            {% if backup.is_encrypted %}
+                            <span>
+                                <i class="fas fa-lock"></i>
+                                {% trans "Encrypted" %}
+                            </span>
+                            {% endif %}
+                            {% if backup.remote_uploads.exists %}
+                            <span>
+                                <i class="fas fa-cloud"></i>
+                                {% if not backup.local_path %}
+                                {% trans "Remote Only" %}
+                                {% else %}
+                                {% trans "Cloud" %}
+                                {% endif %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <span class="backup-status {{ backup.status }}">
+                        {{ backup.get_status_display }}
+                    </span>
+                    <div class="backup-actions">
+                        {% if backup.status == 'completed' %}
+                        <a href="{% url 'admin:management_restore_confirm' backup.id %}" class="button">
+                            <i class="fas fa-upload"></i> {% trans "Restore" %}
+                        </a>
+                        {% if backup.local_path %}
+                        <a href="{{ backup.local_path }}" class="button default" download>
+                            <i class="fas fa-download"></i>
+                        </a>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-backups">
+                    <i class="fas fa-archive"></i>
+                    <h3>{% trans "No Backups Found" %}</h3>
+                    <p>{% trans "Create your first backup to protect your data." %}</p>
+                    <a href="{% url 'admin:management_create_full_backup' %}" class="button primary">
+                        <i class="fas fa-plus"></i> {% trans "Create Backup" %}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Upload Backup Section -->
+        <div class="upload-section">
+            <h3>
+                <i class="fas fa-file-upload"></i>
+                {% trans "Upload Backup File" %}
+            </h3>
+            <form id="upload-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>{% trans "Drag and drop a backup file here, or" %} <span class="browse-link">{% trans "browse" %}</span></p>
+                    <input type="file" name="backup_file" id="backup-file" accept=".tar.gz,.tar,.zip,.sql" hidden>
+                </div>
+            </form>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'admin:management_system_dashboard' %}" class="button default">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Dashboard" %}
+            </a>
+            <a href="{% url 'admin:management_create_full_backup' %}" class="button">
+                <i class="fas fa-plus"></i> {% trans "Create New Backup" %}
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="restore-config" class="mgmt-hidden"
+     data-upload-url="{% url 'admin:management_restore' %}"
+     data-msg-upload-confirm="{% trans 'Upload backup file' %}"
+     data-msg-uploading="{% trans 'Uploading...' %}"
+     data-msg-upload-failed="{% trans 'Upload failed' %}"
+     data-msg-unknown="{% trans 'Unknown error' %}"></div>
+<script src="{% static 'management/js/restore.js' %}"></script>
+{% endblock %}

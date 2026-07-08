@@ -1,0 +1,148 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/browse-table.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:management_database_browser' %}">{% trans 'Database Browser' %}</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+    
+    <!-- Table Information -->
+    <div class="table-info">
+        <div class="table-stats">
+            <div class="table-stat">
+                <strong>Total Rows:</strong> {{ total_rows|default:"0" }}
+            </div>
+            <div class="table-stat">
+                <strong>Page:</strong> {{ page }} of {{ total_pages }}
+            </div>
+            {% if result.success %}
+            <div class="table-stat">
+                <strong>Showing:</strong> {{ result.row_count }} rows
+            </div>
+            <div class="table-stat">
+                <strong>Query Time:</strong> {{ result.execution_time|floatformat:3 }}s
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="table-actions">
+            <a href="{% url 'admin:management_database_browser' %}" class="action-btn secondary">← Back to Tables</a>
+            <a href="{% url 'admin:management_query_runner' %}" class="action-btn">Query Runner</a>
+            <button data-action="export-table" class="action-btn">📄 Export CSV</button>
+        </div>
+    </div>
+    
+    <!-- Table Data -->
+    {% if result.success %}
+        {% if result.columns %}
+        <div class="table-container">
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        {% for column in result.columns %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if result.rows %}
+                        {% for row in result.rows %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>
+                                {% if cell is None %}
+                                    <span class="null-value">NULL</span>
+                                {% else %}
+                                    {{ cell|truncatechars:100 }}
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="{{ result.columns|length }}" class="no-data">
+                                <h4>📭 No Data Found</h4>
+                                <p>This table appears to be empty or has no rows matching the current criteria.</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if total_rows > 0 %}
+        <div class="pagination">
+            <div class="pagination-info">
+                Showing rows {{ start_row }} to {{ end_row }} of {{ total_rows }} total
+            </div>
+            
+            <div class="pagination-controls">
+                {% if has_previous %}
+                    <a href="?page=1">« First</a>
+                    <a href="?page={{ previous_page }}">‹ Previous</a>
+                {% else %}
+                    <span class="disabled">« First</span>
+                    <span class="disabled">‹ Previous</span>
+                {% endif %}
+                
+                <span class="current">{{ page }}</span>
+                
+                {% if has_next %}
+                    <a href="?page={{ next_page }}">Next ›</a>
+                    <a href="?page={{ total_pages }}">Last »</a>
+                {% else %}
+                    <span class="disabled">Next ›</span>
+                    <span class="disabled">Last »</span>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="pagination">
+            <div class="pagination-info">
+                Table structure shown with 0 rows
+            </div>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div class="no-data">
+            <h3>❌ No Table Information</h3>
+            <p>Unable to retrieve table structure or columns.</p>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="error-message">
+            <strong>Error:</strong> {{ result.error }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<div id="browse-table-config" class="mgmt-hidden"
+     data-table-name="{{ table_name|escapejs }}"
+     data-page="{{ page }}"
+     data-has-previous="{% if has_previous %}true{% else %}false{% endif %}"
+     data-has-next="{% if has_next %}true{% else %}false{% endif %}"
+     data-previous-page="{{ previous_page|default:1 }}"
+     data-next-page="{{ next_page|default:1 }}"></div>
+<script src="{% static 'management/js/browse-table.js' %}"></script>
+</div>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+{% if shares %}
+<div class="list-row-cards">
+    {% for share in shares %}
+    <div class="list-row-card">
+        <!-- Platform Icon -->
+        <div class="list-row-card-icon share-visual">
+            <div class="share-platform-icon platform-{{ share.platform }}">
+                {% if share.platform == 'facebook' %}
+                    <i class="fab fa-facebook"></i>
+                {% elif share.platform == 'twitter' %}
+                    <i class="fab fa-twitter"></i>
+                {% elif share.platform == 'linkedin' %}
+                    <i class="fab fa-linkedin"></i>
+                {% elif share.platform == 'pinterest' %}
+                    <i class="fab fa-pinterest"></i>
+                {% elif share.platform == 'whatsapp' %}
+                    <i class="fab fa-whatsapp"></i>
+                {% elif share.platform == 'telegram' %}
+                    <i class="fab fa-telegram"></i>
+                {% elif share.platform == 'email' %}
+                    <i class="fas fa-envelope"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <!-- Title Row: Content + Platform Badge -->
+            <div class="share-title-row">
+                <h3 class="list-row-card-title">
+                    {{ share.content_type.model|title }} #{{ share.object_id }}
+                    {% if share.content_object %} - {{ share.content_object|truncatechars:40 }}{% endif %}
+                </h3>
+                <span class="list-row-card-badge platform-{{ share.platform }}">
+                    {% if share.platform == 'facebook' %}
+                        <i class="fab fa-facebook"></i> {% trans "Facebook" %}
+                    {% elif share.platform == 'twitter' %}
+                        <i class="fab fa-twitter"></i> {% trans "Twitter" %}
+                    {% elif share.platform == 'linkedin' %}
+                        <i class="fab fa-linkedin"></i> {% trans "LinkedIn" %}
+                    {% elif share.platform == 'pinterest' %}
+                        <i class="fab fa-pinterest"></i> {% trans "Pinterest" %}
+                    {% elif share.platform == 'whatsapp' %}
+                        <i class="fab fa-whatsapp"></i> {% trans "WhatsApp" %}
+                    {% elif share.platform == 'telegram' %}
+                        <i class="fab fa-telegram"></i> {% trans "Telegram" %}
+                    {% elif share.platform == 'email' %}
+                        <i class="fas fa-envelope"></i> {% trans "Email" %}
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Compact Meta Row - All in one line -->
+            <div class="list-row-card-meta share-meta-compact">
+                {% if share.content_type.model == 'product' and share.content_object and share.content_object.images.all.0 %}
+                    <span class="list-row-card-meta-item share-product-thumb-meta">
+                        <a href="{% url 'admin:catalog_product_change' share.content_object.id %}" title="{{ share.content_object.name }}">
+                            <img src="{{ share.content_object.images.all.0.thumbnail_small }}"
+                                 alt="{{ share.content_object.name }}"
+                                 class="share-product-thumb-inline">
+                        </a>
+                    </span>
+                {% endif %}
+
+                {% if share.user %}
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-user"></i>
+                        <a href="{% url 'admin:auth_user_change' share.user.id %}">
+                            {{ share.user.get_full_name|default:share.user.email|truncatechars:20 }}
+                        </a>
+                    </span>
+                {% else %}
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-user-slash"></i>
+                        {% trans "Anonymous" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-meta-item">
+                    <i class="far fa-clock"></i>
+                    {{ share.shared_at|date:"M d, Y H:i" }}
+                </span>
+
+                {% if share.device_type %}
+                <span class="list-row-card-meta-item">
+                    {% if share.device_type == 'desktop' %}
+                        <i class="fas fa-desktop"></i>
+                    {% elif share.device_type == 'mobile' %}
+                        <i class="fas fa-mobile-alt"></i>
+                    {% elif share.device_type == 'tablet' %}
+                        <i class="fas fa-tablet-alt"></i>
+                    {% else %}
+                        <i class="fas fa-question"></i>
+                    {% endif %}
+                    {{ share.get_device_type_display }}
+                </span>
+                {% endif %}
+
+                {% if share.ip_address %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-globe"></i>
+                    {{ share.ip_address }}
+                </span>
+                {% endif %}
+
+                {% if share.shared_url %}
+                <span class="list-row-card-meta-item share-url-meta">
+                    <i class="fas fa-link"></i>
+                    <a href="{{ share.shared_url }}" target="_blank" title="{{ share.shared_url }}">
+                        {{ share.shared_url|truncatechars:30 }}
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <div class="no-results">
+        <div>
+            <i class="fas fa-search"></i>
+        </div>
+        <div>{% trans "No social shares found matching your filters." %}</div>
+        <div class="mt-8">
+            <button class="button secondary" data-action="clear-filters">
+                <i class="fas fa-times"></i>
+                {% trans "Clear Filters" %}
+            </button>
+        </div>
+    </div>
+{% endif %}

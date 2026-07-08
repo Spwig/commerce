@@ -1,0 +1,120 @@
+{% load i18n %}
+<div class="wizard-step-header">
+    <div class="wizard-step-icon">
+        <i class="fas fa-sliders-h"></i>
+    </div>
+    <h3 class="wizard-step-title">{% trans "Fine-Tune Your Store" %}</h3>
+    <p class="wizard-step-description">{% trans "These optional settings have sensible defaults. Adjust them now or come back anytime." %}</p>
+</div>
+
+<form id="wizard-form-finetune" novalidate>
+    {% csrf_token %}
+
+    {# E-commerce Settings #}
+    <div class="finetune-section open">
+        <div class="finetune-section-header">
+            <i class="fas fa-shopping-cart section-icon"></i>
+            <span class="finetune-section-label">{% trans "Checkout & Inventory" %}</span>
+            <i class="fas fa-chevron-down finetune-section-toggle"></i>
+        </div>
+        <div class="finetune-section-body">
+            <div class="finetune-section-content">
+                {% for field in ecommerce_form %}
+                <div class="form-group">
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                    <label class="checkbox-label">
+                        {{ field }}
+                        <span>{{ field.label }}</span>
+                    </label>
+                    {% if field.help_text %}
+                    <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% else %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# Email Settings #}
+    <div class="finetune-section">
+        <div class="finetune-section-header">
+            <i class="fas fa-bell section-icon"></i>
+            <span class="finetune-section-label">{% trans "Email Notifications" %}</span>
+            <i class="fas fa-chevron-down finetune-section-toggle"></i>
+        </div>
+        <div class="finetune-section-body">
+            <div class="finetune-section-content">
+                {% for field in email_form %}
+                <div class="form-group">
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                    <label class="checkbox-label">
+                        {{ field }}
+                        <span>{{ field.label }}</span>
+                    </label>
+                    {% if field.help_text %}
+                    <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% else %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# SEO Settings #}
+    <div class="finetune-section">
+        <div class="finetune-section-header">
+            <i class="fas fa-search section-icon"></i>
+            <span class="finetune-section-label">{% trans "SEO" %}</span>
+            <i class="fas fa-chevron-down finetune-section-toggle"></i>
+        </div>
+        <div class="finetune-section-body">
+            <div class="finetune-section-content">
+                {% for field in seo_form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# Social Media #}
+    <div class="finetune-section">
+        <div class="finetune-section-header">
+            <i class="fas fa-share-alt section-icon"></i>
+            <span class="finetune-section-label">{% trans "Social Media" %}</span>
+            <i class="fas fa-chevron-down finetune-section-toggle"></i>
+        </div>
+        <div class="finetune-section-body">
+            <div class="finetune-section-content">
+                {% for field in social_form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="help-text">{{ field.help_text }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,438 @@
+{
+  "element_type": "text",
+  "name": "Text",
+  "description": "Versatile text element with comprehensive typography and styling controls",
+  "version": "1.0.2",
+  "category": "basic",
+  "icon": "fas fa-font",
+  "author": "Page Builder System",
+  "element_builder_primitive": true,
+  "tags": ["text", "typography", "content", "paragraph"],
+  "supports_translation": true,
+  "translation_domain": "text_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/text.css"],
+  "disable_base_properties": ["typography_group"],
+  "tabs": {
+    "basic": {
+      "label": "Basic",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "content_group": {
+          "type": "property_group",
+          "label": "Text Content",
+          "columns": 1,
+          "properties": {
+            "text": {
+              "type": "textarea",
+              "label": "Text Content",
+              "default": "Your text content here...",
+              "translatable": true,
+              "required": true,
+              "rows": 4,
+              "full_width": true
+            },
+            "allow_html": {
+              "type": "boolean",
+              "label": "Allow HTML",
+              "default": false,
+              "help_text": "Enable HTML formatting in text content"
+            }
+          }
+        },
+        "typography_group": {
+          "type": "property_group",
+          "label": "Typography",
+          "columns": 1,
+          "properties": {
+            "typography": {
+              "type": "typography",
+              "label": "Typography Settings",
+              "help_text": "Configure all typography properties including font, size, weight, spacing, and style",
+              "utility": "typography_editor",
+              "default": ""
+            }
+          }
+        },
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout Options",
+          "properties": {
+            "max_width": {
+              "type": "select",
+              "label": "Max Width",
+              "options": [
+                {"value": "", "label": "None"},
+                {"value": "xs", "label": "Extra Small (20rem)"},
+                {"value": "sm", "label": "Small (24rem)"},
+                {"value": "md", "label": "Medium (28rem)"},
+                {"value": "lg", "label": "Large (32rem)"},
+                {"value": "xl", "label": "Extra Large (36rem)"},
+                {"value": "2xl", "label": "2X Large (42rem)"},
+                {"value": "3xl", "label": "3X Large (48rem)"},
+                {"value": "4xl", "label": "4X Large (56rem)"},
+                {"value": "5xl", "label": "5X Large (64rem)"},
+                {"value": "6xl", "label": "6X Large (72rem)"},
+                {"value": "7xl", "label": "7X Large (80rem)"},
+                {"value": "prose", "label": "Prose (65ch)"},
+                {"value": "screen-sm", "label": "Small Screen"},
+                {"value": "screen-md", "label": "Medium Screen"},
+                {"value": "screen-lg", "label": "Large Screen"},
+                {"value": "screen-xl", "label": "Extra Large Screen"}
+              ],
+              "default": ""
+            },
+            "truncate": {
+              "type": "boolean",
+              "label": "Truncate Text",
+              "default": false,
+              "help_text": "Truncate text with ellipsis when it overflows"
+            },
+            "white_space": {
+              "type": "select",
+              "label": "White Space",
+              "options": [
+                {"value": "", "label": "Default"},
+                {"value": "normal", "label": "Normal"},
+                {"value": "nowrap", "label": "No Wrap"},
+                {"value": "pre", "label": "Preserve"},
+                {"value": "pre-line", "label": "Preserve Line Breaks"},
+                {"value": "pre-wrap", "label": "Preserve Wrap"}
+              ],
+              "default": ""
+            }
+          }
+        }
+      }
+    },
+    "style": {
+      "label": "Style",
+      "icon": "fas fa-paint-brush",
+      "order": 2,
+      "properties": {
+        "colors_group": {
+          "type": "property_group",
+          "label": "Colors",
+          "columns": 1,
+          "properties": {
+            "text_color": {
+              "type": "color_advanced",
+              "label": "Text Color",
+              "help_text": "Set the text color using the advanced color picker",
+              "utility": "color_picker",
+              "default": "#374151"
+            }
+          }
+        },
+        "border_group": {
+          "type": "property_group",
+          "label": "Border",
+          "columns": 1,
+          "properties": {
+            "border": {
+              "type": "border_advanced",
+              "label": "Border",
+              "help_text": "Configure border width, style, color and radius",
+              "utility": "border_editor",
+              "default": ""
+            }
+          }
+        },
+        "spacing_group": {
+          "type": "property_group",
+          "label": "Spacing",
+          "columns": 1,
+          "properties": {
+            "spacing": {
+              "type": "spacing",
+              "label": "Spacing",
+              "help_text": "Configure margin and padding with visual editor",
+              "utility": "spacing_editor",
+              "default": ""
+            }
+          }
+        },
+        "effects_group": {
+          "type": "property_group",
+          "label": "Effects",
+          "properties": {
+            "box_shadow": {
+              "type": "shadow",
+              "label": "Box Shadow",
+              "help_text": "Configure box shadow for the text element container",
+              "utility": "shadow_editor",
+              "shadow_type": "box",
+              "default": ""
+            },
+            "text_shadow": {
+              "type": "shadow",
+              "label": "Text Shadow",
+              "placeholder": "e.g., 1px 1px 2px rgba(0,0,0,0.5)",
+              "help_text": "CSS text-shadow property",
+              "utility": "shadow_editor",
+              "shadow_type": "text"
+            },
+            "opacity": {
+              "type": "range",
+              "label": "Opacity",
+              "min": 0,
+              "max": 1,
+              "step": 0.1,
+              "default": 1
+            }
+          }
+        },
+        "text_behavior_group": {
+          "type": "property_group",
+          "label": "Text Behavior",
+          "properties": {
+            "word_break": {
+              "type": "select",
+              "label": "Word Break",
+              "options": [
+                {"value": "", "label": "Default"},
+                {"value": "normal", "label": "Normal"},
+                {"value": "break-all", "label": "Break All"},
+                {"value": "keep-all", "label": "Keep All"},
+                {"value": "break-word", "label": "Break Word"}
+              ],
+              "default": ""
+            },
+            "overflow": {
+              "type": "select",
+              "label": "Overflow",
+              "options": [
+                {"value": "", "label": "Default"},
+                {"value": "visible", "label": "Visible"},
+                {"value": "hidden", "label": "Hidden"},
+                {"value": "scroll", "label": "Scroll"},
+                {"value": "auto", "label": "Auto"}
+              ],
+              "default": ""
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "text": {
+      "type": "textarea",
+      "label": "Text Content",
+      "default": "Your text content here...",
+      "translatable": true,
+      "required": true,
+      "rows": 4
+    },
+    "allow_html": {
+      "type": "boolean",
+      "label": "Allow HTML",
+      "default": false,
+      "help_text": "Enable HTML formatting in text content"
+    },
+    "typography": {
+      "type": "typography",
+      "label": "Typography Settings",
+      "help_text": "Configure all typography properties including font, size, weight, spacing, and style",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "text_color": {
+      "type": "color_advanced",
+      "label": "Text Color",
+      "help_text": "Set the text color using the advanced color picker",
+      "utility": "color_picker",
+      "default": "#374151"
+    },
+    "max_width": {
+      "type": "select",
+      "label": "Max Width",
+      "options": [
+        {"value": "", "label": "None"},
+        {"value": "xs", "label": "Extra Small (20rem)"},
+        {"value": "sm", "label": "Small (24rem)"},
+        {"value": "md", "label": "Medium (28rem)"},
+        {"value": "lg", "label": "Large (32rem)"},
+        {"value": "xl", "label": "Extra Large (36rem)"},
+        {"value": "2xl", "label": "2X Large (42rem)"},
+        {"value": "3xl", "label": "3X Large (48rem)"},
+        {"value": "4xl", "label": "4X Large (56rem)"},
+        {"value": "5xl", "label": "5X Large (64rem)"},
+        {"value": "6xl", "label": "6X Large (72rem)"},
+        {"value": "7xl", "label": "7X Large (80rem)"},
+        {"value": "prose", "label": "Prose (65ch)"},
+        {"value": "screen-sm", "label": "Small Screen"},
+        {"value": "screen-md", "label": "Medium Screen"},
+        {"value": "screen-lg", "label": "Large Screen"},
+        {"value": "screen-xl", "label": "Extra Large Screen"}
+      ],
+      "default": ""
+    },
+    "truncate": {
+      "type": "boolean",
+      "label": "Truncate Text",
+      "default": false,
+      "help_text": "Truncate text with ellipsis when it overflows"
+    },
+    "white_space": {
+      "type": "select",
+      "label": "White Space",
+      "options": [
+        {"value": "", "label": "Default"},
+        {"value": "normal", "label": "Normal"},
+        {"value": "nowrap", "label": "No Wrap"},
+        {"value": "pre", "label": "Preserve"},
+        {"value": "pre-line", "label": "Preserve Line Breaks"},
+        {"value": "pre-wrap", "label": "Preserve Wrap"}
+      ],
+      "default": ""
+    },
+    "word_break": {
+      "type": "select",
+      "label": "Word Break",
+      "options": [
+        {"value": "", "label": "Default"},
+        {"value": "normal", "label": "Normal"},
+        {"value": "break-all", "label": "Break All"},
+        {"value": "keep-all", "label": "Keep All"},
+        {"value": "break-word", "label": "Break Word"}
+      ],
+      "default": ""
+    },
+    "overflow": {
+      "type": "select",
+      "label": "Overflow",
+      "options": [
+        {"value": "", "label": "Default"},
+        {"value": "visible", "label": "Visible"},
+        {"value": "hidden", "label": "Hidden"},
+        {"value": "scroll", "label": "Scroll"},
+        {"value": "auto", "label": "Auto"}
+      ],
+      "default": ""
+    },
+    "border": {
+      "type": "border_advanced",
+      "label": "Border",
+      "help_text": "Configure border width, style, color and radius",
+      "utility": "border_editor",
+      "default": ""
+    },
+    "rounded": {
+      "type": "select",
+      "label": "Border Radius",
+      "options": [
+        {"value": "", "label": "None"},
+        {"value": "sm", "label": "Small"},
+        {"value": "md", "label": "Medium"},
+        {"value": "lg", "label": "Large"},
+        {"value": "xl", "label": "Extra Large"},
+        {"value": "2xl", "label": "2X Large"},
+        {"value": "3xl", "label": "3X Large"},
+        {"value": "full", "label": "Full (Circle/Pill)"}
+      ],
+      "default": ""
+    },
+    "spacing": {
+      "type": "spacing",
+      "label": "Spacing",
+      "help_text": "Configure margin and padding with visual editor",
+      "utility": "spacing_editor",
+      "default": ""
+    },
+    "box_shadow": {
+      "type": "shadow",
+      "label": "Box Shadow",
+      "help_text": "Configure box shadow for the text element container",
+      "utility": "shadow_editor",
+      "shadow_type": "box",
+      "default": ""
+    },
+    "text_shadow": {
+      "type": "shadow",
+      "label": "Text Shadow",
+      "placeholder": "e.g., 1px 1px 2px rgba(0,0,0,0.5)",
+      "help_text": "CSS text-shadow property",
+      "utility": "shadow_editor",
+      "shadow_type": "text"
+    },
+    "opacity": {
+      "type": "range",
+      "label": "Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 1
+    },
+    "z_index": {
+      "type": "number",
+      "label": "Z-Index",
+      "help_text": "Stacking order (higher numbers appear on top)"
+    },
+    "id": {
+      "type": "string",
+      "label": "Element ID",
+      "help_text": "Unique identifier for this element"
+    },
+    "custom_class": {
+      "type": "string",
+      "label": "Custom CSS Classes",
+      "help_text": "Additional CSS classes to apply"
+    },
+    "custom_styles": {
+      "type": "textarea",
+      "label": "Custom CSS Styles",
+      "help_text": "Additional CSS styles",
+      "rows": 3
+    },
+    "data_attributes": {
+      "type": "object",
+      "label": "Data Attributes",
+      "help_text": "Custom data-* attributes as key-value pairs"
+    },
+    "visibility_rules": {
+      "type": "visibility_rules",
+      "label": "Visibility Rules",
+      "help_text": "Control when this element is shown based on conditions like user status, device, time, and more",
+      "utility": "visibility_rules_editor",
+      "default": []
+    }
+  },
+  "translations": {
+    "en": {
+      "name": "Text",
+      "description": "Versatile text element with comprehensive typography and styling controls"
+    },
+    "es": {
+      "name": "Texto",
+      "description": "Elemento de texto versatil con controles completos de tipografia y estilo"
+    },
+    "fr": {
+      "name": "Texte",
+      "description": "Element de texte polyvalent avec des controles typographiques et de style complets"
+    },
+    "de": {
+      "name": "Text",
+      "description": "Vielseitiges Textelement mit umfassenden Typografie- und Stilkontrollen"
+    },
+    "pt": {
+      "name": "Texto",
+      "description": "Elemento de texto versatil com controles abrangentes de tipografia e estilo"
+    },
+    "zh-hans": {
+      "name": "Text",
+      "description": "Versatile text element with comprehensive typography and styling controls"
+    },
+    "ja": {
+      "name": "Text",
+      "description": "Versatile text element with comprehensive typography and styling controls"
+    }
+  },
+  "defaults": {
+    "text": "Add your text content here. You can edit this by clicking the edit button.",
+    "size": "base",
+    "color": "gray-700"
+  }
+}

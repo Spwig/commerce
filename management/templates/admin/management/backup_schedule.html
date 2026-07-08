@@ -1,0 +1,242 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Backup Schedule" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/system_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'management/css/backup-schedule.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; {% trans 'Backup Schedule' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="schedule-container">
+        <div class="schedule-header">
+            <h1>
+                <i class="fas fa-calendar-alt"></i>
+                {% trans "Backup Schedule" %}
+            </h1>
+            <p>{% trans "Configure automatic backups to protect your data" %}</p>
+        </div>
+
+        <!-- Schedule Status -->
+        <div class="schedule-status {% if schedule and schedule.is_enabled %}enabled{% else %}disabled{% endif %}">
+            <i class="fas {% if schedule and schedule.is_enabled %}fa-check-circle{% else %}fa-pause-circle{% endif %}"></i>
+            <span class="status-text">
+                {% if schedule and schedule.is_enabled %}
+                    {% trans "Scheduled backups are enabled" %}
+                {% else %}
+                    {% trans "Scheduled backups are disabled" %}
+                {% endif %}
+            </span>
+        </div>
+
+        <form method="post" class="schedule-form">
+            {% csrf_token %}
+
+            <!-- Enable/Disable Toggle -->
+            <div class="form-section">
+                <div class="toggle-group">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="is_enabled" {% if schedule and schedule.is_enabled %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div>
+                        <div class="toggle-label">{% trans "Enable Scheduled Backups" %}</div>
+                        <div class="toggle-desc">{% trans "Automatically create backups on a regular schedule" %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Settings -->
+            <div class="form-section">
+                <h3>
+                    <i class="fas fa-clock"></i>
+                    {% trans "Schedule" %}
+                </h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="frequency">{% trans "Frequency" %}</label>
+                        <select name="frequency" id="frequency">
+                            <option value="daily" {% if schedule.frequency == 'daily' %}selected{% endif %}>{% trans "Daily" %}</option>
+                            <option value="weekly" {% if schedule.frequency == 'weekly' %}selected{% endif %}>{% trans "Weekly" %}</option>
+                            <option value="monthly" {% if schedule.frequency == 'monthly' %}selected{% endif %}>{% trans "Monthly" %}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="time_of_day">{% trans "Time" %}</label>
+                        <input type="time" name="time_of_day" id="time_of_day"
+                               value="{{ schedule.time_of_day|time:'H:i'|default:'03:00' }}">
+                        <span class="help-text">{% trans "Server time zone" %}</span>
+                    </div>
+                </div>
+                <div class="form-row{% if schedule.frequency != 'weekly' %} mgmt-hidden{% endif %}" id="weekly-options">
+                    <div class="form-group">
+                        <label for="day_of_week">{% trans "Day of Week" %}</label>
+                        <select name="day_of_week" id="day_of_week">
+                            <option value="0" {% if schedule.day_of_week == 0 %}selected{% endif %}>{% trans "Monday" %}</option>
+                            <option value="1" {% if schedule.day_of_week == 1 %}selected{% endif %}>{% trans "Tuesday" %}</option>
+                            <option value="2" {% if schedule.day_of_week == 2 %}selected{% endif %}>{% trans "Wednesday" %}</option>
+                            <option value="3" {% if schedule.day_of_week == 3 %}selected{% endif %}>{% trans "Thursday" %}</option>
+                            <option value="4" {% if schedule.day_of_week == 4 %}selected{% endif %}>{% trans "Friday" %}</option>
+                            <option value="5" {% if schedule.day_of_week == 5 %}selected{% endif %}>{% trans "Saturday" %}</option>
+                            <option value="6" {% if schedule.day_of_week == 6 %}selected{% endif %}>{% trans "Sunday" %}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row{% if schedule.frequency != 'monthly' %} mgmt-hidden{% endif %}" id="monthly-options">
+                    <div class="form-group">
+                        <label for="day_of_month">{% trans "Day of Month" %}</label>
+                        <select name="day_of_month" id="day_of_month">
+                            {% for day in "123456789"|make_list %}
+                            <option value="{{ day }}" {% if schedule.day_of_month == day|add:0 %}selected{% endif %}>{{ day }}</option>
+                            {% endfor %}
+                            {% for day in "10111213141516171819202122232425262728" %}
+                            {% endfor %}
+                            <option value="10" {% if schedule.day_of_month == 10 %}selected{% endif %}>10</option>
+                            <option value="15" {% if schedule.day_of_month == 15 %}selected{% endif %}>15</option>
+                            <option value="20" {% if schedule.day_of_month == 20 %}selected{% endif %}>20</option>
+                            <option value="25" {% if schedule.day_of_month == 25 %}selected{% endif %}>25</option>
+                            <option value="28" {% if schedule.day_of_month == 28 %}selected{% endif %}>28</option>
+                        </select>
+                        <span class="help-text">{% trans "Use 28 or less for all months" %}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Options -->
+            <div class="form-section">
+                <h3>
+                    <i class="fas fa-cog"></i>
+                    {% trans "Backup Options" %}
+                </h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="backup_type">{% trans "Backup Type" %}</label>
+                        <select name="backup_type" id="backup_type">
+                            <option value="full" {% if schedule.backup_type == 'full' %}selected{% endif %}>{% trans "Full System" %}</option>
+                            <option value="db" {% if schedule.backup_type == 'db' %}selected{% endif %}>{% trans "Database Only" %}</option>
+                            <option value="media" {% if schedule.backup_type == 'media' %}selected{% endif %}>{% trans "Media Only" %}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="retention_days">{% trans "Retention Period" %}</label>
+                        <select name="retention_days" id="retention_days">
+                            <option value="7" {% if schedule.retention_days == 7 %}selected{% endif %}>7 {% trans "days" %}</option>
+                            <option value="14" {% if schedule.retention_days == 14 %}selected{% endif %}>14 {% trans "days" %}</option>
+                            <option value="30" {% if schedule.retention_days == 30 %}selected{% endif %}>30 {% trans "days" %}</option>
+                            <option value="60" {% if schedule.retention_days == 60 %}selected{% endif %}>60 {% trans "days" %}</option>
+                            <option value="90" {% if schedule.retention_days == 90 %}selected{% endif %}>90 {% trans "days" %}</option>
+                        </select>
+                        <span class="help-text">{% trans "Older backups will be automatically deleted" %}</span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="toggle-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="encrypt" {% if schedule.encrypt %}checked{% endif %}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <div>
+                            <div class="toggle-label">{% trans "Encrypt Backups" %}</div>
+                            <div class="toggle-desc">{% trans "Encrypt backup files for additional security" %}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remote Storage (optional) -->
+            <div class="form-section">
+                <h3>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    {% trans "Remote Storage (Optional)" %}
+                </h3>
+                {% if destinations %}
+                <p class="help-text" style="margin-bottom: 12px;">
+                    {% trans "Automatically upload scheduled backups to these destinations." %}
+                </p>
+                {% for dest in destinations %}
+                <div class="form-row">
+                    <div class="toggle-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="remote_destinations" value="{{ dest.pk }}"
+                                   {% if dest.is_selected %}checked{% endif %}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <div>
+                            <div class="toggle-label">{{ dest.name }}</div>
+                            <div class="toggle-desc">{{ dest.get_provider_type_display }}{% if dest.is_default %} &middot; {% trans "Default" %}{% endif %}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <p class="help-text" style="margin-top: 8px;">
+                    <a href="{% url 'admin:management_storage_destinations' %}">
+                        <i class="fas fa-cog"></i> {% trans "Manage destinations" %}
+                    </a>
+                </p>
+                {% else %}
+                <p class="help-text">
+                    {% trans "No remote storage destinations configured." %}
+                    <a href="{% url 'admin:management_storage_wizard_step1' %}">{% trans "Add one now" %}</a>
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'admin:management_system_dashboard' %}" class="button default">
+                    <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                </a>
+                <button type="submit" class="button primary">
+                    <i class="fas fa-save"></i> {% trans "Save Schedule" %}
+                </button>
+            </div>
+        </form>
+
+        <!-- Next Run Info -->
+        {% if schedule and schedule.is_enabled %}
+        <div class="next-run-info">
+            <h3>
+                <i class="fas fa-info-circle"></i>
+                {% trans "Schedule Information" %}
+            </h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">{% trans "Next Scheduled Backup" %}</span>
+                    <span class="value">
+                        {% if schedule.next_run %}
+                            {{ schedule.next_run|date:"M j, Y H:i" }}
+                        {% else %}
+                            {% trans "Calculating..." %}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="label">{% trans "Last Backup" %}</span>
+                    <span class="value">
+                        {% if schedule.last_run %}
+                            {{ schedule.last_run|date:"M j, Y H:i" }}
+                        {% else %}
+                            {% trans "Never" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="{% static 'management/js/backup-schedule.js' %}"></script>
+{% endblock %}

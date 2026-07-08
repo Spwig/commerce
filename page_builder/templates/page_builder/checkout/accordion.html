@@ -1,0 +1,120 @@
+{% extends "page_builder/checkout/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Accordion Checkout Template - All steps on one page with collapsible sections #}
+
+{% block checkout_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/checkout-accordion.css' %}">
+{% endblock %}
+
+{% block checkout_layout %}
+<div class="checkout-container checkout-container--accordion">
+    <!-- Steps Column -->
+    <div class="checkout-steps" id="checkout-steps">
+
+        <!-- Step 1: Contact -->
+        <div class="checkout-step checkout-step--active" id="step-contact" data-step="contact">
+            <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="true">
+                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>1</span></div>{% endif %}
+                <h2>{% mtrans 'Contact' %}</h2>
+                <span class="checkout-step__summary" id="contact-summary"></span>
+                <i class="fas fa-chevron-down checkout-step__toggle"></i>
+            </div>
+            <div class="checkout-step__body">
+                {% include "page_builder/checkout/_step_contact.html" %}
+                <div class="checkout-step__actions">
+                    <button type="button" class="btn btn--primary" data-action="continue-contact">
+                        {% mtrans 'Continue to Shipping' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Shipping Address -->
+        <div class="checkout-step checkout-step--disabled" id="step-shipping" data-step="shipping">
+            <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="false">
+                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>2</span></div>{% endif %}
+                <h2>{% mtrans 'Shipping Address' %}</h2>
+                <span class="checkout-step__summary" id="shipping-summary"></span>
+                <i class="fas fa-chevron-down checkout-step__toggle"></i>
+            </div>
+            <div class="checkout-step__body">
+                {% include "page_builder/checkout/_step_shipping.html" %}
+                <div class="checkout-step__actions">
+                    <button type="button" class="btn btn--primary" data-action="continue-shipping">
+                        {% mtrans 'Continue to Shipping Method' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Shipping Method -->
+        <div class="checkout-step checkout-step--disabled" id="step-shipping-method" data-step="shipping-method">
+            <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="false">
+                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>3</span></div>{% endif %}
+                <h2>{% mtrans 'Shipping Method' %}</h2>
+                <span class="checkout-step__summary" id="shipping-method-summary"></span>
+                <i class="fas fa-chevron-down checkout-step__toggle"></i>
+            </div>
+            <div class="checkout-step__body">
+                {% include "page_builder/checkout/_step_shipping_method.html" %}
+                <div class="checkout-step__actions">
+                    <button type="button" class="btn btn--primary" data-action="continue-shipping-method">
+                        {% mtrans 'Continue to Payment' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Payment -->
+        <div class="checkout-step checkout-step--disabled" id="step-payment" data-step="payment">
+            <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="false">
+                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>4</span></div>{% endif %}
+                <h2>{% mtrans 'Payment' %}</h2>
+                <span class="checkout-step__summary" id="payment-summary"></span>
+                <i class="fas fa-chevron-down checkout-step__toggle"></i>
+            </div>
+            <div class="checkout-step__body">
+                {% include "page_builder/checkout/_step_payment.html" %}
+                <div class="checkout-step__actions">
+                    <button type="button" class="btn btn--primary" data-action="continue-payment">
+                        {% mtrans 'Continue to Payment' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Review & Complete Payment -->
+        <div class="checkout-step checkout-step--disabled" id="step-review" data-step="review">
+            <div class="checkout-step__header" role="button" tabindex="0" aria-expanded="false">
+                {% if template_options.show_step_numbers %}<div class="checkout-step__number"><span>5</span></div>{% endif %}
+                <h2>{% mtrans 'Review & Complete Payment' %}</h2>
+                <span class="checkout-step__summary"></span>
+                <i class="fas fa-chevron-down checkout-step__toggle"></i>
+            </div>
+            <div class="checkout-step__body">
+                {% include "page_builder/checkout/_step_review.html" %}
+
+                {% if template_options.show_trust_badges and checkout_trust_badges %}
+                <div class="checkout-trust-badges">
+                    {% include "page_builder/includes/_trust_badges.html" with trust_badges=checkout_trust_badges %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Order Summary Sidebar -->
+    {% if template_options.show_order_summary_sidebar %}
+    {% include "page_builder/checkout/_order_summary.html" %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block checkout_scripts %}
+<script src="{% static 'page_builder/js/checkout.js' %}" defer></script>
+{% endblock %}

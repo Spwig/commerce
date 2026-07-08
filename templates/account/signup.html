@@ -1,0 +1,265 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n static socialaccount core_extras %}
+
+{% block head_title %}{% trans "Sign Up" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/css/entrance.css' %}">
+{% endblock %}
+
+{% block content %}
+{% get_site_settings as site_settings %}
+<div class="entrance-page">
+    <div class="entrance-background"></div>
+
+    <div class="entrance-container">
+        <div class="entrance-card">
+            <!-- Header -->
+            <div class="entrance-header">
+                {% with logo_url=site_settings|get_site_logo_url %}
+                {% if logo_url %}
+                <img src="{{ logo_url }}" alt="{% trans 'Logo' %}" class="entrance-logo">
+                {% endif %}
+                {% endwith %}
+                <h1 class="entrance-title">{% trans "Create Account" %}</h1>
+                <p class="entrance-subtitle">{% trans "Join us today" %}</p>
+            </div>
+
+            <!-- Error Messages -->
+            {% if form.non_field_errors %}
+            <div class="entrance-alert entrance-alert-error" role="alert">
+                <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                <div class="entrance-alert-content">
+                    {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="entrance-alert entrance-alert-{{ message.tags }}" role="alert">
+                    <i class="fas fa-info-circle" aria-hidden="true"></i>
+                    <div class="entrance-alert-content">
+                        {{ message }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Signup Form -->
+            <div class="entrance-form">
+                <form method="post" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+
+                    <!-- Email Field -->
+                    <div class="entrance-field">
+                        <label for="{{ form.email.id_for_label }}" class="entrance-label">
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            {{ form.email.label }}
+                        </label>
+                        <div class="entrance-input-wrapper">
+                            <input type="email"
+                                   name="{{ form.email.html_name }}"
+                                   id="{{ form.email.id_for_label }}"
+                                   value="{{ form.email.value|default:'' }}"
+                                   required
+                                   autocomplete="email"
+                                   placeholder="{% trans 'you@example.com' %}"
+                                   data-field="email">
+                        </div>
+                        {% if form.email.errors %}
+                        <div class="entrance-field-error server-error">
+                            {{ form.email.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Username Field (if present) -->
+                    {% if form.username %}
+                    <div class="entrance-field">
+                        <label for="{{ form.username.id_for_label }}" class="entrance-label">
+                            <i class="fas fa-user" aria-hidden="true"></i>
+                            {{ form.username.label }}
+                        </label>
+                        <div class="entrance-input-wrapper">
+                            <input type="text"
+                                   name="{{ form.username.html_name }}"
+                                   id="{{ form.username.id_for_label }}"
+                                   value="{{ form.username.value|default:'' }}"
+                                   required
+                                   autocomplete="username"
+                                   placeholder="{% trans 'Choose a username' %}"
+                                   data-field="username">
+                        </div>
+                        {% if form.username.errors %}
+                        <div class="entrance-field-error server-error">
+                            {{ form.username.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Password Field -->
+                    <div class="entrance-field">
+                        <label for="{{ form.password1.id_for_label }}" class="entrance-label">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                            {{ form.password1.label }}
+                        </label>
+                        <div class="entrance-input-wrapper">
+                            <input type="password"
+                                   name="{{ form.password1.html_name }}"
+                                   id="{{ form.password1.id_for_label }}"
+                                   required
+                                   autocomplete="new-password"
+                                   placeholder="{% trans 'Choose a strong password' %}"
+                                   data-field="password1">
+                            <button type="button"
+                                    class="password-toggle"
+                                    data-action="toggle-password"
+                                    data-target="{{ form.password1.id_for_label }}"
+                                    data-label-show="{% trans 'Show password' %}"
+                                    data-label-hide="{% trans 'Hide password' %}"
+                                    aria-label="{% trans 'Show password' %}">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        {% if form.password1.errors %}
+                        <div class="entrance-field-error server-error">
+                            {{ form.password1.errors }}
+                        </div>
+                        {% endif %}
+                        {% if form.password1.help_text %}
+                        <div class="entrance-field-help">
+                            {{ form.password1.help_text }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="entrance-field">
+                        <label for="{{ form.password2.id_for_label }}" class="entrance-label">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                            {{ form.password2.label }}
+                        </label>
+                        <div class="entrance-input-wrapper">
+                            <input type="password"
+                                   name="{{ form.password2.html_name }}"
+                                   id="{{ form.password2.id_for_label }}"
+                                   required
+                                   autocomplete="new-password"
+                                   placeholder="{% trans 'Confirm your password' %}"
+                                   data-field="password2">
+                            <button type="button"
+                                    class="password-toggle"
+                                    data-action="toggle-password"
+                                    data-target="{{ form.password2.id_for_label }}"
+                                    data-label-show="{% trans 'Show password' %}"
+                                    data-label-hide="{% trans 'Hide password' %}"
+                                    aria-label="{% trans 'Show password' %}">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        {% if form.password2.errors %}
+                        <div class="entrance-field-error server-error">
+                            {{ form.password2.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Hidden redirect field -->
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                    {% endif %}
+
+                    <!-- Submit Button -->
+                    <button type="submit"
+                            class="entrance-submit"
+                            data-loading-text="{% trans 'Creating account...' %}">
+                        <span class="entrance-submit-text">{% trans "Create Account" %}</span>
+                        <i class="fas fa-arrow-right entrance-submit-icon" aria-hidden="true"></i>
+                        <i class="fas fa-spinner entrance-submit-spinner" aria-hidden="true" style="display: none;"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Social Auth Section -->
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+            <div class="entrance-social">
+                <h2 class="entrance-divider">
+                    <span>{% trans "Or sign up with" %}</span>
+                </h2>
+
+                <div class="social-buttons">
+                    {% for provider in socialaccount_providers %}
+                        {% if provider.id == 'google' %}
+                        <a href="{% provider_login_url 'google' process='login' %}"
+                           class="social-btn social-btn-google"
+                           data-provider="google"
+                           data-loading-text="{% trans 'Connecting to Google...' %}">
+                            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span>{% trans "Google" %}</span>
+                        </a>
+                        {% endif %}
+
+                        {% if provider.id == 'apple' %}
+                        <a href="{% provider_login_url 'apple' process='login' %}"
+                           class="social-btn social-btn-apple"
+                           data-provider="apple"
+                           data-loading-text="{% trans 'Connecting to Apple...' %}">
+                            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                            </svg>
+                            <span>{% trans "Apple" %}</span>
+                        </a>
+                        {% endif %}
+
+                        {% if provider.id == 'microsoft' %}
+                        <a href="{% provider_login_url 'microsoft' process='login' %}"
+                           class="social-btn social-btn-microsoft"
+                           data-provider="microsoft"
+                           data-loading-text="{% trans 'Connecting to Microsoft...' %}">
+                            <svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="currentColor" d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
+                            </svg>
+                            <span>{% trans "Microsoft" %}</span>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Footer Links -->
+            <div class="entrance-footer">
+                <p class="entrance-footer-text">
+                    {% blocktrans %}Already have an account?{% endblocktrans %}
+                    <a href="{% url 'account_login' %}" class="entrance-link">
+                        {% trans "Sign in" %}
+                    </a>
+                </p>
+
+                <div class="entrance-footer-powered">
+                    <span class="entrance-footer-powered-text">{% trans "Powered by" %}</span>
+                    <a href="https://spwig.com" class="entrance-link" target="_blank" rel="noopener">
+                        Spwig
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+{{ block.super }}
+<script src="{% static 'accounts/js/entrance.js' %}"></script>
+{% endblock %}

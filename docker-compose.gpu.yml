@@ -1,0 +1,24 @@
+# GPU-enabled Docker Compose override file
+# Use this with: docker-compose -f docker-compose.yml -f docker-compose.gpu.yml up
+
+version: '3.8'
+
+services:
+  translator:
+    # GPU support for NVIDIA GPUs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all  # or use count: 1 for single GPU
+              capabilities: [gpu]
+
+    environment:
+      # Override device configuration for GPU
+      - DEVICE=cuda
+      - ENABLE_GPU=true
+      - PREFER_GPU=true
+
+    # Alternative runtime method (older Docker versions)
+    # runtime: nvidia

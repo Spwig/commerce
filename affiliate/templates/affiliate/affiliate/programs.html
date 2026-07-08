@@ -1,0 +1,102 @@
+{% extends "affiliate/base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "Browse Programs" context "affiliate" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate/programs.css' %}">
+{% endblock %}
+
+{% block page_title %}{% trans "Affiliate Programs" context "affiliate" %}{% endblock %}
+
+{% block page_description %}
+<p>{% trans "Discover programs to promote and earn commissions" context "affiliate" %}</p>
+{% endblock %}
+
+{% block content %}
+<div class="programs-container">
+    {% if programs %}
+        <div class="programs-grid">
+            {% for program in programs %}
+            <div class="program-card {% if program.id in my_programs %}enrolled{% endif %}">
+                {% if program.logo %}
+                    <div class="program-logo">
+                        <img src="{{ program.logo.url }}" alt="{{ program.name }}">
+                    </div>
+                {% else %}
+                    <div class="program-logo placeholder">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                {% endif %}
+
+                <div class="program-info">
+                    <h3>{{ program.name }}</h3>
+                    <p class="program-description">{{ program.description|truncatewords:25 }}</p>
+
+                    <div class="program-stats">
+                        <div class="stat">
+                            <span class="stat-value">
+                                {% if program.commission_type == 'percentage' %}
+                                    {{ program.commission_rate }}%
+                                {% else %}
+                                    ${{ program.commission_rate|floatformat:2 }}
+                                {% endif %}
+                            </span>
+                            <span class="stat-label">{% trans "Commission" context "stats" %}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">{{ program.cookie_duration }}d</span>
+                            <span class="stat-label">{% trans "Cookie" context "stats" %}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">${{ program.minimum_payout|floatformat:0 }}</span>
+                            <span class="stat-label">{% trans "Min. Payout" context "stats" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="program-actions">
+                    {% if program.id in my_programs %}
+                        <span class="badge badge-enrolled">
+                            <i class="fas fa-check-circle"></i> {% trans "Enrolled" context "status" %}
+                        </span>
+                    {% else %}
+                        <button type="button" class="btn-affiliate btn-affiliate-primary" data-action="apply-program" data-program-id="{{ program.id }}" data-program-name="{{ program.name|escapejs }}">
+                            <i class="fas fa-plus"></i> {% trans "Join Program" context "action" %}
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+        <nav class="pagination-nav">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page=1">&laquo; {% trans "First" %}</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a></li>
+                {% endif %}
+
+                <li class="current">
+                    {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+                </li>
+
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a></li>
+                    <li><a href="?page={{ page_obj.paginator.num_pages }}">{% trans "Last" %} &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-briefcase"></i>
+            <h3>{% trans "No Programs Available" context "empty" %}</h3>
+            <p>{% trans "There are no active affiliate programs at this time. Check back later!" context "empty" %}</p>
+        </div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

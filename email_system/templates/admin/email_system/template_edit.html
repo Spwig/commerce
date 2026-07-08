@@ -1,0 +1,258 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Edit Email Template" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/css/template-editor.css' %}">
+<!-- Monaco Editor CDN - CSP allowlist needed for cdnjs.cloudflare.com -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="template-editor-container">
+    <!-- Header -->
+    <div class="editor-header">
+        <div class="header-top">
+            <div class="header-left">
+                <a href="{% url 'email_system:template_list' %}" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    {% trans "Back to Templates" %}
+                </a>
+                <h1>
+                    <i class="fas fa-code"></i>
+                    {{ title }}
+                </h1>
+                <span class="version-badge">
+                    <i class="fas fa-code-branch"></i>
+                    {% trans "Version" %} {{ template.version }}
+                </span>
+                {% if editing_language != base_language %}
+                <div class="language-badge">
+                    <i class="fas fa-language"></i>
+                    {% trans "Editing" %}: {{ editing_language|upper }}
+                    {% if is_translation %}
+                        <span class="badge badge-success">{% trans "Translation" %}</span>
+                    {% else %}
+                        <span class="badge badge-warning">{% trans "Base Template" %}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if is_system %}
+        <div class="warning-badge">
+            <i class="fas fa-info-circle"></i>
+            {% trans "This is a system template (read-only). Clone it to create a customizable version." %}
+        </div>
+        {% endif %}
+        <div class="header-actions">
+            <button type="button" class="btn btn-secondary" data-action="refresh-preview">
+                <i class="fas fa-sync-alt"></i>
+                {% trans "Refresh Preview" %}
+            </button>
+            <a href="{% url 'email_system:template_preview' template.id %}?language={{ editing_language }}" class="btn btn-secondary" target="_blank">
+                <i class="fas fa-external-link-alt"></i>
+                {% trans "Full Preview" %}
+            </a>
+            {% if not is_system %}
+            <button type="button" class="btn btn-primary" data-action="save-template" id="save-btn">
+                <i class="fas fa-save"></i>
+                {% trans "Save Template" %}
+            </button>
+            {% else %}
+            <form method="post" action="{% url 'email_system:clone_template' template.id %}" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-clone"></i>
+                    {% trans "Clone to Edit" %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Editor Layout -->
+    <div class="editor-layout">
+        <!-- Left Panel: Code Editors -->
+        <div class="editor-panel" id="editor-panel">
+            <!-- Panel Header with Expand Button -->
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-code"></i>
+                    {% trans "Code Editor" %}
+                </div>
+                <button class="expand-btn" data-action="toggle-panel-expand" data-panel="editor" title="{% trans 'Expand/Collapse' %}">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="editor-tabs">
+                <button class="tab-btn active" data-action="switch-tab" data-tab="mjml">
+                    <i class="fas fa-code"></i>
+                    {% trans "MJML Template" %}
+                </button>
+                <button class="tab-btn" data-action="switch-tab" data-tab="text">
+                    <i class="fas fa-align-left"></i>
+                    {% trans "Plain Text" %}
+                </button>
+                <button class="tab-btn" data-action="switch-tab" data-tab="variables">
+                    <i class="fas fa-tags"></i>
+                    {% trans "Variables" %}
+                </button>
+            </div>
+
+            <!-- Subject Line Editor -->
+            <div class="subject-editor">
+                <label for="subject-input">
+                    <i class="fas fa-envelope"></i>
+                    {% trans "Subject Line" %}
+                </label>
+                <input
+                    type="text"
+                    id="subject-input"
+                    value="{{ template.subject }}"
+                    placeholder="{% trans 'Email subject line (can use variables like {{ order_number }})' %}"
+                    {% if is_system %}readonly{% endif %}
+                >
+            </div>
+
+            <!-- MJML Editor Tab -->
+            <div class="tab-content active" id="mjml-tab">
+                <div class="editor-toolbar">
+                    <span class="toolbar-title">
+                        <i class="fas fa-code"></i>
+                        {% trans "MJML Code" %}
+                    </span>
+                    <div class="toolbar-actions">
+                        <button type="button" class="btn-tool" data-action="format-code" title="{% trans 'Format Code' %}">
+                            <i class="fas fa-magic"></i>
+                        </button>
+                        <button type="button" class="btn-tool" data-action="validate-mjml" title="{% trans 'Validate MJML' %}">
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="mjml-editor" class="code-editor"></div>
+            </div>
+
+            <!-- Plain Text Editor Tab -->
+            <div class="tab-content" id="text-tab">
+                <div class="editor-toolbar">
+                    <span class="toolbar-title">
+                        <i class="fas fa-align-left"></i>
+                        {% trans "Plain Text Version" %}
+                    </span>
+                </div>
+                <div id="text-editor" class="code-editor"></div>
+            </div>
+
+            <!-- Variables Reference Tab -->
+            <div class="tab-content" id="variables-tab">
+                <div class="variables-panel">
+                    <h3>
+                        <i class="fas fa-tags"></i>
+                        {% trans "Available Variables" %}
+                    </h3>
+                    <p class="help-text">
+                        {% trans "Click a variable to copy it to your clipboard. Use these in your template with double curly braces:" %}
+                        <code>{% templatetag openvariable %} variable_name {% templatetag closevariable %}</code>
+                    </p>
+
+                    <div class="variables-list">
+                        {% for var_name in available_variables %}
+                        <div class="variable-item" data-action="copy-variable" data-var-name="{{ var_name }}">
+                            <div class="variable-name">
+                                <i class="fas fa-tag"></i>
+                                <code>{% templatetag openvariable %} {{ var_name }} {% templatetag closevariable %}</code>
+                            </div>
+                            <button class="copy-btn" title="{% trans 'Copy' %}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="variables-help">
+                        <h4><i class="fas fa-info-circle"></i> {% trans "Template Syntax Help" %}</h4>
+                        <div class="help-item">
+                            <strong>{% trans "Variables:" %}</strong>
+                            <code>{% templatetag openvariable %} customer_name {% templatetag closevariable %}</code>
+                        </div>
+                        <div class="help-item">
+                            <strong>{% trans "Conditions:" %}</strong>
+                            <code>{% verbatim %}{% if order_total > 100 %}...{% endif %}{% endverbatim %}</code>
+                        </div>
+                        <div class="help-item">
+                            <strong>{% trans "Loops:" %}</strong>
+                            <code>{% verbatim %}{% for item in items %}...{% endfor %}{% endverbatim %}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Preview -->
+        <div class="preview-panel" id="preview-panel">
+            <!-- Panel Header with Expand Button -->
+            <div class="panel-header">
+                <div class="panel-title">
+                    <i class="fas fa-eye"></i>
+                    {% trans "Live Preview" %}
+                </div>
+                <button class="expand-btn" data-action="toggle-panel-expand" data-panel="preview" title="{% trans 'Expand/Collapse' %}">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+
+            <div class="preview-header">
+                <div class="preview-actions">
+                    <button type="button" class="btn-tool active" data-action="set-preview-device" data-device="desktop" title="{% trans 'Desktop View' %}">
+                        <i class="fas fa-desktop"></i>
+                    </button>
+                    <button type="button" class="btn-tool" data-action="set-preview-device" data-device="mobile" title="{% trans 'Mobile View' %}">
+                        <i class="fas fa-mobile-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="preview-container" id="preview-container">
+                <div class="preview-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>{% trans "Loading preview..." %}</p>
+                </div>
+                <iframe
+                    id="preview-iframe"
+                    class="preview-iframe desktop"
+                    srcdoc=""
+                    title="{% trans 'Template Preview' %}"
+                ></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Save Status Indicator -->
+<div id="save-status" class="save-status">
+    <div class="status-content">
+        <i class="fas fa-check-circle"></i>
+        <span id="status-message">{% trans "Saved" %}</span>
+    </div>
+</div>
+
+<script type="application/json" id="template-editor-data">
+{
+    "id": "{{ template.id }}",
+    "subject": "{{ template.subject|escapejs }}",
+    "htmlContent": "{{ template.html_content|escapejs }}",
+    "textContent": "{{ template.text_content|escapejs }}",
+    "isSystem": {{ is_system|yesno:"true,false" }},
+    "csrfToken": "{{ csrf_token }}"
+}
+</script>
+
+<!-- Monaco Editor CDN - CSP allowlist needed for cdnjs.cloudflare.com -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+<script src="{% static 'email_system/js/template-editor.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% comment %}
+Template for theme metadata
+Used by {% theme_meta %} template tag
+{% endcomment %}
+
+<!-- Theme Metadata -->
+<meta name="theme-name" content="{{ theme_name }}">
+<meta name="theme-version" content="{{ theme_version }}">
+{% if theme_author %}
+<meta name="theme-author" content="{{ theme_author }}">
+{% endif %}
+{% if theme %}
+<meta name="theme-slug" content="{{ theme.slug }}">
+{% endif %}

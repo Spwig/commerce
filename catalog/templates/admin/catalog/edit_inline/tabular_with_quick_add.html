@@ -1,0 +1,192 @@
+{% load i18n admin_urls static admin_modify %}
+<div class="js-inline-admin-formset inline-group"
+     id="{{ inline_admin_formset.formset.prefix }}-group"
+     data-inline-type="tabular"
+     data-inline-formset="{{ inline_admin_formset.inline_formset_data }}">
+  {{ inline_admin_formset.formset.management_form }}
+  <fieldset class="module {{ inline_admin_formset.classes }}"
+            data-quick-add-url="{% url 'catalog_admin:quick_add_attribute' %}">
+    {% if inline_admin_formset.is_collapsible %}<details open><summary>{% endif %}
+    <h2 class="inline-heading">{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h2>
+    {% if inline_admin_formset.is_collapsible %}</summary>{% endif %}
+
+    {# Quick Add Attribute Section #}
+    <div class="quick-add-attribute-section">
+        <div class="quick-add-header">
+            <h3 class="inline-heading">{% trans "Quick Add Attribute" %}</h3>
+            <button type="button" class="toggle-quick-add" aria-expanded="false">
+                <svg class="icon-expand" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 11L3 6h10l-5 5z"/>
+                </svg>
+                <svg class="icon-collapse" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="display: none;">
+                    <path d="M8 5l5 5H3l5-5z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="quick-add-content" style="display: none;">
+            <p class="help-text">
+                {% trans "Create a new attribute and its values in one step, then they'll be automatically added to this product." %}
+            </p>
+            <p class="help-text" style="margin-top: 4px; font-style: italic;">
+                <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+                {% trans "Attributes are shared across your store. If an attribute like 'Size' or 'Color' already exists, new values will be added to it automatically." %}
+            </p>
+
+            <div class="quick-add-form">
+                <div class="form-row">
+                    <div class="field-box">
+                        <label for="quick_attribute_name">{% trans "Attribute Name" %}</label>
+                        <input type="text"
+                               id="quick_attribute_name"
+                               name="quick_attribute_name"
+                               placeholder="{% trans 'e.g., Color, Size, Material' %}"
+                               class="vTextField">
+                        <p class="help">{% trans "The name of the attribute (e.g., 'Color', 'Size')" %}</p>
+                    </div>
+
+                    <div class="field-box">
+                        <label for="quick_attribute_type">{% trans "Display Type" %}</label>
+                        <select id="quick_attribute_type" name="quick_attribute_type" class="vTextField">
+                            <option value="text">{% trans "Text" %}</option>
+                            <option value="color">{% trans "Color Swatch" %}</option>
+                        </select>
+                        <p class="help">{% trans "Text shows value labels, Color Swatch displays colored circles" %}</p>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="field-box full-width">
+                        <label for="quick_attribute_values">{% trans "Values (comma-separated)" %}</label>
+                        <input type="text"
+                               id="quick_attribute_values"
+                               name="quick_attribute_values"
+                               placeholder="{% trans 'e.g., Red, Blue, Green or Small, Medium, Large' %}"
+                               class="vTextField">
+                        <p class="help">{% trans "Enter values separated by commas. You can add more values later." %}</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="button create-attribute-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 4px;">
+                            <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        {% trans "Create Attribute & Values" %}
+                    </button>
+                    <span class="loading-indicator" style="display: none;">
+                        <svg class="spinner" width="16" height="16" viewBox="0 0 16 16">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none" opacity="0.3"/>
+                            <path d="M8 2a6 6 0 0 1 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                        {% trans "Creating..." %}
+                    </span>
+                </div>
+
+                <div class="quick-add-messages" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    {{ inline_admin_formset.formset.non_form_errors }}
+
+    <table>
+      <thead>
+        <tr>
+          {% for field in inline_admin_formset.fields %}
+            {% if not field.widget.is_hidden %}
+              <th class="{{ field.name }}{% if field.required %} required{% endif %}">
+                {{ field.label|capfirst }}
+                {% if field.help_text %}<p class="help">{{ field.help_text|safe }}</p>{% endif %}
+              </th>
+            {% endif %}
+          {% endfor %}
+          {% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission %}
+            <th>{% translate "Delete?" %}</th>
+          {% endif %}
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for inline_admin_form in inline_admin_formset %}
+          {% if inline_admin_form.form.non_field_errors %}
+            <tr class="row-form-errors">
+              <td colspan="{{ inline_admin_form|cell_count }}">
+                {{ inline_admin_form.form.non_field_errors }}
+              </td>
+            </tr>
+          {% endif %}
+          <tr class="form-row {% cycle 'row1' 'row2' %} {% if inline_admin_form.original or inline_admin_form.show_url %}has_original{% endif %}{% if forloop.last and inline_admin_formset.has_add_permission %} empty-form{% endif %}"
+              id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last or not inline_admin_formset.has_add_permission or inline_admin_form.original %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+            <td class="original">
+              {% if inline_admin_form.original or inline_admin_form.show_url %}
+                <p>
+                  {% if inline_admin_form.original %}
+                    {{ inline_admin_form.original }}
+                    {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}
+                      <a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}"
+                         class="{{ inline_admin_formset.has_change_permission|yesno:'inlinechangelink,inlineviewlink' }}">
+                        {% if inline_admin_formset.has_change_permission %}{% translate "Change" %}{% else %}{% translate "View" %}{% endif %}
+                      </a>
+                    {% endif %}
+                  {% endif %}
+                  {% if inline_admin_form.show_url %}
+                    <a href="{{ inline_admin_form.absolute_url }}">{% translate "View on site" %}</a>
+                  {% endif %}
+                </p>
+              {% endif %}
+              {% if inline_admin_form.needs_explicit_pk_field %}
+                {{ inline_admin_form.pk_field.field }}
+              {% endif %}
+              {% if inline_admin_form.fk_field %}
+                {{ inline_admin_form.fk_field.field }}
+              {% endif %}
+              {% spaceless %}
+                {% for fieldset in inline_admin_form %}
+                  {% for line in fieldset %}
+                    {% for field in line %}
+                      {% if not field.is_readonly and field.field.is_hidden %}
+                        {{ field.field }}
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+              {% endspaceless %}
+            </td>
+            {% for fieldset in inline_admin_form %}
+              {% for line in fieldset %}
+                {% for field in line %}
+                  {% if not field.is_readonly and not field.field.is_hidden %}
+                    <td{% if field.field.name %} class="field-{{ field.field.name }}"{% endif %}>
+                      {% if field.is_readonly %}
+                        <p>{{ field.contents }}</p>
+                      {% else %}
+                        {{ field.field.errors.as_ul }}
+                        {{ field.field }}
+                      {% endif %}
+                    </td>
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+            {% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission %}
+              <td class="delete">
+                {% if inline_admin_form.original %}
+                  {{ inline_admin_form.deletion_field.field }}
+                {% endif %}
+              </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if inline_admin_formset.has_add_permission %}
+      <div class="add-row">
+        <a href="#">{% blocktranslate with verbose_name=inline_admin_formset.opts.verbose_name|capfirst %}Add another {{ verbose_name }}{% endblocktranslate %}</a>
+      </div>
+    {% endif %}
+
+    {% if inline_admin_formset.is_collapsible %}</details>{% endif %}
+  </fieldset>
+</div>

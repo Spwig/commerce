@@ -1,0 +1,163 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for sync in syncs %}
+    <div class="list-row-card{% if sync.sync_status == 'failed' %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ sync.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if sync.sync_direction == 'outbound' %}
+                <i class="fas fa-arrow-right text-primary icon-large"></i>
+            {% else %}
+                <i class="fas fa-arrow-left icon-info icon-large"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_externallicensesync_change' sync.pk %}">
+                    <code class="code-inline">{{ sync.license_key.key|truncatechars:24 }}</code>
+                    {% if sync.sync_direction == 'outbound' %}
+                        <i class="fas fa-arrow-right code-arrow-small"></i>
+                    {% else %}
+                        <i class="fas fa-arrow-left code-arrow-small"></i>
+                    {% endif %}
+                    {{ sync.provider.name }}
+                </a>
+            </h3>
+
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-fingerprint"></i> {% trans "External ID" %}: <code>{{ sync.external_id }}</code>
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if sync.sync_status == 'success' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Success" %}
+                    </span>
+                {% elif sync.sync_status == 'pending' %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif sync.sync_status == 'failed' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Failed" %}
+                    </span>
+                {% endif %}
+
+                {% if sync.sync_direction == 'outbound' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-upload"></i> {% trans "Outbound" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-download"></i> {% trans "Inbound" %}
+                    </span>
+                {% endif %}
+
+                {% if sync.retry_count > 0 %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-redo"></i> {{ sync.retry_count }} {% trans "retr" %}{{ sync.retry_count|pluralize:"y,ies" }}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if sync.error_message %}
+            <div class="list-row-card-description info-box-error">
+                <div class="info-label-error">
+                    <i class="fas fa-exclamation-circle"></i> {% trans "Error" %}:
+                </div>
+                <div class="info-value-code">
+                    {{ sync.error_message|truncatewords:30 }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if sync.external_data %}
+            <div class="info-box">
+                <div class="info-label">
+                    {% trans "Provider Response" %}:
+                </div>
+                <div class="info-value-mono max-height-100">
+                    <pre class="pre-wrap">{{ sync.external_data|truncatechars:200 }}</pre>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Synced" %}</span>
+                    <span class="list-row-card-stat-value">{{ sync.synced_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Retries" %}</span>
+                    <span class="list-row-card-stat-value" style="color: {% if sync.retry_count > 0 %}var(--warning-fg){% else %}var(--success-fg){% endif %};">
+                        {{ sync.retry_count }}
+                    </span>
+                </div>
+                {% if sync.next_retry_at %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Next Retry" %}</span>
+                    <span class="list-row-card-stat-value">{{ sync.next_retry_at|timeuntil }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-server"></i>
+                    <span>{% trans "Provider" %}: {{ sync.provider.name }}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-key"></i>
+                    <span>{% trans "License" %}: {{ sync.license_key.key|truncatechars:20 }}</span>
+                </div>
+                {% if sync.license_key.user %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{{ sync.license_key.user.email }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_externallicensesync_change' sync.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View sync details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'admin:catalog_licensekey_change' sync.license_key.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View license key' %}">
+                <i class="fas fa-key"></i>
+            </a>
+            <a href="{% url 'admin:catalog_licenseprovider_change' sync.provider.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View provider' %}">
+                <i class="fas fa-server"></i>
+            </a>
+            {% if sync.sync_status == 'failed' %}
+            <a href="{% url 'admin:catalog_externallicensesync_change' sync.pk %}?action=retry"
+               class="list-row-card-action text-warning"
+               title="{% trans 'Retry sync' %}">
+                <i class="fas fa-redo"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-sync-alt"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No sync operations found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Sync operations are created automatically when licenses are synchronized with external providers." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

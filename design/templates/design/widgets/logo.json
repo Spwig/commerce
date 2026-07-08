@@ -1,0 +1,50 @@
+{
+  "type": "logo",
+  "icon": "fa-image",
+  "label": "Logo",
+  "groups": [
+    {
+      "id": "source",
+      "title": "Logo Source",
+      "expanded": true,
+      "fields": [
+        {
+          "key": "use_site_logo",
+          "label": "Use Site Logo",
+          "type": "toggle",
+          "default": true,
+          "help": "Use the logo from Site Settings. Disable to use a custom logo for this widget."
+        },
+        {
+          "key": "logo_url",
+          "label": "Custom Logo",
+          "type": "media",
+          "placeholder": "Select image",
+          "showWhen": { "use_site_logo": false },
+          "help": "Upload a custom logo for this widget only"
+        }
+      ]
+    },
+    {
+      "id": "display",
+      "title": "Display Settings",
+      "expanded": true,
+      "fields": [
+        { "key": "text", "label": "Fallback Text", "type": "text", "placeholder": "Your Brand", "help": "Shown when no logo image is set" },
+        { "key": "alt_text", "label": "Alt Text", "type": "text", "placeholder": "Brand logo" },
+        { "key": "width", "label": "Max Width", "type": "text", "placeholder": "auto", "help": "e.g., 150px or auto" },
+        { "key": "height", "label": "Max Height", "type": "text", "placeholder": "auto" }
+      ]
+    },
+    {
+      "id": "advanced",
+      "title": "Advanced",
+      "expanded": false,
+      "fields": [
+        { "key": "link_url", "label": "Link URL", "type": "url", "default": "/", "placeholder": "/" },
+        { "key": "tagline", "label": "Tagline", "type": "text", "placeholder": "Your tagline", "help": "Optional text below logo" },
+        { "key": "show_on_scroll", "label": "Compact on Scroll", "type": "toggle", "default": false, "help": "Reduce size when scrolling" }
+      ]
+    }
+  ]
+}

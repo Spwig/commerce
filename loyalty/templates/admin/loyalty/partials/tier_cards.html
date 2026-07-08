@@ -1,0 +1,195 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/tier_cards.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for tier in tiers %}
+    <div class="list-row-card tier-card {% if not tier.is_active %}inactive{% endif %} relative">
+        <!-- Rank Badge -->
+        <div class="tier-rank-badge" data-color="{{ tier.color|default:'' }}">
+            {% trans "Rank" %} {{ tier.rank }}
+        </div>
+
+        <!-- Tier Icon with Color -->
+        <div class="list-row-card-icon tier" data-color="{{ tier.color|default:'' }}">
+            {% if tier.icon %}
+                <i class="fas {{ tier.icon }}"></i>
+            {% else %}
+                <i class="fas fa-layer-group"></i>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:loyalty_loyaltytier_change' tier.id %}"
+                   title="{% trans 'Edit tier' %}">
+                    {{ tier.name }}
+                </a>
+            </h3>
+
+            <!-- Description -->
+            <p class="list-row-card-subtitle">
+                {% if tier.description %}
+                    {% if tier.description|length > 100 %}
+                        {{ tier.description|truncatewords:15 }}
+                    {% else %}
+                        {{ tier.description }}
+                    {% endif %}
+                {% else %}
+                    <em class="text-muted">{% trans "No description provided" %}</em>
+                {% endif %}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if tier.is_active %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'This tier is active' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge badge-muted"
+                          title="{% trans 'This tier is inactive' %}">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <!-- Points Multiplier Badge -->
+                {% if tier.points_multiplier and tier.points_multiplier > 1 %}
+                    <span class="list-row-card-badge primary"
+                          title="{% trans 'Points earning multiplier' %}">
+                        <i class="fas fa-times"></i> {{ tier.points_multiplier }}x {% trans "Points" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <!-- Thresholds -->
+                {% if tier.min_points_earned or tier.min_spend or tier.min_orders %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Requirements" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if tier.min_points_earned %}
+                            <span title="{% trans 'Minimum points earned' %}">
+                                {{ tier.min_points_earned }} pts
+                            </span>
+                        {% endif %}
+                        {% if tier.min_spend %}
+                            {% if tier.min_points_earned %} | {% endif %}
+                            <span title="{% trans 'Minimum spend' %}">
+                                ${{ tier.min_spend }}
+                            </span>
+                        {% endif %}
+                        {% if tier.min_orders %}
+                            {% if tier.min_points_earned or tier.min_spend %} | {% endif %}
+                            <span title="{% trans 'Minimum orders' %}">
+                                {{ tier.min_orders }} orders
+                            </span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% else %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Requirements" %}</span>
+                    <span class="list-row-card-stat-value text-muted">
+                        <em>{% trans "No requirements" %}</em>
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- Points Multiplier -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Points Multiplier" %}</span>
+                    <span class="list-row-card-stat-value text-primary">
+                        {{ tier.points_multiplier }}x
+                    </span>
+                </div>
+
+                <!-- Member Count -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Members" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% with member_count=tier.loyaltymember_set.count %}
+                            {% if member_count > 0 %}
+                                <a href="{% url 'admin:loyalty_loyaltymember_changelist' %}?current_tier__id__exact={{ tier.id }}"
+                                   class="text-link no-decoration">
+                                    <i class="fas fa-users"></i> {{ member_count }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted">
+                                    <i class="fas fa-users"></i> 0
+                                </span>
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta Information -->
+        <div class="list-row-card-meta">
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Tier rank order' %}">
+                <i class="fas fa-sort"></i>
+                <span>{% trans "Rank" %}: {{ tier.rank }}</span>
+            </div>
+
+            {% if tier.color %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Tier color' %}">
+                <i class="fas fa-palette"></i>
+                <span class="inline-flex align-center gap-small">
+                    <span class="color-swatch" data-color="{{ tier.color }}"></span>
+                    {{ tier.color }}
+                </span>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Internal tier ID' %}">
+                <i class="fas fa-key"></i>
+                <code class="code-small">{{ tier.id }}</code>
+            </div>
+
+            {% if tier.created_at %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Date created' %}">
+                <i class="fas fa-clock"></i>
+                <span>{{ tier.created_at|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltytier_change' tier.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit tier' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            <a href="{% url 'admin:loyalty_loyaltymember_changelist' %}?current_tier__id__exact={{ tier.id }}"
+               class="list-row-card-action text-primary"
+               title="{% trans 'View members in this tier' %}">
+                <i class="fas fa-users"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-layer-group"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No tiers found." %}</p>
+        <p class="card-empty-state-subtitle">
+            <a href="{% url 'admin:loyalty_loyaltytier_add' %}"
+               class="text-link">
+                {% trans "Create your first tier" %}
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+</div>

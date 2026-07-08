@@ -1,0 +1,108 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Import voucher codes" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:vouchers_vouchercode_changelist' %}">{% trans "Voucher Codes" %}</a>
+    &rsaquo; {% trans "Import" %}
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<style>
+    .voucher-import-wrap { max-width: 880px; }
+    .voucher-import-intro { background: var(--token-color-surface-soft, #f7f8fa); border: 1px solid var(--token-color-border, #e3e6ec); border-radius: 8px; padding: 16px 18px; margin-bottom: 24px; }
+    .voucher-import-intro h2 { margin: 0 0 6px; font-size: 17px; }
+    .voucher-import-intro p { margin: 0; color: var(--token-color-text-muted, #5b6573); font-size: 13px; line-height: 1.5; }
+    .vi-fieldset { border: 1px solid var(--token-color-border, #e3e6ec); border-radius: 8px; padding: 12px 18px 4px; margin-bottom: 20px; }
+    .vi-fieldset > legend { padding: 0 6px; font-weight: 600; font-size: 13px; color: var(--token-color-text-muted, #5b6573); text-transform: uppercase; letter-spacing: 0.04em; }
+    .vi-row { display: grid; grid-template-columns: 220px 1fr; gap: 12px; padding: 10px 0; align-items: start; border-bottom: 1px solid var(--token-color-border-soft, #f0f2f5); }
+    .vi-row:last-child { border-bottom: none; }
+    .vi-row > label { font-size: 13px; padding-top: 4px; }
+    .vi-row .help { display: block; margin-top: 4px; font-size: 11px; color: var(--token-color-text-muted, #6b7280); }
+    .vi-row .errors { color: #c0322f; font-size: 12px; margin-top: 4px; list-style: none; padding: 0; }
+    .vi-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .vi-checkbox-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 6px; }
+    .vi-checkbox-list label { font-size: 13px; }
+    .vi-actions { display: flex; gap: 12px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid var(--token-color-border, #e3e6ec); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="voucher-import-wrap">
+    <div class="voucher-import-intro">
+        <h2><i class="fas fa-file-import"></i> {% trans "Import voucher codes" %}</h2>
+        <p>
+            {% blocktrans %}Upload a CSV or XLSX file of voucher codes, then pick the discount settings that should apply to every code in this batch. On the next page you'll map columns and decide what to do about duplicates.{% endblocktrans %}
+        </p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <ul class="errorlist">{% for err in form.non_field_errors %}<li>{{ err }}</li>{% endfor %}</ul>
+        {% endif %}
+
+        <fieldset class="vi-fieldset">
+            <legend>{% trans "File" %}</legend>
+            <div class="vi-row">
+                <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+                <div>
+                    {{ form.file }}
+                    {% if form.file.help_text %}<span class="help">{{ form.file.help_text }}</span>{% endif %}
+                    {% if form.file.errors %}<ul class="errors">{% for e in form.file.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+        </fieldset>
+
+        {% with sections="discount validity usage" %}{% endwith %}
+
+        <fieldset class="vi-fieldset">
+            <legend>{% trans "Discount" %}</legend>
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.discount_type %}
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.discount_value %}
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.max_discount_amount %}
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.application_scope %}
+        </fieldset>
+
+        <fieldset class="vi-fieldset">
+            <legend>{% trans "Validity" %}</legend>
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.start_date %}
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.end_date %}
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.days_valid %}
+        </fieldset>
+
+        <fieldset class="vi-fieldset">
+            <legend>{% trans "Usage limits" %}</legend>
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.max_uses_total %}
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.max_uses_per_customer %}
+            {% include "admin/vouchers/vouchercode/_import_field_row.html" with f=form.min_order_value %}
+        </fieldset>
+
+        <fieldset class="vi-fieldset">
+            <legend>{% trans "Restrictions" %}</legend>
+            <div class="vi-checkbox-list">
+                <label>{{ form.exclude_sale_items }} {% trans "Cannot apply to sale items" %}</label>
+                <label>{{ form.cannot_combine_with_other_vouchers }} {% trans "Cannot combine with other vouchers" %}</label>
+                <label>{{ form.cannot_combine_with_sale_items }} {% trans "Cannot combine with sale items" %}</label>
+                <label>{{ form.first_time_customers_only }} {% trans "First-time customers only" %}</label>
+                <label>{{ form.is_active }} {% trans "Active immediately" %}</label>
+            </div>
+        </fieldset>
+
+        {{ form.currency_code }}
+
+        <div class="vi-actions">
+            <a href="{% url 'admin:vouchers_vouchercode_changelist' %}" class="button">{% trans "Cancel" %}</a>
+            <button type="submit" class="default">{% trans "Continue to preview" %} <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </form>
+</div>
+{% endblock %}

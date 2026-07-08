@@ -1,0 +1,16 @@
+{% if show_debug %}{% load static %}
+<link rel="stylesheet" href="{% static 'geoip/css/geoip-debug.css' %}">
+<div class="geoip-debug">
+    <strong>GeoIP Debug</strong>
+    IP: {{ location.ip|default:"Unknown" }}<br>
+    Country: {{ location.country|default:"Unknown" }} {{ country_flag }}<br>
+    City: {{ location.city|default:"Unknown" }}<br>
+    Region: {{ location.region|default:"Unknown" }}<br>
+    Currency: {{ location.currency|default:"Unknown" }}<br>
+    Language: {{ location.language|default:"Unknown" }}<br>
+    Source: {{ location.source|default:"Unknown" }}<br>
+    Confidence: {{ confidence_pct }}%<br>
+    Is VPN: {{ location.is_vpn|default:"False" }}<br>
+    Is Proxy: {{ location.is_proxy|default:"False" }}<br>
+</div>
+{% endif %}

@@ -1,0 +1,62 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* =============================================
+   WEBHOOK ENDPOINT CHANGE FORM STYLES
+   Scoped under .webhookendpoint-change-form
+   ============================================= */
+
+/* --- Banner header — now uses .dashboard-header from admin-base.css --- */
+
+/* --- Status badges --- */
+.webhookendpoint-change-form .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.webhookendpoint-change-form .status-badge.active {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.webhookendpoint-change-form .status-badge.inactive {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+.webhookendpoint-change-form .status-badge.disabled {
+    background: var(--error-bg);
+    color: var(--error-fg);
+}
+
+/* --- Form cards — base .form-card styles provided by admin-base.css --- */
+
+/* --- Two-column layout — base .two-column-layout styles provided by admin-base.css --- */
+
+/* --- Checkbox label — base .checkbox-label styles provided by admin-base.css --- */
+
+/* --- Masked secret display --- */
+.webhookendpoint-change-form .readonly code {
+    background: var(--darkened-bg);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 13px;
+    color: var(--body-fg);
+    border: 1px solid var(--hairline-color);
+}
+
+/* --- Readonly fields --- */
+.webhookendpoint-change-form .readonly {
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+/* --- Responsive — .dashboard-header and .two-column-layout responsive handled by admin-base.css --- */

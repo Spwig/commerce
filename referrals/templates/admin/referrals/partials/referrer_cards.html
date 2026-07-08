@@ -1,0 +1,83 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for referrer in referrers %}
+    <div class="list-row-card">
+        <!-- Checkbox for bulk actions -->
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ referrer.pk }}" class="action-select">
+        </div>
+
+        <!-- Referrer Icon -->
+        <div class="list-row-card-icon">
+            <i class="fas fa-user-tag"></i>
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:referrals_referralidentity_change' referrer.pk %}">
+                    {{ referrer.customer.get_full_name|default:referrer.customer.username }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-envelope"></i> {{ referrer.customer.email }}
+            </p>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Clicks" %}</span>
+                    <span class="list-row-card-stat-value">{{ referrer.total_clicks|default:0 }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Signups" %}</span>
+                    <span class="list-row-card-stat-value">{{ referrer.total_signups|default:0 }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Conversions" %}</span>
+                    <span class="list-row-card-stat-value">{{ referrer.total_conversions|default:0 }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Rewards Earned" %}</span>
+                    <span class="list-row-card-stat-value">{{ referrer.total_rewards_earned|floatformat:2|default:"0.00" }}</span>
+                </div>
+            </div>
+
+            <!-- Meta Information -->
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Enrolled" %}: {{ referrer.created_at|date:"M d, Y" }}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-key"></i>
+                    <code class="text-size-11">{{ referrer.token|truncatechars:16 }}</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:referrals_referralidentity_change' referrer.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit referrer' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:auth_user_change' referrer.customer.id %}"
+               class="list-row-card-action"
+               title="{% trans 'View customer' %}">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-user-tag"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No referrers found matching your criteria." %}</p>
+    </div>
+    {% endfor %}
+</div>

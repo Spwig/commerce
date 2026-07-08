@@ -1,0 +1,136 @@
+{% extends "developer_portal/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "New Submission" %}{% endblock %}
+
+{% block content %}
+<div class="dev-page">
+    <div class="dev-page-header">
+        <h1>{% trans "Submit a Component" %}</h1>
+        <p>{% trans "Upload your component package for validation and review." %}</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="dev-form" id="submission-form">
+        {% csrf_token %}
+
+        <div class="dev-form-section">
+            <h2><i class="fas fa-cube"></i> {% trans "Component Type" %}</h2>
+
+            <div class="dev-form-group">
+                <label for="component_type">{% trans "Type" %} <span class="required">*</span></label>
+                <select id="component_type" name="component_type" required>
+                    {% for ct in component_types %}
+                    <option value="{{ ct.slug }}" {% if form_data.component_type == ct.slug %}selected{% endif %}>
+                        {{ ct.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <small>{% trans "Select the type of component you are submitting." %}</small>
+            </div>
+        </div>
+
+        <div class="dev-form-section">
+            <h2><i class="fas fa-file-archive"></i> {% trans "Component Package" %}</h2>
+
+            <div class="dev-form-group">
+                <label for="package_file">{% trans "ZIP File" %} <span class="required">*</span></label>
+                <div class="dev-file-upload" id="file-upload-zone">
+                    <input type="file" id="package_file" name="package_file" accept=".zip" required>
+                    <div class="dev-file-upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>{% trans "Drag and drop your component ZIP file here, or click to browse" %}</p>
+                        <small>{% trans "Maximum file size: 50 MB" %}</small>
+                    </div>
+                    <div class="dev-file-upload-selected dev-hidden" id="file-selected">
+                        <i class="fas fa-file-archive"></i>
+                        <span id="file-name"></span>
+                        <span id="file-size"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="validation-results" class="dev-hidden">
+                <div class="dev-validation-status" id="validation-status"></div>
+                <div class="dev-validation-details" id="validation-details"></div>
+            </div>
+        </div>
+
+        {% if validation_errors %}
+        <div class="dev-form-section">
+            <div class="dev-notice dev-notice-error">
+                <h3><i class="fas fa-exclamation-circle"></i> {% trans "Validation Failed" %}</h3>
+                <ul>
+                    {% for error in validation_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="dev-form-section">
+            <h2><i class="fas fa-info-circle"></i> {% trans "Details" %}</h2>
+
+            <div class="dev-form-group">
+                <label for="description">{% trans "Description" %}</label>
+                <textarea id="description" name="description" rows="4"
+                          placeholder="{% trans 'Describe your component - what it does, what makes it unique...' %}">{{ form_data.description|default:'' }}</textarea>
+                <small>{% trans "This will be shown in the marketplace listing. If left empty, the description from manifest.json will be used." %}</small>
+            </div>
+
+            <div class="dev-form-group">
+                <label for="changelog">{% trans "Changelog" %}</label>
+                <textarea id="changelog" name="changelog" rows="3"
+                          placeholder="{% trans 'What changed in this version...' %}">{{ form_data.changelog|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <div class="dev-form-section">
+            <h2><i class="fas fa-tag"></i> {% trans "Pricing" %}</h2>
+
+            <div class="dev-form-group">
+                <div class="dev-radio-group">
+                    <label class="dev-radio">
+                        <input type="radio" name="pricing_model" value="free"
+                               {% if form_data.pricing_model != 'paid' %}checked{% endif %}>
+                        <span>{% trans "Free" %}</span>
+                        <small>{% trans "Available to all merchants at no cost" %}</small>
+                    </label>
+                    <label class="dev-radio">
+                        <input type="radio" name="pricing_model" value="paid"
+                               {% if form_data.pricing_model == 'paid' %}checked{% endif %}>
+                        <span>{% trans "Paid" %}</span>
+                        <small>{% trans "Set a base price in EUR - you earn 70% of each sale" %}</small>
+                    </label>
+                </div>
+            </div>
+
+            <div class="dev-form-group{% if form_data.pricing_model != 'paid' %} dev-hidden{% endif %}" id="price-field">
+                <label for="price">{% trans "Base Price (EUR)" %}</label>
+                <div class="dev-input-with-prefix">
+                    <span class="dev-input-prefix">&euro;</span>
+                    <input type="number" id="price" name="price" min="1" step="0.01"
+                           value="{{ form_data.price|default:'29.00' }}"
+                           placeholder="29.00">
+                </div>
+                <small>{% trans "Minimum price: €1.00. You will receive 70% of each sale." %}</small>
+                <div class="dev-notice dev-notice-info dev-mt-sm">
+                    <small><i class="fas fa-info-circle"></i> {% trans "Marketplace prices are displayed in the merchant's local currency using live exchange rates. Final sale and payout amounts may vary due to currency conversion." %}</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="dev-form-actions">
+            <button type="submit" class="dev-btn dev-btn-primary" id="submit-btn">
+                <i class="fas fa-paper-plane"></i> {% trans "Submit for Review" %}
+            </button>
+            <a href="{% url 'developer_portal:submissions' %}" class="dev-btn dev-btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+
+<div id="create-submission-config"
+     data-validate-url="{% url 'developer_portal:validate_package' %}"
+     hidden></div>
+<script src="{% static 'developer_portal/js/create.js' %}"></script>
+{% endblock %}

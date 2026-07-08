@@ -1,0 +1,192 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "Affiliate Applications" context "merchant" %} | {{ site_title|default:_('Spwig Admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate-admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {# Breadcrumbs #}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        &rsaquo; <a href="{% url 'affiliate:merchant_dashboard' %}">{% trans "Affiliate Marketing" context "merchant" %}</a>
+        &rsaquo; {% trans "Applications" context "merchant" %}
+    </div>
+
+    {# Page Header #}
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-user-clock"></i>
+                {% trans "Affiliate Applications" context "merchant" %}
+            </h1>
+            <p class="subtitle">{% trans "Review and approve pending affiliate applications" context "merchant" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'affiliate:merchant_dashboard' %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Dashboard" context "action" %}
+            </a>
+        </div>
+    </div>
+
+    {# Results Info #}
+    <div class="results-info">
+        <span class="results-count">
+            <i class="fas fa-user-clock"></i>
+            {{ page_obj.paginator.count|default:applications|length }} {% trans "pending application" %}{{ page_obj.paginator.count|default:applications|length|pluralize }}
+        </span>
+    </div>
+
+    {# Applications Cards #}
+    <div class="list-row-cards">
+        {% for application in applications %}
+        <div class="list-row-card">
+            <div class="list-row-card-icon">
+                <i class="fas fa-user-clock" style="color: var(--warning-fg); font-size: 24px;"></i>
+            </div>
+
+            <div class="list-row-card-content">
+                <h3 class="list-row-card-title">
+                    <a href="{% url 'admin:affiliate_affiliateprogrammembership_change' application.id %}">
+                        {{ application.affiliate.user.get_full_name|default:application.affiliate.user.username }}
+                    </a>
+                </h3>
+
+                <p class="list-row-card-subtitle">
+                    <i class="fas fa-envelope"></i> {{ application.affiliate.user.email }}
+                    {% if application.affiliate.company_name %}
+                        <span style="margin-left: 12px;"><i class="fas fa-building"></i> {{ application.affiliate.company_name }}</span>
+                    {% endif %}
+                </p>
+
+                <div class="list-row-card-badges">
+                    {# Status Badge #}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+
+                    {# Program Badge #}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-project-diagram"></i> {{ application.program.name }}
+                    </span>
+
+                    {# Affiliate Code Badge #}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-tag"></i> {{ application.affiliate.affiliate_code }}
+                    </span>
+                </div>
+
+                <div class="list-row-card-stats">
+                    <div class="list-row-card-stat">
+                        <span class="list-row-card-stat-label">{% trans "Commission" %}</span>
+                        <span class="list-row-card-stat-value">
+                            {% if application.program.commission_type == 'percentage' %}
+                                {{ application.program.commission_value|floatformat:0 }}%
+                            {% else %}
+                                ${{ application.program.commission_value|floatformat:2 }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="list-row-card-stat">
+                        <span class="list-row-card-stat-label">{% trans "Cookie Days" %}</span>
+                        <span class="list-row-card-stat-value">{{ application.program.cookie_lifetime_days }}</span>
+                    </div>
+                    {% if application.program.auto_approve_affiliates %}
+                    <div class="list-row-card-stat">
+                        <span class="list-row-card-stat-label">{% trans "Auto-Approve" %}</span>
+                        <span class="list-row-card-stat-value" style="color: var(--success-fg);">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="list-row-card-meta">
+                    <div class="list-row-card-meta-item">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>{% trans "Applied" %}: {{ application.applied_at|naturaltime }}</span>
+                    </div>
+                    {% if application.affiliate.website %}
+                    <div class="list-row-card-meta-item">
+                        <i class="fas fa-globe"></i>
+                        <span>{{ application.affiliate.website|truncatechars:30 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="list-row-card-actions">
+                <a href="{% url 'admin:affiliate_affiliateprogrammembership_change' application.id %}"
+                   class="list-row-card-action"
+                   title="{% trans 'Review application' context 'action' %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{% url 'admin:affiliate_affiliate_change' application.affiliate.id %}"
+                   class="list-row-card-action"
+                   title="{% trans 'View affiliate profile' context 'action' %}">
+                    <i class="fas fa-user"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>{% trans "No Pending Applications" context "empty state" %}</h2>
+            <p>{% trans "All affiliate applications have been reviewed. New applications will appear here when affiliates apply to join your programs." context "empty state" %}</p>
+            <div class="empty-actions">
+                <a href="{% url 'affiliate:merchant_dashboard' %}" class="button default">
+                    <i class="fas fa-arrow-left"></i> {% trans "Back to Dashboard" context "action" %}
+                </a>
+                <a href="{% url 'admin:affiliate_program_changelist' %}" class="button">
+                    <i class="fas fa-project-diagram"></i> {% trans "Manage Programs" context "action" %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Pagination #}
+    {% if is_paginated %}
+    <p class="paginator">
+        <span class="showing-count">
+            {% blocktrans with start=page_obj.start_index end=page_obj.end_index total=paginator.count %}
+                Showing {{ start }} to {{ end }} of {{ total }}
+            {% endblocktrans %}
+        </span>
+
+        {% if page_obj.has_other_pages %}
+        <span class="pagination-links">
+            {% if page_obj.has_previous %}
+            <a href="?page=1" class="button pagination-button">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="button pagination-button">
+                <i class="fas fa-angle-left"></i>
+            </a>
+            {% endif %}
+
+            <span class="this-page">
+                {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="button pagination-button">
+                <i class="fas fa-angle-right"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="button pagination-button">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

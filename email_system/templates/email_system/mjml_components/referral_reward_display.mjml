@@ -1,0 +1,44 @@
+{# Referral Reward Display Component #}
+{# Usage: {% include 'email_system/mjml_components/referral_reward_display.mjml' with reward_amount=reward_amount reward_currency=reward_currency reward_type=reward_type %} #}
+{# Theme tokens: Uses theme.color.success, theme.color.text_inverse #}
+
+<!-- Reward Display Banner -->
+<mj-section background-color="{{ theme.color.success|default:'#10b981' }}" padding="40px 20px">
+  <mj-column>
+    <mj-text font-size="16px" color="{{ theme.color.text_inverse|default:'#ffffff' }}" align="center" padding-bottom="10px">
+      Your Reward
+    </mj-text>
+
+    {% if reward_type == 'credit' or reward_type == 'coupon' %}
+    <mj-text font-size="48px" font-weight="bold" color="{{ theme.color.text_inverse|default:'#ffffff' }}" align="center" line-height="1">
+      {{ reward_currency }}{{ reward_amount }}
+    </mj-text>
+    {% elif reward_type == 'percent' %}
+    <mj-text font-size="48px" font-weight="bold" color="{{ theme.color.text_inverse|default:'#ffffff' }}" align="center" line-height="1">
+      {{ reward_amount }}% OFF
+    </mj-text>
+    {% else %}
+    <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.text_inverse|default:'#ffffff' }}" align="center" line-height="1">
+      {{ reward_description }}
+    </mj-text>
+    {% endif %}
+
+    <mj-text font-size="16px" color="{{ theme.color.text_inverse|default:'#ffffff' }}" align="center" padding-top="10px">
+      {% if reward_type == 'credit' %}
+      Store Credit
+      {% elif reward_type == 'coupon' %}
+      Discount Coupon
+      {% elif reward_type == 'percent' %}
+      Discount
+      {% else %}
+      Special Reward
+      {% endif %}
+    </mj-text>
+
+    {% if expires_at %}
+    <mj-text font-size="13px" color="rgba(255, 255, 255, 0.9)" align="center" padding-top="5px">
+      Expires: {{ expires_at }}
+    </mj-text>
+    {% endif %}
+  </mj-column>
+</mj-section>

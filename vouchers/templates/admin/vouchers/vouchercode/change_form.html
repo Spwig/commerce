@@ -1,0 +1,630 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_modify %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with code=original.code %}Edit Voucher: {{ code }}{% endblocktrans %}
+    {% else %}
+        {% trans "Add New Voucher" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'vouchers/css/vouchercode_change_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="voucher-change-form" id="content-main">
+
+{% if original %}
+    {% comment %}EDIT MODE — Dashboard + Tabs{% endcomment %}
+    {% if not is_popup %}<div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-ticket-alt"></i>
+                    {% trans "Edit Voucher:" %}
+                    <span class="voucher-code">{{ original.code }}</span>
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        {{ original.get_discount_type_display }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        {% blocktrans with date=original.created_at|date:"N j, Y" %}Created {{ date }}{% endblocktrans %}
+                    </span>
+                    {% if original.created_by %}
+                    <span class="meta-item">
+                        <i class="fas fa-user"></i>
+                        {{ original.created_by }}
+                    </span>
+                    {% endif %}
+                    <span class="voucher-status-badge {{ voucher_status }}">
+                        {% if voucher_status == 'active' %}
+                            <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                        {% elif voucher_status == 'expired' %}
+                            <i class="fas fa-clock"></i> {% trans "Expired" %}
+                        {% elif voucher_status == 'exhausted' %}
+                            <i class="fas fa-ban"></i> {% trans "Exhausted" %}
+                        {% else %}
+                            <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="voucher-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="voucher-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-{% if voucher_status == 'active' %}check-circle{% elif voucher_status == 'expired' %}clock{% elif voucher_status == 'exhausted' %}ban{% else %}times-circle{% endif %}"></i></div>
+                <div class="value">
+                    {% if voucher_status == 'active' %}{% trans "Active" %}
+                    {% elif voucher_status == 'expired' %}{% trans "Expired" %}
+                    {% elif voucher_status == 'exhausted' %}{% trans "Exhausted" %}
+                    {% else %}{% trans "Inactive" %}{% endif %}
+                </div>
+                <div class="label">{% trans "Status" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-percentage"></i></div>
+                <div class="value">
+                    {% if original.discount_type == 'percentage' %}
+                        {{ original.discount_value }}%
+                    {% elif original.discount_type == 'fixed' %}
+                        ${{ original.discount_value }}
+                    {% else %}
+                        {% trans "Gift Card" %}
+                    {% endif %}
+                </div>
+                <div class="label">{% trans "Discount" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="value">{{ original.current_uses }}{% if original.max_uses_total %}/{{ original.max_uses_total }}{% endif %}</div>
+                <div class="label">{% trans "Uses" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <div class="value">{{ unique_customers }}</div>
+                <div class="label">{% trans "Unique Customers" %}</div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if adminform.form.errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            <ul class="errorlist">
+                {% for field, errors in adminform.form.errors.items %}
+                    {% for error in errors %}
+                        <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    {% for inline_admin_formset in inline_admin_formsets %}
+        {% if inline_admin_formset.formset.non_form_errors %}
+        <div class="form-errors-banner">
+            <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="error-content">
+                <h3>{{ inline_admin_formset.opts.verbose_name_plural|title }} {% trans "Errors" %}</h3>
+                <ul class="errorlist">
+                    {% for error in inline_admin_formset.formset.non_form_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <div class="admin-tabs" role="tablist">
+        <button type="button" class="admin-tab-btn active" data-tab="general" role="tab" aria-selected="true" aria-controls="tab-general">
+            <i class="fas fa-info-circle"></i>
+            <span class="label">{% trans "General" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="rules" role="tab" aria-selected="false" aria-controls="tab-rules">
+            <i class="fas fa-shield-alt"></i>
+            <span class="label">{% trans "Rules & Limits" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="scope" role="tab" aria-selected="false" aria-controls="tab-scope">
+            <i class="fas fa-crosshairs"></i>
+            <span class="label">{% trans "Scope" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="analytics" role="tab" aria-selected="false" aria-controls="tab-analytics">
+            <i class="fas fa-chart-bar"></i>
+            <span class="label">{% trans "Usage & Analytics" %}</span>
+        </button>
+    </div>
+
+    <div class="admin-tab-content active" id="tab-general" role="tabpanel" aria-hidden="false">
+
+        <div class="form-card">
+            <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+            <div class="code-field-group">
+                <div class="form-row">
+                    {{ adminform.form.code.label_tag }}
+                    {{ adminform.form.code }}
+                    {% if adminform.form.code.help_text %}<p class="helptext">{{ adminform.form.code.help_text }}</p>{% endif %}
+                    {{ adminform.form.code.errors }}
+                </div>
+                <button type="button" class="generate-code-btn" id="generate-code-btn" title="{% trans 'Generate a random code' %}">
+                    <i class="fas fa-random"></i> {% trans "Generate" %}
+                </button>
+            </div>
+            <div class="two-column-layout">
+                <div class="form-row">
+                    {{ adminform.form.name.label_tag }}
+                    {{ adminform.form.name }}
+                    {% if adminform.form.name.help_text %}<p class="helptext">{{ adminform.form.name.help_text }}</p>{% endif %}
+                    {{ adminform.form.name.errors }}
+                </div>
+                <div class="form-row checkbox-row">
+                    {{ adminform.form.is_active }}
+                    <label for="{{ adminform.form.is_active.id_for_label }}">{% trans "Active" %}</label>
+                </div>
+            </div>
+            <div class="form-row">
+                {{ adminform.form.description.label_tag }}
+                {{ adminform.form.description }}
+                {% if adminform.form.description.help_text %}<p class="helptext">{{ adminform.form.description.help_text }}</p>{% endif %}
+                {{ adminform.form.description.errors }}
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-tags"></i> {% trans "Discount Configuration" %}</h2>
+            <div class="two-column-layout">
+                <div class="form-row">
+                    {{ adminform.form.discount_type.label_tag }}
+                    {{ adminform.form.discount_type }}
+                    {{ adminform.form.discount_type.errors }}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.discount_value.label_tag }}
+                    {{ adminform.form.discount_value }}
+                    {% if adminform.form.discount_value.help_text %}<p class="helptext">{{ adminform.form.discount_value.help_text }}</p>{% endif %}
+                    {{ adminform.form.discount_value.errors }}
+                </div>
+            </div>
+            <div class="conditional-section" id="max-discount-section">
+                <div class="form-row">
+                    {{ adminform.form.max_discount_amount.label_tag }}
+                    {{ adminform.form.max_discount_amount }}
+                    {% if adminform.form.max_discount_amount.help_text %}<p class="helptext">{{ adminform.form.max_discount_amount.help_text }}</p>{% endif %}
+                    {{ adminform.form.max_discount_amount.errors }}
+                </div>
+            </div>
+            <div class="form-row">
+                {{ adminform.form.application_scope.label_tag }}
+                {{ adminform.form.application_scope }}
+                {% if adminform.form.application_scope.help_text %}<p class="helptext">{{ adminform.form.application_scope.help_text }}</p>{% endif %}
+                {{ adminform.form.application_scope.errors }}
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-tab-content" id="tab-rules" role="tabpanel" aria-hidden="true">
+
+        <div class="form-card">
+            <h2><i class="fas fa-calendar-alt"></i> {% trans "Validity Period" %}</h2>
+            <p class="form-card-description">{% trans "Leave end date blank for no expiry. Days valid overrides end date." %}</p>
+            <div class="three-column-layout">
+                <div class="form-row">
+                    {{ adminform.form.start_date.label_tag }}
+                    {{ adminform.form.start_date }}
+                    {{ adminform.form.start_date.errors }}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.end_date.label_tag }}
+                    {{ adminform.form.end_date }}
+                    {% if adminform.form.end_date.help_text %}<p class="helptext">{{ adminform.form.end_date.help_text }}</p>{% endif %}
+                    {{ adminform.form.end_date.errors }}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.days_valid.label_tag }}
+                    {{ adminform.form.days_valid }}
+                    {% if adminform.form.days_valid.help_text %}<p class="helptext">{{ adminform.form.days_valid.help_text }}</p>{% endif %}
+                    {{ adminform.form.days_valid.errors }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-tachometer-alt"></i> {% trans "Usage Limits" %}</h2>
+            <div class="two-column-layout">
+                <div class="form-row">
+                    {{ adminform.form.max_uses_total.label_tag }}
+                    {{ adminform.form.max_uses_total }}
+                    {% if adminform.form.max_uses_total.help_text %}<p class="helptext">{{ adminform.form.max_uses_total.help_text }}</p>{% endif %}
+                    {{ adminform.form.max_uses_total.errors }}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.max_uses_per_customer.label_tag }}
+                    {{ adminform.form.max_uses_per_customer }}
+                    {% if adminform.form.max_uses_per_customer.help_text %}<p class="helptext">{{ adminform.form.max_uses_per_customer.help_text }}</p>{% endif %}
+                    {{ adminform.form.max_uses_per_customer.errors }}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.current_uses.label_tag }}
+                    {{ adminform.form.current_uses }}
+                    {{ adminform.form.current_uses.errors }}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.min_order_value.label_tag }}
+                    {{ adminform.form.min_order_value }}
+                    {% if adminform.form.min_order_value.help_text %}<p class="helptext">{{ adminform.form.min_order_value.help_text }}</p>{% endif %}
+                    {{ adminform.form.min_order_value.errors }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-shield-alt"></i> {% trans "Restrictions" %}</h2>
+            <div class="checkbox-grid">
+                <div class="checkbox-row">
+                    {{ adminform.form.exclude_sale_items }}
+                    <label for="{{ adminform.form.exclude_sale_items.id_for_label }}">{% trans "Exclude sale items" %}</label>
+                </div>
+                <div class="checkbox-row">
+                    {{ adminform.form.cannot_combine_with_other_vouchers }}
+                    <label for="{{ adminform.form.cannot_combine_with_other_vouchers.id_for_label }}">{% trans "Cannot combine with other vouchers" %}</label>
+                </div>
+                <div class="checkbox-row">
+                    {{ adminform.form.cannot_combine_with_sale_items }}
+                    <label for="{{ adminform.form.cannot_combine_with_sale_items.id_for_label }}">{% trans "Cannot combine with sale items" %}</label>
+                </div>
+                <div class="checkbox-row">
+                    {{ adminform.form.first_time_customers_only }}
+                    <label for="{{ adminform.form.first_time_customers_only.id_for_label }}">{% trans "First-time customers only" %}</label>
+                </div>
+            </div>
+        </div>
+
+        {% for inline_admin_formset in inline_admin_formsets %}
+            {% if inline_admin_formset.opts.verbose_name == 'voucher restriction' %}
+            <div class="form-card">
+                <h2><i class="fas fa-sliders-h"></i> {% trans "Advanced Restrictions" %}</h2>
+                <p class="form-card-description">{% trans "Add specific restrictions by region, customer group, or other criteria." %}</p>
+                {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="admin-tab-content" id="tab-scope" role="tabpanel" aria-hidden="true">
+
+        <div class="form-card scope-info-message" id="scope-info-message">
+            <p class="form-card-description scope-info-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Change the application scope to \"Specific Products\" or \"Specific Categories\" in the General tab to configure eligible items. Change the discount type to \"Gift Card\" to configure gift card settings." %}
+            </p>
+        </div>
+
+        <div class="form-card conditional-section" id="eligible-items-section">
+            <h2><i class="fas fa-crosshairs"></i> {% trans "Eligible Items" %}</h2>
+            <p class="form-card-description">{% trans "Only applies when scope is \"Specific Products\" or \"Specific Categories\"." %}</p>
+            <div class="form-row">
+                {{ adminform.form.eligible_products.label_tag }}
+                {{ adminform.form.eligible_products }}
+                {{ adminform.form.eligible_products.errors }}
+            </div>
+            <div class="form-row">
+                {{ adminform.form.eligible_categories.label_tag }}
+                {{ adminform.form.eligible_categories }}
+                {{ adminform.form.eligible_categories.errors }}
+            </div>
+        </div>
+
+        <div class="form-card conditional-section" id="gift-card-section">
+            <h2><i class="fas fa-gift"></i> {% trans "Gift Card Settings" %}</h2>
+            <p class="form-card-description">{% trans "Only applies to gift card type vouchers." %}</p>
+            <div class="two-column-layout">
+                <div class="form-row">
+                    {{ adminform.form.original_gift_card_value.label_tag }}
+                    {{ adminform.form.original_gift_card_value }}
+                    {% if adminform.form.original_gift_card_value.help_text %}<p class="helptext">{{ adminform.form.original_gift_card_value.help_text }}</p>{% endif %}
+                    {{ adminform.form.original_gift_card_value.errors }}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.gift_card_balance.label_tag }}
+                    {{ adminform.form.gift_card_balance }}
+                    {% if adminform.form.gift_card_balance.help_text %}<p class="helptext">{{ adminform.form.gift_card_balance.help_text }}</p>{% endif %}
+                    {{ adminform.form.gift_card_balance.errors }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-tab-content" id="tab-analytics" role="tabpanel" aria-hidden="true">
+
+        <div class="form-card">
+            <h2><i class="fas fa-chart-bar"></i> {% trans "Usage Summary" %}</h2>
+            <div class="voucher-analytics-grid">
+                <div class="analytics-card">
+                    <div class="analytics-value">{{ original.current_uses }}</div>
+                    <div class="analytics-label">{% trans "Total Uses" %}</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-value">{{ unique_customers }}</div>
+                    <div class="analytics-label">{% trans "Unique Customers" %}</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-value">${{ total_discount_given }}</div>
+                    <div class="analytics-label">{% trans "Total Discount Given" %}</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-value">
+                        {% if original.uses_remaining != None %}
+                            {{ original.uses_remaining }}
+                        {% else %}
+                            &infin;
+                        {% endif %}
+                    </div>
+                    <div class="analytics-label">{% trans "Uses Remaining" %}</div>
+                </div>
+            </div>
+        </div>
+
+        {% for inline_admin_formset in inline_admin_formsets %}
+            {% if inline_admin_formset.opts.verbose_name == 'voucher usage' %}
+            <div class="form-card">
+                <h2><i class="fas fa-history"></i> {% trans "Usage History" %}</h2>
+                {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="d-none">
+        <div class="form-row">{{ adminform.form.created_by }}</div>
+        <div class="form-row">{{ adminform.form.created_at }}</div>
+        <div class="form-row">{{ adminform.form.updated_at }}</div>
+    </div>
+
+{% else %}
+    {% comment %}ADD MODE — Clean sequential layout{% endcomment %}
+    <div class="add-mode-header">
+        <h1>
+            <i class="fas fa-plus-circle"></i>
+            {% trans "Add New Voucher" %}
+        </h1>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="voucher-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="button" class="util-btn" id="voucher-save-btn" title="{% trans 'Save and return to list' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    {% if adminform.form.errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            <ul class="errorlist">
+                {% for field, errors in adminform.form.errors.items %}
+                    {% for error in errors %}
+                        <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+    <div class="form-card">
+        <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+        <div class="code-field-group">
+            <div class="form-row">
+                {{ adminform.form.code.label_tag }}
+                {{ adminform.form.code }}
+                {% if adminform.form.code.help_text %}<p class="helptext">{{ adminform.form.code.help_text }}</p>{% endif %}
+                {{ adminform.form.code.errors }}
+            </div>
+            <button type="button" class="generate-code-btn" id="generate-code-btn" title="{% trans 'Generate a random code' %}">
+                <i class="fas fa-random"></i> {% trans "Generate" %}
+            </button>
+        </div>
+        <div class="two-column-layout">
+            <div class="form-row">
+                {{ adminform.form.name.label_tag }}
+                {{ adminform.form.name }}
+                {% if adminform.form.name.help_text %}<p class="helptext">{{ adminform.form.name.help_text }}</p>{% endif %}
+                {{ adminform.form.name.errors }}
+            </div>
+            <div class="form-row checkbox-row">
+                {{ adminform.form.is_active }}
+                <label for="{{ adminform.form.is_active.id_for_label }}">{% trans "Active" %}</label>
+            </div>
+        </div>
+        <div class="form-row">
+            {{ adminform.form.description.label_tag }}
+            {{ adminform.form.description }}
+            {% if adminform.form.description.help_text %}<p class="helptext">{{ adminform.form.description.help_text }}</p>{% endif %}
+            {{ adminform.form.description.errors }}
+        </div>
+    </div>
+
+    {# Discount Configuration #}
+    <div class="form-card">
+        <h2><i class="fas fa-tags"></i> {% trans "Discount Configuration" %}</h2>
+        <div class="two-column-layout">
+            <div class="form-row">
+                {{ adminform.form.discount_type.label_tag }}
+                {{ adminform.form.discount_type }}
+                {{ adminform.form.discount_type.errors }}
+            </div>
+            <div class="form-row">
+                {{ adminform.form.discount_value.label_tag }}
+                {{ adminform.form.discount_value }}
+                {% if adminform.form.discount_value.help_text %}<p class="helptext">{{ adminform.form.discount_value.help_text }}</p>{% endif %}
+                {{ adminform.form.discount_value.errors }}
+            </div>
+        </div>
+        <div class="conditional-section" id="max-discount-section">
+            <div class="form-row">
+                {{ adminform.form.max_discount_amount.label_tag }}
+                {{ adminform.form.max_discount_amount }}
+                {% if adminform.form.max_discount_amount.help_text %}<p class="helptext">{{ adminform.form.max_discount_amount.help_text }}</p>{% endif %}
+                {{ adminform.form.max_discount_amount.errors }}
+            </div>
+        </div>
+        <div class="form-row">
+            {{ adminform.form.application_scope.label_tag }}
+            {{ adminform.form.application_scope }}
+            {% if adminform.form.application_scope.help_text %}<p class="helptext">{{ adminform.form.application_scope.help_text }}</p>{% endif %}
+            {{ adminform.form.application_scope.errors }}
+        </div>
+    </div>
+
+    {# Eligible Items #}
+    <div class="form-card conditional-section" id="eligible-items-section">
+        <h2><i class="fas fa-crosshairs"></i> {% trans "Eligible Items" %}</h2>
+        <p class="form-card-description">{% trans "Only applies when scope is \"Specific Products\" or \"Specific Categories\"." %}</p>
+        <div class="form-row">
+            {{ adminform.form.eligible_products.label_tag }}
+            {{ adminform.form.eligible_products }}
+            {{ adminform.form.eligible_products.errors }}
+        </div>
+        <div class="form-row">
+            {{ adminform.form.eligible_categories.label_tag }}
+            {{ adminform.form.eligible_categories }}
+            {{ adminform.form.eligible_categories.errors }}
+        </div>
+    </div>
+
+    {# Validity Period #}
+    <div class="form-card">
+        <h2><i class="fas fa-calendar-alt"></i> {% trans "Validity Period" %}</h2>
+        <p class="form-card-description">{% trans "Leave end date blank for no expiry. Days valid overrides end date." %}</p>
+        <div class="three-column-layout">
+            <div class="form-row">
+                {{ adminform.form.start_date.label_tag }}
+                {{ adminform.form.start_date }}
+                {{ adminform.form.start_date.errors }}
+            </div>
+            <div class="form-row">
+                {{ adminform.form.end_date.label_tag }}
+                {{ adminform.form.end_date }}
+                {% if adminform.form.end_date.help_text %}<p class="helptext">{{ adminform.form.end_date.help_text }}</p>{% endif %}
+                {{ adminform.form.end_date.errors }}
+            </div>
+            <div class="form-row">
+                {{ adminform.form.days_valid.label_tag }}
+                {{ adminform.form.days_valid }}
+                {% if adminform.form.days_valid.help_text %}<p class="helptext">{{ adminform.form.days_valid.help_text }}</p>{% endif %}
+                {{ adminform.form.days_valid.errors }}
+            </div>
+        </div>
+    </div>
+
+    {# Usage Limits #}
+    <div class="form-card">
+        <h2><i class="fas fa-tachometer-alt"></i> {% trans "Usage Limits" %}</h2>
+        <div class="two-column-layout">
+            <div class="form-row">
+                {{ adminform.form.max_uses_total.label_tag }}
+                {{ adminform.form.max_uses_total }}
+                {% if adminform.form.max_uses_total.help_text %}<p class="helptext">{{ adminform.form.max_uses_total.help_text }}</p>{% endif %}
+                {{ adminform.form.max_uses_total.errors }}
+            </div>
+            <div class="form-row">
+                {{ adminform.form.max_uses_per_customer.label_tag }}
+                {{ adminform.form.max_uses_per_customer }}
+                {% if adminform.form.max_uses_per_customer.help_text %}<p class="helptext">{{ adminform.form.max_uses_per_customer.help_text }}</p>{% endif %}
+                {{ adminform.form.max_uses_per_customer.errors }}
+            </div>
+        </div>
+        <div class="form-row">
+            {{ adminform.form.min_order_value.label_tag }}
+            {{ adminform.form.min_order_value }}
+            {% if adminform.form.min_order_value.help_text %}<p class="helptext">{{ adminform.form.min_order_value.help_text }}</p>{% endif %}
+            {{ adminform.form.min_order_value.errors }}
+        </div>
+    </div>
+
+    {# Restrictions #}
+    <div class="form-card">
+        <h2><i class="fas fa-shield-alt"></i> {% trans "Restrictions" %}</h2>
+        <div class="checkbox-grid">
+            <div class="checkbox-row">
+                {{ adminform.form.exclude_sale_items }}
+                <label for="{{ adminform.form.exclude_sale_items.id_for_label }}">{% trans "Exclude sale items" %}</label>
+            </div>
+            <div class="checkbox-row">
+                {{ adminform.form.cannot_combine_with_other_vouchers }}
+                <label for="{{ adminform.form.cannot_combine_with_other_vouchers.id_for_label }}">{% trans "Cannot combine with other vouchers" %}</label>
+            </div>
+            <div class="checkbox-row">
+                {{ adminform.form.cannot_combine_with_sale_items }}
+                <label for="{{ adminform.form.cannot_combine_with_sale_items.id_for_label }}">{% trans "Cannot combine with sale items" %}</label>
+            </div>
+            <div class="checkbox-row">
+                {{ adminform.form.first_time_customers_only }}
+                <label for="{{ adminform.form.first_time_customers_only.id_for_label }}">{% trans "First-time customers only" %}</label>
+            </div>
+        </div>
+    </div>
+
+    {# Gift Card Settings #}
+    <div class="form-card conditional-section" id="gift-card-section">
+        <h2><i class="fas fa-gift"></i> {% trans "Gift Card Settings" %}</h2>
+        <p class="form-card-description">{% trans "Only applies to gift card type vouchers." %}</p>
+        <div class="two-column-layout">
+            <div class="form-row">
+                {{ adminform.form.original_gift_card_value.label_tag }}
+                {{ adminform.form.original_gift_card_value }}
+                {% if adminform.form.original_gift_card_value.help_text %}<p class="helptext">{{ adminform.form.original_gift_card_value.help_text }}</p>{% endif %}
+                {{ adminform.form.original_gift_card_value.errors }}
+            </div>
+            <div class="form-row">
+                {{ adminform.form.gift_card_balance.label_tag }}
+                {{ adminform.form.gift_card_balance }}
+                {% if adminform.form.gift_card_balance.help_text %}<p class="helptext">{{ adminform.form.gift_card_balance.help_text }}</p>{% endif %}
+                {{ adminform.form.gift_card_balance.errors }}
+            </div>
+        </div>
+    </div>
+
+    {# Advanced Restrictions Inline #}
+    {% for inline_admin_formset in inline_admin_formsets %}
+        {% if inline_admin_formset.opts.verbose_name == 'voucher restriction' %}
+        <div class="form-card">
+            <h2><i class="fas fa-sliders-h"></i> {% trans "Advanced Restrictions" %}</h2>
+            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <div class="d-none">
+        <div class="form-row">{{ adminform.form.created_by }}</div>
+    </div>
+
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'vouchers/js/vouchercode_change_form.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% load i18n static %}
+
+<div class="list-row-cards">
+    {% for promotion in promotions %}
+    <div class="list-row-card{% if not promotion.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ promotion.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if promotion.discount_type == 'percentage_off' %}
+                <i class="fas fa-percent"></i>
+            {% elif promotion.discount_type == 'amount_off' %}
+                <i class="fas fa-dollar-sign"></i>
+            {% else %}
+                <i class="fas fa-tag"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_promotion_change' promotion.pk %}">
+                    {{ promotion.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if promotion.discount_type == 'percentage_off' %}
+                    <strong>{{ promotion.discount_value }}% {% trans "OFF" %}</strong>
+                {% elif promotion.discount_type == 'amount_off' %}
+                    <strong>${{ promotion.discount_value }} {% trans "OFF" %}</strong>
+                {% else %}
+                    <strong>${{ promotion.discount_value }}</strong>
+                {% endif %}
+                &mdash; {{ promotion.get_discount_type_display }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if promotion.is_currently_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-circle-check"></i> {% trans "Active" %}
+                    </span>
+                {% elif promotion.is_active and promotion.start_date > now %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-clock"></i> {% trans "Scheduled" %}
+                    </span>
+                {% elif promotion.end_date and promotion.end_date < now %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-calendar-xmark"></i> {% trans "Expired" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-circle-pause"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-bullseye"></i> {{ promotion.get_apply_to_display }}
+                </span>
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-box"></i> {{ promotion.get_affected_products_count }} {% trans "product" %}{{ promotion.get_affected_products_count|pluralize }}
+                </span>
+
+                {% if promotion.priority > 0 %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-arrow-up"></i> {% trans "Priority" %}: {{ promotion.priority }}
+                    </span>
+                {% endif %}
+
+                {% if promotion.can_stack_with_product_sales %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-layer-group"></i> {% trans "Stackable" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Discount" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if promotion.discount_type == 'percentage_off' %}
+                            {{ promotion.discount_value }}%
+                        {% else %}
+                            ${{ promotion.discount_value }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Products" %}</span>
+                    <span class="list-row-card-stat-value">{{ promotion.get_affected_products_count }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Priority" %}</span>
+                    <span class="list-row-card-stat-value">{{ promotion.priority }}</span>
+                </div>
+                {% if promotion.is_currently_active and promotion.end_date %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Expires In" %}</span>
+                    <span class="list-row-card-stat-value">{{ promotion.expires_in }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>
+                        {{ promotion.start_date|date:"M d, Y" }}
+                        {% if promotion.end_date %}
+                            &rarr; {{ promotion.end_date|date:"M d, Y" }}
+                        {% else %}
+                            &rarr; {% trans "No end date" %}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ promotion.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_promotion_change' promotion.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit promotion' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if promotion.is_active %}
+            <a href="{% url 'admin:catalog_promotion_deactivate' promotion.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Deactivate promotion' %}">
+                <i class="fas fa-pause"></i>
+            </a>
+            {% else %}
+            <a href="{% url 'admin:catalog_promotion_activate' promotion.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Activate promotion' %}">
+                <i class="fas fa-play"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:catalog_promotion_delete' promotion.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete promotion' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-state-card">
+        <div class="empty-state-icon">
+            <i class="fas fa-badge-percent"></i>
+        </div>
+        <p class="empty-state-title">{% trans "No promotions found matching your criteria." %}</p>
+        <p class="empty-state-subtitle">
+            {% trans "Try adjusting your filters or create a new promotion." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

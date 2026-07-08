@@ -1,0 +1,13 @@
+{% comment %}
+Reusable single-field row used by import_upload.html. Pass `f` (a bound
+form field) and the row will render its label, widget, help text, and
+errors.
+{% endcomment %}
+<div class="vi-row">
+    <label for="{{ f.id_for_label }}">{{ f.label }}{% if f.field.required %} *{% endif %}</label>
+    <div>
+        {{ f }}
+        {% if f.help_text %}<span class="help">{{ f.help_text }}</span>{% endif %}
+        {% if f.errors %}<ul class="errors">{% for e in f.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+</div>

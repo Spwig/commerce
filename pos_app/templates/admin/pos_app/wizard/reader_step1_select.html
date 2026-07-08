@@ -1,0 +1,107 @@
+{% extends "admin/pos_app/wizard/reader_base.html" %}
+{% load i18n static %}
+
+{% block wizard_header %}
+<h1>
+    <div class="wizard-icon-large">
+        <i class="fas fa-wifi"></i>
+    </div>
+    {% trans "Select Provider & Method" %}
+</h1>
+<p class="wizard-subtitle">{% trans "Choose the terminal provider for your card reader and how to add it." %}</p>
+{% endblock %}
+
+{% block wizard_content %}
+<form method="post" id="reader-select-form">
+    {% csrf_token %}
+
+    <!-- Provider Selection -->
+    <div class="form-section">
+        <h2 class="form-section-title">
+            <i class="fas fa-credit-card"></i>
+            {% trans "Terminal Provider" %}
+        </h2>
+
+        <div class="provider-select-cards">
+            {% for provider in providers %}
+            <label class="provider-select-card">
+                <input type="radio" name="provider_id" value="{{ provider.id }}"
+                       data-provider-key="{{ provider.provider_key }}"
+                       {% if forloop.first and providers|length == 1 %}checked{% endif %}>
+                <div class="provider-select-card-inner">
+                    <div class="provider-icon">
+                        {% if provider.provider_key == 'stripe_terminal' %}
+                            <i class="fab fa-stripe provider-icon-stripe"></i>
+                        {% elif provider.provider_key == 'manual' %}
+                            <i class="fas fa-keyboard provider-icon-default"></i>
+                        {% else %}
+                            <i class="fas fa-credit-card provider-icon-default"></i>
+                        {% endif %}
+                    </div>
+                    <div class="provider-info">
+                        <h3>{{ provider.display_name }}</h3>
+                        <p class="provider-status {% if provider.connection_status == 'connected' %}connected{% else %}disconnected{% endif %}">
+                            <span class="status-dot"></span>
+                            {% if provider.connection_status == 'connected' %}
+                                {% trans "Connected" %}
+                            {% else %}
+                                {{ provider.get_connection_status_display }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Method Selection (hidden for manual provider) -->
+    <div class="form-section" id="method-section">
+        <h2 class="form-section-title">
+            <i class="fas fa-plus-circle"></i>
+            {% trans "How to Add Reader" %}
+        </h2>
+
+        <div class="method-cards">
+            <label class="method-card">
+                <input type="radio" name="method" value="register" checked>
+                <div class="method-card-inner">
+                    <div class="method-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>{% trans "Register New Device" %}</h3>
+                        <p>{% trans "Enter the registration code shown on your device screen to pair it with your account." %}</p>
+                    </div>
+                </div>
+            </label>
+
+            <label class="method-card">
+                <input type="radio" name="method" value="discover">
+                <div class="method-card-inner">
+                    <div class="method-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>{% trans "Discover Existing" %}</h3>
+                        <p>{% trans "Fetch readers already registered with your provider and import them into your POS system." %}</p>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <div class="wizard-actions">
+        <a href="{% url 'admin:pos_app_posterminalreader_changelist' %}" class="btn btn-secondary">
+            {% trans "Cancel" %}
+        </a>
+        <button type="submit" class="btn btn-primary" id="continue-btn">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'pos_app/admin/js/reader-wizard.js' %}"></script>
+{% endblock %}

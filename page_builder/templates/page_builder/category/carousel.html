@@ -1,0 +1,58 @@
+{% extends "page_builder/category/_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block template_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/category-carousel.css' %}">
+{% endblock %}
+
+{% block product_display %}
+{% if carousel_rows %}
+<div class="cat-carousel-rows">
+    {% for row in carousel_rows %}
+    <div class="cat-carousel"
+         data-slides-per-view="{{ template_options.slides_per_view|default:'4' }}"
+         data-autoplay="{{ template_options.autoplay|yesno:'true,false' }}"
+         data-autoplay-speed="{{ template_options.autoplay_speed|default:'5000' }}"
+         data-infinite="{{ template_options.infinite_loop|yesno:'true,false' }}">
+
+        <div class="cat-carousel__track">
+            {% for product in row.products %}
+            <div class="cat-carousel__slide">
+                {% include 'page_builder/partials/product_card.html' with product=product %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if template_options.show_navigation_arrows %}
+        <button class="cat-carousel__arrow cat-carousel__arrow--prev" aria-label="{% mtrans 'Previous' %}" type="button">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="cat-carousel__arrow cat-carousel__arrow--next" aria-label="{% mtrans 'Next' %}" type="button">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        {% endif %}
+
+        {% if template_options.show_dots %}
+        <div class="cat-carousel__progress" aria-hidden="true">
+            <div class="cat-carousel__progress-track">
+                <div class="cat-carousel__progress-fill"></div>
+            </div>
+            <span class="cat-carousel__progress-label"></span>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="cat-carousel__empty">
+    <i class="fas fa-box-open"></i>
+    <p>{% mtrans 'No products in this category yet.' %}</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block pagination %}{% endblock %}
+
+{% block template_scripts %}
+<script src="{% static 'page_builder/js/category-carousel.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,51 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Tier Cards
+ *
+ * Description: Tier card layout styles for loyalty tier admin list
+ * Template: loyalty/templates/admin/loyalty/partials/tier_cards.html
+ * Extracted: 2026-02-13
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css (list-row-card system)
+ *
+ * Notes:
+ * - Extends the base list-row-card system with tier-specific styling
+ * - Includes responsive breakpoints for mobile (<768px)
+ * - Uses theme CSS variables for colors
+ */
+
+/* Tier-specific card styles */
+.tier-card {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.list-row-card-icon.tier {
+    background: linear-gradient(135deg, var(--primary), var(--link-hover-color));
+    color: var(--primary-fg);
+}
+
+/* Tier rank badge */
+.tier-rank-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Responsive adjustments - Tier-specific rules only */
+@media (max-width: 768px) {
+    .tier-rank-badge {
+        top: 8px;
+        right: 8px;
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+}

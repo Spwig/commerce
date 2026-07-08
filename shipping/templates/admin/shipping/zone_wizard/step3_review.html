@@ -1,0 +1,162 @@
+{% extends "admin/shipping/zone_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-check-circle"></i> {% trans "Review & Create" %}
+</div>
+<p class="step-description">
+    {% trans "Review your zone configuration and create the shipping zone." %}
+</p>
+
+<form method="post" id="zone-create-form">
+    {% csrf_token %}
+
+    <!-- Basic Information Review -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-info-circle"></i> {% trans "Basic Information" %}
+        </h3>
+
+        <div class="zone-wizard-review-grid">
+            <div class="review-item">
+                <div class="review-label">{% trans "Zone Name:" %}</div>
+                <div class="review-value">{{ zone_data.name }}</div>
+            </div>
+
+            {% if zone_data.description %}
+            <div class="review-item">
+                <div class="review-label">{% trans "Description:" %}</div>
+                <div class="review-value">{{ zone_data.description }}</div>
+            </div>
+            {% endif %}
+
+            <div class="review-item">
+                <div class="review-label">{% trans "Priority:" %}</div>
+                <div class="review-value">
+                    <span class="zone-wizard-priority-badge priority-{{ zone_data.priority }}">
+                        P{{ zone_data.priority }}
+                        {% if zone_data.priority == 0 %}
+                            - {% trans "HIGHEST" %}
+                        {% elif zone_data.priority <= 5 %}
+                            - {% trans "HIGH" %}
+                        {% elif zone_data.priority <= 10 %}
+                            - {% trans "MEDIUM" %}
+                        {% else %}
+                            - {% trans "LOW" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="review-item">
+                <div class="review-label">{% trans "Status:" %}</div>
+                <div class="review-value">
+                    {% if zone_data.is_active %}
+                        <span class="zone-wizard-status-badge active">
+                            <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                        </span>
+                    {% else %}
+                        <span class="zone-wizard-status-badge inactive">
+                            <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Geographic Coverage Review -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-globe-americas"></i> {% trans "Geographic Coverage" %}
+        </h3>
+
+        <div class="zone-wizard-review-grid">
+            <!-- Countries -->
+            <div class="review-item full-width">
+                <div class="review-label">{% trans "Countries:" %}</div>
+                <div class="review-value">
+                    {% if zone_data.countries %}
+                        <div class="zone-wizard-country-list">
+                            {% for country in zone_data.countries %}
+                                <span class="zone-wizard-country-chip">{{ country }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <span class="zone-wizard-all-locations">{% trans "All countries" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- States -->
+            {% if zone_data.states %}
+            <div class="review-item full-width">
+                <div class="review-label">{% trans "States/Provinces:" %}</div>
+                <div class="review-value">
+                    <div class="zone-wizard-states-list">
+                        {% for country, states in zone_data.states.items %}
+                            <div class="zone-wizard-state-group">
+                                <strong>{{ country }}:</strong>
+                                {% for state in states %}
+                                    <span class="zone-wizard-state-chip">{{ state }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Postal Patterns -->
+            {% if zone_data.postal_code_patterns %}
+            <div class="review-item full-width">
+                <div class="review-label">{% trans "Postal Code Patterns:" %}</div>
+                <div class="review-value">
+                    <div class="zone-wizard-pattern-list">
+                        {% for pattern in zone_data.postal_code_patterns %}
+                            <code class="zone-wizard-pattern-code">{{ pattern }}</code>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if not zone_data.countries and not zone_data.states and not zone_data.postal_code_patterns %}
+            <div class="review-item full-width">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{% trans "No geographic restrictions - this zone will apply to all locations." %}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Summary Box -->
+    <div class="info-box">
+        <i class="fas fa-lightbulb"></i>
+        <div>
+            <strong>{% trans "What happens next?" %}</strong>
+            <p class="zone-wizard-info-text">
+                {% trans "Your shipping zone will be created and available immediately. You can assign shipping methods to this zone from the Shipping Methods admin." %}
+            </p>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:zone_wizard_step2' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="zone-create-form" class="btn btn-success btn-large">
+        <i class="fas fa-check-circle"></i> {% trans "Create Zone" %}
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script src="{% static 'shipping/js/zone-wizard.js' %}"></script>
+{% endblock %}

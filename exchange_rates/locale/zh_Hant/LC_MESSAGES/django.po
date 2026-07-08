@@ -1,0 +1,1143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Provider Information"
+msgstr "供應商資訊"
+
+msgid "Configuration"
+msgstr "設定"
+
+msgid "Credentials"
+msgstr "憑證"
+
+msgid ""
+"Credentials are encrypted and managed through the provider wizard. To update "
+"credentials, reinstall the provider."
+msgstr "憑證已加密並通過提供者向導進行管理。要更新憑證，請重新安裝提供者。"
+
+msgid "Sync Status"
+msgstr "同步狀態"
+
+msgid "Timestamps"
+msgstr "時間戳記"
+
+msgid "Name"
+msgstr "名稱"
+
+msgid "Status"
+msgstr "狀態"
+
+msgid "Primary"
+msgstr "主要"
+
+msgid "Credentials are encrypted and stored securely"
+msgstr "憑證已加密並安全儲存"
+
+msgid "No credentials configured"
+msgstr "尚未設定憑證"
+
+msgid "Currency Pair"
+msgstr "貨幣對"
+
+msgid "Stale"
+msgstr "過期"
+
+msgid "Fresh"
+msgstr "最新"
+
+msgid "Order"
+msgstr "訂單"
+
+msgid "Rate"
+msgstr "匯率"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "ACTIVE"
+msgstr "啟用"
+
+msgid "INACTIVE"
+msgstr "停用"
+
+msgid "Notes"
+msgstr "備註"
+
+msgid "List manual exchange rates"
+msgstr "列出手動匯率"
+
+msgid ""
+"Returns all manual exchange rates for the current site. Staff authentication "
+"required."
+msgstr "返回本網站的所有手動匯率。需要員工驗證。"
+
+msgid "Create a manual exchange rate"
+msgstr "建立手動匯率"
+
+msgid ""
+"Create a new manual exchange rate for a currency pair. Only one rate per "
+"currency pair is allowed. Manual rates take precedence over provider rates "
+"when active."
+msgstr ""
+"為一組貨幣對建立新的手動匯率。每組貨幣對只能設定一個匯率。當啟用時，手動匯率"
+"會優先於供應商匯率。"
+
+msgid "Rate created successfully"
+msgstr "匯率建立成功"
+
+msgid "Validation error (duplicate pair, invalid rate, etc.)"
+msgstr "驗證錯誤（重複配對、無效匯率等）"
+
+msgid "Get manual exchange rate details"
+msgstr "取得手動匯率詳情"
+
+msgid "Retrieve a specific manual exchange rate by ID."
+msgstr "透過 ID 取得特定的手動匯率。"
+
+msgid "Update a manual exchange rate"
+msgstr "更新手動匯率"
+
+msgid "Fully update a manual exchange rate. All fields required."
+msgstr "完全更新手動匯率。所有欄位均為必填。"
+
+msgid "Rate updated successfully"
+msgstr "匯率已成功更新"
+
+msgid "Partially update a manual exchange rate"
+msgstr "部分更新手動匯率"
+
+msgid ""
+"Update specific fields of a manual exchange rate. Commonly used to update "
+"just the rate value."
+msgstr "更新手動匯率的特定欄位。通常用於僅更新匯率值。"
+
+msgid "Delete a manual exchange rate"
+msgstr "刪除手動匯率"
+
+msgid ""
+"Permanently delete a manual exchange rate. The system will fall back to "
+"provider rates for this currency pair."
+msgstr "永久刪除手動匯率。系統將會回退到此貨幣對的供應商匯率。"
+
+msgid "Rate deleted successfully"
+msgstr "匯率已成功刪除"
+
+msgid "Manual exchange rate created successfully."
+msgstr "手動匯率已成功建立。"
+
+msgid "Failed to create manual exchange rate."
+msgstr "無法建立手動匯率。"
+
+msgid "Manual exchange rate updated successfully."
+msgstr "手動匯率已成功更新。"
+
+msgid "Failed to update manual exchange rate."
+msgstr "無法更新手動匯率。"
+
+msgid "Manual exchange rate deleted successfully."
+msgstr "手動匯率已成功刪除。"
+
+msgid "Toggle manual rate active status"
+msgstr "切換手動匯率狀態"
+
+msgid ""
+"Toggle the active/inactive status of a manual exchange rate. When "
+"deactivated, the system falls back to provider rates."
+msgstr "切換手動匯率的啟用/停用狀態。當停用時，系統會回退到供應商匯率。"
+
+msgid "Status toggled successfully"
+msgstr "狀態已成功切換"
+
+msgid "Rate {} successfully"
+msgstr "匯率 {} 成功"
+
+msgid "activated"
+msgstr "已啟用"
+
+msgid "deactivated"
+msgstr "已停用"
+
+msgid "Bulk create or update manual rates"
+msgstr "批量創建或更新手動匯率"
+
+msgid ""
+"Create or update multiple manual exchange rates in a single request. Each "
+"rate is identified by its base_currency + target_currency pair. If a rate "
+"for the pair already exists, it is updated; otherwise a new one is created. "
+"Maximum 100 rates per request.\n"
+"\n"
+"**Request body example:**\n"
+"```json\n"
+"{\n"
+"  \"rates\": [\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"EUR\", \"rate\": "
+"\"0.92\"},\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"GBP\", \"rate\": "
+"\"0.79\", \"is_active\": true}\n"
+"  ]\n"
+"}\n"
+"```"
+msgstr ""
+"以單一請求建立或更新多個手動匯率。每個匯率由其 base_currency + "
+"target_currency 組合識別。如果該組合的匯率已經存在，則會更新；否則會建立新的"
+"匯率。每個請求最多可處理 100 個匯率。**請求主體範例：** ```json {\n"
+"  \"rates\": [\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"EUR\", \"rate\": "
+"\"0.92\"},\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"GBP\", \"rate\": "
+"\"0.79\", \"is_active\": true}\n"
+"  ]\n"
+"} ```"
+
+msgid "Bulk operation completed"
+msgstr "批量操作完成"
+
+msgid "Invalid request data."
+msgstr "無效的請求資料。"
+
+msgid "base_currency, target_currency, and rate are required."
+msgstr "需要 base_currency、target_currency 和 rate。"
+
+msgid "Base and target currencies must be different."
+msgstr "基準貨幣和目標貨幣必須不同。"
+
+msgid "Exchange rate must be greater than zero."
+msgstr "匯率必須大於零。"
+
+msgid "Invalid rate value."
+msgstr "無效的匯率值。"
+
+#, python-format
+msgid "Bulk operation completed: %(created)d created, %(updated)d updated."
+msgstr "批量操作完成：%(created)d 個已建立，%(updated)d 個已更新。"
+
+msgid "Sync manual rates from provider"
+msgstr "從提供商同步手動匯率"
+
+msgid ""
+"Auto-populate manual exchange rates from the latest provider rates. Rates "
+"marked as locked (exclude_from_auto_sync) will be skipped. Creates new "
+"manual rates or updates existing unlocked ones."
+msgstr ""
+"從最新的供應商匯率自動填入手動匯率。標記為已鎖定（exclude_from_auto_sync）的"
+"匯率將被跳過。會創建新的手動匯率或更新現有的未鎖定匯率。"
+
+msgid "Sync completed"
+msgstr "同步完成"
+
+msgid "Sync failed"
+msgstr "同步失敗"
+
+msgid "No provider rate available"
+msgstr "沒有可用的供應商匯率"
+
+#, python-format
+msgid "Synced from provider on %(date)s"
+msgstr "於 %(date)s 從供應商同步"
+
+#, python-format
+msgid ""
+"Sync complete: %(created)d created, %(updated)d updated, %(skipped)d locked "
+"(skipped)"
+msgstr ""
+"同步完成：%(created)d 個已建立，%(updated)d 個已更新，%(skipped)d 個已鎖定"
+"（跳過）"
+
+msgid "An error occurred during sync."
+msgstr "同步期間發生錯誤。"
+
+msgid "Exchange Rates"
+msgstr "匯率"
+
+msgid "Site"
+msgstr "網站"
+
+msgid "Site this provider account belongs to"
+msgstr "此提供者帳戶所屬的網站"
+
+msgid "Provider Component"
+msgstr "供應商組件"
+
+msgid "Exchange rate provider component from update system"
+msgstr "來自更新系統的匯率提供者組件"
+
+msgid "Account Name"
+msgstr "帳號名稱"
+
+msgid ""
+"Friendly name for this provider account (e.g., 'Main Exchange Rate Provider')"
+msgstr "此提供者帳戶的友好名稱（例如：'主要匯率提供者'）"
+
+msgid "Encrypted Credentials"
+msgstr "加密憑證"
+
+msgid "Encrypted API credentials for this provider"
+msgstr "此提供者的加密 API 憑證"
+
+msgid "Active"
+msgstr "啟用"
+
+msgid ""
+"Whether this provider account is active and should be used for rate fetching"
+msgstr "此提供者帳戶是否處於活動狀態且應用於獲取匯率"
+
+msgid "Primary Provider"
+msgstr "主要服務商"
+
+msgid "Use this provider as primary source for exchange rates"
+msgstr "將此提供者用作匯率的主要來源"
+
+msgid "Priority"
+msgstr "優先級"
+
+msgid "Priority for fallback chain (lower = higher priority)"
+msgstr "備用鏈的優先級（數字越低，優先級越高）"
+
+msgid "Provider Settings"
+msgstr "供應商設定"
+
+msgid "Provider-specific settings and configuration"
+msgstr "提供商特定的設定和配置"
+
+msgid "Last Sync At"
+msgstr "上次同步時間"
+
+msgid "When rates were last successfully fetched"
+msgstr "上次成功獲取匯率的時間"
+
+msgid "Pending"
+msgstr "待處理"
+
+msgid "Success"
+msgstr "成功"
+
+msgid "Error"
+msgstr "錯誤"
+
+msgid "Sync Error Message"
+msgstr "同步錯誤訊息"
+
+msgid "Error message from last sync attempt"
+msgstr "上次同步嘗試的錯誤訊息"
+
+msgid "Exchange Rate Provider Account"
+msgstr "匯率供應商帳號"
+
+msgid "Exchange Rate Provider Accounts"
+msgstr "匯率供應商帳號"
+
+msgid "Provider Account"
+msgstr "供應商帳號"
+
+msgid "Base Currency"
+msgstr "基準貨幣"
+
+msgid "Base currency code (e.g., 'USD')"
+msgstr "基準貨幣代碼（例如 'USD'）"
+
+msgid "Target Currency"
+msgstr "目標貨幣"
+
+msgid "Target currency code (e.g., 'EUR')"
+msgstr "目標貨幣代碼（例如 'EUR'）"
+
+msgid "Exchange Rate"
+msgstr "匯率"
+
+msgid "Exchange rate from base to target (e.g., 0.85 means 1 USD = 0.85 EUR)"
+msgstr "從基準貨幣到目標貨幣的匯率（例如，0.85 表示 1 美元 = 0.85 歐元）"
+
+msgid "Fetched At"
+msgstr "取得時間"
+
+msgid "When this rate was last fetched from provider"
+msgstr "此匯率上次從提供者處獲取的時間"
+
+msgid "Provider Name"
+msgstr "提供者名稱"
+
+msgid "Name of exchange rate provider used"
+msgstr "所使用的匯率提供者名稱"
+
+msgid "Created At"
+msgstr "建立時間"
+
+msgid "When this rate snapshot was created"
+msgstr "此匯率快照創建的時間"
+
+msgid "Exchange Rate History"
+msgstr "匯率歷史紀錄"
+
+msgid "Site this manual rate belongs to"
+msgstr "此手動匯率所屬的網站"
+
+msgid ""
+"Exchange rate from base to target (e.g., 0.85 means 1 base = 0.85 target)"
+msgstr "從基準貨幣到目標貨幣的匯率（例如，0.85 表示 1 基準 = 0.85 目標）"
+
+msgid "Whether this manual rate is active and should be used for conversions"
+msgstr "此手動匯率是否啟用，並應用於轉換"
+
+msgid "Locked (Exclude from Auto-Sync)"
+msgstr "已鎖定（排除自動同步）"
+
+msgid ""
+"When enabled, this rate will not be overwritten by provider sync operations. "
+"Use for rates you manage manually."
+msgstr "啟用後，此匯率不會被供應商同步操作覆蓋。請用於您手動管理的匯率。"
+
+msgid ""
+"Optional notes about this rate (e.g., 'Fixed rate for wholesale customers')"
+msgstr "關於此匯率的備註（例如：「批發客戶的固定匯率」）"
+
+msgid "Manual Exchange Rate"
+msgstr "手動匯率"
+
+msgid "Manual Exchange Rates"
+msgstr "手動匯率"
+
+msgid "Inactive"
+msgstr "未啟用"
+
+msgid ""
+"\n"
+"        <h3>Fixer.io Setup</h3>\n"
+"        <ol>\n"
+"            <li>Sign up at <a href=\"https://fixer.io/product\" "
+"target=\"_blank\">fixer.io/product</a></li>\n"
+"            <li>Get your Access Key from the <a href=\"https://fixer.io/"
+"dashboard\" target=\"_blank\">dashboard</a></li>\n"
+"            <li>Enter your Access Key in the credentials field</li>\n"
+"        </ol>\n"
+"        <p><strong>Free Tier:</strong> 100 requests/month (sufficient for ~3 "
+"daily updates)</p>\n"
+"        <p><strong>Paid Plans:</strong> From $10/month for 1,000 requests</"
+"p>\n"
+"        <p><strong>Data Source:</strong> European Central Bank (ECB)</p>\n"
+"        <p><strong>Note:</strong> Free tier only provides EUR as base "
+"currency. Historical rates and custom base currencies require paid plans.</"
+"p>\n"
+"        <p><strong>Best For:</strong> EU-based stores requiring ECB "
+"compliance</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h3>Fixer.io 設定</h3> <ol> <li>在 <a href=\"https://fixer.io/"
+"product\" target=\"_blank\">fixer.io/product</a> 註冊帳號</li> <li>從 <a "
+"href=\"https://fixer.io/dashboard\" target=\"_blank\">儀表板</a> 取得您的存取"
+"金鑰</li> <li>在憑證欄位中輸入您的存取金鑰</li> </ol> <p><strong>免費方案：</"
+"strong> 每月 100 次請求（足夠支持約 3 次每日更新）</p> <p><strong>付費方案："
+"</strong> 每月 $10 起，可獲得 1,000 次請求</p> <p><strong>資料來源：</"
+"strong> 歐洲中央銀行 (ECB)</p> <p><strong>注意：</strong> 免費方案僅提供 EUR "
+"為基準貨幣。歷史匯率與自定義基準貨幣需要付費方案。</p> <p><strong>最適合：</"
+"strong> 需要符合 ECB 合規要求的歐洲基於商店</p>\n"
+"        "
+
+msgid ""
+"\n"
+"        <h3>Open Exchange Rates Setup</h3>\n"
+"        <ol>\n"
+"            <li>Sign up at <a href=\"https://openexchangerates.org/signup\" "
+"target=\"_blank\">openexchangerates.org/signup</a></li>\n"
+"            <li>Get your App ID from the <a href=\"https://openexchangerates."
+"org/account/app-ids\" target=\"_blank\">dashboard</a></li>\n"
+"            <li>Enter your App ID in the credentials field</li>\n"
+"        </ol>\n"
+"        <p><strong>Free Tier:</strong> 1,000 requests/month (sufficient for "
+"~30 daily updates)</p>\n"
+"        <p><strong>Paid Plans:</strong> From $12/month for unlimited "
+"requests and hourly updates</p>\n"
+"        <p><strong>Note:</strong> Free tier only provides USD as base "
+"currency and daily updates. Historical rates and cryptocurrency support "
+"require paid plans.</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h3>Open Exchange Rates 設定</h3> <ol> <li>在 <a href=\"https://"
+"openexchangerates.org/signup\" target=\"_blank\">openexchangerates.org/"
+"signup</a> 註冊帳號</li> <li>從 <a href=\"https://openexchangerates.org/"
+"account/app-ids\" target=\"_blank\">儀表板</a> 取得您的應用程式 ID</li> <li>"
+"在憑證欄位中輸入您的應用程式 ID</li> </ol> <p><strong>免費方案：</strong> 每"
+"月 1,000 次請求（足夠支持約 30 次每日更新）</p> <p><strong>付費方案：</"
+"strong> 每月 $12 起，提供無限次請求與每小時更新</p> <p><strong>注意：</"
+"strong> 免費方案僅提供 USD 為基準貨幣及每日更新。歷史匯率與加密貨幣支援需要付"
+"費方案。</p>\n"
+"        "
+
+msgid ""
+"List of rate objects with base_currency, target_currency, rate, and optional "
+"is_active/notes"
+msgstr ""
+"包含 base_currency、target_currency、rate 以及可選 is_active/notes 的匯率物件"
+"列表"
+
+msgid "Exchange Rate Providers"
+msgstr "匯率服務商"
+
+msgid "Site Admin"
+msgstr "網站管理員"
+
+msgid "Manage currency exchange rate provider integrations"
+msgstr "管理貨幣匯率提供者整合"
+
+msgid "provider"
+msgstr "提供者"
+
+msgid "active"
+msgstr "啟用"
+
+msgid "Browse Providers"
+msgstr "瀏覽服務提供者"
+
+msgid "Bulk Actions"
+msgstr "批量操作"
+
+msgid "Enable Selected"
+msgstr "啟用選中項目"
+
+msgid "Disable Selected"
+msgstr "停用選中項目"
+
+msgid "Set as Primary"
+msgstr "設為主要"
+
+msgid "Sync Rates"
+msgstr "同步匯率"
+
+msgid "Delete Selected"
+msgstr "刪除選中文章"
+
+msgid "Apply"
+msgstr "應用"
+
+msgid "selected"
+msgstr "已選取"
+
+msgid "All Sync Statuses"
+msgstr "所有同步狀態"
+
+msgid "All Active Status"
+msgstr "所有活動狀態"
+
+msgid "All Providers"
+msgstr "所有供應商"
+
+msgid "Search providers..."
+msgstr "搜尋提供者..."
+
+msgid "Select All"
+msgstr "全選"
+
+#, python-format
+msgid "%(counter)s provider"
+msgid_plural "%(counter)s providers"
+msgstr[0] "%(counter)s 供應商"
+msgstr[1] "%(counter)s 供應商"
+
+msgid "No provider accounts found"
+msgstr "未找到供應商帳號"
+
+msgid "Try adjusting your filters or search query."
+msgstr "請嘗試調整過濾條件或搜索查詢。"
+
+msgid "Get started by connecting your first exchange rate provider."
+msgstr "通過連接您的第一個匯率提供者來開始。"
+
+msgid "Browse & Install Providers"
+msgstr "瀏覽並安裝提供者"
+
+msgid "Loading..."
+msgstr "載入中..."
+
+msgid "Provider:"
+msgstr "提供者："
+
+msgid "Last synced:"
+msgstr "上次同步："
+
+msgid "ago"
+msgstr "前"
+
+msgid "Never synced"
+msgstr "從未同步"
+
+msgid "Edit"
+msgstr "編輯"
+
+msgid "Disable"
+msgstr "停用"
+
+msgid "Enable"
+msgstr "啟用"
+
+msgid "Delete"
+msgstr "刪除"
+
+msgid "Set and manage exchange rates manually for currency conversions"
+msgstr "手動設定和管理用於貨幣轉換的匯率"
+
+msgid "rate"
+msgstr "匯率"
+
+msgid "inactive"
+msgstr "未啟用"
+
+msgid "locked"
+msgstr "已鎖定"
+
+msgid "Sync from Provider"
+msgstr "從供應商同步"
+
+msgid "Add Rate"
+msgstr "新增匯率"
+
+msgid ""
+"Manual rates take precedence over provider-fetched rates. Lock rates to "
+"prevent them from being overwritten during provider sync."
+msgstr ""
+"手動匯率優先於從供應商取得的匯率。鎖定匯率以防止在供應商同步期間被覆蓋。"
+
+msgid "Updated"
+msgstr "已更新"
+
+msgid "Locked"
+msgstr "已鎖定"
+
+msgid "Unlock (allow auto-sync)"
+msgstr "解鎖（允許自動同步）"
+
+msgid "Lock (exclude from auto-sync)"
+msgstr "上鎖（排除自動同步）"
+
+msgid "Deactivate"
+msgstr "停用"
+
+msgid "Activate"
+msgstr "啟用"
+
+msgid "No manual exchange rates"
+msgstr "沒有手動匯率"
+
+msgid ""
+"Add manual exchange rates to define fixed conversion rates between "
+"currencies."
+msgstr "新增手動匯率以定義貨幣之間的固定轉換率。"
+
+msgid "Add Your First Rate"
+msgstr "新增您的第一個匯率"
+
+msgid "Syncing from Provider"
+msgstr "正在從供應商同步"
+
+msgid "Fetching latest provider rates and updating unlocked manual rates..."
+msgstr "正在獲取最新的供應商匯率並更新未鎖定的手動匯率..."
+
+msgid "Browse Exchange Rate Providers"
+msgstr "瀏覽匯率供應商"
+
+msgid "Home"
+msgstr "首頁"
+
+msgid "Provider Accounts"
+msgstr "供應商帳號"
+
+msgid ""
+"Choose an exchange rate provider to integrate with your store. Install new "
+"providers or configure existing ones."
+msgstr "選擇一個匯率提供商與您的商店整合。安裝新的提供商或配置現有的提供商。"
+
+msgid "Update Server Unavailable"
+msgstr "更新伺服器不可用"
+
+msgid ""
+"Could not connect to the update server. Showing locally installed providers "
+"only."
+msgstr "無法連接到更新伺服器。僅顯示本地安裝的供應商。"
+
+msgid "Exchange Rate Provider Marketplace"
+msgstr "匯率供應商市場"
+
+msgid ""
+"Here you can discover and install exchange rate providers to automate your "
+"currency conversion, including live rates, historical data, and multi-"
+"currency support."
+msgstr ""
+"您可以在此處發現並安裝匯率提供商，以自動化貨幣轉換，包括即時匯率、歷史數據和"
+"多幣種支持。"
+
+msgid "What you can do:"
+msgstr "您可以做什麼："
+
+msgid "Browse available exchange rate providers by feature and pricing"
+msgstr "按功能和定價瀏覽可用的匯率提供商"
+
+msgid "Install new providers with one click"
+msgstr "點擊一下安裝新提供商"
+
+msgid "Update installed providers to the latest versions"
+msgstr "將已安裝的提供商更新到最新版本"
+
+msgid "Configure provider settings after installation"
+msgstr "安裝後設定供應商設定"
+
+msgid "Getting Started:"
+msgstr "入門指南："
+
+msgid "Browse providers below and find the right one for you"
+msgstr "在下方瀏覽提供商，找到適合您的那個"
+
+msgid "Click 'Install' to add the provider to your store"
+msgstr "點擊 '安裝' 將供應商添加到您的商店"
+
+msgid "Navigate to Settings to configure API credentials"
+msgstr "導航到設定以配置 API 憑證"
+
+msgid "Test the provider connection and sync exchange rates"
+msgstr "測試提供商連接並同步匯率"
+
+#, python-format
+msgid ""
+"\n"
+"                    Currently: %(counter)s provider available\n"
+"                "
+msgid_plural ""
+"\n"
+"                    Currently: %(counter)s providers available\n"
+"                "
+msgstr[0] ""
+"\n"
+"                    目前有 %(counter)s 供應商可用\n"
+"                "
+msgstr[1] ""
+"\n"
+"                    Currently: %(counter)s provider available\n"
+"                "
+
+msgid "Update Available"
+msgstr "有可用更新"
+
+msgid "Installed"
+msgstr "已安裝"
+
+msgid "Available"
+msgstr "可用"
+
+msgid "Live Rates"
+msgstr "即時匯率"
+
+msgid "Historical"
+msgstr "歷史"
+
+msgid "Crypto"
+msgstr "加密貨幣"
+
+msgid "Commodities"
+msgstr "商品"
+
+msgid "Any Base Currency"
+msgstr "任何基準貨幣"
+
+msgid "Batch Requests"
+msgstr "批次請求"
+
+msgid "Free"
+msgstr "免費"
+
+msgid "Update"
+msgstr "更新"
+
+msgid "Configure"
+msgstr "配置"
+
+msgid "Install"
+msgstr "安裝"
+
+msgid "View Details"
+msgstr "查看詳情"
+
+msgid "Learn More"
+msgstr "了解更多"
+
+msgid "No Providers Available"
+msgstr "無可用提供者"
+
+msgid ""
+"No exchange rate providers are currently available. Please check your update "
+"server connection or contact support."
+msgstr "目前沒有可用的匯率提供商。請檢查您的更新服務器連接或聯繫支持團隊。"
+
+msgid "Installing provider..."
+msgstr "正在安裝提供者..."
+
+msgid "Connect Exchange Rate Provider"
+msgstr "連線匯率供應商"
+
+msgid "Follow these steps to connect your exchange rate provider account"
+msgstr "按照以下步驟連接您的匯率提供商帳戶"
+
+msgid "Select Provider"
+msgstr "選擇提供者"
+
+msgid "Setup Instructions"
+msgstr "設定說明"
+
+msgid "Enter Credentials"
+msgstr "輸入憑證"
+
+msgid "Test Connection"
+msgstr "測試連線"
+
+msgid "Select an Exchange Rate Provider"
+msgstr "選擇匯率提供商"
+
+msgid "Choose the exchange rate provider you want to connect to your store."
+msgstr "選擇您要連接到商店的匯率提供商。"
+
+msgid "No exchange rate provider components are currently installed."
+msgstr "目前未安裝任何匯率提供商組件。"
+
+msgid ""
+"Please download and install exchange rate provider components from the "
+"component registry."
+msgstr "請從組件倉庫下載並安裝匯率提供商組件。"
+
+msgid "Browse Components"
+msgstr "瀏覽組件"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Next"
+msgstr "下一步"
+
+#, python-format
+msgid ""
+"\n"
+"        Before entering credentials, review these setup steps for "
+"%(provider)s.\n"
+"        "
+msgstr ""
+"\n"
+"        在輸入憑證之前，請查看這些 %(provider)s 的設置步驟。在輸入憑證之前，"
+"請查看這些 %(provider)s 的設置步驟。\n"
+"        "
+
+msgid "Setup Instructions Not Available"
+msgstr "無設定說明"
+
+#, python-format
+msgid ""
+"\n"
+"                    Setup instructions are not available for this version of "
+"%(provider)s.\n"
+"                    Please contact support for assistance or check for an "
+"updated version.\n"
+"                    "
+msgstr ""
+"\n"
+"                    此版本的 %(provider)s 没有設置說明。請聯繫支援團隊以獲得"
+"協助，或檢查是否有更新版本。\n"
+"                    "
+
+msgid "Back"
+msgstr "返回"
+
+msgid "Continue to Credentials"
+msgstr "繼續到憑證"
+
+msgid "Enter API Credentials"
+msgstr "輸入 API 憑證"
+
+#, python-format
+msgid ""
+"\n"
+"        Enter your API credentials for %(provider)s. These will be securely "
+"encrypted and stored.\n"
+"        "
+msgstr ""
+"\n"
+"        請輸入您的 %(provider)s API 憑證。這些憑證將被安全地加密並儲存。請輸"
+"入您的 %(provider)s API 憑證。這些憑證將被安全地加密並儲存。\n"
+"        "
+
+msgid "Don't have an account yet?"
+msgstr "還沒有帳號嗎？"
+
+msgid "You'll need an account to get API credentials."
+msgstr "您需要一個帳戶來獲取 API 憑證。"
+
+msgid "Sign up here"
+msgstr "在此註冊"
+
+msgid "API Credentials"
+msgstr "API 資格"
+
+msgid "Select..."
+msgstr "選擇..."
+
+msgid "No credential fields configured for this provider."
+msgstr "此提供者未配置任何憑證欄位。"
+
+msgid ""
+"Your credentials will be encrypted using AES-256 encryption before being "
+"stored in the database."
+msgstr "您的憑證在存儲到資料庫之前將使用 AES-256 加密進行加密。"
+
+#, python-format
+msgid ""
+"\n"
+"        Test the connection to %(provider)s to verify your credentials are "
+"correct.\n"
+"        "
+msgstr ""
+"\n"
+"        測試與 %(provider)s 的連接以驗證您的憑證是否正確。測試與 "
+"%(provider)s 的連接以驗證您的憑證是否正確。\n"
+"        "
+
+msgid "Testing connection..."
+msgstr "正在測試連線..."
+
+msgid "Please wait while we verify your credentials."
+msgstr "請稍等，我們正在驗證您的憑證。"
+
+msgid "Click to test the connection with your entered credentials."
+msgstr "點擊以使用您輸入的憑證測試連接。"
+
+msgid "Connection Successful!"
+msgstr "連線成功！"
+
+msgid "Connection Details"
+msgstr "連線詳情"
+
+msgid "Save & Finish"
+msgstr "儲存並完成"
+
+msgid "Your credentials were verified successfully."
+msgstr "您的憑證已成功驗證。"
+
+msgid "Connection Failed"
+msgstr "連線失敗"
+
+msgid "Could not connect to the provider API."
+msgstr "無法連接到提供者的 API。"
+
+msgid "An unexpected error occurred."
+msgstr "發生了意外錯誤。"
+
+msgid "Saving..."
+msgstr "正在儲存..."
+
+msgid "Failed to save provider account."
+msgstr "無法儲存供應商帳號。"
+
+msgid "An error occurred while saving."
+msgstr "儲存時發生錯誤。"
+
+msgid "Provider {} successfully"
+msgstr "供應商 {} 成功"
+
+msgid "enabled"
+msgstr "啟用"
+
+msgid "disabled"
+msgstr "停用"
+
+msgid "An error occurred while updating the provider."
+msgstr "更新提供商時發生錯誤。"
+
+msgid "\"{}\" set as primary provider"
+msgstr "\"{}\" 設為主要供應商"
+
+msgid "An error occurred while setting the primary provider."
+msgstr "設置主要提供商時發生錯誤。"
+
+msgid "Provider implementation not found"
+msgstr "找不到供應商實現"
+
+msgid ""
+"Failed to decrypt provider credentials. Please reconfigure the provider."
+msgstr "無法解密提供商憑證。請重新配置提供商。"
+
+msgid "Site settings not configured"
+msgstr "網站設定未配置"
+
+msgid "No rates returned from provider"
+msgstr "供應商未返回任何匯率"
+
+msgid "Successfully synced {} exchange rate(s)"
+msgstr "成功同步 {} 個匯率"
+
+msgid "Failed to sync exchange rates. Check the provider configuration."
+msgstr "無法同步匯率。請檢查提供商配置。"
+
+msgid "Provider \"{}\" successfully deleted"
+msgstr "供應商 \"{}\" 成功刪除"
+
+msgid "An error occurred while deleting the provider."
+msgstr "刪除提供商時發生錯誤。"
+
+msgid "Invalid action or no providers selected"
+msgstr "無效的操作或未選擇任何提供者"
+
+msgid "{} provider(s) enabled"
+msgstr "{} 個供應商已啟用"
+
+msgid "{} provider(s) disabled"
+msgstr "{} 個供應商已停用"
+
+msgid "Please select exactly one provider to set as primary"
+msgstr "請選擇一個提供者設為主要"
+
+msgid "{} provider(s) queued for sync, {} errors: {}"
+msgstr "{} 個提供者已排隊進行同步，{} 個錯誤：{}"
+
+msgid "{} provider(s) queued for sync"
+msgstr "{} 個供應商已排隊同步"
+
+msgid "{} provider(s) deleted"
+msgstr "{} 個供應商已刪除"
+
+msgid "Unknown action: {}"
+msgstr "未知操作：{}"
+
+msgid "An error occurred while performing the bulk action."
+msgstr "執行批量操作時發生錯誤。"
+
+msgid "An error occurred while updating the rate."
+msgstr "更新匯率時發生錯誤。"
+
+msgid "unlocked"
+msgstr "已解鎖"
+
+msgid "Unlocked"
+msgstr "已解鎖"
+
+msgid "Provider is already installed. Configure it now."
+msgstr "服務商已經安裝。請現在進行配置。"
+
+msgid "Provider not found on update server."
+msgstr "在更新伺服器上找不到服務商。"
+
+msgid "Could not determine provider version."
+msgstr "無法確定提供者版本。"
+
+#, python-format
+msgid "Failed to download provider: %(error)s"
+msgstr "下載提供商失敗：%(error)s"
+
+#, python-format
+msgid "Failed to install provider: %(error)s"
+msgstr "安裝提供商失敗：%(error)s"
+
+#, python-format
+msgid "Provider \"%(name)s\" installed successfully! Configure it now."
+msgstr "提供商 \"%(name)s\" 已成功安裝！現在請進行配置。"
+
+msgid "An unexpected error occurred during installation."
+msgstr "安裝期間發生了意外錯誤。"
+
+msgid "Provider not installed."
+msgstr "提供者未安裝。"
+
+#, python-format
+msgid "Could not connect to update server: %(error)s"
+msgstr "無法連接到更新伺服器：%(error)s"
+
+msgid "Could not determine latest version."
+msgstr "無法確定最新版本。"
+
+#, python-format
+msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
+msgstr "提供商 \"%(name)s\" 已經是最新版本 (v%(version)s)。"
+
+#, python-format
+msgid "Failed to download update: %(error)s"
+msgstr "下載更新失敗：%(error)s"
+
+#, python-format
+msgid "Failed to install update: %(error)s"
+msgstr "安裝更新失敗：%(error)s"
+
+#, python-format
+msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
+msgstr "提供商 \"%(name)s\" 已成功更新到 v%(version)s！"
+
+msgid "An unexpected error occurred during the update."
+msgstr "更新期間發生了意外錯誤。"
+
+msgid "Connect Exchange Rate Provider - Select Provider"
+msgstr "連接匯率提供者 - 選擇提供者"
+
+msgid "Please select a provider."
+msgstr "請選擇一個提供者。"
+
+msgid "Invalid provider selected."
+msgstr "選擇的提供者無效。"
+
+msgid "Please select a provider first."
+msgstr "請先選擇一個提供者。"
+
+#, python-format
+msgid "Setup instructions not found for %(provider)s. Please contact support."
+msgstr "找不到 %(provider)s 的設置說明。請聯繫支援團隊。"
+
+#, python-format
+msgid "Error loading provider: %(error)s"
+msgstr "載入服務提供者時發生錯誤：%(error)s"
+
+msgid "Connect Exchange Rate Provider - Setup Instructions"
+msgstr "連接匯率提供者 - 設置說明"
+
+msgid "Could not load provider configuration."
+msgstr "無法加載供應商配置。"
+
+msgid "Connect Exchange Rate Provider - Enter Credentials"
+msgstr "連接匯率提供者 - 輸入憑證"
+
+msgid "Error loading provider configuration."
+msgstr "載入提供商設定時發生錯誤。"
+
+msgid "Please complete previous steps first."
+msgstr "請先完成之前的步驟。"
+
+msgid "Provider not found."
+msgstr "找不到提供者。"
+
+msgid "Connect Exchange Rate Provider - Test Connection"
+msgstr "連接匯率提供者 - 測試連接"
+
+msgid "Provider implementation not found."
+msgstr "找不到提供商的實現。"
+
+msgid "An error occurred while testing the connection."
+msgstr "測試連接時發生錯誤。"
+
+msgid "Site not configured."
+msgstr "網站未設定。"
+
+msgid "Connection test failed"
+msgstr "連線測試失敗"
+
+msgid "Provider connected successfully!"
+msgstr "供應商連線成功！"
+
+msgid "An error occurred while saving the provider."
+msgstr "保存提供商時發生錯誤。"

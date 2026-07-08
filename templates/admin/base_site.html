@@ -1,0 +1,1456 @@
+{% extends "admin/base.html" %}
+{% load i18n static admin_urls core_extras staff_role_tags %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-sidebar.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-header.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/help-system.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/bug-report.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/language-switcher.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+<script src="{% static 'core/admin/js/console-capture.js' %}"></script>
+{{ block.super }}
+<meta name="csrf-token" content="{{ csrf_token }}">
+{% if site_settings %}<script nonce="{{ request.csp_nonce }}">document.documentElement.setAttribute('data-error-reporting','{{ site_settings.error_reporting_enabled|yesno:"true,false" }}');document.documentElement.setAttribute('data-error-reporting-js','{{ site_settings.error_reporting_include_js|yesno:"true,false" }}');</script>{% endif %}
+{% if site_settings %}<script type="application/json" id="shop-currency-config">{"currency": "{{ site_settings.default_currency|escapejs }}"}</script>
+<script type="application/json" id="shop-country-config">{"country": "{{ shop_default_country|escapejs }}"}</script>{% endif %}
+<script src="{% static 'core/js/error-reporter.js' %}"></script>
+<script src="{% static 'core/admin/js/logo-contrast.js' %}" defer></script>
+<script src="{% static 'core/admin/js/help-system.js' %}" defer></script>
+<script src="{% static 'core/admin/js/admin-header.js' %}" defer></script>
+<script src="{% static 'core/admin/js/bug-report-wizard.js' %}" defer></script>
+<script src="{% static 'core/admin/js/setup-instructions.js' %}" defer></script>
+<script src="{% static 'core/admin/js/admin-badge-refresh.js' %}" defer></script>
+{% endblock %}
+
+{% block usertools %}
+{{ block.super }}
+{% endblock %}
+
+{% block messages %}{% endblock %}
+
+{% block content_title %}
+{% if not is_popup %}
+{% if user.is_authenticated %}
+{% include "admin/includes/header.html" %}
+{% endif %}
+<div class="admin-wrapper{% if is_admin_read_only %} admin-read-only{% endif %}{% if license_status.is_account_suspended %} admin-account-suspended{% endif %}">
+    {% if user.is_authenticated %}
+    <!-- Collapsible Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="toggle-btn toggle-btn-mobile" data-action="toggle-sidebar" title="{% trans 'Toggle Menu' %}">
+                <span id="toggle-icon-mobile">☰</span>
+            </button>
+        </div>
+
+        <div class="sidebar-menu">
+            {% has_category user 'catalog' as can_catalog %}
+            {% has_category user 'orders' as can_orders %}
+            {% has_category user 'customers' as can_customers %}
+            {% has_category user 'content' as can_content %}
+            {% has_category user 'design' as can_design %}
+            {% has_category user 'marketing' as can_marketing %}
+            {% has_category user 'media' as can_media %}
+            {% has_category user 'email' as can_email %}
+            {% has_category user 'payments' as can_payments %}
+            {% has_category user 'search' as can_search %}
+            {% has_category user 'settings' as can_settings %}
+            {% has_category user 'pos_admin' as can_pos_admin %}
+            {% has_category user 'users' as can_users %}
+            {% has_category user 'translations' as can_translations %}
+            {% has_category user 'custom_fields' as can_custom_fields %}
+            {% has_category user 'system' as can_system %}
+            <!-- Dashboard - Primary -->
+            <div class="menu-group">
+                <a href="{% url 'admin:management_shop_dashboard' %}" class="menu-item dashboard-primary" data-tooltip="{% trans 'View store overview and key metrics' %}">
+                    <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+                    <span class="menu-text">{% trans "Dashboard" %}</span>
+                </a>
+                {% if can_media %}
+                <a href="/admin/media_library/mediaasset/gallery/" class="menu-item" data-tooltip="{% trans 'Manage product images and media' %}">
+                    <span class="menu-icon"><i class="fas fa-images"></i></span>
+                    <span class="menu-text">{% trans "Media Library" %}</span>
+                </a>
+                {% endif %}
+                <a href="{% url 'marketplace:browse' %}" class="menu-item {% if 'marketplace' in request.path %}active{% endif %}" data-tooltip="{% trans 'Browse and install components' %}">
+                    <span class="menu-icon"><i class="fas fa-store"></i></span>
+                    <span class="menu-text">{% trans "Marketplace" %}</span>
+                </a>
+            </div>
+
+            <!-- Products -->
+            {% if can_catalog %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Products" %}</div>
+                <a href="{% url 'admin:catalog_product_changelist' %}" class="menu-item" data-tooltip="{% trans 'Manage your product catalog' %}">
+                    <span class="menu-icon"><i class="fas fa-box-open"></i></span>
+                    <span class="menu-text">{% trans "All Products" %}</span>
+                </a>
+                <a href="{% url 'admin:catalog_category_changelist' %}" class="menu-item" data-tooltip="{% trans 'Organize products into categories' %}">
+                    <span class="menu-icon"><i class="fas fa-folder-tree"></i></span>
+                    <span class="menu-text">{% trans "Categories" %}</span>
+                </a>
+                <a href="{% url 'admin:catalog_productreview_changelist' %}" class="menu-item" data-tooltip="{% trans 'Moderate customer reviews' %}" data-badge-key="reviews_pending">
+                    <span class="menu-icon"><i class="fas fa-star-half-alt"></i></span>
+                    <span class="menu-text">{% trans "Reviews" %}</span>
+                    {% if menu_badges.reviews_pending %}<span class="menu-badge menu-badge-warning">{{ menu_badges.reviews_pending }}</span>{% endif %}
+                </a>
+                <a href="{% url 'admin:subscriptions_subscriptionplan_changelist' %}" class="menu-item" data-tooltip="{% trans 'Manage subscription plans with recurring billing' %}" data-badge-key="subscriptions_past_due">
+                    <span class="menu-icon"><i class="fas fa-tag"></i></span>
+                    <span class="menu-text">{% trans "Subscription Plans" %}</span>
+                    {% if menu_badges.subscriptions_past_due %}<span class="menu-badge menu-badge-danger">{{ menu_badges.subscriptions_past_due }}</span>{% endif %}
+                </a>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:catalog_giftcard_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="giftcards" data-tooltip="{% trans 'Manage gift cards and track balances' %}">
+                            <span class="menu-icon"><i class="fas fa-gift"></i></span>
+                            <span class="menu-text">{% trans "Gift Cards" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle gift cards submenu" aria-expanded="false" aria-controls="submenu-giftcards">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-giftcards">
+                        <a href="{% url 'admin:catalog_giftcardtransaction_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View all gift card transactions and balance changes' %}">
+                            <span class="menu-icon"><i class="fas fa-history"></i></span>
+                            <span class="menu-text">{% trans "Transactions" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:catalog_booking_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="bookings" data-tooltip="{% trans 'View and manage customer bookings' %}" data-badge-key="bookings_pending">
+                            <span class="menu-icon"><i class="fas fa-calendar-check"></i></span>
+                            <span class="menu-text">{% trans "Bookings" %}</span>
+                            {% if menu_badges.bookings_pending %}<span class="menu-badge menu-badge-danger">{{ menu_badges.bookings_pending }}</span>{% endif %}
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle bookings submenu" aria-expanded="false" aria-controls="submenu-bookings">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-bookings">
+                        <a href="{% url 'admin:catalog_bookingwaitlist_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage waitlist for fully-booked slots' %}">
+                            <span class="menu-icon"><i class="fas fa-clock"></i></span>
+                            <span class="menu-text">{% trans "Waitlist" %}</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            {% endif %}
+
+            <!-- Inventory (Multi-Warehouse) - Only visible when multi-warehouse mode is enabled -->
+            {% if site_settings.enable_multi_warehouse and can_catalog %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Inventory" %}</div>
+                <a href="{% url 'admin:catalog_warehouse_changelist' %}" class="menu-item" data-tooltip="{% trans 'Manage warehouse locations' %}">
+                    <span class="menu-icon"><i class="fas fa-warehouse"></i></span>
+                    <span class="menu-text">{% trans "Warehouses" %}</span>
+                </a>
+                <a href="{% url 'admin:catalog_stockitem_changelist' %}" class="menu-item" data-tooltip="{% trans 'View and manage stock levels' %}" data-badge-key="low_stock">
+                    <span class="menu-icon"><i class="fas fa-boxes"></i></span>
+                    <span class="menu-text">{% trans "Stock Items" %}</span>
+                    {% if menu_badges.low_stock %}<span class="menu-badge menu-badge-warning">{{ menu_badges.low_stock }}</span>{% endif %}
+                </a>
+                <a href="{% url 'admin:catalog_stockmovement_changelist' %}" class="menu-item" data-tooltip="{% trans 'Track inventory movements and adjustments' %}">
+                    <span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>
+                    <span class="menu-text">{% trans "Stock Movements" %}</span>
+                </a>
+                <a href="{% url 'admin:catalog_salesregion_changelist' %}" class="menu-item" data-tooltip="{% trans 'Configure sales regions and product availability' %}">
+                    <span class="menu-icon"><i class="fas fa-globe-americas"></i></span>
+                    <span class="menu-text">{% trans "Sales Regions" %}</span>
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Orders -->
+            {% if can_orders %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Orders" %}</div>
+                <a href="{% url 'admin:orders_order_changelist' %}" class="menu-item" data-tooltip="{% trans 'Process and manage customer orders' %}" data-badge-key="orders_new">
+                    <span class="menu-icon"><i class="fas fa-shopping-cart"></i></span>
+                    <span class="menu-text">{% trans "All Orders" %}</span>
+                    {% if menu_badges.orders_new %}<span class="menu-badge menu-badge-primary">{{ menu_badges.orders_new }}</span>{% endif %}
+                </a>
+                <a href="{% url 'admin:cart_cart_changelist' %}" class="menu-item" data-tooltip="{% trans 'View active and abandoned shopping carts' %}" data-badge-key="carts_abandoned">
+                    <span class="menu-icon"><i class="fas fa-cart-plus"></i></span>
+                    <span class="menu-text">{% trans "Active Carts" %}</span>
+                    {% if menu_badges.carts_abandoned %}<span class="menu-badge menu-badge-warning">{{ menu_badges.carts_abandoned }}</span>{% endif %}
+                </a>
+                <a href="{% url 'admin:cart_taxrate_changelist' %}" class="menu-item" data-tooltip="{% trans 'Configure tax rates by region' %}">
+                    <span class="menu-icon"><i class="fas fa-percentage"></i></span>
+                    <span class="menu-text">{% trans "Tax Rates" %}</span>
+                </a>
+                <a href="{% url 'admin:orders_returnrequest_changelist' %}" class="menu-item" data-tooltip="{% trans 'Manage returns and RMA requests' %}" data-badge-key="returns_pending">
+                    <span class="menu-icon"><i class="fas fa-undo"></i></span>
+                    <span class="menu-text">{% trans "Returns & RMA" %}</span>
+                    {% if menu_badges.returns_pending %}<span class="menu-badge menu-badge-danger">{{ menu_badges.returns_pending }}</span>{% endif %}
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Shipping (Configuration) -->
+            {% if can_orders %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Shipping" %}</div>
+                <a href="{% url 'admin:cart_shippingmethod_changelist' %}" class="menu-item" data-tooltip="{% trans 'Configure available shipping methods' %}">
+                    <span class="menu-icon"><i class="fas fa-dolly"></i></span>
+                    <span class="menu-text">{% trans "Shipping Methods" %}</span>
+                </a>
+                <a href="{% url 'admin:shipping_shippingzone_changelist' %}" class="menu-item" data-tooltip="{% trans 'Manage shipping zones and coverage areas' %}">
+                    <span class="menu-icon"><i class="fas fa-globe"></i></span>
+                    <span class="menu-text">{% trans "Shipping Zones" %}</span>
+                </a>
+                <a href="{% url 'admin:shipping_shippingpromotion_changelist' %}" class="menu-item" data-tooltip="{% trans 'Configure shipping promotions and pricing' %}">
+                    <span class="menu-icon"><i class="fas fa-sliders-h"></i></span>
+                    <span class="menu-text">{% trans "Shipping Promotions" %}</span>
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Fulfillment (Operations) -->
+            {% if can_orders %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Fulfillment" %}</div>
+                <a href="{% url 'admin:shipping_shipment_changelist' %}" class="menu-item" data-tooltip="{% trans 'Track and manage shipments' %}" data-badge-key="shipments_pending">
+                    <span class="menu-icon"><i class="fas fa-truck"></i></span>
+                    <span class="menu-text">{% trans "Shipments" %}</span>
+                    {% if menu_badges.shipments_pending %}<span class="menu-badge menu-badge-info">{{ menu_badges.shipments_pending }}</span>{% endif %}
+                </a>
+                <a href="{% url 'admin:shipping_provideraccount_changelist' %}" class="menu-item" data-tooltip="{% trans 'Configure shipping providers and carriers' %}">
+                    <span class="menu-icon"><i class="fas fa-shipping-fast"></i></span>
+                    <span class="menu-text">{% trans "Shipping Providers" %}</span>
+                </a>
+                <a href="{% url 'admin:shipping_shippingpackage_changelist' %}" class="menu-item" data-tooltip="{% trans 'Define standard boxes and packaging for shipping' %}">
+                    <span class="menu-icon"><i class="fas fa-box"></i></span>
+                    <span class="menu-text">{% trans "Shipping Packages" %}</span>
+                </a>
+                <a href="{% url 'admin:shipping_trackingevent_changelist' %}" class="menu-item" data-tooltip="{% trans 'Debug tracking events' %}">
+                    <span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>
+                    <span class="menu-text">{% trans "Tracking Events" %}</span>
+                </a>
+                <a href="{% url 'admin:shipping_webhooklog_changelist' %}" class="menu-item" data-tooltip="{% trans 'View webhook delivery logs' %}">
+                    <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="menu-text">{% trans "Webhook Logs" %}</span>
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Customers -->
+            {% if can_customers %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Customers" %}</div>
+                <a href="{% url 'admin:accounts_customerprofile_changelist' %}" class="menu-item" data-tooltip="{% trans 'View and manage customer accounts' %}">
+                    <span class="menu-icon"><i class="fas fa-users"></i></span>
+                    <span class="menu-text">{% trans "All Customers" %}</span>
+                </a>
+                <a href="{% url 'admin:admin_api_customermessage_changelist' %}" class="menu-item" data-tooltip="{% trans 'View and respond to customer inquiries' %}" data-badge-key="messages_unread">
+                    <span class="menu-icon"><i class="fas fa-envelope"></i></span>
+                    <span class="menu-text">{% trans "Messages" %}</span>
+                    {% if menu_badges.messages_unread %}<span class="menu-badge menu-badge-primary">{{ menu_badges.messages_unread }}</span>{% endif %}
+                </a>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:accounts_communicationpreference_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="communications" data-tooltip="{% trans 'Manage customer communication preferences' %}">
+                            <span class="menu-icon"><i class="fas fa-comments"></i></span>
+                            <span class="menu-text">{% trans "Communications" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle communications submenu" aria-expanded="false" aria-controls="submenu-communications">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-communications">
+                        <a href="{% url 'admin:accounts_communicationpreference_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage customer communication preferences' %}">
+                            <span class="menu-icon"><i class="fas fa-envelope-open-text"></i></span>
+                            <span class="menu-text">{% trans "Communication Preferences" %}</span>
+                        </a>
+                        <a href="{% url 'preference_analytics_dashboard' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View communication preference analytics' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+                            <span class="menu-text">{% trans "Preference Analytics" %}</span>
+                        </a>
+                        <a href="{% url 'admin:accounts_preferencechangelog_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View preference change history' %}">
+                            <span class="menu-icon"><i class="fas fa-history"></i></span>
+                            <span class="menu-text">{% trans "Preference Change Log" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'customers:dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="analytics" data-tooltip="{% trans 'Analyze customer behavior and trends' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-bar"></i></span>
+                            <span class="menu-text">{% trans "Analytics" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle analytics submenu" aria-expanded="false" aria-controls="submenu-analytics">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-analytics">
+                        <a href="{% url 'customers:ltv_settings' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure LTV calculation methods' %}">
+                            <span class="menu-icon"><i class="fas fa-cog"></i></span>
+                            <span class="menu-text">{% trans "LTV Settings" %}</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            {% endif %}
+
+            <!-- Point of Sale -->
+            {% if can_pos_admin and not is_community_edition %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Point of Sale" %}</div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'pos_admin:dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="pos" data-tooltip="{% trans 'POS dashboard and management' %}">
+                            <span class="menu-icon"><i class="fas fa-cash-register"></i></span>
+                            <span class="menu-text">{% trans "POS Dashboard" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle POS submenu" aria-expanded="false" aria-controls="submenu-pos">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-pos">
+                        <a href="{% url 'admin:pos_app_posterminal_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage POS terminal devices' %}">
+                            <span class="menu-icon"><i class="fas fa-desktop"></i></span>
+                            <span class="menu-text">{% trans "Terminals" %}</span>
+                        </a>
+                        <a href="{% url 'admin:pos_app_posshift_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View shift history and reconciliation' %}">
+                            <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+                            <span class="menu-text">{% trans "Shifts" %}</span>
+                        </a>
+                        <a href="{% url 'admin:pos_app_storegroup_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Organize stores into regional groups' %}">
+                            <span class="menu-icon"><i class="fas fa-layer-group"></i></span>
+                            <span class="menu-text">{% trans "Store Groups" %}</span>
+                        </a>
+                        <a href="{% url 'admin:pos_app_receipttemplate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Customize receipt layouts per store' %}">
+                            <span class="menu-icon"><i class="fas fa-receipt"></i></span>
+                            <span class="menu-text">{% trans "Receipt Templates" %}</span>
+                        </a>
+                        <a href="{% url 'admin:pos_app_promoslide_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Promotional slides for customer displays' %}">
+                            <span class="menu-icon"><i class="fas fa-images"></i></span>
+                            <span class="menu-text">{% trans "Promo Slides" %}</span>
+                        </a>
+                        <a href="{% url 'admin:pos_app_posterminalprovider_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure payment terminal providers' %}">
+                            <span class="menu-icon"><i class="fas fa-credit-card"></i></span>
+                            <span class="menu-text">{% trans "Terminal Providers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:pos_app_posterminalreader_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage connected card readers' %}">
+                            <span class="menu-icon"><i class="fas fa-wifi"></i></span>
+                            <span class="menu-text">{% trans "Card Readers" %}</span>
+                        </a>
+                        <a href="/pos/" class="menu-item menu-subitem" data-tooltip="{% trans 'Launch the POS interface' %}" target="_blank">
+                            <span class="menu-icon"><i class="fas fa-external-link-alt"></i></span>
+                            <span class="menu-text">{% trans "Open POS" %}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Search -->
+            {% if can_search %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Search" %}</div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:search_searchquery_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="search" data-tooltip="{% trans 'View search analytics and performance' %}">
+                            <span class="menu-icon"><i class="fas fa-search"></i></span>
+                            <span class="menu-text">{% trans "Search Analytics" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle search submenu" aria-expanded="false" aria-controls="submenu-search">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-search">
+                        <a href="{% url 'admin:search_synonym_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage search synonyms to improve results' %}">
+                            <span class="menu-icon"><i class="fas fa-equals"></i></span>
+                            <span class="menu-text">{% trans "Synonyms" %}</span>
+                        </a>
+                        <a href="{% url 'admin:search_searchredirect_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Redirect searches to specific pages' %}">
+                            <span class="menu-icon"><i class="fas fa-directions"></i></span>
+                            <span class="menu-text">{% trans "Redirects" %}</span>
+                        </a>
+                        <a href="{% url 'admin:search_searchengine_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure search engine instances' %}">
+                            <span class="menu-icon"><i class="fas fa-cogs"></i></span>
+                            <span class="menu-text">{% trans "Search Engines" %}</span>
+                        </a>
+                        <a href="{% url 'admin:search_searchsettings_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure search behavior and weights' %}">
+                            <span class="menu-icon"><i class="fas fa-sliders-h"></i></span>
+                            <span class="menu-text">{% trans "Search Settings" %}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Marketing -->
+            {% if can_marketing or can_content %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Marketing" %}</div>
+                <a href="{% url 'admin:catalog_promotion_changelist' %}" class="menu-item" data-tooltip="{% trans 'Create and manage sales promotions' %}">
+                    <span class="menu-icon"><i class="fas fa-percentage"></i></span>
+                    <span class="menu-text">{% trans "Sales & Promotions" %}</span>
+                </a>
+                <a href="{% url 'admin:vouchers_vouchercode_changelist' %}" class="menu-item" data-tooltip="{% trans 'Generate discount vouchers' %}">
+                    <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
+                    <span class="menu-text">{% trans "Vouchers" %}</span>
+                </a>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'affiliate:merchant_dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="affiliate" data-tooltip="{% trans 'Manage affiliate partners' %}">
+                            <span class="menu-icon"><i class="fas fa-handshake"></i></span>
+                            <span class="menu-text">{% trans "Affiliate Program" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle affiliate submenu" aria-expanded="false" aria-controls="submenu-affiliate">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-affiliate">
+                        <a href="{% url 'admin:affiliate_program_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage affiliate programs' %}">
+                            <span class="menu-icon"><i class="fas fa-project-diagram"></i></span>
+                            <span class="menu-text">{% trans "Programs" %}</span>
+                        </a>
+                        <a href="{% url 'admin:affiliate_affiliate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage affiliates' %}">
+                            <span class="menu-icon"><i class="fas fa-users"></i></span>
+                            <span class="menu-text">{% trans "Affiliates" %}</span>
+                        </a>
+                        <a href="{% url 'admin:affiliate_affiliateprogrammembership_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Review affiliate applications' %}">
+                            <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+                            <span class="menu-text">{% trans "Applications" %}</span>
+                        </a>
+                        <a href="{% url 'admin:affiliate_commission_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Track affiliate commissions' %}">
+                            <span class="menu-icon"><i class="fas fa-dollar-sign"></i></span>
+                            <span class="menu-text">{% trans "Commissions" %}</span>
+                        </a>
+                        <a href="{% url 'admin:affiliate_payout_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage affiliate payouts' %}" data-badge-key="affiliate_payouts_pending">
+                            <span class="menu-icon"><i class="fas fa-money-check-alt"></i></span>
+                            <span class="menu-text">{% trans "Payouts" %}</span>
+                            {% if menu_badges.affiliate_payouts_pending %}<span class="menu-badge menu-badge-warning">{{ menu_badges.affiliate_payouts_pending }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'admin:payout_providers_payoutprovideraccount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure payout provider accounts' %}">
+                            <span class="menu-icon"><i class="fas fa-money-bill-transfer"></i></span>
+                            <span class="menu-text">{% trans "Payout Providers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:affiliate_affiliatesettings_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Customize affiliate portal landing page' %}">
+                            <span class="menu-icon"><i class="fas fa-sliders-h"></i></span>
+                            <span class="menu-text">{% trans "Portal Settings" %}</span>
+                        </a>
+                        <a href="{% url 'admin:affiliate_affiliatereportsettings_change' 1 %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure monthly affiliate report settings' %}">
+                            <span class="menu-icon"><i class="fas fa-file-invoice"></i></span>
+                            <span class="menu-text">{% trans "Report Settings" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'loyalty:dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="loyalty" data-tooltip="{% trans 'Manage customer loyalty program' %}">
+                            <span class="menu-icon"><i class="fas fa-award"></i></span>
+                            <span class="menu-text">{% trans "Loyalty Program" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle loyalty submenu" aria-expanded="false" aria-controls="submenu-loyalty">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-loyalty">
+                        <a href="{% url 'admin:loyalty_loyaltymember_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View loyalty program members' %}">
+                            <span class="menu-icon"><i class="fas fa-user-tag"></i></span>
+                            <span class="menu-text">{% trans "Members" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltyreward_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure loyalty rewards' %}">
+                            <span class="menu-icon"><i class="fas fa-gift"></i></span>
+                            <span class="menu-text">{% trans "Rewards" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltytier_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Set up loyalty tiers' %}">
+                            <span class="menu-icon"><i class="fas fa-layer-group"></i></span>
+                            <span class="menu-text">{% trans "Tiers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltycampaign_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Run targeted loyalty campaigns' %}">
+                            <span class="menu-icon"><i class="fas fa-bullhorn"></i></span>
+                            <span class="menu-text">{% trans "Loyalty Campaigns" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltyrule_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure loyalty rules' %}">
+                            <span class="menu-icon"><i class="fas fa-ruler"></i></span>
+                            <span class="menu-text">{% trans "Loyalty Rules" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltybadge_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Design loyalty badges' %}">
+                            <span class="menu-icon"><i class="fas fa-medal"></i></span>
+                            <span class="menu-text">{% trans "Loyalty Badges" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltytransaction_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Audit loyalty transactions' %}">
+                            <span class="menu-icon"><i class="fas fa-history"></i></span>
+                            <span class="menu-text">{% trans "Loyalty Transactions" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltysegment_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Define customer segments' %}">
+                            <span class="menu-icon"><i class="fas fa-users-cog"></i></span>
+                            <span class="menu-text">{% trans "Loyalty Segments" %}</span>
+                        </a>
+                        <a href="{% url 'admin:loyalty_loyaltyredemption_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Track reward redemptions' %}" data-badge-key="loyalty_redemptions_pending">
+                            <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
+                            <span class="menu-text">{% trans "Redemptions" %}</span>
+                            {% if menu_badges.loyalty_redemptions_pending %}<span class="menu-badge menu-badge-warning">{{ menu_badges.loyalty_redemptions_pending }}</span>{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'social_sharing:dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="social-sharing" data-tooltip="{% trans 'Monitor social sharing activity' %}">
+                            <span class="menu-icon"><i class="fas fa-share-nodes"></i></span>
+                            <span class="menu-text">{% trans "Social Sharing" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle social sharing submenu" aria-expanded="false" aria-controls="submenu-social-sharing">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-social-sharing">
+                        <a href="{% url 'admin:social_sharing_socialshare_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Track social shares' %}">
+                            <span class="menu-icon"><i class="fas fa-share-alt"></i></span>
+                            <span class="menu-text">{% trans "Social Shares" %}</span>
+                        </a>
+                        <a href="{% url 'admin:social_sharing_sharecount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View share statistics' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-bar"></i></span>
+                            <span class="menu-text">{% trans "Share Counts" %}</span>
+                        </a>
+                        <a href="{% url 'admin:social_sharing_socialsharingsettings_change' 1 %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure social sharing' %}">
+                            <span class="menu-icon"><i class="fas fa-sliders"></i></span>
+                            <span class="menu-text">{% trans "Social Sharing Settings" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'referrals:dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="referrals" data-tooltip="{% trans 'Manage referral program' %}">
+                            <span class="menu-icon"><i class="fas fa-user-friends"></i></span>
+                            <span class="menu-text">{% trans "Referral Program" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle referrals submenu" aria-expanded="false" aria-controls="submenu-referrals">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-referrals">
+                        <a href="{% url 'admin:referrals_referralidentity_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View customers who have referred others' %}">
+                            <span class="menu-icon"><i class="fas fa-user-plus"></i></span>
+                            <span class="menu-text">{% trans "Referrers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:referrals_referralreward_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View rewards issued to customers' %}">
+                            <span class="menu-icon"><i class="fas fa-gifts"></i></span>
+                            <span class="menu-text">{% trans "Issued Rewards" %}</span>
+                        </a>
+                        <a href="{% url 'admin:referrals_referralprogram_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure reward rules and program settings' %}">
+                            <span class="menu-icon"><i class="fas fa-cog"></i></span>
+                            <span class="menu-text">{% trans "Program Settings" %}</span>
+                        </a>
+                        <a href="{% url 'admin:referrals_referralattribution_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Review and approve referral conversions' %}">
+                            <span class="menu-icon"><i class="fas fa-link"></i></span>
+                            <span class="menu-text">{% trans "Attributions" %}</span>
+                        </a>
+                        <a href="{% url 'admin:referrals_referralevent_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Monitor referral activity and clicks' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+                            <span class="menu-text">{% trans "Events" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'product_feeds:dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="product-feeds" data-tooltip="{% trans 'Manage product feed connections' %}" data-badge-key="feed_errors">
+                            <span class="menu-icon"><i class="fas fa-rss"></i></span>
+                            <span class="menu-text">{% trans "Product Feeds" %}</span>
+                            {% if menu_badges.feed_errors %}<span class="menu-badge menu-badge-danger">{{ menu_badges.feed_errors }}</span>{% endif %}
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle product feeds submenu" aria-expanded="false" aria-controls="submenu-product-feeds">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-product-feeds">
+                        <a href="{% url 'admin:product_feeds_feedprovideraccount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage feed accounts' %}">
+                            <span class="menu-icon"><i class="fas fa-list"></i></span>
+                            <span class="menu-text">{% trans "Feed Accounts" %}</span>
+                        </a>
+                        <a href="{% url 'product_feeds:wizard_step1' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Connect a new feed provider' %}">
+                            <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
+                            <span class="menu-text">{% trans "Add Provider" %}</span>
+                        </a>
+                        <a href="{% url 'admin:product_feeds_feedsynclog_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View feed sync history' %}">
+                            <span class="menu-icon"><i class="fas fa-history"></i></span>
+                            <span class="menu-text">{% trans "Sync Logs" %}</span>
+                        </a>
+                        <a href="{% url 'product_feeds:provider_browse' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Browse available providers' %}">
+                            <span class="menu-icon"><i class="fas fa-store"></i></span>
+                            <span class="menu-text">{% trans "Browse Providers" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <a href="{% url 'admin:announcements_announcement_changelist' %}" class="menu-item" data-tooltip="{% trans 'Manage store announcements' %}">
+                    <span class="menu-icon"><i class="fas fa-bullhorn"></i></span>
+                    <span class="menu-text">{% trans "Announcements" %}</span>
+                </a>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:blog_blogpost_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="blog" data-tooltip="{% trans 'Manage blog posts and content' %}">
+                            <span class="menu-icon"><i class="fas fa-blog"></i></span>
+                            <span class="menu-text">{% trans "Blog" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle blog submenu" aria-expanded="false" aria-controls="submenu-blog">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-blog">
+                        <a href="{% url 'admin:blog_blogpost_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage blog posts' %}" data-badge-key="blog_drafts">
+                            <span class="menu-icon"><i class="fas fa-newspaper"></i></span>
+                            <span class="menu-text">{% trans "Blog Posts" %}</span>
+                            {% if menu_badges.blog_drafts %}<span class="menu-badge menu-badge-info">{{ menu_badges.blog_drafts }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'admin:blog_blogcategory_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Organize posts into categories' %}">
+                            <span class="menu-icon"><i class="fas fa-folder"></i></span>
+                            <span class="menu-text">{% trans "Categories" %}</span>
+                        </a>
+                        <a href="{% url 'admin:blog_blogtag_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage blog tags' %}">
+                            <span class="menu-icon"><i class="fas fa-tags"></i></span>
+                            <span class="menu-text">{% trans "Tags" %}</span>
+                        </a>
+                        <a href="{% url 'admin:blog_blogsubscriber_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage blog subscribers' %}">
+                            <span class="menu-icon"><i class="fas fa-envelope-open-text"></i></span>
+                            <span class="menu-text">{% trans "Subscribers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:blog_socialconnectoraccount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage connected social accounts for auto-sharing' %}">
+                            <span class="menu-icon"><i class="fas fa-share-alt"></i></span>
+                            <span class="menu-text">{% trans "Social Accounts" %}</span>
+                        </a>
+                        <a href="{% url 'admin:blog_blogsettings_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure blog settings' %}">
+                            <span class="menu-icon"><i class="fas fa-cog"></i></span>
+                            <span class="menu-text">{% trans "Blog Settings" %}</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            {% endif %}
+
+            <!-- Design -->
+            {% if can_design or can_content %}
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Design" %}</div>
+                {% if can_design %}
+                <a href="{% url 'design:dashboard' %}" class="menu-item" data-tooltip="{% trans 'Customize store design and theme' %}" data-badge-key="design_updates">
+                    <span class="menu-icon"><i class="fas fa-paint-brush"></i></span>
+                    <span class="menu-text">{% trans "Design & Theme" %}</span>
+                    {% if menu_badges.design_updates %}<span class="menu-badge menu-badge-info">{{ menu_badges.design_updates }}</span>{% endif %}
+                </a>
+                {% endif %}
+                {% if can_content %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:page_builder_page_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="pages" data-tooltip="{% trans 'Create and edit store pages' %}">
+                            <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+                            <span class="menu-text">{% trans "Pages" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle pages submenu" aria-expanded="false" aria-controls="submenu-pages">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-pages">
+                        <a href="{% url 'admin:page_builder_pagetemplate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage page templates' %}">
+                            <span class="menu-icon"><i class="fas fa-clipboard"></i></span>
+                            <span class="menu-text">{% trans "Page Templates" %}</span>
+                        </a>
+                        <a href="{% url 'admin:form_builder_form_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Create and manage custom forms' %}" data-badge-key="forms_submitted">
+                            <span class="menu-icon"><i class="fas fa-wpforms"></i></span>
+                            <span class="menu-text">{% trans "Forms" %}</span>
+                            {% if menu_badges.forms_submitted %}<span class="menu-badge menu-badge-primary">{{ menu_badges.forms_submitted }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'admin:form_builder_formresponse_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View form submissions and responses' %}">
+                            <span class="menu-icon"><i class="fas fa-inbox"></i></span>
+                            <span class="menu-text">{% trans "Form Responses" %}</span>
+                        </a>
+                        <a href="{% url 'admin:element_builder_customelement_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Create reusable data-bound UI components' %}">
+                            <span class="menu-icon"><i class="fas fa-puzzle-piece"></i></span>
+                            <span class="menu-text">{% trans "Custom Elements" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Settings -->
+            <div class="menu-group">
+                <div class="menu-group-title">{% trans "Settings" %}</div>
+                {% if can_settings %}
+                <a href="{% url 'admin:core_sitesettings_changelist' %}" class="menu-item" data-tooltip="{% trans 'Configure store settings' %}">
+                    <span class="menu-icon"><i class="fas fa-cog"></i></span>
+                    <span class="menu-text">{% trans "Store Settings" %}</span>
+                </a>
+                {% endif %}
+                {% if can_payments %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'payment_providers:payment_dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="payments" data-tooltip="{% trans 'View payment performance and analytics' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+                            <span class="menu-text">{% trans "Payment Dashboard" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle payments submenu" aria-expanded="false" aria-controls="submenu-payments">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-payments">
+                        <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage payment provider connections' %}">
+                            <span class="menu-icon"><i class="fas fa-credit-card"></i></span>
+                            <span class="menu-text">{% trans "Payment Providers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:payment_providers_paymenttransaction_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View payment transactions' %}" data-badge-key="payments_failed">
+                            <span class="menu-icon"><i class="fas fa-receipt"></i></span>
+                            <span class="menu-text">{% trans "Transactions" %}</span>
+                            {% if menu_badges.payments_failed %}<span class="menu-badge menu-badge-danger">{{ menu_badges.payments_failed }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'admin:payment_providers_paymentwebhook_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View webhook logs' %}">
+                            <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+                            <span class="menu-text">{% trans "Webhooks" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if can_settings %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:exchange_rates_exchangerateprovideraccount_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="exchange-rates" data-tooltip="{% trans 'Manage currency exchange rate providers' %}">
+                            <span class="menu-icon"><i class="fas fa-money-bill-wave"></i></span>
+                            <span class="menu-text">{% trans "Exchange Rates" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle exchange rates submenu" aria-expanded="false" aria-controls="submenu-exchange-rates">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-exchange-rates">
+                        <a href="{% url 'admin:exchange_rates_exchangerateprovideraccount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage provider accounts' %}">
+                            <span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>
+                            <span class="menu-text">{% trans "Provider Accounts" %}</span>
+                        </a>
+                        <a href="{% url 'exchange_rates:wizard_step1' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Connect a new exchange rate provider' %}">
+                            <span class="menu-icon"><i class="fas fa-plug"></i></span>
+                            <span class="menu-text">{% trans "Connect Provider" %}</span>
+                        </a>
+                        <a href="{% url 'exchange_rates:provider_browse' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Browse available exchange rate providers' %}">
+                            <span class="menu-icon"><i class="fas fa-store"></i></span>
+                            <span class="menu-text">{% trans "Browse Providers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:exchange_rates_manualexchangerate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Set and manage manual exchange rates' %}">
+                            <span class="menu-icon"><i class="fas fa-pen"></i></span>
+                            <span class="menu-text">{% trans "Manual Rates" %}</span>
+                        </a>
+                        <a href="{% url 'admin:exchange_rates_exchangerate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View cached exchange rates' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-line"></i></span>
+                            <span class="menu-text">{% trans "Cached Rates" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if can_marketing %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'seo_generator:seo_dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="seo-generator" data-tooltip="{% trans 'SEO coverage dashboard and providers' %}">
+                            <span class="menu-icon"><i class="fas fa-search-plus"></i></span>
+                            <span class="menu-text">{% trans "SEO Generator" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle SEO generator submenu" aria-expanded="false" aria-controls="submenu-seo-generator">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-seo-generator">
+                        <a href="{% url 'seo_generator:seo_dashboard' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'SEO coverage overview and actions' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-pie"></i></span>
+                            <span class="menu-text">{% trans "Dashboard" %}</span>
+                        </a>
+                        <a href="{% url 'admin:seo_generator_seoprovideraccount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage provider accounts' %}">
+                            <span class="menu-icon"><i class="fas fa-cog"></i></span>
+                            <span class="menu-text">{% trans "Provider Accounts" %}</span>
+                        </a>
+                        <a href="{% url 'seo_generator:wizard_step1' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Connect a new SEO provider' %}">
+                            <span class="menu-icon"><i class="fas fa-plug"></i></span>
+                            <span class="menu-text">{% trans "Connect Provider" %}</span>
+                        </a>
+                        <a href="{% url 'seo_generator:provider_browse' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Browse available SEO providers' %}">
+                            <span class="menu-icon"><i class="fas fa-store"></i></span>
+                            <span class="menu-text">{% trans "Browse Providers" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if can_custom_fields %}
+                <a href="{% url 'custom_fields:management' %}" class="menu-item {% if 'custom-fields' in request.path %}active{% endif %}" data-tooltip="{% trans 'Define custom fields for products, orders, and more' %}">
+                    <span class="menu-icon"><i class="fas fa-sliders-h"></i></span>
+                    <span class="menu-text">{% trans "Custom Fields" %}</span>
+                </a>
+                {% endif %}
+                {% if can_users %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:accounts_staffmember_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="users" data-tooltip="{% trans 'Manage staff users and permissions' %}">
+                            <span class="menu-icon"><i class="fas fa-user-shield"></i></span>
+                            <span class="menu-text">{% trans "Staff Management" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle users submenu" aria-expanded="false" aria-controls="submenu-users">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-users">
+                        <a href="{% url 'admin:staff_roles_staffrole_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage staff roles and permissions' %}">
+                            <span class="menu-icon"><i class="fas fa-users-cog"></i></span>
+                            <span class="menu-text">{% trans "Staff Roles" %}</span>
+                        </a>
+                        <a href="{% url 'admin:core_apitoken_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage API tokens for integrations' %}">
+                            <span class="menu-icon"><i class="fas fa-key"></i></span>
+                            <span class="menu-text">{% trans "API Tokens" %}</span>
+                        </a>
+                        <a href="{% url 'admin:auth_user_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View all users including customers' %}">
+                            <span class="menu-icon"><i class="fas fa-users"></i></span>
+                            <span class="menu-text">{% trans "All Users" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if can_email %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:email_system_emailaccount_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="email" data-tooltip="{% trans 'Configure email delivery settings' %}">
+                            <span class="menu-icon"><i class="fas fa-mail-bulk"></i></span>
+                            <span class="menu-text">{% trans "Email Configuration" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle email submenu" aria-expanded="false" aria-controls="submenu-email">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-email">
+                        <a href="{% url 'email_system:template_list' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Design customer email templates' %}">
+                            <span class="menu-icon"><i class="fas fa-envelope"></i></span>
+                            <span class="menu-text">{% trans "Email Templates" %}</span>
+                        </a>
+                        <a href="{% url 'admin:email_system_emailoutbox_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Monitor email queue' %}" data-badge-key="emails_failed">
+                            <span class="menu-icon"><i class="fas fa-inbox"></i></span>
+                            <span class="menu-text">{% trans "Email Queue" %}</span>
+                            {% if menu_badges.emails_failed %}<span class="menu-badge menu-badge-danger">{{ menu_badges.emails_failed }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'email_system:translation_manager' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage email translations' %}">
+                            <span class="menu-icon"><i class="fas fa-language"></i></span>
+                            <span class="menu-text">{% trans "Email Translations" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:sms_system_smsprovideraccount_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="sms" data-tooltip="{% trans 'Configure SMS and WhatsApp messaging' %}">
+                            <span class="menu-icon"><i class="fas fa-sms"></i></span>
+                            <span class="menu-text">{% trans "SMS / WhatsApp" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle SMS submenu" aria-expanded="false" aria-controls="submenu-sms">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-sms">
+                        <a href="{% url 'admin:sms_system_smsprovideraccount_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage SMS provider accounts' %}">
+                            <span class="menu-icon"><i class="fas fa-server"></i></span>
+                            <span class="menu-text">{% trans "Provider Accounts" %}</span>
+                        </a>
+                        <a href="{% url 'sms_system:wizard_step1' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Add a new SMS provider with guided setup' %}">
+                            <span class="menu-icon"><i class="fas fa-magic"></i></span>
+                            <span class="menu-text">{% trans "Setup Wizard" %}</span>
+                        </a>
+                        <a href="{% url 'sms_system:provider_browse' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Browse and install SMS providers' %}">
+                            <span class="menu-icon"><i class="fas fa-store"></i></span>
+                            <span class="menu-text">{% trans "Browse Providers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:sms_system_smstemplate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Edit SMS message templates' %}">
+                            <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+                            <span class="menu-text">{% trans "SMS Templates" %}</span>
+                        </a>
+                        <a href="{% url 'admin:sms_system_smsoutbox_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View sent and pending messages' %}" data-badge-key="sms_failed">
+                            <span class="menu-icon"><i class="fas fa-paper-plane"></i></span>
+                            <span class="menu-text">{% trans "Message Log" %}</span>
+                            {% if menu_badges.sms_failed %}<span class="menu-badge menu-badge-danger">{{ menu_badges.sms_failed }}</span>{% endif %}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if can_translations %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="/admin/translations/" class="menu-item" data-has-submenu="true" data-submenu-id="translations" data-tooltip="{% trans 'Manage store translations' %}">
+                            <span class="menu-icon"><i class="fas fa-globe"></i></span>
+                            <span class="menu-text">{% trans "Translation Service" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle translations submenu" aria-expanded="false" aria-controls="submenu-translations">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-translations">
+                        <a href="{% url 'translations:language_management' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage active languages' %}">
+                            <span class="menu-icon"><i class="fas fa-language"></i></span>
+                            <span class="menu-text">{% trans "Languages" %}</span>
+                        </a>
+                        <a href="{% url 'translations:ui_translations_editor' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Translate storefront UI strings' %}">
+                            <span class="menu-icon"><i class="fas fa-edit"></i></span>
+                            <span class="menu-text">{% trans "UI Translations" %}</span>
+                        </a>
+                        <a href="{% url 'translations:coverage_detail' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View translation coverage across your site' %}">
+                            <span class="menu-icon"><i class="fas fa-chart-pie"></i></span>
+                            <span class="menu-text">{% trans "Coverage" %}</span>
+                        </a>
+                        <a href="/admin/translations/local-service/" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure local AI translation' %}">
+                            <span class="menu-icon"><i class="fas fa-robot"></i></span>
+                            <span class="menu-text">{% trans "Local AI Service" %}</span>
+                        </a>
+                        <a href="{% url 'translations:external_providers' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage external translation APIs' %}">
+                            <span class="menu-icon"><i class="fas fa-wrench"></i></span>
+                            <span class="menu-text">{% trans "External Providers" %}</span>
+                        </a>
+                        <a href="{% url 'translations:translation_jobs' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Monitor translation jobs' %}" data-badge-key="translations_failed">
+                            <span class="menu-icon"><i class="fas fa-tasks"></i></span>
+                            <span class="menu-text">{% trans "Translation Jobs" %}</span>
+                            {% if menu_badges.translations_failed %}<span class="menu-badge menu-badge-danger">{{ menu_badges.translations_failed }}</span>{% endif %}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if can_settings %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:geoip_geolocation_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="geoip" data-tooltip="{% trans 'Manage GEO-IP service and visitor locations' %}">
+                            <span class="menu-icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <span class="menu-text">{% trans "GEO-IP Service" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle GEO-IP submenu" aria-expanded="false" aria-controls="submenu-geoip">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-geoip">
+                        <a href="{% url 'admin:geoip_visitorlocation_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View visitor location data' %}">
+                            <span class="menu-icon"><i class="fas fa-users"></i></span>
+                            <span class="menu-text">{% trans "Visitor Locations" %}</span>
+                        </a>
+                        <a href="{% url 'admin:geoip_geoipprovider_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure GEO-IP providers' %}">
+                            <span class="menu-icon"><i class="fas fa-wrench"></i></span>
+                            <span class="menu-text">{% trans "Providers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:geoip_countrymapping_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage country mappings' %}">
+                            <span class="menu-icon"><i class="fas fa-flag"></i></span>
+                            <span class="menu-text">{% trans "Country Mappings" %}</span>
+                        </a>
+                        <a href="{% url 'admin:geoip_businessrule_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Configure business rules' %}">
+                            <span class="menu-icon"><i class="fas fa-cogs"></i></span>
+                            <span class="menu-text">{% trans "Business Rules" %}</span>
+                        </a>
+                        <a href="{% url 'admin:geoip_geolocation_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View cached geo locations' %}">
+                            <span class="menu-icon"><i class="fas fa-database"></i></span>
+                            <span class="menu-text">{% trans "Geo Locations" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'redoc' %}" class="menu-item" data-has-submenu="true" data-submenu-id="developer-docs" data-tooltip="{% trans 'API documentation for developers' %}" target="_blank">
+                            <span class="menu-icon"><i class="fas fa-book-open"></i></span>
+                            <span class="menu-text">{% trans "Developer Docs" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle developer docs submenu" aria-expanded="false" aria-controls="submenu-developer-docs">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-developer-docs">
+                        <a href="{% url 'swagger-ui' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Interactive API testing interface' %}" target="_blank">
+                            <span class="menu-icon"><i class="fas fa-flask"></i></span>
+                            <span class="menu-text">{% trans "Swagger API" %}</span>
+                        </a>
+                        <a href="{% url 'schema' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Download OpenAPI schema' %}" target="_blank">
+                            <span class="menu-icon"><i class="fas fa-file-code"></i></span>
+                            <span class="menu-text">{% trans "OpenAPI Schema" %}</span>
+                        </a>
+                        <a href="{% url 'admin:webhooks_webhookendpoint_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage outbound webhooks for integrations' %}">
+                            <span class="menu-icon"><i class="fas fa-broadcast-tower"></i></span>
+                            <span class="menu-text">{% trans "Webhooks" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if can_catalog %}
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:catalog_licenseprovider_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="license-management" data-tooltip="{% trans 'Configure license servers and manage license keys' %}">
+                            <span class="menu-icon"><i class="fas fa-key"></i></span>
+                            <span class="menu-text">{% trans "License Management" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle license management submenu" aria-expanded="false" aria-controls="submenu-license-management">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-license-management">
+                        <a href="{% url 'admin:catalog_licenseprovider_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Connect to external license servers (Keygen, License Spring, Cryptlex, etc.)' %}">
+                            <span class="menu-icon"><i class="fas fa-server"></i></span>
+                            <span class="menu-text">{% trans "License Providers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:catalog_licensekey_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View and manage all license keys' %}">
+                            <span class="menu-icon"><i class="fas fa-key"></i></span>
+                            <span class="menu-text">{% trans "License Keys" %}</span>
+                        </a>
+                        <a href="{% url 'admin:catalog_licensekeytemplate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Define license key formats and patterns' %}">
+                            <span class="menu-icon"><i class="fas fa-file-code"></i></span>
+                            <span class="menu-text">{% trans "Key Templates" %}</span>
+                        </a>
+                        <a href="{% url 'admin:catalog_licensepool_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Pre-generate bulk license keys' %}">
+                            <span class="menu-icon"><i class="fas fa-database"></i></span>
+                            <span class="menu-text">{% trans "License Pools" %}</span>
+                        </a>
+                        <a href="{% url 'admin:catalog_externallicensesync_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Monitor sync status with external providers' %}">
+                            <span class="menu-icon"><i class="fas fa-sync-alt"></i></span>
+                            <span class="menu-text">{% trans "Sync Logs" %}</span>
+                        </a>
+                        <a href="{% url 'admin:catalog_digitalasset_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage downloadable files and license requirements' %}">
+                            <span class="menu-icon"><i class="fas fa-download"></i></span>
+                            <span class="menu-text">{% trans "Digital Assets" %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Developer Portal - HQ only -->
+            {% if SPWIG_IS_HQ and user.is_superuser %}
+            <div class="menu-group">
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:developer_portal_componentsubmission_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="developer-portal" data-tooltip="{% trans 'Manage developer submissions and profiles' %}">
+                            <span class="menu-icon"><i class="fas fa-code"></i></span>
+                            <span class="menu-text">{% trans "Developer Portal" %}</span>
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle developer portal submenu" aria-expanded="false" aria-controls="submenu-developer-portal">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-developer-portal">
+                        <a href="{% url 'admin:developer_portal_developerprofile_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage developer applications and profiles' %}">
+                            <span class="menu-icon"><i class="fas fa-user-shield"></i></span>
+                            <span class="menu-text">{% trans "Developers" %}</span>
+                        </a>
+                        <a href="{% url 'admin:developer_portal_componentsubmission_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Review component submissions' %}">
+                            <span class="menu-icon"><i class="fas fa-upload"></i></span>
+                            <span class="menu-text">{% trans "Submissions" %}</span>
+                        </a>
+                        <a href="{% url 'admin:developer_portal_submissionreview_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Audit trail of review actions' %}">
+                            <span class="menu-icon"><i class="fas fa-clipboard-check"></i></span>
+                            <span class="menu-text">{% trans "Reviews" %}</span>
+                        </a>
+                        <a href="{% url 'developer_portal:portal' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View the public developer portal' %}">
+                            <span class="menu-icon"><i class="fas fa-external-link-alt"></i></span>
+                            <span class="menu-text">{% trans "Portal Frontend" %}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- System - superusers only (hidden for Spwig-hosted) -->
+            {% if user.is_superuser and not license_status.is_hosted %}
+            <div class="menu-group">
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:management_system_dashboard' %}" class="menu-item" data-has-submenu="true" data-submenu-id="system" data-tooltip="{% trans 'View system health and metrics' %}" data-badge-key="platform_update">
+                            <span class="menu-icon"><i class="fas fa-server"></i></span>
+                            <span class="menu-text">{% trans "System Dashboard" %}</span>
+                            {% if menu_badges.platform_update %}<span class="menu-badge menu-badge-info"><i class="fas fa-arrow-up"></i></span>{% endif %}
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle system submenu" aria-expanded="false" aria-controls="submenu-system">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-system">
+                        <a href="{% url 'admin:migration_migrationjob_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Import and export data' %}">
+                            <span class="menu-icon"><i class="fas fa-exchange-alt"></i></span>
+                            <span class="menu-text">{% trans "Data Import/Export" %}</span>
+                        </a>
+                        <a href="{% url 'admin:migration_syncjob_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Sync settings or migrate between Spwig installations' %}">
+                            <span class="menu-icon"><i class="fas fa-sync-alt"></i></span>
+                            <span class="menu-text">{% trans "Spwig-to-Spwig Sync" %}</span>
+                        </a>
+                        <a href="/admin/management/queryhistory/database-browser/" class="menu-item menu-subitem" data-tooltip="{% trans 'Browse database tables' %}">
+                            <span class="menu-icon"><i class="fas fa-database"></i></span>
+                            <span class="menu-text">{% trans "Database Browser" %}</span>
+                        </a>
+                        <a href="{% url 'admin:management_databasebackup_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage database backups' %}" data-badge-key="backup_status">
+                            <span class="menu-icon"><i class="fas fa-save"></i></span>
+                            <span class="menu-text">{% trans "Database Backups" %}</span>
+                            {% if menu_badges.backup_status %}<span class="menu-badge menu-badge-{% if menu_badges.backup_status == 'success' %}success{% else %}warning{% endif %}">{{ menu_badges.backup_status }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'admin:management_systemmetrics_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Monitor system performance' %}">
+                            <span class="menu-icon"><i class="fas fa-tachometer-alt"></i></span>
+                            <span class="menu-text">{% trans "System Metrics" %}</span>
+                        </a>
+                        <a href="{% url 'admin:management_logentry_log_viewer' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'View Docker container logs' %}">
+                            <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+                            <span class="menu-text">{% trans "Log Viewer" %}</span>
+                        </a>
+                        <a href="/admin/management/fileoperation/file-manager/" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage server files' %}">
+                            <span class="menu-icon"><i class="fas fa-folder-open"></i></span>
+                            <span class="menu-text">{% trans "File Manager" %}</span>
+                        </a>
+                        <a href="{% url 'admin:component_updates_componentregistry_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage installed components and updates' %}" data-badge-key="component_updates">
+                            <span class="menu-icon"><i class="fas fa-puzzle-piece"></i></span>
+                            <span class="menu-text">{% trans "Component Updates" %}</span>
+                            {% if menu_badges.component_updates %}<span class="menu-badge menu-badge-warning">{{ menu_badges.component_updates }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'admin:component_updates_platformupdate_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Platform updates and hotfixes' %}" data-badge-key="hotfix_available">
+                            <span class="menu-icon"><i class="fas fa-arrow-circle-up"></i></span>
+                            <span class="menu-text">{% trans "Platform Updates" %}</span>
+                            {% if menu_badges.hotfix_available %}<span class="menu-badge menu-badge-danger">!</span>{% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- System (hosted) - limited menu for hosted merchants -->
+            {% if user.is_superuser and license_status.is_hosted %}
+            <div class="menu-group">
+                <div class="menu-item-group">
+                    <div class="menu-item-parent">
+                        <a href="{% url 'admin:component_updates_componentregistry_changelist' %}" class="menu-item" data-has-submenu="true" data-submenu-id="system-hosted" data-tooltip="{% trans 'Manage components and updates' %}" data-badge-key="component_updates">
+                            <span class="menu-icon"><i class="fas fa-puzzle-piece"></i></span>
+                            <span class="menu-text">{% trans "Components" %}</span>
+                            {% if menu_badges.component_updates %}<span class="menu-badge menu-badge-warning">{{ menu_badges.component_updates }}</span>{% endif %}
+                        </a>
+                        <button class="submenu-toggle" aria-label="Toggle components submenu" aria-expanded="false" aria-controls="submenu-system-hosted">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="submenu-container collapsed" id="submenu-system-hosted">
+                        <a href="{% url 'admin:component_updates_componentregistry_changelist' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage installed components and updates' %}" data-badge-key="component_updates">
+                            <span class="menu-icon"><i class="fas fa-puzzle-piece"></i></span>
+                            <span class="menu-text">{% trans "Component Updates" %}</span>
+                            {% if menu_badges.component_updates %}<span class="menu-badge menu-badge-warning">{{ menu_badges.component_updates }}</span>{% endif %}
+                        </a>
+                        <a href="{% url 'admin:component_updates_hosted_upgrade' %}" class="menu-item menu-subitem" data-tooltip="{% trans 'Manage platform updates' %}" data-badge-key="platform_update">
+                            <span class="menu-icon"><i class="fas fa-arrow-circle-up"></i></span>
+                            <span class="menu-text">{% trans "Platform Updates" %}</span>
+                            {% if menu_badges.platform_update %}<span class="menu-badge menu-badge-info"><i class="fas fa-arrow-up"></i></span>{% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <div class="sidebar-logo">
+                <img src="{% static 'images/spwig_logo.svg' %}" alt="Spwig" class="logo-image">
+            </div>
+            <button class="toggle-btn toggle-btn-desktop" data-action="toggle-sidebar" title="{% trans 'Toggle Menu' %}">
+                <span id="toggle-icon-desktop">☰</span>
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="main-content">
+        {% if messages %}
+        <ul class="messagelist">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+        {% get_2fa_grace_period_status as mfa_status %}
+        {% if mfa_status.show_banner %}
+        <div class="mfa-grace-banner {% if mfa_status.enforcement_level == 'required' %}mfa-banner-warning{% else %}mfa-banner-info{% endif %}">
+            <div class="mfa-banner-icon">
+                {% if mfa_status.enforcement_level == 'required' %}
+                <i class="fas fa-shield-alt"></i>
+                {% else %}
+                <i class="fas fa-info-circle"></i>
+                {% endif %}
+            </div>
+            <div class="mfa-banner-content">
+                {% if mfa_status.enforcement_level == 'required' %}
+                    {% if mfa_status.days_remaining == 0 %}
+                    <strong>{% trans "Action Required:" %}</strong> {% trans "Two-factor authentication is required for your account. Please enable it now to maintain access." %}
+                    {% elif mfa_status.days_remaining == 1 %}
+                    <strong>{% trans "Reminder:" %}</strong> {% trans "Two-factor authentication will be required tomorrow. Please enable it to avoid access interruption." %}
+                    {% else %}
+                    <strong>{% trans "Reminder:" %}</strong> {% blocktrans with days=mfa_status.days_remaining %}Two-factor authentication will be required in {{ days }} days. Set it up now to secure your account.{% endblocktrans %}
+                    {% endif %}
+                {% else %}
+                <strong>{% trans "Recommendation:" %}</strong> {% trans "Enable two-factor authentication to better protect your account." %}
+                {% endif %}
+            </div>
+            <a href="{{ mfa_status.profile_url }}" class="mfa-banner-action">
+                <i class="fas fa-lock"></i>
+                {% trans "Enable 2FA" %}
+            </a>
+            <button type="button" class="mfa-banner-dismiss" data-action="dismiss-mfa-banner" aria-label="{% trans 'Dismiss' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endif %}
+        {% if menu_badges.platform_update %}
+        <div class="update-notice-banner">
+            <div class="update-banner-icon">
+                <i class="fas fa-arrow-circle-up"></i>
+            </div>
+            <div class="update-banner-content">
+                <strong>{% trans "Update Available:" %}</strong>
+                {% if menu_badges.platform_update_version %}
+                {% blocktrans with version=menu_badges.platform_update_version %}A new version ({{ version }}) of Spwig is available.{% endblocktrans %}
+                {% else %}
+                {% trans "A new version of Spwig is available." %}
+                {% endif %}
+            </div>
+            {% if license_status.is_hosted %}
+            <a href="{% url 'admin:component_updates_hosted_upgrade' %}" class="update-banner-action">
+                <i class="fas fa-calendar-alt"></i>
+                {% trans "Schedule Update" %}
+            </a>
+            {% else %}
+            <a href="{% url 'admin:management_system_dashboard' %}" class="update-banner-action">
+                <i class="fas fa-download"></i>
+                {% trans "View Update" %}
+            </a>
+            {% endif %}
+            <button type="button" class="update-banner-dismiss" data-action="dismiss-update-banner" aria-label="{% trans 'Dismiss' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endif %}
+        {% if license_status.show_banner %}
+        <div class="license-notice-banner {% if license_status.grace_expired %}license-banner-lockout{% elif license_status.warning_phase %}license-banner-critical{% elif license_status.grace_period_active %}license-banner-warning{% else %}license-banner-info{% endif %}">
+            <div class="license-banner-icon">
+                {% if license_status.grace_expired %}
+                <i class="fas fa-exclamation-triangle"></i>
+                {% elif license_status.warning_phase %}
+                <i class="fas fa-exclamation-circle"></i>
+                {% else %}
+                <i class="fas fa-key"></i>
+                {% endif %}
+            </div>
+            <div class="license-banner-content">
+                {% if license_status.grace_expired %}
+                    <strong>{% trans "License Required:" %}</strong>
+                    {% trans "Your trial period has expired. Please activate a license to continue using the platform." %}
+                {% elif license_status.warning_phase %}
+                    <strong>{% trans "Trial Expiring Soon:" %}</strong>
+                    {% if license_status.grace_days_remaining <= 1 %}
+                    {% trans "Your trial period expires tomorrow. Activate a license to avoid service interruption." %}
+                    {% else %}
+                    {% blocktrans with days=license_status.grace_days_remaining %}Your trial period expires in {{ days }} days. Activate a license to avoid service interruption.{% endblocktrans %}
+                    {% endif %}
+                {% elif license_status.grace_period_active %}
+                    <strong>{% trans "Trial Mode:" %}</strong>
+                    {% blocktrans with days=license_status.grace_days_remaining %}{{ days }} days remaining in your evaluation period. Activate a license to enable all features.{% endblocktrans %}
+                {% else %}
+                    <strong>{% trans "Unlicensed:" %}</strong>
+                    {% trans "This installation is running without a license." %}
+                {% endif %}
+            </div>
+            <a href="{% url 'admin:core_licensestatus_changelist' %}" class="license-banner-action">
+                <i class="fas fa-key"></i>
+                {% trans "Manage License" %}
+            </a>
+            {% if license_status.grace_period_active and not license_status.warning_phase and not license_status.grace_expired %}
+            <button type="button" class="license-banner-dismiss" data-action="dismiss-license-banner" aria-label="{% trans 'Dismiss' %}">
+                <i class="fas fa-times"></i>
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if maintenance_status and is_licensed and not license_status.is_hosted %}
+            {% if not maintenance_status.active and not maintenance_status.in_grace_period %}
+            <div class="license-notice-banner license-banner-lockout">
+                <div class="license-banner-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Maintenance Expired:" %}</strong>
+                    {% trans "Your maintenance has expired. Feature updates and Spwig-hosted services (GeoIP, Address Autocomplete, Push Notifications) are disabled. Security patches will continue to be delivered." %}
+                </div>
+                <a href="https://spwig.com/en/purchase?renew={{ license_info.license_key }}" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-sync-alt"></i>
+                    {% trans "Renew Maintenance" %}
+                </a>
+            </div>
+            {% elif maintenance_status.in_grace_period %}
+            <div class="license-notice-banner license-banner-warning">
+                <div class="license-banner-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Maintenance Grace Period:" %}</strong>
+                    {% blocktrans with days=maintenance_status.grace_days_remaining %}{{ days }} days remaining before Spwig-hosted services are disabled. Renew your maintenance to avoid service interruption.{% endblocktrans %}
+                </div>
+                <a href="https://spwig.com/en/purchase?renew={{ license_info.license_key }}" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-sync-alt"></i>
+                    {% trans "Renew Maintenance" %}
+                </a>
+            </div>
+            {% elif maintenance_status.active and maintenance_status.days_remaining is not None and maintenance_status.days_remaining <= 30 %}
+            <div class="license-notice-banner license-banner-info">
+                <div class="license-banner-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Maintenance Expiring Soon:" %}</strong>
+                    {% blocktrans with days=maintenance_status.days_remaining %}Your maintenance expires in {{ days }} days. Renew to continue receiving feature updates and Spwig-hosted services.{% endblocktrans %}
+                </div>
+                <a href="https://spwig.com/en/purchase?renew={{ license_info.license_key }}" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-sync-alt"></i>
+                    {% trans "Renew" %}
+                </a>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        {# Hosted-service tier banner — appears when any of GeoIP/Geocoder/Push #}
+        {# crosses 80% of the Community-tier quota. Not shown to paid tiers. #}
+        {% if hosted_services.available and hosted_services.any_over_80 and is_community_edition %}
+        <div class="license-notice-banner {% if hosted_services.any_over_100 %}license-banner-critical{% else %}license-banner-warning{% endif %}">
+            <div class="license-banner-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="license-banner-content">
+                {% if hosted_services.any_over_100 %}
+                <strong>{% trans "Spwig services limit reached:" %}</strong>
+                {% trans "One of your hosted services has hit its Community-tier quota. Upgrade to keep them running without interruption." %}
+                {% else %}
+                <strong>{% trans "Approaching hosted-services limit:" %}</strong>
+                {% trans "One of your Spwig services is over 80% of its Community-tier quota. Upgrade to raise the limit before it's hit." %}
+                {% endif %}
+            </div>
+            <a href="{{ hosted_services.upgrade_url }}" class="license-banner-action" target="_blank" rel="noopener">
+                <i class="fas fa-arrow-up"></i>
+                {% trans "Upgrade" %}
+            </a>
+        </div>
+        {% endif %}
+
+        {% if is_admin_read_only %}
+        <div class="license-notice-banner license-banner-info read-only-banner">
+            <div class="license-banner-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="license-banner-content">
+                <strong>{% trans "Read-Only Mode:" %}</strong>
+                {% trans "You are viewing the admin in read-only mode. Changes cannot be made with your current permissions." %}
+            </div>
+        </div>
+        {% endif %}
+        {% if license_status.is_hosted %}
+            {% if license_status.account_status == 'past_due' %}
+            <div class="license-notice-banner license-banner-warning">
+                <div class="license-banner-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Payment Past Due:" %}</strong>
+                    {% trans "Your payment has failed. Please update your billing information to avoid service interruption." %}
+                </div>
+                <a href="https://spwig.com/en/account/subscription/update-payment/" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i>
+                    {% trans "Update Billing" %}
+                </a>
+            </div>
+            {% elif license_status.account_status == 'grace_period' %}
+            <div class="license-notice-banner license-banner-critical">
+                <div class="license-banner-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Grace Period Active:" %}</strong>
+                    {% trans "Your subscription is past due. Service will be suspended soon if payment is not resolved." %}
+                </div>
+                <a href="https://spwig.com/en/account/subscription/update-payment/" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i>
+                    {% trans "Resolve Now" %}
+                </a>
+            </div>
+            {% elif license_status.account_status == 'suspended' %}
+            <div class="license-notice-banner license-banner-lockout">
+                <div class="license-banner-icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Account Suspended:" %}</strong>
+                    {% trans "Your subscription is suspended. Your store is in read-only mode. Contact support to restore access." %}
+                </div>
+                <a href="https://spwig.com/en/account/subscription/" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i>
+                    {% trans "Restore Account" %}
+                </a>
+            </div>
+            {% elif license_status.account_status == 'read_only' %}
+            <div class="license-notice-banner license-banner-lockout">
+                <div class="license-banner-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Read-Only Mode:" %}</strong>
+                    {% trans "Your store is in read-only mode. Changes cannot be made until your account status is resolved." %}
+                </div>
+                <a href="https://spwig.com/en/account/subscription/" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i>
+                    {% trans "Manage Account" %}
+                </a>
+            </div>
+            {% elif license_status.account_status == 'cancelled' %}
+            <div class="license-notice-banner license-banner-lockout">
+                <div class="license-banner-icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="license-banner-content">
+                    <strong>{% trans "Account Cancelled:" %}</strong>
+                    {% trans "Your subscription has been cancelled. Your store will be archived soon." %}
+                </div>
+                <a href="https://spwig.com/en/account/subscription/" class="license-banner-action" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i>
+                    {% trans "Reactivate" %}
+                </a>
+            </div>
+            {% endif %}
+        {% endif %}
+        {% if ssl_not_configured and not license_status.is_hosted %}
+        <div class="license-notice-banner license-banner-warning">
+            <div class="license-banner-icon">
+                <i class="fas fa-lock-open"></i>
+            </div>
+            <div class="license-banner-content">
+                <strong>{% trans "SSL Not Configured:" %}</strong>
+                {% trans "Your store is not using HTTPS. Customer data is transmitted unencrypted. Set up SSL to protect your customers." %}
+            </div>
+            <a href="{% url 'admin:core_sitesettings_change' 1 %}?tab=domain-ssl" class="license-banner-action">
+                <i class="fas fa-shield-alt"></i>
+                {% trans "Set Up SSL" %}
+            </a>
+        </div>
+        {% endif %}
+{% else %}
+<!-- Popup Mode: Simplified Layout -->
+<div class="popup-content">
+{% endif %}
+{% endblock %}
+
+{% block content_subtitle %}{% endblock %}
+
+{% block content %}
+{% if not is_popup %}
+    </div> <!-- Close main-content -->
+</div> <!-- Close admin-wrapper -->
+{% else %}
+</div> <!-- Close popup-content -->
+{% endif %}
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+{% endblock %}

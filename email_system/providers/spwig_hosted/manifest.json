@@ -1,0 +1,109 @@
+{
+  "component_type": "email_provider",
+  "slug": "spwig_hosted_mail",
+  "name": "Spwig Email",
+  "version": "1.0.0",
+  "provider_key": "spwig_hosted_mail",
+  "is_builtin": true,
+  "entry_point": "provider.py",
+  "class_name": "SpwigHostedMailProvider",
+  "description": "Managed email delivery for Spwig-hosted stores. Emails are sent through the Spwig Mail Gateway with automatic DKIM signing. Zero configuration required — works immediately after store provisioning.",
+  "author": "Spwig",
+  "author_details": {
+    "name": "Spwig E-commerce Platform",
+    "email": "support@spwig.com",
+    "website": "https://spwig.com"
+  },
+  "homepage_url": "https://spwig.com/docs/email/hosted-mail",
+  "support_url": "https://spwig.com/support",
+  "logo": "logo.svg",
+  "min_platform_version": "1.2.0",
+  "license": "Proprietary",
+  "hosted_only": true,
+  "capabilities": {
+    "send": true,
+    "oauth": false,
+    "api_key": false,
+    "webhooks": false,
+    "attachments": true,
+    "inline_images": true,
+    "templates": true,
+    "tracking": false,
+    "bounce_handling": true,
+    "dkim_signing": true,
+    "custom_headers": true,
+    "batch_sending": false,
+    "custom_domains": true,
+    "rate_limiting": true,
+    "localhost_only": false
+  },
+  "rate_limits": {
+    "emails_per_second": null,
+    "emails_per_hour": null,
+    "emails_per_month": null,
+    "has_burst_limit": false,
+    "notes": "Rate limits are enforced at the gateway level based on subscription plan. Starter: 100/day, Business: 500/day, Enterprise: 2000/day."
+  },
+  "credential_schema": {
+    "gateway_host": {
+      "type": "text",
+      "title": "Mail Gateway Host",
+      "description": "Spwig Mail Gateway address (auto-configured during provisioning)",
+      "required": true,
+      "default": "mail-gw.spwig.com",
+      "secret": false,
+      "readonly": true
+    },
+    "gateway_port": {
+      "type": "number",
+      "title": "Mail Gateway Port",
+      "description": "SMTP submission port (auto-configured)",
+      "required": true,
+      "default": 587,
+      "secret": false,
+      "readonly": true
+    },
+    "auth_user": {
+      "type": "text",
+      "title": "Account ID",
+      "description": "Your Spwig hosted account identifier",
+      "required": true,
+      "secret": false,
+      "readonly": true
+    },
+    "auth_token": {
+      "type": "password",
+      "title": "Authentication Token",
+      "description": "Mail gateway authentication token",
+      "required": true,
+      "secret": true,
+      "readonly": true
+    }
+  },
+  "pricing": {
+    "free_tier": {
+      "emails_per_month": null,
+      "features": [
+        "Included with all Spwig-hosted plans",
+        "Automatic DKIM signing",
+        "Custom domain support",
+        "Zero configuration"
+      ]
+    },
+    "paid_tiers": [],
+    "cost_notes": "Spwig Email is included with all hosted plans at no additional cost."
+  },
+  "advantages": [
+    "Zero configuration — works immediately",
+    "Automatic DKIM signing for deliverability",
+    "Custom domain support with guided DNS setup",
+    "Included with all hosted plans",
+    "Managed by Spwig — monitoring, blacklist protection, IP warming"
+  ],
+  "disadvantages": [
+    "Only available on Spwig-hosted installations",
+    "Rate limits based on subscription plan",
+    "No open/click tracking",
+    "Default sender is noreply@myspwig.com (custom domain requires DNS setup)"
+  ]
+}

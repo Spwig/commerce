@@ -1,0 +1,108 @@
+{
+  "type": "site_variable",
+  "icon": "fa-database",
+  "label": "Site Variable",
+  "groups": [
+    {
+      "id": "content",
+      "title": "Content",
+      "expanded": true,
+      "fields": [
+        {
+          "key": "variable",
+          "label": "Variable to Display",
+          "type": "select",
+          "default": "site_name",
+          "options": [
+            { "value": "site_name", "label": "Store Name" },
+            { "value": "site_tagline", "label": "Tagline" },
+            { "value": "site_url", "label": "Website URL" },
+            { "value": "admin_email", "label": "Admin Email" },
+            { "value": "support_email", "label": "Support Email" },
+            { "value": "phone_number", "label": "Phone Number" },
+            { "value": "full_address", "label": "Full Address" },
+            { "value": "address_line_1", "label": "Street Address" },
+            { "value": "city", "label": "City" },
+            { "value": "state_province", "label": "State/Province" },
+            { "value": "postal_code", "label": "Postal Code" },
+            { "value": "country", "label": "Country" },
+            { "value": "facebook_url", "label": "Facebook URL" },
+            { "value": "twitter_url", "label": "Twitter/X URL" },
+            { "value": "instagram_url", "label": "Instagram URL" },
+            { "value": "linkedin_url", "label": "LinkedIn URL" },
+            { "value": "default_currency", "label": "Currency Code" },
+            { "value": "default_language", "label": "Language Code" }
+          ],
+          "help": "Select which site setting to display"
+        },
+        {
+          "key": "enable_link",
+          "label": "Make Clickable Link",
+          "type": "toggle",
+          "default": true,
+          "help": "For URLs and emails, wrap in a clickable link"
+        },
+        {
+          "key": "link_target",
+          "label": "Open in New Tab",
+          "type": "toggle",
+          "default": true,
+          "showWhen": { "enable_link": true },
+          "help": "Open link in new browser tab"
+        }
+      ]
+    },
+    {
+      "id": "icon",
+      "title": "Icon",
+      "expanded": false,
+      "fields": [
+        {
+          "key": "show_icon",
+          "label": "Show Icon",
+          "type": "toggle",
+          "default": false
+        },
+        {
+          "key": "icon",
+          "label": "Icon",
+          "type": "icon",
+          "placeholder": "fas fa-info-circle",
+          "showWhen": { "show_icon": true }
+        },
+        {
+          "key": "icon_position",
+          "label": "Icon Position",
+          "type": "select",
+          "default": "before",
+          "options": [
+            { "value": "before", "label": "Before Text" },
+            { "value": "after", "label": "After Text" }
+          ],
+          "showWhen": { "show_icon": true }
+        }
+      ]
+    },
+    {
+      "id": "styling",
+      "title": "Styling",
+      "expanded": false,
+      "fields": [
+        {
+          "key": "text_color",
+          "label": "Text Color",
+          "type": "color",
+          "default": "",
+          "help": "Leave empty to use theme header/footer text color"
+        },
+        {
+          "key": "typography",
+          "label": "Typography",
+          "type": "typography",
+          "default": "{\"fontFamily\": \"var(--theme-typography-font-family-heading)\", \"fontSize\": \"1rem\", \"fontWeight\": \"400\"}",
+          "help": "Font family, size, weight, and spacing"
+        }
+      ]
+    }
+  ]
+}

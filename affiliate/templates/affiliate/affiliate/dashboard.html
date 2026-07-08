@@ -1,0 +1,239 @@
+{% extends "affiliate/base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "Affiliate Dashboard" context "dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate/dashboard.css' %}">
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <header class="dashboard-header">
+        <h1><i class="fas fa-chart-line"></i> {% trans "Affiliate Dashboard" context "dashboard" %}</h1>
+        <p class="subtitle">{% trans "Welcome back" context "dashboard" %}, {{ user.get_full_name|default:user.username }}!</p>
+    </header>
+
+    {# Overview Statistics #}
+    <section class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-icon primary">
+                <i class="fas fa-mouse-pointer"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ total_clicks|intcomma }}</h3>
+                <p>{% trans "Total Clicks" context "stats" %}</p>
+                <small class="stat-change">
+                    <i class="fas fa-chart-line"></i> {{ recent_clicks|intcomma }} {% trans "last 30 days" context "stats" %}
+                </small>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon success">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <h3>${{ total_earned|floatformat:2|intcomma }}</h3>
+                <p>{% trans "Total Earned" context "stats" %}</p>
+                <small class="stat-meta">{% trans "All time earnings" context "stats" %}</small>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon warning">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-content">
+                <h3>${{ pending_balance|floatformat:2|intcomma }}</h3>
+                <p>{% trans "Pending Balance" context "stats" %}</p>
+                <small class="stat-meta">{% trans "Ready for payout" context "stats" %}</small>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon info">
+                <i class="fas fa-link"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ active_links }}</h3>
+                <p>{% trans "Active Links" context "stats" %}</p>
+                <small class="stat-meta">{% trans "In" %} {{ active_programs }} {% trans "programs" context "stats" %}</small>
+            </div>
+        </div>
+    </section>
+
+    {# Performance Chart #}
+    {% if has_chart_data %}
+    <section class="dashboard-section chart-section">
+        <header class="section-header">
+            <h2><i class="fas fa-chart-line"></i> {% trans "Performance Trend (Last 30 Days)" context "dashboard" %}</h2>
+        </header>
+        <div class="chart-container">
+            <canvas id="affiliatePerformanceChart" data-chart="performance"></canvas>
+        </div>
+    </section>
+    {% endif %}
+
+    <div class="dashboard-grid">
+        {# Recent Commissions #}
+        <section class="dashboard-section">
+            <header class="section-header">
+                <h2><i class="fas fa-coins"></i> {% trans "Recent Commissions" context "dashboard" %}</h2>
+                <a href="{% url 'affiliate:commissions' %}" class="btn btn-sm btn-outline">
+                    {% trans "View All" context "action" %} <i class="fas fa-arrow-right"></i>
+                </a>
+            </header>
+
+            <div class="commissions-list">
+                {% if recent_commissions %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Date" context "table" %}</th>
+                                <th>{% trans "Program" context "table" %}</th>
+                                <th>{% trans "Order" context "table" %}</th>
+                                <th>{% trans "Amount" context "table" %}</th>
+                                <th>{% trans "Status" context "table" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for commission in recent_commissions %}
+                            <tr>
+                                <td>{{ commission.created_at|date:"M d, Y" }}</td>
+                                <td>{{ commission.program.name }}</td>
+                                <td>#{{ commission.order.id }}</td>
+                                <td class="amount">${{ commission.amount|floatformat:2 }}</td>
+                                <td>
+                                    <span class="badge badge-{{ commission.status }}">
+                                        {{ commission.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>{% trans "No commissions yet" context "empty" %}</p>
+                        <small>{% trans "Start promoting your affiliate links to earn commissions!" context "empty" %}</small>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        {# Top Performing Links #}
+        <section class="dashboard-section">
+            <header class="section-header">
+                <h2><i class="fas fa-fire"></i> {% trans "Top Performing Links" context "dashboard" %}</h2>
+                <a href="{% url 'affiliate:links' %}" class="btn btn-sm btn-outline">
+                    {% trans "View All" context "action" %} <i class="fas fa-arrow-right"></i>
+                </a>
+            </header>
+
+            <div class="links-list">
+                {% if top_links %}
+                    {% for link in top_links %}
+                    <div class="link-item">
+                        <div class="link-info">
+                            <h4>{{ link.label|default:link.link_code }}</h4>
+                            <p class="link-meta">
+                                <i class="fas fa-briefcase"></i> {{ link.program.name }}
+                            </p>
+                        </div>
+                        <div class="link-stats">
+                            <span class="clicks-badge">
+                                <i class="fas fa-mouse-pointer"></i> {{ link.clicks_count|intcomma }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-link"></i>
+                        <p>{% trans "No tracking links yet" context "empty" %}</p>
+                        <small>{% trans "Create your first tracking link to start earning!" context "empty" %}</small>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        {# Recent Clicks #}
+        <section class="dashboard-section full-width">
+            <header class="section-header">
+                <h2><i class="fas fa-chart-bar"></i> {% trans "Recent Activity" context "dashboard" %}</h2>
+            </header>
+
+            <div class="activity-timeline">
+                {% if recent_clicks_list %}
+                    {% for click in recent_clicks_list %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-title">
+                                {% trans "Click on" %} <strong>{{ click.link.label|default:click.link.link_code }}</strong>
+                            </p>
+                            <p class="activity-meta">
+                                <i class="fas fa-briefcase"></i> {{ click.link.program.name }}
+                                <span class="separator">•</span>
+                                <i class="fas fa-clock"></i> {{ click.clicked_at|naturaltime }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-chart-line"></i>
+                        <p>{% trans "No recent activity" context "empty" %}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    {# Quick Actions #}
+    <section class="quick-actions">
+        <h2>{% trans "Quick Actions" context "dashboard" %}</h2>
+        <div class="actions-grid">
+            <a href="{% url 'affiliate:links' %}" class="action-card">
+                <i class="fas fa-link"></i>
+                <h3>{% trans "Create Link" context "action" %}</h3>
+                <p>{% trans "Generate a new tracking link" context "action" %}</p>
+            </a>
+
+            <a href="{% url 'affiliate:programs' %}" class="action-card">
+                <i class="fas fa-search"></i>
+                <h3>{% trans "Browse Programs" context "action" %}</h3>
+                <p>{% trans "Find programs to promote" context "action" %}</p>
+            </a>
+
+            <a href="{% url 'affiliate:payouts' %}" class="action-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <h3>{% trans "Request Payout" context "action" %}</h3>
+                <p>{% trans "Withdraw your earnings" context "action" %}</p>
+            </a>
+
+            <a href="{% url 'affiliate:commissions' %}" class="action-card">
+                <i class="fas fa-chart-pie"></i>
+                <h3>{% trans "View Reports" context "action" %}</h3>
+                <p>{% trans "Analyze your performance" context "action" %}</p>
+            </a>
+        </div>
+    </section>
+</div>
+
+{% if has_chart_data %}
+<script type="application/json" id="affiliate-chart-data">{
+    "labels": {{ chart_labels|safe }},
+    "clicks": {{ chart_clicks|safe }},
+    "revenue": {{ chart_revenue|safe }},
+    "clicksLabel": "{% trans 'Clicks' context 'chart' %}",
+    "revenueLabel": "{% trans 'Earnings ($)' context 'chart' %}"
+}</script>
+{% endif %}
+
+{% endblock %}

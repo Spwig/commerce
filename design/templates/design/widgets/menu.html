@@ -1,0 +1,92 @@
+{% load i18n widget_tags merchant_trans %}
+{# Menu Widget - Supports both standard and mega dropdown modes #}
+{# Context: widget, config, menu, menu_items #}
+
+<nav class="widget-menu {% if config.mega_dropdown %}widget-menu-mega{% endif %} {{ widget.css_classes }}"
+     data-menu-id="{{ config.menu_id }}"
+     data-sticky="{{ config.sticky|default:False }}"
+     data-mobile-breakpoint="{{ config.mobile_breakpoint|default:768 }}">
+
+    {% if config.menu_id and menu_items %}
+        <!-- Mobile Toggle -->
+        <button class="menu-toggle" aria-label="{% mtrans 'Toggle menu' %}" aria-expanded="false">
+            <span class="toggle-icon"></span>
+        </button>
+
+        {% if config.mega_dropdown %}
+            {# Mega Menu Mode - Inline rendering with mega dropdown support #}
+            <ul class="menu-list menu-{{ config.display_type|default:'horizontal' }}" role="menubar">
+                {% for item in menu_items %}
+                <li class="menu-item {% if item.has_children %}has-dropdown has-mega{% endif %} {{ item.css_classes }}"
+                    role="none">
+                    <a href="{{ item.url }}"
+                       target="{{ item.target }}"
+                       class="menu-link"
+                       role="menuitem"
+                       {% if item.has_children %}aria-haspopup="true" aria-expanded="false"{% endif %}>
+                        {% if config.show_icons and item.icon %}
+                            <i class="{{ item.icon }} menu-icon" aria-hidden="true"></i>
+                        {% endif %}
+                        <span class="menu-text">{{ item.title }}</span>
+                        {% if item.badge_text %}
+                            <span class="menu-badge" {% if item.badge_color %}style="background-color: {{ item.badge_color|validate_css_color }};"{% endif %}>
+                                {{ item.badge_text }}
+                            </span>
+                        {% endif %}
+                        {% if item.has_children %}
+                            <i class="dropdown-arrow fas fa-chevron-down" aria-hidden="true"></i>
+                        {% endif %}
+                    </a>
+
+                    {% if item.has_children %}
+                        <!-- Mega Dropdown -->
+                        <div class="mega-dropdown" style="--columns: {{ config.dropdown_columns|default:4 }};">
+                            <div class="mega-dropdown-inner">
+                                {% for child in item.get_children %}
+                                    <div class="mega-column">
+                                        <a href="{{ child.url }}" class="mega-column-header" target="{{ child.target }}">
+                                            {% if config.show_icons and child.icon %}
+                                                <i class="{{ child.icon }}" aria-hidden="true"></i>
+                                            {% endif %}
+                                            {{ child.title }}
+                                        </a>
+
+                                        {% if child.has_children %}
+                                            <ul class="mega-submenu">
+                                                {% for subchild in child.get_children %}
+                                                <li class="mega-submenu-item">
+                                                    <a href="{{ subchild.url }}" target="{{ subchild.target }}">
+                                                        {{ subchild.title }}
+                                                        {% if subchild.description %}
+                                                            <span class="item-description">{{ subchild.description }}</span>
+                                                        {% endif %}
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+
+                                        {% if config.show_images and child.image %}
+                                            <div class="mega-featured-image">
+                                                <img src="{{ child.image }}" alt="{{ child.title }}" loading="lazy">
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            {# Standard Menu Mode - Uses shared partial for consistency #}
+            {% include "design/partials/menu_items.html" with menu=menu menu_items=menu_items display_type=config.display_type|default:'horizontal' preview_mode=False %}
+        {% endif %}
+
+    {% elif config.menu_id and not menu %}
+        {# Menu not found - render nothing on frontend, only show in admin preview #}
+    {% else %}
+        {# No menu selected - render nothing on frontend #}
+    {% endif %}
+</nav>

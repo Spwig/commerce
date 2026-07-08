@@ -1,0 +1,247 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Setup Wizard - Complete Page Styles
+ *
+ * Description: Styles for the setup wizard completion page
+ * Template: setup_wizard/templates/setup_wizard/complete.html
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/wizard-base.css (shared wizard styles)
+ * - setup_wizard/static/setup_wizard/admin/css/base_wizard.css
+ */
+
+/* ==========================================================================
+   Completion Alert Headers
+   ========================================================================== */
+
+.setup-complete-alert h3 {
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.setup-complete-alert p {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Next Steps Section
+   ========================================================================== */
+
+.setup-next-steps {
+    margin: 2rem 0;
+}
+
+.setup-next-steps-title {
+    color: var(--body-fg, #333);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.setup-next-steps-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* ==========================================================================
+   Next Step Cards
+   ========================================================================== */
+
+.setup-next-step-card {
+    background: var(--darkened-bg, #f8f9fa);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--border-color, #e0e0e0);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.setup-next-step-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.1));
+}
+
+.setup-next-step-card.card-products {
+    border-left-color: var(--success-fg, #28a745);
+}
+
+.setup-next-step-card.card-payments {
+    border-left-color: var(--primary, #417690);
+}
+
+.setup-next-step-card.card-customize {
+    border-left-color: var(--link-fg, #6f42c1);
+}
+
+.setup-next-step-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--body-fg, #333);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.setup-next-step-card p {
+    margin: 0 0 1rem 0;
+    color: var(--body-quiet-color, #666);
+}
+
+/* ==========================================================================
+   Optional Items Section
+   ========================================================================== */
+
+.setup-optional-section {
+    margin: 2rem 0;
+}
+
+.setup-optional-title {
+    color: var(--body-fg, #333);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.setup-optional-desc {
+    color: var(--body-quiet-color, #666);
+    margin-bottom: 1rem;
+}
+
+.setup-optional-grid {
+    display: grid;
+    gap: 0.75rem;
+}
+
+/* ==========================================================================
+   Optional Item Row
+   ========================================================================== */
+
+.setup-optional-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 6px;
+}
+
+.setup-optional-item-icon {
+    font-size: 1.5rem;
+    color: var(--primary, #417690);
+    flex-shrink: 0;
+    width: 2rem;
+    text-align: center;
+}
+
+.setup-optional-item-content {
+    flex: 1;
+}
+
+.setup-optional-item-label {
+    color: var(--body-fg, #333);
+}
+
+.setup-optional-item-desc {
+    color: var(--body-quiet-color, #666);
+    font-size: 0.9rem;
+}
+
+.setup-optional-item .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Store Summary
+   ========================================================================== */
+
+.setup-store-summary {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 8px;
+}
+
+.setup-store-summary h4 {
+    margin: 0 0 1rem 0;
+    color: var(--body-fg, #333);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.setup-store-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.setup-store-summary-grid strong {
+    color: var(--body-fg, #333);
+}
+
+.setup-summary-value-complete {
+    color: var(--success-fg, #28a745);
+}
+
+.setup-summary-value-partial {
+    color: var(--link-fg, #ffc107);
+}
+
+/* ==========================================================================
+   Action Footer
+   ========================================================================== */
+
+.setup-complete-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3rem;
+    background: var(--darkened-bg, #f8f9fa);
+    border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.setup-complete-actions-left,
+.setup-complete-actions-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .setup-next-steps-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .setup-optional-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .setup-store-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .setup-complete-actions {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+
+    .setup-complete-actions-left,
+    .setup-complete-actions-right {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

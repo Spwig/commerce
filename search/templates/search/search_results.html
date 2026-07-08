@@ -1,0 +1,257 @@
+{% extends 'page_builder/base.html' %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% if query %}{% blocktrans with q=query %}Search Results for "{{ q }}"{% endblocktrans %}{% else %}{% mtrans "Search" %}{% endif %}{% endblock %}
+
+{% block body_class %}search-page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'search/css/search.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container section">
+    <div class="search-page__header">
+        <h1 class="search-page__title">
+            {% if query %}
+                {% blocktrans with q=query count counter=total_count %}
+                    {{ counter }} result for "{{ q }}"
+                {% plural %}
+                    {{ counter }} results for "{{ q }}"
+                {% endblocktrans %}
+            {% else %}
+                {% mtrans "Search" %}
+            {% endif %}
+        </h1>
+
+        {% if response_time_ms %}
+        <p class="search-page__meta">
+            {% blocktrans with time=response_time_ms %}Search completed in {{ time }}ms{% endblocktrans %}
+        </p>
+        {% endif %}
+    </div>
+
+    {% if did_you_mean %}
+    <div class="search-page__suggestion">
+        {% mtrans "Did you mean:" %}
+        <a href="?q={{ did_you_mean }}">{{ did_you_mean }}</a>
+    </div>
+    {% endif %}
+
+    {% if applied_synonyms %}
+    <div class="search-page__synonyms">
+        {% mtrans "Also searching for:" %}
+        {% for synonym in applied_synonyms %}
+            <span class="badge badge--secondary">{{ synonym }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="search-page__content">
+        <!-- Filters Sidebar -->
+        <aside class="search-filters">
+            <form method="get" class="search-filters__form" id="search-filters-form">
+                <input type="hidden" name="q" value="{{ query }}">
+
+                {% if facets.types %}
+                <div class="search-filters__section">
+                    <h3 class="search-filters__title">{% mtrans "Type" %}</h3>
+                    <div class="search-filters__options">
+                        <label class="search-filter-option">
+                            <input type="radio" name="type" value="" {% if not current_filters.type %}checked{% endif %}>
+                            <span>{% mtrans "All" %}</span>
+                        </label>
+                        {% for type, count in facets.types.items %}
+                        <label class="search-filter-option">
+                            <input type="radio" name="type" value="{{ type }}" {% if current_filters.type == type %}checked{% endif %}>
+                            <span>
+                                {% if type == 'product' %}{% mtrans "Products" %}
+                                {% elif type == 'category' %}{% mtrans "Categories" %}
+                                {% elif type == 'brand' %}{% mtrans "Brands" %}
+                                {% elif type == 'blog_post' %}{% mtrans "Blog Posts" %}
+                                {% else %}{{ type|title }}{% endif %}
+                                ({{ count }})
+                            </span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if facets.price_range.min and facets.price_range.max %}
+                <div class="search-filters__section">
+                    <h3 class="search-filters__title">{% mtrans "Price Range" %}</h3>
+                    <div class="search-filters__price-range">
+                        <input type="number" name="min_price" placeholder="{% mtrans 'Min' %}"
+                               value="{{ current_filters.min_price }}" min="{{ facets.price_range.min }}"
+                               class="search-filters__input">
+                        <span>-</span>
+                        <input type="number" name="max_price" placeholder="{% mtrans 'Max' %}"
+                               value="{{ current_filters.max_price }}" max="{{ facets.price_range.max }}"
+                               class="search-filters__input">
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if facets.in_stock %}
+                <div class="search-filters__section">
+                    <h3 class="search-filters__title">{% mtrans "Availability" %}</h3>
+                    <label class="search-filter-option">
+                        <input type="checkbox" name="in_stock" value="true"
+                               {% if current_filters.in_stock == 'true' %}checked{% endif %}>
+                        <span>{% mtrans "In Stock Only" %} ({{ facets.in_stock.true }})</span>
+                    </label>
+                </div>
+                {% endif %}
+
+                <div class="search-filters__section">
+                    <h3 class="search-filters__title">{% mtrans "Sort By" %}</h3>
+                    <select name="sort" class="search-filters__select">
+                        <option value="relevance" {% if current_filters.sort == 'relevance' %}selected{% endif %}>{% mtrans "Relevance" %}</option>
+                        <option value="price_asc" {% if current_filters.sort == 'price_asc' %}selected{% endif %}>{% mtrans "Price: Low to High" %}</option>
+                        <option value="price_desc" {% if current_filters.sort == 'price_desc' %}selected{% endif %}>{% mtrans "Price: High to Low" %}</option>
+                        <option value="newest" {% if current_filters.sort == 'newest' %}selected{% endif %}>{% mtrans "Newest First" %}</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--full">{% mtrans "Apply Filters" %}</button>
+
+                {% if current_filters.type or current_filters.min_price or current_filters.max_price or current_filters.in_stock %}
+                <a href="?q={{ query }}" class="btn btn--outline btn--full">{% mtrans "Clear Filters" %}</a>
+                {% endif %}
+            </form>
+        </aside>
+
+        <!-- Results -->
+        <main class="search-results">
+            {% if show_empty_state %}
+                <div class="search-results__empty">
+                    <div class="empty-state">
+                        <div class="empty-state__icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h2 class="empty-state__title">
+                            {% if query %}
+                                {% mtrans "No results found" %}
+                            {% else %}
+                                {% mtrans "Start searching" %}
+                            {% endif %}
+                        </h2>
+                        <p class="empty-state__text">
+                            {% if query %}
+                                {% blocktrans with q=query %}We couldn't find anything matching "{{ q }}". Try different keywords or browse our categories.{% endblocktrans %}
+                            {% else %}
+                                {% mtrans "Enter a search term to find products, categories, and more." %}
+                            {% endif %}
+                        </p>
+                        <a href="/" class="btn btn--primary">{% mtrans "Browse Categories" %}</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="search-results__list">
+                    {% for result in results %}
+                    <a href="{{ result.url }}" class="search-result-card search-result-card--{{ result.type }}">
+                        <div class="search-result-card__thumb">
+                            {% if result.thumbnail %}
+                                <img src="{{ result.thumbnail }}" alt="" loading="lazy">
+                            {% else %}
+                                <span class="search-result-card__thumb-icon">
+                                    {% if result.type == 'product' %}<i class="fas fa-box"></i>
+                                    {% elif result.type == 'category' %}<i class="fas fa-folder"></i>
+                                    {% elif result.type == 'brand' %}<i class="fas fa-tag"></i>
+                                    {% elif result.type == 'blog_post' %}<i class="fas fa-newspaper"></i>
+                                    {% else %}<i class="fas fa-search"></i>{% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="search-result-card__body">
+                            <div class="search-result-card__top">
+                                <span class="search-result-card__type">
+                                    {% if result.type == 'product' %}{% mtrans "Product" %}
+                                    {% elif result.type == 'category' %}{% mtrans "Category" %}
+                                    {% elif result.type == 'brand' %}{% mtrans "Brand" %}
+                                    {% elif result.type == 'blog_post' %}{% mtrans "Blog" %}
+                                    {% else %}{{ result.type|title }}{% endif %}
+                                </span>
+                                {% if result.is_translated %}
+                                <span class="search-result-card__translated" title="{% mtrans 'Content available in your language' %}">
+                                    <i class="fas fa-language"></i> {% mtrans "Translated" %}
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <h3 class="search-result-card__title">
+                                {% firstof result.name result.title %}
+                            </h3>
+
+                            {% firstof result.description result.excerpt as result_desc %}
+                            {% if result_desc %}
+                            <p class="search-result-card__description">
+                                {{ result_desc|truncatewords:20 }}
+                            </p>
+                            {% endif %}
+
+                            <div class="search-result-card__meta">
+                                {% if result.type == 'product' %}
+                                    <span class="search-result-card__price">
+                                        {{ result.currency }} {{ result.price }}
+                                    </span>
+                                    {% if result.in_stock %}
+                                    <span class="search-result-card__stock search-result-card__stock--in">
+                                        {% mtrans "In Stock" %}
+                                    </span>
+                                    {% else %}
+                                    <span class="search-result-card__stock search-result-card__stock--out">
+                                        {% mtrans "Out of Stock" %}
+                                    </span>
+                                    {% endif %}
+                                {% elif result.type == 'category' or result.type == 'brand' %}
+                                    <span class="search-result-card__count">
+                                        {% blocktrans count count=result.product_count %}{{ count }} product{% plural %}{{ count }} products{% endblocktrans %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if total_pages > 1 %}
+                <nav class="search-pagination">
+                    {% if page > 1 %}
+                    <a href="?q={{ query }}&page={{ page|add:'-1' }}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.sort %}&sort={{ current_filters.sort }}{% endif %}"
+                       class="search-pagination__link search-pagination__link--prev">
+                        <i class="fas fa-chevron-left"></i> {% mtrans "Previous" %}
+                    </a>
+                    {% endif %}
+
+                    <div class="search-pagination__pages">
+                        {% for p in page_range %}
+                            {% if p == page %}
+                            <span class="search-pagination__page search-pagination__page--current">{{ p }}</span>
+                            {% else %}
+                            <a href="?q={{ query }}&page={{ p }}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.sort %}&sort={{ current_filters.sort }}{% endif %}"
+                               class="search-pagination__page">{{ p }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if page < total_pages %}
+                    <a href="?q={{ query }}&page={{ page|add:'1' }}{% if current_filters.type %}&type={{ current_filters.type }}{% endif %}{% if current_filters.sort %}&sort={{ current_filters.sort }}{% endif %}"
+                       class="search-pagination__link search-pagination__link--next">
+                        {% mtrans "Next" %} <i class="fas fa-chevron-right"></i>
+                    </a>
+                    {% endif %}
+                </nav>
+                {% endif %}
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'search/js/search-results.js' %}"></script>
+{% endblock %}

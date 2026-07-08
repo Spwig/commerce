@@ -1,0 +1,19 @@
+{% extends "page_builder/category/_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block template_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/category-grid.css' %}">
+{% endblock %}
+
+{% block product_display %}
+<div class="product-grid{% if template_options.products_per_row != 'auto' %} product-grid--cols-{{ template_options.products_per_row }}{% endif %}">
+    {% for product in products %}
+        {% include 'page_builder/partials/product_card.html' with product=product %}
+    {% empty %}
+    <div class="product-grid__empty">
+        <i class="fas fa-box-open"></i>
+        <p>{% mtrans 'No products in this category yet.' %}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

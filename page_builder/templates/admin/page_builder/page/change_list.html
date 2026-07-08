@@ -1,0 +1,199 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Pages" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'page_builder/admin/css/pb-change-list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'page_builder/js/admin/page-thumbnail-trigger.js' %}" defer></script>
+{% if capture_thumbnail_queue %}
+{{ capture_thumbnail_queue|json_script:"capture-thumbnail-queue" }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var queueData = JSON.parse(document.getElementById('capture-thumbnail-queue').textContent);
+    PageThumbnailCapture.triggerQueue(queueData);
+});
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-file-alt"></i>
+                {% trans "Page Management" %}
+            </h1>
+            <p class="subtitle">{% trans "Create and manage storefront pages with the visual page builder" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:page_builder_page_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Page" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by title or slug...' %}"
+                    value="">
+            </div>
+
+            <!-- Page Type -->
+            <div class="filter-field">
+                <label for="filter-page-type">
+                    <i class="fas fa-th-large"></i> {% trans "Page Type" %}
+                </label>
+                <select id="filter-page-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for type_value, type_label in page_types %}
+                    <option value="{{ type_value }}">{{ type_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="draft">{% trans "Draft" %}</option>
+                    <option value="published">{% trans "Published" %}</option>
+                    <option value="archived">{% trans "Archived" %}</option>
+                </select>
+            </div>
+
+            <!-- Theme -->
+            <div class="filter-field">
+                <label for="filter-theme">
+                    <i class="fas fa-palette"></i> {% trans "Theme" %}
+                </label>
+                <select id="filter-theme">
+                    <option value="">{% trans "All Themes" %}</option>
+                    <option value="none">{% trans "No Theme (Default)" %}</option>
+                    {% for theme in themes %}
+                    <option value="{{ theme.id }}">{{ theme.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Default Page -->
+            <div class="filter-field">
+                <label for="filter-is-default">
+                    <i class="fas fa-star"></i> {% trans "Default Page" %}
+                </label>
+                <select id="filter-is-default">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "Default Pages Only" %}</option>
+                    <option value="no">{% trans "Non-Default Pages" %}</option>
+                </select>
+            </div>
+
+            <!-- Requires Auth -->
+            <div class="filter-field">
+                <label for="filter-requires-auth">
+                    <i class="fas fa-lock"></i> {% trans "Access" %}
+                </label>
+                <select id="filter-requires-auth">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "Requires Login" %}</option>
+                    <option value="no">{% trans "Public Access" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-page" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Pages" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-file-alt"></i>
+            <span id="page-count">{{ cl.result_count }}</span> {% trans "page" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="page-results">
+        {% include "admin/page_builder/partials/page_cards.html" with pages=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 page{% plural %}{{ counter }} pages{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'pages' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url "page_builder_admin:filter_pages" %}"
+     data-results-container="page-results"
+     data-results-count="page-count"
+     style="display:none;"></div>
+</div>
+{% endblock %}

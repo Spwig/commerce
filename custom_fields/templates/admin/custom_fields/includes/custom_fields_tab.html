@@ -1,0 +1,149 @@
+{% load i18n static %}
+{% comment %}
+    Custom Fields tab content for model change forms.
+
+    Expected context:
+    - custom_field_groups: list of {group, fields: [{definition, value, choices}]}
+    - has_custom_fields: boolean
+{% endcomment %}
+
+{% if has_custom_fields %}
+<div class="custom-fields-tab-content">
+    {% for group_data in custom_field_groups %}
+    <fieldset class="custom-field-group">
+        <h3 class="custom-field-group-title">
+            {{ group_data.group.name }}
+            {% if group_data.group.show_on_storefront %}
+            <span class="badge badge-info" title="{% trans 'Visible on storefront' %}"><i class="fas fa-eye"></i></span>
+            {% endif %}
+        </h3>
+
+        {% for field_data in group_data.fields %}
+        {% with def=field_data.definition value=field_data.value choices=field_data.choices %}
+        <div class="form-row custom-field-row" data-field-type="{{ def.field_type }}">
+            <div>
+                <label for="cf_{{ def.slug }}"{% if def.is_required %} class="required"{% endif %}>
+                    {{ def.name }}
+                    {% if def.is_translatable %}
+                    <span class="translatable-indicator" title="{% trans 'This field can be translated' %}">
+                        <i class="fas fa-language"></i>
+                    </span>
+                    {% endif %}
+                </label>
+
+                {% if def.field_type == 'text' %}
+                <input type="text" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       value="{{ value|default_if_none:'' }}"
+                       class="vTextField"
+                       {% if def.validation_config.max_length %}maxlength="{{ def.validation_config.max_length }}"{% endif %}
+                       {% if def.is_required %}required{% endif %}>
+
+                {% elif def.field_type == 'textarea' %}
+                <textarea name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                          class="vLargeTextField" rows="4"
+                          {% if def.validation_config.max_length %}maxlength="{{ def.validation_config.max_length }}"{% endif %}
+                          {% if def.is_required %}required{% endif %}>{{ value|default_if_none:'' }}</textarea>
+
+                {% elif def.field_type == 'number' %}
+                <input type="number" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       value="{{ value|default_if_none:'' }}"
+                       class="vIntegerField"
+                       step="1"
+                       {% if def.validation_config.min is not None %}min="{{ def.validation_config.min }}"{% endif %}
+                       {% if def.validation_config.max is not None %}max="{{ def.validation_config.max }}"{% endif %}
+                       {% if def.is_required %}required{% endif %}>
+
+                {% elif def.field_type == 'decimal' %}
+                <input type="number" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       value="{{ value|default_if_none:'' }}"
+                       class="vIntegerField"
+                       step="any"
+                       {% if def.validation_config.min is not None %}min="{{ def.validation_config.min }}"{% endif %}
+                       {% if def.validation_config.max is not None %}max="{{ def.validation_config.max }}"{% endif %}
+                       {% if def.is_required %}required{% endif %}>
+
+                {% elif def.field_type == 'boolean' %}
+                <input type="checkbox" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       class="vCheckboxInput"
+                       {% if value %}checked{% endif %}>
+
+                {% elif def.field_type == 'date' %}
+                <input type="date" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       value="{{ value|default_if_none:'' }}"
+                       class="vDateField"
+                       {% if def.is_required %}required{% endif %}>
+
+                {% elif def.field_type == 'datetime' %}
+                <input type="datetime-local" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       value="{{ value|default_if_none:'' }}"
+                       class="vDateTimeField"
+                       {% if def.is_required %}required{% endif %}>
+
+                {% elif def.field_type == 'url' %}
+                <input type="url" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       value="{{ value|default_if_none:'' }}"
+                       class="vURLField"
+                       {% if def.is_required %}required{% endif %}>
+
+                {% elif def.field_type == 'email' %}
+                <input type="email" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                       value="{{ value|default_if_none:'' }}"
+                       class="vTextField"
+                       {% if def.is_required %}required{% endif %}>
+
+                {% elif def.field_type == 'select' %}
+                <select name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                        class="vSelectField"
+                        {% if def.is_required %}required{% endif %}>
+                    <option value="">---------</option>
+                    {% for choice in choices %}
+                    <option value="{{ choice.value }}" {% if choice.value == value %}selected{% endif %}>
+                        {{ choice.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                {% elif def.field_type == 'multiselect' %}
+                <select name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                        class="vSelectField" multiple
+                        {% if def.is_required %}required{% endif %}>
+                    {% for choice in choices %}
+                    <option value="{{ choice.value }}" {% if choice.value in value %}selected{% endif %}>
+                        {{ choice.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                {% elif def.field_type == 'color' %}
+                <div class="color-field-wrapper">
+                    <input type="color" name="cf_{{ def.slug }}" id="cf_{{ def.slug }}"
+                           value="{{ value|default:'#000000' }}"
+                           class="vColorField">
+                    <input type="text" class="color-hex-display"
+                           value="{{ value|default:'#000000' }}" readonly
+                           data-action="trigger-color-picker">
+                </div>
+
+                {% endif %}
+
+                {% if def.help_text_value %}
+                <p class="help">{{ def.help_text_value }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </fieldset>
+    {% empty %}
+    <div class="custom-fields-empty">
+        <p>{% trans "No custom fields have been defined for this type." %}</p>
+        <p><a href="{% url 'custom_fields:management' %}">{% trans "Manage custom fields" %}</a></p>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="custom-fields-empty">
+    <p>{% trans "No custom fields have been defined for this type." %}</p>
+    <p><a href="{% url 'custom_fields:management' %}">{% trans "Manage custom fields" %}</a></p>
+</div>
+{% endif %}

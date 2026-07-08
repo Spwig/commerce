@@ -1,0 +1,330 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Member" %}: {{ original }}{% else %}{% trans "Add Member" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltymember_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="loyalty-member-change-form">
+
+{% if original %}
+    <!-- Header with Save Actions -->
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-user-tag"></i>
+                    {% trans "Edit Member" %}: {{ original }}
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-fingerprint"></i> {{ original.uuid }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i> {% trans "Enrolled" %}: {{ original.enrolled_at|date:"M d, Y" }}
+                    </span>
+                    <span class="meta-item">
+                        {% if original.is_active %}
+                            <span class="member-status-active"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+                        {% else %}
+                            <span class="member-status-inactive"><i class="fas fa-times-circle"></i> {% trans "Inactive" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="submit" form="loyaltymember-form" class="util-btn" name="_save" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Member Dashboard Cards -->
+    <div class="member-dashboard">
+        <!-- Points Balance Card -->
+        <div class="member-card">
+            <div class="member-card-header">
+                <div class="member-card-icon primary">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3 class="member-card-title">{% trans "Points Balance" %}</h3>
+            </div>
+            <div class="member-card-body">
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Available Points" %}</span>
+                    <span class="member-stat-value large">
+                        {% if original.balance %}
+                            {{ original.balance.available_points|floatformat:0 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Pending Points" %}</span>
+                    <span class="member-stat-value warning">
+                        {% if original.balance %}
+                            {{ original.balance.pending_points|floatformat:0 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="member-quick-actions">
+                <a href="{% url 'admin:loyalty_loyaltymember_adjust_points' original.id %}" class="button">
+                    <i class="fas fa-edit"></i> {% trans "Adjust Points" %}
+                </a>
+            </div>
+        </div>
+
+        <!-- Lifetime Stats Card -->
+        <div class="member-card">
+            <div class="member-card-header">
+                <div class="member-card-icon success">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="member-card-title">{% trans "Lifetime Statistics" %}</h3>
+            </div>
+            <div class="member-card-body">
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Total Earned" %}</span>
+                    <span class="member-stat-value success">
+                        {% if original.balance %}
+                            +{{ original.balance.lifetime_earned|floatformat:0 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Total Redeemed" %}</span>
+                    <span class="member-stat-value error">
+                        {% if original.balance %}
+                            -{{ original.balance.lifetime_redeemed|floatformat:0 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Expired" %}</span>
+                    <span class="member-stat-value">
+                        {% if original.balance %}
+                            {{ original.balance.lifetime_expired|floatformat:0 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Tier Card -->
+        <div class="member-card">
+            <div class="member-card-header">
+                <div class="member-card-icon warning">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h3 class="member-card-title">{% trans "Current Tier" %}</h3>
+            </div>
+            <div class="member-card-body">
+                {% if original.current_tier %}
+                    <div class="member-stat">
+                        <span class="member-stat-label">{% trans "Tier" %}</span>
+                        <span class="member-stat-value member-tier-name">
+                            {{ original.current_tier.name }}
+                        </span>
+                    </div>
+                    <div class="member-stat">
+                        <span class="member-stat-label">{% trans "Rank" %}</span>
+                        <span class="member-stat-value">
+                            {{ original.current_tier.rank }}
+                        </span>
+                    </div>
+                    {% if original.current_tier.points_multiplier != 1.0 %}
+                    <div class="member-stat">
+                        <span class="member-stat-label">{% trans "Points Multiplier" %}</span>
+                        <span class="member-stat-value success">
+                            {{ original.current_tier.points_multiplier }}x
+                        </span>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <p class="member-no-tier">{% trans "No tier assigned" %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Member Activity Card -->
+        <div class="member-card">
+            <div class="member-card-header">
+                <div class="member-card-icon info">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+                <h3 class="member-card-title">{% trans "Member Activity" %}</h3>
+            </div>
+            <div class="member-card-body">
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Enrolled" %}</span>
+                    <span class="member-stat-value member-stat-date">
+                        {{ original.enrolled_at|date:"M d, Y" }}
+                    </span>
+                </div>
+                {% if original.balance.last_earned_at %}
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Last Earned" %}</span>
+                    <span class="member-stat-value member-stat-date">
+                        {{ original.balance.last_earned_at|date:"M d, Y" }}
+                    </span>
+                </div>
+                {% endif %}
+                {% if original.balance.last_redeemed_at %}
+                <div class="member-stat">
+                    <span class="member-stat-label">{% trans "Last Redeemed" %}</span>
+                    <span class="member-stat-value member-stat-date">
+                        {{ original.balance.last_redeemed_at|date:"M d, Y" }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="member-quick-actions">
+                <a href="{% url 'admin:auth_user_change' original.customer.id %}" class="button button-secondary">
+                    <i class="fas fa-user"></i> {% trans "View Customer" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions Section -->
+    <div class="transactions-section">
+        <div class="transactions-section-header">
+            <h2>
+                <i class="fas fa-receipt"></i> {% trans "Recent Transactions" %}
+            </h2>
+            <span class="transactions-section-meta">
+                {% trans "Showing last 10 transactions" %}
+            </span>
+        </div>
+        {% include "admin/loyalty/partials/transaction_cards.html" with transactions=recent_transactions %}
+
+        <div class="transactions-view-all">
+            <a href="{% url 'admin:loyalty_loyaltytransaction_changelist' %}?member__id__exact={{ original.id }}"
+               class="button">
+                <i class="fas fa-list"></i>
+                {% trans "View All Transactions" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Error Banner -->
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Member Settings Form -->
+    <form method="post" id="loyaltymember-form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-card">
+            <h2><i class="fas fa-cog"></i> {% trans "Member Settings" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-customer{% if adminform.form.customer.errors %} errors{% endif %}">
+                        {{ adminform.form.customer.errors }}
+                        {{ adminform.form.customer.label_tag }}
+                        {{ adminform.form.customer }}
+                        {% if adminform.form.customer.help_text %}<p class="help">{{ adminform.form.customer.help_text }}</p>{% endif %}
+                    </div>
+                    <div class="form-row field-current_tier{% if adminform.form.current_tier.errors %} errors{% endif %}">
+                        {{ adminform.form.current_tier.errors }}
+                        {{ adminform.form.current_tier.label_tag }}
+                        {{ adminform.form.current_tier }}
+                        {% if adminform.form.current_tier.help_text %}<p class="help">{{ adminform.form.current_tier.help_text }}</p>{% endif %}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-is_active">
+                        <label class="checkbox-label">
+                            {{ adminform.form.is_active }} {{ adminform.form.is_active.label }}
+                        </label>
+                        {% if adminform.form.is_active.help_text %}<p class="help">{{ adminform.form.is_active.help_text }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inlines -->
+        {% for inline_admin_formset in inline_admin_formsets %}
+            {% if inline_admin_formset.opts.verbose_name|lower == 'loyalty member badge' %}
+            <div class="form-card">
+                <h2><i class="fas fa-award"></i> {% trans "Badges" %}</h2>
+                {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        {% for inline_admin_formset in inline_admin_formsets %}
+            {% if inline_admin_formset.opts.verbose_name|lower == 'loyalty balance' %}
+            <div class="form-card">
+                <h2><i class="fas fa-wallet"></i> {% trans "Balance Details" %}</h2>
+                <p class="form-card-description">{% trans "Balance data is displayed in the dashboard cards above. Edit here only for manual corrections." %}</p>
+                {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Hidden fields container — ensures all form fields are in POST data -->
+        <div class="hidden">
+            {% for fieldset in adminform %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                        {{ field.field }}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <!-- Hidden submit row -->
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% else %}
+    {# Add mode — use Django's default form #}
+    {{ block.super }}
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'loyalty/admin/js/loyaltymember_form.js' %}"></script>
+{% endblock %}

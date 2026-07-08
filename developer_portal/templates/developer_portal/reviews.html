@@ -1,0 +1,152 @@
+{% extends "developer_portal/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Reviews" %}{% endblock %}
+
+{% block content %}
+<div class="dev-page">
+    <div class="dev-page-header">
+        <h1>{% trans "Reviews" %}</h1>
+    </div>
+
+    {# Filter Bar #}
+    <div class="dev-filter-bar">
+        <form method="get" class="dev-filter-form">
+            <select name="component" class="dev-filter-select" data-auto-submit="true">
+                <option value="">{% trans "All Components" %}</option>
+                {% for comp in components %}
+                <option value="{{ comp.component_slug }}" {% if current_component == comp.component_slug %}selected{% endif %}>
+                    {{ comp.component_name }}
+                </option>
+                {% endfor %}
+            </select>
+            <select name="status" class="dev-filter-select" data-auto-submit="true">
+                <option value="">{% trans "All Status" %}</option>
+                <option value="unresponded" {% if current_status == 'unresponded' %}selected{% endif %}>{% trans "Needs Response" %}</option>
+                <option value="responded" {% if current_status == 'responded' %}selected{% endif %}>{% trans "Responded" %}</option>
+            </select>
+            <select name="rating" class="dev-filter-select" data-auto-submit="true">
+                <option value="">{% trans "All Ratings" %}</option>
+                {% for i in "54321" %}
+                <option value="{{ i }}" {% if current_rating == i %}selected{% endif %}>{{ i }} {% trans "Star" %}{{ i|pluralize }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    {# Reviews List #}
+    {% if reviews %}
+    <div class="dev-reviews-list">
+        {% for review in reviews %}
+        <div class="dev-review-card" id="review-{{ review.pk }}">
+            <div class="dev-review-header">
+                <div class="dev-review-avatar">{{ review.author_name|first }}</div>
+                <div class="dev-review-meta">
+                    <div class="dev-review-author-line">
+                        <strong>{{ review.author_name }}</strong>
+                        {% if review.is_verified_purchase %}
+                        <span class="dev-review-badge-verified">
+                            <i class="fas fa-check-circle"></i> {% trans "Verified" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="dev-review-info-line">
+                        <span class="dev-review-component">{{ review.component_name }}</span>
+                        <span class="dev-review-date">{{ review.review_created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+                <div class="dev-review-stars">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="fas fa-star"></i>
+                        {% else %}
+                            <i class="far fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if review.title %}
+            <h3 class="dev-review-title">{{ review.title }}</h3>
+            {% endif %}
+
+            {% if review.comment %}
+            <p class="dev-review-comment">{{ review.comment }}</p>
+            {% endif %}
+
+            {# Developer Response Section #}
+            <div class="dev-review-response-section">
+                {% if review.developer_response %}
+                <div class="dev-review-response">
+                    <div class="dev-review-response-header">
+                        <i class="fas fa-reply"></i>
+                        <strong>{% trans "Your Response" %}</strong>
+                        <span class="dev-review-response-date">{{ review.developer_response_at|date:"M d, Y" }}</span>
+                    </div>
+                    <p class="dev-review-response-text">{{ review.developer_response }}</p>
+                </div>
+                {% else %}
+                <button class="dev-btn dev-btn-sm dev-btn-outline dev-review-respond-toggle"
+                        data-action="toggle-response-form" data-review-id="{{ review.pk }}">
+                    <i class="fas fa-reply"></i> {% trans "Respond" %}
+                </button>
+                <div class="dev-review-response-form dev-hidden" id="response-form-{{ review.pk }}">
+                    <textarea id="response-text-{{ review.pk }}"
+                              placeholder="{% trans 'Write your response...' %}"
+                              maxlength="2000" rows="3"></textarea>
+                    <div class="dev-review-response-actions">
+                        <span class="dev-review-char-count" id="char-count-{{ review.pk }}">0 / 2000</span>
+                        <button class="dev-btn dev-btn-sm dev-btn-secondary"
+                                data-action="toggle-response-form" data-review-id="{{ review.pk }}">{% trans "Cancel" %}</button>
+                        <button class="dev-btn dev-btn-sm dev-btn-primary"
+                                data-action="submit-response" data-review-id="{{ review.pk }}">{% trans "Submit Response" %}</button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Pagination #}
+    {% if is_paginated %}
+    <div class="dev-pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_component %}&component={{ current_component }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_rating %}&rating={{ current_rating }}{% endif %}"
+           class="dev-btn dev-btn-sm dev-btn-secondary">&laquo; {% trans "Previous" %}</a>
+        {% endif %}
+        <span class="dev-pagination-info">
+            {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}
+                Page {{ current }} of {{ total }}
+            {% endblocktrans %}
+        </span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if current_component %}&component={{ current_component }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}{% if current_rating %}&rating={{ current_rating }}{% endif %}"
+           class="dev-btn dev-btn-sm dev-btn-secondary">{% trans "Next" %} &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="dev-empty-state">
+        <i class="fas fa-star"></i>
+        <p>{% trans "No reviews yet. Reviews will appear here once merchants rate your components." %}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<div id="reviews-config"
+     data-respond-url-template="{% url 'developer_portal:review_respond' pk=0 %}"
+     hidden></div>
+<script type="application/json" id="reviews-translations">
+{
+    "pleaseEnterResponse": "{% trans 'Please enter a response.' %}",
+    "yourResponse": "{% trans 'Your Response' %}",
+    "failedSubmit": "{% trans 'Failed to submit response.' %}",
+    "networkError": "{% trans 'Network error. Please try again.' %}"
+}
+</script>
+<script src="{% static 'developer_portal/js/reviews.js' %}"></script>
+{% endblock %}

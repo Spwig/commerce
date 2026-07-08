@@ -1,0 +1,21 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Spacer Element Styles
+ *
+ * Theme tokens provide defaults. Merchant overrides via inline styles.
+ * Height is always set inline from element properties.
+ * Background handled by base_styles from background_group.
+ */
+
+.pb-spacer {
+    display: block;
+    width: 100%;
+}
+
+/* Mobile: Scale down spacer heights to 60% */
+@media (max-width: 767px) {
+  .pb-spacer {
+    height: calc(var(--spacer-height, 40px) * var(--element-spacer-mobile-scale, 0.6));
+  }
+}

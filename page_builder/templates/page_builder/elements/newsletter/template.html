@@ -1,0 +1,33 @@
+{% load i18n element_tags merchant_trans %}
+{% mtrans "Subscribe" as default_subscribe %}
+<!-- Newsletter Signup Element -->
+<section class="newsletter{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+{% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+{% hover_animation_attrs element %}
+style="{% base_styles element %}">
+    <div class="container">
+        {% if element.content.title %}
+        <h3 class="newsletter__title">{{ element.content.title }}</h3>
+        {% endif %}
+
+        {% if element.content.description %}
+        <p class="newsletter__subtitle">{{ element.content.description }}</p>
+        {% endif %}
+
+        <form class="newsletter__form" method="post" action="{{ element.content.action_url|default:'#' }}">
+            {% csrf_token %}
+            <input type="email"
+                   name="email"
+                   placeholder="{% mtrans 'Enter your email address' %}"
+                   class="form-input newsletter__input"
+                   required>
+            <button type="submit" class="btn btn--primary">
+                {{ element.content.button_text|default:default_subscribe }}
+            </button>
+        </form>
+
+        {% if element.content.privacy_note %}
+        <p class="newsletter__privacy">{{ element.content.privacy_note }}</p>
+        {% endif %}
+    </div>
+</section>

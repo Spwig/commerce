@@ -1,0 +1,348 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Payment Providers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'payment_providers/css/admin_provider_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-credit-card"></i>
+                {% trans "Payment Provider Accounts" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage payment gateway integrations and API connections" %}</p>
+            <p class="change-list-stats-subtitle">
+                {% blocktrans count counter=cl.result_count %}{{ counter }} provider{% plural %}{{ counter }} providers{% endblocktrans %}
+                {% if active_count %}<span class="stat-separator">·</span>{{ active_count }} {% trans "active" %}{% endif %}
+                {% if connected_count %}<span class="stat-separator">·</span>{{ connected_count }} {% trans "connected" %}{% endif %}
+            </p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'payment_providers:provider_browse' %}" class="button default change-list-action-button">
+                <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+            </a>
+            <a href="{% url 'payment_providers:wizard_step1' %}" class="button primary change-list-action-button">
+                <i class="fas fa-magic"></i> {% trans "Setup New Provider" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Toolbar -->
+    <div class="provider-toolbar">
+        <div class="toolbar-left">
+            <!-- Search Box -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="provider-search" placeholder="{% trans 'Search providers...' %}" value="{{ request.GET.q }}">
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- Filters -->
+            <div class="filter-group">
+                <!-- Connection Status Filter -->
+                <select id="status-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="connected" {% if request.GET.connection_status == 'connected' %}selected{% endif %}>
+                        {% trans "Connected" %} ({{ connected_count }})
+                    </option>
+                    <option value="error" {% if request.GET.connection_status == 'error' %}selected{% endif %}>
+                        {% trans "Error" %} ({{ error_count }})
+                    </option>
+                    <option value="unknown" {% if request.GET.connection_status == 'unknown' %}selected{% endif %}>
+                        {% trans "Unknown" %} ({{ unknown_count }})
+                    </option>
+                </select>
+
+                <!-- Active Filter -->
+                <select id="active-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Active Status" %}</option>
+                    <option value="1" {% if request.GET.is_active == '1' %}selected{% endif %}>
+                        {% trans "Active Only" %} ({{ active_count }})
+                    </option>
+                    <option value="0" {% if request.GET.is_active == '0' %}selected{% endif %}>
+                        {% trans "Inactive Only" %} ({{ inactive_count }})
+                    </option>
+                </select>
+
+                <!-- Checkout Mode Filter -->
+                <select id="checkout-mode-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Checkout Modes" %}</option>
+                    <option value="hosted" {% if request.GET.checkout_mode == 'hosted' %}selected{% endif %}>
+                        {% trans "Hosted" %} ({{ hosted_count }})
+                    </option>
+                    <option value="integrated" {% if request.GET.checkout_mode == 'integrated' %}selected{% endif %}>
+                        {% trans "Integrated" %} ({{ integrated_count }})
+                    </option>
+                </select>
+
+                <!-- Provider Type Filter -->
+                {% if provider_types %}
+                <select id="provider-type-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Provider Types" %}</option>
+                    {% for ptype in provider_types %}
+                    <option value="{{ ptype.component__slug }}"
+                            {% if request.GET.component == ptype.component__slug %}selected{% endif %}>
+                        {{ ptype.component__name }} ({{ ptype.count }})
+                    </option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-overview">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-plug"></i>
+            </div>
+            <div class="stat-content">
+                <div class="value">{{ connected_count }}</div>
+                <div class="label">{% trans "Connected" %}</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="value">{{ active_count }}</div>
+                <div class="label">{% trans "Active" %}</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-server"></i>
+            </div>
+            <div class="stat-content">
+                <div class="value">{{ hosted_count }}</div>
+                <div class="label">{% trans "Hosted Mode" %}</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-code"></i>
+            </div>
+            <div class="stat-content">
+                <div class="value">{{ integrated_count }}</div>
+                <div class="label">{% trans "Integrated Mode" %}</div>
+            </div>
+        </div>
+        {% if default_provider %}
+        <div class="dashboard-stat-card default-provider-card">
+            <div class="stat-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-content">
+                <div class="value">{{ default_provider.display_name|default:default_provider.component.name }}</div>
+                <div class="label">{% trans "Default Provider" %}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Provider Cards Grid -->
+    <div class="provider-cards-grid">
+        {% for obj in cl.result_list %}
+        <div class="provider-card"
+             data-connection-status="{{ obj.connection_status }}"
+             data-is-active="{{ obj.is_active|lower }}"
+             data-checkout-mode="{{ obj.checkout_mode }}"
+             data-component="{{ obj.component.slug }}">
+
+            <!-- Provider Logo/Icon -->
+            <a href="{% url 'admin:payment_providers_paymentprovideraccount_change' obj.id %}" class="pp-card-logo-link">
+                {% if obj.component.logo %}
+                    <div class="provider-icon provider-logo">
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ obj.component.logo.url }}" alt="{{ obj.component.name }}" loading="lazy" crossorigin="anonymous">
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="provider-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                {% endif %}
+                {% if obj.is_default %}
+                    <span class="default-badge" title="{% trans 'Default Provider' %}">
+                        <i class="fas fa-star"></i>
+                    </span>
+                {% endif %}
+            </a>
+
+            <!-- Provider Info -->
+            <div class="provider-info">
+                <h3 class="provider-name">
+                    <a href="{% url 'admin:payment_providers_paymentprovideraccount_change' obj.id %}">
+                        {{ obj.display_name|default:obj.component.name }}
+                    </a>
+                </h3>
+
+                <div class="provider-component">
+                    <span class="component-label">{% trans "Provider:" %}</span>
+                    <span class="component-value">{{ obj.component.name }}</span>
+                </div>
+
+                <div class="provider-meta">
+                    {% if obj.user %}
+                        <span class="meta-item user-meta">
+                            <i class="fas fa-user"></i>
+                            <span class="user-name">{{ obj.user.get_full_name|default:obj.user.username }}</span>
+                        </span>
+                    {% endif %}
+                    {% if obj.checkout_mode %}
+                        <span class="meta-item mode-meta">
+                            <i class="fas fa-shopping-cart"></i>
+                            {% if obj.checkout_mode == 'hosted' %}
+                                <span class="mode-badge mode-hosted">
+                                    <i class="fas fa-external-link-alt"></i> {% trans "Hosted" %}
+                                </span>
+                            {% else %}
+                                <span class="mode-badge mode-integrated">
+                                    <i class="fas fa-code"></i> {% trans "Integrated" %}
+                                </span>
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Connection Status -->
+                <div class="connection-status">
+                    {% if obj.connection_status == 'connected' %}
+                        <span class="status-badge status-connected">
+                            <i class="fas fa-check-circle"></i> {% trans "Connected" %}
+                        </span>
+                    {% elif obj.connection_status == 'error' %}
+                        <span class="status-badge status-error" title="{{ obj.connection_error }}">
+                            <i class="fas fa-exclamation-triangle"></i> {% trans "Error" %}
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-unknown">
+                            <i class="fas fa-question-circle"></i> {% trans "Unknown" %}
+                        </span>
+                    {% endif %}
+
+                    {% if obj.last_tested_at %}
+                        <span class="last-tested">
+                            {% trans "Last tested:" %} {{ obj.last_tested_at|timesince }} {% trans "ago" %}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="provider-badges">
+                    <!-- Active/Inactive Badge -->
+                    {% if obj.is_active %}
+                        <span class="badge badge-status badge-active">
+                            <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                        </span>
+                    {% else %}
+                        <span class="badge badge-status badge-inactive">
+                            <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="provider-actions">
+                <a href="{% url 'admin:payment_providers_paymentprovideraccount_change' obj.id %}"
+                   class="action-btn edit-btn"
+                   title="{% trans 'Edit' %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <button class="action-btn test-btn"
+                        data-account-id="{{ obj.id }}"
+                        title="{% trans 'Test Connection' %}">
+                    <i class="fas fa-vial"></i>
+                </button>
+                <button class="action-btn provider-toggle-btn {% if obj.is_active %}active{% else %}inactive{% endif %}"
+                        data-account-id="{{ obj.id }}"
+                        data-is-active="{{ obj.is_active|yesno:'true,false' }}"
+                        title="{% if obj.is_active %}{% trans 'Disable' %}{% else %}{% trans 'Enable' %}{% endif %}">
+                    {% if obj.is_active %}
+                        <i class="fas fa-toggle-on"></i>
+                    {% else %}
+                        <i class="fas fa-toggle-off"></i>
+                    {% endif %}
+                </button>
+                <button class="action-btn default-btn {% if obj.is_default %}is-default{% endif %}"
+                        data-account-id="{{ obj.id }}"
+                        data-is-default="{{ obj.is_default|yesno:'true,false' }}"
+                        title="{% trans 'Set as Default' %}">
+                    <i class="fas fa-star"></i>
+                </button>
+                <button class="action-btn delete-btn"
+                        data-account-id="{{ obj.id }}"
+                        title="{% trans 'Delete' %}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-providers-message">
+            <div class="empty-state">
+                <i class="fas fa-credit-card fa-4x"></i>
+                <h2>{% trans "No Payment Providers Connected" %}</h2>
+                <p>{% trans "Get started by connecting your first payment provider" %}</p>
+                <a href="{% url 'payment_providers:provider_browse' %}" class="button default pp-empty-state-btn">
+                    <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+                </a>
+                <a href="{% url 'payment_providers:wizard_step1' %}" class="button primary">
+                    <i class="fas fa-magic"></i> {% trans "Setup Your First Provider" %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination (if needed) -->
+    {% if cl.result_count > 50 %}
+    <div class="pagination">
+        {{ cl.result_count }} {% trans "providers" %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- i18n config for JS -->
+<script type="application/json" id="pp-list-config">
+{
+    "i18n": {
+        "testing": "{% trans 'Testing...' %}",
+        "setting": "{% trans 'Setting...' %}",
+        "deleting": "{% trans 'Deleting...' %}",
+        "connectionTestFailed": "{% trans 'Connection test failed' %}",
+        "failedSetDefault": "{% trans 'Failed to set default' %}",
+        "providerDeletedSuccess": "{% trans 'Provider deleted successfully' %}",
+        "failedDelete": "{% trans 'Failed to delete' %}",
+        "confirmSetDefault": "{% trans 'Set this provider as the default payment provider?' %}",
+        "confirmDelete": "{% trans 'Are you sure you want to delete this payment provider? This action cannot be undone.' %}",
+        "failedToggle": "{% trans 'Failed to toggle provider' %}",
+        "enable": "{% trans 'Enable' %}",
+        "disable": "{% trans 'Disable' %}",
+        "active": "{% trans 'Active' %}",
+        "inactive": "{% trans 'Inactive' %}"
+    }
+}
+</script>
+
+<!-- Include custom JavaScript -->
+<script src="{% static 'core/admin/js/logo-contrast.js' %}"></script>
+<script src="{% static 'payment_providers/js/admin_provider_list.js' %}"></script>
+{% endblock %}

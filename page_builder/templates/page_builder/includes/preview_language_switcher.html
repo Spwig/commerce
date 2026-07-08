@@ -1,0 +1,57 @@
+{% load i18n static %}
+{# Language Switcher for Preview View #}
+
+<div class="language-switcher" id="preview-language-switcher">
+    {% get_current_language as LANGUAGE_CODE %}
+    <button class="language-dropdown-toggle" type="button" id="languageDropdown"
+            data-action="toggle-language-dropdown" aria-expanded="false" title="{% trans 'Change Language' %}">
+        <i class="fas fa-language" style="font-size: 16px;"></i>
+        <span class="current-lang-code">{{ LANGUAGE_CODE|upper }}</span>
+        <span class="dropdown-arrow">▼</span>
+    </button>
+
+    <div class="language-dropdown-menu" id="languageDropdownMenu">
+        {% for language in languages %}
+            <button class="language-option {% if language.code == LANGUAGE_CODE %}active{% endif %}"
+                    data-action="switch-preview-language"
+                    data-lang="{{ language.code }}">
+                <span class="flag">
+                    {% if language.code == 'en' or language.code == 'en-us' %}
+                        <i class="fas fa-flag-usa"></i>
+                    {% elif language.code == 'es' %}
+                        <i class="fas fa-globe-americas"></i>
+                    {% elif language.code == 'fr' %}
+                        <i class="fas fa-globe-europe"></i>
+                    {% elif language.code == 'de' %}
+                        <i class="fas fa-globe-europe"></i>
+                    {% elif language.code == 'pt' %}
+                        <i class="fas fa-globe-americas"></i>
+                    {% elif language.code == 'zh' or language.code == 'zh-hans' %}
+                        <i class="fas fa-globe-asia"></i>
+                    {% elif language.code == 'ja' %}
+                        <i class="fas fa-globe-asia"></i>
+                    {% elif language.code == 'ar' %}
+                        <i class="fas fa-globe-africa"></i>
+                    {% elif language.code == 'ru' %}
+                        <i class="fas fa-globe-europe"></i>
+                    {% elif language.code == 'it' %}
+                        <i class="fas fa-globe-europe"></i>
+                    {% elif language.code == 'af' %}
+                        <i class="fas fa-globe-africa"></i>
+                    {% else %}
+                        <i class="fas fa-globe"></i>
+                    {% endif %}
+                </span>
+                <span class="lang-details">
+                    <span class="lang-name">{{ language.name }}</span>
+                    <span class="lang-code">{{ language.code|upper }}</span>
+                </span>
+                {% if language.code == LANGUAGE_CODE %}
+                    <span class="checkmark">✓</span>
+                {% endif %}
+            </button>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{% static 'page_builder/js/preview-language-switcher.js' %}" defer></script>

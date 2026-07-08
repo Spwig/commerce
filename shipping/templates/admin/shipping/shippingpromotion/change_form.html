@@ -1,0 +1,377 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Shipping Promotion" %}: {{ original.name }}{% else %}{% trans "Add Shipping Promotion" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'shipping/css/shippingpromotion_change_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="shippingpromotion-change-form">
+
+    {# --- HEADER --- #}
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    {% if original %}
+                        <i class="fas fa-route"></i> {% trans "Edit Shipping Promotion" %}: {{ original.name }}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Add Shipping Promotion" %}
+                    {% endif %}
+                </h1>
+                {% if original %}
+                <div class="header-meta">
+                    <span class="meta-item"><i class="fas fa-tag"></i> {{ original.get_promotion_type_display }}</span>
+                    <span class="meta-item"><i class="fas fa-sort-numeric-up"></i> {% trans "Priority" %}: {{ original.priority }}</span>
+                    <span class="meta-item"><i class="fas fa-calendar"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                    {% if original.is_active %}
+                    <span class="status-badge active">{% trans "Active" %}</span>
+                    {% else %}
+                    <span class="status-badge inactive">{% trans "Inactive" %}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="sr-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="sr-save-btn" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- FORM --- #}
+    <form method="post" id="shippingpromotion_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {# --- TAB NAVIGATION --- #}
+        {% if not is_popup %}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="conditions" role="tab" aria-selected="false">
+                <i class="fas fa-filter"></i>
+                <span class="label">{% trans "Conditions" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="restrictions" role="tab" aria-selected="false">
+                <i class="fas fa-lock"></i>
+                <span class="label">{% trans "Restrictions" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="schedule" role="tab" aria-selected="false">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="label">{% trans "Schedule" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="advanced" role="tab" aria-selected="false">
+                <i class="fas fa-sliders-h"></i>
+                <span class="label">{% trans "Advanced" %}</span>
+            </button>
+        </div>
+        {% endif %}
+
+        {# === TAB: BASIC === #}
+        <div class="admin-tab-content active" id="tab-basic" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-basic' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.field.name == 'is_active' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-action' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-bolt"></i> {% trans "Promotion Action" %}</h2>
+                    <p class="form-card-description">{% trans "Define what this promotion does to shipping costs. For percentage values, enter 0-100." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: CONDITIONS === #}
+        <div class="admin-tab-content" id="tab-conditions" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-cart' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-shopping-cart"></i> {% trans "Cart Conditions" %}</h2>
+                    <p class="form-card-description">{% trans "Leave empty for no restriction on that condition." %}</p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            {% for line in fieldset %}
+                                {% for field in line %}
+                                    {% if field.field.name == 'min_cart_value' or field.field.name == 'min_cart_weight' or field.field.name == 'min_item_count' %}
+                                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field.field }}
+                                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <div class="column">
+                            {% for line in fieldset %}
+                                {% for field in line %}
+                                    {% if field.field.name == 'max_cart_value' or field.field.name == 'max_cart_weight' or field.field.name == 'max_item_count' %}
+                                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field.field }}
+                                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if 'tab-zones' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-map-marked-alt"></i> {% trans "Geographic Restrictions" %}</h2>
+                    <p class="form-card-description">{% trans "Promotion applies only to these zones. Leave empty for all zones." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-methods' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-truck"></i> {% trans "Shipping Method Restrictions" %}</h2>
+                    <p class="form-card-description">{% trans "Promotion applies only to these methods. Leave empty for all methods." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: RESTRICTIONS === #}
+        <div class="admin-tab-content" id="tab-restrictions" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-products' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-box"></i> {% trans "Product/Category Restrictions" %}</h2>
+                    <p class="form-card-description">{% trans "Control which products/categories this promotion applies to." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-customers' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-users"></i> {% trans "Customer Restrictions" %}</h2>
+                    <p class="form-card-description">{% trans "Limit promotion to specific customer groups or first-time customers." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.field.name == 'first_time_customers_only' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: SCHEDULE === #}
+        <div class="admin-tab-content" id="tab-schedule" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-time' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-calendar-alt"></i> {% trans "Time Restrictions" %}</h2>
+                    <p class="form-card-description">{% trans "Schedule when this promotion is active. Leave empty for always active." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: ADVANCED === #}
+        <div class="admin-tab-content" id="tab-advanced" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-behavior' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-sliders-h"></i> {% trans "Promotion Behavior" %}</h2>
+                    <p class="form-card-description">{% trans "Priority determines evaluation order (higher = first). Stop further promotions prevents lower-priority promotions from being applied." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.field.name == 'stop_further_promotions' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-summary' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-list-check"></i> {% trans "Conditions Summary" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-metadata' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-clock"></i> {% trans "Metadata" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# --- HIDDEN SUBMIT ROW --- #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'shipping/js/shippingpromotion_change_form.js' %}"></script>
+{% endblock %}

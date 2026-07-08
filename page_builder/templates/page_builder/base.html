@@ -1,0 +1,200 @@
+{% load i18n static theme_tags merchant_trans %}
+<!DOCTYPE html>
+<html lang="en"{% if design_settings.force_light_mode %} data-theme="light"{% endif %}{% if site_settings %} data-error-reporting="{{ site_settings.error_reporting_enabled|yesno:"true,false" }}" data-error-reporting-js="{{ site_settings.error_reporting_include_js|yesno:"true,false" }}"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ page_title|default:"Modern Shop" }}{% endblock %}</title>
+    
+    <!-- Meta Tags -->
+    {% if page_description %}<meta name="description" content="{{ page_description }}">{% endif %}
+    {% if page_keywords %}<meta name="keywords" content="{{ page_keywords }}">{% endif %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page_title|default:'Modern Shop' }}">
+    {% if page_description %}<meta property="og:description" content="{{ page_description }}">{% endif %}
+    {% if og_image %}<meta property="og:image" content="{{ og_image.url }}">{% endif %}
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page_title|default:'Modern Shop' }}">
+    {% if page_description %}<meta name="twitter:description" content="{{ page_description }}">{% endif %}
+    {% if og_image %}<meta name="twitter:image" content="{{ og_image.url }}">{% endif %}
+    
+    <!-- Favicon -->
+    {% load core_extras %}
+    {% favicon_meta %}
+
+    {% load static %}
+
+    <!-- Preconnect to improve loading performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+    <!-- DNS prefetch for payment provider SDKs -->
+    <link rel="dns-prefetch" href="//static.airwallex.com">
+    <link rel="dns-prefetch" href="//js.stripe.com">
+    <link rel="dns-prefetch" href="//web.squarecdn.com">
+    <link rel="dns-prefetch" href="//www.paypal.com">
+    <link rel="dns-prefetch" href="//merchant.revolut.com">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- CSS Loading Order: Theme Variables -> Base -> Components -> Brand Overrides -->
+
+    <!-- 1. Theme Variables CSS (colors, typography, spacing) - MUST load first -->
+    {% if page_theme_css_url %}
+        <!-- Use page-specific theme CSS if available (passed from view) -->
+        <link rel="stylesheet" href="{{ page_theme_css_url }}" media="all">
+    {% else %}
+        <!-- Fall back to global active theme CSS -->
+        {% active_theme_css_url as theme_css %}
+        {% if theme_css %}
+            <link rel="stylesheet" href="{{ theme_css }}" media="all">
+        {% endif %}
+    {% endif %}
+
+    <!-- 2. Base CSS (global resets, typography, utility classes) -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" media="all">
+
+    <!-- 3. Platform Component CSS (product cards, buttons, cart, search - overrides base) -->
+    <link rel="stylesheet" href="{% static 'design/platform/components.css' %}" media="all">
+
+    <!-- 3. Global Animations CSS -->
+    <link rel="stylesheet" href="{% static 'core/frontend/animations.css' %}" media="all">
+
+    <!-- 4. Element-specific CSS (dynamically loaded based on page elements) -->
+    <link rel="stylesheet" href="{% static 'form_builder/css/form_frontend.css' %}" media="all">
+    {% for css_file in element_css_files %}
+    <link rel="stylesheet" href="{% static css_file %}" media="all">
+    {% endfor %}
+
+    <!-- 5. Brand/Custom Tokens from branding builder (if available) -->
+    {% if brand_css_url %}
+        <link rel="stylesheet" href="{{ brand_css_url }}" media="all">
+    {% endif %}
+
+    <!-- 6. Header/Footer Zone & Widget CSS -->
+    <link rel="stylesheet" href="{% static 'design/css/header-footer-zones.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'design/css/header-preset-zones.css' %}" media="all">
+    {% header_widget_css page=page %}
+    {% footer_widget_css page=page %}
+
+    <!-- 7. Mini-Cart Panel CSS (always needed) -->
+    <link rel="stylesheet" href="{% static 'design/css/widgets/cart.css' %}" media="all">
+
+    <!-- 8. Search Autocomplete CSS -->
+    <link rel="stylesheet" href="{% static 'search/css/search.css' %}" media="all">
+
+    <!-- Frontend Base CSS (resets, accessibility, toasts) -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/frontend-base.css' %}" media="all">
+
+    <!-- Mobile Menu CSS (fallback header/footer component styles) -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/components/mobile-menu.css' %}" media="all">
+
+    <!-- Footer Extras CSS (trust badges) -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/components/footer-extras.css' %}" media="all">
+
+    {% if cookie_consent_ctx.enabled %}
+    <!-- Cookie Consent Banner CSS -->
+    <link rel="stylesheet" href="{% static 'core/frontend/cookie_banner.css' %}" media="all">
+    {% endif %}
+
+    <!-- Additional CSS -->
+    {% block extra_css %}{% endblock %}
+    
+    {% block extra_head %}{% endblock %}
+
+    <!-- Error Reporter -->
+    <script src="{% static 'core/js/error-reporter.js' %}"></script>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">
+        {% mtrans 'Skip to main content' %}
+    </a>
+    
+    <!-- Header -->
+    {% block header %}
+        {% if not hide_header %}
+            {% render_header page=page %}
+        {% endif %}
+    {% endblock %}
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        {% block content %}
+        <!-- Render page sections -->
+        {% for section in sections %}
+            {% include 'page_builder/sections/section.html' with section=section %}
+        {% endfor %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% block footer %}
+        {% if not hide_footer %}
+            {% render_footer page=page %}
+        {% endif %}
+    {% endblock %}
+
+    <!-- Mini Cart -->
+    {% if not hide_header %}
+        {% include 'page_builder/components/mini-cart.html' %}
+    {% endif %}
+
+    <!-- JavaScript -->
+    {% block scripts %}
+        <!-- Frontend Utilities (lazy loading, cart, notifications, express checkout) -->
+        <script src="{% static 'page_builder/js/frontend-utils.js' %}"></script>
+
+        <!-- Mini Cart Module -->
+        <script src="{% static 'page_builder/js/mini-cart.js' %}" defer></script>
+
+        <!-- Element-specific JavaScript (dynamic loading) -->
+        {% for script_url in element_scripts %}
+        <script src="{{ script_url }}" defer></script>
+        {% endfor %}
+
+        <!-- Search Autocomplete JavaScript -->
+        <script src="{% static 'search/js/search-autocomplete.js' %}" defer></script>
+
+        <!-- Mobile Menu Toggle -->
+        <script src="{% static 'design/js/mobile-menu.js' %}" defer></script>
+
+        <!-- Product Card Interactions (add-to-cart, quick-view, wishlist) -->
+        <script src="{% static 'page_builder/js/product-card.js' %}" defer></script>
+        <script src="{% static 'page_builder/js/quick-view.js' %}" defer></script>
+
+        <!-- Notification Zone (announcement bar) — conditional -->
+        {% notification_zone_assets page=page %}
+    {% endblock %}
+
+    {% block extra_scripts %}{% endblock %}
+
+    {% if cookie_consent_ctx.enabled %}
+    <!-- Cookie Consent Banner -->
+    {% include "core/cookie_banner.html" %}
+    <script src="{% static 'core/frontend/cookie_banner.js' %}" defer></script>
+    {% endif %}
+
+    <!-- Store currency for JavaScript formatting (CSP-safe JSON island) -->
+    {% if site_settings %}
+    <script type="application/json" id="shop-currency-config">{"currency": "{{ site_settings.default_currency|escapejs }}"}</script>
+    <script type="application/json" id="shop-country-config">{"country": "{{ shop_default_country|escapejs }}"}</script>
+    {% endif %}
+
+    <!-- Merchant UI Translations for JavaScript -->
+    {% if js_ui_translations %}
+    <script id="ui-translations" type="application/json">
+{{ js_ui_translations|safe }}
+    </script>
+    {% endif %}
+
+    {% include 'page_builder/partials/quick_view_modal.html' %}
+</body>
+</html>

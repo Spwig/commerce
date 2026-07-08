@@ -1,0 +1,32 @@
+{% load element_tags %}<div class="eb-preview-element{% if element.id == selected_element_id %} selected{% endif %}{% if element.has_empty_preview %} eb-empty-preview{% endif %}"
+     data-element-id="{{ element.id }}"
+     data-element-type="{{ element.element_type }}"
+     data-element-order="{{ element.order }}"
+     {% if element.has_empty_preview %}title="This field has no data for the selected item. It will be empty on the frontend."{% endif %}>
+
+    {% if element.element_type == 'container' %}
+        {% include "element_builder/partials/container_preview.html" %}
+    {% else %}
+        {% render_element element %}
+    {% endif %}
+
+    {# Render children for non-containers (containers handle their own children) #}
+    {% if element.element_type != 'container' %}
+        {% with cached_children=element.cached_children %}
+        {% if cached_children %}
+        <div class="eb-preview-children">
+            {% for child in cached_children %}
+                {% include "element_builder/element_preview_wrapper.html" with element=child %}
+            {% endfor %}
+        </div>
+        {% elif element.child_elements.exists %}
+        {# Fallback if cached_children not set (shouldn't happen in preview with bindings) #}
+        <div class="eb-preview-children">
+            {% for child in element.child_elements.all %}
+                {% include "element_builder/element_preview_wrapper.html" with element=child %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+    {% endif %}
+</div>

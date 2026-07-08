@@ -1,0 +1,32 @@
+<!-- Content Section -->
+<section class="content-section section"
+         data-section-id="{{ section.id }}"
+         {% if section.settings.background_color %}style="background-color: {{ section.settings.background_color }};"{% endif %}>
+    <div class="container">
+        {% if section.settings.show_header %}
+        <div class="section-header text-center mb-12">
+            {% if section.settings.title %}
+            <h2 class="section-header__title">
+                {{ section.settings.title }}
+            </h2>
+            {% endif %}
+            {% if section.settings.subtitle %}
+            <p class="section-header__subtitle">
+                {{ section.settings.subtitle }}
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="elements-container">
+            {% for element in elements %}
+                {% include "page_builder/elements/"|add:element.element_type|add:".html" with element=element %}
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-plus-circle empty-state__icon"></i>
+                    <p class="empty-state__text">Add content elements to this section</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

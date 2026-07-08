@@ -1,0 +1,135 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Marketplace" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="{{ upgrade_server_origin }}" crossorigin>
+<link rel="dns-prefetch" href="{{ upgrade_server_origin }}">
+<link rel="stylesheet" type="text/css" href="{% static 'marketplace/css/marketplace.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="marketplace-page">
+    <div class="marketplace-header">
+        <div class="marketplace-header-text">
+            <h1><i class="fas fa-store"></i> {% trans "Marketplace" %}</h1>
+            <p>{% trans "Discover and install components for your store" %}</p>
+        </div>
+        <div class="marketplace-search">
+            <div class="marketplace-search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" id="marketplace-search" placeholder="{% trans 'Search components...' %}" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <div class="marketplace-type-tabs" id="type-tabs">
+        <button class="marketplace-tab active" data-type="">
+            {% trans "All" %}
+        </button>
+        {% for ct in component_types %}
+        <button class="marketplace-tab" data-type="{{ ct.slug }}">
+            {% if ct.icon %}<i class="fas {{ ct.icon }}"></i> {% endif %}{{ ct.name }}
+        </button>
+        {% endfor %}
+    </div>
+
+    <div class="marketplace-filters">
+        <div class="marketplace-filter-group">
+            <label>{% trans "Pricing" %}</label>
+            <select id="filter-pricing">
+                <option value="">{% trans "All" %}</option>
+                <option value="free">{% trans "Free" %}</option>
+                <option value="paid">{% trans "Paid" %}</option>
+            </select>
+        </div>
+        <div class="marketplace-filter-group">
+            <label>{% trans "Sort by" %}</label>
+            <select id="filter-sort">
+                <option value="popular">{% trans "Most Popular" %}</option>
+                <option value="newest">{% trans "Newest" %}</option>
+                <option value="rating">{% trans "Highest Rated" %}</option>
+                <option value="name">{% trans "Name" %}</option>
+            </select>
+        </div>
+        <div class="marketplace-filter-group marketplace-country-filter">
+            <label>{% trans "Country" %}</label>
+            <div class="marketplace-country-select" id="country-select-wrapper">
+                <input type="text" id="filter-country-search" placeholder="{% trans 'All Countries' %}" autocomplete="off">
+                <input type="hidden" id="filter-country" value="">
+                <span class="marketplace-country-clear marketplace-hidden" id="country-clear">&times;</span>
+                <ul class="marketplace-country-dropdown marketplace-hidden" id="country-dropdown">
+                    <li data-value="" class="marketplace-country-option">{% trans "All Countries" %}</li>
+                    {% for code, name in countries %}
+                    <li data-value="{{ code }}" class="marketplace-country-option">{{ name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="marketplace-grid" id="marketplace-grid">
+        <div class="marketplace-loading" id="marketplace-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading components..." %}</p>
+        </div>
+    </div>
+
+    <div class="marketplace-empty marketplace-hidden" id="marketplace-empty">
+        <i class="fas fa-box-open"></i>
+        <h3>{% trans "No components found" %}</h3>
+        <p>{% trans "Try adjusting your search or filters." %}</p>
+    </div>
+
+    <div class="marketplace-pagination marketplace-hidden" id="marketplace-pagination">
+        <button class="marketplace-btn marketplace-btn-secondary" id="btn-prev" disabled>
+            <i class="fas fa-chevron-left"></i> {% trans "Previous" %}
+        </button>
+        <span class="marketplace-page-info" id="page-info"></span>
+        <button class="marketplace-btn marketplace-btn-secondary" id="btn-next" disabled>
+            {% trans "Next" %} <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Quick Preview Modal -->
+<div class="admin-modal-overlay" id="preview-modal">
+    <div class="admin-modal admin-modal--md">
+        <button class="admin-modal-close" id="modal-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="marketplace-modal-content" id="modal-content">
+            <div class="marketplace-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="marketplace-config-data">
+{
+    "browseUrl": "{% url "marketplace:browse_api" %}",
+    "installUrl": "{% url "marketplace:install_ajax" %}",
+    "reviewUrl": "{% url "marketplace:review_ajax" %}",
+    "detailBaseUrl": "/{{ LANGUAGE_CODE }}/admin/marketplace/",
+    "csrfToken": "{{ csrf_token }}",
+    "strings": {
+        "installed": "{% trans 'Installed' %}",
+        "details": "{% trans 'Details' %}",
+        "purchase": "{% trans 'Purchase' %}",
+        "install": "{% trans 'Install' %}",
+        "free": "{% trans 'Free' %}",
+        "global": "{% trans 'Global' %}",
+        "country": "{% trans 'country' %}",
+        "countries": "{% trans 'countries' %}",
+        "by": "{% trans 'by' %}",
+        "failedToLoad": "{% trans 'Failed to load components' %}",
+        "failedToLoadDetails": "{% trans 'Failed to load details' %}"
+    }
+}
+</script>
+<script src="{% static 'providers_common/js/manifest-i18n.js' %}"></script>
+<script src="{% static 'marketplace/js/marketplace.js' %}"></script>
+{% endblock %}

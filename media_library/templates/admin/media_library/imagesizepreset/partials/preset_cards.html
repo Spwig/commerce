@@ -1,0 +1,75 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for preset in presets %}
+    <div class="list-row-card">
+        <div class="card-header">
+            <div>
+                <h3>
+                    <a href="{% url 'admin:media_library_imagesizepreset_change' preset.pk %}">
+                        <i class="fas fa-crop"></i> {{ preset.name }}
+                    </a>
+                </h3>
+                <div class="card-meta">
+                    <span class="badge badge-info">
+                        <i class="fas fa-expand"></i> {{ preset.width }}×{{ preset.height }}px
+                    </span>
+                    {% if preset.is_system_preset %}
+                    <span class="badge badge-primary">
+                        <i class="fas fa-lock"></i> {% trans "System" %}
+                    </span>
+                    {% else %}
+                    <span class="badge">
+                        <i class="fas fa-user"></i> {% trans "Custom" %}
+                    </span>
+                    {% endif %}
+                    {% if preset.is_active %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% else %}
+                    <span class="badge badge-secondary">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>{% trans "Crop Mode" %}:</strong>
+                    {{ preset.get_crop_mode_display }}
+                </div>
+
+                <div class="info-item">
+                    <strong>{% trans "Quality" %}:</strong>
+                    {{ preset.quality }}%
+                </div>
+
+                {% if preset.description %}
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <strong>{% trans "Description" %}:</strong>
+                    {{ preset.description|truncatewords:20 }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <a href="{% url 'admin:media_library_imagesizepreset_change' preset.pk %}" class="button small">
+                <i class="fas fa-edit"></i> {% trans "Edit" %}
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-crop"></i>
+        </div>
+        <p>{% trans "No image size presets match your filters." %}</p>
+        <p class="text-muted">{% trans "Create a preset to define standard image dimensions." %}</p>
+    </div>
+    {% endfor %}
+</div>

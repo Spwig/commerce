@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Find Your Orders" %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="mx-auto h-16 w-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mb-4">
+                <svg class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900">{% trans "Find Your Orders" %}</h1>
+            <p class="mt-2 text-gray-600">{% trans "Enter the email address you used at checkout" %}</p>
+        </div>
+
+        <!-- Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="p-4 rounded-md {% if message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800{% elif message.tags == 'success' %}bg-green-50 border border-green-200 text-green-800{% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %}">
+                    <div class="flex">
+                        <svg class="h-5 w-5 {% if message.tags == 'error' %}text-red-400{% elif message.tags == 'success' %}text-green-400{% else %}text-blue-400{% endif %} mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            {% if message.tags == 'error' %}
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            {% else %}
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            {% endif %}
+                        </svg>
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if not email_sent %}
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        {% trans "Email Address" %}
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="{% trans 'you@example.com' %}"
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
+                >
+                    {% trans "Send Me a Link" %}
+                </button>
+            </form>
+            {% else %}
+            <div class="text-center py-4">
+                <svg class="mx-auto h-12 w-12 text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <p class="text-gray-700">{% trans "Check your inbox for a link to view your orders." %}</p>
+            </div>
+            {% endif %}
+
+            <!-- Already have an account? -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">
+                    {% trans "Already have an account?" %}
+                    <a href="{% url 'account_login' %}" class="text-blue-600 hover:text-blue-800 font-medium">
+                        {% trans "Log in" %}
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

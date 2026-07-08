@@ -1,0 +1,207 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'Order Confirmed' %} - {{ site_settings.site_name|default:'Shop' }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/order-confirmation.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="confirmation">
+
+            <!-- Success Banner -->
+            <div class="confirmation__banner">
+                <div class="confirmation__icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1 class="confirmation__title">{% mtrans 'Thank you for your order!' %}</h1>
+                <p class="confirmation__order-number">
+                    {% mtrans 'Order' %} <strong>#{{ order.order_number }}</strong>
+                </p>
+                <p class="confirmation__message">
+                    {% mtrans "We've sent a confirmation email to your inbox." %}
+                </p>
+            </div>
+
+            <!-- Addresses -->
+            <div class="confirmation__card">
+                <h2 class="confirmation__card-title">{% mtrans 'Delivery Details' %}</h2>
+                <div class="confirmation__addresses">
+                    <div>
+                        <div class="confirmation__address-label">{% mtrans 'Shipping Address' %}</div>
+                        <div class="confirmation__address">
+                            {% if order.shipping_address_name %}{{ order.shipping_address_name }}<br>{% endif %}
+                            {% if order.shipping_address1 %}{{ order.shipping_address1 }}<br>{% endif %}
+                            {% if order.shipping_address2 %}{{ order.shipping_address2 }}<br>{% endif %}
+                            {% if order.shipping_city %}{{ order.shipping_city }}, {% endif %}
+                            {% if order.shipping_state %}{{ order.shipping_state }} {% endif %}
+                            {% if order.shipping_postal_code %}{{ order.shipping_postal_code }}<br>{% endif %}
+                            {% if order.shipping_country %}{{ order.shipping_country }}{% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="confirmation__address-label">{% mtrans 'Billing Address' %}</div>
+                        <div class="confirmation__address">
+                            {% if order.billing_address_name %}{{ order.billing_address_name }}<br>{% endif %}
+                            {% if order.billing_address1 %}{{ order.billing_address1 }}<br>{% endif %}
+                            {% if order.billing_address2 %}{{ order.billing_address2 }}<br>{% endif %}
+                            {% if order.billing_city %}{{ order.billing_city }}, {% endif %}
+                            {% if order.billing_state %}{{ order.billing_state }} {% endif %}
+                            {% if order.billing_postal_code %}{{ order.billing_postal_code }}<br>{% endif %}
+                            {% if order.billing_country %}{{ order.billing_country }}{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Method -->
+            {% if order.shipping_method %}
+            <div class="confirmation__card">
+                <h2 class="confirmation__card-title">{% mtrans 'Shipping Method' %}</h2>
+                <p>{{ order.shipping_method }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Order Items -->
+            <div class="confirmation__card">
+                <h2 class="confirmation__card-title">{% mtrans 'Items Ordered' %}</h2>
+                <table class="confirmation__items">
+                    <thead>
+                        <tr>
+                            <th>{% mtrans 'Product' %}</th>
+                            <th>{% mtrans 'Qty' %}</th>
+                            <th>{% mtrans 'Total' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order_items %}
+                        <tr>
+                            <td>
+                                <div class="confirmation__item-info">
+                                    <div>
+                                        <div class="confirmation__item-name">{{ item.product_name }}</div>
+                                        {% if item.variant_name %}
+                                        <div class="confirmation__item-variant">{{ item.variant_name }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Totals -->
+                <div class="confirmation__totals">
+                    <div class="confirmation__totals-row">
+                        <span>{% mtrans 'Subtotal' %}</span>
+                        <span>{{ order.subtotal }}</span>
+                    </div>
+
+                    {% if order.shipping_cost %}
+                    <div class="confirmation__totals-row">
+                        <span>{% mtrans 'Shipping' %}</span>
+                        <span>{{ order.shipping_cost }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if order.discount_amount and order.discount_amount > 0 %}
+                    <div class="confirmation__totals-row confirmation__totals-row--discount">
+                        <span>{% mtrans 'Discount' %}</span>
+                        <span>-{{ order.discount_amount }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if order.tax_amount and order.tax_amount > 0 %}
+                    <div class="confirmation__totals-row">
+                        <span>{% mtrans 'Tax' %}</span>
+                        <span>{{ order.tax_amount }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="confirmation__totals-row confirmation__totals-row--total">
+                        <span>{% mtrans 'Total' %}</span>
+                        <span>{{ order.total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Creation Prompt (for guest users in post_purchase mode) -->
+            {% if is_guest_user and account_creation_timing == 'post_purchase' %}
+            <div class="confirmation__card confirmation__card--highlight">
+                <div class="confirmation__account-prompt">
+                    <div class="confirmation__account-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2 class="confirmation__account-title">{% mtrans 'Save Your Order Details' %}</h2>
+                    <p class="confirmation__account-message">
+                        {{ account_creation_message }}
+                    </p>
+
+                    <form id="account-creation-form" class="confirmation__account-form">
+                        {% csrf_token %}
+                        <div class="confirmation__form-group">
+                            <label for="account-password">{% mtrans 'Choose a Password' %}</label>
+                            <input type="password" id="account-password" name="password"
+                                   required minlength="8" autocomplete="new-password"
+                                   class="confirmation__input"
+                                   placeholder="{% mtrans 'Minimum 8 characters' %}">
+                        </div>
+
+                        <div class="confirmation__form-group">
+                            <label for="account-password-confirm">{% mtrans 'Confirm Password' %}</label>
+                            <input type="password" id="account-password-confirm" name="password_confirm"
+                                   required minlength="8" autocomplete="new-password"
+                                   class="confirmation__input">
+                        </div>
+
+                        <button type="submit" class="btn btn--primary btn--lg" id="create-account-btn">
+                            <i class="fas fa-check"></i>
+                            {% mtrans 'Create Account' %}
+                        </button>
+
+                        <button type="button" class="btn btn--text" id="skip-account">
+                            {% mtrans 'Skip for now' %}
+                        </button>
+                    </form>
+
+                    {% if show_social_auth and social_providers %}
+                    <div class="confirmation__divider">
+                        <span>{% mtrans 'or sign up with' %}</span>
+                    </div>
+                    <div class="confirmation__social-auth">
+                        {% for provider in social_providers %}
+                        <a href="{% url 'socialaccount_signup' provider.provider %}?process=connect"
+                           class="btn btn--social btn--social--{{ provider.provider }}">
+                            <i class="fab fa-{{ provider.provider }}"></i>
+                            {{ provider.display_name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Continue Shopping -->
+            <div class="confirmation__actions">
+                <a href="{% url 'page_builder:category_list' %}" class="btn btn--primary btn--lg">
+                    <i class="fas fa-arrow-left"></i>
+                    {% mtrans 'Continue Shopping' %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'page_builder/js/order-confirmation.js' %}" defer></script>
+{% endblock %}

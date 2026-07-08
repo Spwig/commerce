@@ -1,0 +1,257 @@
+{
+  "element_type": "blog_post_carousel",
+  "name": "Blog Post Carousel",
+  "description": "Display blog posts in a sliding carousel with auto-play options",
+  "version": "1.0.1",
+  "category": "content",
+  "icon": "fas fa-images",
+  "author": "Page Builder System",
+  "tags": ["blog", "posts", "carousel", "slider", "articles"],
+  "supports_translation": true,
+  "translation_domain": "blog_post_carousel_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/blog-post-carousel.css"],
+  "scripts": [
+    "/static/page_builder/js/elements/blog-post-carousel.js"
+  ],
+  "disable_base_properties": ["text_color"],
+  "context_provider": "page_builder.context_providers.blog_post_carousel_context",
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-newspaper",
+      "order": 1,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "From Our Blog",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "string",
+              "label": "Subtitle",
+              "default": "",
+              "translatable": true
+            }
+          }
+        },
+        "source_group": {
+          "type": "property_group",
+          "label": "Post Source",
+          "columns": 1,
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "options": [
+                {"value": "dynamic", "label": "Live from Blog"},
+                {"value": "static", "label": "Manual Selection"}
+              ],
+              "default": "dynamic"
+            },
+            "source": {
+              "type": "select",
+              "label": "Post Source",
+              "options": [
+                {"value": "recent", "label": "Recent Posts"},
+                {"value": "featured", "label": "Featured Posts"},
+                {"value": "pinned", "label": "Pinned Posts"},
+                {"value": "category", "label": "From Category"}
+              ],
+              "default": "recent",
+              "show_if": {"data_source": "dynamic"}
+            },
+            "category_slug": {
+              "type": "string",
+              "label": "Category Slug",
+              "show_if": {"source": "category", "data_source": "dynamic"}
+            },
+            "max_posts": {
+              "type": "number",
+              "label": "Number of Posts",
+              "default": 8,
+              "min": 2,
+              "max": 20,
+              "show_if": {"data_source": "dynamic"}
+            }
+          }
+        },
+        "static_posts_group": {
+          "type": "property_group",
+          "label": "Static Posts",
+          "columns": 1,
+          "show_if": {"data_source": "static"},
+          "properties": {
+            "posts": {
+              "type": "array",
+              "label": "Blog Posts",
+              "full_width": true,
+              "item_schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string", "label": "Title", "translatable": true},
+                  "excerpt": {"type": "textarea", "label": "Excerpt", "translatable": true, "rows": 2},
+                  "image": {"type": "image", "label": "Featured Image"},
+                  "url": {"type": "url", "label": "Post URL", "link_selector": true},
+                  "category": {"type": "string", "label": "Category"},
+                  "date": {"type": "string", "label": "Date"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "carousel": {
+      "label": "Carousel",
+      "icon": "fas fa-sliders-h",
+      "order": 2,
+      "properties": {
+        "carousel_settings_group": {
+          "type": "property_group",
+          "label": "Carousel Settings",
+          "columns": 1,
+          "properties": {
+            "posts_per_view": {
+              "type": "select",
+              "label": "Posts Per View",
+              "options": [
+                {"value": "1", "label": "1"},
+                {"value": "2", "label": "2"},
+                {"value": "3", "label": "3"},
+                {"value": "4", "label": "4"}
+              ],
+              "default": "3"
+            }
+          }
+        },
+        "autoplay_group": {
+          "type": "property_group",
+          "label": "Autoplay",
+          "properties": {
+            "autoplay": {
+              "type": "boolean",
+              "label": "Auto Play",
+              "default": false
+            },
+            "autoplay_interval": {
+              "type": "number",
+              "label": "Interval (seconds)",
+              "default": 5,
+              "min": 2,
+              "max": 15,
+              "show_if": {"autoplay": true}
+            },
+            "pause_on_hover": {
+              "type": "boolean",
+              "label": "Pause on Hover",
+              "default": true
+            }
+          }
+        },
+        "navigation_group": {
+          "type": "property_group",
+          "label": "Navigation",
+          "properties": {
+            "infinite_loop": {
+              "type": "boolean",
+              "label": "Infinite Loop",
+              "default": true
+            },
+            "show_arrows": {
+              "type": "boolean",
+              "label": "Show Navigation Arrows",
+              "default": true
+            },
+            "show_dots": {
+              "type": "boolean",
+              "label": "Show Pagination Dots",
+              "default": true
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-eye",
+      "order": 3,
+      "properties": {
+        "style_group": {
+          "type": "property_group",
+          "label": "Card Style",
+          "properties": {
+            "card_style": {
+              "type": "select",
+              "label": "Card Style",
+              "options": [
+                {"value": "default", "label": "Default"},
+                {"value": "minimal", "label": "Minimal"},
+                {"value": "overlay", "label": "Image Overlay"}
+              ],
+              "default": "default"
+            },
+            "image_ratio": {
+              "type": "select",
+              "label": "Image Ratio",
+              "options": [
+                {"value": "16/9", "label": "16:9"},
+                {"value": "4/3", "label": "4:3"},
+                {"value": "1/1", "label": "1:1"}
+              ],
+              "default": "16/9"
+            }
+          }
+        },
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Show/Hide Elements",
+          "properties": {
+            "show_image": {"type": "boolean", "label": "Show Image", "default": true},
+            "show_excerpt": {"type": "boolean", "label": "Show Excerpt", "default": true},
+            "show_category": {"type": "boolean", "label": "Show Category", "default": true},
+            "show_date": {"type": "boolean", "label": "Show Date", "default": true}
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {"type": "string", "default": "From Our Blog", "translatable": true},
+    "subtitle": {"type": "string", "default": "", "translatable": true},
+    "data_source": {"type": "select", "default": "dynamic"},
+    "source": {"type": "select", "default": "recent"},
+    "category_slug": {"type": "string"},
+    "max_posts": {"type": "number", "default": 8},
+    "posts": {"type": "array"},
+    "posts_per_view": {"type": "select", "default": "3"},
+    "autoplay": {"type": "boolean", "default": false},
+    "autoplay_interval": {"type": "number", "default": 5},
+    "infinite_loop": {"type": "boolean", "default": true},
+    "pause_on_hover": {"type": "boolean", "default": true},
+    "show_arrows": {"type": "boolean", "default": true},
+    "show_dots": {"type": "boolean", "default": true},
+    "card_style": {"type": "select", "default": "default"},
+    "image_ratio": {"type": "select", "default": "16/9"},
+    "show_image": {"type": "boolean", "default": true},
+    "show_excerpt": {"type": "boolean", "default": true},
+    "show_category": {"type": "boolean", "default": true},
+    "show_date": {"type": "boolean", "default": true}
+  },
+  "translations": {
+    "en": {"name": "Blog Post Carousel", "description": "Display blog posts in a sliding carousel"},
+    "es": {"name": "Carrusel de Blog", "description": "Mostrar publicaciones de blog en un carrusel deslizante"},
+    "fr": {"name": "Carrousel d'Articles", "description": "Afficher les articles de blog dans un carrousel"},
+    "de": {"name": "Blog-Karussell", "description": "Blog-Beiträge in einem Karussell anzeigen"},
+    "pt": {"name": "Carrossel de Blog", "description": "Exibir posts de blog em um carrossel deslizante"},
+    "zh-hans": {"name": "博客轮播", "description": "以轮播形式显示博客文章"},
+    "ja": {"name": "ブログカルーセル", "description": "ブログ記事をカルーセルで表示"}
+  }
+}

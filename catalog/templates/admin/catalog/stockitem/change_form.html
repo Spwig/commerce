@@ -1,0 +1,244 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with product=original.product.name warehouse=original.warehouse.name %}Stock: {{ product }} @ {{ warehouse }}{% endblocktrans %}
+    {% else %}
+        {% trans "Add Stock Item" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/stockitem_change_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="stockitem-change-form">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    {% if original %}
+                        <i class="fas fa-cubes"></i>
+                        {{ original.product.name }}
+                        {% if original.variant %}<span class="variant-label">— {{ original.variant }}</span>{% endif %}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Add Stock Item" %}
+                    {% endif %}
+                </h1>
+                {% if original %}
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-warehouse"></i>
+                        {{ original.warehouse.name }}
+                    </span>
+                    {% if original.product.sku %}
+                    <span class="meta-item">
+                        <i class="fas fa-barcode"></i>
+                        {{ original.product.sku }}
+                    </span>
+                    {% endif %}
+                    <span class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        {% blocktrans with date=original.updated_at|date:"N j, Y" %}Updated {{ date }}{% endblocktrans %}
+                    </span>
+                    {% if original.is_low_stock %}
+                    <span class="si-status-badge low-stock"><i class="fas fa-exclamation-triangle"></i> {% trans "Low Stock" %}</span>
+                    {% elif original.available <= 0 %}
+                    <span class="si-status-badge out-of-stock"><i class="fas fa-times-circle"></i> {% trans "Out of Stock" %}</span>
+                    {% else %}
+                    <span class="si-status-badge in-stock"><i class="fas fa-check-circle"></i> {% trans "In Stock" %}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="si-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="si-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if original %}
+    <!-- Stock Summary Cards -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-box"></i></div>
+            <div class="value">{{ original.on_hand }}</div>
+            <div class="label">{% trans "On Hand" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-lock"></i></div>
+            <div class="value">{{ original.allocated }}</div>
+            <div class="label">{% trans "Allocated" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="value">{{ original.available }}</div>
+            <div class="label">{% trans "Available" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-bell"></i></div>
+            <div class="value">{{ original.effective_low_stock_threshold }}</div>
+            <div class="label">{% trans "Low Stock Threshold" %}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Error Banner -->
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Form -->
+    <form method="post" id="stockitem_form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="stock" role="tab" aria-selected="true">
+                <i class="fas fa-cubes"></i>
+                <span class="label">{% trans "Stock" %}</span>
+            </button>
+            {% if original %}
+            <button type="button" class="admin-tab-btn" data-tab="movements" role="tab" aria-selected="false">
+                <i class="fas fa-exchange-alt"></i>
+                <span class="label">{% trans "Movements" %}</span>
+            </button>
+            {% endif %}
+            <button type="button" class="admin-tab-btn" data-tab="timestamps" role="tab" aria-selected="false">
+                <i class="fas fa-clock"></i>
+                <span class="label">{% trans "Timestamps" %}</span>
+            </button>
+        </div>
+
+        <!-- Stock Tab -->
+        <div class="admin-tab-content active" id="tab-stock" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-product' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-link"></i> {% trans "Product & Location" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-levels' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-layer-group"></i> {% trans "Stock Levels" %}</h2>
+                    <p class="form-card-description">{% trans "On Hand: Total physical stock. Allocated: Reserved for orders. Available: On Hand - Allocated." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if original %}
+        <!-- Movements Tab -->
+        <div class="admin-tab-content" id="tab-movements" role="tabpanel">
+            {% for inline_admin_formset in inline_admin_formsets %}
+                {% if inline_admin_formset.opts.verbose_name|lower == 'stock movement' %}
+                <div class="form-card">
+                    <h2><i class="fas fa-exchange-alt"></i> {% trans "Stock Movement History" %}</h2>
+                    <p class="form-card-description">{% trans "Audit trail of all stock changes for this item." %}</p>
+                    {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% if not movement_count %}
+            <div class="form-card info-message">
+                <p><i class="fas fa-info-circle"></i> {% trans "No stock movements recorded yet." %}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Timestamps Tab -->
+        <div class="admin-tab-content" id="tab-timestamps" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-timestamps' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-clock"></i> {% trans "Timestamps" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Hidden submit row -->
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'catalog/js/stockitem_change_form.js' %}"></script>
+{% endblock %}

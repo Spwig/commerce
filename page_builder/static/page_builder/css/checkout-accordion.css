@@ -1,0 +1,192 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* =============================================================================
+   Checkout Accordion Template
+   Collapsible steps on a single page with order summary sidebar.
+
+   Mobile-First Responsive Design
+   Breakpoints (from theme tokens.json):
+   - Mobile:  Default (no media query)
+   - SM:      640px (theme sm breakpoint)
+   - MD:      768px (theme md breakpoint)
+   - LG:      1024px (theme lg breakpoint)
+   ============================================================================= */
+
+/* Layout - Mobile First */
+.checkout-container--accordion {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--theme-space-4, 1rem);
+    padding: 0 var(--theme-space-3, 0.75rem);
+    padding-bottom: var(--theme-space-6, 1.5rem);
+}
+
+@media (min-width: 768px) {
+    .checkout-container--accordion {
+        grid-template-columns: 1fr 380px;
+        gap: var(--theme-space-8, 2rem);
+        padding: 0 var(--theme-space-4, 1rem);
+        padding-bottom: var(--theme-space-8, 2rem);
+    }
+}
+
+/* Accordion Steps - Mobile First */
+.checkout-container--accordion .checkout-step {
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-base, 0.5rem);
+    margin-bottom: var(--theme-space-3, 0.75rem);
+    overflow: hidden;
+    background: var(--theme-color-surface, #fff);
+}
+
+@media (min-width: 768px) {
+    .checkout-container--accordion .checkout-step {
+        border-radius: var(--theme-radius-lg, 0.75rem);
+        margin-bottom: var(--theme-space-4, 1rem);
+    }
+}
+
+.checkout-container--accordion .checkout-step__header {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+    cursor: pointer;
+    background: var(--theme-color-surface, #fff);
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+@media (min-width: 768px) {
+    .checkout-container--accordion .checkout-step__header {
+        gap: var(--theme-space-3, 0.75rem);
+        padding: var(--theme-space-4, 1rem) var(--theme-space-6, 1.5rem);
+    }
+}
+
+.checkout-container--accordion .checkout-step__header:hover {
+    background: var(--theme-color-background-secondary, #f9fafb);
+}
+
+/* Step number - Mobile First (smaller on mobile) */
+.checkout-container--accordion .checkout-step__number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: var(--theme-color-border, #e5e7eb);
+    color: var(--theme-color-text-muted, #6b7280);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@media (min-width: 640px) {
+    .checkout-container--accordion .checkout-step__number {
+        width: 2rem;
+        height: 2rem;
+        font-size: var(--theme-font-size-sm, 0.875rem);
+    }
+}
+
+/* Step title - Mobile First */
+.checkout-container--accordion .checkout-step__header h2 {
+    flex: 1;
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin: 0;
+}
+
+@media (min-width: 640px) {
+    .checkout-container--accordion .checkout-step__header h2 {
+        font-size: var(--theme-font-size-base, 1rem);
+    }
+}
+
+/* Step summary - Mobile First (hidden on mobile) */
+.checkout-container--accordion .checkout-step__summary {
+    display: none;
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    max-width: 200px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+    .checkout-container--accordion .checkout-step__summary {
+        display: block;
+    }
+}
+
+.checkout-container--accordion .checkout-step__toggle {
+    color: var(--theme-color-text-muted, #6b7280);
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+/* Step body - Mobile First */
+.checkout-container--accordion .checkout-step__body {
+    padding: 0 var(--theme-space-4, 1rem) var(--theme-space-4, 1rem);
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .checkout-container--accordion .checkout-step__body {
+        padding: 0 var(--theme-space-6, 1.5rem) var(--theme-space-6, 1.5rem);
+    }
+}
+
+/* Active step */
+.checkout-container--accordion .checkout-step--active .checkout-step__number {
+    background: var(--theme-color-primary, #2563eb);
+    color: var(--theme-color-text-inverse, #fff);
+}
+
+.checkout-container--accordion .checkout-step--active .checkout-step__body {
+    display: block;
+}
+
+.checkout-container--accordion .checkout-step--active .checkout-step__toggle {
+    transform: rotate(180deg);
+}
+
+/* Completed step */
+.checkout-container--accordion .checkout-step--completed .checkout-step__number {
+    background: var(--theme-color-success, #059669);
+    color: var(--theme-color-text-inverse, #fff);
+}
+
+.checkout-container--accordion .checkout-step--completed .checkout-step__number::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 0.7rem;
+}
+
+.checkout-container--accordion .checkout-step--completed .checkout-step__number span {
+    display: none;
+}
+
+/* Disabled step */
+.checkout-container--accordion .checkout-step--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.checkout-container--accordion .checkout-step--disabled .checkout-step__header {
+    cursor: default;
+}
+
+/* Step actions */
+.checkout-container--accordion .checkout-step__actions {
+    margin-top: var(--theme-space-6, 1.5rem);
+    display: flex;
+    justify-content: flex-end;
+}

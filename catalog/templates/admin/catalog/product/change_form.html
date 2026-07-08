@@ -1,0 +1,2082 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_readonly %}
+
+{% block title %}{% if original %}{% trans "Edit Product" %}: {{ original.name }}{% else %}{% trans "Add New Product" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/admin_product_form.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/admin_attribute_cards.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/admin_variant_cards.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/admin_configurator_cards.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/admin_booking_cards.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+<link rel="stylesheet" href="{% static 'seo_generator/admin/seo_generator.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/ckeditor_media_library.css' %}">
+<link rel="stylesheet" href="{% static 'custom_fields/css/custom_fields_admin.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header with Save Actions -->
+    <div class="product-admin-header">
+        <div class="header-title">
+            <h1>
+                {% if original %}
+                    {% with primary_image=original.images.all.0 %}
+                        {% if primary_image %}
+                            <img src="{{ primary_image.thumbnail_small }}" alt="{{ original.name }}" class="header-thumbnail">
+                        {% else %}
+                            <i class="fas fa-box"></i>
+                        {% endif %}
+                    {% endwith %}
+                    {% trans "Edit Product" %}: {{ original.name }}
+                {% else %}
+                    <i class="fas fa-plus"></i> {% trans "Add New Product" %}
+                {% endif %}
+            </h1>
+            {% if original %}
+                <div class="header-meta">
+                    <span class="status-badge status-{{ original.status }}" id="product-status-badge"
+                          data-saved-status="{{ original.get_status_display }}"
+                          data-saved-class="status-{{ original.status }}">
+                        {{ original.get_status_display }}
+                    </span>
+                    <span class="meta-item"><i class="fas fa-barcode"></i> SKU: {{ original.sku }}</span>
+                    <span class="meta-item"><i class="fas fa-calendar"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                    {% if original.status == 'published' %}
+                        <a href="{{ original.get_absolute_url }}" class="meta-item view-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> {% trans "View on Site" %}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="submit" form="product-form" class="util-btn" name="_save" title="{% trans 'Save and return to product list' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabbed Navigation -->
+    <div class="admin-tabs" role="tablist" aria-label="{% trans 'Product sections' %}">
+        <button class="admin-tab-btn active" data-tab="basic-info" role="tab" aria-selected="true" aria-controls="panel-basic-info" id="tab-basic-info">
+            <i class="fas fa-info-circle"></i>
+            <span class="label">{% trans "Basic Info" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="media" role="tab" aria-selected="false" aria-controls="panel-media" id="tab-media">
+            <i class="fas fa-images"></i>
+            <span class="label">{% trans "Media" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="pricing" role="tab" aria-selected="false" aria-controls="panel-pricing" id="tab-pricing">
+            <i class="fas fa-dollar-sign"></i>
+            <span class="label">{% trans "Pricing" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="inventory" role="tab" aria-selected="false" aria-controls="panel-inventory" id="tab-inventory">
+            <i class="fas fa-boxes"></i>
+            <span class="label">{% trans "Inventory" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="seo" role="tab" aria-selected="false" aria-controls="panel-seo" id="tab-seo">
+            <i class="fas fa-search"></i>
+            <span class="label">{% trans "SEO" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="advanced" role="tab" aria-selected="false" aria-controls="panel-advanced" id="tab-advanced">
+            <i class="fas fa-cog"></i>
+            <span class="label">{% trans "Advanced" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="subscriptions" role="tab" aria-selected="false" aria-controls="panel-subscriptions" id="tab-subscriptions">
+            <i class="fas fa-sync-alt"></i>
+            <span class="label">{% trans "Subscriptions" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="variations" data-show-when="product_type" data-show-values="variable" role="tab" aria-selected="false" aria-controls="panel-variations" id="tab-variations">
+            <i class="fas fa-layer-group"></i>
+            <span class="label">{% trans "Variations" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="bundle-items" data-show-when="product_type" data-show-values="bundle" role="tab" aria-selected="false" aria-controls="panel-bundle-items" id="tab-bundle-items">
+            <i class="fas fa-boxes"></i>
+            <span class="label">{% trans "Bundle Items" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="gift-card" data-show-when="product_type" data-show-values="gift_card" role="tab" aria-selected="false" aria-controls="panel-gift-card" id="tab-gift-card">
+            <i class="fas fa-gift"></i>
+            <span class="label">{% trans "Gift Card" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="digital-assets" role="tab" aria-selected="false" aria-controls="panel-digital-assets" id="tab-digital-assets">
+            <i class="fas fa-file-download"></i>
+            <span class="label">{% trans "Digital Assets" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="licensing" role="tab" aria-selected="false" aria-controls="panel-licensing" id="tab-licensing">
+            <i class="fas fa-key"></i>
+            <span class="label">{% trans "Licensing" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="customization" role="tab" aria-selected="false" aria-controls="panel-customization" id="tab-customization">
+            <i class="fas fa-paint-brush"></i>
+            <span class="label">{% trans "Customization" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="configuration" data-show-when="product_type" data-show-values="configurable" role="tab" aria-selected="false" aria-controls="panel-configuration" id="tab-configuration">
+            <i class="fas fa-sliders-h"></i>
+            <span class="label">{% trans "Configuration" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="3d-viewer" data-show-when="product_type" data-show-values="configurable" role="tab" aria-selected="false" aria-controls="panel-3d-viewer" id="tab-3d-viewer">
+            <i class="fas fa-cube"></i>
+            <span class="label">{% trans "3D Viewer" %}</span>
+        </button>
+        <button class="admin-tab-btn conditional-tab hidden" data-tab="booking" data-show-when="product_type" data-show-values="booking" role="tab" aria-selected="false" aria-controls="panel-booking" id="tab-booking">
+            <i class="fas fa-calendar-check"></i>
+            <span class="label">{% trans "Booking" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="dependencies" role="tab" aria-selected="false" aria-controls="panel-dependencies" id="tab-dependencies">
+            <i class="fas fa-link"></i>
+            <span class="label">{% trans "Dependencies" %}</span>
+        </button>
+        {% if has_custom_fields %}
+        <button class="admin-tab-btn" data-tab="custom-fields" role="tab" aria-selected="false" aria-controls="panel-custom-fields" id="tab-custom-fields">
+            <i class="fas fa-sliders-h"></i>
+            <span class="label">{% trans "Custom Fields" %}</span>
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" id="product-form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Display Form Errors -->
+        {% if adminform.form.errors or adminform.form.non_field_errors %}
+        <div class="form-errors-banner">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="error-content">
+                <h3>{% trans "Please correct the errors below" %}</h3>
+                {% if adminform.form.non_field_errors %}
+                    <ul class="errorlist">
+                        {% for error in adminform.form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if adminform.form.errors %}
+                    <ul class="errorlist">
+                        {% for field, errors in adminform.form.errors.items %}
+                            {% if field != '__all__' %}
+                                <li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Display Inline Formset Errors -->
+        {% for inline_admin_formset in inline_admin_formsets %}
+            {% if inline_admin_formset.formset.non_form_errors %}
+                <div class="form-errors-banner">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>{{ inline_admin_formset.opts.verbose_name_plural|title }} {% trans "Errors" %}</h3>
+                        <ul class="errorlist">
+                            {% for error in inline_admin_formset.formset.non_form_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+            {% comment %}Display individual form errors from the formset{% endcomment %}
+            {% for form in inline_admin_formset.formset %}
+                {% if form.errors and not form.errors.as_data|length == 0 %}
+                    <div class="form-errors-banner">
+                        <div class="error-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="error-content">
+                            <h3>{{ inline_admin_formset.opts.verbose_name|title }} #{{ forloop.counter }} {% trans "Errors" %}</h3>
+                            <ul class="errorlist">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
+        <!-- Tab Content Panels -->
+        <div class="tab-content">
+            <!-- Basic Info Tab -->
+            <div class="tab-panel active" data-panel="basic-info" role="tabpanel" id="panel-basic-info" aria-labelledby="tab-basic-info">
+                <div class="form-card">
+                    <h2>{% trans "Product Information" %}</h2>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.name.label_tag }}
+                                {{ adminform.form.name }}
+                                {% if adminform.form.name.help_text %}
+                                    <p class="help">{{ adminform.form.name.help_text }}</p>
+                                {% endif %}
+                                {% if adminform.form.name.errors %}
+                                    <p class="error">{{ adminform.form.name.errors }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.slug.label_tag }}
+                                {{ adminform.form.slug }}
+                                {% if adminform.form.slug.help_text %}
+                                    <p class="help">{{ adminform.form.slug.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.sku.label_tag }}
+                                {{ adminform.form.sku }}
+                                {% if adminform.form.sku.help_text %}
+                                    <p class="help">{{ adminform.form.sku.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.product_type.label_tag }}
+                                {{ adminform.form.product_type }}
+                                {% if adminform.form.product_type.help_text %}
+                                    <p class="help">{{ adminform.form.product_type.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.status.label_tag }}
+                                {{ adminform.form.status }}
+                                {% if adminform.form.status.help_text %}
+                                    <p class="help">{{ adminform.form.status.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.category.label_tag }}
+                                {{ adminform.form.category }}
+                                {% if adminform.form.category.help_text %}
+                                    <p class="help">{{ adminform.form.category.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.brand.label_tag }}
+                                {{ adminform.form.brand }}
+                                {% if adminform.form.brand.help_text %}
+                                    <p class="help">{{ adminform.form.brand.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row checkbox-row">
+                                {{ adminform.form.is_featured }}
+                                {{ adminform.form.is_featured.label_tag }}
+                                {% if adminform.form.is_featured.help_text %}
+                                    <p class="help">{{ adminform.form.is_featured.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row checkbox-row" id="is-digital-row">
+                                {{ adminform.form.is_digital }}
+                                {{ adminform.form.is_digital.label_tag }}
+                                {% if adminform.form.is_digital.help_text %}
+                                    <p class="help">{{ adminform.form.is_digital.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row checkbox-row">
+                                {{ adminform.form.hide_from_storefront }}
+                                {{ adminform.form.hide_from_storefront.label_tag }}
+                                {% if adminform.form.hide_from_storefront.help_text %}
+                                    <p class="help">{{ adminform.form.hide_from_storefront.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if configurator_parent_products %}
+                    <div class="form-card component-usage-card">
+                        <h2><i class="fas fa-puzzle-piece"></i> {% trans "Configurator Component Usage" %}</h2>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "This product is used as a component option in the following configurable products. Use the 'Hide from Storefront' checkbox above to make it available only as a configurator option." %}
+                        </p>
+                        <div class="component-usage-list">
+                            {% for parent in configurator_parent_products %}
+                            <a href="{% url 'admin:catalog_product_change' parent.id %}" class="component-usage-item">
+                                <div class="component-usage-item__icon">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <div class="component-usage-item__info">
+                                    <span class="component-usage-item__name">{{ parent.name }}</span>
+                                    <span class="component-usage-item__slots">
+                                        {% for slot_name in parent.slot_names %}
+                                            <span class="component-usage-item__slot-badge">{{ slot_name }}</span>
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                                <i class="fas fa-external-link-alt component-usage-item__link"></i>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Product Descriptions Section -->
+                    <div class="form-card">
+                        <h2>{% trans "Product Descriptions" %}</h2>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Short description appears in product listings. Full description shows on the product page. Click the globe icon to translate into other languages." %}
+                        </p>
+
+                        <div class="form-row">
+                            {{ adminform.form.short_description.label_tag }}
+                            {{ adminform.form.short_description }}
+                            {% if adminform.form.short_description.help_text %}
+                                <p class="help">{{ adminform.form.short_description.help_text }}</p>
+                            {% endif %}
+                            {% if adminform.form.short_description.errors %}
+                                <p class="error">{{ adminform.form.short_description.errors }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.full_description.label_tag }}
+                            {{ adminform.form.full_description }}
+                            {% if adminform.form.full_description.help_text %}
+                                <p class="help">{{ adminform.form.full_description.help_text }}</p>
+                            {% endif %}
+                            {% if adminform.form.full_description.errors %}
+                                <p class="error">{{ adminform.form.full_description.errors }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Tab -->
+            <div class="tab-panel" data-panel="media" role="tabpanel" id="panel-media" aria-labelledby="tab-media">
+                <div class="form-card">
+                    <h2>{% trans "Product Images" %}</h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Drag images to reorder. The first image will be used as the primary product image on listings and cards." %}
+                    </p>
+
+                    <div id="product-images-manager">
+                        <!-- Image cards will be rendered here -->
+                        <div class="product-images-grid" id="product-images-grid">
+                            {% if original and original.images.all %}
+                                {% for image in original.images.all %}
+                                <div class="product-image-card" data-image-id="{{ image.id }}" data-media-asset-id="{{ image.media_asset.id }}">
+                                    <div class="image-card-header">
+                                        <i class="fas fa-grip-vertical drag-handle"></i>
+                                        {% if image.is_primary %}
+                                            <span class="primary-badge"><i class="fas fa-star"></i> {% trans "Primary" %}</span>
+                                        {% endif %}
+                                        <button type="button" class="image-card-delete" data-image-id="{{ image.id }}" aria-label="{% trans 'Delete image' %}">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="image-card-preview">
+                                        <img src="{{ image.thumbnail_medium }}" alt="{{ image.alt_text|default:original.name }}">
+                                    </div>
+                                    <div class="image-card-details">
+                                        <div class="form-row">
+                                            <label for="alt_text_{{ image.id }}">{% trans "Alt Text" %}</label>
+                                            <input type="text"
+                                                   id="alt_text_{{ image.id }}"
+                                                   name="image_{{ image.id }}_alt_text"
+                                                   value="{{ image.alt_text }}"
+                                                   placeholder="{{ image.media_asset.alt_text|default:original.name }}"
+                                                   class="image-alt-input">
+                                        </div>
+                                        <div class="image-card-toggles">
+                                            <label class="toggle-label" for="image_{{ image.id }}_show_in_gallery">
+                                                <input type="checkbox"
+                                                       id="image_{{ image.id }}_show_in_gallery"
+                                                       name="image_{{ image.id }}_show_in_gallery"
+                                                       {% if image.show_in_gallery %}checked{% endif %}
+                                                       class="image-toggle">
+                                                <span>{% trans "Show in Gallery" %}</span>
+                                            </label>
+                                            <label class="toggle-label" for="image_{{ image.id }}_show_in_listing">
+                                                <input type="checkbox"
+                                                       id="image_{{ image.id }}_show_in_listing"
+                                                       name="image_{{ image.id }}_show_in_listing"
+                                                       {% if image.show_in_listing %}checked{% endif %}
+                                                       class="image-toggle">
+                                                <span>{% trans "Show in Listing" %}</span>
+                                            </label>
+                                            <label class="toggle-label" for="image_{{ image.id }}_is_primary">
+                                                <input type="checkbox"
+                                                       id="image_{{ image.id }}_is_primary"
+                                                       name="image_{{ image.id }}_is_primary"
+                                                       {% if image.is_primary %}checked{% endif %}
+                                                       class="image-primary-toggle"
+                                                       data-image-id="{{ image.id }}">
+                                                <span>{% trans "Set as Primary" %}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-images-placeholder">
+                                    <i class="fas fa-images"></i>
+                                    <p>{% trans "No images added yet" %}</p>
+                                    <p class="help">{% trans "Click the button below to add images from your media library" %}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="button" class="button default" id="add-media-btn">
+                            <i class="fas fa-plus"></i> {% trans "Add Images from Media Library" %}
+                        </button>
+                    </div>
+
+                    <!-- Hidden field to store images data for submission -->
+                    <input type="hidden" name="product_images_data" id="product-images-data">
+                </div>
+
+                <div class="form-card">
+                    <h2>{% trans "Gallery Settings" %}</h2>
+                    <div class="form-row">
+                        <div class="field-wrapper">
+                            {{ adminform.form.gallery_type.label_tag }}
+                            {{ adminform.form.gallery_type }}
+                            {% if adminform.form.gallery_type.help_text %}
+                                <p class="help">{{ adminform.form.gallery_type.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Tab -->
+            <div class="tab-panel" data-panel="pricing" role="tabpanel" id="panel-pricing" aria-labelledby="tab-pricing">
+                {% if adminform.form.pricing_strategy %}
+                <div class="form-card">
+                    <h2>{% trans "Pricing Strategy" %}</h2>
+                    <p class="help-text">{{ adminform.form.pricing_strategy.help_text }}</p>
+                    <div class="form-row">
+                        <label for="{{ adminform.form.pricing_strategy.id_for_label }}">{{ adminform.form.pricing_strategy.label }}</label>
+                        {{ adminform.form.pricing_strategy }}
+                        {% if adminform.form.pricing_strategy.errors %}
+                            <p class="error">{{ adminform.form.pricing_strategy.errors }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="form-card">
+                    <h2>{% trans "Regular Pricing" %}</h2>
+                    <div class="pricing-layout">
+                        <div class="price-row">
+                            <label for="id_price_0">{{ adminform.form.price.label }}</label>
+                            <div class="money-field-group">
+                                <div>
+                                    <label class="money-label" for="id_price_0">{% trans "Amount" %}</label>
+                                    <input type="number" name="price_0" value="{{ adminform.form.price.value|money_amount }}" step="0.01" id="id_price_0" {% if adminform.form.price.field.required %}required{% endif %}>
+                                </div>
+                                <div>
+                                    <label class="money-label" for="id_price_1">{% trans "Currency" %}</label>
+                                    {% with price_currency=adminform.form.price.value|money_currency %}
+                                    <select name="price_1" id="id_price_1" {% if adminform.form.price.field.required %}required{% endif %}>
+                                        {% for code, name in adminform.form.price.field.widget.widgets.1.choices %}
+                                            <option value="{{ code }}" {% if price_currency == code %}selected{% endif %}>{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            {% if adminform.form.price.help_text %}
+                                <p class="help">{{ adminform.form.price.help_text }}</p>
+                            {% endif %}
+                            {% if adminform.form.price.errors %}
+                                <p class="error">{{ adminform.form.price.errors }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="price-row">
+                            <label for="id_cost_0">{{ adminform.form.cost.label }}</label>
+                            <div class="money-field-group">
+                                <div>
+                                    <label class="money-label" for="id_cost_0">{% trans "Amount" %}</label>
+                                    <input type="number" name="cost_0" value="{{ adminform.form.cost.value|money_amount }}" step="0.01" id="id_cost_0" {% if adminform.form.cost.field.required %}required{% endif %}>
+                                </div>
+                                <div>
+                                    <label class="money-label" for="id_cost_1">{% trans "Currency" %}</label>
+                                    {% with cost_currency=adminform.form.cost.value|money_currency %}
+                                    <select name="cost_1" id="id_cost_1" {% if adminform.form.cost.field.required %}required{% endif %}>
+                                        {% for code, name in adminform.form.cost.field.widget.widgets.1.choices %}
+                                            <option value="{{ code }}" {% if cost_currency == code %}selected{% endif %}>{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            {% if adminform.form.cost.help_text %}
+                                <p class="help">{{ adminform.form.cost.help_text }}</p>
+                            {% endif %}
+                            {% if adminform.form.cost.errors %}
+                                <p class="error">{{ adminform.form.cost.errors }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card bundle-pricing-section{% if not original or original.product_type != 'bundle' %} product-form-hidden{% endif %}" id="bundle-pricing-section">
+                    <h2>{% trans "Bundle Pricing" %}</h2>
+                    <p class="help-text">{% trans "Configure how the bundle price is calculated. Choose 'Fixed Price' to use the price field above, 'Percentage Discount' to discount component sum, or 'Sum of Components' to show total of all components." %}</p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.bundle_pricing_strategy.label_tag }}
+                                {{ adminform.form.bundle_pricing_strategy }}
+                                {% if adminform.form.bundle_pricing_strategy.help_text %}
+                                    <p class="help">{{ adminform.form.bundle_pricing_strategy.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.bundle_discount_percentage.label_tag }}
+                                {{ adminform.form.bundle_discount_percentage }}
+                                {% if adminform.form.bundle_discount_percentage.help_text %}
+                                    <p class="help">{{ adminform.form.bundle_discount_percentage.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>{% trans "Sale Settings" %}</h2>
+                    <p class="help-text">{% trans "Configure a sale discount for this product. The sale will automatically activate/deactivate based on the dates you set." %}</p>
+                    <div class="pricing-layout">
+                        <div class="sale-fields-group">
+                            <div class="sale-field">
+                                <label for="{{ adminform.form.sale_type.id_for_label }}">{{ adminform.form.sale_type.label }}</label>
+                                {{ adminform.form.sale_type }}
+                                {% if adminform.form.sale_type.help_text %}
+                                    <p class="help">{{ adminform.form.sale_type.help_text }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="sale-field">
+                                <label for="{{ adminform.form.sale_value.id_for_label }}">{{ adminform.form.sale_value.label }}</label>
+                                {{ adminform.form.sale_value }}
+                                {% if adminform.form.sale_value.help_text %}
+                                    <p class="help">{{ adminform.form.sale_value.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    <label for="{{ adminform.form.sale_start_date.id_for_label }}">{{ adminform.form.sale_start_date.label }}</label>
+                                    {{ adminform.form.sale_start_date }}
+                                    {% if adminform.form.sale_start_date.help_text %}
+                                        <p class="help">{{ adminform.form.sale_start_date.help_text }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="form-row">
+                                    <label for="{{ adminform.form.sale_end_date.id_for_label }}">{{ adminform.form.sale_end_date.label }}</label>
+                                    {{ adminform.form.sale_end_date }}
+                                    {% if adminform.form.sale_end_date.help_text %}
+                                        <p class="help">{{ adminform.form.sale_end_date.help_text }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-Currency Pricing Inline -->
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% if inline_admin_formset.opts.verbose_name == 'Currency-Specific Price' %}
+                        <div class="form-card">
+                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Inventory Tab -->
+            <div class="tab-panel" data-panel="inventory" role="tabpanel" id="panel-inventory" aria-labelledby="tab-inventory">
+                <div class="form-card">
+                    <h2>{% trans "Stock Management" %}</h2>
+
+                    <!-- Help text - conditional based on multi-warehouse mode and product type -->
+                    {% if original and original.product_type == 'variable' %}
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "For Variable Products, inventory is managed in the Variations tab for each variation." %}
+                        </p>
+                    {% elif enable_multi_warehouse %}
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Multi-warehouse mode is enabled. Stock levels for each warehouse are configured in the 'Stock Items' inline section below after saving the product." %}
+                        </p>
+                    {% else %}
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Simplified stock management mode. Enter the total stock quantity below. To enable multi-warehouse inventory tracking, go to Store Settings > Inventory." %}
+                        </p>
+                    {% endif %}
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row checkbox-row">
+                                {{ adminform.form.track_inventory }}
+                                {{ adminform.form.track_inventory.label_tag }}
+                                {% if adminform.form.track_inventory.help_text %}
+                                    <p class="help">{{ adminform.form.track_inventory.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.low_stock_threshold.label_tag }}
+                                {{ adminform.form.low_stock_threshold }}
+                                {% if adminform.form.low_stock_threshold.help_text %}
+                                    <p class="help">{{ adminform.form.low_stock_threshold.help_text }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Simple Stock Quantity - Only shown when multi-warehouse is disabled and not a variable product -->
+                            {% if not enable_multi_warehouse and not original.product_type == 'variable' %}
+                                <div class="form-row" id="simple-stock-row">
+                                    <label for="id_simple_stock_quantity">{% trans "Stock Quantity" %}</label>
+                                    <input type="number"
+                                           name="simple_stock_quantity"
+                                           id="id_simple_stock_quantity"
+                                           value="{{ simple_stock_quantity|default:0 }}"
+                                           min="0"
+                                           step="1"
+                                           class="vIntegerField">
+                                    <p class="help">{% trans "Total quantity available for this product in your main warehouse" %}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="column">
+                            <div class="form-row checkbox-row">
+                                {{ adminform.form.allow_backorders }}
+                                {{ adminform.form.allow_backorders.label_tag }}
+                                {% if adminform.form.allow_backorders.help_text %}
+                                    <p class="help">{{ adminform.form.allow_backorders.help_text }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Current Stock Display - Only for existing products in simple mode and not variable products -->
+                            {% if not enable_multi_warehouse and original and not original.product_type == 'variable' %}
+                                <div class="form-row">
+                                    <div class="stock-status-box">
+                                        <strong class="stock-status-title">
+                                            <i class="fas fa-warehouse"></i> {% trans "Current Stock Status" %}
+                                        </strong>
+                                        <p class="stock-status-text">
+                                            <span class="stock-quantity">{{ simple_stock_quantity|default:0 }}</span>
+                                            {% trans "units in stock" %}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>{% trans "Physical Attributes" %}</h2>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.weight.label_tag }}
+                                {{ adminform.form.weight }}
+                                {% if adminform.form.weight.help_text %}
+                                    <p class="help">{{ adminform.form.weight.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.length.label_tag }}
+                                {{ adminform.form.length }}
+                                {% if adminform.form.length.help_text %}
+                                    <p class="help">{{ adminform.form.length.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.width.label_tag }}
+                                {{ adminform.form.width }}
+                                {% if adminform.form.width.help_text %}
+                                    <p class="help">{{ adminform.form.width.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.height.label_tag }}
+                                {{ adminform.form.height }}
+                                {% if adminform.form.height.help_text %}
+                                    <p class="help">{{ adminform.form.height.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-barcode"></i>
+                        {% trans "Product Identifiers" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Standard product codes used for marketplace listings, inventory systems, and point-of-sale. These help customers find your products across different platforms." %}
+                    </p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row identifier-field">
+                                <label for="{{ adminform.form.gtin.id_for_label }}">
+                                    {{ adminform.form.gtin.label }}
+                                    <span class="field-badge">Global</span>
+                                </label>
+                                {{ adminform.form.gtin }}
+                                {% if adminform.form.gtin.help_text %}
+                                    <p class="help">{{ adminform.form.gtin.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row identifier-field">
+                                <label for="{{ adminform.form.ean.id_for_label }}">
+                                    {{ adminform.form.ean.label }}
+                                    <span class="field-badge">Europe</span>
+                                </label>
+                                {{ adminform.form.ean }}
+                                {% if adminform.form.ean.help_text %}
+                                    <p class="help">{{ adminform.form.ean.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row identifier-field">
+                                <label for="{{ adminform.form.upc.id_for_label }}">
+                                    {{ adminform.form.upc.label }}
+                                    <span class="field-badge">USA</span>
+                                </label>
+                                {{ adminform.form.upc }}
+                                {% if adminform.form.upc.help_text %}
+                                    <p class="help">{{ adminform.form.upc.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row identifier-field">
+                                <label for="{{ adminform.form.isbn.id_for_label }}">
+                                    {{ adminform.form.isbn.label }}
+                                    <span class="field-badge">Books</span>
+                                </label>
+                                {{ adminform.form.isbn }}
+                                {% if adminform.form.isbn.help_text %}
+                                    <p class="help">{{ adminform.form.isbn.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row identifier-field">
+                                <label for="{{ adminform.form.asin.id_for_label }}">
+                                    {{ adminform.form.asin.label }}
+                                    <span class="field-badge">Amazon</span>
+                                </label>
+                                {{ adminform.form.asin }}
+                                {% if adminform.form.asin.help_text %}
+                                    <p class="help">{{ adminform.form.asin.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row identifier-field">
+                                <label for="{{ adminform.form.mpn.id_for_label }}">
+                                    {{ adminform.form.mpn.label }}
+                                    <span class="field-badge">Manufacturer</span>
+                                </label>
+                                {{ adminform.form.mpn }}
+                                {% if adminform.form.mpn.help_text %}
+                                    <p class="help">{{ adminform.form.mpn.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-globe"></i>
+                        {% trans "International Shipping / Customs" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Required for international shipments. Products without this data cannot be shipped outside the origin country." %}
+                        <a href="https://hts.usitc.gov/" target="_blank" rel="noopener">
+                            {% trans "Look up HS codes" %} <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row customs-field required-field">
+                                <label for="{{ adminform.form.hs_code.id_for_label }}">
+                                    {{ adminform.form.hs_code.label }}
+                                    <span class="required-badge">Required for International</span>
+                                </label>
+                                {{ adminform.form.hs_code }}
+                                {% if adminform.form.hs_code.help_text %}
+                                    <p class="help">{{ adminform.form.hs_code.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row customs-field required-field">
+                                <label for="{{ adminform.form.country_of_origin.id_for_label }}">
+                                    {{ adminform.form.country_of_origin.label }}
+                                    <span class="required-badge">Required for International</span>
+                                </label>
+                                {{ adminform.form.country_of_origin }}
+                                {% if adminform.form.country_of_origin.help_text %}
+                                    <p class="help">{{ adminform.form.country_of_origin.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row customs-field required-field">
+                                <label for="{{ adminform.form.unit_price_for_customs.id_for_label }}">
+                                    {{ adminform.form.unit_price_for_customs.label }}
+                                    <span class="required-badge">Required for International</span>
+                                </label>
+                                {{ adminform.form.unit_price_for_customs }}
+                                {% if adminform.form.unit_price_for_customs.help_text %}
+                                    <p class="help">{{ adminform.form.unit_price_for_customs.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row customs-field">
+                                <label for="{{ adminform.form.export_license_number.id_for_label }}">
+                                    {{ adminform.form.export_license_number.label }}
+                                    <span class="field-badge optional-badge">Optional</span>
+                                </label>
+                                {{ adminform.form.export_license_number }}
+                                {% if adminform.form.export_license_number.help_text %}
+                                    <p class="help">{{ adminform.form.export_license_number.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row customs-field">
+                                <label for="{{ adminform.form.export_license_expiry.id_for_label }}">
+                                    {{ adminform.form.export_license_expiry.label }}
+                                    <span class="field-badge optional-badge">Optional</span>
+                                </label>
+                                {{ adminform.form.export_license_expiry }}
+                                {% if adminform.form.export_license_expiry.help_text %}
+                                    <p class="help">{{ adminform.form.export_license_expiry.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Items Inline (Multi-Warehouse) -->
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% if inline_admin_formset.opts.verbose_name == 'stock item' %}
+                        <div class="form-card">
+                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- SEO Tab -->
+            <div class="tab-panel" data-panel="seo" role="tabpanel" id="panel-seo" aria-labelledby="tab-seo">
+                <div class="form-card">
+                    <h2>{% trans "Search Engine Optimization" %}</h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Optimize how your product appears in search engine results. The preview below shows how it will look in Google search. Click the globe icon to translate into other languages." %}
+                    </p>
+
+                    <!-- SEO Generator Button Container -->
+                    <div id="seo-generator-container"></div>
+
+                    <div class="form-row">
+                        {{ adminform.form.meta_title.label_tag }}
+                        {{ adminform.form.meta_title }}
+                        {% if adminform.form.meta_title.help_text %}
+                            <p class="help">{{ adminform.form.meta_title.help_text }}</p>
+                        {% endif %}
+                        {% if adminform.form.meta_title.errors %}
+                            <p class="error">{{ adminform.form.meta_title.errors }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-row">
+                        {{ adminform.form.meta_description.label_tag }}
+                        {{ adminform.form.meta_description }}
+                        {% if adminform.form.meta_description.help_text %}
+                            <p class="help">{{ adminform.form.meta_description.help_text }}</p>
+                        {% endif %}
+                        {% if adminform.form.meta_description.errors %}
+                            <p class="error">{{ adminform.form.meta_description.errors }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.seo_auto_generated }}
+                        {{ adminform.form.seo_auto_generated.label_tag }}
+                        {% if adminform.form.seo_auto_generated.help_text %}
+                            <p class="help">{{ adminform.form.seo_auto_generated.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="seo-preview">
+                        <h3>{% trans "Search Result Preview" %}</h3>
+                        <div id="seo-preview-content">
+                            <!-- SEO preview will be rendered by JavaScript -->
+                        </div>
+                        <p class="seo-preview-disclaimer">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "This is a preview only. Actual search engines may vary the layout and content based on their algorithms and display preferences." %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Tab -->
+            <div class="tab-panel" data-panel="advanced" role="tabpanel" id="panel-advanced" aria-labelledby="tab-advanced">
+                <div class="form-card">
+                    <h2>{% trans "Product Page Settings" %}</h2>
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.show_related_products }}
+                        {{ adminform.form.show_related_products.label_tag }}
+                        {% if adminform.form.show_related_products.help_text %}
+                            <p class="help">{{ adminform.form.show_related_products.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.show_reviews }}
+                        {{ adminform.form.show_reviews.label_tag }}
+                        {% if adminform.form.show_reviews.help_text %}
+                            <p class="help">{{ adminform.form.show_reviews.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.show_specifications }}
+                        {{ adminform.form.show_specifications.label_tag }}
+                        {% if adminform.form.show_specifications.help_text %}
+                            <p class="help">{{ adminform.form.show_specifications.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>{% trans "Technical Details" %}</h2>
+                    <div class="form-row">
+                        {{ adminform.form.features.label_tag }}
+                        {{ adminform.form.features }}
+                        {% if adminform.form.features.help_text %}
+                            <p class="help">{{ adminform.form.features.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row kv-editor-spacer">
+                        {{ adminform.form.specifications.label_tag }}
+                        {{ adminform.form.specifications }}
+                        {% if adminform.form.specifications.help_text %}
+                            <p class="help">{{ adminform.form.specifications.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% if inline_admin_formset.opts.verbose_name == 'Product Region Visibility' %}
+                        <div class="form-card">
+                            {{ inline_admin_formset.formset.management_form }}
+                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Variations Tab (Variable Products) -->
+            <div class="tab-panel" data-panel="variations" role="tabpanel" id="panel-variations" aria-labelledby="tab-variations">
+                {# Hidden management forms for all inlines in this tab #}
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% with vname=inline_admin_formset.opts.verbose_name|lower %}
+                    {% if 'attribute' in vname %}
+                        <div class="product-form-hidden">
+                            {{ inline_admin_formset.formset.management_form }}
+                        </div>
+                    {% endif %}
+                    {% if vname == 'product variant' %}
+                        {# Render management form but zero out counts since variant CRUD is AJAX-based #}
+                        <div class="product-form-hidden" data-zero-formset="variants">
+                            {{ inline_admin_formset.formset.management_form }}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                {% endfor %}
+
+                {# AJAX-based Attribute Cards #}
+                {% if original %}
+                <div class="form-card" id="attribute-cards-container">
+                    <div class="attr-cards-header">
+                        <h2>
+                            <i class="fas fa-tags"></i>
+                            {% trans "Product Attributes" %}
+                            <span class="attr-count-badge" id="attr-count-badge">0</span>
+                        </h2>
+                        <div class="attr-cards-actions">
+                            <button type="button" class="button" id="add-attribute-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add Attribute" %}
+                            </button>
+                            <button type="button" class="button" id="create-attribute-btn">
+                                <i class="fas fa-magic"></i> {% trans "Create New" %}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="attr-list" id="attr-list">
+                        <div class="attr-list-loading" id="attr-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading attributes..." %}
+                        </div>
+                    </div>
+                    {# Variation Builder banner - shown/hidden by JS based on attribute count #}
+                    <div class="variation-builder-banner product-form-hidden" id="variation-builder-banner">
+                        <div class="variation-builder-content">
+                            <h3 class="variation-builder-title">
+                                <i class="fas fa-magic"></i>
+                                {% trans "Generate Product Variations" %}
+                            </h3>
+                            <p class="variation-builder-description">
+                                {% trans "Use the Variation Builder to automatically create all combinations of your product attributes" %}
+                            </p>
+                        </div>
+                        <a href="{% url 'catalog_admin:variation_builder' original.id %}"
+                           class="button variation-builder-button">
+                            <i class="fas fa-bolt"></i>
+                            {% trans "Open Variation Builder" %}
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Add Attribute Modal (search & select existing) #}
+                <div class="attr-modal-overlay product-form-hidden" id="add-attr-modal-overlay">
+                    <div class="attr-modal" id="add-attr-modal">
+                        <div class="attr-modal-header">
+                            <h3>{% trans "Add Attribute" %}</h3>
+                            <button type="button" class="attr-modal-close" data-modal="add-attr-modal-overlay">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="attr-modal-body">
+                            <div class="attr-search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="attr-search-input" placeholder="{% trans 'Search attributes...' %}" autocomplete="off">
+                            </div>
+                            <div class="attr-search-results" id="attr-search-results">
+                                <div class="attr-search-empty">
+                                    <i class="fas fa-search"></i>
+                                    <p>{% trans "Type to search for attributes" %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Create Attribute Modal (quick create) #}
+                <div class="attr-modal-overlay product-form-hidden" id="create-attr-modal-overlay">
+                    <div class="attr-modal" id="create-attr-modal">
+                        <div class="attr-modal-header">
+                            <h3>{% trans "Create New Attribute" %}</h3>
+                            <button type="button" class="attr-modal-close" data-modal="create-attr-modal-overlay">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="attr-modal-body">
+                            <div class="attr-form-group">
+                                <label for="new-attr-name">{% trans "Attribute Name" %}</label>
+                                <input type="text" id="new-attr-name" placeholder="{% trans 'e.g. Size, Color, Material' %}" autocomplete="off">
+                            </div>
+                            <div class="attr-form-group">
+                                <label for="new-attr-type">{% trans "Display Type" %}</label>
+                                <select id="new-attr-type">
+                                    <option value="select">{% trans "Dropdown Select" %}</option>
+                                    <option value="color">{% trans "Color Swatch" %}</option>
+                                    <option value="button">{% trans "Button Group" %}</option>
+                                    <option value="radio">{% trans "Radio Buttons" %}</option>
+                                </select>
+                            </div>
+                            <div class="attr-form-group">
+                                <label for="new-attr-values">{% trans "Values" %}</label>
+                                <input type="text" id="new-attr-values" placeholder="{% trans 'Comma separated, e.g. Small, Medium, Large' %}" autocomplete="off">
+                                <span class="attr-form-help">{% trans "Enter values separated by commas" %}</span>
+                            </div>
+                        </div>
+                        <div class="attr-modal-footer">
+                            <button type="button" class="button" data-modal="create-attr-modal-overlay">
+                                {% trans "Cancel" %}
+                            </button>
+                            <button type="button" class="button attr-modal-save-btn" id="create-attr-save">
+                                <i class="fas fa-check"></i> {% trans "Create Attribute" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {# AJAX-based Variant Cards #}
+                {% if original %}
+                <div class="form-card" id="variant-cards-container">
+                    <div class="variant-cards-header">
+                        <h2>
+                            <i class="fas fa-boxes"></i>
+                            {% trans "Product Variants" %}
+                            <span class="variant-count-badge" id="variant-count-badge">0</span>
+                        </h2>
+                        <div class="variant-cards-actions">
+                            <button type="button" class="button" id="add-variant-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add New Variant" %}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="variant-list" id="variant-list">
+                        <div class="variant-list-loading" id="variant-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading variants..." %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Variant Edit/Create Modal #}
+                <div class="variant-modal-overlay product-form-hidden" id="variant-modal-overlay">
+                    <div class="variant-modal" id="variant-modal">
+                        <div class="variant-modal-header">
+                            <h3 id="variant-modal-title">{% trans "Edit Variant" %}</h3>
+                            <button type="button" class="variant-modal-close" id="variant-modal-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="variant-modal-body" id="variant-modal-body">
+                            {# Sections rendered by JS #}
+                        </div>
+                        <div class="variant-modal-footer">
+                            <button type="button" class="button" id="variant-modal-cancel">
+                                {% trans "Cancel" %}
+                            </button>
+                            <button type="button" class="button variant-modal-save-btn" id="variant-modal-save">
+                                <i class="fas fa-check"></i> {% trans "Save Variant" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bundle Items Tab (Bundle Products) -->
+            <div class="tab-panel" data-panel="bundle-items" role="tabpanel" id="panel-bundle-items" aria-labelledby="tab-bundle-items">
+                {% if not original %}
+                <div class="form-card">
+                    <div class="product-empty-state-wrapper">
+                        <i class="fas fa-info-circle product-empty-state-icon"></i>
+                        <p class="product-empty-state-text">
+                            {% trans "Save the product first to start adding bundle components." %}
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-boxes-stacked"></i>
+                        {% trans "Bundle Components" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Add products to this bundle. Each component can have a fixed variant or allow customers to choose at checkout. Configure the bundle pricing strategy in the Pricing tab." %}
+                    </p>
+                    {% for inline_admin_formset in inline_admin_formsets %}
+                        {% if inline_admin_formset.opts.verbose_name == 'bundle item' %}
+                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Gift Card Tab (Gift Card Products) -->
+            <div class="tab-panel" data-panel="gift-card" role="tabpanel" id="panel-gift-card" aria-labelledby="tab-gift-card">
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-gift"></i>
+                        {% trans "Gift Card Configuration" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Configure how customers can purchase gift cards. You can offer fixed denominations, allow custom amounts, or both." %}
+                    </p>
+                    <div class="form-row">
+                        {{ adminform.form.gift_card_denomination_type.label_tag }}
+                        {{ adminform.form.gift_card_denomination_type }}
+                        {% if adminform.form.gift_card_denomination_type.help_text %}
+                            <p class="help">{{ adminform.form.gift_card_denomination_type.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.gift_card_denominations.label_tag }}
+                        {{ adminform.form.gift_card_denominations }}
+                        {% if adminform.form.gift_card_denominations.help_text %}
+                            <p class="help">{{ adminform.form.gift_card_denominations.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.gift_card_min_amount.label_tag }}
+                                {{ adminform.form.gift_card_min_amount }}
+                                {% if adminform.form.gift_card_min_amount.help_text %}
+                                    <p class="help">{{ adminform.form.gift_card_min_amount.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.gift_card_max_amount.label_tag }}
+                                {{ adminform.form.gift_card_max_amount }}
+                                {% if adminform.form.gift_card_max_amount.help_text %}
+                                    <p class="help">{{ adminform.form.gift_card_max_amount.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.gift_card_expires_days.label_tag }}
+                        {{ adminform.form.gift_card_expires_days }}
+                        {% if adminform.form.gift_card_expires_days.help_text %}
+                            <p class="help">{{ adminform.form.gift_card_expires_days.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% if adminform.form.gift_card_currency %}
+                    <div class="form-row">
+                        {{ adminform.form.gift_card_currency.label_tag }}
+                        {{ adminform.form.gift_card_currency }}
+                        {% if adminform.form.gift_card_currency.help_text %}
+                            <p class="help">{{ adminform.form.gift_card_currency.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Digital Assets Tab (Digital Products) -->
+            <div class="tab-panel" data-panel="digital-assets" role="tabpanel" id="panel-digital-assets" aria-labelledby="tab-digital-assets">
+                {% if not original %}
+                <div class="form-card">
+                    <div class="product-empty-state-wrapper">
+                        <i class="fas fa-info-circle product-empty-state-icon"></i>
+                        <p class="product-empty-state-text">
+                            {% trans "Save the product first to start adding digital assets." %}
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% if inline_admin_formset.opts.verbose_name == 'digital asset' %}
+                        <div class="form-card">
+                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Licensing Tab (Digital Products) -->
+            <div class="tab-panel" data-panel="licensing" role="tabpanel" id="panel-licensing" aria-labelledby="tab-licensing">
+                <!-- License Generation Section -->
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-key"></i>
+                        {% trans "License Generation" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Enable automatic license key generation for this product. This is useful for software licenses, API keys, activation codes, or any product that requires a unique key." %}
+                    </p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row checkbox-row license-generation-toggle">
+                                {{ adminform.form.requires_license }}
+                                <label for="{{ adminform.form.requires_license.id_for_label }}" class="license-checkbox-label">
+                                    <strong>{{ adminform.form.requires_license.label }}</strong>
+                                </label>
+                                {% if adminform.form.requires_license.help_text %}
+                                    <p class="help">{{ adminform.form.requires_license.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row" id="license-trigger-row">
+                                {{ adminform.form.license_generation_trigger.label_tag }}
+                                {{ adminform.form.license_generation_trigger }}
+                                {% if adminform.form.license_generation_trigger.help_text %}
+                                    <p class="help">{{ adminform.form.license_generation_trigger.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- License Key Format Section -->
+                <div class="form-card license-settings-section">
+                    <h2>
+                        <i class="fas fa-fingerprint"></i>
+                        {% trans "License Key Format" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Select a template that defines how license keys are generated for this product." %}
+                    </p>
+                    <div class="form-row">
+                        {{ adminform.form.license_template.label_tag }}
+                        {{ adminform.form.license_template }}
+                        <a href="{% url 'admin:catalog_licensekeytemplate_add' %}" target="_blank" class="button license-add-btn">
+                            <i class="fas fa-plus"></i> {% trans "Create New Template" %}
+                        </a>
+                        {% if adminform.form.license_template.help_text %}
+                            <p class="help">{{ adminform.form.license_template.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <!-- License Key Preview (populated via AJAX) -->
+                    <div id="license-template-preview" class="license-preview-box product-form-hidden">
+                        <h4 class="license-preview-title">
+                            <i class="fas fa-eye"></i> {% trans "Preview" %}
+                        </h4>
+                        <div class="preview-pattern license-preview-detail">
+                            <span class="license-preview-label">{% trans "Pattern" %}:</span>
+                            <code id="preview-pattern-text" class="license-preview-code"></code>
+                        </div>
+                        <div class="preview-samples">
+                            <span class="license-preview-label">{% trans "Sample Keys" %}:</span>
+                            <ul id="preview-samples-list" class="license-preview-samples">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Default License Settings Section -->
+                <div class="form-card license-settings-section">
+                    <h2>
+                        <i class="fas fa-sliders-h"></i>
+                        {% trans "Default License Settings" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "These defaults are applied when licenses are generated for this product. Individual licenses can be modified after creation." %}
+                    </p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.default_license_type.label_tag }}
+                                {{ adminform.form.default_license_type }}
+                                {% if adminform.form.default_license_type.help_text %}
+                                    <p class="help">{{ adminform.form.default_license_type.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.default_max_activations.label_tag }}
+                                {{ adminform.form.default_max_activations }}
+                                {% if adminform.form.default_max_activations.help_text %}
+                                    <p class="help">{{ adminform.form.default_max_activations.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        {{ adminform.form.default_validity_days.label_tag }}
+                        {{ adminform.form.default_validity_days }}
+                        {% if adminform.form.default_validity_days.help_text %}
+                            <p class="help">{{ adminform.form.default_validity_days.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- External Provider Section -->
+                <div class="form-card license-settings-section">
+                    <h2>
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        {% trans "External License Provider" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Optionally sync licenses to an external provider when orders are placed. The license will be created in both systems." %}
+                    </p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.license_provider.label_tag }}
+                                {{ adminform.form.license_provider }}
+                                {% if adminform.form.license_provider.help_text %}
+                                    <p class="help">{{ adminform.form.license_provider.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row" id="external-product-id-row">
+                                {{ adminform.form.external_product_id.label_tag }}
+                                {{ adminform.form.external_product_id }}
+                                {% if adminform.form.external_product_id.help_text %}
+                                    <p class="help">{{ adminform.form.external_product_id.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="no-providers-message" class="no-providers-message product-form-hidden">
+                        <i class="fas fa-plug no-providers-icon"></i>
+                        {% trans "No license providers connected." %}
+                        <a href="{% url 'catalog_admin:license_provider_wizard_step1' %}">{% trans "Connect a provider" %}</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customization Tab (Customizable Products) -->
+            <div class="tab-panel" data-panel="customization" role="tabpanel" id="panel-customization" aria-labelledby="tab-customization">
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-paint-brush"></i>
+                        {% trans "Customization Settings" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Enable product customization to allow customers to personalize this product with text, images, or selections. Customization options are managed in the section below." %}
+                    </p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row checkbox-row">
+                                {{ adminform.form.allow_customization }}
+                                {{ adminform.form.allow_customization.label_tag }}
+                                {% if adminform.form.allow_customization.help_text %}
+                                    <p class="help">{{ adminform.form.allow_customization.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.customization_preview_template.label_tag }}
+                                {{ adminform.form.customization_preview_template }}
+                                {% if adminform.form.customization_preview_template.help_text %}
+                                    <p class="help">{{ adminform.form.customization_preview_template.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% if inline_admin_formset.opts.verbose_name == 'customization option' %}
+                        <div class="form-card">
+                            {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Visual Design Editor Section -->
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-paint-brush"></i>
+                        {% trans "Visual Design Editor" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Set up a visual canvas editor where customers can add text, images, and clipart to your product. Define designable surfaces, upload mockup images, create design templates, and configure pricing." %}
+                    </p>
+                    {% if original %}
+                    <div class="viewer-3d-section">
+                        {% if has_design_config %}
+                        <div class="viewer-3d-status viewer-3d-status-ready">
+                            <i class="fas fa-check-circle viewer-3d-status-icon"></i>
+                            <div>
+                                <strong>{% trans "Design Editor Configured" %}</strong>
+                                <p class="viewer-3d-description">
+                                    {% trans "This product has a visual design editor. Open the setup page to manage surfaces, templates, and settings." %}
+                                </p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="viewer-3d-status viewer-3d-status-none">
+                            <i class="fas fa-info-circle viewer-3d-status-icon"></i>
+                            <div>
+                                <strong>{% trans "No Design Editor" %}</strong>
+                                <p class="viewer-3d-description">
+                                    {% trans "Open the Design Editor Setup to configure surfaces and enable the visual customization experience." %}
+                                </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <a href="{% url 'customizable_product:design_setup' original.pk %}" class="button viewer-3d-launch-btn">
+                            <i class="fas fa-paint-brush"></i> {% trans "Open Design Editor Setup" %}
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="help-text">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% trans "Save this product first, then come back to set up the visual design editor." %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Subscriptions Tab -->
+            <div class="tab-panel" data-panel="subscriptions" role="tabpanel" id="panel-subscriptions" aria-labelledby="tab-subscriptions">
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-sync-alt"></i>
+                        {% trans "Subscription Configuration" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Enable subscription billing for this product. Customers can purchase with recurring payments. Configure available subscription plans and whether one-time purchase is also allowed." %}
+                    </p>
+                    <div class="form-row checkbox-row">
+                        {{ adminform.form.is_subscription_enabled }}
+                        {{ adminform.form.is_subscription_enabled.label_tag }}
+                        {% if adminform.form.is_subscription_enabled.help_text %}
+                            <p class="help">{{ adminform.form.is_subscription_enabled.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.subscription_plans.label_tag }}
+                                {{ adminform.form.subscription_plans }}
+                                {% if adminform.form.subscription_plans.help_text %}
+                                    <p class="help">{{ adminform.form.subscription_plans.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row checkbox-row">
+                                {{ adminform.form.allow_one_time_purchase }}
+                                {{ adminform.form.allow_one_time_purchase.label_tag }}
+                                {% if adminform.form.allow_one_time_purchase.help_text %}
+                                    <p class="help">{{ adminform.form.allow_one_time_purchase.help_text }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-row checkbox-row">
+                                {{ adminform.form.subscription_default }}
+                                {{ adminform.form.subscription_default.label_tag }}
+                                {% if adminform.form.subscription_default.help_text %}
+                                    <p class="help">{{ adminform.form.subscription_default.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Tab (Configurable Products) -->
+            <div class="tab-panel" data-panel="configuration" role="tabpanel" id="panel-configuration" aria-labelledby="tab-configuration">
+                {# Hidden management forms for slot/preset inlines (required by Django formset validation) #}
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% with vname=inline_admin_formset.opts.verbose_name|lower %}
+                    {% if vname == 'configuration slot' %}
+                        <div class="product-form-hidden" data-zero-formset="configuration_slots">
+                            {{ inline_admin_formset.formset.management_form }}
+                        </div>
+                    {% endif %}
+                    {% if vname == 'configuration preset' %}
+                        <div class="product-form-hidden" data-zero-formset="configuration_presets">
+                            {{ inline_admin_formset.formset.management_form }}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                {% endfor %}
+
+                {% if original %}
+                {# Section 1: Configurator Pricing #}
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-dollar-sign"></i>
+                        {% trans "Configurator Pricing" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Choose how the price is calculated for configured products." %}
+                    </p>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.configurator_pricing_strategy.label_tag }}
+                                {{ adminform.form.configurator_pricing_strategy }}
+                                {% if adminform.form.configurator_pricing_strategy.help_text %}
+                                    <p class="help">{{ adminform.form.configurator_pricing_strategy.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.configurator_base_price.label_tag }}
+                                {{ adminform.form.configurator_base_price }}
+                                {% if adminform.form.configurator_base_price.help_text %}
+                                    <p class="help">{{ adminform.form.configurator_base_price.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Section 2: Configuration Slots (AJAX card list) #}
+                <div class="form-card" id="config-slots-container">
+                    <div class="config-slots-header">
+                        <h2>
+                            <i class="fas fa-layer-group"></i>
+                            {% trans "Configuration Slots" %}
+                            <span class="config-slot-count-badge" id="config-slot-count">0</span>
+                        </h2>
+                        <div>
+                            <button type="button" class="button" id="add-slot-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add Slot" %}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="config-slot-list" id="config-slot-list">
+                        <div class="config-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading slots..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Section 3: Compatibility Rules #}
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-project-diagram"></i>
+                        {% trans "Compatibility Rules" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Define which options are compatible across slots. Use the compatibility matrix to manage rules visually." %}
+                    </p>
+                    <div class="config-compatibility-summary">
+                        <div class="config-compatibility-summary__stat">
+                            <span class="config-compatibility-summary__count">{{ compatibility_rule_count|default:"0" }}</span>
+                            <span class="config-compatibility-summary__label">{% trans "rules defined" %}</span>
+                        </div>
+                        <a href="{% url 'catalog_admin:compatibility_matrix' product_id=original.pk %}" class="button">
+                            <i class="fas fa-th"></i>
+                            {% trans "Open Compatibility Matrix" %}
+                        </a>
+                    </div>
+                </div>
+
+                {# Section 4: Configuration Presets (AJAX card list) #}
+                <div class="form-card" id="config-presets-container">
+                    <div class="config-presets-header">
+                        <h2>
+                            <i class="fas fa-magic"></i>
+                            {% trans "Configuration Presets" %}
+                            <span class="config-preset-count-badge" id="config-preset-count">0</span>
+                        </h2>
+                        <div>
+                            <button type="button" class="button" id="add-preset-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add Preset" %}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="config-preset-list" id="config-preset-list">
+                        <div class="config-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading presets..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Slot Create/Edit Modal #}
+                <div class="config-slot-modal-overlay product-form-hidden" id="config-slot-modal-overlay">
+                    <div class="config-slot-modal">
+                        <div class="config-slot-modal-header">
+                            <h3 id="config-slot-modal-title">{% trans "Add Slot" %}</h3>
+                            <button type="button" class="config-slot-modal-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="config-slot-modal-body" id="config-slot-modal-body">
+                        </div>
+                        <div class="config-slot-modal-footer">
+                            <button type="button" class="button" id="config-slot-modal-cancel">
+                                {% trans "Cancel" %}
+                            </button>
+                            <button type="button" class="button config-modal-save-btn" id="config-slot-modal-save">
+                                <i class="fas fa-check"></i> {% trans "Save Slot" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {# Preset Create/Edit Modal #}
+                <div class="config-preset-modal-overlay product-form-hidden" id="config-preset-modal-overlay">
+                    <div class="config-preset-modal">
+                        <div class="config-preset-modal-header">
+                            <h3 id="config-preset-modal-title">{% trans "Add Preset" %}</h3>
+                            <button type="button" class="config-preset-modal-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="config-preset-modal-body" id="config-preset-modal-body">
+                        </div>
+                        <div class="config-preset-modal-footer">
+                            <button type="button" class="button" id="config-preset-modal-cancel">
+                                {% trans "Cancel" %}
+                            </button>
+                            <button type="button" class="button config-modal-save-btn" id="config-preset-modal-save">
+                                <i class="fas fa-check"></i> {% trans "Save Preset" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+                {# Product not yet saved #}
+                <div class="form-card">
+                    <div class="config-save-first">
+                        <i class="fas fa-save"></i>
+                        <h3>{% trans "Save Product First" %}</h3>
+                        <p>{% trans "Save this product as a configurable product to start adding configuration slots, options, compatibility rules, and presets." %}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- 3D Viewer Tab (Configurable Products) -->
+            <div class="tab-panel" data-panel="3d-viewer" role="tabpanel" id="panel-3d-viewer" aria-labelledby="tab-3d-viewer">
+                <div class="form-card">
+                    <h2>
+                        <i class="fas fa-cube"></i>
+                        {% trans "3D Product Visualization" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Add a 3D model to this configurable product. Customers will see the model update in real-time as they select options. Use the 3D Scene Manager to upload a GLB model, map configurator options to visual changes, and configure viewer settings." %}
+                    </p>
+                    {% if original %}
+                    <div class="viewer-3d-section">
+                        {% if has_3d_scene %}
+                        <div class="viewer-3d-status viewer-3d-status-ready">
+                            <i class="fas fa-check-circle viewer-3d-status-icon"></i>
+                            <div>
+                                <strong>{% trans "3D Scene Configured" %}</strong>
+                                <p class="viewer-3d-description">
+                                    {% trans "This product has a 3D scene. Open the Scene Manager to edit it." %}
+                                </p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="viewer-3d-status viewer-3d-status-none">
+                            <i class="fas fa-info-circle viewer-3d-status-icon"></i>
+                            <div>
+                                <strong>{% trans "No 3D Scene" %}</strong>
+                                <p class="viewer-3d-description">
+                                    {% trans "Open the Scene Manager to set up a 3D model for this product." %}
+                                </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <a href="{% url 'configurator_3d:scene_setup' original.pk %}" class="button viewer-3d-launch-btn">
+                            <i class="fas fa-cube"></i> {% trans "Open 3D Scene Manager" %}
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="help-text">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% trans "Save this product first, then come back to set up 3D visualization." %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Booking Tab Panel (Booking Products) -->
+            <div class="tab-panel" data-panel="booking" role="tabpanel" id="panel-booking" aria-labelledby="tab-booking">
+                {% if original %}
+
+                {# Section 1: Booking Configuration (singleton AJAX form) #}
+                <div class="form-card" id="booking-config-container">
+                    <h2>
+                        <i class="fas fa-cog"></i>
+                        {% trans "Booking Configuration" %}
+                    </h2>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Configure booking type, duration, scheduling, confirmation, and display settings." %}
+                    </p>
+                    <div id="booking-config-form">
+                        <div class="booking-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading configuration..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Section 2: Resources (AJAX card list) #}
+                <div class="form-card" id="booking-resources-container">
+                    <div class="booking-section-header">
+                        <h2>
+                            <i class="fas fa-users"></i>
+                            {% trans "Resources" %}
+                            <span class="booking-count-badge" id="booking-resource-count">0</span>
+                        </h2>
+                        <div>
+                            <button type="button" class="button" id="add-booking-resource-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add Resource" %}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Add bookable resources like staff members, rooms, or equipment." %}
+                    </p>
+                    <div class="booking-card-list" id="booking-resource-list">
+                        <div class="booking-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading resources..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Section 3: Person Types (AJAX card list) #}
+                <div class="form-card" id="booking-person-types-container">
+                    <div class="booking-section-header">
+                        <h2>
+                            <i class="fas fa-user-friends"></i>
+                            {% trans "Person Types" %}
+                            <span class="booking-count-badge" id="booking-person-type-count">0</span>
+                        </h2>
+                        <div>
+                            <button type="button" class="button" id="add-booking-person-type-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add Person Type" %}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Define person types for group bookings with per-person pricing (e.g. Adult, Child, Senior)." %}
+                    </p>
+                    <div class="booking-card-list" id="booking-person-type-list">
+                        <div class="booking-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading person types..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Section 4a: Blackout Periods #}
+                <div class="form-card" id="booking-blackout-container">
+                    <div class="booking-section-header">
+                        <h2>
+                            <i class="fas fa-ban"></i>
+                            {% trans "Blackout Periods" %}
+                            <span class="booking-count-badge" id="booking-blackout-count">0</span>
+                        </h2>
+                        <div>
+                            <button type="button" class="button" id="add-booking-blackout-btn">
+                                <i class="fas fa-plus"></i> {% trans "Block Dates" %}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Block specific dates or date ranges when bookings are not accepted (holidays, maintenance, closures)." %}
+                    </p>
+                    <div id="booking-blackout-calendar" class="booking-blackout-calendar"></div>
+                    <div class="booking-card-list" id="booking-blackout-list">
+                        <div class="booking-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading blackout periods..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Section 4b: Availability Rules (AJAX card list) #}
+                <div class="form-card" id="booking-availability-rules-container">
+                    <div class="booking-section-header">
+                        <h2>
+                            <i class="fas fa-calendar-alt"></i>
+                            {% trans "Availability & Pricing Rules" %}
+                            <span class="booking-count-badge" id="booking-availability-rule-count">0</span>
+                        </h2>
+                        <div>
+                            <button type="button" class="button" id="add-booking-availability-rule-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add Rule" %}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Set when bookings are available or have custom pricing. Higher priority rules override lower ones." %}
+                    </p>
+                    <div class="booking-card-list" id="booking-availability-rule-list">
+                        <div class="booking-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading availability rules..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Section 5: Recurrence Rules (AJAX card list) #}
+                <div class="form-card" id="booking-recurrence-rules-container">
+                    <div class="booking-section-header">
+                        <h2>
+                            <i class="fas fa-redo"></i>
+                            {% trans "Recurrence Rules" %}
+                            <span class="booking-count-badge" id="booking-recurrence-rule-count">0</span>
+                        </h2>
+                        <div>
+                            <button type="button" class="button" id="add-booking-recurrence-rule-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add Recurrence" %}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Define recurring schedules like weekly yoga classes or monthly coaching sessions." %}
+                    </p>
+                    <div class="booking-card-list" id="booking-recurrence-rule-list">
+                        <div class="booking-list-loading">
+                            <i class="fas fa-spinner fa-spin"></i> {% trans "Loading recurrence rules..." %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Shared Modal for Resources / Person Types / Availability Rules / Recurrence Rules #}
+                <div class="booking-modal-overlay product-form-hidden" id="booking-modal-overlay">
+                    <div class="booking-modal">
+                        <div class="booking-modal-header">
+                            <h3 id="booking-modal-title">{% trans "Add Item" %}</h3>
+                            <button type="button" class="booking-modal-close" id="booking-modal-close-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="booking-modal-body" id="booking-modal-body">
+                        </div>
+                        <div class="booking-modal-footer">
+                            <button type="button" class="button" id="booking-modal-cancel">
+                                {% trans "Cancel" %}
+                            </button>
+                            <button type="button" class="button booking-modal-save-btn" id="booking-modal-save">
+                                <i class="fas fa-check"></i> <span id="booking-modal-save-text">{% trans "Save" %}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {# Hide Django inline management forms but keep them in DOM #}
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% with vname=inline_admin_formset.opts.verbose_name|lower %}
+                    {% if vname == 'booking configuration' or vname == 'booking resource' or vname == 'person type' or vname == 'availability rule' or vname == 'recurrence rule' %}
+                    <div class="product-form-force-hidden">
+                        {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                {% endfor %}
+
+                {% else %}
+                {# Product not yet saved #}
+                <div class="form-card">
+                    <div class="config-save-first">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3>{% trans "Save Product First" %}</h3>
+                        <p>{% trans "Save this product as a booking product to start configuring booking settings, resources, availability rules, and recurrence schedules." %}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Dependencies Tab Panel -->
+            <div class="tab-panel" data-panel="dependencies" role="tabpanel" id="panel-dependencies" aria-labelledby="tab-dependencies">
+                <div class="form-card">
+                    <h2><i class="fas fa-link"></i> {% trans "Product Dependencies" %}</h2>
+                    <p class="help-text">{% trans "Define products that a customer must own (or have in their cart) before purchasing this product, or products you recommend alongside this one." %}</p>
+                    {% for inline_admin_formset in inline_admin_formsets %}
+                        {% if inline_admin_formset.opts.verbose_name == 'product dependency' %}
+                            {% include inline_admin_formset.opts.template %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if has_custom_fields %}
+            <!-- Custom Fields Tab Panel -->
+            <div class="tab-panel" data-panel="custom-fields" role="tabpanel" id="panel-custom-fields" aria-labelledby="tab-custom-fields">
+                <div class="form-card">
+                    <h2><i class="fas fa-sliders-h"></i> {% trans "Custom Fields" %}</h2>
+                    {% include "admin/custom_fields/includes/custom_fields_tab.html" %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Hidden field to store translations JSON -->
+        <input type="hidden" name="translations_data" id="translations-data-field">
+    </form>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<!-- Sortable.js for drag-and-drop -->
+<script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+
+<!-- Media Library JavaScript - Must be loaded first for global wrapper functions -->
+<script src="{% static 'media_library/js/media-library.js' %}"></script>
+
+<!-- CKEditor Media Library Integration (image picker + video insert) -->
+<script src="{% static 'core/admin/js/ckeditor_media_library.js' %}"></script>
+
+<!-- SEO Generator -->
+<script src="{% static 'seo_generator/admin/seo_generator.js' %}"></script>
+
+<script type="application/json" id="product-admin-config">
+{
+    "productId": {% if original %}{{ original.id }}{% else %}null{% endif %},
+    "isNew": {% if original %}false{% else %}true{% endif %},
+    "translationsApiUrlTemplate": "{% url 'catalog_api:product-translations' 0 %}",
+    "mediaLibraryApiUrl": "/media-library/api/assets/",
+    "csrfToken": "{{ csrf_token }}",
+    "currentLanguage": "{{ LANGUAGE_CODE }}"
+}
+</script>
+<script src="{% static 'catalog/js/product_admin_init.js' %}"></script>
+<script src="{% static 'catalog/js/admin_product_form.js' %}"></script>
+<script src="{% static 'catalog/js/media_manager.js' %}"></script>
+<script src="{% static 'catalog/js/admin_attribute_cards.js' %}"></script>
+<script src="{% static 'catalog/js/admin_variant_cards.js' %}"></script>
+<script src="{% static 'catalog/js/admin_configurator.js' %}"></script>
+<script src="{% static 'catalog/js/admin_booking.js' %}"></script>
+
+{# Translation Editor Initialization #}
+{% include "admin/includes/translation_editor_init.html" %}
+
+{# Unsaved Changes Modal for external editor links #}
+{% if original %}
+<div class="admin-modal-overlay" id="unsaved-changes-modal">
+    <div class="admin-modal admin-modal--sm">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">
+                <i class="fas fa-exclamation-triangle unsaved-modal-warning-icon"></i>
+                {% trans "Unsaved Changes" %}
+            </h3>
+            <button type="button" class="admin-modal-close" id="unsaved-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body unsaved-modal-body-text">
+            <p>
+                {% trans "You have unsaved changes on this product. Save them now and continue to the editor, or go back to finish editing." %}
+            </p>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="button" id="unsaved-modal-cancel">
+                {% trans "Go Back" %}
+            </button>
+            <button type="button" class="button unsaved-modal-save-btn" id="unsaved-modal-save">
+                <i class="fas fa-save"></i> {% trans "Save & Continue" %}
+            </button>
+        </div>
+    </div>
+</div>
+<script src="{% static 'catalog/js/unsaved_changes_modal.js' %}"></script>
+{% endif %}
+
+{% endblock %}

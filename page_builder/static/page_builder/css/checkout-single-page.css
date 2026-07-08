@@ -1,0 +1,185 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* =============================================================================
+   Checkout Single Page Template
+   All fields visible at once in a two-column layout.
+
+   Mobile-First Responsive Design
+   Breakpoints (from theme tokens.json):
+   - Mobile:  Default (no media query)
+   - SM:      640px (theme sm breakpoint)
+   - MD:      768px (theme md breakpoint)
+   - LG:      1024px (theme lg breakpoint)
+   ============================================================================= */
+
+/* Layout - Mobile First */
+.checkout-container--single-page {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--theme-space-4, 1rem);
+    padding: 0 var(--theme-space-3, 0.75rem);
+    padding-bottom: var(--theme-space-6, 1.5rem);
+}
+
+@media (min-width: 768px) {
+    .checkout-container--single-page {
+        grid-template-columns: 1fr 380px;
+        gap: var(--theme-space-8, 2rem);
+        padding: 0 var(--theme-space-4, 1rem);
+        padding-bottom: var(--theme-space-8, 2rem);
+    }
+}
+
+/* Sticky summary - Desktop only */
+@media (min-width: 1024px) {
+    .checkout-container--single-page .checkout-summary--sticky .checkout-summary__card {
+        position: sticky;
+        top: var(--theme-space-4, 1rem);
+    }
+}
+
+/* ===== Sections ===== */
+
+.single-page__sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--theme-space-6, 1.5rem);
+}
+
+/* Section - Mobile First */
+.single-page__section {
+    background: var(--theme-color-surface, #fff);
+    border-radius: var(--theme-radius-base, 0.5rem);
+    padding: var(--theme-space-4, 1rem);
+    box-shadow: var(--theme-shadow-base, 0 1px 3px rgba(0,0,0,0.1));
+}
+
+@media (min-width: 768px) {
+    .single-page__section {
+        border-radius: var(--theme-radius-lg, 0.75rem);
+        padding: var(--theme-space-6, 1.5rem);
+    }
+}
+
+.single-page__section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--theme-font-size-lg, 1.125rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.single-page__section-title i {
+    color: var(--theme-color-primary, #2563eb);
+    font-size: 1rem;
+}
+
+.single-page__section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--theme-color-primary, #2563eb);
+    color: var(--theme-color-text-inverse, #fff);
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* Dividers */
+.single-page__divider {
+    height: 1px;
+    background: var(--theme-color-border, #e5e7eb);
+    margin: 0;
+}
+
+/* Without dividers, add spacing between sections */
+.single-page__sections--no-dividers .single-page__section + .single-page__section {
+    margin-top: var(--theme-space-2, 0.5rem);
+}
+
+/* Loading state for dynamic sections */
+.single-page__section--loading {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Section: shipping methods & payment (initially empty, populated by JS) */
+.single-page__section[data-step="shipping-method"],
+.single-page__section[data-step="payment"] {
+    transition: opacity 0.3s ease;
+}
+
+.single-page__section--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Place order area - Mobile First */
+.single-page__submit {
+    background: var(--theme-color-surface, #fff);
+    border-radius: var(--theme-radius-base, 0.5rem);
+    padding: var(--theme-space-4, 1rem);
+    box-shadow: var(--theme-shadow-base, 0 1px 3px rgba(0,0,0,0.1));
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .single-page__submit {
+        border-radius: var(--theme-radius-lg, 0.75rem);
+        padding: var(--theme-space-6, 1.5rem);
+    }
+}
+
+.single-page__submit .btn--lg {
+    width: 100%;
+    min-width: auto;
+}
+
+@media (min-width: 640px) {
+    .single-page__submit .btn--lg {
+        width: auto;
+        min-width: 280px;
+    }
+}
+
+/* Express checkout at top - Mobile First */
+.single-page__express {
+    background: var(--theme-color-surface, #fff);
+    border-radius: var(--theme-radius-base, 0.5rem);
+    padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+    box-shadow: var(--theme-shadow-base, 0 1px 3px rgba(0,0,0,0.1));
+    text-align: center;
+    margin-bottom: var(--theme-space-3, 0.75rem);
+}
+
+@media (min-width: 768px) {
+    .single-page__express {
+        border-radius: var(--theme-radius-lg, 0.75rem);
+        padding: var(--theme-space-4, 1rem) var(--theme-space-6, 1.5rem);
+        margin-bottom: var(--theme-space-4, 1rem);
+    }
+}
+
+.single-page__express-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: var(--theme-space-4, 1rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+.single-page__express-divider::before,
+.single-page__express-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--theme-color-border, #e5e7eb);
+}

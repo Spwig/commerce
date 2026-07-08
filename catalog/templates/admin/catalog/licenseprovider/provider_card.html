@@ -1,0 +1,124 @@
+{% load i18n static %}
+
+<div class="provider-card {% if provider.is_active %}active{% else %}inactive{% endif %}" data-provider-id="{{ provider.id }}">
+    <div class="provider-card-header">
+        <div class="provider-select">
+            <input type="checkbox"
+                   name="_selected_action"
+                   value="{{ provider.pk }}"
+                   class="provider-checkbox">
+        </div>
+        <div class="provider-info">
+            <div class="provider-icon">
+                {% if provider.logo_path %}
+                    <div class="logo-plate" data-auto-contrast>
+                        <img src="{% static provider.logo_path %}"
+                             alt="{{ provider.name }}"
+                             loading="lazy"
+                             crossorigin="anonymous">
+                    </div>
+                {% else %}
+                    {% if provider.provider_type == 'spwig_server' %}
+                        <i class="fas fa-server"></i>
+                    {% elif provider.provider_type == 'keygen' %}
+                        <i class="fas fa-lock"></i>
+                    {% elif provider.provider_type == 'licensespring' %}
+                        <i class="fas fa-bolt"></i>
+                    {% elif provider.provider_type == 'cryptlex' %}
+                        <i class="fas fa-shield-alt"></i>
+                    {% elif provider.provider_type == 'custom' %}
+                        <i class="fas fa-cog"></i>
+                    {% else %}
+                        <i class="fas fa-key"></i>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="provider-text">
+                <h3 class="provider-name">{{ provider.name }}</h3>
+                <p class="provider-type">{{ provider.get_provider_type_display }}</p>
+            </div>
+        </div>
+        <div class="provider-badges">
+            {% if provider.is_active %}
+                <span class="badge badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+            {% else %}
+                <span class="badge badge-inactive">
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                </span>
+            {% endif %}
+
+            {% if provider.connection_status == 'connected' %}
+                <span class="badge badge-success">
+                    <i class="fas fa-plug"></i> {% trans "Connected" %}
+                </span>
+            {% elif provider.connection_status == 'error' %}
+                <span class="badge badge-error">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans "Error" %}
+                </span>
+            {% else %}
+                <span class="badge badge-warning">
+                    <i class="fas fa-question-circle"></i> {% trans "Not Tested" %}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="provider-card-body">
+        <div class="provider-details">
+            <div class="detail-row">
+                <span class="detail-label"><i class="fas fa-link"></i> {% trans "API Endpoint" %}:</span>
+                <span class="detail-value">{{ provider.api_endpoint|truncatechars:50 }}</span>
+            </div>
+
+            {% if provider.connection_error %}
+                <div class="detail-row error">
+                    <span class="detail-label"><i class="fas fa-exclamation-circle"></i> {% trans "Error" %}:</span>
+                    <span class="detail-value">{{ provider.connection_error|truncatechars:80 }}</span>
+                </div>
+            {% endif %}
+
+            <div class="detail-row">
+                <span class="detail-label"><i class="fas fa-sync"></i> {% trans "Sync" %}:</span>
+                <span class="detail-value">
+                    {% if provider.sync_on_order %}<span class="sync-badge">Order</span>{% endif %}
+                    {% if provider.sync_on_activation %}<span class="sync-badge">Activation</span>{% endif %}
+                    {% if provider.sync_on_deactivation %}<span class="sync-badge">Deactivation</span>{% endif %}
+                    {% if not provider.sync_on_order and not provider.sync_on_activation and not provider.sync_on_deactivation %}
+                        <span class="quiet">{% trans "None" %}</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            {% if provider.last_tested_at %}
+                <div class="detail-row">
+                    <span class="detail-label"><i class="fas fa-clock"></i> {% trans "Last Tested" %}:</span>
+                    <span class="detail-value">{{ provider.last_tested_at|timesince }} {% trans "ago" %}</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="provider-card-footer">
+        <div class="provider-actions">
+            <a href="{% url 'admin:catalog_licenseprovider_change' provider.pk %}"
+               class="action-button">
+                <i class="fas fa-edit"></i> {% trans "Configure" %}
+            </a>
+            <button type="button"
+                    class="action-button test-connection-btn"
+                    data-provider-id="{{ provider.pk }}"
+                    data-provider-name="{{ provider.name }}">
+                <i class="fas fa-plug"></i> {% trans "Test" %}
+            </button>
+            {% if provider.connection_status == 'connected' %}
+                <button type="button"
+                        class="action-button sync-now-btn"
+                        data-provider-id="{{ provider.pk }}">
+                    <i class="fas fa-sync"></i> {% trans "Sync Now" %}
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+{% extends "admin/cart/method_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-globe"></i> {% trans "Geographic Coverage" %}
+</div>
+<p class="step-description">
+    {% trans "Define where this shipping method is available using shipping zones." %}
+</p>
+
+<form method="post" id="method-coverage-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-map-marked-alt"></i> {% trans "Shipping Zones" %}
+        </h3>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Zone-Based Coverage:" %}</strong>
+                {% trans "Use shipping zones for flexible, rule-based geographic coverage. This approach works seamlessly with shipping rules and allows precise control over where your methods are available." %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>{% trans "Select Shipping Zones" %}</label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Choose which shipping zones this method is available for. Leave empty to make available worldwide." %}
+            </p>
+
+            <!-- Dual Listbox for Zone Selection -->
+            <div class="dual-listbox">
+                <div class="listbox-panel">
+                    <label>{% trans "Available Zones" %}</label>
+                    <select id="available-zones" class="dual-select" multiple size="10">
+                        {% for zone in all_zones %}
+                            {% if not method_data.zones or zone.id|stringformat:"s" not in method_data.zones %}
+                                <option value="{{ zone.id }}">{{ zone.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="listbox-controls">
+                    <button type="button" class="btn btn-secondary btn-sm" id="add-zones" title="{% trans 'Add selected zones' %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="add-all-zones" title="{% trans 'Add all zones' %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="remove-zones" title="{% trans 'Remove selected zones' %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="remove-all-zones" title="{% trans 'Remove all zones' %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </button>
+                </div>
+
+                <div class="listbox-panel">
+                    <label>{% trans "Selected Zones" %}</label>
+                    <select id="selected-zones" name="zones" class="dual-select" multiple size="10">
+                        {% if method_data.zones %}
+                            {% for zone_id in method_data.zones %}
+                                {% for zone in all_zones %}
+                                    {% if zone.id|stringformat:"s" == zone_id %}
+                                        <option value="{{ zone.id }}">{{ zone.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+
+            {% if not all_zones %}
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>{% trans "No shipping zones found!" %}</strong>
+                        {% trans "You need to create shipping zones first." %}
+                        <a href="{% url 'admin:shipping_shippingzone_add' %}" target="_blank">
+                            {% trans "Create a shipping zone" %}
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'cart:method_wizard_step2' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="method-coverage-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script src="{% static 'cart/js/wizard_step3.js' %}"></script>
+{% endblock %}

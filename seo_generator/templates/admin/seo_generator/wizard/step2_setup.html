@@ -1,0 +1,49 @@
+{% extends "admin/seo_generator/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content setup-step">
+    <h2 class="step-title">
+        <i class="fas fa-book-open"></i>
+        {% trans "Setup Instructions" %}
+    </h2>
+    <p class="step-description">
+        {% blocktrans with provider=component.name %}
+        Before entering credentials, review these setup steps for {{ provider }}.
+        {% endblocktrans %}
+    </p>
+
+    {% if has_instructions %}
+        {{ instructions_html }}
+    {% else %}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+                <p><strong>{% trans "Setup Instructions Not Available" %}</strong></p>
+                <p>
+                    {% blocktrans with provider=component.name %}
+                    Setup instructions are not available for this version of {{ provider }}.
+                    Please contact support for assistance or check for an updated version.
+                    {% endblocktrans %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
+    <form method="post" id="setup-form">
+        {% csrf_token %}
+    </form>
+</div>
+{% include "providers_common/includes/manifest_i18n.html" %}
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'seo_generator:wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="setup-form" class="btn btn-primary">
+        {% trans "Continue to Credentials" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

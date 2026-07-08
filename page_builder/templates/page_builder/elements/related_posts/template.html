@@ -1,0 +1,64 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Related Posts Element -->
+<section class="related-posts related-posts--{{ element.content.layout|default:'grid' }}"
+         {% hover_animation_attrs element %}
+         style="{% base_styles element %}">
+    {% if element.content.title %}
+    <h3 class="related-posts__title">{{ element.content.title }}</h3>
+    {% endif %}
+
+    <div class="related-posts__container" style="--related-columns: {{ element.content.columns|default:'3' }};">
+        {% with posts=element_context.posts|default:element.content.posts %}
+        {% for post in posts %}
+        <article class="related-posts__item">
+            {% if element.content.show_image|default:True %}
+            <a href="{{ post.url|default:post.get_absolute_url }}" class="related-posts__image-link">
+                <div class="related-posts__image-wrapper" style="aspect-ratio: {{ element.content.image_ratio|default:'16/9' }};">
+                    {% if post.image or post.featured_image %}
+                    <img src="{% if post.image %}{{ post.image }}{% elif post.featured_image.file %}{{ post.featured_image.file.url }}{% endif %}"
+                         alt="{{ post.title }}"
+                         class="related-posts__image"
+                         loading="lazy">
+                    {% else %}
+                    <div class="related-posts__image-placeholder">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+            {% endif %}
+
+            <div class="related-posts__content">
+                {% if element.content.show_category|default:True and post.category %}
+                <span class="related-posts__category">
+                    {{ post.category.name|default:post.category }}
+                </span>
+                {% endif %}
+
+                <h4 class="related-posts__post-title">
+                    <a href="{{ post.url|default:post.get_absolute_url }}">{{ post.title }}</a>
+                </h4>
+
+                {% if element.content.show_excerpt and post.excerpt %}
+                <p class="related-posts__excerpt">{{ post.excerpt|truncatechars:80 }}</p>
+                {% endif %}
+
+                {% if element.content.show_date|default:True %}
+                <span class="related-posts__date">
+                    {% if post.published_at %}
+                    {{ post.published_at|date:"M j, Y" }}
+                    {% else %}
+                    {{ post.date }}
+                    {% endif %}
+                </span>
+                {% endif %}
+            </div>
+        </article>
+        {% empty %}
+        <div class="related-posts__empty">
+            <p>{% mtrans "No related posts found" %}</p>
+        </div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+</section>

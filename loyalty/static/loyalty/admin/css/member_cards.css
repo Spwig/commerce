@@ -1,0 +1,68 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Member Cards
+ *
+ * Description: Card layout styles for loyalty member_cards
+ * Template: loyalty/templates/admin/loyalty/partials/member_cards.html
+ * Extracted: 2026-02-13
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css (list-row-card system)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Additional styles specific to member cards */
+.list-row-card-checkbox {
+    display: flex;
+    align-items: center;
+    padding-right: 8px;
+}
+
+.list-row-card-checkbox input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.list-row-card-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.list-row-card-stat-label {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.list-row-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-right: 16px;
+    color: var(--body-quiet-color);
+    font-size: 12px;
+}
+
+.list-row-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.list-row-card-meta-item i {
+    width: 14px;
+    text-align: center;
+}
+
+/* Responsive adjustments - Member-specific rules only */
+@media (max-width: 768px) {
+    .list-row-card-checkbox {
+        order: -1;
+        margin-bottom: 12px;
+    }
+}

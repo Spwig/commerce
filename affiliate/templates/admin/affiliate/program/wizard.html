@@ -1,0 +1,383 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Affiliate Program" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'affiliate/css/program-wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Header -->
+    <div class="wizard-header">
+        <a href="{% url 'admin:affiliate_program_changelist' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Programs" %}
+        </a>
+        <h1><i class="fas fa-handshake"></i> {% trans "Create Affiliate Program" %}</h1>
+        <p class="wizard-subtitle">{% trans "Set up a new affiliate program to grow your business through partner referrals" %}</p>
+    </div>
+
+    <!-- Step Indicators -->
+    <div class="wizard-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Basics" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Commission" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Tracking" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Settings" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="5">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Review" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Form -->
+    <form id="wizard-form" method="post">
+        {% csrf_token %}
+
+        <div class="wizard-content">
+            <!-- Step 1: Program Basics -->
+            <div class="wizard-step" data-step="1">
+                <h2 class="step-title">
+                    <i class="fas fa-info-circle"></i> {% trans "Program Basics" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Start by giving your affiliate program a name and description." %}
+                </p>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="name">{% trans "Program Name" %} <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" class="form-control"
+                               placeholder="{% trans 'e.g., Partner Referral Program' %}"
+                               maxlength="200" required>
+                        <p class="help-text">{% trans "Choose a clear name that affiliates will recognize." %}</p>
+                        <p class="error-message" id="name-error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slug">{% trans "URL Slug" %}</label>
+                        <input type="text" id="slug" name="slug" class="form-control"
+                               placeholder="{% trans 'auto-generated-from-name' %}"
+                               maxlength="200">
+                        <p class="help-text">{% trans "URL-friendly identifier. Leave blank to auto-generate from name." %}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">{% trans "Description" %}</label>
+                        <textarea id="description" name="description" class="form-control" rows="4"
+                                  placeholder="{% trans 'Describe your program, commission structure, and what affiliates can expect...' %}"></textarea>
+                        <p class="help-text">{% trans "This description will be shown to potential affiliates." %}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">{% trans "Initial Status" %}</label>
+                        <select id="status" name="status" class="form-control">
+                            <option value="active">{% trans "Active - Accept affiliates immediately" %}</option>
+                            <option value="paused">{% trans "Paused - Set up now, activate later" %}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Commission Structure -->
+            <div class="wizard-step" data-step="2" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-percentage"></i> {% trans "Commission Structure" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Define how affiliates will earn commissions from referrals." %}
+                </p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-coins"></i> {% trans "Commission Type" %}
+                    </h3>
+
+                    <div class="commission-type-cards">
+                        <label class="commission-type-card selected" data-type="percentage">
+                            <input type="radio" name="commission_type" value="percentage" checked>
+                            <div class="card-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>{% trans "Percentage" %}</h4>
+                                <p>{% trans "Pay a percentage of each sale" %}</p>
+                            </div>
+                            <div class="card-check">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </label>
+
+                        <label class="commission-type-card" data-type="fixed">
+                            <input type="radio" name="commission_type" value="fixed">
+                            <div class="card-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="card-content">
+                                <h4>{% trans "Fixed Amount" %}</h4>
+                                <p>{% trans "Pay a fixed amount per sale" %}</p>
+                            </div>
+                            <div class="card-check">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="form-group commission-value-group">
+                        <label for="commission_value">
+                            <span id="commission-value-label">{% trans "Commission Percentage" %}</span>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="input-with-addon">
+                            <span class="input-addon" id="commission-prefix" style="display: none;">$</span>
+                            <input type="number" id="commission_value" name="commission_value"
+                                   class="form-control" step="0.01" min="0" max="100"
+                                   placeholder="10" required>
+                            <span class="input-addon" id="commission-suffix">%</span>
+                        </div>
+                        <p class="help-text" id="commission-help">
+                            {% trans "Enter a value between 0 and 100." %}
+                        </p>
+                        <p class="error-message" id="commission_value-error"></p>
+                    </div>
+
+                    <!-- Commission Preview -->
+                    <div class="commission-preview">
+                        <div class="preview-title">
+                            <i class="fas fa-calculator"></i> {% trans "Example Calculation" %}
+                        </div>
+                        <div class="preview-content">
+                            <div class="preview-example">
+                                <span class="preview-label">{% trans "Order Value:" %}</span>
+                                <span class="preview-value">$100.00</span>
+                            </div>
+                            <div class="preview-example highlight">
+                                <span class="preview-label">{% trans "Affiliate Earns:" %}</span>
+                                <span class="preview-value" id="preview-commission">$10.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Tracking Settings -->
+            <div class="wizard-step" data-step="3" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-cookie"></i> {% trans "Tracking Settings" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Configure how long affiliate referrals are tracked." %}
+                </p>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="cookie_lifetime_days">{% trans "Cookie Lifetime" %}</label>
+                        <div class="slider-group">
+                            <input type="range" id="cookie_lifetime_slider" min="1" max="365" value="30"
+                                   class="form-slider">
+                            <div class="slider-value">
+                                <input type="number" id="cookie_lifetime_days" name="cookie_lifetime_days"
+                                       class="form-control small" min="1" max="365" value="30"> {% trans "days" %}
+                            </div>
+                        </div>
+                        <p class="help-text">
+                            {% trans "How long after clicking an affiliate link should a purchase be attributed to that affiliate?" %}
+                        </p>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="info-box-content">
+                            <h4>{% trans "How Cookie Tracking Works" %}</h4>
+                            <p>{% trans "When a customer clicks an affiliate's link, a tracking cookie is stored in their browser. If they make a purchase within the cookie lifetime, the affiliate receives credit for the sale." %}</p>
+                            <ul>
+                                <li><strong>{% trans "7-14 days:" %}</strong> {% trans "Standard for impulse purchases" %}</li>
+                                <li><strong>{% trans "30 days:" %}</strong> {% trans "Most common, good balance" %}</li>
+                                <li><strong>{% trans "60-90 days:" %}</strong> {% trans "Better for considered purchases" %}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Affiliate Settings -->
+            <div class="wizard-step" data-step="4" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-users-cog"></i> {% trans "Affiliate Settings" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Configure how affiliates join and get paid." %}
+                </p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-user-check"></i> {% trans "Affiliate Approval" %}
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="auto_approve_affiliates" name="auto_approve_affiliates">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">
+                                <strong>{% trans "Auto-approve new affiliates" %}</strong>
+                                <span class="checkbox-description">{% trans "Automatically approve affiliate applications without manual review" %}</span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="alert alert-info" id="approval-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="approval-message">{% trans "You will manually review and approve each affiliate application." %}</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-money-check-alt"></i> {% trans "Payout Settings" %}
+                    </h3>
+
+                    <div class="form-group">
+                        <label for="minimum_payout">{% trans "Minimum Payout Threshold" %}</label>
+                        <div class="input-with-addon">
+                            <span class="input-addon">$</span>
+                            <input type="number" id="minimum_payout" name="minimum_payout"
+                                   class="form-control" step="0.01" min="0" value="50.00">
+                        </div>
+                        <p class="help-text">{% trans "Affiliates must earn at least this amount before they can request a payout." %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Review -->
+            <div class="wizard-step" data-step="5" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-check-double"></i> {% trans "Review & Create" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Review your program settings before creating." %}
+                </p>
+
+                <div class="review-summary">
+                    <div class="review-section">
+                        <h3><i class="fas fa-info-circle"></i> {% trans "Program Basics" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Name" %}</span>
+                                <span class="review-value" id="review-name">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Status" %}</span>
+                                <span class="review-value" id="review-status">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-percentage"></i> {% trans "Commission" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Type" %}</span>
+                                <span class="review-value" id="review-commission-type">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Value" %}</span>
+                                <span class="review-value" id="review-commission-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-cookie"></i> {% trans "Tracking" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Cookie Lifetime" %}</span>
+                                <span class="review-value" id="review-cookie">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-users-cog"></i> {% trans "Settings" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Auto-approve" %}</span>
+                                <span class="review-value" id="review-auto-approve">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Minimum Payout" %}</span>
+                                <span class="review-value" id="review-min-payout">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Validation Errors -->
+                <div class="alert alert-error" id="form-errors" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="form-errors-message"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="wizard-navigation">
+            <div class="nav-buttons">
+                <button type="button" class="btn btn-secondary" id="btn-prev" style="display: none;">
+                    <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-next">
+                    {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="submit" class="btn btn-success btn-large" id="btn-create" style="display: none;">
+                    <i class="fas fa-check"></i> {% trans "Create Program" %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="application/json" id="wizard-translations">
+{
+    "programNameRequired": "{% trans 'Program name is required.' %}",
+    "validCommissionValue": "{% trans 'Please enter a valid commission value.' %}",
+    "percentageMax100": "{% trans 'Percentage cannot exceed 100%.' %}",
+    "commissionPercentage": "{% trans 'Commission Percentage' %}",
+    "commissionAmount": "{% trans 'Commission Amount' %}",
+    "enter0to100": "{% trans 'Enter a value between 0 and 100.' %}",
+    "enterFixedAmount": "{% trans 'Enter the fixed amount per sale.' %}",
+    "autoApproveOn": "{% trans 'New affiliates will be automatically approved.' %}",
+    "autoApproveOff": "{% trans 'You will manually review and approve each affiliate application.' %}",
+    "active": "{% trans 'Active' %}",
+    "paused": "{% trans 'Paused' %}",
+    "percentage": "{% trans 'Percentage' %}",
+    "fixedAmount": "{% trans 'Fixed Amount' %}",
+    "days": "{% trans 'days' %}",
+    "yes": "{% trans 'Yes' %}",
+    "no": "{% trans 'No' %}",
+    "creating": "{% trans 'Creating...' %}",
+    "createProgram": "{% trans 'Create Program' %}",
+    "errorOccurred": "{% trans 'An error occurred. Please try again.' %}"
+}
+</script>
+<script src="{% static 'affiliate/admin/js/program-wizard.js' %}" defer></script>
+{% endblock %}

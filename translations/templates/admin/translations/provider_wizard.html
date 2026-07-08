@@ -1,0 +1,287 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Provider Setup" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'translations/admin/css/translations.css' %}">
+<link rel="stylesheet" href="{% static 'translations/admin/css/providers.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/provider-wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="wizard-header">
+        <a href="{% url 'translations:external_providers' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Providers" %}
+        </a>
+        <h1>{% trans "Setup" %} {{ component.name }}</h1>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="wizard-progress">
+        <div class="progress-step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Setup Instructions" %}</div>
+        </div>
+        <div class="progress-step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Configuration" %}</div>
+        </div>
+        <div class="progress-step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Settings" %}</div>
+        </div>
+        <div class="progress-step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Verify" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <!-- Step 1: Setup Instructions -->
+        <div class="wizard-step active" id="step-1">
+            <h2>{% trans "Setup Instructions" %}</h2>
+
+            {% if has_instructions %}
+            <div class="setup-instructions">
+                {{ instructions_html }}
+            </div>
+            {% else %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-user-plus"></i> {% trans "1. Create an Account" %}</h3>
+                <p>{% blocktrans with name=component.name %}Sign up for a {{ name }} account to get API access.{% endblocktrans %}</p>
+                {% if provider_config.signup_url %}
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button default">
+                    <i class="fas fa-external-link-alt"></i> {% blocktrans with name=component.name %}Sign Up for {{ name }}{% endblocktrans %}
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "2. Get Your API Credentials" %}</h3>
+                <p>{% trans "You will need the following credentials:" %}</p>
+                <ul>
+                    {% for field_key, field_def in credential_schema.items %}
+                    <li><strong>{{ field_def.label }}</strong> — {{ field_def.help_text }}</li>
+                    {% endfor %}
+                </ul>
+                {% if provider_config.docs_url %}
+                <a href="{{ provider_config.docs_url }}" target="_blank" class="button default">
+                    <i class="fas fa-external-link-alt"></i> {% trans "View Documentation" %}
+                </a>
+                {% endif %}
+            </div>
+
+            {% if provider_info.features %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-globe"></i> {% trans "3. Features & Language Support" %}</h3>
+                <ul>
+                    {% for feature in provider_info.features %}
+                    <li><i class="{{ feature.icon }}"></i> {{ feature.text }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if provider_info.free_tier or provider_info.pricing %}
+            <div class="info-box">
+                <i class="fas fa-dollar-sign"></i>
+                <div>
+                    <strong>{% trans "Pricing Information" %}</strong>
+                    {% if provider_info.free_tier %}
+                    <p>{% trans "Free tier:" %} {{ provider_info.free_tier }}</p>
+                    {% endif %}
+                    {% if provider_info.pricing %}
+                    <p>{% trans "Pricing:" %} {{ provider_info.pricing }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <div class="wizard-actions">
+                <button type="button" class="button default" data-action="next-step">
+                    {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Configuration (manifest-driven) -->
+        <div class="wizard-step" id="step-2">
+            <h2>{% trans "API Configuration" %}</h2>
+
+            <form id="provider-form">
+                {% csrf_token %}
+                <input type="hidden" name="provider_type" value="{{ provider_type }}">
+
+                <div class="form-group">
+                    <label for="provider_name">{% trans "Display Name" %}</label>
+                    <input type="text" id="provider_name" name="name" class="form-control"
+                           value="{% if existing_account %}{{ existing_account.display_name }}{% else %}{{ component.name }}{% endif %}"
+                           placeholder="{% blocktrans with name=component.name %}e.g., My {{ name }} Account{% endblocktrans %}">
+                </div>
+
+                {% for field_key, field_def in credential_schema.items %}
+                <div class="form-group">
+                    <label for="field_{{ field_key }}">
+                        {{ field_def.label }}
+                        {% if field_def.required %}<span class="required">*</span>{% endif %}
+                    </label>
+                    {% if field_def.type == 'select' %}
+                    <select id="field_{{ field_key }}"
+                            name="{{ field_key }}"
+                            class="form-control"
+                            {% if field_def.required %}required{% endif %}>
+                        {% for option in field_def.options %}
+                        <option value="{{ option.value }}"{% if option.value == field_def.default %} selected{% endif %}>{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% else %}
+                    <input type="{% if field_def.type == 'password' %}password{% else %}text{% endif %}"
+                           id="field_{{ field_key }}"
+                           name="{{ field_key }}"
+                           class="form-control"
+                           placeholder="{{ field_def.placeholder|default:'' }}"
+                           {% if field_def.required %}required{% endif %}>
+                    {% endif %}
+                    {% if field_def.help_text %}
+                    <small class="form-text text-muted">{{ field_def.help_text }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="test-connection">
+                    <button type="button" class="button default" data-action="test-connection">
+                        <i class="fas fa-plug"></i> {% trans "Test Connection" %}
+                    </button>
+                    <div id="test-result"></div>
+                </div>
+            </form>
+
+            <div class="wizard-actions">
+                <button type="button" class="button" data-action="previous-step">
+                    <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                </button>
+                <button type="button" class="button default" data-action="next-step">
+                    {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Settings -->
+        <div class="wizard-step" id="step-3">
+            <h2>{% trans "Advanced Settings" %}</h2>
+
+            <form id="settings-form">
+                <div class="form-group">
+                    <label for="rate_limit">{% trans "Rate Limit" %}</label>
+                    <input type="number" id="rate_limit" name="rate_limit" class="form-control"
+                           value="{% if existing_account.settings.rate_limit %}{{ existing_account.settings.rate_limit }}{% else %}100{% endif %}"
+                           placeholder="100">
+                    <small class="form-text text-muted">
+                        {% trans "Maximum requests per minute" %}
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="max_chars">{% trans "Max Characters per Request" %}</label>
+                    <input type="number" id="max_chars" name="max_chars_per_request" class="form-control"
+                           value="{% if existing_account.settings.max_chars_per_request %}{{ existing_account.settings.max_chars_per_request }}{% else %}5000{% endif %}"
+                           placeholder="5000">
+                    <small class="form-text text-muted">
+                        {% trans "Maximum number of characters to send in a single request" %}
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="timeout">{% trans "Timeout (seconds)" %}</label>
+                    <input type="number" id="timeout" name="timeout_seconds" class="form-control"
+                           value="{% if existing_account.settings.timeout %}{{ existing_account.settings.timeout }}{% else %}30{% endif %}"
+                           placeholder="30">
+                    <small class="form-text text-muted">
+                        {% trans "Request timeout in seconds" %}
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="priority">{% trans "Priority" %}</label>
+                    <input type="number" id="priority" name="priority" class="form-control"
+                           value="{% if existing_account %}{{ existing_account.priority }}{% else %}0{% endif %}"
+                           placeholder="0">
+                    <small class="form-text text-muted">
+                        {% trans "Higher priority providers are tried first (0-100)" %}
+                    </small>
+                </div>
+            </form>
+
+            <div class="wizard-actions">
+                <button type="button" class="button" data-action="previous-step">
+                    <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                </button>
+                <button type="button" class="button default" data-action="next-step">
+                    {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Verify -->
+        <div class="wizard-step" id="step-4">
+            <h2>{% trans "Verify Configuration" %}</h2>
+
+            <div class="verification-summary">
+                <h3>{% trans "Configuration Summary" %}</h3>
+                <dl class="summary-list">
+                    <dt>{% trans "Provider" %}</dt>
+                    <dd id="summary-provider" data-default-name="{{ component.name }}">{{ component.name }}</dd>
+
+                    <dt>{% trans "Credentials" %}</dt>
+                    <dd id="summary-credentials">***************</dd>
+
+                    <dt>{% trans "Rate Limit" %}</dt>
+                    <dd id="summary-rate-limit">100 requests/min</dd>
+                </dl>
+            </div>
+
+            <div class="test-translation">
+                <h3>{% trans "Test Translation" %}</h3>
+                <div class="test-form">
+                    <input type="text" id="test-text" class="form-control"
+                           placeholder="{% trans 'Enter text to translate' %}"
+                           value="{% trans 'Hello, world!' %}">
+                    <select id="test-target" class="form-control">
+                        <option value="es">{% trans "Spanish" %}</option>
+                        <option value="fr">{% trans "French" %}</option>
+                        <option value="de">{% trans "German" %}</option>
+                        <option value="ja">{% trans "Japanese" %}</option>
+                    </select>
+                    <button type="button" class="button default" data-action="test-translation">
+                        <i class="fas fa-language"></i> {% trans "Test" %}
+                    </button>
+                </div>
+                <div id="test-translation-result"></div>
+            </div>
+
+            <div class="wizard-actions">
+                <button type="button" class="button" data-action="previous-step">
+                    <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                </button>
+                <button type="button" class="button default" data-action="save-configuration">
+                    <i class="fas fa-save"></i> {% trans "Save Configuration" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="translations-config"
+     data-test-provider-url="{% url 'translations_api:test_provider' %}"
+     data-test-translation-url="{% url 'translations_api:test_translation' %}"
+     data-save-provider-url="{% url 'translations_api:save_provider' %}"
+     data-providers-url="{% url 'translations:external_providers' %}"
+     hidden></div>
+<script src="{% static 'translations/admin/js/provider-wizard.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "page_builder/category/_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block template_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/category-featured.css' %}">
+{% endblock %}
+
+{% block product_display %}
+<!-- Featured Hero Products -->
+{% if featured_products %}
+<div class="cat-featured-heroes{% if template_options.hero_layout == 'split' %} cat-featured-heroes--split{% endif %}">
+    {% for product in featured_products %}
+    <article class="cat-featured-hero">
+        <a href="{{ product.get_absolute_url }}" class="cat-featured-hero__link">
+            <div class="cat-featured-hero__image-wrapper">
+                {% if product.primary_image_large_url %}
+                <img src="{{ product.primary_image_large_url }}" alt="{{ product.name }}" class="cat-featured-hero__image" loading="eager">
+                {% else %}
+                <div class="cat-featured-hero__placeholder">
+                    <i class="fas fa-image"></i>
+                </div>
+                {% endif %}
+                <div class="cat-featured-hero__overlay"></div>
+            </div>
+            <div class="cat-featured-hero__content">
+                <span class="cat-featured-hero__badge">{% mtrans 'Featured' %}</span>
+                <h3 class="cat-featured-hero__title">{{ product.name }}</h3>
+                <span class="cat-featured-hero__price">{{ product.display_price }}</span>
+                <span class="cat-featured-hero__btn">{% mtrans 'View Product' %} <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+    </article>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Divider -->
+{% if featured_products and remaining_products %}
+<div class="cat-featured-divider">
+    <span class="cat-featured-divider__text">{% mtrans 'More Products' %}</span>
+</div>
+{% endif %}
+
+<!-- Remaining Products Grid -->
+{% if remaining_products %}
+<div class="product-grid">
+    {% for product in remaining_products %}
+        {% include 'page_builder/partials/product_card.html' with product=product %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if not featured_products and not remaining_products %}
+<div class="product-grid__empty">
+    <i class="fas fa-box-open"></i>
+    <p>{% mtrans 'No products in this category yet.' %}</p>
+</div>
+{% endif %}
+{% endblock %}

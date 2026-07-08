@@ -1,0 +1,120 @@
+{% extends "admin/shipping/zone_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-info-circle"></i> {% trans "Basic Information" %}
+</div>
+<p class="step-description">
+    {% trans "Provide a name and priority for your shipping zone. The priority determines which zone is used when an address matches multiple zones." %}
+</p>
+
+<form method="post" id="zone-basic-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-tag"></i> {% trans "Zone Details" %}
+        </h3>
+
+        <!-- Zone Name -->
+        <div class="form-group">
+            <label for="id_name">
+                {% trans "Zone Name" %} <span class="required">*</span>
+            </label>
+            <input type="text"
+                   id="id_name"
+                   name="name"
+                   class="form-control"
+                   value="{{ zone_data.name|default:'' }}"
+                   required
+                   maxlength="200"
+                   placeholder="{% trans 'e.g., North America, European Union, Domestic' %}">
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "A descriptive name for this shipping zone" %}
+            </p>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="id_description">{% trans "Description" %}</label>
+            <textarea id="id_description"
+                      name="description"
+                      class="form-control"
+                      rows="3"
+                      placeholder="{% trans 'Optional description of what this zone covers...' %}">{{ zone_data.description|default:'' }}</textarea>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Optional details about this zone's coverage" %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-sort-amount-down"></i> {% trans "Priority & Status" %}
+        </h3>
+
+        <!-- Priority -->
+        <div class="form-group">
+            <label for="id_priority">
+                {% trans "Priority" %} <span class="required">*</span>
+            </label>
+            <input type="number"
+                   id="id_priority"
+                   name="priority"
+                   class="form-control"
+                   value="{{ zone_data.priority|default:0 }}"
+                   min="0"
+                   max="100"
+                   required>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Zone priority (0 = highest). When an address matches multiple zones, the highest priority zone is used." %}
+            </p>
+            <div class="info-box">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>{% trans "Priority Guidelines:" %}</strong>
+                    <ul class="zone-wizard-info-list">
+                        <li>{% trans "0-5: High priority zones (specific regions)" %}</li>
+                        <li>{% trans "6-10: Medium priority zones (broader regions)" %}</li>
+                        <li>{% trans "11+: Low priority zones (catch-all zones)" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Status -->
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox"
+                       id="id_is_active"
+                       name="is_active"
+                       {% if zone_data.is_active or not zone_data.name %}checked{% endif %}>
+                {% trans "Active" %}
+            </label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Only active zones are used for shipping calculations" %}
+            </p>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:shipping_shippingzone_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="zone-basic-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script src="{% static 'shipping/js/zone-wizard.js' %}"></script>
+{% endblock %}

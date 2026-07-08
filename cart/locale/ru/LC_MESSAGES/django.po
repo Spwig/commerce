@@ -1,0 +1,2783 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+msgid "Action and method IDs required"
+msgstr "Требуются идентификаторы действия и метода"
+
+msgid "{} method(s) enabled"
+msgstr "\"{}\" метод(ы) включены"
+
+msgid "{} method(s) disabled"
+msgstr "\"{}\" метод(ы) отключены"
+
+msgid "{} method(s) deleted"
+msgstr "{} метод(ов) удален(ы)"
+
+msgid "Unknown action"
+msgstr "Неизвестное действие"
+
+msgid "Invalid request data"
+msgstr "Недопустимые данные запроса"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "Случилась неожиданная ошибка. Пожалуйста, попробуйте еще раз."
+
+msgid "Basic Information"
+msgstr "Основная информация"
+
+msgid "Geographic Scope"
+msgstr "Географический охват"
+
+msgid "Application Rules"
+msgstr "Правила применения"
+
+msgid "Product Exemptions"
+msgstr "Исключения товаров"
+
+msgid "Timestamps"
+msgstr "Моменты времени"
+
+msgid "Rate %"
+msgstr "Ставка (%)"
+
+msgid "Cart"
+msgstr "Корзина"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "Введите в процентах (например, 8.25 для 8.25%)"
+
+msgid "Rate (%)"
+msgstr "Ставка (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "Пожалуйста, завершите шаг 1 первым"
+
+msgid "Please complete the wizard steps"
+msgstr "Пожалуйста, завершите все шаги в мастере"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "Метод доставки \"%(name)s\" успешно создан!"
+
+msgid "Please configure rate tables for this method."
+msgstr "Пожалуйста, настройте таблицы тарифов для этого метода."
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "Не удалось создать метод доставки: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "Получить данные мини-корзины"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    Получить текущее содержимое корзины в формате для компонента мини-"
+"корзины. Работает как для аутентифицированных пользователей (корзина связана "
+"с учетной записью пользователя), так и для анонимных пользователей (корзина "
+"связана с сессией). Данные корзины включают все товары с деталями продуктов, "
+"количествами, ценами и изображениями. **Сценарии использования:** - "
+"Первоначальная загрузка мини-корзины на странице - Обновление корзины после "
+"внешних изменений - Проверка статуса корзины перед оформлением заказа "
+"**Аутентификация:** Не требуется (использует сессию для анонимных "
+"пользователей)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "Данные корзины успешно получены"
+
+msgid "Update cart item quantity"
+msgstr "Обновить количество элемента корзины"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    Обновить количество товара в корзине. Установите количество равным 0, "
+"чтобы полностью удалить товар. Эндпоинт проверяет доступность товара перед "
+"обновлением и возвращает полностью обновленную корзину. **Сценарии "
+"использования:** - Кнопки увеличения/уменьшения количества в мини-корзине - "
+"Прямые изменения количества вводом - Удаление товаров (количество=0) "
+"**Аутентификация:** Не требуется (проверяет, принадлежит ли товар корзине "
+"пользователя) **Проверка:** - Товар должен существовать в корзине "
+"пользователя - Количество должно быть неотрицательным целым числом - "
+"Проверяется доступность товара для продуктов, отслеживаемых на складе\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "Корзина успешно обновлена"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "Неверные данные запроса или недостаточный запас"
+
+msgid "Cart item not found"
+msgstr "Элемент корзины не найден"
+
+msgid "Remove item from cart"
+msgstr "Удалить товар из корзины"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    Удалить товар из корзины полностью. Возвращает обновленные данные "
+"корзины после удаления. **Сценарии использования:** - Кнопка удаления "
+"товаров в корзине - Очистка конкретных товаров **Аутентификация:** Не "
+"требуется (проверяет, принадлежит ли товар корзине пользователя)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "Товар успешно удален"
+
+msgid "Get empty cart recommendations"
+msgstr "Получить рекомендации для пустой корзины"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    Получить интеллектуальные рекомендации товаров для состояния пустой "
+"корзины. Возвращает персонализированные предложения, организованные в "
+"обозначенные разделы, на основе: - **Недавно просмотренные**: Товары, "
+"которые пользователь просматривал (на основе сессии для анонимных "
+"пользователей) - **Связанные**: Товары из тех же категорий, что и недавно "
+"просмотренные товары - **В продаже**: Товары, которые сейчас находятся в "
+"распродаже - **Популярные**: Популярные товары по просмотрам/продажам - "
+"**Рекомендованные**: Товары, выбранные редакторами в качестве резервного "
+"варианта Все возвращаемые товары проверены на наличие в наличии и доступны "
+"для покупки. **Сценарии использования:** - Состояние пустой корзины в мини-"
+"корзине - Разделы \"Вам может понравиться\" - Возможности кросс-продажи "
+"**Аутентификация:** Не требуется (используется сессия для анонимных "
+"пользователей) **Персонализация:** - Анонимные пользователи: На основе "
+"товаров, просмотренных в сессии - Авторизованные пользователи: На основе "
+"истории и предпочтений аккаунта\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr ""
+"Максимальное количество возвращаемых продуктов (по умолчанию: 6, максимум: "
+"12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "Рекомендации успешно получены"
+
+msgid "User"
+msgstr "Пользователь"
+
+msgid "Session Key"
+msgstr "Ключ сессии"
+
+msgid "Cart Currency"
+msgstr "Валюта корзины"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"Код валюты для всех элементов в этой корзине (например, EUR, NZD). Пустое "
+"значение означает валюту по умолчанию магазина."
+
+msgid "Default Layout"
+msgstr "Основной макет"
+
+msgid "Compact View"
+msgstr "Упрощенное представление"
+
+msgid "Detailed View"
+msgstr "Подробное представление"
+
+msgid "Minimal View"
+msgstr "Минимальное представление"
+
+msgid "Sidebar Cart"
+msgstr "Корзина в боковой панели"
+
+msgid "Overlay Cart"
+msgstr "Корзина с накладыванием"
+
+msgid "How the cart is displayed"
+msgstr "Как отображается корзина"
+
+msgid "Cart Layout"
+msgstr "Макет корзины"
+
+msgid "Show Product Images"
+msgstr "Отображать изображения товаров"
+
+msgid "Show Product Variants"
+msgstr "Отображать варианты товаров"
+
+msgid "Show Remove Button"
+msgstr "Отображать кнопку удаления"
+
+msgid "Show Quantity Controls"
+msgstr "Отображать элементы управления количеством"
+
+msgid "Show Item Totals"
+msgstr "Отображать общую стоимость позиции"
+
+msgid "Show Cart Summary"
+msgstr "Отображать общий итог корзины"
+
+msgid "Show Savings"
+msgstr "Показать сэкономленные средства"
+
+msgid "Single Page Checkout"
+msgstr "Одностраничный процесс оформления заказа"
+
+msgid "Multi-Step Checkout"
+msgstr "Многошаговый процесс оформления заказа"
+
+msgid "Accordion Style"
+msgstr "Стиль аккордеона"
+
+msgid "Wizard Style"
+msgstr "Стиль визарда"
+
+msgid "Checkout Flow"
+msgstr "Процесс оформления заказа"
+
+msgid "Shipping Address"
+msgstr "Адрес доставки"
+
+msgid "Shipping Method"
+msgstr "Способ доставки"
+
+msgid "Calculated shipping cost"
+msgstr "Рассчитанная стоимость доставки"
+
+msgid "Shipping Cost"
+msgstr "Стоимость доставки"
+
+msgid "Estimated Delivery Date"
+msgstr "Предполагаемая дата доставки"
+
+msgid "Shipping Notes"
+msgstr "Примечания к доставке"
+
+msgid "None"
+msgstr "Нет"
+
+msgid "Percentage"
+msgstr "Процент"
+
+msgid "Fixed Amount"
+msgstr "Фиксированная сумма"
+
+msgid "POS manual discount type"
+msgstr "Тип ручной скидки POS"
+
+msgid "POS manual discount value"
+msgstr "Значение ручной скидки POS"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "Значение скидки (процент или фиксированная сумма)"
+
+msgid "POS discount applied by"
+msgstr "Скидка применена пользователем"
+
+msgid "POS discount approved by"
+msgstr "Скидка одобрена пользователем"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr ""
+"Менеджер, который одобрил скидку, если она превышала лимит для сотрудников"
+
+msgid "POS discount reason"
+msgstr "Причина скидки POS"
+
+msgid "Created At"
+msgstr "Создано"
+
+msgid "Updated At"
+msgstr "Обновлено"
+
+msgid "Shopping Cart"
+msgstr "Корзина покупок"
+
+msgid "Shopping Carts"
+msgstr "Корзины покупок"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "Корзина для {username}"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "Корзина (Сессия: {session})"
+
+msgid "No shipping required"
+msgstr "Доставка не требуется"
+
+msgid "Shipping address required"
+msgstr "Требуется адрес доставки"
+
+msgid "Available shipping methods retrieved"
+msgstr "Доступные методы доставки получены"
+
+msgid "Shipping calculated successfully"
+msgstr "Доставка успешно рассчитана"
+
+msgid "Invalid gift card code"
+msgstr "Неверный код подарочной карты"
+
+msgid "Gift card already applied"
+msgstr "Подарочная карта уже применена"
+
+msgid "Gift card is not active"
+msgstr "Подарочная карта не активна"
+
+msgid "Gift card has expired"
+msgstr "Подарочная карта истекла"
+
+msgid "Gift card has been fully redeemed"
+msgstr "Подарочная карта полностью использована"
+
+msgid "Gift card cannot be used"
+msgstr "Подарочная карта не может быть использована"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"Несоответствие валют. Подарочная карта в валюте {card_currency}, корзина в "
+"валюте {cart_currency}"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"Эта подарочная карта указана в {card_currency}. Пожалуйста, переключитесь на "
+"{card_currency}, чтобы использовать её."
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr ""
+"Подарочные карты не могут быть использованы для покупки других подарочных "
+"карт"
+
+msgid "Cart total is already covered"
+msgstr "Общая сумма корзины уже покрыта"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "Невозможно выполнить конвертацию валюты подарочной карты"
+
+msgid "Gift card applied successfully"
+msgstr "Подарочная карта успешно применена"
+
+msgid "Product"
+msgstr "Товар"
+
+msgid "Variant"
+msgstr "Вариант"
+
+msgid "Quantity"
+msgstr "Количество"
+
+msgid "Unit Price"
+msgstr "Цена за единицу"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"Персонализации товаров с рассчитанными ценами: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "Персонализация"
+
+msgid "Is Subscription"
+msgstr "Является подпиской"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "Будет ли этот товар приобретаться как подписка"
+
+msgid "Subscription Plan"
+msgstr "План подписки"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "Выбранная подписка для регулярной оплаты"
+
+msgid "Pricing Tier"
+msgstr "Уровень цен"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "Выбранное ценовое ограничение (частота оплаты) для подписки"
+
+msgid "Payment Token"
+msgstr "Токен оплаты"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr ""
+"Сохраненный способ оплаты для регулярной оплаты (необходим для подписок)"
+
+msgid "Parent Bundle"
+msgstr "Родительский набор"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "Если это компонент пакета, ссылка на элемент корзины пакета"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"Детали бронирования: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+
+msgid "Booking Data"
+msgstr "Данные бронирования"
+
+msgid "Customer notes for this item"
+msgstr "Заметки клиента для этого товара"
+
+msgid "Notes"
+msgstr "Заметки"
+
+msgid "manual discount type"
+msgstr "ручной тип скидки"
+
+msgid "manual discount value"
+msgstr "ручное значение скидки"
+
+msgid "discount applied by"
+msgstr "скидка применена кем"
+
+msgid "discount approved by"
+msgstr "скидка одобрена кем"
+
+msgid "discount reason"
+msgstr "причина скидки"
+
+msgid "Cart Item"
+msgstr "Позиция в корзине"
+
+msgid "Cart Items"
+msgstr "Позиции в корзине"
+
+msgid "My Wishlist"
+msgstr "Мой список желаемых товаров"
+
+msgid "Name"
+msgstr "Название"
+
+msgid "Grid Layout"
+msgstr "Сеточный макет"
+
+msgid "List Layout"
+msgstr "Макет списка"
+
+msgid "How wishlist items are displayed"
+msgstr "Как отображаются элементы списка желаемых товаров"
+
+msgid "Wishlist Layout"
+msgstr "Макет списка желаемых товаров"
+
+msgid "Is Public"
+msgstr "Открыт для публики"
+
+msgid "Share Slug"
+msgstr "Ссылка для размещения"
+
+msgid "Show Prices"
+msgstr "Показывать цены"
+
+msgid "Show Availability"
+msgstr "Показывать наличие"
+
+msgid "Show Add to Cart"
+msgstr "Показывать кнопку добавления в корзину"
+
+msgid "Wishlist"
+msgstr "Список желаемых товаров"
+
+msgid "Wishlists"
+msgstr "Списки желаемых товаров"
+
+msgid "Low"
+msgstr "Низкий"
+
+msgid "Medium"
+msgstr "Средний"
+
+msgid "High"
+msgstr "Высокий"
+
+msgid "Priority"
+msgstr "Приоритет"
+
+msgid "Notify When Available"
+msgstr "Уведомлять при наличии"
+
+msgid "Notify When On Sale"
+msgstr "Уведомлять при скидках"
+
+msgid "Wishlist Item"
+msgstr "Элемент списка желаемых товаров"
+
+msgid "Wishlist Items"
+msgstr "Элементы списка желаемых товаров"
+
+msgid "Viewed At"
+msgstr "Просмотрено"
+
+msgid "View Count"
+msgstr "Количество просмотров"
+
+msgid "Recently Viewed Product"
+msgstr "Недавно просмотренный товар"
+
+msgid "Recently Viewed Products"
+msgstr "Недавно просмотренные товары"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "Сессия: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{product} просмотрен пользователем {user}"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Flat Rate"
+msgstr "Плата фиксированного размера"
+
+msgid "Free Shipping"
+msgstr "Бесплатная доставка"
+
+msgid "Weight Based"
+msgstr "На основе веса"
+
+msgid "Price Based"
+msgstr "На основе цены"
+
+msgid "Real-Time Carrier Rates"
+msgstr "Текущие тарифы перевозчиков"
+
+msgid "Local Pickup"
+msgstr "Самовывоз"
+
+msgid "Table Rate"
+msgstr "Таблица тарифов"
+
+msgid "Method Type"
+msgstr "Тип метода"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "Фиксированная стоимость доставки (для типа flat_rate)"
+
+msgid "Flat Rate Cost"
+msgstr "Стоимость фиксированной ставки"
+
+msgid "Minimum cart value to qualify"
+msgstr "Минимальное значение корзины для квалификации"
+
+msgid "Minimum Order Value"
+msgstr "Минимальное значение заказа"
+
+msgid "Maximum cart value to qualify"
+msgstr "Максимальное значение корзины для квалификации"
+
+msgid "Maximum Order Value"
+msgstr "Максимальное значение заказа"
+
+msgid "Minimum cart weight (kg)"
+msgstr "Минимальный вес корзины (кг)"
+
+msgid "Minimum Weight"
+msgstr "Минимальный вес"
+
+msgid "Maximum cart weight (kg)"
+msgstr "Максимальный вес корзины (кг)"
+
+msgid "Maximum Weight"
+msgstr "Максимальный вес"
+
+msgid "Shipping Zones"
+msgstr "Зоны доставки"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"Регионы, где этот метод доставки доступен. Если поле пустое, применяются "
+"старые ограничения по странам/штатам."
+
+msgid "Pickup Locations"
+msgstr "Места самовывоза"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"Места, где клиенты могут забрать заказы с помощью этого метода доставки. "
+"Только применимо к типу метода 'local_pickup'."
+
+msgid "Minimum delivery time in business days"
+msgstr "Минимальное время доставки в рабочих днях"
+
+msgid "Minimum Delivery Days"
+msgstr "Минимальное количество дней доставки"
+
+msgid "Maximum delivery time in business days"
+msgstr "Максимальное время доставки в рабочих днях"
+
+msgid "Maximum Delivery Days"
+msgstr "Максимальное количество дней доставки"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "Класс иконки Font Awesome (например, 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "Иконка"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"Изображение метода доставки из медиабиблиотеки. Если указано, имеет "
+"приоритет над иконкой."
+
+msgid "Image"
+msgstr "Изображение"
+
+msgid "Sort Order"
+msgstr "Порядок сортировки"
+
+msgid "Is Active"
+msgstr "Активно"
+
+msgid "Custom Carrier"
+msgstr "Кастомный перевозчик"
+
+msgid "Carrier"
+msgstr "Перевозчик"
+
+msgid "Carrier-specific service code"
+msgstr "Уникальный код услуги перевозчика"
+
+msgid "Carrier Service Code"
+msgstr "Код услуги перевозчика"
+
+msgid "Shipping Methods"
+msgstr "Методы доставки"
+
+msgid "Shipping method is not active"
+msgstr "Метод доставки не активен"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "Требуется минимальная сумма заказа {value}"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "Превышена максимальная сумма заказа {value}"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "Требуется минимальный вес заказа {weight} кг"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "Превышена максимальная масса заказа {weight} кг"
+
+msgid "Cart contains only digital products"
+msgstr "Корзина содержит только цифровые товары"
+
+msgid "Available"
+msgstr "Доступно"
+
+msgid "No geographic restrictions"
+msgstr "Нет географических ограничений"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "Доступно в зоне {zone}"
+
+msgid "Not available in your location"
+msgstr "Недоступно в вашем регионе"
+
+msgid "Available worldwide"
+msgstr "Доступно по всему миру"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "Код страны ISO 3166-1 alpha-2"
+
+msgid "Country"
+msgstr "Страна"
+
+msgid "State/Province/Region"
+msgstr "Штат/провинция/регион"
+
+msgid "State"
+msgstr "Штат"
+
+msgid "City name (optional)"
+msgstr "Название города (необязательное)"
+
+msgid "City"
+msgstr "Город"
+
+msgid "List of specific postal codes (optional)"
+msgstr "Список конкретных почтовых индексов (необязательный)"
+
+msgid "Postal Codes"
+msgstr "Почтовые индексы"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "Ставка налога в десятичном формате (например, 0.0825 для 8.25%)"
+
+msgid "Rate"
+msgstr "Тариф"
+
+msgid "Sales Tax"
+msgstr "Налог на продажи"
+
+msgid "Custom Tax"
+msgstr "Кастомный налог"
+
+msgid "Tax Type"
+msgstr "Тип налога"
+
+msgid "Apply tax to shipping costs"
+msgstr "Применять налог к стоимости доставки"
+
+msgid "Applies to Shipping"
+msgstr "Применяется к доставке"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "Рассчитывается вместе с другими налогами (комбинированный налог)"
+
+msgid "Compound Tax"
+msgstr "Составной налог"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr ""
+"Типы товаров, освобожденные от этого налога (например, ['digital', "
+"'service'])"
+
+msgid "Exempt Product Types"
+msgstr "Типы товаров, освобожденных от налогов"
+
+msgid "Categories exempt from this tax"
+msgstr "Категории, освобожденные от этой налоговой ставки"
+
+msgid "Exempt Categories"
+msgstr "Освобожденные категории"
+
+msgid "Higher priority rules take precedence"
+msgstr "Правила с более высоким приоритетом имеют преимущество"
+
+msgid "Tax Rate"
+msgstr "Налоговая ставка"
+
+msgid "Tax Rates"
+msgstr "Налоговые ставки"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "Европа"
+
+msgid "North America"
+msgstr "Северная Америка"
+
+msgid "Asia Pacific"
+msgstr "Азиатско-Тихоокеанский регион"
+
+msgid "Middle East"
+msgstr "Ближний Восток"
+
+msgid "Africa"
+msgstr "Африка"
+
+msgid "Latin America"
+msgstr "Латинская Америка"
+
+msgid "Oceania"
+msgstr "Океания"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "Уникальный идентификатор (например, eu_vat, us_sales_tax)"
+
+msgid "Key"
+msgstr "Ключ"
+
+msgid "Font Awesome icon class"
+msgstr "Класс иконки Font Awesome"
+
+msgid "Default Tax Type"
+msgstr "Стандартный тип налога"
+
+msgid "Region"
+msgstr "Регион"
+
+msgid "Version for tracking rate updates"
+msgstr "Версия для отслеживания обновлений ставок"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Last Updated"
+msgstr "Последнее обновление"
+
+msgid "Tax Preset Group"
+msgstr "Группа предустановленных налогов"
+
+msgid "Tax Preset Groups"
+msgstr "Группы предустановленных налогов"
+
+msgid "Preset Group"
+msgstr "Предустановленная группа"
+
+msgid "Country Code"
+msgstr "Код страны"
+
+msgid "Country Name"
+msgstr "Название страны"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "Код штата/провинции (для предустановленных значений США/Канады)"
+
+msgid "State Code"
+msgstr "Код штата"
+
+msgid "State Name"
+msgstr "Название штата"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "Ставка налога в десятичном формате (например, 0.20 для 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "Дополнительные примечания (например, 'Увеличено с 22% в июле 2025')"
+
+msgid "Tax Preset Rate"
+msgstr "Ставка налога по умолчанию"
+
+msgid "Tax Preset Rates"
+msgstr "Ставки налогов по умолчанию"
+
+msgid "Billing Address"
+msgstr "Адрес для выставления счета"
+
+msgid "Billing Same as Shipping"
+msgstr "Адрес для выставления счета такой же, как и адрес доставки"
+
+msgid "Shipping Address Data"
+msgstr "Данные адреса доставки"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Временные данные для адреса доставки (не сохраняются в модель Address, пока "
+"заказ не будет оформлен)"
+
+msgid "Billing Address Data"
+msgstr "Данные адреса оплаты"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Временные данные для адреса оплаты (не сохраняются в модель Address, пока "
+"заказ не будет оформлен)"
+
+msgid "Selected Shipping Method"
+msgstr "Выбранная методика доставки"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "Кэшированный список доступных методов доставки с расценками"
+
+msgid "Available Shipping Methods"
+msgstr "Доступные методики доставки"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "Подробный расчёт налогов по юрисдикциям"
+
+msgid "Tax Breakdown"
+msgstr "Расчёт налогов"
+
+msgid "Tax Amount"
+msgstr "Сумма налога"
+
+msgid "Payment Provider"
+msgstr "Поставщик платежей"
+
+msgid "Subtotal"
+msgstr "Всего без учёта скидок"
+
+msgid "Discount Amount"
+msgstr "Сумма скидки"
+
+msgid "Gift Card Discount"
+msgstr "Скидка по подарочной карте"
+
+msgid "Total discount from applied gift cards"
+msgstr "Общая скидка от примененных подарочных карт"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "Итоговая сумма: субтотал + доставка + налог - скидки"
+
+msgid "Total Amount"
+msgstr "Общая сумма"
+
+msgid "Cart Review"
+msgstr "Проверка корзины"
+
+msgid "Billing Information"
+msgstr "Информация для выставления счета"
+
+msgid "Payment Method"
+msgstr "Метод оплаты"
+
+msgid "Order Review"
+msgstr "Проверка заказа"
+
+msgid "Step Completed"
+msgstr "Этап завершён"
+
+msgid "Expires At"
+msgstr "Истекает"
+
+msgid "Metadata"
+msgstr "Метаданные"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "Дополнительные метаданные (например, информация о покупке на маркете)"
+
+msgid "Checkout Session"
+msgstr "Сессия оформления заказа"
+
+msgid "Checkout Sessions"
+msgstr "Сессии оформления заказа"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "Оформление заказа для {cart}"
+
+msgid "Gift Card"
+msgstr "Подарочная карта"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "Сумма в базовой валюте (используется для расчетов в корзине)"
+
+msgid "Original Currency Amount"
+msgstr "Сумма в оригинальной валюте"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Скидка в собственной валюте подарочной карты (для подарочных карт в "
+"иностранных валютах)"
+
+msgid "Exchange Rate"
+msgstr "Курс обмена"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "Курс: валюта подарочной карты -> базовая валюта в момент применения"
+
+msgid "Applied At"
+msgstr "Применено в"
+
+msgid "Applied Gift Card"
+msgstr "Примененная подарочная карта"
+
+msgid "Applied Gift Cards"
+msgstr "Примененные подарочные карты"
+
+msgid "This gift card cannot be used"
+msgstr "Эта подарочная карта не может быть использована"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "Сумма скидки превышает баланс подарочной карты"
+
+msgid "Total customization price (per unit)"
+msgstr "Общая стоимость настройки (на единицу)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "'instant' для цифровых товаров, 'shipping' для физических товаров"
+
+msgid "True if this item is a component of a bundle"
+msgstr "Истинно, если этот товар является компонентом набора"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "ID родительского набора CartItem, если это компонент"
+
+msgid "Child items if this is a bundle parent"
+msgstr "Дочерние элементы, если это родитель набора"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr ""
+"Словарь сопоставления bundle_item_id с variant_id для выбранных клиентом "
+"вариантов"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr ""
+"Список bundle_item_ids для исключения (для необязательных элементов, которые "
+"клиент не хочет)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"Сопоставление slot_id со списком выбранных option_ids для настраиваемых "
+"продуктов"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "ИД предустановки конфигурации, используемый в качестве начальной точки"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"Детали бронирования: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "Количество должно быть не менее 1"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "Для покупок подписки требуется план подписки"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "Токен оплаты требуется для покупок подписки"
+
+msgid "Product not found"
+msgstr "Товар не найден"
+
+msgid "This product does not support subscriptions"
+msgstr "Этот продукт не поддерживает подписки"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "Недействительный или неактивный план подписки"
+
+msgid "This plan is not available for this product"
+msgstr "Этот план недоступен для этого продукта"
+
+msgid "Invalid or inactive payment token"
+msgstr "Недействительный или неактивный токен оплаты"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "Уровень цен не найден или не принадлежит к выбранному плану"
+
+msgid "No pricing tier available for this plan"
+msgstr "Для этого плана недоступно ценовое ограничение"
+
+msgid "Quantity cannot be negative"
+msgstr "Количество не может быть отрицательным"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "Код подарочной карты (например, GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "Сумма, списанная с этой подарочной карты (в базовой валюте)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "Оставшийся баланс на подарочной карте после применения"
+
+msgid "Base currency code"
+msgstr "Код базовой валюты"
+
+msgid "Gift card's native currency code"
+msgstr "Код родной валюты подарочной карты"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Скидка в собственной валюте подарочной карты (для подарочных карт в "
+"иностранной валюте)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr ""
+"Требуется либо address_id, либо полные детали адреса. Недостающие поля: "
+"{fields}"
+
+msgid "This product requires customization"
+msgstr "Этот товар требует настройки"
+
+msgid "Invalid design token"
+msgstr "Недопустимый токен дизайна"
+
+msgid "Design not found or expired"
+msgstr "Дизайн не найден или истёк"
+
+msgid "This product does not support customization"
+msgstr "Этот товар не поддерживает кастомизацию"
+
+msgid "Invalid customization option"
+msgstr "Недопустимый вариант настройки"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "Настройка '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "Необходимая настройка '{name}' отсутствует"
+
+msgid "Insufficient stock"
+msgstr "Недостаточное количество товара на складе"
+
+msgid "Bundle has no components configured"
+msgstr "Набор не имеет настроенных компонентов"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "Невозможно исключить необязательную компоненту пакета: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "Требуется выбор варианта для: {name}"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "Выбран недопустимый вариант для: {name}"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr ""
+"Недостаточное количество товара на складе для компонента пакета: {name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "Количество набора обновлено в корзине"
+
+msgid "Bundle added to cart"
+msgstr "Набор добавлен в корзину"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "Необходимый слот '{name}' не имеет выбора."
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "Слот '{name}' требует хотя бы {min} выборов."
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "Слот '{name}' позволяет выбрать максимум {max} вариантов."
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "Недействительный идентификатор слота: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "Вариант {opt_id} недействителен для слота '{slot}'."
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr ""
+"Несовместный выбор в слоте '{slot}'. Некоторые опции несовместимы с вашими "
+"другими выборами."
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"Исключенный выбор в слоте '{slot}'. Некоторые опции конфликтуют с вашими "
+"другими выборами."
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "Недостаточное количество товара для компонента: {name}"
+
+msgid "Configured product added to cart"
+msgstr "Настроенный товар добавлен в корзину"
+
+msgid "Either user or session_key must be provided"
+msgstr "Необходимо предоставить либо пользователя, либо session_key"
+
+msgid "This product is no longer available"
+msgstr "Этот товар больше недоступен"
+
+msgid "You must be logged in to purchase this product."
+msgstr "Вам необходимо войти в систему, чтобы приобрести этот продукт."
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "Этот продукт требует, чтобы вы сначала владели \"%(required)s\"."
+
+msgid "Product variant not found"
+msgstr "Вариант товара не найден"
+
+msgid "Configuration is required for configurable products"
+msgstr "Необходима конфигурация для конфигурируемых товаров"
+
+msgid "Booking added to cart"
+msgstr "Бронирование добавлено в корзину"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "Недостаточное количество товара на складе для запрошенного количества"
+
+msgid "Cart item quantity updated"
+msgstr "Количество элемента корзины обновлено"
+
+msgid "Item added to cart"
+msgstr "Элемент добавлен в корзину"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr ""
+"Количество компонентов не может быть изменено напрямую. Обновите "
+"родительский продукт."
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"Товар удален из корзины. Также удален %(names)s (требуемый продукт больше не "
+"в корзине)."
+
+msgid "Item removed from cart"
+msgstr "Элемент удален из корзины"
+
+msgid "Cart item updated"
+msgstr "Элемент корзины обновлен"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr ""
+"Элементы компонента не могут быть удалены напрямую. Удалите родительский "
+"продукт."
+
+msgid "Cart cleared"
+msgstr "Корзина очищена"
+
+msgid "Voucher removed"
+msgstr "Купон удален"
+
+msgid "Voucher not found in cart"
+msgstr "Купон не найден в корзине"
+
+msgid "Gift card removed"
+msgstr "Подарочная карта удалена"
+
+msgid "Gift card not found in cart"
+msgstr "Подарочная карта не найдена в корзине"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count} элемента объединены в корзину"
+
+msgid "Account creation required to proceed"
+msgstr "Требуется создание аккаунта для продолжения"
+
+msgid "Address not found"
+msgstr "Адрес не найден"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "Необходимо предоставить либо address_id, либо address_data"
+
+msgid "Shipping address set"
+msgstr "Адрес доставки установлен"
+
+msgid "Billing address must be provided"
+msgstr "Обязательно предоставьте адрес выставления счета"
+
+msgid "Billing address set"
+msgstr "Адрес выставления счета установлен"
+
+msgid "Shipping address must be set first"
+msgstr "Адрес доставки должен быть установлен первым"
+
+msgid "Shipping method not found"
+msgstr "Метод доставки не найден"
+
+msgid "Shipping method selected"
+msgstr "Метод доставки выбран"
+
+msgid "Payment provider not found"
+msgstr "Провайдер платежа не найден"
+
+msgid "Payment provider is not properly configured"
+msgstr "Провайдер платежей не правильно настроен"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "Провайдер платежей недоступен для вашего местоположения или валюты"
+
+msgid "Payment method selected"
+msgstr "Метод платежа выбран"
+
+msgid "Cart is empty"
+msgstr "Корзина пуста"
+
+msgid "Shipping address is required"
+msgstr "Требуется адрес доставки"
+
+msgid "Shipping method is required"
+msgstr "Требуется метод доставки"
+
+msgid "Billing address is required"
+msgstr "Требуется адрес выставления счета"
+
+msgid "Payment method is required"
+msgstr "Требуется метод платежа"
+
+msgid "Checkout session has expired"
+msgstr "Сессия оформления заказа истекла"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "Недостаточное количество товара для {product}"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr ""
+"\"%(product)s\" требует предварительной собственности на \"%(required)s\"."
+
+msgid "Customer email is required"
+msgstr "Требуется адрес электронной почты клиента"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr ""
+"Невозможно распределить склад для заказа. Пожалуйста, свяжитесь со службой "
+"поддержки."
+
+msgid "Insufficient stock to complete order"
+msgstr "Недостаточное количество товара для завершения заказа"
+
+msgid "Error processing order. Please try again."
+msgstr "Ошибка обработки заказа. Пожалуйста, попробуйте еще раз."
+
+msgid "Order created successfully"
+msgstr "Заказ успешно создан"
+
+msgid "Wishlist item updated"
+msgstr "Элемент списка желаемых товаров обновлен"
+
+msgid "Item added to wishlist"
+msgstr "Элемент добавлен в список желаемых товаров"
+
+msgid "Item removed from wishlist"
+msgstr "Элемент удален из списка желаемых товаров"
+
+msgid "Item moved to cart"
+msgstr "Элемент перемещен в корзину"
+
+msgid "Wishlist cleared"
+msgstr "Список желаемых товаров очищен"
+
+msgid "Wishlist with this name already exists"
+msgstr "Список желаемых товаров с этим именем уже существует"
+
+msgid "Wishlist created"
+msgstr "Создан список желаемых товаров"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "Мониторинг активных и заброшенных корзин клиентов"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "cart"
+msgstr "корзина"
+
+msgid "Filters"
+msgstr "Фильтры"
+
+msgid "Search"
+msgstr "Поиск"
+
+msgid "Search by user, session, or email..."
+msgstr "Поиск по пользователю, сессии или электронной почте..."
+
+msgid "User Type"
+msgstr "Тип пользователя"
+
+msgid "All Carts"
+msgstr "Все корзины"
+
+msgid "Registered Users"
+msgstr "Зарегистрированные пользователи"
+
+msgid "Guest Carts"
+msgstr "Корзины гостей"
+
+msgid "Cart Status"
+msgstr "Статус корзины"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Active (< 24h)"
+msgstr "Активная (< 24 часа)"
+
+msgid "Abandoned (> 24h)"
+msgstr "Брошенная (> 24 часа)"
+
+msgid "Empty"
+msgstr "Пустая"
+
+msgid "Has Shipping"
+msgstr "Имеет доставку"
+
+msgid "No Shipping"
+msgstr "Без доставки"
+
+msgid "Min Cart Value"
+msgstr "Минимальное значение корзины"
+
+msgid "Min value"
+msgstr "Минимальное значение"
+
+msgid "Max Cart Value"
+msgstr "Максимальное значение корзины"
+
+msgid "Max value"
+msgstr "Максимальное значение"
+
+msgid "Created From"
+msgstr "Создано с"
+
+msgid "Created To"
+msgstr "Создано до"
+
+msgid "Apply Filters"
+msgstr "Применить фильтры"
+
+msgid "Clear All"
+msgstr "Сбросить все"
+
+msgid "Run the selected action"
+msgstr "Выполнить выбранное действие"
+
+msgid "Go"
+msgstr "Перейти"
+
+msgid "of"
+msgstr "из"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s корзина"
+msgstr[1] "%(counter)s корзины"
+msgstr[2] "%(counter)s корзин"
+
+msgid "carts"
+msgstr "корзины"
+
+msgid "Show all"
+msgstr "Показать все"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Add Shipping Method"
+msgstr "Добавить метод доставки"
+
+msgid "Configure a new shipping method for your store"
+msgstr "Настройте новый метод доставки для вашего магазина"
+
+msgid "Method Basics"
+msgstr "Основные сведения о методе"
+
+msgid "Eligibility"
+msgstr "Право на получение"
+
+msgid "Coverage"
+msgstr "Область действия"
+
+msgid "Features"
+msgstr "Функции"
+
+msgid "Review"
+msgstr "Пересмотр"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "Определите основную идентичность и тип этого метода доставки."
+
+msgid "Method Name"
+msgstr "Название метода"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "например, стандартная доставка, экспресс-доставка"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "Имя для клиента этого метода доставки"
+
+msgid "Optional description of this shipping method"
+msgstr "Необязательное описание этого метода доставки"
+
+msgid "Display Icon"
+msgstr "Отображение иконки"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"Выберите изображение из медиатеки или выберите иконку Font Awesome. "
+"Изображение имеет приоритет, если оба варианта предоставлены."
+
+msgid "Custom Image"
+msgstr "Персонализированное изображение"
+
+msgid "Font Awesome Icon"
+msgstr "Иконка Font Awesome"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "Выберите иконку из библиотеки Font Awesome"
+
+msgid "Active"
+msgstr "Активно"
+
+msgid "Make this method available to customers immediately"
+msgstr "Сделайте этот метод доступным для клиентов немедленно"
+
+msgid "Method Type & Pricing"
+msgstr "Тип метода и ценообразование"
+
+msgid "Select method type..."
+msgstr "Выберите тип метода..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "Плата за доставку - фиксированная стоимость доставки"
+
+msgid "Free Shipping - No charge"
+msgstr "Бесплатная доставка - Без оплаты"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "Весовая система - расчет по весу корзины"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "Ценовая система - расчет по сумме товаров в корзине"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "Действующие тарифы перевозчиков - актуальные тарифы от перевозчиков"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "Локальная доставка — клиент сам забирает в указанном месте"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "Таблица тарифов - сложные правила на основе веса/цены/направления"
+
+msgid "Method Types:"
+msgstr "Типы методов:"
+
+msgid "Flat Rate:"
+msgstr "Плоская ставка:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "Фиксированная стоимость доставки, независимо от заказа"
+
+msgid "Free Shipping:"
+msgstr "Бесплатная доставка:"
+
+msgid "No shipping charge"
+msgstr "Без взимаемых сборов за доставку"
+
+msgid "Weight/Price Based:"
+msgstr "Основано на весе/цене:"
+
+msgid "Calculate using rate tables"
+msgstr "Рассчитать с использованием таблиц ставок"
+
+msgid "Real-Time:"
+msgstr "В реальном времени:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "Получите актуальные тарифы от USPS, FedEx, UPS или DHL"
+
+msgid "Local Pickup:"
+msgstr "Самовывоз:"
+
+msgid "Customer picks up at your location"
+msgstr "Клиент забирает товар на вашем месте"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "Фиксированная стоимость доставки, взимаемая с клиента"
+
+msgid "No Configured Providers"
+msgstr "Нет настроенных поставщиков"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"Вы должны настроить по крайней мере одного поставщика доставки, который "
+"поддерживает актуальные тарифы, прежде чем вы сможете использовать этот тип "
+"метода."
+
+msgid "Connect Provider"
+msgstr "Подключить поставщика"
+
+msgid "Manage Providers"
+msgstr "Управление поставщиками"
+
+msgid "Select a configured shipping provider"
+msgstr "Выберите настроенный поставщика доставки"
+
+msgid "Tip:"
+msgstr "Подсказка:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"Только поставщики, которые настроены и поддерживают актуальные тарифы, "
+"показаны выше."
+
+msgid "Manage providers"
+msgstr "Управление поставщиками"
+
+msgid "Service Code"
+msgstr "Код услуги"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "Уникальный код услуги от перевозчика (необязательное)"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Next Step"
+msgstr "Следующий шаг"
+
+msgid "Eligibility Conditions"
+msgstr "Условия соответствия"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr ""
+"Определите, когда этот метод доставки должен быть доступен на основе "
+"стоимости и веса корзины."
+
+msgid "Order Value Restrictions"
+msgstr "Ограничения по стоимости заказа"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr ""
+"Установите минимальные или максимальные требования к сумме товаров в корзине "
+"для этого метода."
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr ""
+"Метод доступен только если сумма товаров в корзине составляет как минимум "
+"эту сумму"
+
+msgid "No maximum"
+msgstr "Без максимального значения"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "Метод доступен только если сумма товаров в корзине ниже этой суммы"
+
+msgid "Examples:"
+msgstr "Примеры:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr ""
+"Бесплатная доставка для заказов свыше $50: установите минимальное значение "
+"на 50.00"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr ""
+"Экономическая доставка для заказов менее $100: установите максимальное "
+"значение на 100.00"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr ""
+"Стандартная доставка за $25-$200: Установите как минимальную, так и "
+"максимальную сумму"
+
+msgid "Weight Restrictions"
+msgstr "Ограничения по весу"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr "Установите минимальный или максимальный вес корзины для этого метода."
+
+msgid "Minimum Weight (kg)"
+msgstr "Минимальный вес (кг)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr ""
+"Метод доступен только если общий вес корзины составляет не менее указанного "
+"значения"
+
+msgid "Maximum Weight (kg)"
+msgstr "Максимальный вес (кг)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "Метод доступен только если общий вес корзины ниже указанного значения"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "Доставка легких посылок до 2 кг: Установите максимальный вес на 2.00"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr ""
+"Доставка тяжелых грузов свыше 20 кг: Установите минимальный вес на 20.00"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr ""
+"Стандартная доставка за 0.5 кг - 10 кг: Установите как минимальный, так и "
+"максимальный вес"
+
+msgid "Additional Options"
+msgstr "Дополнительные опции"
+
+msgid "Requires Shipping Address"
+msgstr "Требует адрес доставки"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"Покупатель должен указать адрес доставки для этого метода (отключите для "
+"цифровых товаров или местного самовывоза)"
+
+msgid "Previous"
+msgstr "Предыдущая"
+
+msgid "Geographic Coverage"
+msgstr "Географическое охватывание"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr "Определите, где этот метод доставки доступен, используя зоны доставки."
+
+msgid "Zone-Based Coverage:"
+msgstr "Охватывание на основе зон:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"Используйте зоны доставки для гибкого географического охвата на основе "
+"правил. Этот подход работает без проблем с правилами доставки и позволяет "
+"точно контролировать, где доступны ваши методы."
+
+msgid "Select Shipping Zones"
+msgstr "Выберите зоны доставки"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"Выберите зоны доставки, для которых доступен данный метод. Оставьте поле "
+"пустым, чтобы сделать его доступным во всем мире."
+
+msgid "Available Zones"
+msgstr "Доступные зоны"
+
+msgid "Add selected zones"
+msgstr "Добавить выбранные зоны"
+
+msgid "Add all zones"
+msgstr "Добавить все зоны"
+
+msgid "Remove selected zones"
+msgstr "Удалить выбранные зоны"
+
+msgid "Remove all zones"
+msgstr "Удалить все зоны"
+
+msgid "Selected Zones"
+msgstr "Выбранные зоны"
+
+msgid "No shipping zones found!"
+msgstr "Зоны доставки не найдены!"
+
+msgid "You need to create shipping zones first."
+msgstr "Вам нужно сначала создать зоны доставки."
+
+msgid "Create a shipping zone"
+msgstr "Создать зону доставки"
+
+msgid "Method Features"
+msgstr "Функции метода"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr ""
+"Настройте прогнозы доставки, порядок отображения и метод-специфические "
+"функции."
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "Выберите физические места, где покупатели могут забрать свои заказы."
+
+msgid "Available Pickup Locations"
+msgstr "Доступные точки выдачи"
+
+msgid "Available Locations"
+msgstr "Доступные локации"
+
+msgid "Selected Locations"
+msgstr "Выбранные локации"
+
+msgid "No pickup locations found!"
+msgstr "Точки выдачи не найдены!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr ""
+"Вам нужно сначала создать места самовывоза для местных методов доставки."
+
+msgid "Create a pickup location"
+msgstr "Создать точку выгрузки"
+
+msgid "Carrier API Status"
+msgstr "Статус API перевозчика"
+
+msgid "Carrier:"
+msgstr "Перевозчик:"
+
+msgid "Service Code:"
+msgstr "Код услуги:"
+
+msgid "API Configuration Status"
+msgstr "Статус конфигурации API"
+
+msgid "Checking API credentials..."
+msgstr "Проверка учетных данных API..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr ""
+"Убедитесь, что учетные данные API вашего перевозчика настроены в настройках "
+"поставщика доставки."
+
+msgid "Enable Rate Caching"
+msgstr "Включить кэширование тарифов"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"Кэшируйте ставки перевозчика на 15 минут для улучшения производительности и "
+"снижения количества вызовов API"
+
+msgid "Rate Table Configuration"
+msgstr "Конфигурация таблицы тарифов"
+
+msgid "Weight-Based Rates:"
+msgstr "Тарифы на основе веса:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr ""
+"Вы сможете настроить тарифы по уровням на основе веса корзины после создания "
+"метода."
+
+msgid "Price-Based Rates:"
+msgstr "Тарифы на основе цены:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"Вы сможете настроить тарифы по уровням на основе суммы корзины после "
+"создания метода."
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr ""
+"Таблицы ставок можно управлять с редактируемой страницы метода после его "
+"создания."
+
+msgid "Delivery Time Estimate"
+msgstr "Оценка времени доставки"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "Предоставьте покупателям прогнозируемый временной интервал доставки."
+
+msgid "Fastest delivery time in business days"
+msgstr "Самое быстрое время доставки в рабочие дни"
+
+msgid "Slowest delivery time in business days"
+msgstr "Самое медленное время доставки в рабочие дни"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "Обычная доставка: 3-5 рабочих дней"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "Экспресс доставка: 1-2 рабочих дня"
+
+msgid "International shipping: 7-14 business days"
+msgstr "Международная доставка: 7-14 рабочих дней"
+
+msgid "Display Settings"
+msgstr "Настройки отображения"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr ""
+"Числа меньшего размера отображаются первыми. Используйте это для контроля "
+"над порядком отображения методов для покупателей."
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"Назначьте порядок сортировки с шагом в 10 (0, 10, 20), чтобы легко вставлять "
+"новые методы между существующими."
+
+msgid "Review & Create"
+msgstr "Проверить и создать"
+
+msgid "API credentials verified successfully"
+msgstr "Учетные данные API успешно проверены"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "Проверьте конфигурацию метода доставки и создайте его."
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Name:"
+msgstr "Название:"
+
+msgid "Method Type:"
+msgstr "Тип метода:"
+
+msgid "Description:"
+msgstr "Описание:"
+
+msgid "Display Icon:"
+msgstr "Иконка отображения:"
+
+msgid "Status:"
+msgstr "Статус:"
+
+msgid "Inactive"
+msgstr "Неактивен"
+
+msgid "Flat Rate Cost:"
+msgstr "Фиксированная стоимость тарифа:"
+
+msgid "Min Order Value:"
+msgstr "Минимальное значение заказа:"
+
+msgid "Max Order Value:"
+msgstr "Максимальное значение заказа:"
+
+msgid "Min Weight:"
+msgstr "Минимальный вес:"
+
+msgid "Max Weight:"
+msgstr "Максимальный вес:"
+
+msgid "Requires Shipping Address:"
+msgstr "Требует адрес доставки:"
+
+msgid "Yes"
+msgstr "Да"
+
+msgid "No"
+msgstr "Нет"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr ""
+"Условия соответствия не заданы - метод доступен для всех значений корзины и "
+"весов"
+
+msgid "Shipping Zones:"
+msgstr "Зоны доставки:"
+
+msgid "Coverage:"
+msgstr "Область охвата:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "Весь мир (никакие зоны не выбраны)"
+
+msgid "Pickup Locations:"
+msgstr "Места выдачи:"
+
+msgid "location"
+msgstr "место"
+
+msgid "Delivery Time:"
+msgstr "Время доставки:"
+
+msgid "Instant Pickup"
+msgstr "Быстрая выдача"
+
+msgid "Delivery Estimate:"
+msgstr "Приблизительная дата доставки:"
+
+msgid "business days"
+msgstr "рабочих дней"
+
+msgid "Sort Order:"
+msgstr "Порядок сортировки:"
+
+msgid "Rate Caching:"
+msgstr "Кэширование ставок:"
+
+msgid "Enabled"
+msgstr "Включен"
+
+msgid "What happens next:"
+msgstr "Что происходит дальше:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "Метод доставки будет создан с указанными выше настройками"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "Вы будете перенаправлены для настройки таблиц ставок для этого метода"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr ""
+"Метод будет сразу доступен для клиентов (если условия соответствия выполнены)"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr ""
+"Метод будет создан в режиме \"неактивный\" - активируйте его, когда он будет "
+"готов"
+
+msgid "Create Shipping Method"
+msgstr "Создать метод доставки"
+
+msgid "Creating..."
+msgstr "Создание..."
+
+msgid "Session"
+msgstr "Сессия"
+
+msgid "Registered"
+msgstr "Зарегистрированный"
+
+msgid "Guest"
+msgstr "Гость"
+
+msgid "item"
+msgstr "предмет"
+
+msgid "Shipping Set"
+msgstr "Набор доставки"
+
+msgid "Cart Total"
+msgstr "Итог корзины"
+
+msgid "Items"
+msgstr "Предметы"
+
+msgid "Savings"
+msgstr "Экономия"
+
+msgid "Shipping"
+msgstr "Доставка"
+
+msgid "Grand Total"
+msgstr "Итого"
+
+msgid "Updated"
+msgstr "Обновлено"
+
+msgid "ago"
+msgstr "назад"
+
+msgid "Created"
+msgstr "Создано"
+
+msgid "Est. Delivery"
+msgstr "Оценочная доставка"
+
+msgid "View cart details"
+msgstr "Посмотреть детали корзины"
+
+msgid "Edit cart"
+msgstr "Редактировать корзину"
+
+msgid "Delete cart"
+msgstr "Удалить корзину"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "Вы уверены, что хотите очистить эту корзину?"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "Корзины для покупок не найдены по вашему запросу."
+
+msgid "Try adjusting your filters or search terms."
+msgstr "Попробуйте скорректировать фильтры или поисковые запросы."
+
+msgid "Edit Shipping Method"
+msgstr "Редактировать способ доставки"
+
+msgid "Save and continue editing"
+msgstr "Сохранить и продолжить редактирование"
+
+msgid "Please correct the errors below"
+msgstr "Пожалуйста, исправьте ошибки ниже"
+
+msgid "Basic"
+msgstr "Базовый"
+
+msgid "Pricing"
+msgstr "Ценовая политика"
+
+msgid "Display"
+msgstr "Отображение"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr ""
+"Необязательно: Ограничить доступность на основе стоимости заказа или веса."
+
+msgid "Delivery Time"
+msgstr "Время доставки"
+
+msgid "Display Options"
+msgstr "Варианты отображения"
+
+msgid "Carrier Integration"
+msgstr "Интеграция с перевозчиком"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr ""
+"Настройте параметры, специфичные для перевозчика, для поиска в реальном "
+"времени тарифов."
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "Настройте варианты доставки, ставки и методы доставки"
+
+msgid "method"
+msgstr "метод"
+
+msgid "active"
+msgstr "активный"
+
+msgid "Add Method"
+msgstr "Добавить метод"
+
+msgid "Bulk Actions"
+msgstr "Массовые действия"
+
+msgid "Enable Selected"
+msgstr "Включить выбранные"
+
+msgid "Disable Selected"
+msgstr "Отключить выбранные"
+
+msgid "Delete Selected"
+msgstr "Удалить выбранные"
+
+msgid "Apply"
+msgstr "Применить"
+
+msgid "selected"
+msgstr "выбранные"
+
+msgid "All Status"
+msgstr "Все статусы"
+
+msgid "All Types"
+msgstr "Все типы"
+
+msgid "Real-Time Rates"
+msgstr "Тарифы в реальном времени"
+
+msgid "Clear all filters"
+msgstr "Очистить все фильтры"
+
+msgid "Clear Filters"
+msgstr "Очистить фильтры"
+
+msgid "Search methods..."
+msgstr "Поиск методов..."
+
+msgid "Select All"
+msgstr "Выбрать все"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s метод"
+msgstr[1] "%(counter)s метода"
+msgstr[2] "%(counter)s методов"
+msgstr[3] "%(counter)s методов"
+
+msgid "No shipping methods found"
+msgstr "Методы доставки не найдены"
+
+msgid "Try adjusting your filters or search query."
+msgstr "Попробуйте скорректировать фильтры или запрос поиска."
+
+msgid "Get started by creating your first shipping method."
+msgstr "Начните с создания вашего первого метода доставки."
+
+msgid "Add First Method"
+msgstr "Добавить первый метод"
+
+msgid "Loading..."
+msgstr "Загрузка..."
+
+msgid "Order Value:"
+msgstr "Значение заказа:"
+
+msgid "Weight:"
+msgstr "Вес:"
+
+msgid "Zones:"
+msgstr "Зоны:"
+
+msgid "zone"
+msgstr "Зона"
+
+msgid "Countries:"
+msgstr "Страны:"
+
+msgid "country"
+msgstr "страна"
+
+msgid "Worldwide"
+msgstr "Весь мир"
+
+msgid "Pickup:"
+msgstr "Самовывоз:"
+
+msgid "Delivery:"
+msgstr "Доставка:"
+
+msgid "Edit method"
+msgstr "Редактировать метод"
+
+msgid "Toggle active status"
+msgstr "Переключить статус активности"
+
+msgid "Delete method"
+msgstr "Удалить метод"
+
+msgid "Edit Tax Rate"
+msgstr "Редактировать ставку налога"
+
+msgid "Add Tax Rate"
+msgstr "Добавить ставку налога"
+
+msgid "Geography"
+msgstr "География"
+
+msgid "Rules"
+msgstr "Правила"
+
+msgid "Exemptions"
+msgstr "Исключения"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"Укажите, где применяется эта ставка налога. Оставьте поле \"регион/город\" "
+"пустым для налогов, действующих по всей стране."
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr ""
+"Исключите определенные типы или категории товаров из этой ставки налога."
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"Настройте правила налогообложения для вашего магазина. Ставки налогов "
+"соответствуют адресам покупателей во время оформления заказа."
+
+msgid "Load Presets"
+msgstr "Загрузить шаблоны"
+
+msgid "Total Rules"
+msgstr "Общие правила"
+
+msgid "Countries"
+msgstr "Страны"
+
+msgid "Tax Types"
+msgstr "Типы налогов"
+
+msgid "Search by name, country, state..."
+msgstr "Поиск по имени, стране, региону..."
+
+msgid "All Countries"
+msgstr "Все страны"
+
+msgid "Custom"
+msgstr "Пользовательский"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Clear"
+msgstr "Очистить"
+
+msgid "Tax Rules"
+msgstr "Правила налогообложения"
+
+msgid "rules"
+msgstr "правила"
+
+msgid "Load Tax Rate Presets"
+msgstr "Загрузить шаблоны ставок налога"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr ""
+"Быстро добавьте стандартные ставки налога для вашего региона. Существующие "
+"ставки не будут дублироваться."
+
+msgid "rates"
+msgstr "ставка налога"
+
+msgid "Load"
+msgstr "Загрузить"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "postal codes"
+msgstr "почтовые индексы"
+
+msgid "Shipping Taxed"
+msgstr "Налог на доставку"
+
+msgid "Compound"
+msgstr "Составной"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "No tax rates configured"
+msgstr "Не заданы ставки налога"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"Используйте 'Загрузить шаблоны' для быстрого добавления стандартных ставок "
+"для вашего региона, или добавьте ставки вручную."
+
+msgid "Get current cart"
+msgstr "Получить текущую корзину"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"Получить текущую корзину для аутентифицированного пользователя или сессии. "
+"Возвращает товары в корзине, промежуточную сумму, скидки, налоги и итог. "
+"Автоматически создает корзину, если она не существует."
+
+msgid "Add item to cart"
+msgstr "Добавить товар в корзину"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"Добавить товар в корзину с указанным количеством. Опционально можно включить "
+"идентификатор варианта, настройки и примечания. Проверяет доступность товара "
+"на складе и объединяет с существующим товаром в корзине, если это тот же "
+"товар/вариант. Для подписочных товаров включите is_subscription=true вместе "
+"с subscription_plan_id, payment_token_id и, при необходимости, "
+"pricing_tier_id."
+
+msgid "Update cart item"
+msgstr "Обновить товар в корзине"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"Обновите количество товара, настройки или примечания. Проверяет новое "
+"количество на соответствие наличию на складе. Возвращает обновленную корзину "
+"с пересчитанными итогами."
+
+msgid "Remove cart item"
+msgstr "Удалить элемент корзины"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"Удалите конкретный товар из корзины. Пересчитывает итоги корзины и повторно "
+"проверяет примененные купоны в соответствии с новым итогом корзины."
+
+msgid "Clear cart"
+msgstr "Очистить корзину"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"Удалить все товары из корзины. Также удаляет примененные купоны. Объект "
+"корзины сохраняется, но становится пустым."
+
+msgid "Apply voucher code"
+msgstr "Применить промо-код"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"Применить код купона к корзине. Проверяет пригодность купона, минимальные "
+"требования к покупке и лимиты использования. Рассчитывает и применяет скидку "
+"к итогу корзины."
+
+msgid "Remove voucher"
+msgstr "Удалить купон"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"Удалить конкретный купон из корзины по коду. Пересчитает общую сумму корзины "
+"без скидки купона. Пользователь может снова применить купон позже, если он "
+"соответствует критериям."
+
+msgid "Apply gift card"
+msgstr "Применить подарочную карту"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"Применить код подарочной карты к корзине. Проверяет статус, баланс и валюту "
+"подарочной карты. Подарочные карты нельзя использовать для покупки других "
+"подарочных карт. Сумма, примененная к корзине, ограничена балансом "
+"подарочной карты или оставшейся суммой корзины."
+
+msgid "Remove gift card"
+msgstr "Удалить подарочную карту"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"Удалите конкретную подарочную карту из корзины по коду. Баланс подарочной "
+"карты не изменится, пока оформление заказа не будет завершено. Пользователь "
+"может снова применить подарочную карту."
+
+msgid "Get cart summary"
+msgstr "Получить резюме корзины"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"Получите сводку корзины с количеством товаров, промежуточной и общей суммой. "
+"Быстрее, чем полный конечный точка корзины. Полезно для значка корзины в "
+"заголовке или быстрого отображения общей суммы."
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"Элементы компонента не могут быть изменены напрямую. Обновите родительский "
+"продукт вместо этого."
+
+msgid "List user wishlists"
+msgstr "Список желаемых списков пользователя"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"Получить все списки желаний аутентифицированного пользователя. Пользователи "
+"могут иметь несколько списков желаний для разных целей (например, 'День "
+"рождения', 'Свадьба', 'Идеи'). Возвращает названия списков желаний, "
+"количество элементов и настройки приватности."
+
+msgid "Create wishlist"
+msgstr "Создать список желаний"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"Создать новый список желаний для аутентифицированного пользователя. Укажите "
+"имя, описание и настройку приватности (общедоступный/частный). Общедоступные "
+"списки желаний можно поделиться через URL."
+
+msgid "Get wishlist details"
+msgstr "Получить детали желаемого списка"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"Получить подробную информацию о конкретном списке желаний, включая все "
+"товары, цены, наличие и настройки об sharing. Доступно только для владельца "
+"списка желаний, если он не является общедоступным."
+
+msgid "Update wishlist"
+msgstr "Обновить список желаний"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"Обновите информацию о списке желаний, включая имя, описание или настройки "
+"приватности. Можно сделать список желаний общедоступным или приватным. "
+"Только владелец может обновить."
+
+msgid "Partially update wishlist"
+msgstr "Частично обновить желаемый список"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"Обновите конкретные поля списка желаний без отправки полных данных списка "
+"желаний. Полезно для переключения приватности или переименования списка "
+"желаний."
+
+msgid "Delete wishlist"
+msgstr "Удалить список желаний"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"Всегда удалить избранный список и все его элементы. Это нельзя отменить. "
+"Удалить может только владелец."
+
+msgid "Add item to wishlist"
+msgstr "Добавить товар в список желаний"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"Добавьте продукт в список желаний с необязательным вариантом, количеством и "
+"примечаниями. Предотвращает дубликаты. Можно добавить в стандартный список "
+"желаний или указать идентификатор списка желаний."
+
+msgid "Remove item from wishlist"
+msgstr "Удалить товар из списка желаний"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"Удалить конкретный товар из списка желаний. Товар можно добавить обратно "
+"позже. Это не влияет на доступность товара."
+
+msgid "Move item to cart"
+msgstr "Переместить товар в корзину"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"Переместить товар из списка желаний напрямую в корзину. Проверяет "
+"доступность товара на складе. Товар удаляется из списка желаний после "
+"успешного добавления в корзину."
+
+msgid "Get public wishlist by share slug"
+msgstr "Получить публичный избранный список по share slug"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"Просмотр публичного списка желаний с использованием его URL-адреса. Любой, у "
+"кого есть ссылка, может просматривать публичные списки желаний. Полезно для "
+"регистров подарков и списков желаний, поделённых с семьёй/друзьями."
+
+msgid "ID of the wishlist item to remove"
+msgstr "ID элемента избранных товаров для удаления"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "ID элемента избранных товаров для перемещения в корзину"
+
+msgid "Share slug of the public wishlist"
+msgstr "Слаг общедоступного списка избранных товаров для обмена"
+
+msgid "Wishlist not found"
+msgstr "Список желаемых товаров не найден"
+
+msgid "Get checkout session"
+msgstr "Получить сессию оформления заказа"
+
+msgid "Set shipping address"
+msgstr "Установить адрес доставки"
+
+msgid "Set billing address"
+msgstr "Установить адрес оплаты"
+
+msgid "Get available shipping methods"
+msgstr "Получить доступные методы доставки"
+
+msgid "Get available payment providers"
+msgstr "Получить доступных провайдеров оплаты"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"Возвращает доступных провайдеров оплаты для страны и валюты клиента. "
+"Фильтрация основана на странах доставки, возможностях провайдеров и "
+"настройках продавца."
+
+msgid "Set shipping method"
+msgstr "Установить метод доставки"
+
+msgid "Set payment method"
+msgstr "Установить метод оплаты"
+
+msgid "Validate checkout"
+msgstr "Проверить оформление заказа"
+
+msgid "Complete checkout"
+msgstr "Завершить оформление заказа"
+
+msgid "Get recently viewed products"
+msgstr "Получить недавно просмотренные товары"
+
+msgid "Get recently viewed details"
+msgstr "Получить детали недавно просмотренных товаров"
+
+msgid "List shipping methods"
+msgstr "Список способов доставки"
+
+msgid "Get shipping method details"
+msgstr "Получить детали способа доставки"
+
+msgid "List tax rates"
+msgstr "Список ставок налогов"
+
+msgid "Get tax rate details"
+msgstr "Получить детали ставки налога"
+
+msgid "Create tax rate"
+msgstr "Создать ставку налога"
+
+msgid "Update tax rate"
+msgstr "Обновить ставку налога"
+
+msgid "Partial update tax rate"
+msgstr "Частично обновить ставку налога"
+
+msgid "Delete tax rate"
+msgstr "Удалить ставку налога"
+
+msgid "Calculate applicable taxes"
+msgstr "Рассчитать применимые налоги"
+
+msgid "Tax rates grouped by country"
+msgstr "Ставки налогов, сгруппированные по стране"
+
+msgid "Load preset tax rates"
+msgstr "Загрузить предустановленные ставки налога"
+
+msgid "List tax preset groups"
+msgstr "Список групп предустановленных налогов"
+
+msgid "Get preset group details"
+msgstr "Получить детали предустановленной группы"
+
+msgid "List rates in a preset group"
+msgstr "Список ставок в предопределенной группе"

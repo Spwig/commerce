@@ -1,0 +1,190 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Card Readers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'pos_app/css/pos_changelist.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="pos-terminal-readers-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-wifi"></i>
+                {% trans "Card Readers" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage physical card reader devices connected to your POS terminals" %}</p>
+        </div>
+        {% if has_providers %}
+        <div class="change-list-header-actions">
+            <button type="button" class="button secondary change-list-action-button" id="sync-readers-btn" data-action="sync-readers">
+                <i class="fas fa-sync"></i> {% trans "Sync Readers" %}
+            </button>
+            <a href="{% url 'pos_admin:reader_wizard_step1' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Reader" %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not has_providers %}
+    <!-- No Provider Setup Panel -->
+    <div class="pos-store-setup">
+        <div class="pos-store-setup-header">
+            <i class="fas fa-credit-card"></i>
+            <div>
+                <h2>{% trans "Configure a Terminal Provider First" %}</h2>
+                <p>{% trans "Before adding card readers, you need to set up a terminal provider (like Stripe Terminal) that will manage the reader connections." %}</p>
+            </div>
+        </div>
+        <div class="pos-store-setup-card">
+            <p>{% trans "Terminal providers handle the communication between your POS and card readers. Once configured, readers can be discovered and registered." %}</p>
+            <a href="{% url 'admin:pos_app_posterminalprovider_add' %}" class="button primary">
+                <i class="fas fa-plus"></i> {% trans "Add Terminal Provider" %}
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by label or serial number...' %}"
+                    value="">
+            </div>
+
+            <!-- Provider -->
+            <div class="filter-field">
+                <label for="filter-provider">
+                    <i class="fas fa-credit-card"></i> {% trans "Provider" %}
+                </label>
+                <select id="filter-provider">
+                    <option value="">{% trans "All Providers" %}</option>
+                    {% for provider in providers %}
+                    <option value="{{ provider.id }}">{{ provider.display_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="online">{% trans "Online" %}</option>
+                    <option value="offline">{% trans "Offline" %}</option>
+                    <option value="busy">{% trans "Busy" %}</option>
+                </select>
+            </div>
+
+            <!-- Assigned -->
+            <div class="filter-field">
+                <label for="filter-assigned">
+                    <i class="fas fa-link"></i> {% trans "Assignment" %}
+                </label>
+                <select id="filter-assigned">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="assigned">{% trans "Assigned to Terminal" %}</option>
+                    <option value="unassigned">{% trans "Unassigned" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters">
+                <span class="active-filters-label">{% trans "Active:" %}</span>
+            </div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Readers" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-wifi"></i>
+            <span id="reader-count">{{ cl.result_count }}</span> {% trans "reader" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="reader-results">
+        {% include "admin/pos_app/posterminalreader/partials/reader_cards.html" with readers=cl.result_list terminals=terminals %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count > 0 %}
+    <p class="paginator">
+        {{ cl.result_count }} {% trans "reader" %}{{ cl.result_count|pluralize }}
+        {% if cl.show_all_url %}
+            | <a href="{{ cl.show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    {% endif %}
+
+    <script type="application/json" id="reader-list-translations">
+    {
+        "syncing": "{% trans 'Syncing...' %}",
+        "syncReaders": "{% trans 'Sync Readers' %}",
+        "synced": "{% trans 'Synced' %}",
+        "readers": "{% trans 'readers' %}",
+        "syncWithErrors": "{% trans 'Sync completed with errors:' %}",
+        "syncFailed": "{% trans 'Sync failed:' %}",
+        "failedAssign": "{% trans 'Failed to assign' %}",
+        "failedAssignReader": "{% trans 'Failed to assign reader' %}",
+        "online": "{% trans 'Online' %}",
+        "offline": "{% trans 'Offline' %}",
+        "busy": "{% trans 'Busy' %}",
+        "justNow": "{% trans 'Just now' %}",
+        "failedRefresh": "{% trans 'Failed to refresh status' %}"
+    }
+    </script>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'pos_app/admin/js/reader-list.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,418 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% trans "My Account" %} - {% trans "Shop" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% trans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% trans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% trans 'My Account' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% trans "My Account" %}</h1>
+        <p class="page-header__subtitle">{% trans "Manage your account, orders, and preferences" %}</p>
+    </div>
+</section>
+
+<!-- Account Dashboard -->
+<section class="section">
+    <div class="container">
+        <!-- Quick Stats -->
+        <div class="account-stats">
+            <div class="account-stat">
+                <div class="account-stat__content">
+                    <p class="account-stat__label">{% trans "Recent Orders" %}</p>
+                    <p class="account-stat__value">{{ recent_orders|length }}</p>
+                </div>
+                <div class="account-stat__icon account-stat__icon--orders">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+            </div>
+
+            <div class="account-stat">
+                <div class="account-stat__content">
+                    <p class="account-stat__label">{% trans "Active Subscriptions" %}</p>
+                    <p class="account-stat__value">{{ active_subscriptions }}</p>
+                </div>
+                <div class="account-stat__icon account-stat__icon--subscriptions">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+            </div>
+
+            <div class="account-stat">
+                <div class="account-stat__content">
+                    <p class="account-stat__label">{% trans "Saved Addresses" %}</p>
+                    <p class="account-stat__value">{{ saved_addresses }}</p>
+                </div>
+                <div class="account-stat__icon account-stat__icon--addresses">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="account-grid">
+            <!-- Left Column: Loyalty, Referral, Affiliate Cards -->
+            <div class="account-grid__left">
+                <!-- Loyalty Points Card (if member) -->
+                {% if loyalty_member %}
+        <div class="account-card">
+            <div class="account-card__header">
+                <div class="account-card__header-flex">
+                    <div class="account-stat__icon account-stat__icon--loyalty">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h2 class="account-card__title">{% trans "Loyalty Rewards" %}</h2>
+                </div>
+            </div>
+            <div class="account-card__body">
+                <div class="loyalty-grid">
+                    <div class="loyalty-stat-center">
+                        <div class="loyalty-points-value">{{ loyalty_balance.available_balance|floatformat:0 }}</div>
+                        <div class="loyalty-stat-label">{% trans "Available Points" %}</div>
+                    </div>
+
+                    {% if loyalty_tier %}
+                    <div class="loyalty-stat-center">
+                        <div class="loyalty-tier-badge" data-color="{{ loyalty_tier.color }}">
+                            {{ loyalty_tier.name }}
+                        </div>
+                        <div class="loyalty-stat-label">{% trans "Current Tier" %}</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="loyalty-stats-row">
+                    <div>
+                        <span class="label">{% trans "Lifetime Earned:" %}</span>
+                        <span class="value">{{ loyalty_balance.lifetime_earned|floatformat:0 }}</span>
+                    </div>
+                    <div>
+                        <span class="label">{% trans "Pending:" %}</span>
+                        <span class="value">{{ loyalty_balance.pending_balance|floatformat:0 }}</span>
+                    </div>
+                    <div>
+                        <span class="label">{% trans "Redeemed:" %}</span>
+                        <span class="value">{{ loyalty_balance.lifetime_redeemed|floatformat:0 }}</span>
+                    </div>
+                </div>
+
+                <div class="loyalty-cta">
+                    <a href="{% url 'loyalty:dashboard' %}" class="btn btn-primary">
+                        {% trans "View Rewards" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Referral Rewards Card -->
+        <div class="account-card">
+            <div class="account-card__header">
+                <div class="account-card__header-flex">
+                    <div class="account-stat__icon account-stat__icon--referral">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h2 class="account-card__title">{% trans "Referral Rewards" %}</h2>
+                </div>
+            </div>
+            <div class="account-card__body">
+                {% if referral_identity %}
+                    <div class="card-code-section">
+                        <div class="card-code-label">{% trans "Your Referral Code:" %}</div>
+                        <div class="card-code-row">
+                            <code class="card-code">{{ referral_identity.referral_token }}</code>
+                            <button class="card-code-copy-btn"
+                                    data-action="copy-referral-code"
+                                    data-code="{{ referral_identity.referral_token|escapejs }}"
+                                    data-success-msg="{% trans 'Referral code copied to clipboard!' %}"
+                                    title="{% trans 'Copy' %}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-stats-grid">
+                        <div class="card-stat-box">
+                            <div class="card-stat-box__value">{{ referral_stats.clicks }}</div>
+                            <div class="card-stat-box__label">{% trans "Clicks" %}</div>
+                        </div>
+                        <div class="card-stat-box">
+                            <div class="card-stat-box__value">{{ referral_stats.signups }}</div>
+                            <div class="card-stat-box__label">{% trans "Signups" %}</div>
+                        </div>
+                        <div class="card-stat-box">
+                            <div class="card-stat-box__value">{{ referral_stats.conversions }}</div>
+                            <div class="card-stat-box__label">{% trans "Conversions" %}</div>
+                        </div>
+                        <div class="card-stat-box">
+                            <div class="card-stat-box__value">{{ referral_stats.conversion_rate|floatformat:1 }}%</div>
+                            <div class="card-stat-box__label">{% trans "Conv. Rate" %}</div>
+                        </div>
+                    </div>
+
+                    <div class="referral-rewards-row">
+                        <div>
+                            <span class="label">{% trans "Pending Rewards:" %}</span>
+                            <span class="value value--pending">${{ referral_rewards_pending|floatformat:2 }}</span>
+                        </div>
+                        <div>
+                            <span class="label">{% trans "Total Earned:" %}</span>
+                            <span class="value value--earned">${{ referral_rewards_total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Encouragement to start referring -->
+                    <div class="referral-empty">
+                        <i class="fas fa-gift referral-empty__icon"></i>
+                        <h3 class="referral-empty__title">{% trans "Earn Rewards by Referring Friends" %}</h3>
+                        <p class="referral-empty__text">
+                            {% trans "Share your unique referral link and earn rewards when your friends make their first purchase!" %}
+                        </p>
+                        <a href="{% url 'referrals:dashboard' %}" class="btn btn-primary">
+                            {% trans "Get Started" %}
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Affiliate Portal Card (if affiliate) -->
+        {% if is_affiliate and affiliate_stats %}
+        <div class="account-card">
+            <div class="account-card__header">
+                <div class="account-card__header-flex">
+                    <div class="account-stat__icon account-stat__icon--affiliate">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h2 class="account-card__title">{% trans "Affiliate Earnings" %}</h2>
+                </div>
+            </div>
+            <div class="account-card__body">
+                <div class="card-code-section">
+                    <div class="card-code-label">{% trans "Your Affiliate Code:" %}</div>
+                    <code class="card-code">{{ affiliate_stats.affiliate_code }}</code>
+                </div>
+
+                <div class="card-stats-grid">
+                    <div class="card-stat-box">
+                        <div class="card-stat-box__value card-stat-box__value--success">${{ affiliate_stats.total_earned|floatformat:2 }}</div>
+                        <div class="card-stat-box__label">{% trans "Total Earned" %}</div>
+                    </div>
+                    <div class="card-stat-box">
+                        <div class="card-stat-box__value card-stat-box__value--warning">${{ affiliate_stats.pending|floatformat:2 }}</div>
+                        <div class="card-stat-box__label">{% trans "Pending Approval" %}</div>
+                    </div>
+                    <div class="card-stat-box">
+                        <div class="card-stat-box__value card-stat-box__value--info">${{ affiliate_stats.outstanding|floatformat:2 }}</div>
+                        <div class="card-stat-box__label">{% trans "Available for Payout" %}</div>
+                    </div>
+                    <div class="card-stat-box">
+                        <div class="card-stat-box__value card-stat-box__value--muted">${{ affiliate_stats.total_paid|floatformat:2 }}</div>
+                        <div class="card-stat-box__label">{% trans "Total Paid" %}</div>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="{% url 'affiliate:dashboard' %}" class="btn btn-primary">
+                        {% trans "Go to Affiliate Portal" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+            </div>
+            <!-- End Left Column -->
+
+            <!-- Right Column: Account Management & Recent Orders -->
+            <div class="account-grid__right">
+                {% if hosted_subscription %}
+                <!-- Hosted Store Card -->
+                <div class="account-card" style="border-left: 4px solid var(--color-primary, #2563eb); margin-bottom: 1.5rem;">
+                    <div class="account-card__header">
+                        <h2 class="account-card__title">{% trans "Your Hosted Store" %}</h2>
+                        <span style="padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;
+                            {% if hosted_subscription.status == 'active' %}background: #dcfce7; color: #166534;
+                            {% elif hosted_subscription.status == 'past_due' %}background: #fef3c7; color: #92400e;
+                            {% elif hosted_subscription.status == 'suspended' %}background: #fee2e2; color: #991b1b;
+                            {% elif hosted_subscription.status == 'cancelled' %}background: #f3f4f6; color: #374151;
+                            {% else %}background: #f3f4f6; color: #374151;{% endif %}">
+                            {{ hosted_subscription.get_status_display }}
+                        </span>
+                    </div>
+                    <div style="padding: 1rem 1.5rem;">
+                        <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">{{ hosted_subscription.store_name }}</p>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">{{ hosted_subscription.hosted_plan.name }} &middot; {{ hosted_subscription.get_billing_interval_display }}</p>
+                        {% if hosted_subscription.store_slug %}
+                        <a href="https://{{ hosted_subscription.store_slug }}.myspwig.com" target="_blank" rel="noopener" style="color: var(--color-primary, #2563eb); font-size: 0.875rem; text-decoration: none;">
+                            {{ hosted_subscription.store_slug }}.myspwig.com <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i>
+                        </a>
+                        {% endif %}
+                        {% if hosted_subscription.next_billing_date and hosted_subscription.status == 'active' %}
+                        <p style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.5rem;">{% trans "Next billing" %}: {{ hosted_subscription.next_billing_date|date:"d M Y" }}</p>
+                        {% endif %}
+                    </div>
+                    <div style="padding: 0 1.5rem 1rem;">
+                        <a href="{% url 'accounts:hosting_detail' %}" style="display: inline-flex; align-items: center; padding: 0.5rem 1rem; background: var(--color-primary, #2563eb); color: white; border-radius: 0.375rem; font-size: 0.875rem; text-decoration: none;">
+                            {% trans "Manage Subscription" %} <i class="fas fa-chevron-right" style="margin-left: 0.5rem; font-size: 0.7rem;"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Account Management -->
+            <div class="account-card">
+                <div class="account-card__header">
+                    <h2 class="account-card__title">{% trans "Account Management" %}</h2>
+                </div>
+
+                <div class="account-links">
+                    <!-- Subscriptions -->
+                    <a href="{% url 'accounts:subscription_list' %}" class="account-link">
+                        <div class="account-link__icon account-link__icon--subscriptions">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="account-link__content">
+                            <p class="account-link__title">{% trans "My Subscriptions" %}</p>
+                            <p class="account-link__description">{% trans "Manage your active subscriptions" %}</p>
+                        </div>
+                        <i class="fas fa-chevron-right account-link__arrow"></i>
+                    </a>
+
+                    <!-- Addresses -->
+                    <a href="{% url 'accounts:address_list' %}" class="account-link">
+                        <div class="account-link__icon account-link__icon--addresses">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="account-link__content">
+                            <p class="account-link__title">{% trans "My Addresses" %}</p>
+                            <p class="account-link__description">{% trans "Manage shipping and billing addresses" %}</p>
+                        </div>
+                        <i class="fas fa-chevron-right account-link__arrow"></i>
+                    </a>
+
+                    <!-- Payment Methods -->
+                    <a href="{% url 'accounts:payment_token_list' %}" class="account-link">
+                        <div class="account-link__icon account-link__icon--payment">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="account-link__content">
+                            <p class="account-link__title">{% trans "Payment Methods" %}</p>
+                            <p class="account-link__description">{% trans "Manage your payment methods" %}</p>
+                        </div>
+                        <i class="fas fa-chevron-right account-link__arrow"></i>
+                    </a>
+
+                    <!-- Account Settings -->
+                    <a href="{% url 'accounts:profile' %}" class="account-link">
+                        <div class="account-link__icon account-link__icon--settings">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        <div class="account-link__content">
+                            <p class="account-link__title">{% trans "Account Settings" %}</p>
+                            <p class="account-link__description">{% trans "Update your profile information" %}</p>
+                        </div>
+                        <i class="fas fa-chevron-right account-link__arrow"></i>
+                    </a>
+
+                    <!-- Communication Preferences -->
+                    <a href="{% url 'accounts:communication_preferences' %}" class="account-link">
+                        <div class="account-link__icon account-link__icon--notifications">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="account-link__content">
+                            <p class="account-link__title">{% trans "Communication Preferences" %}</p>
+                            <p class="account-link__description">{% trans "Manage email and notification settings" %}</p>
+                        </div>
+                        <i class="fas fa-chevron-right account-link__arrow"></i>
+                    </a>
+
+                    <!-- Messages -->
+                    <a href="{% url 'accounts:message_list' %}" class="account-link">
+                        <div class="account-link__icon account-link__icon--messages">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="account-link__content">
+                            <p class="account-link__title">
+                                {% mtrans "My Messages" %}
+                                {% if unread_reply_count %}
+                                    <span class="account-link__badge">{{ unread_reply_count }}</span>
+                                {% endif %}
+                            </p>
+                            <p class="account-link__description">{% mtrans "View support conversations and send messages" %}</p>
+                        </div>
+                        <i class="fas fa-chevron-right account-link__arrow"></i>
+                    </a>
+
+                    <!-- Security -->
+                    <a href="{% url 'account_change_password' %}" class="account-link">
+                        <div class="account-link__icon account-link__icon--security">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="account-link__content">
+                            <p class="account-link__title">{% trans "Security" %}</p>
+                            <p class="account-link__description">{% trans "Change password and security settings" %}</p>
+                        </div>
+                        <i class="fas fa-chevron-right account-link__arrow"></i>
+                    </a>
+                </div>
+            </div>
+
+                <!-- Recent Orders -->
+            <div class="account-card">
+                <div class="account-card__header">
+                    <h2 class="account-card__title">{% trans "Recent Orders" %}</h2>
+                    <a href="/orders/" class="account-card__link">{% trans "View All" %}</a>
+                </div>
+
+                {% if recent_orders %}
+                    <div class="order-list">
+                        {% for order in recent_orders %}
+                        <a href="/orders/{{ order.id }}/" class="order-item">
+                            <div class="order-item__info">
+                                <p class="order-item__number">{{ order.order_number }}</p>
+                                <p class="order-item__date">{{ order.created_at|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="order-item__details">
+                                <p class="order-item__total">{{ order.total_amount }}</p>
+                                <span class="badge badge--{{ order.status }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="account-empty">
+                        <i class="fas fa-shopping-bag account-empty__icon"></i>
+                        <p class="account-empty__text">{% trans "No orders yet" %}</p>
+                        <a href="/" class="btn btn--primary">{% trans "Start Shopping" %}</a>
+                    </div>
+                {% endif %}
+            </div>
+            <!-- End Account Management Card -->
+            </div>
+            <!-- End Right Column -->
+        </div>
+        <!-- End Main Content Grid -->
+    </div>
+    <!-- End Container -->
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'accounts/js/dashboard.js' %}" defer></script>
+{% endblock %}

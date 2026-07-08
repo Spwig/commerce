@@ -1,0 +1,137 @@
+{% extends "admin/payment_providers/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <div class="provider-header">
+        <div class="provider-logo-small">
+            <img src="{{ provider.component.icon|default:provider.component.thumbnail_url }}"
+                 alt="{{ provider.component.name }}"
+                 data-img-fallback-src="{% static 'core/admin/img/default-provider.svg' %}">
+        </div>
+        <div class="provider-info">
+            <h2 class="step-title">{% trans "Test Connection" %}</h2>
+            <p class="step-description">{% trans "Verify your" %} {{ provider.component.name }} {% trans "credentials" %}</p>
+        </div>
+    </div>
+
+    <div class="connection-test-container">
+        {% if test_result %}
+            {% if test_result.success %}
+            <div class="test-result success">
+                <div class="result-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="result-content">
+                    <h3>{% trans "Connection Successful!" %}</h3>
+                    <p>{% trans "Your" %} {{ provider.component.name }} {% trans "account has been verified and is ready to use." %}</p>
+
+                    {% if test_result.account_info %}
+                    <div class="account-details">
+                        <h4>{% trans "Account Information" %}</h4>
+                        <dl>
+                            {% if test_result.account_info.account_id %}
+                            <dt>{% trans "Account ID" %}:</dt>
+                            <dd>{{ test_result.account_info.account_id }}</dd>
+                            {% endif %}
+
+                            {% if test_result.account_info.email %}
+                            <dt>{% trans "Email" %}:</dt>
+                            <dd>{{ test_result.account_info.email }}</dd>
+                            {% endif %}
+
+                            {% if test_result.account_info.country %}
+                            <dt>{% trans "Country" %}:</dt>
+                            <dd>{{ test_result.account_info.country }}</dd>
+                            {% endif %}
+
+                            {% if test_result.account_info.currency %}
+                            <dt>{% trans "Default Currency" %}:</dt>
+                            <dd>{{ test_result.account_info.currency }}</dd>
+                            {% endif %}
+
+                            {% if test_result.account_info.status %}
+                            <dt>{% trans "Account Status" %}:</dt>
+                            <dd><span class="badge badge-success">{{ test_result.account_info.status }}</span></dd>
+                            {% endif %}
+                        </dl>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="test-result error">
+                <div class="result-icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="result-content">
+                    <h3>{% trans "Connection Failed" %}</h3>
+                    <p>{{ test_result.error_message|default:_("Unable to connect to the payment provider. Please check your credentials and try again.") }}</p>
+
+                    {% if test_result.error_details %}
+                    <details class="error-details">
+                        <summary>{% trans "Technical Details" %}</summary>
+                        <pre>{{ test_result.error_details }}</pre>
+                    </details>
+                    {% endif %}
+
+                    <div class="troubleshooting">
+                        <h4><i class="fas fa-lightbulb"></i> {% trans "Troubleshooting Tips" %}</h4>
+                        <ul>
+                            <li>{% trans "Verify that your API credentials are correct" %}</li>
+                            <li>{% trans "Check that your account is active with the payment provider" %}</li>
+                            <li>{% trans "Ensure you're using the correct environment (test/production)" %}</li>
+                            <li>{% trans "Verify that your IP address is not blocked by the provider" %}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="test-pending">
+            <div class="spinner-container">
+                <div class="spinner">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                </div>
+            </div>
+            <h3>{% trans "Testing Connection..." %}</h3>
+            <p>{% trans "Please wait while we verify your credentials with" %} {{ provider.component.name }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if not test_result %}
+    <form method="post" id="test-form" class="auto-submit-form">
+        {% csrf_token %}
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    {% if test_result %}
+        {% if test_result.success %}
+        <a href="{% url 'payment_providers:wizard_step3' %}?component_id={{ component_id }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        <a href="{% url 'payment_providers:wizard_step5' %}?component_id={{ component_id }}" class="btn btn-primary">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </a>
+        {% else %}
+        <a href="{% url 'payment_providers:wizard_step3' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> {% trans "Edit Credentials" %}
+        </a>
+        <a href="{% url 'payment_providers:wizard_step4' %}?retry=1" class="btn btn-secondary">
+            <i class="fas fa-redo"></i> {% trans "Retry Test" %}
+        </a>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_scripts %}
+{% if not test_result %}
+<script src="{% static 'payment_providers/js/wizard-step4.js' %}"></script>
+{% endif %}
+{% endblock wizard_scripts %}

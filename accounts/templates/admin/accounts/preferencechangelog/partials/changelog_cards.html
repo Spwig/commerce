@@ -1,0 +1,109 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for log in logs %}
+    <div class="list-row-card">
+        <div class="list-row-card-icon">
+            {% if log.source == 'user' %}
+                <i class="fas fa-user"></i>
+            {% elif log.source == 'registration' %}
+                <i class="fas fa-user-plus"></i>
+            {% elif log.source == 'checkout' %}
+                <i class="fas fa-shopping-cart"></i>
+            {% elif log.source == 'api' %}
+                <i class="fas fa-plug"></i>
+            {% elif log.source == 'admin' %}
+                <i class="fas fa-user-shield"></i>
+            {% elif log.source == 'verification' %}
+                <i class="fas fa-check-circle"></i>
+            {% elif log.source == 'unsubscribe' %}
+                <i class="fas fa-bell-slash"></i>
+            {% elif log.source == 'system' %}
+                <i class="fas fa-cog"></i>
+            {% else %}
+                <i class="fas fa-history"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:accounts_preferencechangelog_change' log.pk %}">
+                    {{ log.action }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-user"></i> {{ log.user.email }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if log.source == 'user' %}
+                <span class="list-row-card-badge primary">
+                    {{ log.get_source_display }}
+                </span>
+                {% elif log.source == 'admin' %}
+                <span class="list-row-card-badge warning">
+                    {{ log.get_source_display }}
+                </span>
+                {% elif log.source == 'unsubscribe' %}
+                <span class="list-row-card-badge error">
+                    {{ log.get_source_display }}
+                </span>
+                {% elif log.source == 'system' %}
+                <span class="list-row-card-badge">
+                    {{ log.get_source_display }}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge success">
+                    {{ log.get_source_display }}
+                </span>
+                {% endif %}
+            </div>
+
+            {% if log.change_summary %}
+            <div class="list-row-card-description">
+                {{ log.change_summary }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ log.timestamp|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if log.ip_address %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-globe"></i>
+                    <span>{{ log.ip_address }}</span>
+                </div>
+                {% endif %}
+                {% if log.user_agent %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-desktop"></i>
+                    <span>{{ log.user_agent|truncatechars:40 }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:accounts_preferencechangelog_change' log.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'admin:auth_user_change' log.user.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View user' %}">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-history"></i>
+        </div>
+        <p>{% trans "No change log entries match your filters." %}</p>
+    </div>
+    {% endfor %}
+</div>

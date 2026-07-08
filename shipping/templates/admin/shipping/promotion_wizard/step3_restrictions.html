@@ -1,0 +1,127 @@
+{% extends "admin/shipping/promotion_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-globe-americas"></i> {% trans "Geographic & Method Restrictions" %}
+</div>
+<p class="step-description">
+    {% trans "Restrict this promotion to specific shipping zones and/or methods. Leave selections empty to apply to all zones and methods." %}
+</p>
+
+<form method="post" id="rule-restrictions-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>{% trans "Optional Restrictions:" %}</strong>
+            <p class="promotion-wizard-info-text">
+                {% trans "If you don't select any zones or methods, the promotion will apply to all of them (subject to other conditions)." %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-map-marked-alt"></i> {% trans "Shipping Zones" %}
+        </h3>
+
+        <p class="section-help">
+            {% trans "Select which shipping zones this promotion should apply to. Leave empty to apply to all zones." %}
+        </p>
+
+        {% if all_zones %}
+            <div class="checkbox-group">
+                {% for zone in all_zones %}
+                    <label class="checkbox-item">
+                        <input type="checkbox"
+                               name="zones"
+                               value="{{ zone.id }}"
+                               {% if zone.id|stringformat:"s" in selected_zone_ids %}checked{% endif %}>
+                        <span class="checkbox-label">
+                            <strong>{{ zone.name }}</strong>
+                            {% if zone.description %}
+                                <span class="checkbox-description">{{ zone.description|truncatewords:10 }}</span>
+                            {% endif %}
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {% trans "No shipping zones have been created yet." %}
+                <a href="{% url 'shipping:zone_wizard_step1' %}" target="_blank">{% trans "Create a zone" %}</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-shipping-fast"></i> {% trans "Shipping Methods" %}
+        </h3>
+
+        <p class="section-help">
+            {% trans "Select which shipping methods this promotion should apply to. Leave empty to apply to all methods." %}
+        </p>
+
+        {% if all_methods %}
+            <div class="checkbox-group">
+                {% for method in all_methods %}
+                    <label class="checkbox-item">
+                        <input type="checkbox"
+                               name="shipping_methods"
+                               value="{{ method.id }}"
+                               {% if method.id|stringformat:"s" in selected_method_ids %}checked{% endif %}>
+                        <span class="checkbox-label">
+                            <strong>{{ method.name }}</strong>
+                            {% if method.description %}
+                                <span class="checkbox-description">{{ method.description|truncatewords:10 }}</span>
+                            {% endif %}
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {% trans "No shipping methods have been created yet." %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="info-box">
+        <i class="fas fa-lightbulb"></i>
+        <div>
+            <strong>{% trans "Pro Tip:" %}</strong>
+            <p class="promotion-wizard-info-text">
+                {% trans "Combine zone and method restrictions to create highly targeted rules. For example, free shipping for Express delivery to North America." %}
+            </p>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:promotion_wizard_step2' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="rule-restrictions-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script type="application/json" id="promotion-wizard-step3-config">
+{
+    "i18n": {
+        "selectAll": "{% trans 'Select All' %}",
+        "selectNone": "{% trans 'Select None' %}"
+    }
+}
+</script>
+<script src="{% static 'shipping/js/promotion-wizard-step3.js' %}"></script>
+{% endblock %}

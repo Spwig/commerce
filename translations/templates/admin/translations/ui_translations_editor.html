@@ -1,0 +1,144 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "UI Translations" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'translations/admin/css/ui_translations_editor.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="ui-trans-editor">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1><i class="fas fa-language"></i> {% trans "UI Translations" %}</h1>
+            <p class="subtitle">{% trans "Translate checkout, cart, product page, and other frontend UI strings into any language." %}</p>
+        </div>
+
+        {% if language_stats %}
+        <!-- Language Tabs -->
+        <div class="ui-trans-tabs" id="language-tabs">
+            {% for stat in language_stats %}
+            <button type="button"
+                    class="ui-trans-tab{% if forloop.first %} ui-trans-tab--active{% endif %}"
+                    data-lang="{{ stat.language.code }}"
+                    data-action="select-language">
+                {% if stat.language.flag %}
+                    <span class="ui-trans-tab__flag">{{ stat.language.flag }}</span>
+                {% endif %}
+                <span class="ui-trans-tab__name">{{ stat.language.name }}</span>
+                <span class="ui-trans-tab__badge {% if stat.completion >= 100 %}ui-trans-tab__badge--complete{% elif stat.completion > 0 %}ui-trans-tab__badge--partial{% endif %}">
+                    {{ stat.completion }}%
+                </span>
+            </button>
+            {% endfor %}
+        </div>
+
+        <!-- Toolbar -->
+        <div class="ui-trans-toolbar">
+            <div class="ui-trans-toolbar__left">
+                <select id="filter-select" class="ui-trans-select" data-action="apply-filter">
+                    <option value="all">{% trans 'All strings' %}</option>
+                    <option value="untranslated">{% trans 'Untranslated' %}</option>
+                    <option value="shipped">{% trans 'Shipped (built-in)' %}</option>
+                    <option value="auto">{% trans 'Auto-translated' %}</option>
+                    <option value="verified">{% trans 'Verified' %}</option>
+                    <option value="locked">{% trans 'Locked' %}</option>
+                </select>
+                <select id="section-select" class="ui-trans-select" data-action="filter-section">
+                    <option value="all">{% trans 'All sections' %}</option>
+                    {% for key, label in sections.items %}
+                    <option value="{{ key }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="ui-trans-toolbar__right">
+                <button type="button" class="btn-admin btn-admin--secondary" data-action="export-pack">
+                    <i class="fas fa-download"></i> {% trans 'Export' %}
+                </button>
+                <button type="button" class="btn-admin btn-admin--secondary" data-action="show-import-modal">
+                    <i class="fas fa-upload"></i> {% trans 'Import' %}
+                </button>
+                <button type="button" class="btn-admin btn-admin--secondary" data-action="auto-translate">
+                    <i class="fas fa-language"></i> {% trans 'Auto-translate missing' %}
+                </button>
+                <button type="button" class="btn-admin btn-admin--primary" data-action="save-all" id="save-btn" disabled>
+                    <i class="fas fa-save"></i> {% trans 'Save changes' %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="ui-trans-progress">
+            <div class="ui-trans-progress__bar">
+                <div class="ui-trans-progress__fill" id="progress-fill"></div>
+            </div>
+            <span class="ui-trans-progress__text" id="progress-text">0 / {{ total_strings }}</span>
+        </div>
+
+        <!-- String Editor -->
+        <div class="ui-trans-strings" id="strings-container">
+            <div class="ui-trans-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>{% trans 'Select a language to start editing...' %}</p>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="ui-trans-empty">
+            <i class="fas fa-globe"></i>
+            <h3>{% trans 'No active languages' %}</h3>
+            <p>{% trans 'Activate languages in the Language Management section to start translating UI strings.' %}</p>
+            <a href="{% url 'translations:language_management' %}" class="btn-admin btn-admin--primary">
+                {% trans 'Manage Languages' %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Import Modal -->
+    <div class="admin-modal-overlay" id="import-modal">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title"><i class="fas fa-upload"></i> {% trans 'Import Language Pack' %}</h3>
+                <button type="button" class="admin-modal-close" data-action="close-import-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal-body">
+                <!-- Step 1: File selection -->
+                <div class="ui-trans-import-dropzone" id="import-dropzone">
+                    <i class="fas fa-file-import"></i>
+                    <p>{% trans 'Drag & drop a .json language pack here' %}</p>
+                    <p class="ui-trans-import-dropzone__or">{% trans 'or' %}</p>
+                    <label class="btn-admin btn-admin--secondary ui-trans-import-dropzone__btn">
+                        <i class="fas fa-folder-open"></i> {% trans 'Choose file' %}
+                        <input type="file" accept=".json" id="import-file-input"
+                            data-action="preview-import" hidden>
+                    </label>
+                </div>
+                <!-- Step 2: Preview (populated by JS) -->
+                <div id="import-preview" hidden></div>
+            </div>
+            <div class="admin-modal-footer" id="import-footer" hidden>
+                <button type="button" class="btn-admin btn-admin--secondary" data-action="close-import-modal">
+                    {% trans 'Cancel' %}
+                </button>
+                <button type="button" class="btn-admin btn-admin--primary" id="import-apply-btn" data-action="apply-import">
+                    <i class="fas fa-check"></i> {% trans 'Apply Import' %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="ui-trans-toast" id="toast" hidden></div>
+</div>
+<script src="{% static 'translations/admin/js/ui_translations_editor.js' %}"></script>
+{% endblock %}

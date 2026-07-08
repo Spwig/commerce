@@ -1,0 +1,45 @@
+{% load i18n %}
+{% if setup_progress and not setup_banner_dismissed %}
+<div class="setup-progress-banner{% if setup_essential_complete %} setup-complete{% endif %}" id="setup-progress-banner">
+    <div class="setup-progress-ring">
+        <svg viewBox="0 0 48 48">
+            <circle class="ring-bg" cx="24" cy="24" r="20"></circle>
+            <circle class="ring-fill" cx="24" cy="24" r="20"
+                    stroke-dasharray="{% widthratio 1 1 125.66 %}"
+                    stroke-dashoffset="{% widthratio setup_essential_remaining 100 125.66 %}"></circle>
+        </svg>
+        <span class="ring-text">{{ setup_completion_pct }}%</span>
+    </div>
+
+    <div class="setup-progress-info">
+        {% if setup_essential_complete %}
+            <p class="setup-progress-title">{% trans "Setup Complete" %}</p>
+            <p class="setup-progress-subtitle">{% trans "Your store is ready. Fine-tune settings anytime." %}</p>
+        {% else %}
+            <p class="setup-progress-title">
+                {% blocktrans with completed=setup_essential_completed total=setup_essential_total %}
+                    Store Setup: {{ completed }} of {{ total }} steps complete
+                {% endblocktrans %}
+            </p>
+            <p class="setup-progress-subtitle">{% trans "Complete setup to start selling" %}</p>
+        {% endif %}
+    </div>
+
+    <div class="setup-progress-actions">
+        {% if setup_essential_complete %}
+            <button type="button" class="setup-progress-btn" data-setup-wizard-open>
+                <i class="fas fa-sliders-h"></i>
+                {% trans "Fine-Tune" %}
+            </button>
+            <button type="button" class="setup-progress-btn btn-subtle" onclick="this.closest('.setup-progress-banner').style.display='none'" title="{% trans 'Dismiss' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        {% else %}
+            <button type="button" class="setup-progress-btn" data-setup-wizard-open>
+                <i class="fas fa-arrow-right"></i>
+                {% trans "Continue Setup" %}
+            </button>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

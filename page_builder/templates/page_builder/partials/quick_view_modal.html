@@ -1,0 +1,71 @@
+{% load i18n static merchant_trans %}
+{# Quick View Modal - for variable products from category/listing pages #}
+{# Included once in base.html, populated dynamically via JS + API #}
+
+<div id="product-quick-view" class="quick-view" aria-hidden="true" role="dialog" aria-modal="true" aria-label="{% mtrans 'Quick product view' %}">
+    <div class="quick-view__backdrop"></div>
+    <div class="quick-view__panel">
+        <button class="quick-view__close" aria-label="{% mtrans 'Close' %}" type="button">
+            <i class="fas fa-times"></i>
+        </button>
+
+        {# Loading State #}
+        <div class="quick-view__loading">
+            <div class="quick-view__spinner"></div>
+        </div>
+
+        {# Content (hidden until data loads) #}
+        <div class="quick-view__body" style="display: none;">
+            {# Gallery #}
+            <div class="quick-view__gallery">
+                <div class="quick-view__image-wrapper">
+                    <img class="quick-view__image" src="" alt="" loading="eager">
+                </div>
+                <div class="quick-view__thumbs"></div>
+            </div>
+
+            {# Product Info #}
+            <div class="quick-view__info">
+                <h2 class="quick-view__title"></h2>
+
+                <div class="quick-view__price">
+                    <span class="quick-view__price-current"></span>
+                    <span class="quick-view__price-original" style="display: none;"></span>
+                </div>
+
+                <div class="quick-view__description"></div>
+
+                {# Variant Selectors (built dynamically by JS) #}
+                <div class="quick-view__variants"></div>
+
+                {# Stock Status #}
+                <div class="quick-view__stock"></div>
+
+                {# Quantity + Add to Cart #}
+                <div class="quick-view__actions">
+                    <div class="quick-view__quantity">
+                        <button class="quick-view__qty-btn" data-action="decrease" type="button" aria-label="{% mtrans 'Decrease quantity' %}">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" class="quick-view__qty-input" value="1" min="1" max="99" aria-label="{% mtrans 'Quantity' %}">
+                        <button class="quick-view__qty-btn" data-action="increase" type="button" aria-label="{% mtrans 'Increase quantity' %}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <button class="quick-view__add-btn" type="button" disabled>
+                        <span class="quick-view__add-btn-text">{% mtrans "Select Options" %}</span>
+                        <span class="quick-view__add-btn-loading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+
+                <a href="#" class="quick-view__full-link">
+                    {% mtrans "View Full Details" %} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'page_builder/css/components/quick-view.css' %}" />

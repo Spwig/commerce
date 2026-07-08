@@ -1,0 +1,201 @@
+{% load i18n static %}
+
+<div class="list-row-cards">
+    {% for page in pages %}
+    <div class="list-row-card{% if not page.status == 'published' %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ page.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon page-preview-thumbnail">
+            {% if page.preview_thumbnail %}
+                <img src="{{ page.preview_thumbnail.url }}" alt="{{ page.title }}" loading="lazy">
+                {% if page.preview_thumbnail_updated_at %}
+                <span class="thumbnail-age" title="{% trans 'Captured' %}: {{ page.preview_thumbnail_updated_at|timesince }} {% trans 'ago' %}">
+                    <i class="fas fa-camera"></i>
+                </span>
+                {% endif %}
+            {% elif page.og_image %}
+                <img src="{{ page.og_image.url }}" alt="{{ page.title }}">
+            {% else %}
+                {% if page.page_type == 'home' %}
+                    <i class="fas fa-home"></i>
+                {% elif page.page_type == 'product' %}
+                    <i class="fas fa-box"></i>
+                {% elif page.page_type == 'category' %}
+                    <i class="fas fa-folder"></i>
+                {% elif page.page_type == 'cart' %}
+                    <i class="fas fa-shopping-cart"></i>
+                {% elif page.page_type == 'checkout' %}
+                    <i class="fas fa-credit-card"></i>
+                {% elif page.page_type == 'blog' %}
+                    <i class="fas fa-blog"></i>
+                {% elif page.page_type == 'contact' %}
+                    <i class="fas fa-envelope"></i>
+                {% elif page.page_type == 'about' %}
+                    <i class="fas fa-info-circle"></i>
+                {% else %}
+                    <i class="fas fa-file-alt"></i>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:page_builder_page_change' page.pk %}">
+                    {{ page.title }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-link"></i> /{{ page.slug }}/
+                {% if page.theme %}
+                    &nbsp;&bull;&nbsp;
+                    <i class="fas fa-palette"></i> {{ page.theme.name }}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if page.status == 'published' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Published" %}
+                    </span>
+                {% elif page.status == 'draft' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-pencil-alt"></i> {% trans "Draft" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-archive"></i> {% trans "Archived" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-th-large"></i> {{ page.get_page_type_display }}
+                </span>
+
+                {% if page.is_default_for_type %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-star"></i> {% trans "Default" %}
+                    </span>
+                {% endif %}
+
+                {% if page.requires_auth %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-lock"></i> {% trans "Login Required" %}
+                    </span>
+                {% endif %}
+
+                {% with element_count=page.elements.count %}
+                {% if element_count > 0 %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-cubes"></i> {{ element_count }} {% trans "element" %}{{ element_count|pluralize }}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge" style="color: var(--error-fg);">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "No elements" %}
+                    </span>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            {% if page.meta_description %}
+            <div class="list-row-card-description">
+                {{ page.meta_description|truncatewords:20 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Elements" %}</span>
+                    <span class="list-row-card-stat-value" style="color: var(--primary); font-weight: 600;">
+                        {{ page.elements.count }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Cache" %}</span>
+                    <span class="list-row-card-stat-value">{{ page.cache_timeout }}s</span>
+                </div>
+                {% if page.published_at %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Published" %}</span>
+                    <span class="list-row-card-stat-value">{{ page.published_at|date:"M d" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Prominent Page Builder Button -->
+            {% if page.slug %}
+            <div class="list-row-card-page-builder" style="margin-top: 12px;">
+                <a href="{% url 'page_builder_admin:visual_builder' page_id=page.pk %}"
+                   class="page-builder-btn"
+                   target="_blank"
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--primary); color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: background 0.2s ease;">
+                    <i class="fas fa-magic"></i> {% trans "Edit Page Design" %}
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ page.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ page.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if page.created_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{{ page.created_by.username }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:page_builder_page_change' page.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit page' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if page.slug %}
+            <a href="{% url 'page_builder_admin:page_preview' slug=page.slug %}"
+               class="list-row-card-action"
+               target="_blank"
+               title="{% trans 'Preview page' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'page_builder_admin:visual_builder' page_id=page.pk %}"
+               class="list-row-card-action"
+               target="_blank"
+               title="{% trans 'Visual Page Builder' %}">
+                <i class="fas fa-magic"></i>
+            </a>
+            {% endif %}
+            {% if page.elements.count > 0 %}
+            <a href="{% url 'admin:page_builder_element_changelist' %}?page__id__exact={{ page.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View elements' %}">
+                <i class="fas fa-cubes"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:page_builder_page_delete' page.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete page' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card" style="text-align: center; padding: 40px; color: var(--body-quiet-color);">
+        <div style="font-size: 48px; margin-bottom: 16px;">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <p style="font-size: 16px; margin: 0;">{% trans "No pages found matching your criteria." %}</p>
+        <p style="font-size: 14px; margin-top: 10px; color: var(--body-quiet-color);">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

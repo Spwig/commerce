@@ -1,0 +1,499 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_urls %}
+
+{% block title %}{% if original %}{% trans "Edit Affiliate" %}{% else %}{% trans "Add Affiliate" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate_change_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="affiliate-change-form"{% if original %} data-affiliate-id="{{ original.pk }}"{% endif %}>
+
+{% if original %}
+<!-- EDIT MODE: Dashboard View for Existing Affiliates -->
+
+<!-- Back to List Link -->
+<a href="{% url 'admin:affiliate_affiliate_changelist' %}" class="back-to-list">
+    <i class="fas fa-arrow-left"></i>
+    {% trans "Back to Affiliates" %}
+</a>
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="dashboard-header-top">
+        <div class="dashboard-header-info">
+            <h1>
+                <i class="fas fa-user-tie"></i>
+                {% if original.user.get_full_name %}
+                    {{ original.user.get_full_name }}
+                {% else %}
+                    {{ original.user.username }}
+                {% endif %}
+            </h1>
+            <div class="affiliate-meta">
+                <div class="affiliate-meta-item">
+                    <i class="fas fa-id-badge"></i>
+                    <span>{{ original.affiliate_code }}</span>
+                </div>
+                <div class="affiliate-meta-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ original.user.email }}</span>
+                </div>
+                <div class="affiliate-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Joined" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if original.company_name %}
+                <div class="affiliate-meta-item">
+                    <i class="fas fa-building"></i>
+                    <span>{{ original.company_name }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="dashboard-header-actions">
+            <!-- Status Badge -->
+            {% if original.status == 'active' %}
+            <span class="status-badge success">
+                <i class="fas fa-check-circle"></i> {% trans "Active" %}
+            </span>
+            {% elif original.status == 'pending' %}
+            <span class="status-badge warning">
+                <i class="fas fa-clock"></i> {% trans "Pending" %}
+            </span>
+            {% elif original.status == 'suspended' %}
+            <span class="status-badge danger">
+                <i class="fas fa-ban"></i> {% trans "Suspended" %}
+            </span>
+            {% else %}
+            <span class="status-badge secondary">
+                <i class="fas fa-times-circle"></i> {% trans "Rejected" %}
+            </span>
+            {% endif %}
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                {% if original.status == 'pending' %}
+                <button type="button" class="button success" data-action="status-change"
+                        data-url="{% url 'affiliate:approve_affiliate' affiliate_id=original.pk %}"
+                        data-confirm="{% trans 'Approve this affiliate?' %}"
+                        title="{% trans 'Approve this affiliate' %}">
+                    <i class="fas fa-check"></i> {% trans "Approve" %}
+                </button>
+                {% endif %}
+                {% if original.status != 'active' and original.status != 'pending' %}
+                <button type="button" class="button success" data-action="status-change"
+                        data-url="{% url 'affiliate:activate_affiliate' affiliate_id=original.pk %}"
+                        data-confirm="{% trans 'Activate this affiliate?' %}"
+                        title="{% trans 'Activate this affiliate' %}">
+                    <i class="fas fa-play"></i> {% trans "Activate" %}
+                </button>
+                {% endif %}
+                {% if original.status == 'active' %}
+                <button type="button" class="button warning" data-action="status-change"
+                        data-url="{% url 'affiliate:suspend_affiliate' affiliate_id=original.pk %}"
+                        data-confirm="{% trans 'Suspend this affiliate?' %}"
+                        title="{% trans 'Suspend this affiliate' %}">
+                    <i class="fas fa-pause"></i> {% trans "Suspend" %}
+                </button>
+                {% endif %}
+                {% if original.user.profile %}
+                <a href="{% url 'admin:accounts_customerprofile_change' original.user.profile.pk %}"
+                   class="button secondary" title="{% trans 'View customer profile' %}">
+                    <i class="fas fa-user-circle"></i> {% trans "View Customer" %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="dashboard-stats-grid">
+    <div class="dashboard-stat-card">
+        <div class="icon"><i class="fas fa-briefcase"></i></div>
+        <div class="value">{{ programs_count|default:0 }}</div>
+        <div class="label">{% trans "Active Programs" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+        <div class="icon"><i class="fas fa-link"></i></div>
+        <div class="value">{{ links_count|default:0 }}</div>
+        <div class="label">{% trans "Tracking Links" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+        <div class="icon"><i class="fas fa-mouse-pointer"></i></div>
+        <div class="value">{{ total_clicks|default:0 }}</div>
+        <div class="label">{% trans "Total Clicks" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+        <div class="icon"><i class="fas fa-shopping-cart"></i></div>
+        <div class="value">{{ conversions|default:0 }}</div>
+        <div class="label">{% trans "Conversions" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+        <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+        <div class="value">${{ total_earned|floatformat:2|default:"0.00" }}</div>
+        <div class="label">{% trans "Total Earned" %}</div>
+    </div>
+    <div class="dashboard-stat-card">
+        <div class="icon"><i class="fas fa-wallet"></i></div>
+        <div class="value">${{ outstanding_balance|floatformat:2|default:"0.00" }}</div>
+        <div class="label">{% trans "Outstanding" %}</div>
+    </div>
+</div>
+
+<!-- Main Form - Two Column Layout -->
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+{% csrf_token %}
+
+<div class="dashboard-2col-grid">
+    <!-- Left Column - Edit Form -->
+    <div class="affiliate-edit-section">
+        <!-- Tabs Navigation -->
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="basic">
+                <i class="fas fa-user"></i>
+                <span class="label">{% trans "Basic Info" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="payment">
+                <i class="fas fa-credit-card"></i>
+                <span class="label">{% trans "Payment" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="contact">
+                <i class="fas fa-address-card"></i>
+                <span class="label">{% trans "Contact" %}</span>
+            </button>
+        </div>
+
+        <!-- Basic Info Tab -->
+        <div class="admin-tab-content active" id="tab-basic">
+            <div class="form-section">
+                <div class="form-field">
+                    <label for="id_user">{% trans "User Account" %}</label>
+                    {{ adminform.form.user }}
+                    {% if adminform.form.user.errors %}
+                    <span class="field-error">{{ adminform.form.user.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-row two-col">
+                    <div class="form-field">
+                        <label>{% trans "Affiliate Code" %}</label>
+                        <div class="readonly-value">
+                            <i class="fas fa-id-badge"></i>
+                            {{ original.affiliate_code }}
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="id_status">{% trans "Status" %}</label>
+                        {{ adminform.form.status }}
+                        {% if adminform.form.status.errors %}
+                        <span class="field-error">{{ adminform.form.status.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Tab -->
+        <div class="admin-tab-content" id="tab-payment">
+            <div class="form-section">
+                <div class="form-field">
+                    <label for="id_payment_email">{% trans "Payment Email" %}</label>
+                    {{ adminform.form.payment_email }}
+                    {% if adminform.form.payment_email.errors %}
+                    <span class="field-error">{{ adminform.form.payment_email.errors.0 }}</span>
+                    {% endif %}
+                    <p class="help">{% trans "Email address for PayPal or other payment methods." %}</p>
+                </div>
+
+                <div class="form-field">
+                    <label for="id_payment_method">{% trans "Payment Method" %}</label>
+                    {{ adminform.form.payment_method }}
+                    {% if adminform.form.payment_method.errors %}
+                    <span class="field-error">{{ adminform.form.payment_method.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Tab -->
+        <div class="admin-tab-content" id="tab-contact">
+            <div class="form-section">
+                <div class="form-field">
+                    <label for="id_company_name">{% trans "Company Name" %}</label>
+                    {{ adminform.form.company_name }}
+                    {% if adminform.form.company_name.errors %}
+                    <span class="field-error">{{ adminform.form.company_name.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-field">
+                    <label for="id_website">{% trans "Website" %}</label>
+                    {{ adminform.form.website }}
+                    {% if adminform.form.website.errors %}
+                    <span class="field-error">{{ adminform.form.website.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="submit" name="_save" class="button primary">
+                <i class="fas fa-save"></i> {% trans "Save Changes" %}
+            </button>
+            <button type="submit" name="_continue" class="button default">
+                <i class="fas fa-edit"></i> {% trans "Save and Continue" %}
+            </button>
+            <a href="{% url 'admin:affiliate_affiliate_changelist' %}" class="button secondary">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Right Column - Programs and Activity -->
+    <div class="affiliate-info-section">
+        <!-- Programs Card -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2><i class="fas fa-briefcase"></i> {% trans "Program Memberships" %}</h2>
+                <a href="{% url 'admin:affiliate_affiliateprogrammembership_add' %}?affiliate={{ original.pk }}"
+                   class="button small primary">
+                    <i class="fas fa-plus"></i> {% trans "Add" %}
+                </a>
+            </div>
+            <div class="section-content">
+                {% if memberships %}
+                <div class="membership-list">
+                    {% for membership in memberships %}
+                    <div class="membership-item">
+                        <div class="membership-info">
+                            <span class="membership-program">{{ membership.program.name }}</span>
+                            <span class="membership-status {{ membership.status }}">
+                                {% if membership.status == 'approved' %}
+                                <i class="fas fa-check-circle"></i>
+                                {% elif membership.status == 'pending' %}
+                                <i class="fas fa-clock"></i>
+                                {% else %}
+                                <i class="fas fa-times-circle"></i>
+                                {% endif %}
+                                {{ membership.get_status_display }}
+                            </span>
+                        </div>
+                        <a href="{% url 'admin:affiliate_affiliateprogrammembership_change' membership.pk %}"
+                           class="membership-edit" title="{% trans 'Edit' %}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>{% trans "No program memberships yet." %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Commissions Card -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> {% trans "Recent Commissions" %}</h2>
+                <a href="{% url 'admin:affiliate_commission_changelist' %}?affiliate__id__exact={{ original.pk }}"
+                   class="button small secondary">
+                    {% trans "View All" %}
+                </a>
+            </div>
+            <div class="section-content">
+                {% if recent_commissions %}
+                <div class="commission-list">
+                    {% for commission in recent_commissions %}
+                    <div class="commission-item">
+                        <div class="commission-info">
+                            <span class="commission-amount">${{ commission.amount|floatformat:2 }}</span>
+                            <span class="commission-date">{{ commission.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <span class="commission-status {{ commission.status }}">
+                            {{ commission.get_status_display }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-receipt"></i>
+                    <p>{% trans "No commissions yet." %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Links Card -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2><i class="fas fa-external-link-alt"></i> {% trans "Quick Links" %}</h2>
+            </div>
+            <div class="section-content quick-links">
+                <a href="{% url 'admin:affiliate_link_changelist' %}?affiliate__id__exact={{ original.pk }}" class="quick-link">
+                    <i class="fas fa-link"></i>
+                    <span>{% trans "View Tracking Links" %}</span>
+                    <span class="count">{{ links_count|default:0 }}</span>
+                </a>
+                <a href="{% url 'admin:affiliate_click_changelist' %}?link__affiliate__id__exact={{ original.pk }}" class="quick-link">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <span>{% trans "View Clicks" %}</span>
+                    <span class="count">{{ total_clicks|default:0 }}</span>
+                </a>
+                <a href="{% url 'admin:affiliate_payout_changelist' %}?affiliate__id__exact={{ original.pk }}" class="quick-link">
+                    <i class="fas fa-money-check-alt"></i>
+                    <span>{% trans "View Payouts" %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden fields for Django admin compatibility -->
+<div style="display: none;">
+    {% for fieldset in adminform %}
+        {% for line in fieldset %}
+            {% for field in line %}
+                {% if field.field.name not in 'user,status,payment_email,payment_method,company_name,website' %}
+                    {{ field.field }}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+</div>
+</form>
+
+{% else %}
+<!-- ADD MODE: Clean Form for New Affiliates -->
+
+<!-- Back to List Link -->
+<a href="{% url 'admin:affiliate_affiliate_changelist' %}" class="back-to-list">
+    <i class="fas fa-arrow-left"></i>
+    {% trans "Back to Affiliates" %}
+</a>
+
+<!-- Page Header -->
+<div class="add-form-header">
+    <h1>
+        <i class="fas fa-user-plus"></i>
+        {% trans "Add New Affiliate" %}
+    </h1>
+    <p class="subtitle">{% trans "Create a new affiliate account to start tracking referrals and commissions." %}</p>
+</div>
+
+<!-- Main Form -->
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+{% csrf_token %}
+
+<div class="add-form-container">
+    <!-- User Selection Card -->
+    <div class="section-card">
+        <div class="section-header">
+            <i class="fas fa-user"></i>
+            <h2>{% trans "User Account" %}</h2>
+        </div>
+        <div class="section-content">
+            <div class="form-field">
+                <label for="id_user">{% trans "Select User" %} <span class="required">*</span></label>
+                {{ adminform.form.user }}
+                {% if adminform.form.user.errors %}
+                <span class="field-error">{{ adminform.form.user.errors.0 }}</span>
+                {% endif %}
+                <p class="help">{% trans "Select an existing user account to create an affiliate profile for." %}</p>
+            </div>
+
+            <div class="form-field">
+                <label for="id_status">{% trans "Initial Status" %}</label>
+                {{ adminform.form.status }}
+                {% if adminform.form.status.errors %}
+                <span class="field-error">{{ adminform.form.status.errors.0 }}</span>
+                {% endif %}
+                <p class="help">{% trans "Set to 'Active' to enable immediately, or 'Pending' for manual review." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Information Card -->
+    <div class="section-card">
+        <div class="section-header">
+            <i class="fas fa-credit-card"></i>
+            <h2>{% trans "Payment Information" %}</h2>
+        </div>
+        <div class="section-content">
+            <div class="form-field">
+                <label for="id_payment_email">{% trans "Payment Email" %} <span class="required">*</span></label>
+                {{ adminform.form.payment_email }}
+                {% if adminform.form.payment_email.errors %}
+                <span class="field-error">{{ adminform.form.payment_email.errors.0 }}</span>
+                {% endif %}
+                <p class="help">{% trans "Email address for receiving payments (e.g., PayPal email)." %}</p>
+            </div>
+
+            <div class="form-field">
+                <label for="id_payment_method">{% trans "Payment Method" %}</label>
+                {{ adminform.form.payment_method }}
+                {% if adminform.form.payment_method.errors %}
+                <span class="field-error">{{ adminform.form.payment_method.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information Card (Optional) -->
+    <div class="section-card optional">
+        <div class="section-header">
+            <i class="fas fa-address-card"></i>
+            <h2>{% trans "Contact Information" %} <span class="optional-label">{% trans "Optional" %}</span></h2>
+        </div>
+        <div class="section-content">
+            <div class="form-row two-col">
+                <div class="form-field">
+                    <label for="id_company_name">{% trans "Company Name" %}</label>
+                    {{ adminform.form.company_name }}
+                    {% if adminform.form.company_name.errors %}
+                    <span class="field-error">{{ adminform.form.company_name.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-field">
+                    <label for="id_website">{% trans "Website" %}</label>
+                    {{ adminform.form.website }}
+                    {% if adminform.form.website.errors %}
+                    <span class="field-error">{{ adminform.form.website.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+        <button type="submit" name="_save" class="button primary">
+            <i class="fas fa-user-plus"></i> {% trans "Create Affiliate" %}
+        </button>
+        <button type="submit" name="_addanother" class="button default">
+            <i class="fas fa-plus"></i> {% trans "Save and Add Another" %}
+        </button>
+        <a href="{% url 'admin:affiliate_affiliate_changelist' %}" class="button secondary">
+            <i class="fas fa-times"></i> {% trans "Cancel" %}
+        </a>
+    </div>
+</div>
+</form>
+
+{% endif %}
+
+</div>
+
+<!-- Tab switching handled by global AdminTabs utility -->
+
+<script src="{% static 'affiliate/js/affiliate-admin.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,306 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Catalog - Licenseprovider Form
+ *
+ * Description: Styles for change_form.html
+ * Template: catalog/templates/admin/catalog/licenseprovider/change_form.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Product Mapping Section */
+.product-mapping-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.product-mapping-section h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.product-mapping-section .section-description {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+/* Add Mapping Form */
+.add-mapping-form {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 16px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.add-mapping-form .form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.add-mapping-form label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.add-mapping-form input,
+.add-mapping-form select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+}
+
+.add-mapping-form input:focus,
+.add-mapping-form select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-bg);
+}
+
+.add-mapping-form .button {
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+/* Product Search Dropdown */
+.product-search-container {
+    position: relative;
+}
+
+.product-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    z-index: 1000;
+    display: none;
+}
+
+.product-search-results.active {
+    display: block;
+}
+
+.product-search-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.product-search-item:hover {
+    background: var(--darkened-bg);
+}
+
+.product-search-item:last-child {
+    border-bottom: none;
+}
+
+.product-search-item .product-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+    background: var(--darkened-bg);
+}
+
+.product-search-item .product-info {
+    flex: 1;
+}
+
+.product-search-item .product-name {
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.product-search-item .product-sku {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.product-search-item.no-results {
+    color: var(--text-muted);
+    cursor: default;
+}
+
+.product-search-item.no-results:hover {
+    background: transparent;
+}
+
+/* Mappings Table */
+.mappings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mappings-table th,
+.mappings-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mappings-table th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--darkened-bg);
+}
+
+.mappings-table td {
+    font-size: 14px;
+}
+
+.mappings-table .product-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mappings-table .product-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    object-fit: cover;
+    background: var(--darkened-bg);
+}
+
+.mappings-table .product-details {
+    flex: 1;
+}
+
+.mappings-table .product-name {
+    font-weight: 500;
+}
+
+.mappings-table .product-sku {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.mappings-table .external-id {
+    font-family: monospace;
+    background: var(--darkened-bg);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.mappings-table .actions-cell {
+    text-align: right;
+}
+
+.mappings-table .delete-btn {
+    background: none;
+    border: none;
+    color: var(--error-fg);
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.mappings-table .delete-btn:hover {
+    background: var(--error-bg);
+}
+
+/* Empty State */
+.mappings-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.mappings-empty i {
+    font-size: 48px;
+    opacity: 0.3;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.mappings-empty p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Loading State */
+.mappings-loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+}
+
+.mappings-loading i {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+/* Notification Toast */
+.mapping-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+}
+
+.mapping-toast.success {
+    background: var(--success-bg);
+    color: var(--success-fg);
+    border: 1px solid var(--success-fg);
+}
+
+.mapping-toast.error {
+    background: var(--error-bg);
+    color: var(--error-fg);
+    border: 1px solid var(--error-fg);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

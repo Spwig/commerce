@@ -1,0 +1,307 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}
+{% if category %}{{ category.name }} - {% endif %}{% mtrans 'Categories' %} - {{ site_settings.site_name|default:'Shop' }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/category-base.css' %}">
+{% block template_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+{% if template_options.show_breadcrumb %}
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                {% if category %}
+                {% if category.parent %}
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:category_detail' category_slug=category.parent.slug %}" class="breadcrumb__link">{{ category.parent.name }}</a>
+                </li>
+                {% endif %}
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:category_list' %}" class="breadcrumb__link">{% mtrans 'Categories' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {{ category.name }}
+                </li>
+                {% else %}
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'Categories' %}
+                </li>
+                {% endif %}
+            </ol>
+        </nav>
+    </div>
+</section>
+{% endif %}
+
+<!-- Banner / Page Header -->
+{% if category and template_options.show_banner %}
+{% with banner_url=category.get_banner_url %}
+{% if banner_url %}
+<section class="cat-banner">
+    <img src="{{ banner_url }}" alt="{{ category.name }}" class="cat-banner__image" loading="eager">
+    <div class="cat-banner__overlay"></div>
+    <div class="cat-banner__content container">
+        <h1 class="cat-banner__title">{{ category.name }}</h1>
+        {% if template_options.show_category_description and category.description %}
+        <p class="cat-banner__subtitle">{{ category.description }}</p>
+        {% endif %}
+    </div>
+</section>
+{% else %}
+<section class="cat-page-header">
+    <div class="container">
+        <h1 class="cat-page-header__title">{{ category.name }}</h1>
+        {% if template_options.show_category_description and category.description %}
+        <p class="cat-page-header__subtitle">{{ category.description }}</p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+{% endwith %}
+{% else %}
+<section class="cat-page-header">
+    <div class="container">
+        <h1 class="cat-page-header__title">
+            {% if category %}{{ category.name }}{% else %}{% mtrans 'Product Categories' %}{% endif %}
+        </h1>
+        {% if template_options.show_category_description %}
+        <p class="cat-page-header__subtitle">
+            {% if category and category.description %}
+                {{ category.description }}
+            {% elif not category %}
+                {% mtrans 'Browse our collection of products' %}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+{% if not category %}
+<!-- Category Browse (no specific category selected) -->
+{% block category_browse %}
+<section class="cat-section">
+    <div class="container">
+        <div class="category-grid">
+            {% for cat in categories %}
+            <article class="category-card">
+                <a href="{% url 'page_builder:category_detail' category_slug=cat.slug %}" class="category-card__link">
+                    <div class="category-card__image-wrapper">
+                        {% if template_options.card_image_fallback == 'product' %}
+                            {% with cat.get_card_image_thumbnail as img_url %}
+                            {% if img_url %}
+                                <img src="{{ img_url }}" alt="{{ cat.name }}" class="category-card__image" loading="lazy">
+                            {% else %}
+                                <div class="category-card__placeholder">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+                            {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            {% with cat.get_image_thumbnail as img_url %}
+                            {% if img_url %}
+                                <img src="{{ img_url }}" alt="{{ cat.name }}" class="category-card__image" loading="lazy">
+                            {% else %}
+                                <div class="category-card__placeholder">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+                            {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                    <div class="category-card__content">
+                        <h3 class="category-card__title">{{ cat.name }}</h3>
+                        {% if cat.description %}
+                        <p class="category-card__description">{{ cat.description|truncatewords:10 }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+            </article>
+            {% empty %}
+            <div class="category-grid__empty">
+                <i class="fas fa-folder-open"></i>
+                <p>{% mtrans 'No categories available yet.' %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% else %}
+
+<!-- Subcategories -->
+{% if template_options.show_subcategories and category.children.count > 0 %}
+<section class="cat-section cat-section--compact">
+    <div class="container">
+        <h2 class="cat-section__title cat-section__title--sm">{% mtrans 'Subcategories' %}</h2>
+        <div class="subcategory-list">
+            {% for subcat in category.children.all %}
+            <a href="{% url 'page_builder:category_detail' category_slug=subcat.slug %}" class="subcategory-chip">
+                {{ subcat.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Products Section -->
+<section class="cat-section">
+    <div class="container">
+
+        <!-- Sort Bar -->
+        {% if template_options.show_sort_bar %}
+        <div class="sort-bar">
+            <div class="sort-bar__info">
+                {% if template_options.show_product_count %}
+                <span class="sort-bar__count">
+                    {{ total_count }} {% if total_count == 1 %}{% mtrans 'product' %}{% else %}{% mtrans 'products' %}{% endif %}
+                </span>
+                {% endif %}
+            </div>
+            <div class="sort-bar__controls">
+                <label for="sort-select" class="sort-bar__label">{% mtrans 'Sort by' %}:</label>
+                <select id="sort-select" class="sort-bar__select" data-sort-select>
+                    {% for value, label in sort_choices %}
+                    <option data-url="?sort={{ value }}"
+                            {% if current_sort == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Product Display (template-specific) -->
+        {% block product_display %}
+        <div class="product-grid">
+            {% for product in products %}
+                {% include 'page_builder/partials/product_card.html' with product=product %}
+            {% empty %}
+            <div class="product-grid__empty">
+                <i class="fas fa-box-open"></i>
+                <p>{% mtrans 'No products in this category yet.' %}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endblock %}
+
+        <!-- Pagination -->
+        {% if paginator.num_pages > 1 %}
+        {% block pagination %}
+        {% if template_options.pagination_style == 'numbered' %}
+        <nav class="pagination" aria-label="{% mtrans 'Page navigation' %}">
+            <ul class="pagination__list">
+                {% if page_obj.has_previous %}
+                <li class="pagination__item">
+                    <a href="?sort={{ current_sort }}&page={{ page_obj.previous_page_number }}"
+                       class="pagination__link pagination__link--prev"
+                       aria-label="{% mtrans 'Previous page' %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <li class="pagination__item">
+                        <span class="pagination__link pagination__link--active" aria-current="page">{{ num }}</span>
+                    </li>
+                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                    <li class="pagination__item">
+                        <a href="?sort={{ current_sort }}&page={{ num }}" class="pagination__link">{{ num }}</a>
+                    </li>
+                    {% elif num == 1 or num == paginator.num_pages %}
+                    <li class="pagination__item">
+                        <a href="?sort={{ current_sort }}&page={{ num }}" class="pagination__link">{{ num }}</a>
+                    </li>
+                    {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+                    <li class="pagination__item pagination__item--ellipsis">
+                        <span class="pagination__ellipsis">&hellip;</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="pagination__item">
+                    <a href="?sort={{ current_sort }}&page={{ page_obj.next_page_number }}"
+                       class="pagination__link pagination__link--next"
+                       aria-label="{% mtrans 'Next page' %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        {% elif template_options.pagination_style == 'load_more' %}
+        {% if page_obj.has_next %}
+        <div class="load-more">
+            <button class="load-more__btn"
+                    data-next-page="{{ page_obj.next_page_number }}"
+                    data-sort="{{ current_sort }}"
+                    data-url="{{ request.path }}"
+                    type="button">
+                <i class="fas fa-plus"></i>
+                {% mtrans 'Load More Products' %}
+            </button>
+            <p class="load-more__info">
+                {% blocktrans with shown=page_obj.end_index total=total_count %}
+                    Showing {{ shown }} of {{ total }} products
+                {% endblocktrans %}
+            </p>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endblock %}
+        {% endif %}
+
+    </div>
+</section>
+{% endif %}
+
+<!-- Help Section -->
+{% if template_options.show_help_section %}
+<section class="cat-section cat-section--alt">
+    <div class="container">
+        <div class="help-block">
+            <h2 class="help-block__title">{% mtrans "Can't Find What You're Looking For?" %}</h2>
+            <p class="help-block__text">
+                {% mtrans 'Use our search feature or contact our customer service team for personalized assistance.' %}
+            </p>
+            <div class="help-block__actions">
+                <a href="/search/" class="btn btn--primary">
+                    <i class="fas fa-search"></i>
+                    {% mtrans 'Search Products' %}
+                </a>
+                <a href="/page/contact/" class="btn btn--outline">
+                    <i class="fas fa-headset"></i>
+                    {% mtrans 'Contact Support' %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'page_builder/js/category-sort.js' %}" defer></script>
+{% if template_options.pagination_style == 'load_more' %}
+<script src="{% static 'page_builder/js/category-load-more.js' %}" defer></script>
+{% endif %}
+{% block template_scripts %}{% endblock %}
+{% endblock %}

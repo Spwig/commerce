@@ -1,0 +1,56 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+/** Header/Footer Preview Styles */
+
+/* Preview container styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--theme-font-family-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    background: var(--theme-color-background, #f5f5f5);
+    color: var(--theme-color-text, #333);
+}
+
+/* Footer preview needs flex column for sticky footer */
+body.preview-footer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.preview-container {
+    min-height: 100vh;
+}
+
+.preview-info {
+    background: var(--theme-color-surface, white);
+    padding: var(--theme-space-4, 1rem);
+    border-bottom: 1px solid var(--theme-color-border, #e0e0e0);
+    text-align: center;
+    color: var(--theme-color-text-muted, #666);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+/* Demo content below header / above footer */
+.demo-content {
+    padding: var(--theme-space-8, 2rem);
+    max-width: var(--theme-container-max-width, 1200px);
+    margin: 0 auto;
+}
+
+/* Footer preview: demo content takes remaining space */
+body.preview-footer .demo-content {
+    flex: 1;
+    width: 100%;
+}
+
+.demo-content h1 {
+    color: var(--theme-color-text, #333);
+    margin-bottom: var(--theme-space-4, 1rem);
+    font-family: var(--theme-font-family-heading, var(--theme-font-family-body, inherit));
+}
+
+.demo-content p {
+    color: var(--theme-color-text-muted, #666);
+    line-height: var(--theme-line-height-relaxed, 1.6);
+    margin-bottom: var(--theme-space-4, 1rem);
+}

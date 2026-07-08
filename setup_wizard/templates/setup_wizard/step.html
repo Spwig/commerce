@@ -1,0 +1,140 @@
+{% extends "setup_wizard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ step_config.title }} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block wizard_content %}
+<!-- Wizard Header -->
+<div class="setup-wizard-header">
+    <h1 class="wizard-title"><i class="fas fa-rocket"></i> {% trans "Store Setup Wizard" %}</h1>
+    <p class="wizard-subtitle">{% trans "Let's get your e-commerce store configured!" %}</p>
+
+    <!-- Progress Container -->
+    <div class="setup-progress-container">
+        <div class="setup-progress-bar">
+            <div class="setup-progress-fill" data-progress="{{ progress_percentage }}"></div>
+        </div>
+        <p class="setup-progress-text">{% trans "Step" %} {{ step_index }} {% trans "of" %} {{ total_steps }} ({{ progress_percentage }}% {% trans "complete" %})</p>
+
+        <!-- Step Navigation Indicators -->
+        <div class="setup-step-navigation">
+            {% for step in all_steps %}
+                <div class="setup-step-indicator {% if forloop.counter0 < step_index %}completed{% endif %} {% if forloop.counter0 == step_index|add:'-1' %}active{% endif %}"
+                    title="{{ step.title }}">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Wizard Body -->
+<div class="setup-wizard-body">
+    <!-- Step Header -->
+    <div class="setup-step-header">
+        <div class="setup-step-icon"><i class="{{ step_config.icon }}"></i></div>
+        <h2 class="setup-step-title">{{ step_config.title }}</h2>
+        <p class="setup-step-description">{{ step_config.description }}</p>
+
+        {% if not step_config.required %}
+            <div class="setup-skip-notice">
+                <small><i class="fas fa-info-circle"></i> {% trans "This step is optional - you can skip it and configure later" %}</small>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Form Section -->
+    <form id="step-form" method="post" enctype="multipart/form-data" class="setup-form-section">
+        {% csrf_token %}
+
+        {% if step_config.key == 'payment_methods' %}
+            <!-- Payment Providers Info Section -->
+            <div class="setup-payment-info">
+                <div class="setup-payment-icon"><i class="fas fa-credit-card"></i></div>
+                <h3 class="setup-payment-title">{% trans "Payment Providers" %}</h3>
+                <p class="setup-payment-description">
+                    {% trans "Payment providers are configured through the dedicated Payment Provider admin. You can set up Stripe, PayPal, and other providers there." %}
+                </p>
+                <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="btn btn-primary" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Manage Payment Providers" %}
+                </a>
+            </div>
+        {% else %}
+            <!-- Form Fields -->
+            {% for field in form %}
+                <div class="setup-form-group">
+                    <label for="{{ field.id_for_label }}" class="setup-form-label">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="required">*</span>{% endif %}
+                    </label>
+
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="setup-form-check">
+                            {{ field }}
+                            <div>
+                                <label for="{{ field.id_for_label }}" class="setup-form-check-label">{{ field.label }}</label>
+                                {% if field.help_text %}
+                                    <div class="setup-form-help">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="setup-form-help">{{ field.help_text }}</div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <div class="setup-alert-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </form>
+</div>
+
+<!-- Wizard Actions -->
+<div class="setup-wizard-actions">
+    <div class="setup-actions-left">
+        {% if previous_step_key %}
+            <a href="{% url 'setup_wizard:step' step_key=previous_step_key %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+            </a>
+        {% else %}
+            <a href="{% url 'admin:index' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> {% trans "Dashboard" %}
+            </a>
+        {% endif %}
+
+        <a href="{% url 'setup_wizard:skip' %}" class="btn btn-warning" title="{% trans 'Skip the entire setup wizard' %}">
+            {% trans "Skip Setup Wizard" %}
+        </a>
+
+        {% if not step_config.required %}
+            <button type="submit" form="step-form" name="skip_step" class="btn btn-secondary">
+                {% trans "Skip This Step" %}
+            </button>
+        {% endif %}
+    </div>
+
+    <div class="setup-actions-right">
+        <button type="submit" form="step-form" name="save_and_continue" class="btn btn-primary">
+            {% if is_last_step %}
+                {% trans "Complete Setup" %} <i class="fas fa-check"></i>
+            {% else %}
+                {% trans "Save & Continue" %} <i class="fas fa-arrow-right"></i>
+            {% endif %}
+        </button>
+
+        {% if not is_last_step %}
+            <button type="submit" form="step-form" name="save_and_finish" class="btn btn-success">
+                <i class="fas fa-save"></i> {% trans "Save & Finish Later" %}
+            </button>
+        {% endif %}
+    </div>
+</div>
+
+<script src="{% static 'setup_wizard/js/step.js' %}"></script>
+{% endblock %}

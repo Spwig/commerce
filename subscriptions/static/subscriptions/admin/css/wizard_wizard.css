@@ -1,0 +1,300 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Subscriptions - Wizard Wizard
+ *
+ * Description: Styles for wizard.html
+ * Template: subscriptions/templates/admin/subscriptions/subscriptionplan/wizard.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/wizard-base.css (base wizard styles)
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Wizard container override */
+.wizard-container {
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+/* Fix wizard steps distribution */
+.wizard-steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.wizard-steps .step {
+    flex: 1;
+    min-width: 0;
+}
+
+.wizard-steps .step-label {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* No-tiers empty state icon */
+.no-tiers-message .no-tiers-icon {
+    font-size: 48px;
+    color: var(--body-quiet-color);
+    margin-bottom: 16px;
+}
+
+/* Policy card description text */
+.policy-card-description {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin-top: 8px;
+}
+
+/* Wizard hidden navigation button */
+.wizard-btn-hidden {
+    display: none;
+}
+
+.tier-card {
+        background: var(--body-bg);
+        border: 2px solid var(--border-color, var(--border-color));
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+    .tier-card.default {
+        border-color: var(--primary);
+        background: var(--primary-bg, #f0f7ff);
+    }
+
+    .tier-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .tier-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .tier-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+
+    .add-tier-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .add-tier-btn:hover {
+        background: var(--primary-hover);
+    }
+
+    .pricing-model-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .model-card {
+        background: var(--body-bg);
+        border: 2px solid var(--border-color, var(--border-color));
+        border-radius: 8px;
+        padding: 24px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .model-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .model-card.selected {
+        border-color: var(--primary);
+        background: var(--primary-bg, #f0f7ff);
+    }
+
+    .model-card-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: var(--primary);
+    }
+
+    .model-card-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-color);
+    }
+
+    .model-card-description {
+        font-size: 14px;
+        color: var(--body-quiet-color);
+        line-height: 1.5;
+    }
+
+    .policy-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .policy-card {
+        background: var(--body-bg);
+        border: 2px solid var(--border-color, var(--border-color));
+        border-radius: 8px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .policy-card:hover {
+        border-color: var(--primary);
+    }
+
+    .policy-card.selected {
+        border-color: var(--primary);
+        background: var(--primary-bg, #f0f7ff);
+    }
+
+    .policy-card-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+        color: var(--primary);
+    }
+
+    .policy-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .review-section {
+        background: var(--body-bg);
+        border: 1px solid var(--border-color, var(--border-color));
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+    .review-section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .review-grid {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 12px;
+        font-size: 14px;
+    }
+
+    .review-label {
+        font-weight: 600;
+        color: var(--body-quiet-color);
+    }
+
+    .review-value {
+        color: var(--text-color);
+    }
+
+    .review-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: var(--primary-bg, #f0f7ff);
+        color: var(--primary);
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .error-summary {
+        background: var(--error-bg);
+        border: 1px solid var(--error-fg);
+        border-radius: 6px;
+        padding: 16px;
+        margin-bottom: 24px;
+    }
+
+    .error-summary-title {
+        font-weight: 600;
+        color: var(--error-fg);
+        margin-bottom: 8px;
+    }
+
+    .error-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .error-list li {
+        color: var(--error-fg);
+        padding: 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .no-tiers-message {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--body-quiet-color);
+        font-size: 14px;
+    }
+
+/* Tier header title */
+.tier-header-title {
+    margin: 0;
+    color: var(--text-color);
+}
+
+/* Review tier items */
+.review-tier-item {
+    padding: 12px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.review-badge-inline {
+    margin-left: 8px;
+}
+
+.review-tier-detail {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin-top: 4px;
+}

@@ -1,0 +1,265 @@
+{% load i18n %}
+
+<!-- Bug Report Modal -->
+<div class="admin-modal-overlay" id="bugReportModalOverlay">
+    <div class="admin-modal admin-modal--md">
+        <!-- Header -->
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title">
+                <i class="fas fa-bug"></i>
+                <span id="bugReportTitle">{% trans "Report a Bug" %}</span>
+            </h2>
+            <div class="bug-steps-indicator" id="bugStepsIndicator">
+                <span class="bug-step-dot active" data-step="1">1</span>
+                <span class="bug-step-dot" data-step="2">2</span>
+                <span class="bug-step-dot" data-step="3">3</span>
+                <span class="bug-step-dot" data-step="4">4</span>
+            </div>
+            <button type="button" class="admin-modal-close" data-action="close-bug-report"
+                    aria-label="{% trans 'Close' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="admin-modal-body">
+            <!-- Step 1: What happened? -->
+            <div class="bug-step" id="bugStep1" data-visible="true">
+                <h3 class="bug-step-heading">{% trans "What happened?" %}</h3>
+                <p class="bug-step-desc">{% trans "Tell us about the issue you encountered so we can investigate." %}</p>
+
+                <div class="bug-form-group">
+                    <label class="bug-label">{% trans "Category" %} <span class="bug-required">*</span></label>
+                    <div class="bug-category-grid" id="bugCategoryGrid">
+                        <button type="button" class="bug-category-card" data-value="ui_visual">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>{% trans "UI/Visual" %}</span>
+                        </button>
+                        <button type="button" class="bug-category-card" data-value="functionality">
+                            <i class="fas fa-cog"></i>
+                            <span>{% trans "Functionality" %}</span>
+                        </button>
+                        <button type="button" class="bug-category-card" data-value="performance">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>{% trans "Performance" %}</span>
+                        </button>
+                        <button type="button" class="bug-category-card" data-value="data">
+                            <i class="fas fa-database"></i>
+                            <span>{% trans "Data Issue" %}</span>
+                        </button>
+                        <button type="button" class="bug-category-card" data-value="other">
+                            <i class="fas fa-ellipsis-h"></i>
+                            <span>{% trans "Other" %}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bug-form-group">
+                    <label class="bug-label" for="bugDescription">
+                        {% trans "What were you doing when you noticed the bug?" %}
+                        <span class="bug-required">*</span>
+                    </label>
+                    <textarea id="bugDescription" class="bug-textarea" rows="4"
+                              placeholder="{% trans 'Describe what you were doing and what went wrong...' %}"
+                              maxlength="2000"></textarea>
+                    <span class="bug-char-count"><span id="bugDescCharCount">0</span> / 2000</span>
+                </div>
+
+                <div class="bug-form-group">
+                    <label class="bug-label">{% trans "Severity" %} <span class="bug-required">*</span></label>
+                    <div class="bug-severity-options" id="bugSeverityOptions">
+                        <button type="button" class="bug-severity-card" data-value="minor">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="bug-severity-text">
+                                <strong>{% trans "Minor" %}</strong>
+                                <small>{% trans "Cosmetic or minor annoyance" %}</small>
+                            </div>
+                        </button>
+                        <button type="button" class="bug-severity-card" data-value="significant">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div class="bug-severity-text">
+                                <strong>{% trans "Significant" %}</strong>
+                                <small>{% trans "Feature impaired but workaround exists" %}</small>
+                            </div>
+                        </button>
+                        <button type="button" class="bug-severity-card" data-value="blocking">
+                            <i class="fas fa-ban"></i>
+                            <div class="bug-severity-text">
+                                <strong>{% trans "Blocking" %}</strong>
+                                <small>{% trans "Cannot complete a critical task" %}</small>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Browser Data Consent -->
+            <div class="bug-step" id="bugStep2" data-visible="false">
+                <h3 class="bug-step-heading">{% trans "Browser Data" %}</h3>
+                <p class="bug-step-desc">{% trans "Sharing browser data helps us diagnose the issue faster. Toggle each item to include it in your report." %}</p>
+
+                <div class="bug-consent-list">
+                    <div class="bug-consent-item">
+                        <div class="bug-consent-header">
+                            <label class="bug-toggle">
+                                <input type="checkbox" id="consentConsole" checked>
+                                <span class="bug-toggle-slider"></span>
+                            </label>
+                            <div class="bug-consent-info">
+                                <strong>{% trans "Console Logs" %}</strong>
+                                <small>{% trans "Recent browser console messages (errors, warnings)" %}</small>
+                            </div>
+                            <button type="button" class="bug-consent-preview-btn" data-target="consolePreview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="bug-consent-preview" id="consolePreview">
+                            <pre id="consolePreviewContent">{% trans "Loading..." %}</pre>
+                        </div>
+                    </div>
+
+                    <div class="bug-consent-item">
+                        <div class="bug-consent-header">
+                            <label class="bug-toggle">
+                                <input type="checkbox" id="consentPageUrl" checked>
+                                <span class="bug-toggle-slider"></span>
+                            </label>
+                            <div class="bug-consent-info">
+                                <strong>{% trans "Current Page" %}</strong>
+                                <small>{% trans "The URL and admin section you were viewing" %}</small>
+                            </div>
+                            <button type="button" class="bug-consent-preview-btn" data-target="pageUrlPreview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="bug-consent-preview" id="pageUrlPreview">
+                            <pre id="pageUrlPreviewContent">{% trans "Loading..." %}</pre>
+                        </div>
+                    </div>
+
+                    <div class="bug-consent-item">
+                        <div class="bug-consent-header">
+                            <label class="bug-toggle">
+                                <input type="checkbox" id="consentBrowser" checked>
+                                <span class="bug-toggle-slider"></span>
+                            </label>
+                            <div class="bug-consent-info">
+                                <strong>{% trans "Browser Info" %}</strong>
+                                <small>{% trans "Browser type, screen size, language" %}</small>
+                            </div>
+                            <button type="button" class="bug-consent-preview-btn" data-target="browserPreview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="bug-consent-preview" id="browserPreview">
+                            <pre id="browserPreviewContent">{% trans "Loading..." %}</pre>
+                        </div>
+                    </div>
+
+                    <div class="bug-consent-item">
+                        <div class="bug-consent-header">
+                            <label class="bug-toggle">
+                                <input type="checkbox" id="consentNavigation">
+                                <span class="bug-toggle-slider"></span>
+                            </label>
+                            <div class="bug-consent-info">
+                                <strong>{% trans "Navigation History" %}</strong>
+                                <small>{% trans "Recent pages visited in this session" %}</small>
+                            </div>
+                            <button type="button" class="bug-consent-preview-btn" data-target="navPreview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="bug-consent-preview" id="navPreview">
+                            <pre id="navPreviewContent">{% trans "Loading..." %}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Contact Info -->
+            <div class="bug-step" id="bugStep3" data-visible="false">
+                <h3 class="bug-step-heading">{% trans "Contact Information" %}</h3>
+                <div class="bug-optional-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{% trans "This step is entirely optional. You can skip it and submit anonymously." %}</span>
+                </div>
+
+                <div class="bug-form-group">
+                    <label class="bug-label" for="bugContactName">{% trans "Name" %}</label>
+                    <input type="text" id="bugContactName" class="bug-input"
+                           placeholder="{% trans 'Your name' %}" maxlength="200">
+                </div>
+
+                <div class="bug-form-group">
+                    <label class="bug-label" for="bugContactEmail">{% trans "Email" %}</label>
+                    <input type="email" id="bugContactEmail" class="bug-input"
+                           placeholder="{% trans 'your@email.com' %}" maxlength="254">
+                </div>
+
+                <div class="bug-form-group">
+                    <label class="bug-checkbox-label">
+                        <input type="checkbox" id="bugContactConsent">
+                        <span>{% trans "It's okay to contact me for more details about this bug" %}</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Step 4: Review & Submit -->
+            <div class="bug-step" id="bugStep4" data-visible="false">
+                <h3 class="bug-step-heading">{% trans "Review Your Report" %}</h3>
+                <p class="bug-step-desc">{% trans "This is exactly what will be sent. Review it and click Submit when ready." %}</p>
+
+                <div class="bug-review-sections" id="bugReviewSections">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Success state -->
+            <div class="bug-step" id="bugStepSuccess" data-visible="false">
+                <div class="bug-success">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>{% trans "Thank You!" %}</h3>
+                    <p>{% trans "Your bug report has been submitted to Spwig. We appreciate you taking the time to help improve the platform." %}</p>
+                </div>
+            </div>
+
+            <!-- Error state -->
+            <div class="bug-step" id="bugStepError" data-visible="false">
+                <div class="bug-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>{% trans "Submission Failed" %}</h3>
+                    <p id="bugErrorMessage">{% trans "We couldn't send your report right now. It has been saved locally and will be retried automatically." %}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="admin-modal-footer" id="bugReportFooter">
+            <button type="button" class="bug-btn bug-btn-secondary" id="bugBtnBack"
+                    data-action="bug-report-back" style="display: none;">
+                <i class="fas fa-arrow-left"></i>
+                {% trans "Back" %}
+            </button>
+            <div class="bug-footer-spacer"></div>
+            <button type="button" class="bug-btn bug-btn-secondary" id="bugBtnSkip"
+                    data-action="bug-report-skip" style="display: none;">
+                {% trans "Skip" %}
+            </button>
+            <button type="button" class="bug-btn bug-btn-primary" id="bugBtnNext"
+                    data-action="bug-report-next">
+                {% trans "Next" %}
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <button type="button" class="bug-btn bug-btn-success" id="bugBtnSubmit"
+                    data-action="bug-report-submit" style="display: none;">
+                <i class="fas fa-paper-plane"></i>
+                {% trans "Submit Report" %}
+            </button>
+            <button type="button" class="bug-btn bug-btn-primary" id="bugBtnClose"
+                    data-action="close-bug-report" style="display: none;">
+                {% trans "Close" %}
+            </button>
+        </div>
+    </div>
+</div>

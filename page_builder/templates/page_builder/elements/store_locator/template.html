@@ -1,0 +1,71 @@
+{% load i18n static element_tags merchant_trans %}
+{% mtrans "Find a Store" as default_title %}
+{% mtrans "Locate our stores near you for pickup and in-person shopping" as default_subtitle %}
+<!-- Store Locator Element -->
+<section class="store-locator section"
+         data-store-locator
+         data-no-locations-text="{% mtrans 'No store locations available' %}"
+         data-error-text="{% mtrans 'Error loading store locations' %}"
+         data-no-results-text="{% mtrans 'No stores found matching your search' %}"
+         data-pickup-available-text="{% mtrans 'Pickup available' %}"
+         data-leaflet-images="{% static 'core/vendor/leaflet/images' %}"
+         {% hover_animation_attrs element %}>
+    <div class="container">
+        <!-- Header -->
+        <div class="section-header text-center mb-8">
+            <h2 class="section-header__title">
+                {{ element.content.title|default:default_title }}
+            </h2>
+            <p class="section-header__subtitle">
+                {{ element.content.subtitle|default:default_subtitle }}
+            </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="store-locator__search">
+            <div class="store-locator__search-wrapper">
+                <div class="store-locator__search-input-wrapper">
+                    <input
+                        type="text"
+                        id="location-search"
+                        placeholder="{% mtrans 'Enter city, postal code, or address' %}"
+                        class="form-input store-locator__search-input"
+                    >
+                    <svg class="store-locator__search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <button data-search-btn class="btn btn--primary">
+                    {% mtrans "Search" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div class="store-locator__results">
+            <!-- Map -->
+            <div class="store-locator__map-container card">
+                <div id="store-map" class="store-locator__map"></div>
+            </div>
+
+            <!-- Store List -->
+            <div class="store-locator__list-container card">
+                <h3 class="store-locator__list-title">
+                    {% mtrans "Locations" %}
+                </h3>
+                <div id="stores-list" class="store-locator__list">
+                    <!-- Loading state -->
+                    <div class="store-locator__loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="{% static 'core/vendor/leaflet/leaflet.css' %}">
+
+<!-- Leaflet JS (required before store-locator.js) -->
+<script src="{% static 'core/vendor/leaflet/leaflet.js' %}"></script>

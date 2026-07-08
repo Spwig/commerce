@@ -1,0 +1,76 @@
+{% extends "admin/sms_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_title_tag %}{% trans "Select SMS Provider" %}{% endblock %}
+{% block wizard_title %}{% trans "Select SMS Provider" %}{% endblock %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Select a Provider" %}</h2>
+    <p class="step-description">{% trans "Choose the SMS provider you want to configure." %}</p>
+
+    {% if providers %}
+    <form method="post" id="provider-form">
+        {% csrf_token %}
+
+        <div class="providers-grid">
+            {% for provider in providers %}
+            <label class="provider-card" data-provider="{{ provider.key }}">
+                <input type="radio" name="provider_key" value="{{ provider.key }}"
+                       {% if provider.key == pre_selected %}checked{% elif not pre_selected and forloop.first %}checked{% endif %}>
+                <div class="provider-card-content">
+                    <div class="provider-logo provider-logo-placeholder">
+                        <i class="fas fa-sms"></i>
+                    </div>
+                    <h3 class="provider-name">{{ provider.name }}</h3>
+                    <p class="provider-description">{{ provider.description|default:""|truncatewords:15 }}</p>
+                    <div class="provider-capabilities">
+                        {% if provider.capabilities.sms %}
+                        <span class="capability-badge">
+                            <i class="fas fa-comment-sms"></i> SMS
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.whatsapp %}
+                        <span class="capability-badge">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.mms %}
+                        <span class="capability-badge">
+                            <i class="fas fa-image"></i> MMS
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="provider-check">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>{% trans "No Providers Available" %}</h3>
+        <p>{% trans "No SMS providers are installed. Install providers from the provider browse page." %}</p>
+        <a href="{% url 'sms_system:provider_browse' %}" class="btn btn-primary">
+            <i class="fas fa-download"></i> {% trans "Browse Providers" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:sms_system_smsprovideraccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    {% if providers %}
+    <button type="submit" form="provider-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+    {% endif %}
+</div>
+{% endblock %}

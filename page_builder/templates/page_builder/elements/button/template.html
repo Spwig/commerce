@@ -1,0 +1,22 @@
+{% load i18n element_tags merchant_trans %}
+{% if element.content.text %}
+{% with color=element.content.color|default:element.content.style|default:"primary" variant=element.content.variant|default:"solid" size=element.content.size|default:"md" %}
+<a href="{{ element.content.url|default:element.link_url|default:'#' }}"
+   target="{{ element.content.target|default:element.link_target|default:'_self' }}"
+   {% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+   {% hover_animation_attrs element %}
+   class="btn {% if variant == 'solid' %}btn--{{ color }}{% elif variant == 'outline' %}btn--{{ color }}-outline{% elif variant == 'ghost' %}btn--{{ color }}-ghost{% else %}btn--{{ color }}{% endif %}{% if size != 'md' %} btn--{{ size }}{% endif %}{% if element.content.full_width %} btn--full{% endif %}{% if element.content.rounded %} btn--pill{% endif %}{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+   style="{% if element.content.background_color %}background-color: {{ element.content.background_color }};{% endif %}{% if element.content.text_color %}color: {{ element.content.text_color }};{% endif %}{% if element.content.border_color %}border-color: {{ element.content.border_color }};{% endif %}{% if element.content.border_radius %}border-radius: {{ element.content.border_radius }};{% endif %}{% if element.content.padding_x %}padding-left: {{ element.content.padding_x }};padding-right: {{ element.content.padding_x }};{% endif %}{% if element.content.padding_y %}padding-top: {{ element.content.padding_y }};padding-bottom: {{ element.content.padding_y }};{% endif %}{% if element.content.font_size %}font-size: {{ element.content.font_size }};{% endif %}{% if element.content.font_weight %}font-weight: {{ element.content.font_weight }};{% endif %}{% base_styles element %}"
+   {% if element.content.onclick %}data-onclick="{{ element.content.onclick|escapejs }}"{% endif %}
+   {% if element.content.title %}title="{{ element.content.title }}"{% endif %}
+   {% if element.content.aria_label %}aria-label="{{ element.content.aria_label }}"{% endif %}>
+    {% if element.content.icon_before %}<i class="{% with bs=element.content.icon_before_style %}{% if bs == 'brands' %}fab{% elif bs == 'regular' %}far{% elif bs == 'light' %}fal{% elif bs == 'duotone' %}fad{% else %}fas{% endif %}{% endwith %} {{ element.content.icon_before }}"></i>{% endif %}
+    <span>{{ element.content.text }}</span>
+    {% if element.content.icon_after %}<i class="{% with as=element.content.icon_after_style %}{% if as == 'brands' %}fab{% elif as == 'regular' %}far{% elif as == 'light' %}fal{% elif as == 'duotone' %}fad{% else %}fas{% endif %}{% endwith %} {{ element.content.icon_after }}"></i>{% endif %}
+</a>
+{% endwith %}
+{% else %}
+<a href="#" class="btn btn--primary">
+    <span>{% mtrans "Button Text" %}</span>
+</a>
+{% endif %}

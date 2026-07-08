@@ -1,0 +1,115 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/provider-wizard.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'blog/admin/css/select_organization_wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <h1>{% trans "Select LinkedIn Organization" %}</h1>
+        <p class="wizard-subtitle">{% trans "Choose which LinkedIn Company Page you want to connect for posting" %}</p>
+    </div>
+
+    <!-- Step Indicator (OAuth flow has 5 steps) -->
+    <div class="wizard-steps">
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Authorize" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step active">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Select Organization" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Test & Save" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        {% if organizations %}
+        <form method="post" id="org-selection-form">
+            {% csrf_token %}
+            <p class="form-intro">{% trans "We found the following LinkedIn Organizations you can manage. Select the one you want to connect:" %}</p>
+
+            <div class="org-grid" data-card-selector-class="org-card">
+                {% for org in organizations %}
+                <label class="org-card" data-org-id="{{ org.id }}" data-org-name="{{ org.name }}">
+                    <input type="radio" name="organization_id" value="{{ org.id }}" required>
+                    <input type="hidden" name="organization_name_{{ org.id }}" value="{{ org.name }}">
+                    {% if org.logo_url %}
+                    <img src="{{ org.logo_url }}" alt="{{ org.name }}" class="org-logo">
+                    {% else %}
+                    <div class="org-logo org-logo--placeholder">
+                        <i class="fab fa-linkedin"></i>
+                    </div>
+                    {% endif %}
+                    <div class="org-info">
+                        <div class="org-name">{{ org.name }}</div>
+                        {% if org.vanity_name %}
+                        <div class="org-vanity">linkedin.com/company/{{ org.vanity_name }}</div>
+                        {% endif %}
+                        {% if org.role %}
+                        <span class="role-badge {% if org.role == 'ADMINISTRATOR' %}admin{% endif %}">{{ org.role }}</span>
+                        {% endif %}
+                        <div class="org-id">ID: {{ org.id }}</div>
+                    </div>
+                    <div class="check-indicator">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </form>
+        {% else %}
+        <div class="no-orgs-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>{% trans "No Organizations Found" %}</h3>
+            <p>{% trans "We couldn't find any LinkedIn Organizations that you can manage." %}</p>
+            <p>{% trans "Make sure you:" %}</p>
+            <ul class="no-orgs-list">
+                <li>{% trans "Are an admin of at least one LinkedIn Company Page" %}</li>
+                <li>{% trans "Granted all the requested permissions during authorization" %}</li>
+                <li>{% trans "Your LinkedIn app has the w_organization_social permission" %}</li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Wizard Navigation -->
+    <div class="wizard-navigation">
+        <a href="{% url 'blog_admin:wizard_step2' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        {% if organizations %}
+        <button type="submit" form="org-selection-form" class="btn btn-primary">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'blog/admin/js/social_connector_wizard.js' %}"></script>
+{% endblock %}

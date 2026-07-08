@@ -1,0 +1,96 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Product Recycle Bin" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_product_recycle_bin.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>{% trans "Product Recycle Bin" %}</h1>
+
+<p>{% trans "Deleted products are stored here and can be restored or permanently deleted." %}</p>
+
+{% if deleted_products %}
+<form method="post">
+    {% csrf_token %}
+
+    <div class="recycle-bin-actions">
+        <button type="submit" name="action" value="restore" class="button btn-success">
+            ✓ {% trans "Restore Selected" %}
+        </button>
+        <button type="submit" name="action" value="permanent_delete" class="button btn-danger"
+                data-confirm="{% trans 'Permanently delete selected products? This cannot be undone. Products with orders cannot be deleted.' %}">
+            ✕ {% trans "Permanently Delete Selected" %}
+        </button>
+        <button type="submit" name="action" value="empty_bin" class="button btn-warning"
+                data-confirm="{% trans 'Empty entire recycle bin? This will permanently delete all products without orders. This cannot be undone.' %}">
+            🗑 {% trans "Empty Recycle Bin" %}
+        </button>
+    </div>
+
+    <table class="recycle-bin-table">
+        <thead>
+            <tr>
+                <th style="width: 40px;">
+                    <input type="checkbox" id="select-all" title="{% trans 'Select all' %}">
+                </th>
+                <th>{% trans "Product" %}</th>
+                <th>{% trans "SKU" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Brand" %}</th>
+                <th>{% trans "Deleted By" %}</th>
+                <th>{% trans "Deleted At" %}</th>
+                <th style="text-align: center;">{% trans "Has Orders" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in deleted_products %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="product_ids" value="{{ product.id }}">
+                </td>
+                <td><strong>{{ product.name }}</strong></td>
+                <td><code>{{ product.sku }}</code></td>
+                <td>{{ product.category|default:"-" }}</td>
+                <td>{{ product.brand|default:"-" }}</td>
+                <td>{{ product.deleted_by.username|default:"-" }}</td>
+                <td>{{ product.deleted_at|date:"Y-m-d H:i" }}</td>
+                <td style="text-align: center;">
+                    {% if product.has_orders %}
+                        <span class="warning-icon" title="{% trans 'Cannot permanently delete - has associated orders' %}">
+                            ⚠️ {% trans "Yes" %}
+                        </span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p style="margin-top: 20px; color: #6c757d; font-size: 14px;">
+        <strong>{% trans "Note:" %}</strong>
+        {% trans "Products with associated orders cannot be permanently deleted to maintain order history integrity." %}
+    </p>
+</form>
+
+<script src="{% static 'catalog/admin/js/product_recycle_bin.js' %}"></script>
+
+{% else %}
+<div class="empty-state">
+    <div>🗑️</div>
+    <h2>{% trans "Recycle bin is empty" %}</h2>
+    <p>{% trans "Deleted products will appear here." %}</p>
+    <p>
+        <a href="{% url 'admin:catalog_product_changelist' %}" class="button">
+            ← {% trans "Back to Products" %}
+        </a>
+    </p>
+</div>
+{% endif %}
+
+{% endblock %}

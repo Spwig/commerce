@@ -1,0 +1,554 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * License Status Admin Page Styles
+ * Uses theme CSS variables for dark/light mode support
+ * NO inline styles - follows rules.md
+ */
+
+.license-dashboard {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.license-status-card {
+    background: var(--darkened-bg);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+.status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--hairline-color);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.status-badge.licensed {
+    background: var(--success-color);
+    color: var(--body-loud-color);
+}
+
+.status-badge.trial {
+    background: var(--error-color);
+    color: var(--body-loud-color);
+}
+
+.status-badge.warning {
+    background: var(--warning-color);
+    color: var(--primary-fg);
+}
+
+.status-icon {
+    font-size: 24px;
+}
+
+.license-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.detail-item {
+    padding: 16px;
+    background: var(--body-bg);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.detail-label {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 16px;
+    color: var(--body-fg);
+    font-weight: 500;
+}
+
+.upload-section {
+    background: var(--darkened-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    margin-top: 24px;
+}
+
+.upload-section:hover {
+    border-color: var(--primary);
+    background: var(--selected-bg);
+}
+
+.upload-button {
+    background: var(--button-bg);
+    color: var(--button-fg);
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upload-button:hover {
+    background: var(--button-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--button-bg);
+    color: var(--button-fg);
+}
+
+.btn-primary:hover {
+    background: var(--button-hover-bg);
+}
+
+.btn-secondary {
+    background: var(--close-button-bg);
+    color: var(--button-fg);
+}
+
+.btn-secondary:hover {
+    background: var(--close-button-hover-bg);
+}
+
+.warning-banner {
+    background: var(--message-warning-bg);
+    border-left: 4px solid var(--warning-color);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    color: var(--body-fg);
+}
+
+.warning-banner h3 {
+    margin: 0 0 8px 0;
+    color: var(--warning-color);
+}
+
+.warning-banner p {
+    margin: 0;
+    color: var(--body-fg);
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+}
+
+.feature-list li {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--body-fg);
+}
+
+.feature-enabled {
+    color: var(--success-color);
+}
+
+.feature-disabled {
+    color: var(--body-quiet-color);
+}
+
+#upload-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    display: none;
+}
+
+#upload-result.success {
+    background: var(--message-success-bg);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+#upload-result.error {
+    background: var(--message-error-bg);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
+/* POS License Section */
+.pos-license-card .status-header {
+    border-bottom: 2px solid var(--hairline-color);
+}
+
+.pos-license-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pos-license-title h2 {
+    margin: 0;
+    color: var(--body-fg);
+}
+
+.pos-badge {
+    font-size: 14px;
+    padding: 6px 16px;
+}
+
+.pos-not-configured {
+    background: var(--close-button-bg);
+    color: var(--body-quiet-color);
+}
+
+.pos-status-active {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.pos-status-grace {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+.pos-status-expired {
+    color: var(--error-color);
+    font-weight: 600;
+}
+
+.pos-days-warning {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+.pos-days-critical {
+    color: var(--error-color);
+    font-weight: 700;
+}
+
+.pos-activation-section {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline-color);
+}
+
+.pos-activation-section h3 {
+    margin: 0 0 8px;
+    color: var(--body-fg);
+}
+
+.pos-activation-desc {
+    color: var(--body-quiet-color);
+    margin: 0 0 16px;
+    font-size: 14px;
+}
+
+.pos-activation-form {
+    display: flex;
+    gap: 12px;
+}
+
+.pos-activation-form input {
+    flex: 1;
+    max-width: 360px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-family: monospace;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.pos-activation-form input:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb, 65, 131, 196), 0.2);
+}
+
+.pos-activation-result {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.pos-activation-result.success {
+    display: block;
+    background: var(--message-success-bg);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.pos-activation-result.error {
+    display: block;
+    background: var(--message-error-bg);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
+.pos-activation-result.loading {
+    display: block;
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+    border: 1px solid var(--border-color);
+}
+
+/* Entitlements Section */
+.entitlements-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.license-maintenance-section {
+    margin-top: 1.5rem;
+}
+
+.license-renew-cta {
+    margin-top: 1rem;
+}
+
+.entitlement-group {
+    background: var(--body-bg);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--hairline-color);
+}
+
+.entitlement-group-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--body-quiet-color);
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--hairline-color);
+}
+
+.entitlement-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.entitlement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+}
+
+.entitlement-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.entitlement-enabled {
+    background: var(--success-color);
+    color: white;
+}
+
+.entitlement-disabled {
+    background: var(--close-button-bg);
+    color: var(--body-quiet-color);
+}
+
+.entitlement-quota {
+    background: var(--primary);
+    color: white;
+    font-size: 12px;
+}
+
+.entitlement-name {
+    color: var(--body-fg);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.entitlement-expiry {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin-left: auto;
+}
+
+/* Available Add-ons */
+.addons-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--hairline-color);
+}
+
+.addon-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.addon-card {
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.addon-name {
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 4px;
+}
+
+.addon-description {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin-bottom: 8px;
+}
+
+.addon-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* Update Status Indicators */
+.license-update-full {
+    color: var(--success-fg, #27ae60);
+}
+
+.license-update-maintenance {
+    color: var(--warning-fg, #f39c12);
+}
+
+.license-update-eol {
+    color: var(--error-fg, #e74c3c);
+}
+
+/* Activation Section */
+.license-activation-method-primary {
+    margin-bottom: 32px;
+}
+
+.license-activation-heading-primary {
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+.license-activation-heading-secondary {
+    color: var(--body-quiet-color);
+    margin-bottom: 12px;
+}
+
+.license-activation-description {
+    color: var(--body-quiet-color);
+    margin-bottom: 16px;
+}
+
+.license-activation-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.license-input-field {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+}
+
+.license-select-field {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+}
+
+.license-activate-btn {
+    padding: 12px 24px;
+    white-space: nowrap;
+}
+
+.license-activation-result {
+    display: none;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 6px;
+}
+
+.license-hidden {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .license-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .status-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .entitlements-section {
+        grid-template-columns: 1fr;
+    }
+
+    .addon-cards {
+        grid-template-columns: 1fr;
+    }
+}

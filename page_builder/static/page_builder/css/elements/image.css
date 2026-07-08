@@ -1,0 +1,74 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Image Element Styles
+ *
+ * Theme tokens provide defaults. Merchant overrides via inline styles.
+ */
+
+.pb-image {
+    max-width: 100%;
+}
+
+.pb-image__container {
+    line-height: 0; /* Remove gap below image */
+}
+
+.pb-image__link {
+    display: block;
+    transition: opacity var(--theme-transition-duration-fast, 0.15s) var(--theme-transition-easing-default, ease);
+}
+
+.pb-image__link:hover {
+    opacity: 0.9;
+}
+
+.pb-image__img {
+    max-width: 100%;
+    height: auto;
+}
+
+.pb-image__overlay {
+    z-index: 1;
+}
+
+.pb-image__caption {
+    margin-top: var(--theme-space-2, 0.5rem);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.pb-image--placeholder {
+    background-color: var(--theme-color-background-secondary, #f9fafb);
+    border: 2px dashed var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-lg, 0.5rem);
+    padding: var(--theme-space-8, 2rem);
+    text-align: center;
+    margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.pb-image__placeholder-icon {
+    font-size: var(--theme-font-size-4xl, 2.25rem);
+    color: var(--theme-color-text-muted, #9ca3af);
+    margin-bottom: var(--theme-space-2, 0.5rem);
+}
+
+.pb-image__placeholder-text {
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #9ca3af);
+    margin: 0;
+}
+
+@media print {
+    .pb-image--placeholder {
+        display: none;
+    }
+    .pb-image__img {
+        max-width: 100% !important;
+    }
+    .pb-image__overlay {
+        display: none;
+    }
+}

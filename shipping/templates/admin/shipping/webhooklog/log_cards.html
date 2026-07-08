@@ -1,0 +1,93 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for log in logs %}
+    <div class="list-row-card webhook-log-card {% if log.processing_status == 'failed' %}error{% elif log.processing_status == 'pending' %}warning{% endif %}">
+        <div class="list-row-card-icon">
+            <div class="webhook-status-icon {{ log.processing_status }}">
+                {% if log.processing_status == 'processed' %}
+                    <i class="fas fa-check"></i>
+                {% elif log.processing_status == 'failed' %}
+                    <i class="fas fa-times"></i>
+                {% else %}
+                    <i class="fas fa-clock"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:shipping_webhooklog_change' log.pk %}">
+                    <span class="provider-name">{{ log.provider_key }}</span>
+                </a>
+                <span class="webhook-id" title="{{ log.id }}">
+                    #{{ log.id|slice:":8" }}
+                </span>
+            </h3>
+
+            <p class="list-row-card-subtitle endpoint-path">
+                <i class="fas fa-link"></i>
+                {{ log.endpoint }}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Processing Status Badge -->
+                <span class="list-row-card-badge list-row-card-badge-{{ log.processing_status }}">
+                    {% if log.processing_status == 'processed' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif log.processing_status == 'failed' %}
+                        <i class="fas fa-exclamation-circle"></i>
+                    {% else %}
+                        <i class="fas fa-clock"></i>
+                    {% endif %}
+                    {{ log.get_processing_status_display }}
+                </span>
+
+                <!-- HTTP Status Badge -->
+                {% if log.status_code %}
+                <span class="list-row-card-badge http-status-badge http-{{ log.status_code|divisibleby:100|yesno:'success,success,success' }}{% if log.status_code >= 200 and log.status_code < 300 %} http-2xx{% elif log.status_code >= 400 and log.status_code < 500 %} http-4xx{% elif log.status_code >= 500 %} http-5xx{% endif %}">
+                    <i class="fas fa-exchange-alt"></i>
+                    {{ log.status_code }}
+                </span>
+                {% endif %}
+            </div>
+
+            {% if log.error_message %}
+            <div class="error-message-preview">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ log.error_message|truncatewords:15 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Received" %}: {{ log.received_at|date:"M d, Y H:i:s" }}</span>
+                </div>
+                {% if log.processed_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-check-double"></i>
+                    <span>{% trans "Processed" %}: {{ log.processed_at|date:"M d, Y H:i:s" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:shipping_webhooklog_change' log.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-satellite-dish"></i>
+        </div>
+        <h2>{% trans "No webhook logs found" %}</h2>
+        <p>{% trans "Webhook events from shipping providers will appear here when received." %}</p>
+    </div>
+    {% endfor %}
+</div>

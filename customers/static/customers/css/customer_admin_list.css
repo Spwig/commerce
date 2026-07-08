@@ -1,0 +1,292 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Customer Admin List CSS
+ * Reusable CSS classes for admin.py format_html badges, labels, and summaries
+ * Replaces inline styles for CSP compliance
+ */
+
+/* ============================================================================
+   Base Badge Styles
+   ============================================================================ */
+
+.customer-list-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.customer-list-badge-sm {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+/* ============================================================================
+   Account Type Badges
+   ============================================================================ */
+
+.customer-badge-guest {
+    background: #ffc107;
+    color: #000;
+}
+
+.customer-badge-registered {
+    background: #28a745;
+    color: white;
+}
+
+/* ============================================================================
+   Affiliate Status Badges
+   ============================================================================ */
+
+.affiliate-link {
+    text-decoration: none;
+}
+
+.customer-badge-affiliate-pending {
+    background: #ffc107;
+    color: white;
+}
+
+.customer-badge-affiliate-active {
+    background: #28a745;
+    color: white;
+}
+
+.customer-badge-affiliate-suspended {
+    background: #dc3545;
+    color: white;
+}
+
+.customer-badge-affiliate-rejected {
+    background: #6c757d;
+    color: white;
+}
+
+.customer-badge-affiliate-default {
+    background: #6c757d;
+    color: white;
+}
+
+/* ============================================================================
+   Customer Value Display
+   ============================================================================ */
+
+.customer-value-high {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.customer-value-medium {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.customer-value-low {
+    color: #6c757d;
+    font-weight: bold;
+}
+
+/* ============================================================================
+   Segment Badge (dynamic color via CSS custom property)
+   ============================================================================ */
+
+.customer-segment-list-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: white;
+    background-color: var(--segment-bg);
+}
+
+/* ============================================================================
+   LTV Method Badges
+   ============================================================================ */
+
+.ltv-badge-not-calculated {
+    background: #6c757d;
+    color: white;
+    text-transform: uppercase;
+}
+
+.ltv-badge-rfm {
+    background: #17a2b8;
+    color: white;
+    text-transform: uppercase;
+}
+
+.ltv-badge-cohort {
+    background: #007bff;
+    color: white;
+    text-transform: uppercase;
+}
+
+.ltv-badge-probabilistic {
+    background: #9333ea;
+    color: white;
+    text-transform: uppercase;
+}
+
+.ltv-badge-default {
+    background: #6c757d;
+    color: white;
+    text-transform: uppercase;
+}
+
+/* ============================================================================
+   LTV Value Display
+   ============================================================================ */
+
+.ltv-value-very-high {
+    color: #9333ea;
+    font-weight: bold;
+}
+
+.ltv-value-high {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.ltv-value-medium {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.ltv-value-low {
+    color: #6c757d;
+    font-weight: bold;
+}
+
+/* ============================================================================
+   LTV Confidence Display
+   ============================================================================ */
+
+.ltv-confidence-high {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.ltv-confidence-medium {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.ltv-confidence-low {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* ============================================================================
+   Cohort Month Badge
+   ============================================================================ */
+
+.cohort-month-link {
+    text-decoration: none;
+}
+
+.cohort-month-badge {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+/* ============================================================================
+   Color Preview Swatch
+   ============================================================================ */
+
+.color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background-color: var(--swatch-color);
+}
+
+/* ============================================================================
+   Recovery Status
+   ============================================================================ */
+
+.recovery-recovered {
+    color: #28a745;
+}
+
+.recovery-contacted {
+    color: #ffc107;
+}
+
+.recovery-not-contacted {
+    color: #dc3545;
+}
+
+/* ============================================================================
+   Muted Placeholder
+   ============================================================================ */
+
+.muted-dash {
+    color: #6c757d;
+    font-size: 11px;
+}
+
+/* ============================================================================
+   Readonly Summary Panels
+   ============================================================================ */
+
+.analytics-summary {
+    background: var(--darkened-bg, #f8f9fa);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.analytics-summary h4 {
+    margin-top: 0;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.summary-ltv-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color, #dee2e6);
+}
+
+.summary-ltv-section h5 {
+    margin: 0 0 10px 0;
+    color: var(--body-quiet-color, #495057);
+}
+
+.summary-ltv-method {
+    text-transform: capitalize;
+}
+
+.summary-ltv-link {
+    color: var(--primary, #007bff);
+    text-decoration: none;
+}
+
+.behavior-summary {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.behavior-summary h4 {
+    margin-top: 0;
+}
+
+.engagement-summary {
+    background: #f3e5f5;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.engagement-summary h4 {
+    margin-top: 0;
+}

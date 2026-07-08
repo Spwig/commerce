@@ -1,0 +1,447 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'element_builder/css/visual-builder.css' %}">
+<!-- Page Builder CSS for PropertyRenderer styling -->
+<link rel="stylesheet" href="{% static 'page_builder/css/visual-builder.css' %}">
+<!-- Utility CSS (dynamically loaded from installed utilities) -->
+{% for css_file in utility_css_files %}
+<link rel="stylesheet" href="{% static css_file %}">
+{% endfor %}
+<!-- Media Library CSS for image uploads -->
+<link rel="stylesheet" href="{% static 'media_library/css/upload-queue.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:element_builder_customelement_changelist' %}">{% trans 'Custom Elements' %}</a>
+    &rsaquo; <a href="{% url 'admin:element_builder_customelement_change' element.pk %}">{{ element.name }}</a>
+    &rsaquo; {% trans 'Visual Builder' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="element-builder-container" id="element-builder">
+    <!-- Header Bar -->
+    <div class="builder-header">
+        <div class="builder-header-left">
+            <a href="{% url 'admin:element_builder_customelement_changelist' %}" class="builder-back-btn" title="{% trans 'Back to Elements' %}">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="builder-title">
+                <i class="{{ element.icon }}"></i>
+                <h1>{{ element.name }}</h1>
+            </div>
+            <div class="builder-model-selector">
+                <label><i class="fas fa-database"></i> {% trans "Model" %}</label>
+                <select id="model-selector" class="builder-select">
+                    <option value="">{% trans "None (Static Element)" %}</option>
+                    {% for model_key, model_config in bindable_models.items %}
+                    <option value="{{ model_key }}" {% if model_key == element.target_model %}selected{% endif %}>
+                        {{ model_config.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Preview Item Selector (shown when model is selected) -->
+            <div class="builder-preview-selector" id="preview-selector-container"{% if not element.target_model %} style="display: none;"{% endif %}>
+                <label><i class="fas fa-eye"></i> {% trans "Preview" %}</label>
+                <div class="preview-item-search-wrapper">
+                    <input type="text" id="preview-item-search" class="builder-input" placeholder="{% trans 'Search for item...' %}">
+                    <div class="preview-item-dropdown" id="preview-item-dropdown"></div>
+                </div>
+                <div class="preview-item-selected" id="preview-item-selected"></div>
+            </div>
+        </div>
+        <div class="builder-header-right">
+            <div class="builder-status" id="builder-status">
+                <i class="fas fa-check-circle"></i>
+                <span>{% trans "Saved" %}</span>
+            </div>
+            <button type="button" class="builder-btn secondary" id="btn-undo" disabled title="{% trans 'Undo' %}">
+                <i class="fas fa-undo"></i>
+            </button>
+            <button type="button" class="builder-btn secondary" id="btn-redo" disabled title="{% trans 'Redo' %}">
+                <i class="fas fa-redo"></i>
+            </button>
+            <button type="button" class="builder-btn secondary" id="btn-preview" title="{% trans 'Preview' %}">
+                <i class="fas fa-eye"></i>
+                <span>{% trans "Preview" %}</span>
+            </button>
+            <button type="button" class="builder-btn primary" id="btn-save" title="{% trans 'Save' %}">
+                <i class="fas fa-save"></i>
+                <span>{% trans "Save" %}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Builder Area -->
+    <div class="builder-main">
+        <!-- Left Sidebar: Element Library -->
+        <div class="builder-sidebar builder-elements-panel">
+            <div class="builder-panel-header">
+                <h3><i class="fas fa-th"></i> {% trans "Elements" %}</h3>
+            </div>
+            <div class="builder-panel-content" id="element-library-items">
+                <!-- Elements loaded via API in visual-builder.js -->
+                <div class="element-library-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>{% trans "Loading elements..." %}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Canvas -->
+        <div class="builder-canvas-wrapper">
+            <!-- View Toggle -->
+            <div class="canvas-view-toggle" id="canvas-view-toggle">
+                <button type="button" class="view-toggle-btn active" data-view="preview" title="{% trans 'Visual Preview' %}">
+                    <i class="fas fa-eye"></i> {% trans "Preview" %}
+                </button>
+                <button type="button" class="view-toggle-btn" data-view="structure" title="{% trans 'Structure View' %}">
+                    <i class="fas fa-sitemap"></i> {% trans "Structure" %}
+                </button>
+            </div>
+            <div class="builder-canvas" id="builder-canvas">
+                <div class="canvas-empty-state" id="canvas-empty">
+                    <i class="fas fa-hand-pointer"></i>
+                    <p>{% trans "Drag elements here to start building" %}</p>
+                </div>
+                <!-- Visual preview (rendered elements) -->
+                <div class="canvas-preview" id="canvas-preview">
+                    <div class="canvas-preview-loading" id="canvas-preview-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>{% trans "Loading preview..." %}</span>
+                    </div>
+                    <div class="canvas-preview-content" id="canvas-preview-content"></div>
+                </div>
+                <!-- Structure view (tree nodes) -->
+                <div class="canvas-tree" id="canvas-tree" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar: Properties Panel -->
+        <div class="builder-sidebar builder-properties-panel">
+            <div class="builder-panel-header">
+                <h3><i class="fas fa-sliders-h"></i> {% trans "Properties" %}</h3>
+            </div>
+            <div class="builder-panel-content" id="properties-panel">
+                <div class="properties-empty-state">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <p>{% trans "Select an element to edit its properties" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Property Panel Templates -->
+<template id="template-properties-panel">
+    <div class="properties-content">
+        <!-- Field Binding Section -->
+        <div class="properties-section" data-section="binding">
+            <h4 class="properties-section-title">
+                <i class="fas fa-link"></i> {% trans "Field Binding" %}
+            </h4>
+            <div class="properties-section-content">
+                <div class="property-field">
+                    <label for="prop-binding-field">{% trans "Bind to Field" %}</label>
+                    <select id="prop-binding-field" class="property-input">
+                        <option value="">{% trans "None (Static)" %}</option>
+                    </select>
+                </div>
+                <div class="property-field binding-thumbnail-field" style="display:none;">
+                    <label for="prop-binding-thumbnail">{% trans "Thumbnail Size" %}</label>
+                    <select id="prop-binding-thumbnail" class="property-input">
+                        {% for preset in thumbnail_presets %}
+                        <option value="{{ preset.slug }}">{{ preset.name }} ({{ preset.width }}x{{ preset.height }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Section -->
+        <div class="properties-section" data-section="layout">
+            <h4 class="properties-section-title">
+                <i class="fas fa-expand-arrows-alt"></i> {% trans "Layout" %}
+            </h4>
+            <div class="properties-section-content">
+                <div class="property-field">
+                    <label for="prop-display">{% trans "Display" %}</label>
+                    <select id="prop-display" class="property-input" data-prop="display">
+                        <option value="block">Block</option>
+                        <option value="flex">Flex</option>
+                        <option value="grid">Grid</option>
+                        <option value="inline">Inline</option>
+                        <option value="inline-flex">Inline Flex</option>
+                        <option value="inline-block">Inline Block</option>
+                    </select>
+                </div>
+
+                <!-- Flex Properties -->
+                <div class="flex-properties layout-mode-properties" data-show-for="flex,inline-flex">
+                    <div class="property-row">
+                        <div class="property-field">
+                            <label for="prop-flex-direction">{% trans "Direction" %}</label>
+                            <select id="prop-flex-direction" class="property-input" data-prop="flexDirection">
+                                <option value="row">Row</option>
+                                <option value="row-reverse">Row Reverse</option>
+                                <option value="column">Column</option>
+                                <option value="column-reverse">Column Reverse</option>
+                            </select>
+                        </div>
+                        <div class="property-field">
+                            <label for="prop-flex-wrap">{% trans "Wrap" %}</label>
+                            <select id="prop-flex-wrap" class="property-input" data-prop="flexWrap">
+                                <option value="nowrap">No Wrap</option>
+                                <option value="wrap">Wrap</option>
+                                <option value="wrap-reverse">Wrap Reverse</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="property-row">
+                        <div class="property-field">
+                            <label for="prop-justify-content">{% trans "Justify" %}</label>
+                            <select id="prop-justify-content" class="property-input" data-prop="justifyContent">
+                                <option value="flex-start">Start</option>
+                                <option value="flex-end">End</option>
+                                <option value="center">Center</option>
+                                <option value="space-between">Space Between</option>
+                                <option value="space-around">Space Around</option>
+                                <option value="space-evenly">Space Evenly</option>
+                            </select>
+                        </div>
+                        <div class="property-field">
+                            <label for="prop-align-items">{% trans "Align" %}</label>
+                            <select id="prop-align-items" class="property-input" data-prop="alignItems">
+                                <option value="stretch">Stretch</option>
+                                <option value="flex-start">Start</option>
+                                <option value="flex-end">End</option>
+                                <option value="center">Center</option>
+                                <option value="baseline">Baseline</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="property-field">
+                        <label for="prop-gap">{% trans "Gap" %}</label>
+                        <div class="property-input-with-utility" data-utility="spacing">
+                            <input type="text" id="prop-gap" class="property-input" data-prop="gap" placeholder="8px">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid Properties -->
+                <div class="grid-properties layout-mode-properties" data-show-for="grid">
+                    <div class="property-field">
+                        <label for="prop-grid-columns">{% trans "Columns" %}</label>
+                        <select id="prop-grid-columns" class="property-input" data-prop="gridTemplateColumns">
+                            <option value="1fr">1 Column</option>
+                            <option value="repeat(2, 1fr)">2 Columns</option>
+                            <option value="repeat(3, 1fr)">3 Columns</option>
+                            <option value="repeat(4, 1fr)">4 Columns</option>
+                            <option value="repeat(auto-fit, minmax(200px, 1fr))">Auto-fit (200px min)</option>
+                            <option value="repeat(auto-fill, minmax(150px, 1fr))">Auto-fill (150px min)</option>
+                        </select>
+                    </div>
+                    <div class="property-row">
+                        <div class="property-field">
+                            <label for="prop-grid-gap">{% trans "Gap" %}</label>
+                            <input type="text" id="prop-grid-gap" class="property-input" data-prop="gap" placeholder="16px">
+                        </div>
+                        <div class="property-field">
+                            <label for="prop-grid-align">{% trans "Align Items" %}</label>
+                            <select id="prop-grid-align" class="property-input" data-prop="alignItems">
+                                <option value="stretch">Stretch</option>
+                                <option value="start">Start</option>
+                                <option value="end">End</option>
+                                <option value="center">Center</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="property-field">
+                        <label for="prop-justify-items">{% trans "Justify Items" %}</label>
+                        <select id="prop-justify-items" class="property-input" data-prop="justifyItems">
+                            <option value="stretch">Stretch</option>
+                            <option value="start">Start</option>
+                            <option value="end">End</option>
+                            <option value="center">Center</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sizing (always visible) -->
+                <div class="property-row">
+                    <div class="property-field">
+                        <label for="prop-width">{% trans "Width" %}</label>
+                        <input type="text" id="prop-width" class="property-input" data-prop="width" placeholder="auto">
+                    </div>
+                    <div class="property-field">
+                        <label for="prop-height">{% trans "Height" %}</label>
+                        <input type="text" id="prop-height" class="property-input" data-prop="height" placeholder="auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spacing Section -->
+        <div class="properties-section" data-section="spacing">
+            <h4 class="properties-section-title">
+                <i class="fas fa-arrows-alt"></i> {% trans "Spacing" %}
+            </h4>
+            <div class="properties-section-content">
+                <div class="property-field">
+                    <label for="prop-padding">{% trans "Padding" %}</label>
+                    <div class="property-input-with-utility" data-utility="spacing" data-mode="padding">
+                        <input type="text" id="prop-padding" class="property-input" data-prop="padding" placeholder="0">
+                    </div>
+                </div>
+                <div class="property-field">
+                    <label for="prop-margin">{% trans "Margin" %}</label>
+                    <div class="property-input-with-utility" data-utility="spacing" data-mode="margin">
+                        <input type="text" id="prop-margin" class="property-input" data-prop="margin" placeholder="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typography Section -->
+        <div class="properties-section" data-section="typography">
+            <h4 class="properties-section-title">
+                <i class="fas fa-font"></i> {% trans "Typography" %}
+            </h4>
+            <div class="properties-section-content">
+                <div class="property-row">
+                    <div class="property-field">
+                        <label for="prop-font-size">{% trans "Font Size" %}</label>
+                        <input type="text" id="prop-font-size" class="property-input" data-prop="fontSize" placeholder="14px">
+                    </div>
+                    <div class="property-field">
+                        <label for="prop-font-weight">{% trans "Font Weight" %}</label>
+                        <select id="prop-font-weight" class="property-input" data-prop="fontWeight">
+                            <option value="300">Light</option>
+                            <option value="400">Normal</option>
+                            <option value="500">Medium</option>
+                            <option value="600">Semibold</option>
+                            <option value="700">Bold</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="property-row">
+                    <div class="property-field">
+                        <label for="prop-line-height">{% trans "Line Height" %}</label>
+                        <input type="text" id="prop-line-height" class="property-input" data-prop="lineHeight" placeholder="1.5">
+                    </div>
+                    <div class="property-field">
+                        <label for="prop-text-align">{% trans "Text Align" %}</label>
+                        <select id="prop-text-align" class="property-input" data-prop="textAlign">
+                            <option value="left">Left</option>
+                            <option value="center">Center</option>
+                            <option value="right">Right</option>
+                            <option value="justify">Justify</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="property-field">
+                    <label for="prop-color">{% trans "Text Color" %}</label>
+                    <div class="property-input-with-utility" data-utility="color">
+                        <input type="text" id="prop-color" class="property-input" data-prop="color" placeholder="#333333">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appearance Section -->
+        <div class="properties-section" data-section="appearance">
+            <h4 class="properties-section-title">
+                <i class="fas fa-palette"></i> {% trans "Appearance" %}
+            </h4>
+            <div class="properties-section-content">
+                <div class="property-field">
+                    <label for="prop-background">{% trans "Background" %}</label>
+                    <div class="property-input-with-utility" data-utility="background">
+                        <input type="text" id="prop-background" class="property-input" data-prop="backgroundColor" placeholder="transparent">
+                    </div>
+                </div>
+                <div class="property-field">
+                    <label for="prop-border">{% trans "Border" %}</label>
+                    <div class="property-input-with-utility" data-utility="border">
+                        <input type="text" id="prop-border" class="property-input" data-prop="border" placeholder="none">
+                    </div>
+                </div>
+                <div class="property-field">
+                    <label for="prop-border-radius">{% trans "Border Radius" %}</label>
+                    <input type="text" id="prop-border-radius" class="property-input" data-prop="borderRadius" placeholder="0">
+                </div>
+                <div class="property-field">
+                    <label for="prop-box-shadow">{% trans "Box Shadow" %}</label>
+                    <div class="property-input-with-utility" data-utility="shadow">
+                        <input type="text" id="prop-box-shadow" class="property-input" data-prop="boxShadow" placeholder="none">
+                    </div>
+                </div>
+                <div class="property-field">
+                    <label for="prop-opacity">{% trans "Opacity" %}</label>
+                    <input type="range" id="prop-opacity" class="property-input" data-prop="opacity" min="0" max="1" step="0.1" value="1">
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Button -->
+        <div class="properties-actions">
+            <button type="button" class="builder-btn danger" id="btn-delete-element">
+                <i class="fas fa-trash"></i> {% trans "Delete Element" %}
+            </button>
+        </div>
+    </div>
+</template>
+
+<!-- Canvas Node Template -->
+<template id="template-canvas-node">
+    <div class="canvas-node" draggable="true">
+        <div class="canvas-node-header">
+            <i class="node-icon"></i>
+            <span class="node-label"></span>
+            <span class="node-binding-badge" style="display:none;">
+                <i class="fas fa-link"></i>
+                <span class="binding-field"></span>
+            </span>
+        </div>
+        <div class="canvas-node-children"></div>
+    </div>
+</template>
+
+<script type="application/json" id="element-builder-config">
+{
+    "customElementId": {{ element.pk }},
+    "elementTree": {{ element_tree_json|safe }},
+    "bindings": {{ bindings_json|safe }},
+    "targetModel": "{{ element.target_model|default:'' }}",
+    "allBindableModels": {{ all_bindable_models_json|safe }},
+    "modelFields": {{ model_fields_json|safe }},
+    "thumbnailPresets": {{ thumbnail_presets|safe }},
+    "searchItemsUrl": "{% url 'admin:element_builder_search_items' %}",
+    "apiBaseUrl": "/api/element-builder",
+    "elementConfigUrl": "/api/element-builder/element-config/",
+    "csrfToken": "{{ csrf_token }}"
+}
+</script>
+<!-- Utility JS (dynamically loaded from installed utilities) -->
+{% for js_file in utility_js_files %}
+<script src="{% static js_file %}"></script>
+{% endfor %}
+<!-- Upload Queue Manager for background editor image uploads -->
+<script src="{% static 'media_library/js/upload-queue.js' %}"></script>
+<!-- PropertyRenderer from Page Builder (for element-specific properties) -->
+<script src="{% static 'page_builder/js/property_renderer.js' %}"></script>
+<!-- Sortable.js for drag-drop reordering in containers -->
+<script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+<!-- Element Builder Live Preview (for real-time CSS updates) -->
+<script src="{% static 'element_builder/js/live-preview.js' %}"></script>
+<!-- Element Builder JS -->
+<script src="{% static 'element_builder/js/visual-builder.js' %}"></script>
+{% endblock %}

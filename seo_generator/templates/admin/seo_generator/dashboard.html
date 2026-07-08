@@ -1,0 +1,235 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "SEO Dashboard" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'seo_generator/css/dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="application/json" id="seo-coverage-data">{{ coverage_json }}</script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header -->
+    <div class="seo-dashboard-header">
+        <h1>
+            <i class="fas fa-search-plus"></i>
+            {% trans "SEO Dashboard" %}
+        </h1>
+        <p class="subtitle">
+            {% trans "Monitor SEO coverage across your store and generate missing meta content" %}
+        </p>
+
+        <!-- Statistics Grid -->
+        <div class="seo-stats-grid">
+            <div class="seo-stat-card">
+                <div class="icon"><i class="fas fa-globe"></i></div>
+                <div class="value">{{ coverage.total_items }}</div>
+                <div class="label">{% trans "Total Items" %}</div>
+            </div>
+            <div class="seo-stat-card seo-stat-card--success">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="value">{{ coverage.with_both }}</div>
+                <div class="label">{% trans "Complete SEO" %}</div>
+            </div>
+            <div class="seo-stat-card seo-stat-card--warning">
+                <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="value">{{ coverage.missing_any }}</div>
+                <div class="label">{% trans "Missing SEO" %}</div>
+            </div>
+            <div class="seo-stat-card">
+                <div class="icon"><i class="fas fa-plug"></i></div>
+                <div class="value">{{ active_providers }}</div>
+                <div class="label">{% trans "Active Providers" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="seo-dashboard-content">
+        <!-- Coverage Overview -->
+        <div class="seo-coverage-section">
+            <div class="seo-coverage-header">
+                <h2 class="seo-section-title">
+                    <i class="fas fa-chart-pie"></i>
+                    {% trans "SEO Coverage" %}
+                </h2>
+                <button type="button" class="seo-refresh-btn" id="refreshCoverageBtn" title="{% trans 'Refresh' %}">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <div class="seo-coverage-body">
+                <div class="seo-coverage-ring-wrapper">
+                    <svg class="seo-coverage-ring" viewBox="0 0 120 120">
+                        <circle class="seo-coverage-ring__bg" cx="60" cy="60" r="52" />
+                        <circle class="seo-coverage-ring__fill" cx="60" cy="60" r="52"
+                                stroke-dasharray="326.73"
+                                data-percentage="{{ coverage.overall_percentage|default:0 }}" />
+                    </svg>
+                    <div class="seo-coverage-ring__label">
+                        <span class="seo-coverage-ring__pct" id="overallPct">{{ coverage.overall_percentage|floatformat:0 }}%</span>
+                    </div>
+                </div>
+
+                <div class="seo-coverage-details">
+                    <div class="seo-coverage-summary">
+                        <strong id="summaryText">
+                            {% blocktrans with pct=coverage.overall_percentage|floatformat:0 %}{{ pct }}% of your content has complete SEO{% endblocktrans %}
+                        </strong>
+                        <p class="seo-coverage-subtitle">
+                            {% blocktrans with title=coverage.with_title desc=coverage.with_description both=coverage.with_both total=coverage.total_items %}
+                                {{ both }} of {{ total }} items have both meta title and description.
+                                {{ title }} have titles, {{ desc }} have descriptions.
+                            {% endblocktrans %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Type Breakdown -->
+            <div class="seo-content-types">
+                <h3 class="seo-subsection-title">{% trans "Coverage by Content Type" %}</h3>
+                {% for ct in coverage.content_types %}
+                <div class="seo-ct-row" data-ct-key="{{ ct.key }}" data-missing="{{ ct.missing }}">
+                    <div class="seo-ct-info">
+                        <span class="seo-ct-icon"><i class="{{ ct.icon }}"></i></span>
+                        <span class="seo-ct-name">{{ ct.label }}</span>
+                        <span class="seo-ct-count">{{ ct.with_both }} / {{ ct.total }}</span>
+                    </div>
+                    <div class="seo-ct-bar">
+                        <div class="seo-ct-bar__fill" data-width="{{ ct.percentage }}" style="width: 0%;"></div>
+                    </div>
+                    <span class="seo-ct-pct">{{ ct.percentage|floatformat:0 }}%</span>
+                    <span class="seo-ct-toggle"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="seo-ct-detail" data-ct-key="{{ ct.key }}"></div>
+                {% empty %}
+                <p class="seo-empty-state">{% trans "No content found." %}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Quality Metrics & Actions -->
+        <div class="seo-side-panels">
+            <!-- Quality Metrics -->
+            <div class="seo-quality-section">
+                <h2 class="seo-section-title">
+                    <i class="fas fa-stethoscope"></i>
+                    {% trans "Quality Check" %}
+                </h2>
+                <div class="seo-quality-grid">
+                    <div class="seo-quality-item {% if coverage.quality.title_too_short == 0 %}seo-quality-item--ok{% else %}seo-quality-item--warn{% endif %}">
+                        <div class="seo-quality-value">{{ coverage.quality.title_too_short }}</div>
+                        <div class="seo-quality-label">{% trans "Titles too short" %}<br><small>&lt; 30 {% trans "chars" %}</small></div>
+                    </div>
+                    <div class="seo-quality-item {% if coverage.quality.title_too_long == 0 %}seo-quality-item--ok{% else %}seo-quality-item--warn{% endif %}">
+                        <div class="seo-quality-value">{{ coverage.quality.title_too_long }}</div>
+                        <div class="seo-quality-label">{% trans "Titles too long" %}<br><small>&gt; 60 {% trans "chars" %}</small></div>
+                    </div>
+                    <div class="seo-quality-item {% if coverage.quality.desc_too_short == 0 %}seo-quality-item--ok{% else %}seo-quality-item--warn{% endif %}">
+                        <div class="seo-quality-value">{{ coverage.quality.desc_too_short }}</div>
+                        <div class="seo-quality-label">{% trans "Descriptions short" %}<br><small>&lt; 70 {% trans "chars" %}</small></div>
+                    </div>
+                    <div class="seo-quality-item {% if coverage.quality.desc_too_long == 0 %}seo-quality-item--ok{% else %}seo-quality-item--warn{% endif %}">
+                        <div class="seo-quality-value">{{ coverage.quality.desc_too_long }}</div>
+                        <div class="seo-quality-label">{% trans "Descriptions long" %}<br><small>&gt; 160 {% trans "chars" %}</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Provider -->
+            <div class="seo-provider-section">
+                <h2 class="seo-section-title">
+                    <i class="fas fa-bolt"></i>
+                    {% trans "Active Provider" %}
+                </h2>
+                {% if primary_account %}
+                <div class="seo-provider-card seo-provider-card--active">
+                    <div class="seo-provider-name">{{ primary_account.name }}</div>
+                    <div class="seo-provider-type">
+                        {% if primary_account.component %}
+                            {{ primary_account.component.name }}
+                        {% else %}
+                            {% trans "Built-in Generator" %}
+                        {% endif %}
+                    </div>
+                    <span class="seo-provider-badge">{% trans "Primary" %}</span>
+                </div>
+                {% else %}
+                <div class="seo-provider-card seo-provider-card--none">
+                    <div class="seo-provider-name">{% trans "Built-in Generator" %}</div>
+                    <div class="seo-provider-type">{% trans "No external provider configured" %}</div>
+                    <a href="{% url 'seo_generator:wizard_step1' %}" class="seo-provider-action">
+                        {% trans "Connect a provider" %} <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="seo-actions-section">
+                <h2 class="seo-section-title">
+                    <i class="fas fa-rocket"></i>
+                    {% trans "Quick Actions" %}
+                </h2>
+                <div class="seo-actions-list">
+                    {% if coverage.missing_any > 0 %}
+                    <button type="button" class="seo-action-btn seo-action-btn--primary" id="generateAllBtn">
+                        <i class="fas fa-magic"></i>
+                        {% blocktrans with count=coverage.missing_any %}Generate SEO for {{ count }} missing items{% endblocktrans %}
+                    </button>
+                    {% endif %}
+                    <a href="{% url 'admin:seo_generator_seoprovideraccount_changelist' %}" class="seo-action-btn">
+                        <i class="fas fa-cog"></i>
+                        {% trans "Manage Providers" %}
+                    </a>
+                    <a href="{% url 'seo_generator:provider_browse' %}" class="seo-action-btn">
+                        <i class="fas fa-store"></i>
+                        {% trans "Browse Providers" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generation Progress Modal -->
+    <div class="seo-modal-overlay" id="generateModal" style="display: none;">
+        <div class="seo-modal">
+            <div class="seo-modal-header">
+                <h3><i class="fas fa-magic"></i> {% trans "Generating SEO Content" %}</h3>
+                <button type="button" class="seo-modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="seo-modal-body">
+                <div class="seo-progress-bar-container">
+                    <div class="seo-progress-bar" id="generateProgressBar" style="width: 0%;"></div>
+                </div>
+                <div class="seo-progress-info">
+                    <span id="progressText">{% trans "Preparing..." %}</span>
+                    <span id="progressCount">0 / 0</span>
+                </div>
+                <div class="seo-progress-log" id="progressLog"></div>
+            </div>
+            <div class="seo-modal-footer">
+                <button type="button" class="seo-action-btn" id="cancelGenerateBtn">{% trans "Cancel" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="seo-dashboard-config"
+     data-coverage-url="{% url 'seo_generator:seo_coverage_api' %}"
+     data-coverage-refresh-url="{% url 'seo_generator:seo_coverage_refresh' %}"
+     data-missing-items-url="{% url 'seo_generator:seo_missing_items' %}"
+     data-items-url="{% url 'seo_generator:seo_items' content_type='__CT__' %}"
+     data-generate-url="{% url 'seo_generator_api:generate' model_type='__CT__' object_id=0 %}"
+     data-batch-url="{% url 'seo_generator_api:batch_generate' %}"
+     data-csrf-token="{{ csrf_token }}"
+     hidden></div>
+
+<script src="{% static 'seo_generator/js/dashboard.js' %}"></script>
+{% endblock %}

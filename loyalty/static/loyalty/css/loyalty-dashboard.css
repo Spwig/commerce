@@ -1,0 +1,272 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty Program Dashboard Styles - Loyalty-Specific Styles Only
+ *
+ * Uses CSS variables from admin theme (dark.css/light.css) for consistency
+ * Dashboard header, stats cards, and action cards are defined in admin-base.css
+ */
+
+/* ==================== Charts Section ==================== */
+.charts-section {
+    margin-bottom: 2rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.chart-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-card h3 i {
+    color: var(--primary);
+}
+
+.chart-card canvas {
+    max-height: 300px;
+}
+
+/* ==================== Section Styles ==================== */
+.section {
+    margin-bottom: 2rem;
+}
+
+/* ==================== Tables Grid ==================== */
+.tables-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.tables-grid .section {
+    margin-bottom: 0;
+}
+
+/* ==================== Table Styles ==================== */
+.table-responsive {
+    overflow-x: auto;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.loyalty-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--darkened-bg);
+}
+
+.loyalty-table thead {
+    background: var(--primary);
+    color: var(--header-color, var(--body-fg));
+}
+
+.loyalty-table thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.loyalty-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.loyalty-table tbody tr:hover {
+    background: var(--body-bg);
+}
+
+.loyalty-table tbody td {
+    padding: 1rem;
+    color: var(--body-fg);
+}
+
+.loyalty-table tbody td strong {
+    color: var(--primary);
+}
+
+/* Tier Badge */
+.tier-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--primary);
+    color: var(--button-fg);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.tier-badge-none {
+    background: #999999;
+}
+
+/* Trophy Ranking Colors */
+.trophy-gold {
+    color: #FFD700;
+}
+
+.trophy-silver {
+    color: #C0C0C0;
+}
+
+.trophy-bronze {
+    color: #CD7F32;
+}
+
+/* Member Links */
+.member-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.member-link:hover {
+    color: var(--primary-hover, var(--primary));
+    text-decoration: underline;
+}
+
+/* Transaction Type Badges */
+.txn-type {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.txn-earn {
+    background: var(--success-bg, rgba(16, 185, 129, 0.1));
+    color: var(--success-fg, #10b981);
+}
+
+.txn-redeem {
+    background: var(--error-bg, rgba(239, 68, 68, 0.1));
+    color: var(--error-fg, #ef4444);
+}
+
+.txn-bonus {
+    background: var(--info-bg, rgba(59, 130, 246, 0.1));
+    color: var(--info-fg, #3b82f6);
+}
+
+.txn-adjustment {
+    background: var(--warning-bg, rgba(245, 158, 11, 0.1));
+    color: var(--warning-fg, #f59e0b);
+}
+
+.txn-reversal {
+    background: var(--body-quiet-color, rgba(107, 114, 128, 0.1));
+    color: var(--body-quiet-color, #6b7280);
+}
+
+.txn-expire {
+    background: var(--body-quiet-color, rgba(107, 114, 128, 0.1));
+    color: var(--body-quiet-color, #6b7280);
+}
+
+/* Points Display */
+.points-positive {
+    color: var(--success-fg, #10b981) !important;
+    font-weight: 600;
+}
+
+.points-negative {
+    color: var(--error-fg, #ef4444) !important;
+    font-weight: 600;
+}
+
+/* No Data Message */
+.no-data {
+    padding: 2rem;
+    text-align: center;
+    color: var(--body-quiet-color);
+    font-style: italic;
+}
+
+/* View All Button */
+.view-all-button {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.625rem 1.5rem;
+    background: var(--primary);
+    color: var(--button-fg) !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: var(--primary-hover, var(--primary));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn i {
+    margin-right: 0.5rem;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .tables-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .tables-grid .section {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .loyalty-table {
+        font-size: 0.875rem;
+    }
+
+    .loyalty-table thead th,
+    .loyalty-table tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+}

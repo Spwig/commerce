@@ -1,0 +1,119 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for synonym in synonyms %}
+    <div class="list-row-card{% if not synonym.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ synonym.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if synonym.is_bidirectional %}
+                <i class="fas fa-exchange-alt"></i>
+            {% else %}
+                <i class="fas fa-arrow-right"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:search_synonym_change' synonym.pk %}">
+                    {{ synonym.term }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if synonym.is_bidirectional %}
+                    <i class="fas fa-exchange-alt"></i>
+                {% else %}
+                    <i class="fas fa-arrow-right"></i>
+                {% endif %}
+                {% for syn in synonym.synonyms %}
+                    <span class="synonym-badge">{{ syn }}</span>
+                {% endfor %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if synonym.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if synonym.is_bidirectional %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-exchange-alt"></i> {% trans "Bidirectional" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-arrow-right"></i> {% trans "One-way" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-list"></i> {{ synonym.synonyms|length }} {% trans "synonym" %}{{ synonym.synonyms|length|pluralize }}
+                </span>
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if synonym.language %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-language"></i>
+                    <span>{{ synonym.language|upper }}</span>
+                </div>
+                {% else %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-globe"></i>
+                    <span>{% trans "All languages" %}</span>
+                </div>
+                {% endif %}
+
+                {% if synonym.engine %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-server"></i>
+                    <span>{{ synonym.engine.name }}</span>
+                </div>
+                {% else %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-server"></i>
+                    <span>{% trans "All engines" %}</span>
+                </div>
+                {% endif %}
+
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ synonym.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:search_synonym_change' synonym.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit synonym' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:search_synonym_delete' synonym.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete synonym' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-exchange-alt"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No synonyms found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or" %}
+            <a href="{% url 'admin:search_synonym_add' %}">{% trans "add a new synonym" %}</a>.
+        </p>
+    </div>
+    {% endfor %}
+</div>

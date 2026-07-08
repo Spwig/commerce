@@ -1,0 +1,128 @@
+{% load i18n %}
+
+<div class="list-row-card">
+    <div class="list-row-card-icon">
+        {% if movement.movement_type == 'adjustment' %}
+            <i class="fas fa-sliders-h"></i>
+        {% elif movement.movement_type == 'allocation' %}
+            <i class="fas fa-clipboard-check"></i>
+        {% elif movement.movement_type == 'fulfillment' %}
+            <i class="fas fa-truck"></i>
+        {% elif movement.movement_type == 'return' %}
+            <i class="fas fa-undo"></i>
+        {% elif movement.movement_type == 'transfer' %}
+            <i class="fas fa-exchange-alt"></i>
+        {% elif movement.movement_type == 'damage' %}
+            <i class="fas fa-exclamation-triangle"></i>
+        {% elif movement.movement_type == 'recount' %}
+            <i class="fas fa-calculator"></i>
+        {% else %}
+            <i class="fas fa-exchange-alt"></i>
+        {% endif %}
+    </div>
+
+    <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+            <a href="{% url 'admin:catalog_stockmovement_change' movement.pk %}">
+                {{ movement.stock_item.product.name }}
+            </a>
+        </h3>
+        <p class="list-row-card-subtitle">
+            <i class="fas fa-warehouse"></i> {{ movement.stock_item.warehouse.name }}
+            &middot;
+            <i class="fas fa-calendar"></i> {{ movement.created_at|date:"M d, Y H:i" }}
+        </p>
+
+        <div class="list-row-card-badges">
+            {% if movement.movement_type == 'adjustment' %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-sliders-h"></i> {% trans "Adjustment" %}
+                </span>
+            {% elif movement.movement_type == 'allocation' %}
+                <span class="list-row-card-badge list-row-card-badge-warning">
+                    <i class="fas fa-clipboard-check"></i> {% trans "Allocation" %}
+                </span>
+            {% elif movement.movement_type == 'fulfillment' %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-truck"></i> {% trans "Fulfillment" %}
+                </span>
+            {% elif movement.movement_type == 'return' %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-undo"></i> {% trans "Return" %}
+                </span>
+            {% elif movement.movement_type == 'transfer' %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-exchange-alt"></i> {% trans "Transfer" %}
+                </span>
+            {% elif movement.movement_type == 'damage' %}
+                <span class="list-row-card-badge list-row-card-badge-error">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans "Damage" %}
+                </span>
+            {% elif movement.movement_type == 'recount' %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-calculator"></i> {% trans "Recount" %}
+                </span>
+            {% endif %}
+
+            {% if movement.quantity > 0 %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-arrow-up"></i> +{{ movement.quantity }}
+                </span>
+            {% elif movement.quantity < 0 %}
+                <span class="list-row-card-badge list-row-card-badge-error">
+                    <i class="fas fa-arrow-down"></i> {{ movement.quantity }}
+                </span>
+            {% else %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-minus"></i> 0
+                </span>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-stats">
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Previous" %}</span>
+                <span class="list-row-card-stat-value">{{ movement.previous_quantity }}</span>
+            </div>
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Change" %}</span>
+                <span class="list-row-card-stat-value">
+                    {% if movement.quantity > 0 %}+{% endif %}{{ movement.quantity }}
+                </span>
+            </div>
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "New" %}</span>
+                <span class="list-row-card-stat-value">{{ movement.new_quantity }}</span>
+            </div>
+        </div>
+
+        <div class="list-row-card-meta">
+            {% if movement.user %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-user"></i>
+                <span>{{ movement.user.get_full_name|default:movement.user.username }}</span>
+            </div>
+            {% endif %}
+            {% if movement.order %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>{% trans "Order" %}: {{ movement.order.order_number }}</span>
+            </div>
+            {% endif %}
+            {% if movement.reason %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-comment"></i>
+                <span>{{ movement.reason|truncatewords:15 }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="list-row-card-actions">
+        <a href="{% url 'admin:catalog_stockmovement_change' movement.pk %}"
+           class="list-row-card-action"
+           title="{% trans 'View details' %}">
+            <i class="fas fa-eye"></i>
+        </a>
+    </div>
+</div>

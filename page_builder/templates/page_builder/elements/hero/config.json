@@ -1,0 +1,752 @@
+{
+  "element_type": "hero",
+  "name": "Hero Section",
+  "description": "Full-width hero section with title, subtitle, description and call-to-action buttons",
+  "version": "1.2.0",
+  "category": "layout",
+  "icon": "fas fa-star",
+  "author": "Spwig",
+  "element_builder_primitive": true,
+  "tags": ["hero", "banner", "landing", "cta"],
+  "supports_translation": true,
+  "translation_domain": "hero_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/hero.css"],
+  "disable_base_properties": ["typography_group", "colors_group", "spacing_group"],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "title_group": {
+          "type": "property_group",
+          "label": "Title",
+          "help_text": "Configure the main headline",
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Text",
+              "default": "Welcome to Our Site",
+              "translatable": true,
+              "required": true
+            },
+            "title_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "help_text": "Font style settings",
+              "utility": "typography_editor",
+              "default": ""
+            },
+            "title_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "help_text": "Text color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "title_shadow": {
+              "type": "shadow",
+              "label": "Shadow",
+              "help_text": "Text shadow effect",
+              "utility": "shadow_editor",
+              "shadow_type": "text",
+              "default": ""
+            }
+          }
+        },
+        "subtitle_group": {
+          "type": "property_group",
+          "label": "Subtitle",
+          "help_text": "Configure the secondary headline",
+          "properties": {
+            "subtitle": {
+              "type": "string",
+              "label": "Text",
+              "translatable": true
+            },
+            "subtitle_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "help_text": "Font style settings",
+              "utility": "typography_editor",
+              "default": ""
+            },
+            "subtitle_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "help_text": "Text color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "subtitle_shadow": {
+              "type": "shadow",
+              "label": "Shadow",
+              "help_text": "Text shadow effect",
+              "utility": "shadow_editor",
+              "shadow_type": "text",
+              "default": ""
+            }
+          }
+        },
+        "description_group": {
+          "type": "property_group",
+          "label": "Description",
+          "help_text": "Configure the descriptive text",
+          "properties": {
+            "description": {
+              "type": "textarea",
+              "label": "Text",
+              "default": "Discover amazing content and services tailored just for you.",
+              "translatable": true,
+              "rows": 3
+            },
+            "description_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "help_text": "Font style settings",
+              "utility": "typography_editor",
+              "default": ""
+            },
+            "description_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "help_text": "Text color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "description_shadow": {
+              "type": "shadow",
+              "label": "Shadow",
+              "help_text": "Text shadow effect",
+              "utility": "shadow_editor",
+              "shadow_type": "text",
+              "default": ""
+            }
+          }
+        },
+        "options_group": {
+          "type": "property_group",
+          "label": "Options",
+          "columns": 1,
+          "properties": {
+            "show_scroll_indicator": {
+              "type": "boolean",
+              "label": "Show Scroll Indicator",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "buttons": {
+      "label": "Buttons",
+      "icon": "fas fa-hand-pointer",
+      "order": 2,
+      "properties": {
+        "primary_button_group": {
+          "type": "property_group",
+          "label": "Primary Button",
+          "help_text": "Main call-to-action button",
+          "properties": {
+            "button_text": {
+              "type": "string",
+              "label": "Text",
+              "translatable": true
+            },
+            "button_url": {
+              "type": "link_selector",
+              "label": "URL",
+              "default": "#"
+            },
+            "button_target": {
+              "type": "select",
+              "label": "Open In",
+              "options": [
+                {"value": "_self", "label": "Same Window"},
+                {"value": "_blank", "label": "New Window"}
+              ],
+              "default": "_self"
+            },
+            "button_style": {
+              "type": "select",
+              "label": "Style",
+              "options": [
+                {"value": "solid", "label": "Solid"},
+                {"value": "outline", "label": "Outline"},
+                {"value": "ghost", "label": "Ghost"}
+              ],
+              "default": "solid"
+            },
+            "button_size": {
+              "type": "select",
+              "label": "Size",
+              "options": [
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"}
+              ],
+              "default": "md"
+            },
+            "button_background": {
+              "type": "background",
+              "label": "Background",
+              "help_text": "Custom background color or gradient",
+              "utility": "background_editor",
+              "default": ""
+            },
+            "button_text_color": {
+              "type": "color_advanced",
+              "label": "Text Color",
+              "help_text": "Custom text color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "button_border": {
+              "type": "border_advanced",
+              "label": "Border",
+              "help_text": "Custom border styling",
+              "utility": "border_editor",
+              "default": ""
+            },
+            "button_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "help_text": "Custom font styling",
+              "utility": "typography_editor",
+              "default": ""
+            },
+            "button_padding": {
+              "type": "spacing",
+              "label": "Padding",
+              "help_text": "Custom internal spacing",
+              "utility": "spacing_editor",
+              "spacing_type": "padding",
+              "default": ""
+            },
+            "button_shadow": {
+              "type": "shadow",
+              "label": "Shadow",
+              "help_text": "Box shadow effect",
+              "utility": "shadow_editor",
+              "shadow_type": "box",
+              "default": ""
+            }
+          }
+        },
+        "secondary_button_group": {
+          "type": "property_group",
+          "label": "Secondary Button",
+          "help_text": "Optional secondary action button",
+          "properties": {
+            "secondary_button_text": {
+              "type": "string",
+              "label": "Text",
+              "translatable": true
+            },
+            "secondary_button_url": {
+              "type": "link_selector",
+              "label": "URL",
+              "default": "#"
+            },
+            "secondary_button_target": {
+              "type": "select",
+              "label": "Open In",
+              "options": [
+                {"value": "_self", "label": "Same Window"},
+                {"value": "_blank", "label": "New Window"}
+              ],
+              "default": "_self"
+            },
+            "secondary_button_style": {
+              "type": "select",
+              "label": "Style",
+              "options": [
+                {"value": "outline", "label": "Outline"},
+                {"value": "ghost", "label": "Ghost"},
+                {"value": "solid", "label": "Solid"}
+              ],
+              "default": "outline"
+            },
+            "secondary_button_size": {
+              "type": "select",
+              "label": "Size",
+              "options": [
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"}
+              ],
+              "default": "md"
+            },
+            "secondary_button_background": {
+              "type": "background",
+              "label": "Background",
+              "help_text": "Custom background color or gradient",
+              "utility": "background_editor",
+              "default": ""
+            },
+            "secondary_button_text_color": {
+              "type": "color_advanced",
+              "label": "Text Color",
+              "help_text": "Custom text color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "secondary_button_border": {
+              "type": "border_advanced",
+              "label": "Border",
+              "help_text": "Custom border styling",
+              "utility": "border_editor",
+              "default": ""
+            },
+            "secondary_button_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "help_text": "Custom font styling",
+              "utility": "typography_editor",
+              "default": ""
+            },
+            "secondary_button_padding": {
+              "type": "spacing",
+              "label": "Padding",
+              "help_text": "Custom internal spacing",
+              "utility": "spacing_editor",
+              "spacing_type": "padding",
+              "default": ""
+            },
+            "secondary_button_shadow": {
+              "type": "shadow",
+              "label": "Shadow",
+              "help_text": "Box shadow effect",
+              "utility": "shadow_editor",
+              "shadow_type": "box",
+              "default": ""
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "icon": "fas fa-th-large",
+      "order": 3,
+      "properties": {
+        "content_layout_group": {
+          "type": "property_group",
+          "label": "Content Layout",
+          "help_text": "Control how content is positioned",
+          "properties": {
+            "text_align": {
+              "type": "select",
+              "label": "Text Alignment",
+              "options": [
+                {"value": "left", "label": "Left"},
+                {"value": "center", "label": "Center"},
+                {"value": "right", "label": "Right"}
+              ],
+              "default": "center"
+            },
+            "max_width": {
+              "type": "select",
+              "label": "Content Max Width",
+              "options": [
+                {"value": "", "label": "Full Width"},
+                {"value": "2xl", "label": "2X Large"},
+                {"value": "3xl", "label": "3X Large"},
+                {"value": "4xl", "label": "4X Large"},
+                {"value": "5xl", "label": "5X Large"},
+                {"value": "6xl", "label": "6X Large"}
+              ],
+              "default": ""
+            }
+          }
+        },
+        "sizing_group": {
+          "type": "property_group",
+          "label": "Sizing",
+          "help_text": "Control the hero dimensions",
+          "properties": {
+            "min_height": {
+              "type": "select",
+              "label": "Minimum Height",
+              "options": [
+                {"value": "screen", "label": "Full Screen"},
+                {"value": "96", "label": "Large"},
+                {"value": "80", "label": "Medium"},
+                {"value": "64", "label": "Small"}
+              ],
+              "default": "screen"
+            },
+            "padding_top": {
+              "type": "select",
+              "label": "Top Padding",
+              "options": [
+                {"value": "16", "label": "Default"},
+                {"value": "8", "label": "Small"},
+                {"value": "12", "label": "Medium"},
+                {"value": "20", "label": "Large"},
+                {"value": "24", "label": "Extra Large"}
+              ],
+              "default": "16"
+            },
+            "padding_bottom": {
+              "type": "select",
+              "label": "Bottom Padding",
+              "options": [
+                {"value": "16", "label": "Default"},
+                {"value": "8", "label": "Small"},
+                {"value": "12", "label": "Medium"},
+                {"value": "20", "label": "Large"},
+                {"value": "24", "label": "Extra Large"}
+              ],
+              "default": "16"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {
+      "type": "string",
+      "label": "Hero Title",
+      "default": "Welcome to Our Site",
+      "translatable": true,
+      "required": true
+    },
+    "title_typography": {
+      "type": "typography",
+      "label": "Title Typography",
+      "help_text": "Configure typography for the title",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "title_color": {
+      "type": "color_advanced",
+      "label": "Title Color",
+      "help_text": "Set the title text color",
+      "utility": "color_picker",
+      "default": ""
+    },
+    "title_shadow": {
+      "type": "shadow",
+      "label": "Title Shadow",
+      "help_text": "Apply shadow effect to title text",
+      "utility": "shadow_editor",
+      "shadow_type": "text",
+      "default": ""
+    },
+    "subtitle": {
+      "type": "string",
+      "label": "Subtitle",
+      "translatable": true
+    },
+    "subtitle_typography": {
+      "type": "typography",
+      "label": "Subtitle Typography",
+      "help_text": "Configure typography for the subtitle",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "subtitle_color": {
+      "type": "color_advanced",
+      "label": "Subtitle Color",
+      "help_text": "Set the subtitle text color",
+      "utility": "color_picker",
+      "default": ""
+    },
+    "subtitle_shadow": {
+      "type": "shadow",
+      "label": "Subtitle Shadow",
+      "help_text": "Apply shadow effect to subtitle text",
+      "utility": "shadow_editor",
+      "shadow_type": "text",
+      "default": ""
+    },
+    "description": {
+      "type": "textarea",
+      "label": "Description",
+      "default": "Discover amazing content and services tailored just for you.",
+      "translatable": true,
+      "rows": 3
+    },
+    "description_typography": {
+      "type": "typography",
+      "label": "Description Typography",
+      "help_text": "Configure typography for the description",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "description_color": {
+      "type": "color_advanced",
+      "label": "Description Color",
+      "help_text": "Set the description text color",
+      "utility": "color_picker",
+      "default": ""
+    },
+    "description_shadow": {
+      "type": "shadow",
+      "label": "Description Shadow",
+      "help_text": "Apply shadow effect to description text",
+      "utility": "shadow_editor",
+      "shadow_type": "text",
+      "default": ""
+    },
+    "text_align": {
+      "type": "select",
+      "label": "Text Alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "center"
+    },
+    "max_width": {
+      "type": "select",
+      "label": "Content Max Width",
+      "options": [
+        {"value": "", "label": "Full Width"},
+        {"value": "2xl", "label": "2X Large"},
+        {"value": "3xl", "label": "3X Large"},
+        {"value": "4xl", "label": "4X Large"},
+        {"value": "5xl", "label": "5X Large"},
+        {"value": "6xl", "label": "6X Large"}
+      ],
+      "default": ""
+    },
+    "min_height": {
+      "type": "select",
+      "label": "Minimum Height",
+      "options": [
+        {"value": "screen", "label": "Full Screen"},
+        {"value": "96", "label": "Large"},
+        {"value": "80", "label": "Medium"},
+        {"value": "64", "label": "Small"}
+      ],
+      "default": "screen"
+    },
+    "padding_top": {
+      "type": "select",
+      "label": "Top Padding",
+      "options": [
+        {"value": "16", "label": "Default"},
+        {"value": "8", "label": "Small"},
+        {"value": "12", "label": "Medium"},
+        {"value": "20", "label": "Large"},
+        {"value": "24", "label": "Extra Large"}
+      ],
+      "default": "16"
+    },
+    "padding_bottom": {
+      "type": "select",
+      "label": "Bottom Padding",
+      "options": [
+        {"value": "16", "label": "Default"},
+        {"value": "8", "label": "Small"},
+        {"value": "12", "label": "Medium"},
+        {"value": "20", "label": "Large"},
+        {"value": "24", "label": "Extra Large"}
+      ],
+      "default": "16"
+    },
+    "button_text": {
+      "type": "string",
+      "label": "Primary Button Text",
+      "translatable": true
+    },
+    "button_url": {
+      "type": "link_selector",
+      "label": "Primary Button URL",
+      "default": "#"
+    },
+    "button_target": {
+      "type": "select",
+      "label": "Primary Button Target",
+      "options": [
+        {"value": "_self", "label": "Same Window"},
+        {"value": "_blank", "label": "New Window"}
+      ],
+      "default": "_self"
+    },
+    "button_style": {
+      "type": "select",
+      "label": "Primary Button Style",
+      "options": [
+        {"value": "solid", "label": "Solid"},
+        {"value": "outline", "label": "Outline"},
+        {"value": "ghost", "label": "Ghost"}
+      ],
+      "default": "solid"
+    },
+    "button_size": {
+      "type": "select",
+      "label": "Button Size",
+      "options": [
+        {"value": "sm", "label": "Small"},
+        {"value": "md", "label": "Medium"},
+        {"value": "lg", "label": "Large"}
+      ],
+      "default": "md"
+    },
+    "button_background": {
+      "type": "background",
+      "label": "Primary Button Background",
+      "utility": "background_editor",
+      "default": ""
+    },
+    "button_text_color": {
+      "type": "color_advanced",
+      "label": "Primary Button Text Color",
+      "utility": "color_picker",
+      "default": ""
+    },
+    "button_border": {
+      "type": "border_advanced",
+      "label": "Primary Button Border",
+      "utility": "border_editor",
+      "default": ""
+    },
+    "button_typography": {
+      "type": "typography",
+      "label": "Primary Button Typography",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "button_padding": {
+      "type": "spacing",
+      "label": "Primary Button Padding",
+      "utility": "spacing_editor",
+      "spacing_type": "padding",
+      "default": ""
+    },
+    "button_shadow": {
+      "type": "shadow",
+      "label": "Primary Button Shadow",
+      "utility": "shadow_editor",
+      "shadow_type": "box",
+      "default": ""
+    },
+    "secondary_button_text": {
+      "type": "string",
+      "label": "Secondary Button Text",
+      "translatable": true
+    },
+    "secondary_button_url": {
+      "type": "link_selector",
+      "label": "Secondary Button URL",
+      "default": "#"
+    },
+    "secondary_button_target": {
+      "type": "select",
+      "label": "Secondary Button Target",
+      "options": [
+        {"value": "_self", "label": "Same Window"},
+        {"value": "_blank", "label": "New Window"}
+      ],
+      "default": "_self"
+    },
+    "secondary_button_style": {
+      "type": "select",
+      "label": "Secondary Button Style",
+      "options": [
+        {"value": "outline", "label": "Outline"},
+        {"value": "ghost", "label": "Ghost"},
+        {"value": "solid", "label": "Solid"}
+      ],
+      "default": "outline"
+    },
+    "secondary_button_size": {
+      "type": "select",
+      "label": "Secondary Button Size",
+      "options": [
+        {"value": "sm", "label": "Small"},
+        {"value": "md", "label": "Medium"},
+        {"value": "lg", "label": "Large"}
+      ],
+      "default": "md"
+    },
+    "secondary_button_background": {
+      "type": "background",
+      "label": "Secondary Button Background",
+      "utility": "background_editor",
+      "default": ""
+    },
+    "secondary_button_text_color": {
+      "type": "color_advanced",
+      "label": "Secondary Button Text Color",
+      "utility": "color_picker",
+      "default": ""
+    },
+    "secondary_button_border": {
+      "type": "border_advanced",
+      "label": "Secondary Button Border",
+      "utility": "border_editor",
+      "default": ""
+    },
+    "secondary_button_typography": {
+      "type": "typography",
+      "label": "Secondary Button Typography",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "secondary_button_padding": {
+      "type": "spacing",
+      "label": "Secondary Button Padding",
+      "utility": "spacing_editor",
+      "spacing_type": "padding",
+      "default": ""
+    },
+    "secondary_button_shadow": {
+      "type": "shadow",
+      "label": "Secondary Button Shadow",
+      "utility": "shadow_editor",
+      "shadow_type": "box",
+      "default": ""
+    },
+    "show_scroll_indicator": {
+      "type": "boolean",
+      "label": "Show Scroll Indicator",
+      "default": false
+    }
+  },
+  "translations": {
+    "en": {
+      "name": "Hero Section",
+      "description": "Full-width hero section with title, subtitle, description and call-to-action buttons"
+    },
+    "es": {
+      "name": "Sección Hero",
+      "description": "Sección hero de ancho completo con título, subtítulo, descripción y botones de llamada a la acción"
+    },
+    "fr": {
+      "name": "Section Héro",
+      "description": "Section héro pleine largeur avec titre, sous-titre, description et boutons d'appel à l'action"
+    },
+    "de": {
+      "name": "Hero-Bereich",
+      "description": "Vollbreiter Hero-Bereich mit Titel, Untertitel, Beschreibung und Call-to-Action-Buttons"
+    },
+    "pt": {
+      "name": "Seção Hero",
+      "description": "Seção hero de largura total com título, subtítulo, descrição e botões de chamada para ação"
+    },
+    "zh-hans": {
+      "name": "主页横幅",
+      "description": "包含标题、副标题、描述和行动号召按钮的全宽主页横幅区域"
+    },
+    "ja": {
+      "name": "ヒーローセクション",
+      "description": "タイトル、サブタイトル、説明文、コールトゥアクションボタンを含む全幅ヒーローセクション"
+    }
+  },
+  "defaults": {
+    "title": "Hero Section Title",
+    "subtitle": "This is a hero section subtitle",
+    "description": "Add your compelling description here to engage visitors.",
+    "button_text": "Get Started",
+    "button_url": "#",
+    "background_image": "/static/images/placeholder_hero.webp"
+  }
+}

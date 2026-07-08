@@ -1,0 +1,662 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Campaign" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'loyalty/css/campaign-wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="wizard-header">
+        <a href="{% url 'admin:loyalty_loyaltycampaign_changelist' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Campaigns" %}
+        </a>
+        <h1>{% trans "Create New Campaign" %}</h1>
+        <p class="wizard-subtitle">{% trans "Set up an automated loyalty campaign to engage and reward your customers" %}</p>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="wizard-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Basics" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Trigger" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Targeting" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Actions" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="5">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Review" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <form id="campaign-wizard-form" method="post" action="{% url 'loyalty:campaign_wizard' %}">
+        {% csrf_token %}
+        <div class="wizard-content">
+
+            <!-- Step 1: Campaign Basics -->
+            <div class="wizard-step active" id="step-1">
+                <h2 class="step-title">{% trans "Campaign Basics" %}</h2>
+                <p class="step-description">{% trans "Define the basic information and type for your campaign." %}</p>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="name">{% trans "Campaign Name" %} <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" class="form-control"
+                               placeholder="{% trans 'e.g., Birthday Bonus Points' %}" required>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "A descriptive name to identify this campaign." %}
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">{% trans "Description" %}</label>
+                        <textarea id="description" name="description" class="form-control" rows="3"
+                                  placeholder="{% trans 'Describe the purpose and goals of this campaign...' %}"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-cog"></i> {% trans "Campaign Type" %}
+                    </h3>
+                    <p class="step-description">{% trans "Choose how this campaign should be triggered." %}</p>
+
+                    <div class="campaign-type-cards">
+                        <label class="type-card active" data-type="trigger_based">
+                            <input type="radio" name="campaign_type" value="trigger_based" checked>
+                            <div class="type-card-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="type-card-content">
+                                <strong>{% trans "Trigger-Based" %}</strong>
+                                <span>{% trans "Runs when a specific event occurs" %}</span>
+                            </div>
+                        </label>
+
+                        <label class="type-card" data-type="scheduled">
+                            <input type="radio" name="campaign_type" value="scheduled">
+                            <div class="type-card-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="type-card-content">
+                                <strong>{% trans "Scheduled" %}</strong>
+                                <span>{% trans "Runs on a fixed schedule" %}</span>
+                            </div>
+                        </label>
+
+                        <label class="type-card" data-type="manual">
+                            <input type="radio" name="campaign_type" value="manual">
+                            <div class="type-card-icon">
+                                <i class="fas fa-hand-pointer"></i>
+                            </div>
+                            <div class="type-card-content">
+                                <strong>{% trans "Manual" %}</strong>
+                                <span>{% trans "Triggered manually by admin" %}</span>
+                            </div>
+                        </label>
+
+                        <label class="type-card" data-type="behavioral">
+                            <input type="radio" name="campaign_type" value="behavioral">
+                            <div class="type-card-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="type-card-content">
+                                <strong>{% trans "Behavioral" %}</strong>
+                                <span>{% trans "Based on customer behavior patterns" %}</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="wizard-navigation">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-primary" data-action="next-step">
+                            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Trigger Configuration -->
+            <div class="wizard-step" id="step-2">
+                <h2 class="step-title">{% trans "Trigger Configuration" %}</h2>
+                <p class="step-description">{% trans "Configure when this campaign should be activated." %}</p>
+
+                <!-- Trigger-Based Configuration -->
+                <div class="trigger-config" id="config-trigger_based">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-bolt"></i> {% trans "Select Trigger Event" %}
+                        </h3>
+
+                        <div class="trigger-event-grid">
+                            <label class="trigger-event-card" data-event="order_placed">
+                                <input type="radio" name="trigger_event" value="order_placed">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>{% trans "Order Placed" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="customer_signup">
+                                <input type="radio" name="trigger_event" value="customer_signup">
+                                <i class="fas fa-user-plus"></i>
+                                <span>{% trans "Customer Signup" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="birthday">
+                                <input type="radio" name="trigger_event" value="birthday">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>{% trans "Birthday" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="anniversary">
+                                <input type="radio" name="trigger_event" value="anniversary">
+                                <i class="fas fa-gift"></i>
+                                <span>{% trans "Anniversary" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="first_purchase">
+                                <input type="radio" name="trigger_event" value="first_purchase">
+                                <i class="fas fa-star"></i>
+                                <span>{% trans "First Purchase" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="nth_purchase">
+                                <input type="radio" name="trigger_event" value="nth_purchase">
+                                <i class="fas fa-hashtag"></i>
+                                <span>{% trans "Nth Purchase" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="tier_promoted">
+                                <input type="radio" name="trigger_event" value="tier_promoted">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>{% trans "Tier Promoted" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="tier_demoted">
+                                <input type="radio" name="trigger_event" value="tier_demoted">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>{% trans "Tier Demoted" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="cart_abandoned">
+                                <input type="radio" name="trigger_event" value="cart_abandoned">
+                                <i class="fas fa-shopping-basket"></i>
+                                <span>{% trans "Cart Abandoned" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="no_purchase_90d">
+                                <input type="radio" name="trigger_event" value="no_purchase_90d">
+                                <i class="fas fa-clock"></i>
+                                <span>{% trans "Inactive 90 Days" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="points_expiring">
+                                <input type="radio" name="trigger_event" value="points_expiring">
+                                <i class="fas fa-hourglass-half"></i>
+                                <span>{% trans "Points Expiring" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="review_submitted">
+                                <input type="radio" name="trigger_event" value="review_submitted">
+                                <i class="fas fa-comment"></i>
+                                <span>{% trans "Review Submitted" %}</span>
+                            </label>
+                            <label class="trigger-event-card" data-event="referral_converted">
+                                <input type="radio" name="trigger_event" value="referral_converted">
+                                <i class="fas fa-users"></i>
+                                <span>{% trans "Referral Converted" %}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Conditional fields for specific triggers -->
+                    <div class="form-section trigger-conditions wizard-hidden" id="conditions-nth_purchase">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-hashtag"></i> {% trans "Purchase Number" %}
+                        </h3>
+                        <div class="form-group">
+                            <label for="nth_purchase_number">{% trans "Trigger on which purchase number?" %}</label>
+                            <input type="number" id="nth_purchase_number" name="nth_purchase_number"
+                                   class="form-control input-sm" min="2" value="5">
+                            <p class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                {% trans "Campaign will trigger when customer makes their Nth purchase." %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-section trigger-conditions wizard-hidden" id="conditions-order_placed">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-filter"></i> {% trans "Order Conditions (Optional)" %}
+                        </h3>
+                        <div class="form-group">
+                            <label for="min_order_amount">{% trans "Minimum Order Amount" %}</label>
+                            <input type="number" id="min_order_amount" name="min_order_amount"
+                                   class="form-control input-sm" min="0" step="0.01" placeholder="0.00">
+                            <p class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                {% trans "Only trigger for orders above this amount. Leave blank for any amount." %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scheduled Configuration -->
+                <div class="trigger-config wizard-hidden" id="config-scheduled">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-calendar-alt"></i> {% trans "Schedule Configuration" %}
+                        </h3>
+
+                        <div class="form-group">
+                            <label for="schedule_type">{% trans "Frequency" %}</label>
+                            <select id="schedule_type" name="schedule_type" class="form-control input-md">
+                                <option value="daily">{% trans "Daily" %}</option>
+                                <option value="weekly">{% trans "Weekly" %}</option>
+                                <option value="monthly">{% trans "Monthly" %}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="schedule_hour">{% trans "Time of Day" %}</label>
+                            <div class="time-picker">
+                                <select id="schedule_hour" name="schedule_hour" class="form-control">
+                                    {% for h in "0123456789"|make_list %}{% for h2 in "0123456789"|make_list %}
+                                    {% with hour=h|add:h2 %}
+                                    {% if hour|add:"0" < 24 %}
+                                    <option value="{{ hour }}" {% if hour == "9" %}selected{% endif %}>{{ hour }}:00</option>
+                                    {% endif %}
+                                    {% endwith %}
+                                    {% endfor %}{% endfor %}
+                                </select>
+                            </div>
+                            <p class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                {% trans "Campaign will run at this time in your store's timezone." %}
+                            </p>
+                        </div>
+
+                        <div class="form-group schedule-weekly wizard-hidden">
+                            <label>{% trans "Day of Week" %}</label>
+                            <div class="day-selector">
+                                <label class="day-checkbox"><input type="checkbox" name="schedule_days" value="0"> {% trans "Mon" %}</label>
+                                <label class="day-checkbox"><input type="checkbox" name="schedule_days" value="1"> {% trans "Tue" %}</label>
+                                <label class="day-checkbox"><input type="checkbox" name="schedule_days" value="2"> {% trans "Wed" %}</label>
+                                <label class="day-checkbox"><input type="checkbox" name="schedule_days" value="3"> {% trans "Thu" %}</label>
+                                <label class="day-checkbox"><input type="checkbox" name="schedule_days" value="4"> {% trans "Fri" %}</label>
+                                <label class="day-checkbox"><input type="checkbox" name="schedule_days" value="5"> {% trans "Sat" %}</label>
+                                <label class="day-checkbox"><input type="checkbox" name="schedule_days" value="6"> {% trans "Sun" %}</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group schedule-monthly wizard-hidden">
+                            <label for="schedule_day_of_month">{% trans "Day of Month" %}</label>
+                            <select id="schedule_day_of_month" name="schedule_day_of_month" class="form-control input-sm">
+                                {% for d in "123456789"|make_list %}
+                                <option value="{{ d }}">{{ d }}</option>
+                                {% endfor %}
+                                {% for d in "10111213141516171819202122232425262728"|slice:"::2" %}
+                                <option value="{{ d }}">{{ d }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual Configuration -->
+                <div class="trigger-config wizard-hidden" id="config-manual">
+                    <div class="info-box">
+                        <i class="fas fa-hand-pointer"></i>
+                        <div>
+                            <strong>{% trans "Manual Campaigns" %}</strong>
+                            <p>{% trans "This campaign will only run when you manually trigger it from the campaign list. Perfect for one-time promotions or special events." %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Behavioral Configuration -->
+                <div class="trigger-config wizard-hidden" id="config-behavioral">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-brain"></i> {% trans "Behavioral Rules" %}
+                        </h3>
+
+                        <div class="info-box">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <strong>{% trans "Behavioral Campaigns" %}</strong>
+                                <p>{% trans "These campaigns analyze customer behavior patterns and trigger based on combined conditions." %}</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="behavior_type">{% trans "Behavior Type" %}</label>
+                            <select id="behavior_type" name="behavior_type" class="form-control input-lg">
+                                <option value="high_value">{% trans "High Value Customer (top 20% by spend)" %}</option>
+                                <option value="at_risk">{% trans "At Risk (declining engagement)" %}</option>
+                                <option value="new_active">{% trans "New & Active (signed up in last 30 days, 2+ orders)" %}</option>
+                                <option value="dormant">{% trans "Dormant (no activity in 60+ days)" %}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wizard-navigation">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" data-action="prev-step">
+                            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+                        </button>
+                        <button type="button" class="btn btn-primary" data-action="next-step">
+                            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Targeting -->
+            <div class="wizard-step" id="step-3">
+                <h2 class="step-title">{% trans "Targeting" %}</h2>
+                <p class="step-description">{% trans "Define which customers should receive this campaign." %}</p>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="target_all_members" name="target_all_members" checked>
+                            <span>{% trans "Target all loyalty program members" %}</span>
+                        </label>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Uncheck to target specific segments or tiers." %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="targeting-options wizard-hidden" id="targeting-options">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-users"></i> {% trans "Customer Segment" %}
+                        </h3>
+                        <div class="form-group">
+                            <label for="target_segment">{% trans "Select Segment" %}</label>
+                            <select id="target_segment" name="target_segment" class="form-control input-lg">
+                                <option value="">{% trans "All customers (no segment filter)" %}</option>
+                                {% for segment in segments %}
+                                <option value="{{ segment.id }}">{{ segment.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-medal"></i> {% trans "Loyalty Tiers" %}
+                        </h3>
+                        <p class="step-description">{% trans "Optionally limit this campaign to specific tiers." %}</p>
+                        <div class="tier-checkboxes">
+                            {% for tier in tiers %}
+                            <label class="tier-checkbox">
+                                <input type="checkbox" name="target_tiers" value="{{ tier.id }}">
+                                <span class="tier-badge" data-color="{{ tier.color|default:'#6c757d' }}">
+                                    {{ tier.name }}
+                                </span>
+                            </label>
+                            {% empty %}
+                            <p class="help-text">{% trans "No tiers configured yet." %}</p>
+                            {% endfor %}
+                        </div>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Leave all unchecked to include all tiers." %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="wizard-navigation">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" data-action="prev-step">
+                            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+                        </button>
+                        <button type="button" class="btn btn-primary" data-action="next-step">
+                            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Actions -->
+            <div class="wizard-step" id="step-4">
+                <h2 class="step-title">{% trans "Campaign Actions" %}</h2>
+                <p class="step-description">{% trans "Define what happens when this campaign triggers." %}</p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-magic"></i> {% trans "Actions" %}
+                    </h3>
+
+                    <div id="actions-container">
+                        <div class="action-item" data-action-index="0">
+                            <div class="action-header">
+                                <span class="action-number">{% trans "Action" %} 1</span>
+                                <button type="button" class="action-remove wizard-hidden" data-action="remove-action">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="action-content">
+                                <div class="form-group">
+                                    <label>{% trans "Action Type" %}</label>
+                                    <select name="action_type[]" class="form-control action-type-select" >
+                                        <option value="award_points">{% trans "Award Points" %}</option>
+                                        <option value="award_bonus_points">{% trans "Award Bonus Points (multiplier)" %}</option>
+                                        <option value="send_email">{% trans "Send Email" %}</option>
+                                        <option value="upgrade_tier">{% trans "Upgrade Tier" %}</option>
+                                        <option value="grant_badge">{% trans "Grant Badge" %}</option>
+                                    </select>
+                                </div>
+
+                                <div class="action-fields">
+                                    <!-- Award Points Fields (default) -->
+                                    <div class="action-field-group" data-action="award_points">
+                                        <div class="form-group">
+                                            <label>{% trans "Points Amount" %}</label>
+                                            <input type="number" name="action_points[]" class="form-control input-sm"
+                                                   min="1" value="100">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>{% trans "Points Reason" %}</label>
+                                            <input type="text" name="action_reason[]" class="form-control input-md"
+                                                   placeholder="{% trans 'e.g., Birthday bonus' %}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Bonus Points Fields -->
+                                    <div class="action-field-group wizard-hidden" data-action="award_bonus_points">
+                                        <div class="form-group">
+                                            <label>{% trans "Points Multiplier" %}</label>
+                                            <input type="number" name="action_multiplier[]" class="form-control input-sm"
+                                                   min="1.1" max="10" step="0.1" value="2">
+                                            <p class="help-text">{% trans "e.g., 2 = double points on this order" %}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Send Email Fields -->
+                                    <div class="action-field-group wizard-hidden" data-action="send_email">
+                                        <div class="form-group">
+                                            <label>{% trans "Email Template" %}</label>
+                                            <select name="action_email_template[]" class="form-control input-lg">
+                                                <option value="">{% trans "Select template..." %}</option>
+                                                {% for template in email_templates %}
+                                                <option value="{{ template.id }}">{{ template.name }}</option>
+                                                {% empty %}
+                                                <option value="" disabled>{% trans "No templates available" %}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Upgrade Tier Fields -->
+                                    <div class="action-field-group wizard-hidden" data-action="upgrade_tier">
+                                        <div class="form-group">
+                                            <label>{% trans "Upgrade To Tier" %}</label>
+                                            <select name="action_tier[]" class="form-control input-md">
+                                                {% for tier in tiers %}
+                                                <option value="{{ tier.id }}">{{ tier.name }}</option>
+                                                {% empty %}
+                                                <option value="" disabled>{% trans "No tiers configured" %}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Grant Badge Fields -->
+                                    <div class="action-field-group wizard-hidden" data-action="grant_badge">
+                                        <div class="form-group">
+                                            <label>{% trans "Badge" %}</label>
+                                            <select name="action_badge[]" class="form-control input-md">
+                                                {% for badge in badges %}
+                                                <option value="{{ badge.id }}">{{ badge.name }}</option>
+                                                {% empty %}
+                                                <option value="" disabled>{% trans "No badges configured" %}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary add-action-btn" data-action="add-action">
+                        <i class="fas fa-plus"></i> {% trans "Add Another Action" %}
+                    </button>
+                </div>
+
+                <div class="wizard-navigation">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" data-action="prev-step">
+                            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+                        </button>
+                        <button type="button" class="btn btn-primary" data-action="next-step">
+                            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Review & Limits -->
+            <div class="wizard-step" id="step-5">
+                <h2 class="step-title">{% trans "Review & Limits" %}</h2>
+                <p class="step-description">{% trans "Set campaign limits and review your configuration." %}</p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-calendar"></i> {% trans "Campaign Duration" %}
+                    </h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="start_date">{% trans "Start Date" %}</label>
+                            <input type="datetime-local" id="start_date" name="start_date" class="form-control">
+                            <p class="help-text">{% trans "Leave blank to start immediately when activated." %}</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date">{% trans "End Date" %}</label>
+                            <input type="datetime-local" id="end_date" name="end_date" class="form-control">
+                            <p class="help-text">{% trans "Leave blank for no end date." %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-shield-alt"></i> {% trans "Limits & Safeguards" %}
+                    </h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="max_triggers_per_member">{% trans "Max Triggers Per Member" %}</label>
+                            <input type="number" id="max_triggers_per_member" name="max_triggers_per_member"
+                                   class="form-control input-sm" min="1" placeholder="{% trans 'Unlimited' %}">
+                            <p class="help-text">{% trans "Maximum times this can trigger for one customer." %}</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="cooldown_days">{% trans "Cooldown Period (Days)" %}</label>
+                            <input type="number" id="cooldown_days" name="cooldown_days"
+                                   class="form-control input-sm" min="0" value="0">
+                            <p class="help-text">{% trans "Minimum days between triggers for same customer." %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-eye"></i> {% trans "Campaign Summary" %}
+                    </h3>
+                    <div class="campaign-summary" id="campaign-summary">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="wizard-navigation">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-secondary" data-action="prev-step">
+                            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+                        </button>
+                        <button type="submit" class="btn btn-success btn-large" name="save_draft" value="1">
+                            <i class="fas fa-save"></i> {% trans "Save as Draft" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<script type="application/json" id="campaign-wizard-data">
+{
+    "translations": {
+        "enterCampaignName": "{% trans 'Please enter a campaign name.' %}",
+        "selectTrigger": "{% trans 'Please select a trigger event.' %}",
+        "untitledCampaign": "{% trans 'Untitled Campaign' %}",
+        "campaignName": "{% trans 'Campaign Name' %}",
+        "type": "{% trans 'Type' %}",
+        "trigger": "{% trans 'Trigger' %}",
+        "targeting": "{% trans 'Targeting' %}",
+        "actions": "{% trans 'Actions' %}",
+        "actionsConfigured": "{% trans 'action(s) configured' %}",
+        "allMembers": "{% trans 'All Members' %}",
+        "specificSegments": "{% trans 'Specific Segments/Tiers' %}",
+        "action": "{% trans 'Action' %}"
+    },
+    "typeLabels": {
+        "trigger_based": "{% trans 'Trigger-Based' %}",
+        "scheduled": "{% trans 'Scheduled' %}",
+        "manual": "{% trans 'Manual' %}",
+        "behavioral": "{% trans 'Behavioral' %}"
+    },
+    "eventLabels": {
+        "order_placed": "{% trans 'Order Placed' %}",
+        "customer_signup": "{% trans 'Customer Signup' %}",
+        "birthday": "{% trans 'Birthday' %}",
+        "anniversary": "{% trans 'Anniversary' %}",
+        "first_purchase": "{% trans 'First Purchase' %}",
+        "nth_purchase": "{% trans 'Nth Purchase' %}",
+        "tier_promoted": "{% trans 'Tier Promoted' %}",
+        "tier_demoted": "{% trans 'Tier Demoted' %}",
+        "cart_abandoned": "{% trans 'Cart Abandoned' %}",
+        "no_purchase_90d": "{% trans 'Inactive 90 Days' %}",
+        "points_expiring": "{% trans 'Points Expiring' %}",
+        "review_submitted": "{% trans 'Review Submitted' %}",
+        "referral_converted": "{% trans 'Referral Converted' %}"
+    }
+}
+</script>
+<script src="{% static 'loyalty/admin/js/campaign_wizard.js' %}"></script>
+{% endblock %}

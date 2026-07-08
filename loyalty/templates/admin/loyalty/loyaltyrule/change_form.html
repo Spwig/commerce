@@ -1,0 +1,296 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Loyalty Rule" %}: {{ original.name }}{% else %}{% trans "Add Loyalty Rule" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltyrule_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="loyaltyrule-change-form">
+
+    {# --- HEADER --- #}
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    {% if original %}
+                        <i class="fas fa-trophy"></i> {% trans "Edit Loyalty Rule" %}: {{ original.name }}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Add Loyalty Rule" %}
+                    {% endif %}
+                </h1>
+                {% if original %}
+                <div class="header-meta">
+                    <span class="meta-item"><i class="fas fa-tag"></i> {{ original.get_rule_type_display }}</span>
+                    <span class="meta-item"><i class="fas fa-sort-numeric-up"></i> {% trans "Priority" %}: {{ original.priority }}</span>
+                    <span class="meta-item"><i class="fas fa-calendar"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                    {% if original.is_active %}
+                    <span class="status-badge active"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+                    {% else %}
+                    <span class="status-badge inactive"><i class="fas fa-minus-circle"></i> {% trans "Inactive" %}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="rule-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="rule-save-btn" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- FORM --- #}
+    <form method="post" id="loyaltyrule_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {# --- TAB NAVIGATION --- #}
+        {% if not is_popup %}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="config" role="tab" aria-selected="false">
+                <i class="fas fa-cog"></i>
+                <span class="label">{% trans "Configuration" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="conditions" role="tab" aria-selected="false">
+                <i class="fas fa-filter"></i>
+                <span class="label">{% trans "Conditions" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="schedule" role="tab" aria-selected="false">
+                <i class="fas fa-clock"></i>
+                <span class="label">{% trans "Schedule" %}</span>
+            </button>
+        </div>
+        {% endif %}
+
+        {# === TAB: BASIC === #}
+        <div class="admin-tab-content active" id="tab-basic" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-basic' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.field.name == 'is_active' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: CONFIGURATION === #}
+        <div class="admin-tab-content" id="tab-config" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-config' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-cog"></i> {% trans "Rule Configuration" %}</h2>
+                    <p class="form-card-description">{% trans "Configure the rule type, scope, and points rate." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: CONDITIONS === #}
+        <div class="admin-tab-content" id="tab-conditions" role="tabpanel">
+            {# Conditions card #}
+            {% for fieldset in adminform %}
+                {% if 'tab-conditions' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-filter"></i> {% trans "Conditions" %}</h2>
+                    <p class="form-card-description">{% trans "Set minimum order amount and tier restrictions." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            {# Limits card #}
+            {% for fieldset in adminform %}
+                {% if 'tab-limits' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-shield-alt"></i> {% trans "Limits & Restrictions" %}</h2>
+                    <p class="form-card-description">{% trans "Set exclusivity rules." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.field.name == 'is_exclusive' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: SCHEDULE === #}
+        <div class="admin-tab-content" id="tab-schedule" role="tabpanel">
+            {# Date restrictions card #}
+            {% for fieldset in adminform %}
+                {% if 'tab-dates' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-calendar-alt"></i> {% trans "Date Restrictions" %}</h2>
+                    <p class="form-card-description">{% trans "Optionally limit when this rule is active." %}</p>
+                    <div class="two-column-layout">
+                        {% for line in fieldset %}
+                            {% for field in line %}
+                                <div class="column">
+                                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field.field }}
+                                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            {# Points behavior card #}
+            {% for fieldset in adminform %}
+                {% if 'tab-points' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-coins"></i> {% trans "Points Behavior" %}</h2>
+                    <p class="form-card-description">{% trans "Configure pending periods and expiration for earned points." %}</p>
+                    <div class="two-column-layout">
+                        {% for line in fieldset %}
+                            {% for field in line %}
+                                <div class="column">
+                                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field.field }}
+                                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            {# Timestamps card (edit only) #}
+            {% if original %}
+            {% for fieldset in adminform %}
+                {% if 'tab-timestamps' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-history"></i> {% trans "Timestamps" %}</h2>
+                    <div class="two-column-layout">
+                        {% for line in fieldset %}
+                            {% for field in line %}
+                                <div class="column">
+                                    <div class="form-row field-{{ field.field.name }}">
+                                        {% if field.is_readonly %}
+                                            {{ field.label_tag }}
+                                            <div class="readonly">{{ field.contents }}</div>
+                                        {% else %}
+                                            {{ field.label_tag }}
+                                            {{ field.field }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        {# --- HIDDEN SUBMIT ROW --- #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'loyalty/admin/js/loyaltyrule_form.js' %}"></script>
+{% endblock %}

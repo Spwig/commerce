@@ -1,0 +1,141 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for reward in rewards %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ reward.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if reward.status == 'issued' %}
+                <i class="fas fa-gift text-success"></i>
+            {% elif reward.status == 'revoked' %}
+                <i class="fas fa-ban text-error"></i>
+            {% else %}
+                <i class="fas fa-hourglass-half text-warning"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:referrals_referralreward_change' reward.pk %}">
+                    {% if reward.referrer_identity %}
+                        {{ reward.referrer_identity.customer.get_full_name|default:reward.referrer_identity.customer.email }}
+                    {% else %}
+                        {% trans "Unknown Referrer" %}
+                    {% endif %}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-dollar-sign"></i>
+                <strong class="text-size-16 text-primary">{{ reward.amount|floatformat:2 }}</strong>
+                <span class="ml-8 text-muted">
+                    ({{ reward.get_reward_type_display }})
+                </span>
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if reward.status == 'pending' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-hourglass-half"></i> {% trans "Pending" %}
+                    </span>
+                {% elif reward.status == 'issued' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check"></i> {% trans "Issued" %}
+                    </span>
+                {% elif reward.status == 'revoked' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-ban"></i> {% trans "Revoked" %}
+                    </span>
+                {% endif %}
+
+                {% if reward.expires_at %}
+                    {% now "U" as current_timestamp %}
+                    {% if reward.expires_at.timestamp < current_timestamp|add:"0" %}
+                        <span class="list-row-card-badge list-row-card-badge-error">
+                            <i class="fas fa-exclamation-triangle"></i> {% trans "Expired" %}
+                        </span>
+                    {% else %}
+                        <span class="list-row-card-badge">
+                            <i class="fas fa-clock"></i> {% trans "Expires" %}
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                {% if reward.attribution %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Attribution" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <a href="{% url 'admin:referrals_referralattribution_change' reward.attribution.id %}"
+                           class="link-color">
+                            #{{ reward.attribution.pk }}
+                        </a>
+                    </span>
+                </div>
+                {% endif %}
+                {% if reward.voucher %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Voucher" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <code class="text-size-11">{{ reward.voucher.code }}</code>
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Created" %}: {{ reward.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if reward.issued_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{% trans "Issued" %}: {{ reward.issued_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if reward.expires_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-hourglass-end"></i>
+                    <span>{% trans "Expires" %}: {{ reward.expires_at|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:referrals_referralreward_change' reward.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit reward' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if reward.status == 'pending' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="issue-reward" data-pk="{{ reward.pk }}"
+                    title="{% trans 'Issue reward' %}">
+                <i class="fas fa-gift"></i>
+            </button>
+            {% elif reward.status == 'issued' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="revoke-reward" data-pk="{{ reward.pk }}"
+                    title="{% trans 'Revoke reward' %}">
+                <i class="fas fa-ban"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-gift"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No rewards found matching your criteria." %}</p>
+    </div>
+    {% endfor %}
+</div>

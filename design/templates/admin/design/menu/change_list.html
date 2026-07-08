@@ -1,0 +1,112 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Navigation Menus" %} | {{ site_settings.site_name|default:"Spwig" }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/menu-admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="menu-changelist">
+        <!-- Header -->
+        <div class="change-list-header">
+            <div>
+                <h1>
+                    <i class="fas fa-bars"></i>
+                    {% trans "Navigation Menus" %}
+                </h1>
+                <p class="subtitle">{% trans "Create and manage navigation menus for your store's header, footer, and sidebars" %}</p>
+            </div>
+            <div class="change-list-header-actions">
+                <a href="{% url 'design:menu_builder_default' %}" class="change-list-action-button">
+                    <i class="fas fa-magic"></i> {% trans "Visual Builder" %}
+                </a>
+                <a href="{% url 'admin:design_menu_add' %}" class="change-list-action-button secondary">
+                    <i class="fas fa-plus"></i> {% trans "Add Menu" %}
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="stat-card-icon primary">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-value">{{ stats.total_menus }}</div>
+                    <div class="stat-card-label">{% trans "Total Menus" %}</div>
+                </div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="stat-card-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-value">{{ stats.active_menus }}</div>
+                    <div class="stat-card-label">{% trans "Active" %}</div>
+                </div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="stat-card-icon info">
+                    <i class="fas fa-list"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-value">{{ stats.total_items }}</div>
+                    <div class="stat-card-label">{% trans "Menu Items" %}</div>
+                </div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="stat-card-icon warning">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="stat-card-content">
+                    <div class="stat-card-value">{{ stats.locations_used }}</div>
+                    <div class="stat-card-label">{% trans "Locations Used" %}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <h2>{% trans "All Menus" %}</h2>
+            <span class="results-count">
+                <i class="fas fa-bars"></i>
+                {{ cl.result_count }} {% trans "menu" %}{{ cl.result_count|pluralize }}
+            </span>
+        </div>
+
+        <!-- Results Container -->
+        <div id="menu-results">
+            {% if cl.result_list %}
+                {% include "admin/design/menu/partials/menu_cards.html" with menus=cl.result_list %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <h3>{% trans "No menus yet" %}</h3>
+                    <p>{% trans "Create your first navigation menu to help customers navigate your store." %}</p>
+                    <a href="{% url 'design:menu_builder_default' %}" class="change-list-action-button">
+                        <i class="fas fa-magic"></i> {% trans "Create with Visual Builder" %}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Pagination -->
+        {% if cl.result_count %}
+        <p class="paginator">
+            {% if cl.result_count == 1 %}
+                {% blocktrans count counter=cl.result_count %}1 menu{% plural %}{{ counter }} menus{% endblocktrans %}
+            {% else %}
+                {{ cl.result_count }} {% trans "menus" %}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

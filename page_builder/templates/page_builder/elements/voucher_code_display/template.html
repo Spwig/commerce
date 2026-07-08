@@ -1,0 +1,78 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Voucher Code Display Element -->
+<section class="voucher-display voucher-display--{{ element.content.style|default:'ticket' }} voucher-display--{{ element.content.layout|default:'grid' }}"
+         data-voucher-code-display
+         {% hover_animation_attrs element %}
+         style="--voucher-accent: {{ element.content.primary_color|default:'#10b981' }};
+                {% base_styles element %}">
+
+    {% if element.content.title %}
+    <div class="voucher-display__header">
+        <h2 class="voucher-display__title">{{ element.content.title }}</h2>
+        {% if element.content.subtitle %}
+        <p class="voucher-display__subtitle">{{ element.content.subtitle }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="voucher-display__container">
+        {% with vouchers=element_context.vouchers|default:element.content.vouchers %}
+        {% for voucher in vouchers %}
+        <div class="voucher-display__item">
+            <div class="voucher-display__card">
+                <div class="voucher-display__left">
+                    <span class="voucher-display__discount">{{ voucher.discount }}</span>
+                    {% if voucher.description %}
+                    <span class="voucher-display__description">{{ voucher.description }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="voucher-display__divider"></div>
+
+                <div class="voucher-display__right">
+                    <div class="voucher-display__code-wrapper">
+                        <code class="voucher-display__code">{{ voucher.code }}</code>
+                        <button class="voucher-display__copy" data-code="{{ voucher.code }}" aria-label="{% mtrans 'Copy code' %}">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+
+                    <div class="voucher-display__meta">
+                        {% if element.content.show_conditions|default:True and voucher.min_order %}
+                        <span class="voucher-display__condition">
+                            <i class="fas fa-shopping-cart"></i>
+                            {% mtrans "Min:" %} {{ voucher.min_order }}
+                        </span>
+                        {% endif %}
+
+                        {% if element.content.show_expiry|default:True and voucher.expires %}
+                        <span class="voucher-display__expiry">
+                            <i class="far fa-clock"></i>
+                            {% mtrans "Expires:" %} {{ voucher.expires }}
+                        </span>
+                        {% endif %}
+
+                        {% if element.content.show_usage_limit and voucher.usage_limit %}
+                        <span class="voucher-display__usage">
+                            <i class="fas fa-users"></i>
+                            {{ voucher.uses_remaining|default:voucher.usage_limit }} {% mtrans "uses left" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="voucher-display__empty">
+            <i class="fas fa-ticket-alt"></i>
+            <p>{% mtrans "No vouchers available at this time" %}</p>
+        </div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+
+    <div class="voucher-display__toast" aria-live="polite">
+        <i class="fas fa-check-circle"></i>
+        <span>{% mtrans "Code copied to clipboard!" %}</span>
+    </div>
+</section>

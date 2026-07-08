@@ -1,0 +1,95 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Contact Information Widget Styles */
+/* Uses theme widget tokens for customizable styling */
+/* Token pattern: --theme-widget-contact-{property} */
+
+.widget-contact {
+  font-family: var(--theme-font-sans, inherit);
+}
+
+.widget-contact-title {
+  margin-bottom: var(--theme-widget-contact-title-margin-bottom, var(--theme-space-4, 1rem));
+  font-size: var(--theme-widget-contact-title-font-size, var(--theme-font-size-lg, 1.125rem));
+  font-weight: var(--theme-widget-contact-title-font-weight, var(--theme-font-weight-semibold, 600));
+  color: var(--theme-widget-contact-title-color, var(--theme-footer-text-color, currentColor));
+}
+
+.widget-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-widget-contact-item-gap, var(--theme-space-4, 1rem));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.widget-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--theme-widget-contact-icon-gap, var(--theme-space-2, 0.5rem));
+}
+
+.widget-contact-icon {
+  flex-shrink: 0;
+  width: var(--theme-widget-contact-icon-size, 1rem);
+  height: var(--theme-widget-contact-icon-size, 1rem);
+  margin-top: 0.25rem;
+  color: var(--theme-widget-contact-icon-color, var(--theme-color-primary, #3B82F6));
+}
+
+.widget-contact-content {
+  flex: 1;
+}
+
+.widget-contact-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: var(--theme-widget-contact-label-font-size, var(--theme-font-size-xs, 0.75rem));
+  font-weight: var(--theme-font-weight-medium, 500);
+  color: var(--theme-widget-contact-label-color, var(--theme-footer-muted-color, #78716C));
+}
+
+.widget-contact-value {
+  display: block;
+  font-size: var(--theme-widget-contact-value-font-size, var(--theme-font-size-sm, 0.875rem));
+  color: var(--theme-widget-contact-value-color, var(--theme-footer-text-color, currentColor));
+}
+
+.widget-contact-value a {
+  color: var(--theme-widget-contact-link-color, var(--theme-footer-link-color, inherit));
+  text-decoration: none;
+  transition: color var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+}
+
+.widget-contact-value a:hover {
+  color: var(--theme-widget-contact-link-hover-color, var(--theme-footer-link-hover-color, var(--theme-color-primary, #3B82F6)));
+}
+
+/* Compact variant */
+.widget-contact.compact .widget-contact-list {
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.widget-contact.compact .widget-contact-label {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .widget-contact-title {
+    font-size: var(--theme-font-size-base, 1rem); /* Reduce from lg */
+    margin-bottom: var(--theme-space-2, 0.5rem); /* Reduce from space-4 */
+  }
+
+  .widget-contact-item {
+    gap: var(--theme-space-1, 0.25rem); /* Reduce from space-2 */
+  }
+
+  .widget-contact-icon {
+    font-size: var(--theme-font-size-sm, 0.875rem); /* Slightly reduce icon size */
+  }
+
+  .widget-contact-value {
+    font-size: var(--theme-font-size-sm, 0.875rem); /* Keep at sm for readability */
+  }
+}

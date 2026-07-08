@@ -1,0 +1,197 @@
+{% extends "admin/shipping/promotion_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-users"></i> {% trans "Products & Customers" %}
+</div>
+<p class="step-description">
+    {% trans "Restrict this promotion based on cart contents and customer attributes. All restrictions are optional." %}
+</p>
+
+<form method="post" id="rule-customers-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>{% trans "About Product/Customer Restrictions:" %}</strong>
+            <p class="promotion-wizard-info-text">
+                {% trans "Use these to create targeted promotions for specific products, categories, or customer segments." %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-box-open"></i> {% trans "Product Requirements" %}
+        </h3>
+
+        <p class="section-help">
+            {% trans "Require specific products or categories to be in the cart for this promotion to apply." %}
+        </p>
+
+        <!-- Required Products -->
+        <div class="form-group">
+            <label>{% trans "Requires Products" %}</label>
+            {% if all_products %}
+                <div class="scrollable-checkbox-group">
+                    {% for product in all_products %}
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   name="requires_products"
+                                   value="{{ product.id }}"
+                                   {% if product.id|stringformat:"s" in selected_requires_product_ids %}checked{% endif %}>
+                            <span class="checkbox-label">{{ product.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-message">{% trans "No products available" %}</p>
+            {% endif %}
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Promotion only applies if cart contains at least one of these products" %}
+            </p>
+        </div>
+
+        <!-- Required Categories -->
+        <div class="form-group">
+            <label>{% trans "Requires Categories" %}</label>
+            {% if all_categories %}
+                <div class="scrollable-checkbox-group">
+                    {% for category in all_categories %}
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   name="requires_categories"
+                                   value="{{ category.id }}"
+                                   {% if category.id|stringformat:"s" in selected_requires_category_ids %}checked{% endif %}>
+                            <span class="checkbox-label">{{ category.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-message">{% trans "No categories available" %}</p>
+            {% endif %}
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Promotion only applies if cart contains products from at least one of these categories" %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-ban"></i> {% trans "Product Exclusions" %}
+        </h3>
+
+        <p class="section-help">
+            {% trans "Exclude this promotion if specific products or categories are in the cart." %}
+        </p>
+
+        <!-- Excluded Products -->
+        <div class="form-group">
+            <label>{% trans "Excludes Products" %}</label>
+            {% if all_products %}
+                <div class="scrollable-checkbox-group">
+                    {% for product in all_products %}
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   name="excludes_products"
+                                   value="{{ product.id }}"
+                                   {% if product.id|stringformat:"s" in selected_excludes_product_ids %}checked{% endif %}>
+                            <span class="checkbox-label">{{ product.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-message">{% trans "No products available" %}</p>
+            {% endif %}
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Promotion does NOT apply if cart contains any of these products" %}
+            </p>
+        </div>
+
+        <!-- Excluded Categories -->
+        <div class="form-group">
+            <label>{% trans "Excludes Categories" %}</label>
+            {% if all_categories %}
+                <div class="scrollable-checkbox-group">
+                    {% for category in all_categories %}
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   name="excludes_categories"
+                                   value="{{ category.id }}"
+                                   {% if category.id|stringformat:"s" in selected_excludes_category_ids %}checked{% endif %}>
+                            <span class="checkbox-label">{{ category.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-message">{% trans "No categories available" %}</p>
+            {% endif %}
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Promotion does NOT apply if cart contains products from any of these categories" %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-user-friends"></i> {% trans "Customer Restrictions" %}
+        </h3>
+
+        <!-- Customer Groups -->
+        <div class="form-group">
+            <label>{% trans "Customer Groups" %}</label>
+            {% if all_customer_groups %}
+                <div class="checkbox-group">
+                    {% for group in all_customer_groups %}
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   name="customer_groups"
+                                   value="{{ group.id }}"
+                                   {% if group.id|stringformat:"s" in selected_customer_group_ids %}checked{% endif %}>
+                            <span class="checkbox-label">{{ group.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-message">{% trans "No customer groups available" %}</p>
+            {% endif %}
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Promotion only applies to customers in these groups (leave empty for all customers)" %}
+            </p>
+        </div>
+
+        <!-- First-time Customers -->
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox"
+                       id="id_first_time_customers_only"
+                       name="first_time_customers_only"
+                       {% if first_time_customers_only %}checked{% endif %}>
+                {% trans "First-time customers only" %}
+            </label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Promotion only applies to customers with no previous orders" %}
+            </p>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:promotion_wizard_step3' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="rule-customers-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{{ original.name|default:_("Add License Provider") }} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/licenseprovider_form.css' %}">
+{% endblock %}
+
+{% block after_field_sets %}
+{{ block.super }}
+
+{% if original %}
+<!-- Product Mapping Section -->
+<div class="product-mapping-section" id="product-mapping-section">
+    <h3>
+        <i class="fas fa-link"></i>
+        {% trans "Product Mappings" %}
+    </h3>
+    <p class="section-description">
+        {% trans "Map your digital products to external license policies/products. When a customer purchases a mapped product, a license will be created in the external provider." %}
+    </p>
+
+    <!-- Add Mapping Form -->
+    <div class="add-mapping-form">
+        <div class="form-group product-search-container">
+            <label for="product-search">{% trans "Select Product" %}</label>
+            <input type="text"
+                   id="product-search"
+                   placeholder="{% trans 'Search digital products...' %}"
+                   autocomplete="off">
+            <input type="hidden" id="selected-product-id">
+            <div id="product-search-results" class="product-search-results"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="external-id">{% trans "External Policy/Product ID" %}</label>
+            <input type="text"
+                   id="external-id"
+                   placeholder="{% trans 'e.g., policy_abc123' %}">
+        </div>
+
+        <button type="button" class="button primary" id="add-mapping-btn">
+            <i class="fas fa-plus"></i> {% trans "Add Mapping" %}
+        </button>
+    </div>
+
+    <!-- Mappings List -->
+    <div id="mappings-container">
+        <div class="mappings-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading mappings..." %}</p>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="licenseprovider-config">
+{
+    "providerId": {{ original.pk }},
+    "languageCode": "{{ LANGUAGE_CODE|default:'en' }}",
+    "strings": {
+        "selectProduct": "{% trans 'Please select a product' %}",
+        "enterExternalId": "{% trans 'Please enter an external policy/product ID' %}",
+        "errorLoadingMappings": "{% trans 'Error loading mappings' %}",
+        "noProductsFound": "{% trans 'No digital products found' %}",
+        "saving": "{% trans 'Saving...' %}",
+        "errorSavingMapping": "{% trans 'Error saving mapping' %}",
+        "addMapping": "{% trans 'Add Mapping' %}",
+        "confirmDelete": "{% trans 'Are you sure you want to remove this mapping?' %}",
+        "errorRemovingMapping": "{% trans 'Error removing mapping' %}",
+        "noMappings": "{% trans 'No product mappings configured yet. Add a mapping above to get started.' %}",
+        "removeMapping": "{% trans 'Remove mapping' %}",
+        "product": "{% trans 'Product' %}",
+        "externalId": "{% trans 'External ID' %}"
+    }
+}
+</script>
+<script src="{% static 'catalog/admin/js/licenseprovider_change_form.js' %}"></script>
+{% endif %}
+{% endblock %}

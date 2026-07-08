@@ -1,0 +1,122 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Available Widgets" %} | {{ site_title|default:_('Spwig Admin') }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/widget_updates.css' %}">
+<script src="{% static 'design/admin/js/available_widgets.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:design_widget_changelist' %}">{% trans 'Widgets' %}</a>
+    &rsaquo; {% trans 'Available Widgets' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="available-widgets-container" data-theme="{{ admin_theme|default:'light' }}">
+    <div class="available-widgets-header">
+        <h1><i class="fas fa-cloud-download-alt"></i> {% trans "Available Widgets" %}</h1>
+        <div class="available-widgets-actions">
+            <a href="{% url 'admin:design_widget_changelist' %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Widgets" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filter Bar -->
+    <div class="widgets-filter-bar">
+        <label for="type-filter"><i class="fas fa-filter"></i> {% trans "Filter by type:" %}</label>
+        <select id="type-filter">
+            <option value="all" {% if selected_type == 'all' %}selected{% endif %}>{% trans "All Types" %}</option>
+            {% for widget_type in widget_types %}
+                <option value="{{ widget_type }}" {% if selected_type == widget_type %}selected{% endif %}>
+                    {{ widget_type|title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if available_widgets %}
+        <div class="widgets-grid">
+            {% for widget in available_widgets %}
+                <div class="widget-card">
+                    <div class="widget-card-header">
+                        <div class="widget-card-title">
+                            <h3>{{ widget.name }}</h3>
+                            <span class="widget-type">
+                                <i class="fas fa-cube"></i> {{ widget.component_type|default:"widget"|title }}
+                            </span>
+                        </div>
+                        {% if widget.is_installed %}
+                            <span class="widget-installed-badge">
+                                <i class="fas fa-check"></i> {% trans "Installed" %}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <p class="widget-card-description">
+                        {{ widget.description|default:_("No description available") }}
+                    </p>
+
+                    <div class="widget-card-meta">
+                        <div class="widget-card-meta-item">
+                            <i class="fas fa-tag"></i>
+                            <span>{% trans "Version:" %} {{ widget.current_version|default:"N/A" }}</span>
+                        </div>
+                        <div class="widget-card-meta-item">
+                            <i class="fas fa-user"></i>
+                            <span>{{ widget.author|default:"Unknown" }}</span>
+                        </div>
+                        {% if widget.license %}
+                            <div class="widget-card-meta-item">
+                                <i class="fas fa-certificate"></i>
+                                <span>{{ widget.license }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="widget-card-footer">
+                        <div class="widget-version">
+                            {{ widget.current_version|default:"N/A" }}
+                        </div>
+                        {% if not widget.is_installed %}
+                            <form method="post" action="{% url 'admin:widget_install' widget.slug %}" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="version" value="{{ widget.current_version }}">
+                                <button type="submit" class="widget-install-btn">
+                                    <i class="fas fa-download"></i> {% trans "Install" %}
+                                </button>
+                            </form>
+                        {% else %}
+                            <button class="widget-install-btn" disabled>
+                                <i class="fas fa-check"></i> {% trans "Already Installed" %}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="widgets-empty-state">
+            <i class="fas fa-inbox"></i>
+            <h2>{% trans "No Widgets Available" %}</h2>
+            <p>{% trans "No widgets found on the update server, or unable to connect." %}</p>
+        </div>
+    {% endif %}
+</div>
+</div>
+{% endblock %}

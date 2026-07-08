@@ -1,0 +1,176 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Account Widget Styles */
+/* Uses theme widget tokens for customizable styling */
+/* Token pattern: --theme-widget-account-{property} */
+
+.widget-account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Button styles (shared for toggle button and link buttons) */
+.widget-account-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+  padding: var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem);
+  background: transparent;
+  border: none;
+  color: var(--theme-widget-account-icon-color, var(--theme-header-icon-color, currentColor));
+  font-family: var(--theme-font-sans, inherit);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+  cursor: pointer;
+  border-radius: var(--theme-radius-md, 0.375rem);
+  transition: all var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+  text-decoration: none;
+  touch-action: manipulation; /* Prevent double-tap zoom */
+}
+
+.widget-account-button:hover,
+.widget-account-button:focus {
+  color: var(--theme-widget-account-icon-hover-color, var(--theme-header-icon-hover-color, var(--theme-color-primary)));
+  background: var(--theme-color-surface-hover, rgba(0, 0, 0, 0.05));
+}
+
+.widget-account-button:focus {
+  outline: 2px solid var(--theme-color-primary, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* Icon styling */
+.widget-account-icon {
+  font-size: var(--theme-widget-account-icon-size, 1.25rem);
+  width: 1em;
+  height: 1em;
+}
+
+/* Avatar styling */
+.widget-account-avatar {
+  width: var(--theme-widget-account-avatar-size, 2rem);
+  height: var(--theme-widget-account-avatar-size, 2rem);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Username styling */
+.widget-account-name {
+  font-weight: var(--theme-font-weight-medium, 500);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Chevron indicator */
+.widget-account-chevron {
+  font-size: 0.75rem;
+  transition: transform var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+}
+
+.widget-account.is-open .widget-account-chevron {
+  transform: rotate(180deg);
+}
+
+/* Aria-expanded state styling */
+.widget-account-button[aria-expanded="true"] .widget-account-chevron {
+  transform: rotate(180deg);
+}
+
+.widget-account-button[aria-expanded="true"] {
+  color: var(--theme-color-primary, #3b82f6);
+}
+
+/* Focus-visible for keyboard navigation */
+.widget-account-button:focus-visible {
+  outline: 2px solid var(--theme-color-primary, #3b82f6);
+  outline-offset: 2px;
+  border-radius: var(--theme-border-radius-sm, 0.25rem);
+}
+
+/* Dropdown menu */
+.widget-account-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 200px;
+  margin-top: var(--theme-space-2, 0.5rem);
+  padding: var(--theme-widget-account-dropdown-padding, var(--theme-space-2, 0.5rem));
+  background: var(--theme-widget-account-dropdown-bg, var(--theme-color-surface, white));
+  border: 1px solid var(--theme-widget-account-dropdown-border, var(--theme-color-border, #e0e0e0));
+  border-radius: var(--theme-widget-account-dropdown-radius, var(--theme-radius-md, 0.375rem));
+  box-shadow: var(--theme-widget-account-dropdown-shadow, var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1)));
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+  z-index: var(--theme-z-dropdown, 1000);
+}
+
+/* Desktop hover behavior - only on devices with hover capability */
+@media (hover: hover) and (pointer: fine) {
+  .widget-account:hover .widget-account-menu,
+  .widget-account:focus-within .widget-account-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* Show dropdown via JavaScript toggle (click/touch) */
+.widget-account.is-open .widget-account-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Menu link styling */
+.widget-account-link {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-3, 0.75rem);
+  padding: var(--theme-widget-account-link-padding, var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem));
+  color: var(--theme-widget-account-link-color, var(--theme-color-text, currentColor));
+  text-decoration: none;
+  border-radius: var(--theme-widget-account-link-radius, var(--theme-radius-sm, 0.25rem));
+  transition: background var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+  font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+.widget-account-link:hover,
+.widget-account-link:focus {
+  background: var(--theme-widget-account-link-hover-bg, var(--theme-color-surface-hover, #f5f5f5));
+  outline: none;
+}
+
+.widget-account-link i {
+  width: 1.25rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* Divider styling */
+.widget-account-divider {
+  height: 1px;
+  margin: var(--theme-space-2, 0.5rem) 0;
+  background: var(--theme-color-border, #e0e0e0);
+}
+
+/* Anonymous user links container */
+.widget-account-links {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .widget-account-name {
+    display: none;
+  }
+
+  .widget-account-button {
+    padding: var(--theme-space-2, 0.5rem);
+  }
+}

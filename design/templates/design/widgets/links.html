@@ -1,0 +1,21 @@
+{% load i18n widget_tags %}
+<div class="widget-links {{ widget.css_classes }}">
+    {% if config.title %}
+    <h3 class="links-title">{{ config.title }}</h3>
+    {% endif %}
+    <ul class="links-list {{ config.list_style|default:'vertical' }}">
+        {% for link in config.links %}
+        <li class="links-item">
+            <a href="{{ link.url|safe_url }}"
+               {% if link.target %}target="{{ link.target }}"{% endif %}
+               {% if link.rel %}rel="{{ link.rel }}"{% endif %}
+               class="link-item">
+                {% if link.icon %}
+                    <i class="{{ link.icon }}"></i>
+                {% endif %}
+                {{ link.text }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

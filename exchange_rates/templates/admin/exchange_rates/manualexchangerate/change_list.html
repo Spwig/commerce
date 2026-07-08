@@ -1,0 +1,170 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Manual Exchange Rates" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'exchange_rates/css/admin_manual_rates.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="manual-rates-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-pen"></i>
+                {% trans "Manual Exchange Rates" %}
+            </h1>
+            <p class="subtitle">{% trans "Set and manage exchange rates manually for currency conversions" %}</p>
+            <p class="change-list-stats-subtitle">
+                <span id="results-count">{{ total_count }}</span> {% trans "rate" %}{% if total_count != 1 %}s{% endif %}
+                {% if active_count %}<span class="stat-separator">&middot;</span>{{ active_count }} {% trans "active" %}{% endif %}
+                {% if inactive_count %}<span class="stat-separator">&middot;</span>{{ inactive_count }} {% trans "inactive" %}{% endif %}
+                {% if locked_count %}<span class="stat-separator">&middot;</span>{{ locked_count }} {% trans "locked" %}{% endif %}
+            </p>
+        </div>
+        {% if has_add_permission %}
+        <div class="change-list-header-actions">
+            <button type="button" class="button secondary change-list-action-button" id="sync-from-provider-btn">
+                <i class="fas fa-cloud-download-alt"></i> {% trans "Sync from Provider" %}
+            </button>
+            <a href="{% url 'admin:exchange_rates_manualexchangerate_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Rate" %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Info Banner -->
+    <div class="manual-rates-info">
+        <i class="fas fa-info-circle"></i>
+        <span>{% trans "Manual rates take precedence over provider-fetched rates. Lock rates to prevent them from being overwritten during provider sync." %}</span>
+    </div>
+
+    <!-- Rates List -->
+    <div class="manual-rates-list" id="manual-rates-results">
+        {% if cl.result_list %}
+            <div class="list-row-cards">
+                {% for rate in cl.result_list %}
+                <div class="list-row-card{% if not rate.is_active %} disabled{% endif %}{% if rate.exclude_from_auto_sync %} locked{% endif %}"
+                     data-rate-id="{{ rate.id }}"
+                     data-pair="{{ rate.base_currency }}/{{ rate.target_currency }}">
+                    <div class="list-row-card-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="list-row-card-content">
+                        <h3 class="list-row-card-title">
+                            <a href="{% url 'admin:exchange_rates_manualexchangerate_change' rate.id %}">
+                                {{ rate.base_currency }}/{{ rate.target_currency }}
+                            </a>
+                        </h3>
+                        <div class="list-row-card-meta">
+                            <span class="list-row-card-meta-item manual-rate-value">
+                                <i class="fas fa-coins"></i>
+                                1 {{ rate.base_currency }} = {{ rate.rate }} {{ rate.target_currency }}
+                            </span>
+                            <span class="list-row-card-meta-item provider-rate-display" data-pair="{{ rate.base_currency }}/{{ rate.target_currency }}">
+                                <!-- Populated by JS -->
+                            </span>
+                            <span class="list-row-card-meta-item">
+                                <i class="fas fa-clock"></i>
+                                {% trans "Updated" %} {{ rate.updated_at|timesince }} {% trans "ago" %}
+                            </span>
+                        </div>
+                        <div class="list-row-card-badges">
+                            {% if rate.is_active %}
+                                <span class="list-row-card-badge success">{% trans "Active" %}</span>
+                            {% else %}
+                                <span class="list-row-card-badge">{% trans "Inactive" %}</span>
+                            {% endif %}
+                            {% if rate.exclude_from_auto_sync %}
+                                <span class="list-row-card-badge locked-badge"><i class="fas fa-lock"></i> {% trans "Locked" %}</span>
+                            {% endif %}
+                        </div>
+                        {% if rate.notes %}
+                        <p class="list-row-card-subtitle manual-rate-notes">
+                            <i class="fas fa-sticky-note"></i> {{ rate.notes|truncatechars:80 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <div class="list-row-card-actions">
+                        <button class="list-row-card-action manual-rate-lock-toggle"
+                                data-rate-id="{{ rate.id }}"
+                                data-locked="{{ rate.exclude_from_auto_sync|yesno:'true,false' }}"
+                                title="{% if rate.exclude_from_auto_sync %}{% trans 'Unlock (allow auto-sync)' %}{% else %}{% trans 'Lock (exclude from auto-sync)' %}{% endif %}">
+                            <i class="fas {% if rate.exclude_from_auto_sync %}fa-lock{% else %}fa-lock-open{% endif %}"></i>
+                        </button>
+                        <button class="list-row-card-action manual-rate-toggle"
+                                data-rate-id="{{ rate.id }}"
+                                data-active="{{ rate.is_active|yesno:'true,false' }}"
+                                title="{% if rate.is_active %}{% trans 'Deactivate' %}{% else %}{% trans 'Activate' %}{% endif %}">
+                            <i class="fas {% if rate.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                        </button>
+                        <a href="{% url 'admin:exchange_rates_manualexchangerate_change' rate.id %}"
+                           class="list-row-card-action"
+                           title="{% trans 'Edit' %}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'admin:exchange_rates_manualexchangerate_delete' rate.id %}"
+                           class="list-row-card-action"
+                           title="{% trans 'Delete' %}">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if cl.result_count > cl.list_per_page %}
+                {{ block.super }}
+            {% endif %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <i class="fas fa-pen"></i>
+                <h2>{% trans "No manual exchange rates" %}</h2>
+                <p>{% trans "Add manual exchange rates to define fixed conversion rates between currencies." %}</p>
+                <div class="empty-state-actions">
+                    {% if has_add_permission %}
+                    <button type="button" class="button secondary" id="sync-from-provider-empty-btn">
+                        <i class="fas fa-cloud-download-alt"></i> {% trans "Sync from Provider" %}
+                    </button>
+                    <a href="{% url 'admin:exchange_rates_manualexchangerate_add' %}" class="button primary">
+                        <i class="fas fa-plus"></i> {% trans "Add Your First Rate" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Sync Overlay -->
+<div id="sync-overlay" class="sync-overlay" hidden>
+    <div class="sync-overlay-content">
+        <div class="sync-overlay-spinner"></div>
+        <h3>{% trans "Syncing from Provider" %}</h3>
+        <p>{% trans "Fetching latest provider rates and updating unlocked manual rates..." %}</p>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="notification-container" class="notification-container"></div>
+
+<!-- Provider Rates Data (for JS comparison) -->
+{{ provider_rates|json_script:"provider-rates-data" }}
+{% endblock %}

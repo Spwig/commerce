@@ -1,0 +1,150 @@
+{% load i18n static %}
+
+<div class="zone-card"
+     data-zone-id="{{ zone.id }}"
+     data-name="{{ zone.name }}"
+     data-priority="{{ zone.priority }}"
+     data-is-active="{{ zone.is_active|yesno:'true,false' }}">
+    <!-- Checkbox for bulk select -->
+    <div class="zone-checkbox">
+        <input type="checkbox" class="zone-select" value="{{ zone.id }}" id="zone-{{ zone.id }}">
+    </div>
+
+    <!-- Zone Icon & Priority -->
+    <div class="zone-icon">
+        <a href="{% url 'admin:shipping_shippingzone_change' zone.id %}">
+            <div class="zone-icon-container">
+                <i class="fas fa-globe-americas"></i>
+                <div class="zone-priority-badge">
+                    {% if zone.priority == 0 %}
+                        <span class="priority-value highest" title="{% trans 'Highest Priority' %}">P0</span>
+                    {% elif zone.priority <= 5 %}
+                        <span class="priority-value high" title="{% trans 'High Priority' %}">P{{ zone.priority }}</span>
+                    {% elif zone.priority <= 10 %}
+                        <span class="priority-value medium" title="{% trans 'Medium Priority' %}">P{{ zone.priority }}</span>
+                    {% else %}
+                        <span class="priority-value low" title="{% trans 'Low Priority' %}">P{{ zone.priority }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Zone Info -->
+    <div class="zone-info">
+        <h3 class="zone-name">
+            <a href="{% url 'admin:shipping_shippingzone_change' zone.id %}">{{ zone.name }}</a>
+        </h3>
+
+        {% if zone.description %}
+            <p class="zone-description">{{ zone.description|truncatewords:15 }}</p>
+        {% endif %}
+
+        <!-- Coverage Summary -->
+        <div class="zone-coverage">
+            <div class="coverage-summary">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ zone.get_coverage_summary }}</span>
+            </div>
+        </div>
+
+        <!-- Coverage Details -->
+        <div class="zone-coverage-details">
+            <!-- Countries -->
+            {% if zone.countries %}
+                <div class="coverage-item">
+                    <i class="fas fa-flag"></i>
+                    <span class="coverage-label">{% trans "Countries:" %}</span>
+                    <div class="country-tags">
+                        {% for country in zone.countries|slice:":5" %}
+                            <span class="country-tag">{{ country }}</span>
+                        {% endfor %}
+                        {% if zone.countries|length > 5 %}
+                            <span class="country-tag more">+{{ zone.countries|length|add:"-5" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- States Count -->
+            {% with state_count=zone.get_state_count %}
+                {% if state_count > 0 %}
+                    <div class="coverage-item">
+                        <i class="fas fa-map"></i>
+                        <span class="coverage-label">{% trans "States:" %}</span>
+                        <span class="coverage-value">{{ state_count }}</span>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Postal Patterns -->
+            {% if zone.postal_code_patterns %}
+                <div class="coverage-item">
+                    <i class="fas fa-envelope"></i>
+                    <span class="coverage-label">{% trans "Postal Patterns:" %}</span>
+                    <span class="coverage-value">{{ zone.postal_code_patterns|length }}</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Shipping Methods Count -->
+        <div class="zone-methods-count">
+            {% with methods_count=zone.shipping_methods.count %}
+                {% if methods_count > 0 %}
+                    <span class="methods-badge has-methods">
+                        <i class="fas fa-shipping-fast"></i>
+                        {{ methods_count }} {% trans "method" %}{% if methods_count != 1 %}s{% endif %}
+                    </span>
+                {% else %}
+                    <span class="methods-badge no-methods">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {% trans "No methods assigned" %}
+                    </span>
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Zone Badges -->
+        <div class="zone-badges">
+            <!-- Active/Inactive Badge -->
+            {% if zone.is_active %}
+                <span class="badge badge-status badge-active">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+            {% else %}
+                <span class="badge badge-status badge-inactive">
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                </span>
+            {% endif %}
+
+            <!-- Created Date -->
+            <span class="badge badge-date">
+                <i class="fas fa-calendar"></i> {{ zone.created_at|date:"M d, Y" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="zone-actions">
+        <a href="{% url 'admin:shipping_shippingzone_change' zone.id %}"
+           class="action-btn edit-btn"
+           title="{% trans 'Edit' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <button class="action-btn zone-toggle-btn {% if zone.is_active %}active{% else %}inactive{% endif %}"
+                data-zone-id="{{ zone.id }}"
+                data-is-active="{{ zone.is_active|yesno:'true,false' }}"
+                title="{% if zone.is_active %}{% trans 'Disable' %}{% else %}{% trans 'Enable' %}{% endif %}">
+            {% if zone.is_active %}
+                <i class="fas fa-toggle-on"></i>
+            {% else %}
+                <i class="fas fa-toggle-off"></i>
+            {% endif %}
+        </button>
+        <button class="action-btn delete-btn"
+                data-zone-id="{{ zone.id }}"
+                title="{% trans 'Delete' %}">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</div>

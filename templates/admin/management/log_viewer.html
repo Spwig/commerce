@@ -1,0 +1,188 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Log Viewer" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/log_viewer.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:management_logentry_changelist' %}">{% trans 'Log Entries' %}</a>
+    &rsaquo; {% trans 'Log Viewer' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header with Stats -->
+    <div class="log-viewer-header">
+        <h1>
+            <i class="fas fa-file-alt"></i>
+            {% trans "Log Viewer" %}
+        </h1>
+        <p class="subtitle">
+            {% trans "View real-time Docker container logs with filtering and search" %}
+        </p>
+
+        <!-- Stats Cards -->
+        <div class="log-stats-grid">
+            <div class="log-stat-card log-stat-info">
+                <div class="stat-icon"><i class="fas fa-info-circle"></i></div>
+                <div class="stat-value" id="stat-info">{{ stats.global.INFO|default:0 }}</div>
+                <div class="stat-label">{% trans "Info" %}</div>
+            </div>
+            <div class="log-stat-card log-stat-warning">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-value" id="stat-warning">{{ stats.global.WARNING|default:0 }}</div>
+                <div class="stat-label">{% trans "Warnings" %}</div>
+            </div>
+            <div class="log-stat-card log-stat-error">
+                <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                <div class="stat-value" id="stat-error">{{ stats.global.ERROR|default:0 }}</div>
+                <div class="stat-label">{% trans "Errors" %}</div>
+            </div>
+            <div class="log-stat-card log-stat-critical">
+                <div class="stat-icon"><i class="fas fa-skull-crossbones"></i></div>
+                <div class="stat-value" id="stat-critical">{{ stats.global.CRITICAL|default:0 }}</div>
+                <div class="stat-label">{% trans "Critical" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container Status Bar -->
+    <div class="container-status-bar">
+        <h3><i class="fas fa-docker"></i> {% trans "Containers" %}</h3>
+        <div class="container-badges" id="container-badges">
+            {% for container in containers %}
+            <button class="container-badge {% if container.running %}running{% elif container.status == 'unknown' or container.status == 'not_found' or container.status == 'error' %}unknown{% else %}stopped{% endif %}"
+                    data-container="{{ container.name }}"
+                    title="{{ container.display_name }} - {% if container.running %}{% trans 'Running' %}{% elif container.status == 'unknown' or container.status == 'not_found' %}{% trans 'Unknown' %}{% else %}{% trans 'Stopped' %}{% endif %}">
+                <span class="status-dot"></span>
+                <span class="container-name">{{ container.display_name }}</span>
+            </button>
+            {% empty %}
+            <span class="no-containers">{% trans "No containers detected" %}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="log-filters-panel">
+        <div class="filters-row">
+            <div class="filter-group">
+                <label for="filter-container">{% trans "Container" %}</label>
+                <select id="filter-container" class="filter-select">
+                    <option value="">{% trans "All Containers" %}</option>
+                    {% for value, label in container_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-level">{% trans "Level" %}</label>
+                <select id="filter-level" class="filter-select">
+                    <option value="">{% trans "All Levels" %}</option>
+                    {% for value, label in level_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group filter-search">
+                <label for="filter-search">{% trans "Search" %}</label>
+                <input type="text" id="filter-search" class="filter-input" placeholder="{% trans 'Search logs...' %}">
+            </div>
+            <div class="filter-group">
+                <label for="filter-source">{% trans "Source" %}</label>
+                <select id="filter-source" class="filter-select">
+                    <option value="redis">{% trans "Recent (Redis)" %}</option>
+                    <option value="db">{% trans "Archived (Database)" %}</option>
+                </select>
+            </div>
+        </div>
+        <div class="filters-actions">
+            <label class="auto-refresh-toggle">
+                <input type="checkbox" id="auto-refresh" checked>
+                <span>{% trans "Auto-refresh" %}</span>
+                <span class="refresh-interval">({{ settings.auto_refresh_interval }}s)</span>
+            </label>
+            <button type="button" class="btn-refresh" id="btn-refresh" title="{% trans 'Refresh logs' %}">
+                <i class="fas fa-sync-alt"></i>
+                {% trans "Refresh" %}
+            </button>
+            <button type="button" class="btn-clear" id="btn-clear" title="{% trans 'Clear filters' %}">
+                <i class="fas fa-times"></i>
+                {% trans "Clear" %}
+            </button>
+            <div class="export-dropdown" id="export-dropdown">
+                <button type="button" class="btn-export" id="btn-export" title="{% trans 'Export logs' %}">
+                    <i class="fas fa-download"></i>
+                    {% trans "Export" %}
+                    <i class="fas fa-caret-down export-caret"></i>
+                </button>
+                <div class="export-dropdown-menu mgmt-hidden" id="export-menu">
+                    <button type="button" class="export-option" data-format="csv">
+                        <i class="fas fa-file-csv"></i>
+                        {% trans "Export as CSV" %}
+                    </button>
+                    <button type="button" class="export-option" data-format="json">
+                        <i class="fas fa-file-code"></i>
+                        {% trans "Export as JSON" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Entries Container -->
+    <div class="log-entries-container">
+        <div class="log-entries-header">
+            <span class="col-timestamp">{% trans "Timestamp" %}</span>
+            <span class="col-container">{% trans "Container" %}</span>
+            <span class="col-level">{% trans "Level" %}</span>
+            <span class="col-message">{% trans "Message" %}</span>
+        </div>
+        <div class="log-entries-list" id="log-entries">
+            <div class="log-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                {% trans "Loading logs..." %}
+            </div>
+        </div>
+        <div class="log-entries-footer">
+            <div class="log-count">
+                <span id="log-count">0</span> {% trans "entries" %}
+                <span id="log-source-info"></span>
+            </div>
+            <button type="button" class="btn-load-more mgmt-hidden" id="btn-load-more">
+                <i class="fas fa-arrow-down"></i>
+                {% trans "Load More" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Settings link -->
+<div class="log-viewer-settings">
+    <a href="{% url 'admin:management_logviewersettings_changelist' %}" class="settings-link">
+        <i class="fas fa-cog"></i>
+        {% trans "Configure Log Viewer Settings" %}
+    </a>
+</div>
+
+<!-- Log Viewer Configuration -->
+<script type="application/json" id="log-viewer-config">
+{
+    "logsApiUrl": "{% url 'admin:management_logentry_logs_api' %}",
+    "statsApiUrl": "{% url 'admin:management_logentry_stats_api' %}",
+    "containersApiUrl": "{% url 'admin:management_logentry_containers_api' %}",
+    "exportApiUrl": "{% url 'admin:management_logentry_export_api' %}",
+    "refreshInterval": {{ refresh_interval_ms|default:5000 }},
+    "pageSize": {{ settings.default_page_size|default:50 }}
+}
+</script>
+<script src="{% static 'management/js/log-viewer.js' %}" defer></script>
+{% endblock %}

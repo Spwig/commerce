@@ -1,0 +1,129 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Media Assets" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-photo-video"></i>
+                {% trans "Media Assets" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage images, videos, and media files" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:media_library_mediaasset_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Upload Media" %}
+            </a>
+        </div>
+    </div>
+
+    {{ thumbnail_regen_note|safe }}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by title, description, or tags...' %}"
+                    value="">
+            </div>
+
+            <!-- MIME Type -->
+            <div class="filter-field">
+                <label for="filter-mime-type">
+                    <i class="fas fa-file-alt"></i> {% trans "File Type" %}
+                </label>
+                <select id="filter-mime-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for mime_value, mime_label in mime_types %}
+                    <option value="{{ mime_value }}">{{ mime_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Folder -->
+            <div class="filter-field">
+                <label for="filter-folder">
+                    <i class="fas fa-folder"></i> {% trans "Folder" %}
+                </label>
+                <select id="filter-folder">
+                    <option value="">{% trans "All Folders" %}</option>
+                    <option value="none">{% trans "No Folder" %}</option>
+                    {% for folder in folders %}
+                    <option value="{{ folder.id }}">{{ folder.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Visibility -->
+            <div class="filter-field">
+                <label for="filter-is-public">
+                    <i class="fas fa-eye"></i> {% trans "Visibility" %}
+                </label>
+                <select id="filter-is-public">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Public" %}</option>
+                    <option value="false">{% trans "Private" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Media Assets" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-photo-video"></i>
+            <span id="asset-count">{{ cl.result_count }}</span> {% trans "asset" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="asset-results">
+        {% include "admin/media_library/mediaasset/partials/asset_cards.html" with assets=cl.result_list %}
+    </div>
+
+    <div id="list-filter-config"
+     data-filter-url="{% url 'media_library_admin:mediaasset_filter' %}"
+     data-results-container="asset-results"
+     data-results-count="asset-count"
+     style="display:none;"></div>
+</div>
+{% endblock %}

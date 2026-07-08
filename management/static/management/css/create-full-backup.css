@@ -1,0 +1,346 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+/* Create Full Backup Styles */
+
+.backup-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.backup-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.backup-header h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--body-fg);
+}
+
+.backup-header h1 i {
+    color: var(--primary);
+}
+
+.backup-form {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.form-section h3 {
+    margin: 0 0 1rem 0;
+    color: var(--body-fg);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-section h3 i {
+    color: var(--primary);
+}
+
+.backup-type-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.backup-type-card {
+    position: relative;
+    padding: 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.backup-type-card:hover {
+    border-color: var(--primary);
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.backup-type-card.selected {
+    border-color: var(--primary);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.backup-type-card input {
+    position: absolute;
+    opacity: 0;
+}
+
+.backup-type-card .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    background: var(--darkened-bg);
+}
+
+.backup-type-card .card-icon i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.backup-type-card .card-title {
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 0.25rem;
+}
+
+.backup-type-card .card-desc {
+    font-size: 0.85rem;
+    color: var(--quiet-fg);
+}
+
+.backup-type-card .check-mark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+
+.backup-type-card.selected .check-mark {
+    display: flex;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 1rem;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--body-fg);
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--body-bg);
+    color: var(--body-fg);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group .help-text {
+    font-size: 0.8rem;
+    color: var(--quiet-fg);
+}
+
+.toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 1rem;
+    background: var(--darkened-bg);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.toggle-group:last-child {
+    margin-bottom: 0;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--quiet-fg);
+    transition: 0.3s;
+    border-radius: 26px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--success-fg);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+.toggle-label {
+    font-weight: 500;
+    color: var(--body-fg);
+}
+
+.toggle-desc {
+    font-size: 0.85rem;
+    color: var(--quiet-fg);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.action-buttons .button {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+}
+
+.action-buttons .button.primary {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+}
+
+.action-buttons .button.primary:hover {
+    background: var(--primary-dark, #5a67d8);
+}
+
+/* Progress section */
+.backup-progress {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: none;
+}
+
+.backup-progress.active {
+    display: block;
+}
+
+.backup-progress h3 {
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.backup-progress h3 i {
+    color: var(--primary);
+}
+
+.progress-bar-wrapper {
+    margin-bottom: 1rem;
+}
+
+.progress-bar-container {
+    height: 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--success-fg));
+    border-radius: 6px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.progress-percent {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.progress-step {
+    color: var(--quiet-fg);
+}
+
+.disk-info {
+    background: var(--darkened-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.disk-info-item {
+    text-align: center;
+}
+
+.disk-info-item .value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.disk-info-item .label {
+    font-size: 0.8rem;
+    color: var(--quiet-fg);
+}

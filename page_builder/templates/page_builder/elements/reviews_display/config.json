@@ -1,0 +1,375 @@
+{
+  "element_type": "reviews_display",
+  "name": "Reviews Display",
+  "version": "1.1.0",
+  "category": "ecommerce",
+  "icon": "fas fa-star-half-alt",
+  "description": "Display product reviews for social proof",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/reviews-display.css"],
+  "scripts": [
+    "/static/page_builder/js/elements/reviews-display.js"
+  ],
+  "tabs": {
+    "content": {
+      "label": "Content",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "source_group": {
+          "type": "property_group",
+          "label": "Review Source",
+          "columns": 1,
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "default": "dynamic",
+              "options": [
+                {"value": "dynamic", "label": "Live from store"},
+                {"value": "static", "label": "Manual content"}
+              ]
+            },
+            "source_type": {
+              "type": "select",
+              "label": "Review Source",
+              "default": "recent",
+              "options": [
+                {"value": "recent", "label": "Recent Reviews"},
+                {"value": "product", "label": "Specific Product"},
+                {"value": "featured", "label": "Featured Reviews"},
+                {"value": "highest_rated", "label": "Highest Rated"}
+              ],
+              "show_if": {"data_source": "dynamic"}
+            },
+            "product_id": {
+              "type": "number",
+              "label": "Product ID",
+              "default": null,
+              "show_if": {"source_type": "product"}
+            }
+          }
+        },
+        "filter_group": {
+          "type": "property_group",
+          "label": "Filters",
+          "show_if": {"data_source": "dynamic"},
+          "properties": {
+            "min_rating": {
+              "type": "select",
+              "label": "Minimum Rating",
+              "default": "1",
+              "options": [
+                {"value": "1", "label": "1 Star & Up"},
+                {"value": "2", "label": "2 Stars & Up"},
+                {"value": "3", "label": "3 Stars & Up"},
+                {"value": "4", "label": "4 Stars & Up"},
+                {"value": "5", "label": "5 Stars Only"}
+              ]
+            },
+            "max_reviews": {
+              "type": "number",
+              "label": "Maximum Reviews",
+              "default": 6,
+              "min": 1,
+              "max": 24
+            },
+            "show_verified_only": {
+              "type": "boolean",
+              "label": "Verified Purchases Only",
+              "default": false
+            }
+          }
+        },
+        "write_review_group": {
+          "type": "property_group",
+          "label": "Write a Review",
+          "show_if": {"data_source": "dynamic"},
+          "properties": {
+            "show_write_review": {
+              "type": "boolean",
+              "label": "Show Write Review Button",
+              "default": false
+            },
+            "write_review_text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "Write a Review",
+              "translatable": true,
+              "show_if": {"show_write_review": true}
+            },
+            "write_review_login_text": {
+              "type": "string",
+              "label": "Login Required Text",
+              "default": "Please sign in to write a review",
+              "translatable": true,
+              "show_if": {"show_write_review": true}
+            }
+          }
+        },
+        "static_reviews_group": {
+          "type": "property_group",
+          "label": "Static Reviews",
+          "columns": 1,
+          "show_if": {"data_source": "static"},
+          "properties": {
+            "reviews": {
+              "type": "array",
+              "label": "Static Reviews",
+              "full_width": true,
+              "item_type": "object",
+              "item_properties": {
+                "author": {"type": "string", "label": "Author Name"},
+                "rating": {"type": "number", "label": "Rating (1-5)", "min": 1, "max": 5},
+                "title": {"type": "string", "label": "Review Title"},
+                "content": {"type": "textarea", "label": "Review Content"},
+                "date": {"type": "string", "label": "Date"},
+                "verified": {"type": "boolean", "label": "Verified Purchase"},
+                "image": {"type": "image", "label": "Review Image"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-eye",
+      "order": 2,
+      "properties": {
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout",
+          "properties": {
+            "layout": {
+              "type": "select",
+              "label": "Layout",
+              "default": "grid",
+              "options": [
+                {"value": "grid", "label": "Grid"},
+                {"value": "carousel", "label": "Carousel"},
+                {"value": "masonry", "label": "Masonry"},
+                {"value": "list", "label": "List"}
+              ]
+            },
+            "columns": {
+              "type": "select",
+              "label": "Columns",
+              "default": "3",
+              "options": [
+                {"value": "2", "label": "2 Columns"},
+                {"value": "3", "label": "3 Columns"},
+                {"value": "4", "label": "4 Columns"}
+              ],
+              "show_if": {"layout": ["grid", "masonry", "carousel"]}
+            },
+            "show_carousel_arrows": {
+              "type": "boolean",
+              "label": "Show Navigation Arrows",
+              "default": true,
+              "show_if": {"layout": "carousel"}
+            },
+            "show_carousel_dots": {
+              "type": "boolean",
+              "label": "Show Dot Indicators",
+              "default": true,
+              "show_if": {"layout": "carousel"}
+            },
+            "carousel_autoplay": {
+              "type": "boolean",
+              "label": "Auto-play",
+              "default": false,
+              "show_if": {"layout": "carousel"}
+            },
+            "carousel_interval": {
+              "type": "number",
+              "label": "Auto-play Interval (seconds)",
+              "default": 5,
+              "min": 2,
+              "max": 15,
+              "show_if": {"carousel_autoplay": true}
+            }
+          }
+        },
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Show/Hide Elements",
+          "properties": {
+            "show_rating": {
+              "type": "boolean",
+              "label": "Show Star Rating",
+              "default": true
+            },
+            "show_date": {
+              "type": "boolean",
+              "label": "Show Review Date",
+              "default": true
+            },
+            "show_verified_badge": {
+              "type": "boolean",
+              "label": "Show Verified Badge",
+              "default": true
+            },
+            "show_images": {
+              "type": "boolean",
+              "label": "Show Review Images",
+              "default": true
+            },
+            "show_helpful_votes": {
+              "type": "boolean",
+              "label": "Show Helpful Votes",
+              "default": false
+            },
+            "show_avatar": {
+              "type": "boolean",
+              "label": "Show Author Avatar",
+              "default": true
+            },
+            "show_product_name": {
+              "type": "boolean",
+              "label": "Show Product Name",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "label": "Summary",
+      "icon": "fas fa-chart-bar",
+      "order": 3,
+      "properties": {
+        "summary_group": {
+          "type": "property_group",
+          "label": "Rating Summary",
+          "properties": {
+            "show_summary": {
+              "type": "boolean",
+              "label": "Show Rating Summary",
+              "default": true
+            },
+            "summary_position": {
+              "type": "select",
+              "label": "Summary Position",
+              "default": "top",
+              "options": [
+                {"value": "top", "label": "Above Reviews"},
+                {"value": "left", "label": "Left Side"},
+                {"value": "none", "label": "Hidden"}
+              ],
+              "show_if": {"show_summary": true}
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "label": "Appearance",
+      "icon": "fas fa-palette",
+      "order": 4,
+      "properties": {
+        "style_group": {
+          "type": "property_group",
+          "label": "Card Style",
+          "columns": 1,
+          "properties": {
+            "card_style": {
+              "type": "select",
+              "label": "Card Style",
+              "default": "default",
+              "options": [
+                {"value": "default", "label": "Default"},
+                {"value": "bordered", "label": "Bordered"},
+                {"value": "elevated", "label": "Elevated"},
+                {"value": "minimal", "label": "Minimal"}
+              ]
+            }
+          }
+        },
+        "colors_group": {
+          "type": "property_group",
+          "label": "Colors",
+          "properties": {
+            "star_color": {
+              "type": "color",
+              "label": "Star Color",
+              "default": "#f59e0b"
+            },
+            "verified_color": {
+              "type": "color",
+              "label": "Verified Badge Color",
+              "default": "#10b981"
+            }
+          }
+        }
+      }
+    },
+    "header": {
+      "label": "Header",
+      "icon": "fas fa-heading",
+      "order": 5,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Customer Reviews",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "string",
+              "label": "Section Subtitle",
+              "default": "",
+              "translatable": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "data_source": {"type": "select", "label": "Data Source", "default": "dynamic"},
+    "source_type": {"type": "select", "label": "Review Source", "default": "recent"},
+    "product_id": {"type": "number", "label": "Product ID", "default": null},
+    "min_rating": {"type": "select", "label": "Minimum Rating", "default": "1"},
+    "max_reviews": {"type": "number", "label": "Maximum Reviews", "default": 6, "min": 1, "max": 24},
+    "show_verified_only": {"type": "boolean", "label": "Verified Purchases Only", "default": false},
+    "show_write_review": {"type": "boolean", "label": "Show Write Review Button", "default": false},
+    "write_review_text": {"type": "string", "label": "Button Text", "default": "Write a Review", "translatable": true},
+    "write_review_login_text": {"type": "string", "label": "Login Required Text", "default": "Please sign in to write a review", "translatable": true},
+    "reviews": {"type": "array", "label": "Static Reviews", "item_type": "object"},
+    "layout": {"type": "select", "label": "Layout", "default": "grid"},
+    "columns": {"type": "select", "label": "Columns", "default": "3"},
+    "show_carousel_arrows": {"type": "boolean", "label": "Show Navigation Arrows", "default": true},
+    "show_carousel_dots": {"type": "boolean", "label": "Show Dot Indicators", "default": true},
+    "carousel_autoplay": {"type": "boolean", "label": "Auto-play", "default": false},
+    "carousel_interval": {"type": "number", "label": "Auto-play Interval (seconds)", "default": 5, "min": 2, "max": 15},
+    "show_rating": {"type": "boolean", "label": "Show Star Rating", "default": true},
+    "show_date": {"type": "boolean", "label": "Show Review Date", "default": true},
+    "show_verified_badge": {"type": "boolean", "label": "Show Verified Badge", "default": true},
+    "show_images": {"type": "boolean", "label": "Show Review Images", "default": true},
+    "show_helpful_votes": {"type": "boolean", "label": "Show Helpful Votes", "default": false},
+    "show_avatar": {"type": "boolean", "label": "Show Author Avatar", "default": true},
+    "show_product_name": {"type": "boolean", "label": "Show Product Name", "default": false},
+    "show_summary": {"type": "boolean", "label": "Show Rating Summary", "default": true},
+    "summary_position": {"type": "select", "label": "Summary Position", "default": "top"},
+    "card_style": {"type": "select", "label": "Card Style", "default": "default"},
+    "star_color": {"type": "color", "label": "Star Color", "default": "#f59e0b"},
+    "verified_color": {"type": "color", "label": "Verified Badge Color", "default": "#10b981"},
+    "title": {"type": "string", "label": "Section Title", "default": "Customer Reviews", "translatable": true},
+    "subtitle": {"type": "string", "label": "Section Subtitle", "default": "", "translatable": true}
+  },
+  "translations": {
+    "en": {"name": "Reviews Display", "description": "Display product reviews for social proof"},
+    "es": {"name": "Mostrar Reseñas", "description": "Mostrar reseñas de productos para prueba social"},
+    "fr": {"name": "Affichage des Avis", "description": "Afficher les avis produits pour la preuve sociale"},
+    "de": {"name": "Bewertungsanzeige", "description": "Produktbewertungen für sozialen Beweis anzeigen"},
+    "pt": {"name": "Exibição de Avaliações", "description": "Exibir avaliações de produtos para prova social"},
+    "zh-hans": {"name": "评价展示", "description": "展示产品评价以增加社会认同"},
+    "ja": {"name": "レビュー表示", "description": "社会的証明のための製品レビューを表示"}
+  }
+}

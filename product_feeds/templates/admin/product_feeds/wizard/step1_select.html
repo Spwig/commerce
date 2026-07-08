@@ -1,0 +1,110 @@
+{% extends "admin/product_feeds/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Select a Product Feed Provider" %}</h2>
+    <p class="step-description">{% trans "Choose the product feed provider you want to connect to your store." %}</p>
+
+    {% if providers %}
+    <form method="post" id="provider-select-form">
+        {% csrf_token %}
+
+        <div class="providers-grid">
+            {% for provider in providers %}
+            <label class="provider-card" for="provider-{{ provider.component.id }}">
+                <input type="radio"
+                       name="component_id"
+                       value="{{ provider.component.id }}"
+                       id="provider-{{ provider.component.id }}"
+                       required>
+
+                <div class="provider-card-content">
+                    {% if provider.component.thumbnail_url %}
+                    <div class="provider-logo">
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.component.thumbnail_url }}" alt="{{ provider.component.name }}" crossorigin="anonymous">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="provider-logo provider-logo-placeholder">
+                        <i class="fas fa-rss"></i>
+                    </div>
+                    {% endif %}
+
+                    <h3 class="provider-name">{{ provider.component.name }}</h3>
+
+                    {% if provider.component.description %}
+                    <p class="provider-description">{{ provider.component.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    <!-- Capability Badges -->
+                    {% if provider.capabilities %}
+                    <div class="provider-capabilities">
+                        {% if provider.capabilities.xml_feed %}
+                        <span class="capability-badge">
+                            <i class="fas fa-code"></i> {% trans "XML" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.csv_feed %}
+                        <span class="capability-badge">
+                            <i class="fas fa-file-csv"></i> {% trans "CSV" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.json_feed %}
+                        <span class="capability-badge">
+                            <i class="fas fa-brackets-curly"></i> {% trans "JSON" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.api_push %}
+                        <span class="capability-badge">
+                            <i class="fas fa-upload"></i> {% trans "API Push" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.realtime_updates %}
+                        <span class="capability-badge">
+                            <i class="fas fa-bolt"></i> {% trans "Real-time" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.inventory_sync %}
+                        <span class="capability-badge">
+                            <i class="fas fa-boxes"></i> {% trans "Inventory" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="provider-check">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>{% trans "No Providers Available" %}</h3>
+        <p>{% trans "No product feed provider components are currently installed." %}</p>
+        <p>{% trans "Please download and install product feed provider components from the component registry." %}</p>
+        <a href="{% url 'product_feeds:provider_browse' %}" class="btn btn-primary">
+            <i class="fas fa-download"></i> {% trans "Browse Providers" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+{% if providers %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:product_feeds_feedprovideraccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="provider-select-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

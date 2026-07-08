@@ -1,0 +1,298 @@
+{% extends "admin/migration/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-eye"></i>
+        {% trans "Preview Import Data" %}
+    </h3>
+    <p>{% trans "Review what will be imported from your" %} {{ job.get_platform_display }} {% trans "store. You can select which data types to import." %}</p>
+</div>
+
+<!-- Summary Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ preview.products_count|default:0 }}</div>
+        <div class="stat-label">{% trans "Products" %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ preview.categories_count|default:0 }}</div>
+        <div class="stat-label">{% if job.platform == 'shopify' %}{% trans "Collections" %}{% else %}{% trans "Categories" %}{% endif %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ preview.customers_count|default:0 }}</div>
+        <div class="stat-label">{% trans "Customers" %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ preview.orders_count|default:0 }}</div>
+        <div class="stat-label">{% trans "Orders" %}</div>
+    </div>
+    {% if job.platform != 'shopify' %}
+    <div class="stat-card">
+        <div class="stat-number">{{ preview.reviews_count|default:0 }}</div>
+        <div class="stat-label">{% trans "Reviews" %}</div>
+    </div>
+    {% endif %}
+    <div class="stat-card">
+        <div class="stat-number">{{ preview.coupons_count|default:0 }}</div>
+        <div class="stat-label">{% if job.platform == 'shopify' %}{% trans "Discounts" %}{% else %}{% trans "Coupons" %}{% endif %}</div>
+    </div>
+    {% if preview.blog_posts_count %}
+    <div class="stat-card">
+        <div class="stat-number">{{ preview.blog_posts_count|default:0 }}</div>
+        <div class="stat-label">{% trans "Blog Posts" %}</div>
+    </div>
+    {% endif %}
+    {% if preview.bridge_available and preview.affiliates_count %}
+    <div class="stat-card stat-card-affiliate">
+        <div class="stat-number">{{ preview.affiliates_count|default:0 }}</div>
+        <div class="stat-label">{% trans "Affiliates" %}</div>
+    </div>
+    {% endif %}
+</div>
+
+<form method="post" action="{% url 'admin:migration_wizard_step3' job.id %}" id="preview-form">
+    {% csrf_token %}
+
+    <!-- Data Selection -->
+    <div class="content-box">
+        <h3><i class="fas fa-check-square"></i> {% trans "Select Data to Import" %}</h3>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_categories" {% if preview.categories_count > 0 %}checked{% endif %} {% if preview.categories_count == 0 %}disabled{% endif %}>
+                <strong>{% if job.platform == 'shopify' %}{% trans "Collections" %}{% else %}{% trans "Categories" %}{% endif %}</strong>
+                ({{ preview.categories_count|default:0 }} {% trans "found" %})
+            </label>
+            <div class="help">{% if job.platform == 'shopify' %}{% trans "Import collections as product categories" %}{% else %}{% trans "Import product categories and their hierarchy" %}{% endif %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_products" {% if preview.products_count > 0 %}checked{% endif %} {% if preview.products_count == 0 %}disabled{% endif %}>
+                <strong>{% trans "Products" %}</strong>
+                ({{ preview.products_count|default:0 }} {% trans "found" %})
+            </label>
+            <div class="help">{% trans "Import products with images, variants, and attributes" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_customers" {% if preview.customers_count > 0 %}checked{% endif %} {% if preview.customers_count == 0 %}disabled{% endif %}>
+                <strong>{% trans "Customers" %}</strong>
+                ({{ preview.customers_count|default:0 }} {% trans "found" %})
+            </label>
+            <div class="help">{% trans "Import customer accounts and addresses" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_orders" {% if preview.orders_count > 0 %}checked{% endif %} {% if preview.orders_count == 0 %}disabled{% endif %}>
+                <strong>{% trans "Orders" %}</strong>
+                ({{ preview.orders_count|default:0 }} {% trans "found" %})
+            </label>
+            <div class="help">{% trans "Import order history and transactions" %}</div>
+        </div>
+
+        {% if job.platform != 'shopify' %}
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_reviews" {% if preview.reviews_count > 0 %}checked{% endif %} {% if preview.reviews_count == 0 %}disabled{% endif %}>
+                <strong>{% trans "Reviews" %}</strong>
+                ({{ preview.reviews_count|default:0 }} {% trans "found" %})
+            </label>
+            <div class="help">{% trans "Import product reviews and ratings" %}</div>
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_coupons" {% if preview.coupons_count > 0 %}checked{% endif %} {% if preview.coupons_count == 0 %}disabled{% endif %}>
+                <strong>{% if job.platform == 'shopify' %}{% trans "Discounts" %}{% else %}{% trans "Coupons" %}{% endif %}</strong>
+                ({{ preview.coupons_count|default:0 }} {% trans "found" %})
+            </label>
+            <div class="help">{% if job.platform == 'shopify' %}{% trans "Import discount codes and price rules" %}{% else %}{% trans "Import discount coupons and vouchers" %}{% endif %}</div>
+        </div>
+
+        {% if preview.blog_posts_count %}
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_blog" checked>
+                <strong>{% trans "Blog Posts" %}</strong>
+                ({{ preview.blog_posts_count|default:0 }} {% trans "posts" %}{% if preview.blog_categories_count %}, {{ preview.blog_categories_count }} {% trans "categories" %}{% endif %}{% if preview.blog_tags_count %}, {{ preview.blog_tags_count }} {% trans "tags" %}{% endif %})
+            </label>
+            <div class="help">{% trans "Import blog posts with categories, tags, featured images, and content images" %}</div>
+        </div>
+        {% endif %}
+
+        {% if job.platform == 'woocommerce' %}
+        {% if preview.bridge_available %}
+        <!-- Affiliate Data (Bridge Plugin Detected) -->
+        <div class="affiliate-section-divider">
+            <div class="affiliate-section-header">
+                <i class="fas fa-user-friends"></i>
+                <strong>{% trans "Affiliate Program Data" %}</strong>
+                <span class="affiliate-plugin-badge">{{ preview.bridge_plugin_name }}</span>
+            </div>
+            <div class="form-row">
+                <label>
+                    <input type="checkbox" name="import_affiliates" {% if preview.affiliates_count > 0 %}checked{% endif %} {% if preview.affiliates_count == 0 %}disabled{% endif %}>
+                    <strong>{% trans "Affiliates" %}</strong>
+                    ({{ preview.affiliates_count|default:0 }} {% trans "affiliates" %}{% if preview.commissions_count %}, {{ preview.commissions_count }} {% trans "commissions" %}{% endif %}{% if preview.payouts_count %}, {{ preview.payouts_count }} {% trans "payouts" %}{% endif %}{% if preview.plans_count %}, {{ preview.plans_count }} {% trans "plans" %}{% endif %})
+                </label>
+                <div class="help">{% trans "Import affiliate profiles, commission records, and payout history. Requires orders and customers to be imported first." %}</div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Affiliate Bridge Plugin Not Detected -->
+        <div class="bridge-install-box">
+            <div class="bridge-install-box-inner">
+                <i class="fas fa-plug bridge-install-icon"></i>
+                <div>
+                    <strong class="bridge-install-title">{% trans "Affiliate Data Available" %}</strong>
+                    <p class="bridge-install-description">{% trans "To import your affiliate program data (affiliates, commissions, payouts), install the Spwig Migration Bridge plugin on your WordPress site:" %}</p>
+                    <ol class="bridge-install-steps">
+                        <li>{% trans "Download the plugin ZIP using the button below" %}</li>
+                        <li>{% trans "Go to your WordPress admin → Plugins → Add New → Upload Plugin" %}</li>
+                        <li>{% trans "Upload and activate the plugin" %}</li>
+                        <li>{% trans "Return here and refresh this page — the affiliate data will appear automatically" %}</li>
+                    </ol>
+                    <a href="{% url 'admin:migration_download_bridge_plugin' %}" class="bridge-download-btn">
+                        <i class="fas fa-download"></i>
+                        {% trans "Download Bridge Plugin" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Sample Data Preview -->
+    {% if preview.sample_products %}
+    <div class="content-box">
+        <h3><i class="fas fa-box"></i> {% trans "Sample Products" %}</h3>
+        <p>{% trans "Here are a few example products that will be imported:" %}</p>
+
+        <table class="sample-products-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "SKU" %}</th>
+                    <th class="text-right">{% trans "Price" %}</th>
+                    <th class="text-center">{% trans "Status" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in preview.sample_products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td class="monospace">{{ product.sku|default:"—" }}</td>
+                    <td class="text-right">{{ product.price }}</td>
+                    <td class="text-center">
+                        {% if product.status == 'publish' or product.status == 'active' %}
+                        <span class="status-active">{% trans "Active" %}</span>
+                        {% elif product.status == 'archived' %}
+                        <span class="status-draft">{% trans "Archived" %}</span>
+                        {% else %}
+                        <span class="status-draft">{% trans "Draft" %}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Import Options -->
+    <div class="content-box">
+        <h3><i class="fas fa-cog"></i> {% trans "Import Options" %}</h3>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="skip_existing" checked>
+                {% trans "Skip existing items" %}
+            </label>
+            <div class="help">{% trans "Don't import items that already exist (matched by SKU, email, etc.)" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_images" checked>
+                {% trans "Import product images" %}
+            </label>
+            <div class="help">{% trans "Download and import product images (may increase import time)" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="preserve_ids">
+                {% trans "Preserve original IDs where possible" %}
+            </label>
+            <div class="help">{% trans "Attempt to keep original IDs for products and orders (not recommended)" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label for="batch_size">{% trans "Batch size" %}</label>
+            <select name="batch_size" id="batch_size">
+                <option value="10">10 {% trans "items per batch" %}</option>
+                <option value="25" selected>25 {% trans "items per batch" %}</option>
+                <option value="50">50 {% trans "items per batch" %}</option>
+                <option value="100">100 {% trans "items per batch" %}</option>
+            </select>
+            <div class="help">{% trans "Larger batches are faster but use more memory" %}</div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+            <strong>{% trans "Data Safety" %}</strong>
+            <p>{% trans "All data will be imported within a database transaction. If anything goes wrong, the entire import will be rolled back automatically. You'll also have 24 hours to manually rollback if needed." %}</p>
+        </div>
+    </div>
+
+    <div class="wizard-nav">
+        <a href="{% url 'admin:migration_wizard_step2' job.id %}" class="button secondary">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back" %}
+        </a>
+        <button type="submit" class="button primary" id="submit-button">
+            {% trans "Next: Configure Mapping" %}
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <!-- Loading Indicator (hidden by default via CSS class) -->
+    <div id="loading-indicator" class="loading-indicator">
+        <div class="info-box loading-info-box">
+            <i class="fas fa-spinner fa-spin"></i>
+            <div>
+                <strong>{% trans "Generating Field Mappings..." %}</strong>
+                <p id="loading-message">{% trans "Analyzing your data and creating field mappings. This may take a moment..." %}</p>
+                <div class="loading-progress-wrapper">
+                    <div class="loading-progress-track">
+                        <div id="progress-bar" class="loading-progress-bar"></div>
+                    </div>
+                    <div id="progress-text" class="loading-progress-text">{% trans "Preparing..." %}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="application/json" id="step3-data">
+{
+    "translations": {
+        "selectAtLeastOne": "{% trans 'Please select at least one data type to import.' %}",
+        "processing": "{% trans 'Processing...' %}",
+        "fetchingSampleData": "{% trans 'Fetching sample data...' %}",
+        "detectingCustomFields": "{% trans 'Detecting custom fields...' %}",
+        "creatingMappings": "{% trans 'Creating field mappings...' %}"
+    }
+}
+</script>
+<script src="{% static 'migration/js/wizard_step3.js' %}"></script>
+{% endblock %}

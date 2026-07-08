@@ -1,0 +1,122 @@
+{% extends "admin/pos_app/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_header %}
+<h1>
+    <div class="wizard-icon-large success">
+        <i class="fas fa-cog"></i>
+    </div>
+    {% trans "Configure & Save" %}
+</h1>
+<p class="wizard-subtitle">
+    {% if is_builtin %}
+    {% trans "Configure the manual entry provider for your store." %}
+    {% else %}
+    {% blocktrans with name=provider.name %}Review and finalize your {{ name }} configuration.{% endblocktrans %}
+    {% endif %}
+</p>
+{% endblock %}
+
+{% block wizard_content %}
+<form method="post" id="configure-form">
+    {% csrf_token %}
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-tag"></i> {% trans "Provider Details" %}
+        </h3>
+
+        <div class="form-group">
+            <label for="display_name" class="form-label">
+                {% trans "Display Name" %}
+            </label>
+            <input type="text" name="display_name" id="display_name"
+                   value="{% if is_builtin %}{% trans 'Manual Entry' %}{% else %}{{ display_name }}{% endif %}"
+                   class="form-input">
+            <p class="form-help">{% trans "This name will appear in the admin interface and terminal selection." %}</p>
+        </div>
+    </div>
+
+    {% if settings_schema %}
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-sliders-h"></i> {% trans "Provider Settings" %}
+        </h3>
+
+        {% for field_name, field_config in settings_schema.items %}
+        <div class="form-group">
+            <label for="{{ field_name }}" class="form-label">
+                {{ field_config.label }}
+                {% if field_config.required %}<span class="required">*</span>{% endif %}
+            </label>
+
+            {% if field_config.type == 'boolean' %}
+            <label class="checkbox-label">
+                <input type="checkbox" name="{{ field_name }}" id="{{ field_name }}"
+                       {% if field_config.default %}checked{% endif %}>
+                <span>{{ field_config.help_text }}</span>
+            </label>
+            {% elif field_config.type == 'select' %}
+            <select name="{{ field_name }}" id="{{ field_name }}" class="form-input"
+                    {% if field_config.required %}required{% endif %}>
+                {% for option in field_config.options %}
+                <option value="{{ option.value }}" {% if option.value == field_config.default %}selected{% endif %}>
+                    {{ option.label }}
+                </option>
+                {% endfor %}
+            </select>
+            {% if field_config.help_text %}
+            <p class="form-help">{{ field_config.help_text }}</p>
+            {% endif %}
+            {% else %}
+            <input type="text" name="{{ field_name }}" id="{{ field_name }}"
+                   class="form-input"
+                   placeholder="{{ field_config.placeholder|default:'' }}"
+                   {% if field_config.required %}required{% endif %}>
+            {% if field_config.help_text %}
+            <p class="form-help">{{ field_config.help_text }}</p>
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if is_builtin %}
+    <div class="info-box">
+        <div class="info-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="info-content">
+            <strong>{% trans "About Manual Entry" %}</strong>
+            <p>{% trans "The manual entry provider is for standalone terminals that process cards independently. After each terminal transaction, you'll enter the card details (brand, last 4 digits) manually in the POS app." %}</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="success-box">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="success-content">
+            <strong>{% trans "Ready to Connect" %}</strong>
+            <p>{% blocktrans with name=provider.name %}Your {{ name }} account is verified and ready. Click "Save & Connect" to complete the setup.{% endblocktrans %}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="wizard-actions">
+        {% if is_builtin %}
+        <a href="{% url 'pos_admin:wizard_step1' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        {% else %}
+        <a href="{% url 'pos_admin:wizard_step4' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-check"></i> {% trans "Save & Connect" %}
+        </button>
+    </div>
+</form>
+{% endblock %}

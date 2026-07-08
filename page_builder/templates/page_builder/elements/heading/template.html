@@ -1,0 +1,24 @@
+{% load i18n element_tags merchant_trans %}
+{% if element.content.text %}
+{% with tag=element.content.tag|default:"h2" alignment=element.content.alignment|default:"left" %}
+<{{ tag }}
+   class="pb-heading pb-heading--{{ alignment }}{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+   {% if element.content.anchor %}id="{{ element.content.anchor }}"{% elif element.content.id %}id="{{ element.content.id }}"{% endif %}
+   {% hover_animation_attrs element %}
+   style="
+       {# Typography from utility (font-family, size, weight, spacing, etc.) - overrides CSS defaults #}
+       {% if element.content.typography %}{{ element.content.typography }}{% endif %}
+       {# Text color - direct inline style #}
+       {% if element.content.text_color %}color: {{ element.content.text_color }};{% endif %}
+       {# Base properties (background, border, rounded, box_shadow, opacity, z_index, custom_styles) #}
+       {% base_styles element %}
+   ">
+    {{ element.content.text }}
+</{{ tag }}>
+{% endwith %}
+{% else %}
+{# Default heading content when no text is provided - styled via external CSS #}
+<h2 class="pb-heading pb-heading--left">
+    {% mtrans "Heading Text" %}
+</h2>
+{% endif %}

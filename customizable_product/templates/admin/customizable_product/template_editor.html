@@ -1,0 +1,273 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Template Editor" %} | {{ product.name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'customizable_product/css/design-template-builder.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_changelist' %}">{% trans "Products" %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_change' product.pk %}">{{ product.name }}</a>
+    &rsaquo; <a href="{% url 'customizable_product:design_setup' product.pk %}">{% trans "Design Setup" %}</a>
+    &rsaquo; {% if template %}{% trans "Edit Template" %}{% else %}{% trans "New Template" %}{% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="tmpl-builder" id="tmpl-builder">
+    <!-- Notifications -->
+    <div class="tmpl-builder__notifications" id="tmpl-notifications" aria-live="polite"></div>
+
+    <!-- Top Bar: Template metadata + Save -->
+    <div class="tmpl-builder__topbar">
+        <div class="tmpl-builder__topbar-left">
+            <div class="tmpl-builder__field tmpl-builder__field-name">
+                <label for="tmpl-name">{% trans "Name" %}</label>
+                <input type="text" id="tmpl-name" placeholder="{% trans 'Template name' %}" value="{{ template.name|default:'' }}">
+            </div>
+            <div class="tmpl-builder__field tmpl-builder__field-slug">
+                <label for="tmpl-slug">{% trans "Slug" %}</label>
+                <input type="text" id="tmpl-slug" placeholder="{% trans 'slug' %}" value="{{ template.slug|default:'' }}">
+            </div>
+            <div class="tmpl-builder__field tmpl-builder__field-category">
+                <label for="tmpl-category">{% trans "Category" %}</label>
+                <input type="text" id="tmpl-category" placeholder="{% trans 'e.g. Business' %}" value="{{ template.category|default:'' }}">
+            </div>
+        </div>
+        <div class="tmpl-builder__topbar-right">
+            <a href="{% url 'customizable_product:design_setup' product.pk %}" class="tmpl-builder__btn-secondary" id="btn-back">
+                <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+            </a>
+            <button type="button" class="tmpl-builder__btn-primary" id="btn-save-template">
+                <i class="fas fa-save"></i> {% trans "Save Template" %}
+            </button>
+            <button type="button" class="tmpl-builder__btn-primary" id="btn-save-close">
+                <i class="fas fa-check"></i> {% trans "Save & Close" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Surface Tabs -->
+    <div class="tmpl-builder__surfaces" id="tmpl-surfaces">
+        <!-- Populated by JS -->
+    </div>
+
+    <!-- Main: Panel + Canvas -->
+    <div class="tmpl-builder__main">
+        <!-- Left Panel -->
+        <div class="tmpl-builder__panel" id="tmpl-panel">
+            <!-- Tools -->
+            <div class="tmpl-builder__panel-section" id="section-tools">
+                <h4>{% trans "Add Element" %}</h4>
+                <div class="tmpl-builder__tool-btns">
+                    <button type="button" class="tmpl-builder__tool-btn" id="btn-add-text">
+                        <i class="fas fa-font"></i> {% trans "Text" %}
+                    </button>
+                    <button type="button" class="tmpl-builder__tool-btn" id="btn-add-image">
+                        <i class="fas fa-image"></i> {% trans "Image" %}
+                    </button>
+                    <button type="button" class="tmpl-builder__tool-btn" id="btn-add-clipart">
+                        <i class="fas fa-icons"></i> {% trans "Clipart" %}
+                    </button>
+                    <button type="button" class="tmpl-builder__tool-btn" id="btn-add-rect">
+                        <i class="fas fa-square"></i> {% trans "Rectangle" %}
+                    </button>
+                    <button type="button" class="tmpl-builder__tool-btn" id="btn-add-circle">
+                        <i class="fas fa-circle"></i> {% trans "Circle" %}
+                    </button>
+                </div>
+                <input type="file" id="image-upload-input" accept="image/jpeg,image/png,image/svg+xml,image/webp" style="display:none;">
+            </div>
+
+            <!-- Properties (shown when object selected) -->
+            <div class="tmpl-builder__panel-section" id="section-properties" style="display:none;">
+                <h4>{% trans "Properties" %}</h4>
+                <div id="props-container">
+                    <!-- Text properties -->
+                    <div id="props-text" style="display:none;">
+                        <div class="tmpl-builder__prop-row">
+                            <label for="prop-font-family">{% trans "Font" %}</label>
+                            <select id="prop-font-family">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        <div class="tmpl-builder__prop-inline">
+                            <div>
+                                <label for="prop-font-size">{% trans "Size" %}</label>
+                                <input type="number" id="prop-font-size" value="24" min="8" max="200">
+                            </div>
+                            <div>
+                                <label>{% trans "Color" %}</label>
+                                <input type="color" id="prop-font-color" value="#000000" class="tmpl-builder__prop-color">
+                            </div>
+                        </div>
+                        <div class="tmpl-builder__style-btns">
+                            <button type="button" class="tmpl-builder__style-btn" id="prop-bold" title="{% trans 'Bold' %}">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" class="tmpl-builder__style-btn" id="prop-italic" title="{% trans 'Italic' %}">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" class="tmpl-builder__style-btn" id="prop-align-left" title="{% trans 'Left' %}">
+                                <i class="fas fa-align-left"></i>
+                            </button>
+                            <button type="button" class="tmpl-builder__style-btn" id="prop-align-center" title="{% trans 'Center' %}">
+                                <i class="fas fa-align-center"></i>
+                            </button>
+                            <button type="button" class="tmpl-builder__style-btn" id="prop-align-right" title="{% trans 'Right' %}">
+                                <i class="fas fa-align-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Common properties -->
+                    <div id="props-common">
+                        <div class="tmpl-builder__prop-row">
+                            <label for="prop-opacity">{% trans "Opacity" %}</label>
+                            <input type="range" id="prop-opacity" min="0" max="1" step="0.05" value="1" style="width:100%;">
+                        </div>
+                    </div>
+
+                    <!-- Shape properties -->
+                    <div id="props-shape" style="display:none;">
+                        <div class="tmpl-builder__prop-inline">
+                            <div>
+                                <label>{% trans "Fill" %}</label>
+                                <input type="color" id="prop-fill" value="#cccccc" class="tmpl-builder__prop-color">
+                            </div>
+                            <div>
+                                <label>{% trans "Stroke" %}</label>
+                                <input type="color" id="prop-stroke-color" value="#000000" class="tmpl-builder__prop-color">
+                            </div>
+                            <div>
+                                <label>{% trans "Width" %}</label>
+                                <input type="number" id="prop-stroke-width" value="0" min="0" max="20" step="0.5" style="width:50px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ordering -->
+                    <div id="props-ordering" class="tmpl-builder__style-btns" style="margin-top:8px;">
+                        <button type="button" class="tmpl-builder__style-btn" id="prop-bring-front" title="{% trans 'Bring to Front' %}">
+                            <i class="fas fa-angle-double-up"></i>
+                        </button>
+                        <button type="button" class="tmpl-builder__style-btn" id="prop-bring-forward" title="{% trans 'Bring Forward' %}">
+                            <i class="fas fa-angle-up"></i>
+                        </button>
+                        <button type="button" class="tmpl-builder__style-btn" id="prop-send-backward" title="{% trans 'Send Backward' %}">
+                            <i class="fas fa-angle-down"></i>
+                        </button>
+                        <button type="button" class="tmpl-builder__style-btn" id="prop-send-back" title="{% trans 'Send to Back' %}">
+                            <i class="fas fa-angle-double-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lock Controls (shown when object selected) -->
+            <div class="tmpl-builder__panel-section" id="section-locks" style="display:none;">
+                <h4>{% trans "Lock Controls" %}</h4>
+                <p style="font-size:0.75rem;color:var(--body-quiet-color,#999);margin:0 0 6px;">
+                    {% trans "Prevent customers from modifying this element." %}
+                </p>
+                <div class="tmpl-builder__locks">
+                    <label class="tmpl-builder__lock-row">
+                        <input type="checkbox" id="lock-position"> {% trans "Lock Position" %}
+                    </label>
+                    <label class="tmpl-builder__lock-row">
+                        <input type="checkbox" id="lock-size"> {% trans "Lock Size" %}
+                    </label>
+                    <label class="tmpl-builder__lock-row">
+                        <input type="checkbox" id="lock-rotation"> {% trans "Lock Rotation" %}
+                    </label>
+                    <label class="tmpl-builder__lock-row">
+                        <input type="checkbox" id="lock-content"> {% trans "Lock Content" %}
+                    </label>
+                    <label class="tmpl-builder__lock-row">
+                        <input type="checkbox" id="lock-delete"> {% trans "Lock Delete" %}
+                    </label>
+                </div>
+            </div>
+
+            <!-- Layers -->
+            <div class="tmpl-builder__panel-section" id="section-layers">
+                <h4>{% trans "Layers" %}</h4>
+                <div class="tmpl-builder__layers-list" id="layers-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="tmpl-builder__canvas-area">
+            <div class="tmpl-builder__canvas-viewport" id="tmpl-viewport">
+                <div class="tmpl-builder__mockup-container" id="tmpl-mockup-container">
+                    <img id="tmpl-mockup-img" src="" alt="" class="tmpl-builder__mockup-img" style="display:none;">
+                    <div class="tmpl-builder__canvas-zone" id="tmpl-canvas-zone">
+                        <canvas id="tmpl-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Toolbar -->
+            <div class="tmpl-builder__toolbar">
+                <button type="button" class="tmpl-builder__toolbar-btn" id="btn-undo" title="{% trans 'Undo' %}" disabled>
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button type="button" class="tmpl-builder__toolbar-btn" id="btn-redo" title="{% trans 'Redo' %}" disabled>
+                    <i class="fas fa-redo"></i>
+                </button>
+                <span class="tmpl-builder__toolbar-divider"></span>
+                <button type="button" class="tmpl-builder__toolbar-btn" id="btn-zoom-out" title="{% trans 'Zoom Out' %}">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+                <span class="tmpl-builder__zoom-label" id="zoom-label">100%</span>
+                <button type="button" class="tmpl-builder__toolbar-btn" id="btn-zoom-in" title="{% trans 'Zoom In' %}">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <span class="tmpl-builder__toolbar-divider"></span>
+                <button type="button" class="tmpl-builder__toolbar-btn" id="btn-duplicate" title="{% trans 'Duplicate' %}">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <button type="button" class="tmpl-builder__toolbar-btn" id="btn-delete" title="{% trans 'Delete' %}" disabled>
+                    <i class="fas fa-trash"></i>
+                </button>
+                <span class="tmpl-builder__toolbar-spacer"></span>
+                <span style="font-size:0.75rem;color:var(--body-quiet-color,#999);" id="surface-dimensions"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clipart Modal -->
+<div class="tmpl-builder__modal" id="modal-clipart">
+    <div class="tmpl-builder__modal-backdrop"></div>
+    <div class="tmpl-builder__modal-content">
+        <div class="tmpl-builder__modal-header">
+            <h3>{% trans "Choose Clipart" %}</h3>
+            <button type="button" class="tmpl-builder__modal-close">&times;</button>
+        </div>
+        <div class="tmpl-builder__modal-body">
+            <div class="tmpl-builder__clipart-categories" id="clipart-categories">
+                <!-- Populated by JS -->
+            </div>
+            <div class="tmpl-builder__clipart-grid" id="clipart-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Embedded data -->
+<script type="application/json" id="template-editor-data">
+{{ editor_data_json|safe }}
+</script>
+
+<script src="{% static 'core/vendor/js/fabric.min.js' %}"></script>
+<script src="{% static 'customizable_product/js/design-template-builder.js' %}" defer></script>
+{% endblock %}

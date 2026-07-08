@@ -1,0 +1,192 @@
+{% load i18n admin_urls static %}
+{# Bundle Items Inline - Card-based layout #}
+
+<div class="js-inline-admin-formset inline-group bundle-inline-group"
+     id="{{ inline_admin_formset.formset.prefix }}-group"
+     data-inline-type="stacked"
+     data-inline-formset="{{ inline_admin_formset.inline_formset_data }}"
+     data-variants-url="{% url 'catalog_admin:get_product_variants' product_id=0 %}"
+     data-component-autocomplete-url="{% url 'catalog_admin:autocomplete_component_products' %}"
+     data-empty-image="{% static 'admin/img/icon-no.svg' %}">
+
+{{ inline_admin_formset.formset.management_form }}
+
+<fieldset class="module {{ inline_admin_formset.classes }}">
+    {{ inline_admin_formset.formset.non_form_errors }}
+
+    <div class="bundle-items-container">
+        {% for inline_admin_form in inline_admin_formset %}
+        <div class="bundle-item-card{% if inline_admin_form.original %} has-original{% endif %}{% if forloop.last and inline_admin_formset.has_add_permission %} empty-form last-related{% endif %}"
+             id="{{ inline_admin_formset.formset.prefix }}-{% if forloop.last and inline_admin_formset.has_add_permission %}empty{% else %}{{ forloop.counter0 }}{% endif %}"
+             data-index="{{ forloop.counter0 }}">
+
+            {# Hidden fields #}
+            {% for field in inline_admin_form.form.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+
+            {# Delete checkbox (hidden, managed by JS) #}
+            {% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission and inline_admin_form.original %}
+                <div class="bundle-item-delete-field" style="display: none;">
+                    {{ inline_admin_form.deletion_field.field }}
+                </div>
+            {% endif %}
+
+            {# Product Thumbnail #}
+            <div class="bundle-item-thumbnail">
+                {% if inline_admin_form.original and inline_admin_form.original.component_product.images.first %}
+                    <img src="{{ inline_admin_form.original.component_product.images.first.thumbnail_small }}"
+                         alt="{{ inline_admin_form.original.component_product.name }}"
+                         class="bundle-product-image">
+                {% else %}
+                    <div class="bundle-product-placeholder">
+                        <i class="fas fa-box"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Product Info #}
+            <div class="bundle-item-info">
+                <div class="bundle-item-product-select">
+                    <label class="bundle-field-label">{% trans "Product" %}</label>
+                    {% for field in inline_admin_form.form.visible_fields %}
+                        {% if field.name == "component_product" %}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="bundle-field-errors">{{ field.errors }}</div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="bundle-item-product-name">
+                    {% if inline_admin_form.original %}
+                        <span class="product-name-text">{{ inline_admin_form.original.component_product.name }}</span>
+                        <span class="product-sku-text">{{ inline_admin_form.original.component_product.sku }}</span>
+                    {% else %}
+                        <span class="product-name-text placeholder">{% trans "Select a product..." %}</span>
+                    {% endif %}
+                </div>
+
+                {# Customer Selects Variant Toggle - hidden by default, shown by JS for variable products #}
+                <div class="bundle-item-customer-selects">
+                    {% for field in inline_admin_form.form.visible_fields %}
+                        {% if field.name == "allow_variant_selection" %}
+                            <label class="bundle-customer-selects-label">
+                                {{ field }}
+                                <span>{% trans "Customer chooses variant" %}</span>
+                            </label>
+                            <span class="bundle-customer-selects-help">{% trans "When enabled, customer will select the variant at purchase time" %}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {# Variant Selection - hidden by default, shown by JS for variable products #}
+                <div class="bundle-item-variant-select" data-variant-wrapper>
+                    <label class="bundle-field-label">{% trans "Variant" %}</label>
+                    {% for field in inline_admin_form.form.visible_fields %}
+                        {% if field.name == "component_variant" %}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="bundle-field-errors">{{ field.errors }}</div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="bundle-customer-will-choose" style="display: none;">
+                        <i class="fas fa-user-check"></i>
+                        <span>{% trans "Customer will choose at checkout" %}</span>
+                    </div>
+                </div>
+            </div>
+
+            {# Quantity & Options #}
+            <div class="bundle-item-options">
+                <div class="bundle-item-quantity">
+                    <label class="bundle-field-label">{% trans "Qty" %}</label>
+                    {% for field in inline_admin_form.form.visible_fields %}
+                        {% if field.name == "quantity" %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="bundle-item-sort">
+                    <label class="bundle-field-label">{% trans "Order" %}</label>
+                    {% for field in inline_admin_form.form.visible_fields %}
+                        {% if field.name == "sort_order" %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="bundle-item-optional">
+                    {% for field in inline_admin_form.form.visible_fields %}
+                        {% if field.name == "is_optional" %}
+                            <label class="bundle-optional-label">
+                                {{ field }}
+                                <span>{% trans "Optional" %}</span>
+                            </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Price Display #}
+            <div class="bundle-item-pricing">
+                <div class="bundle-item-unit-price">
+                    <span class="bundle-price-label">{% trans "Unit Price" %}</span>
+                    <span class="bundle-price-value" data-field="unit-price">
+                        {% if inline_admin_form.original %}
+                            {{ inline_admin_form.original.get_component_price }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="bundle-item-line-total">
+                    <span class="bundle-price-label">{% trans "Line Total" %}</span>
+                    <span class="bundle-price-value bundle-line-total" data-field="line-total">
+                        {% if inline_admin_form.original %}
+                            {{ inline_admin_form.original.get_total_price }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            {# Actions #}
+            <div class="bundle-item-actions">
+                {% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission %}
+                    <button type="button" class="bundle-item-remove" title="{% trans 'Remove from bundle' %}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Add Button #}
+    {% if inline_admin_formset.has_add_permission %}
+    <div class="bundle-add-row">
+        <button type="button" class="bundle-add-btn" id="{{ inline_admin_formset.formset.prefix }}-add-btn">
+            <i class="fas fa-plus"></i>
+            {% trans "Add Component" %}
+        </button>
+    </div>
+    {% endif %}
+
+    {# Bundle Summary #}
+    <div class="bundle-summary" id="bundle-summary">
+        <div class="bundle-summary-row">
+            <span class="bundle-summary-label">{% trans "Total Components:" %}</span>
+            <span class="bundle-summary-value" id="bundle-total-items">{{ inline_admin_formset.formset.initial_form_count }}</span>
+        </div>
+        <div class="bundle-summary-row">
+            <span class="bundle-summary-label">{% trans "Bundle Value:" %}</span>
+            <span class="bundle-summary-value bundle-total-value" id="bundle-total-value">-</span>
+        </div>
+    </div>
+</fieldset>
+</div>

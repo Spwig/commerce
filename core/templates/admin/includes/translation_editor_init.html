@@ -1,0 +1,34 @@
+{% comment %}
+Translation Editor Initialization Script
+
+Include this template at the bottom of admin change_form templates to initialize
+the translation editor for translatable fields using the proven TranslationEditor utility patterns.
+
+Context variables required (injected by TranslatableAdminMixin):
+- has_translation_support: Boolean, whether translation is available
+- translatable_fields: List of field names that can be translated
+- available_languages_json: JSON string of available languages
+- translation_model_type: Model identifier (e.g., 'core.sitesettings')
+- translation_object_id: Object primary key
+
+Usage in your admin change_form.html:
+    {% include "admin/includes/translation_editor_init.html" %}
+{% endcomment %}
+
+{% if has_translation_support and translation_object_id %}
+{% load i18n static %}
+<script type="application/json" id="translation-editor-init-config" nonce="{{ request.csp_nonce }}">
+{
+    "modelType": "{{ translation_model_type|escapejs }}",
+    "objectId": {{ translation_object_id }},
+    "availableLanguages": {{ available_languages_json|safe }},
+    "translatableFields": {{ translatable_fields|safe }},
+    "lockEndpoint": "{% url 'translations_api:toggle_lock' %}",
+    "i18n": {
+        "saved": "{% trans 'Saved' %}",
+        "unsaved": "{% trans 'Unsaved' %}"
+    }
+}
+</script>
+<script src="{% static 'core/admin/js/translation_editor_init.js' %}"></script>
+{% endif %}

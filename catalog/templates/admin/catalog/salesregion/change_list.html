@@ -1,0 +1,189 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Sales Regions" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'catalog/css/admin_salesregion_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-globe"></i>
+                {% trans "Sales Regions" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage geographic market regions for inventory and pricing" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_salesregion_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Sales Region" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filter Tabs (URL-based, full page reload) -->
+    <div class="admin-tabs">
+        <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if not request.GET.is_active %}active{% endif %}"
+           data-filter="all">
+            <i class="fas fa-th"></i>
+            <span class="label">{% trans "All" %}<br>({{ all_count }})</span>
+        </a>
+        <a href="?is_active=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.is_active == '1' %}active{% endif %}"
+           data-filter="active">
+            <i class="fas fa-check-circle"></i>
+            <span class="label">{% trans "Active" %}<br>({{ active_count }})</span>
+        </a>
+        <a href="?is_active=0{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.is_active == '0' %}active{% endif %}"
+           data-filter="inactive">
+            <i class="fas fa-times-circle"></i>
+            <span class="label">{% trans "Inactive" %}<br>({{ inactive_count }})</span>
+        </a>
+    </div>
+
+    <!-- Filters Panel (AJAX filtering) -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or code...' %}"
+                    value="{{ request.GET.q }}">
+            </div>
+
+            <!-- Currency Filter -->
+            <div class="filter-field">
+                <label for="filter-currency">
+                    <i class="fas fa-dollar-sign"></i> {% trans "Currency" %}
+                </label>
+                <select id="filter-currency">
+                    <option value="">{% trans "All Currencies" %}</option>
+                    {% for currency in currencies %}
+                    <option value="{{ currency }}">{{ currency }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Sales Regions" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-globe"></i>
+            <span id="region-count">{{ cl.result_count }}</span> {% trans "region" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="region-results">
+        {% if cl.result_list %}
+            <div class="list-row-cards">
+                {% for region in cl.result_list %}
+                    {% include "admin/catalog/salesregion/partials/salesregion_cards.html" with region=region %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="list-row-card region-empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <p class="primary-message">{% trans "No sales regions found." %}</p>
+                <p class="secondary-message">
+                    {% trans "Create your first sales region to manage geographic markets." %}
+                </p>
+                <a href="{% url 'admin:catalog_salesregion_add' %}" class="button default">
+                    <i class="fas fa-plus"></i> {% trans "Add Sales Region" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count > cl.list_per_page %}
+    <div class="pagination-container">
+        <p class="paginator">
+            <span class="small quiet">{{ cl.result_count }} {% trans "regions" %}</span>
+        </p>
+        {% if cl.multi_page %}
+            <p class="paginator">
+                {% if cl.page_num > 0 %}
+                    <a href="?p={{ cl.page_num|add:'-1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Previous" %}</a>
+                {% endif %}
+                <span class="this-page">{% trans "Page" %} {{ cl.page_num|add:'1' }} {% trans "of" %} {{ cl.paginator.num_pages }}</span>
+                {% if cl.page_num < cl.paginator.num_pages|add:'-1' %}
+                    <a href="?p={{ cl.page_num|add:'1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Next" %}</a>
+                {% endif %}
+            </p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'catalog_admin:filter_sales_regions' %}"
+         data-results-container="region-results"
+         data-results-count="region-count"
+         data-filter-tab-params="is_active"
+         style="display:none;"></div>
+</div>
+{% endblock %}

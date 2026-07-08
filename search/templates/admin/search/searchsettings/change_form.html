@@ -1,0 +1,398 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static search_filters %}
+
+{% block title %}{% trans "Search Settings" %} | {{ site_settings.site_name|default:"Spwig" }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'search/css/search-admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="search-settings-page">
+    <div class="dashboard-header">
+        <h1><span class="fas fa-search"></span>{% trans "Search Settings" %}</h1>
+    </div>
+    <form method="post" action="" class="settings-form">
+        {% csrf_token %}
+
+        <!-- Tabs Navigation -->
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="general">
+                <i class="fas fa-cog"></i>
+                <span class="label">{% trans "General" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="autocomplete">
+                <i class="fas fa-keyboard"></i>
+                <span class="label">{% trans "Autocomplete" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="content">
+                <i class="fas fa-boxes"></i>
+                <span class="label">{% trans "Content Types" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="indexing">
+                <i class="fas fa-database"></i>
+                <span class="label">{% trans "Deep Indexing" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="fuzzy">
+                <i class="fas fa-magic"></i>
+                <span class="label">{% trans "Fuzzy Matching" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="weights">
+                <i class="fas fa-sliders-h"></i>
+                <span class="label">{% trans "Weights" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="caching">
+                <i class="fas fa-clock"></i>
+                <span class="label">{% trans "Caching" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="analytics">
+                <i class="fas fa-chart-line"></i>
+                <span class="label">{% trans "Analytics" %}</span>
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="settings-content">
+            <!-- General Tab -->
+            <div class="admin-tab-content active" data-panel="general">
+                <h2 class="panel-title">{% trans "General Settings" %}</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="id_is_enabled">{{ adminform.form.is_enabled.label }}</label>
+                        {{ adminform.form.is_enabled }}
+                        <p class="help-text">{{ adminform.form.is_enabled.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_min_query_length">{{ adminform.form.min_query_length.label }}</label>
+                        {{ adminform.form.min_query_length }}
+                        <p class="help-text">{{ adminform.form.min_query_length.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_results_per_page">{{ adminform.form.results_per_page.label }}</label>
+                        {{ adminform.form.results_per_page }}
+                        <p class="help-text">{{ adminform.form.results_per_page.help_text }}</p>
+                    </div>
+                </div>
+
+                <h3 class="section-title">{% trans "Autocomplete" %}</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="id_autocomplete_enabled">{{ adminform.form.autocomplete_enabled.label }}</label>
+                        {{ adminform.form.autocomplete_enabled }}
+                        <p class="help-text">{{ adminform.form.autocomplete_enabled.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_autocomplete_max_results">{{ adminform.form.autocomplete_max_results.label }}</label>
+                        {{ adminform.form.autocomplete_max_results }}
+                        <p class="help-text">{{ adminform.form.autocomplete_max_results.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_autocomplete_debounce_ms">{{ adminform.form.autocomplete_debounce_ms.label }}</label>
+                        {{ adminform.form.autocomplete_debounce_ms }}
+                        <p class="help-text">{{ adminform.form.autocomplete_debounce_ms.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_show_thumbnails">{{ adminform.form.show_thumbnails.label }}</label>
+                        {{ adminform.form.show_thumbnails }}
+                        <p class="help-text">{{ adminform.form.show_thumbnails.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Autocomplete Display Tab -->
+            <div class="admin-tab-content" data-panel="autocomplete">
+                <h2 class="panel-title">{% trans "Autocomplete Display Settings" %}</h2>
+                <p class="panel-description">{% trans "Configure which information to display for each content type in autocomplete results." %}</p>
+
+                <h3 class="section-title"><i class="fas fa-box"></i> {% trans "Product Display" %}</h3>
+                <div class="form-grid form-grid--toggles">
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_product_thumbnail">
+                            {{ adminform.form.autocomplete_product_thumbnail.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_product_thumbnail }}
+                        <p class="help-text">{{ adminform.form.autocomplete_product_thumbnail.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_product_description">
+                            {{ adminform.form.autocomplete_product_description.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_product_description }}
+                        <p class="help-text">{{ adminform.form.autocomplete_product_description.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_product_price">
+                            {{ adminform.form.autocomplete_product_price.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_product_price }}
+                        <p class="help-text">{{ adminform.form.autocomplete_product_price.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_product_sku">
+                            {{ adminform.form.autocomplete_product_sku.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_product_sku }}
+                        <p class="help-text">{{ adminform.form.autocomplete_product_sku.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_product_stock_status">
+                            {{ adminform.form.autocomplete_product_stock_status.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_product_stock_status }}
+                        <p class="help-text">{{ adminform.form.autocomplete_product_stock_status.help_text }}</p>
+                    </div>
+                </div>
+
+                <h3 class="section-title"><i class="fas fa-newspaper"></i> {% trans "Blog Post Display" %}</h3>
+                <div class="form-grid form-grid--toggles">
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_blog_thumbnail">
+                            {{ adminform.form.autocomplete_blog_thumbnail.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_blog_thumbnail }}
+                        <p class="help-text">{{ adminform.form.autocomplete_blog_thumbnail.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_blog_excerpt">
+                            {{ adminform.form.autocomplete_blog_excerpt.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_blog_excerpt }}
+                        <p class="help-text">{{ adminform.form.autocomplete_blog_excerpt.help_text }}</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="id_autocomplete_blog_excerpt_length">{{ adminform.form.autocomplete_blog_excerpt_length.label }}</label>
+                        {{ adminform.form.autocomplete_blog_excerpt_length }}
+                        <p class="help-text">{{ adminform.form.autocomplete_blog_excerpt_length.help_text }}</p>
+                    </div>
+                </div>
+
+                <h3 class="section-title"><i class="fas fa-folder"></i> {% trans "Category Display" %}</h3>
+                <div class="form-grid form-grid--toggles">
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_category_thumbnail">
+                            {{ adminform.form.autocomplete_category_thumbnail.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_category_thumbnail }}
+                        <p class="help-text">{{ adminform.form.autocomplete_category_thumbnail.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_category_product_count">
+                            {{ adminform.form.autocomplete_category_product_count.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_category_product_count }}
+                        <p class="help-text">{{ adminform.form.autocomplete_category_product_count.help_text }}</p>
+                    </div>
+                </div>
+
+                <h3 class="section-title"><i class="fas fa-tag"></i> {% trans "Brand Display" %}</h3>
+                <div class="form-grid form-grid--toggles">
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_brand_logo">
+                            {{ adminform.form.autocomplete_brand_logo.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_brand_logo }}
+                        <p class="help-text">{{ adminform.form.autocomplete_brand_logo.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_autocomplete_brand_product_count">
+                            {{ adminform.form.autocomplete_brand_product_count.label }}
+                        </label>
+                        {{ adminform.form.autocomplete_brand_product_count }}
+                        <p class="help-text">{{ adminform.form.autocomplete_brand_product_count.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Types Tab -->
+            <div class="admin-tab-content" data-panel="content">
+                <h2 class="panel-title">{% trans "Searchable Content Types" %}</h2>
+                <p class="panel-description">{% trans "Choose which content types to include in search results." %}</p>
+                <div class="form-grid form-grid--toggles">
+                    <div class="form-group toggle-group">
+                        <label for="id_search_products">
+                            <i class="fas fa-box"></i>
+                            {{ adminform.form.search_products.label }}
+                        </label>
+                        {{ adminform.form.search_products }}
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_search_categories">
+                            <i class="fas fa-folder"></i>
+                            {{ adminform.form.search_categories.label }}
+                        </label>
+                        {{ adminform.form.search_categories }}
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_search_brands">
+                            <i class="fas fa-tag"></i>
+                            {{ adminform.form.search_brands.label }}
+                        </label>
+                        {{ adminform.form.search_brands }}
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_search_blog_posts">
+                            <i class="fas fa-newspaper"></i>
+                            {{ adminform.form.search_blog_posts.label }}
+                        </label>
+                        {{ adminform.form.search_blog_posts }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Indexing Tab -->
+            <div class="admin-tab-content" data-panel="indexing">
+                <h2 class="panel-title">{% trans "Deep Indexing" %}</h2>
+                <p class="panel-description">{% trans "Configure which additional content fields to include in the search index." %}</p>
+                <div class="form-grid form-grid--toggles">
+                    <div class="form-group toggle-group">
+                        <label for="id_index_skus">
+                            <i class="fas fa-barcode"></i>
+                            {{ adminform.form.index_skus.label }}
+                        </label>
+                        {{ adminform.form.index_skus }}
+                        <p class="help-text">{{ adminform.form.index_skus.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_index_attributes">
+                            <i class="fas fa-palette"></i>
+                            {{ adminform.form.index_attributes.label }}
+                        </label>
+                        {{ adminform.form.index_attributes }}
+                        <p class="help-text">{{ adminform.form.index_attributes.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_index_custom_fields">
+                            <i class="fas fa-puzzle-piece"></i>
+                            {{ adminform.form.index_custom_fields.label }}
+                        </label>
+                        {{ adminform.form.index_custom_fields }}
+                        <p class="help-text">{{ adminform.form.index_custom_fields.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_index_reviews">
+                            <i class="fas fa-star"></i>
+                            {{ adminform.form.index_reviews.label }}
+                        </label>
+                        {{ adminform.form.index_reviews }}
+                        <p class="help-text">{{ adminform.form.index_reviews.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_index_documents">
+                            <i class="fas fa-file-pdf"></i>
+                            {{ adminform.form.index_documents.label }}
+                        </label>
+                        {{ adminform.form.index_documents }}
+                        <p class="help-text">{{ adminform.form.index_documents.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fuzzy Matching Tab -->
+            <div class="admin-tab-content" data-panel="fuzzy">
+                <h2 class="panel-title">{% trans "Fuzzy Matching (Typo Tolerance)" %}</h2>
+                <p class="panel-description">{% trans "Configure how tolerant the search is to spelling mistakes and typos." %}</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="id_fuzzy_enabled">{{ adminform.form.fuzzy_enabled.label }}</label>
+                        {{ adminform.form.fuzzy_enabled }}
+                        <p class="help-text">{{ adminform.form.fuzzy_enabled.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_fuzzy_threshold">{{ adminform.form.fuzzy_threshold.label }}</label>
+                        {{ adminform.form.fuzzy_threshold }}
+                        <p class="help-text">{{ adminform.form.fuzzy_threshold.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_fuzzy_max_edits">{{ adminform.form.fuzzy_max_edits.label }}</label>
+                        {{ adminform.form.fuzzy_max_edits }}
+                        <p class="help-text">{{ adminform.form.fuzzy_max_edits.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relevance Weights Tab -->
+            <div class="admin-tab-content" data-panel="weights">
+                <h2 class="panel-title">{% trans "Relevance Weights" %}</h2>
+                <p class="panel-description">{% trans "Adjust how much each field contributes to search relevance. Higher values mean more importance." %}</p>
+                <div class="weights-grid">
+                    {% for field in weight_fields %}
+                    <div class="weight-slider-group">
+                        <label for="id_{{ field }}">{{ adminform.form|getattr:field|attr:"label" }}</label>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="2" step="0.1"
+                                   id="id_{{ field }}_slider"
+                                   value="{{ adminform.form|getattr:field|attr:'value'|default:'1.0' }}"
+                                   data-target="id_{{ field }}">
+                            {{ adminform.form|getattr:field }}
+                            <span class="slider-value">{{ adminform.form|getattr:field|attr:'value'|default:'1.0' }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Caching Tab -->
+            <div class="admin-tab-content" data-panel="caching">
+                <h2 class="panel-title">{% trans "Cache Settings" %}</h2>
+                <p class="panel-description">{% trans "Configure how long search results are cached for faster performance." %}</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="id_cache_autocomplete_ttl">{{ adminform.form.cache_autocomplete_ttl.label }}</label>
+                        {{ adminform.form.cache_autocomplete_ttl }}
+                        <p class="help-text">{{ adminform.form.cache_autocomplete_ttl.help_text }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_cache_results_ttl">{{ adminform.form.cache_results_ttl.label }}</label>
+                        {{ adminform.form.cache_results_ttl }}
+                        <p class="help-text">{{ adminform.form.cache_results_ttl.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="admin-tab-content" data-panel="analytics">
+                <h2 class="panel-title">{% trans "Analytics & Tracking" %}</h2>
+                <p class="panel-description">{% trans "Configure what search data to collect for analytics." %}</p>
+                <div class="form-grid form-grid--toggles">
+                    <div class="form-group toggle-group">
+                        <label for="id_track_search_queries">
+                            <i class="fas fa-search"></i>
+                            {{ adminform.form.track_search_queries.label }}
+                        </label>
+                        {{ adminform.form.track_search_queries }}
+                        <p class="help-text">{{ adminform.form.track_search_queries.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_track_clicks">
+                            <i class="fas fa-mouse-pointer"></i>
+                            {{ adminform.form.track_clicks.label }}
+                        </label>
+                        {{ adminform.form.track_clicks }}
+                        <p class="help-text">{{ adminform.form.track_clicks.help_text }}</p>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label for="id_track_zero_results">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ adminform.form.track_zero_results.label }}
+                        </label>
+                        {{ adminform.form.track_zero_results }}
+                        <p class="help-text">{{ adminform.form.track_zero_results.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="submit-row">
+            <button type="submit" name="_save" class="btn btn--primary btn--lg">
+                <i class="fas fa-save"></i> {% trans "Save Settings" %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="{% static 'search/admin/js/search-settings.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "developer_portal/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ submission.component_name }} v{{ submission.version }}{% endblock %}
+
+{% block content %}
+<div class="dev-page">
+    <div class="dev-page-header">
+        <div>
+            <a href="{% url 'developer_portal:submissions' %}" class="dev-back-link">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Submissions" %}
+            </a>
+            <h1>
+                {{ submission.component_name }} <code>v{{ submission.version }}</code>
+                <span class="dev-badge dev-badge-type">
+                    <i class="fas {{ submission.type_icon }}"></i>
+                    {{ submission.type_display }}
+                </span>
+            </h1>
+            <p class="text-muted">{{ submission.component_slug }}</p>
+        </div>
+    </div>
+
+    <div class="dev-detail-grid">
+        <div class="dev-detail-main">
+            {# Status Overview #}
+            <div class="dev-card">
+                <h2>{% trans "Status" %}</h2>
+                <div class="dev-status-row">
+                    <div class="dev-status-item">
+                        <span class="dev-status-label">{% trans "Validation" %}</span>
+                        <span class="dev-badge dev-badge-{{ submission.validation_status }}">
+                            {{ submission.get_validation_status_display }}
+                        </span>
+                    </div>
+                    <div class="dev-status-item">
+                        <span class="dev-status-label">{% trans "Review" %}</span>
+                        <span class="dev-badge dev-badge-{{ submission.review_status }}">
+                            {{ submission.get_review_status_display }}
+                        </span>
+                    </div>
+                    <div class="dev-status-item">
+                        <span class="dev-status-label">{% trans "Published" %}</span>
+                        {% if submission.is_published %}
+                            <span class="dev-badge dev-badge-approved">
+                                <i class="fas fa-check"></i> {% trans "Yes" %}
+                            </span>
+                        {% else %}
+                            <span class="dev-badge dev-badge-pending">{% trans "No" %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# Review Notes #}
+            {% if submission.review_notes %}
+            <div class="dev-card">
+                <h2>{% trans "Review Notes" %}</h2>
+                <div class="dev-review-notes">
+                    {{ submission.review_notes|linebreaksbr }}
+                </div>
+            </div>
+            {% endif %}
+
+            {# Description #}
+            {% if submission.description %}
+            <div class="dev-card">
+                <h2>{% trans "Description" %}</h2>
+                <p>{{ submission.description|linebreaksbr }}</p>
+            </div>
+            {% endif %}
+
+            {# Changelog #}
+            {% if submission.changelog %}
+            <div class="dev-card">
+                <h2>{% trans "Changelog" %}</h2>
+                <p>{{ submission.changelog|linebreaksbr }}</p>
+            </div>
+            {% endif %}
+
+            {# Review Timeline #}
+            <div class="dev-card">
+                <h2>{% trans "Review Timeline" %}</h2>
+                {% if review_timeline %}
+                <div class="dev-timeline">
+                    {% for review in review_timeline %}
+                    <div class="dev-timeline-item">
+                        <div class="dev-timeline-marker dev-timeline-{{ review.action }}"></div>
+                        <div class="dev-timeline-content">
+                            <div class="dev-timeline-header">
+                                <span class="dev-badge dev-badge-sm dev-badge-{{ review.action }}">
+                                    {{ review.get_action_display }}
+                                </span>
+                                <span class="dev-timeline-date">{{ review.created_at|date:"M d, Y H:i" }}</span>
+                            </div>
+                            {% if review.comment %}
+                            <p class="dev-timeline-comment">{{ review.comment }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">{% trans "No review activity yet." %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="dev-detail-sidebar">
+            {# Package Info #}
+            <div class="dev-card">
+                <h3>{% trans "Package Info" %}</h3>
+                <dl class="dev-info-list">
+                    <dt>{% trans "File Size" %}</dt>
+                    <dd>{{ submission.package_size_bytes|filesizeformat }}</dd>
+                    <dt>{% trans "Checksum" %}</dt>
+                    <dd><code class="dev-code-sm">{{ submission.package_checksum|truncatechars:16 }}</code></dd>
+                    <dt>{% trans "Submitted" %}</dt>
+                    <dd>{{ submission.submitted_at|date:"M d, Y H:i" }}</dd>
+                    {% if submission.published_at %}
+                    <dt>{% trans "Published" %}</dt>
+                    <dd>{{ submission.published_at|date:"M d, Y H:i" }}</dd>
+                    {% endif %}
+                </dl>
+            </div>
+
+            {# Pricing #}
+            <div class="dev-card">
+                <h3>{% trans "Pricing" %}</h3>
+                {% if submission.is_free %}
+                    <span class="dev-badge dev-badge-free dev-badge-lg">{% trans "Free" %}</span>
+                {% else %}
+                    <span class="dev-price-lg">{{ submission.currency }} {{ submission.price }}</span>
+                    <small class="text-muted">{% trans "You earn 70%" %}</small>
+                {% endif %}
+            </div>
+
+            {# Manifest #}
+            <div class="dev-card">
+                <h3>{% trans "Manifest" %}</h3>
+                <dl class="dev-info-list">
+                    {% for key, value in submission.manifest_data.items %}
+                        {% if key != 'assets' and key != 'bundled_components' and key != 'page_schemas' and key != 'features' %}
+                        <dt>{{ key }}</dt>
+                        <dd>{{ value }}</dd>
+                        {% endif %}
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

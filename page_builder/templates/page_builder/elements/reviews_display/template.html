@@ -1,0 +1,149 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Reviews Display Element -->
+<section class="reviews-display reviews-display--{{ element.content.layout|default:'grid' }} reviews-display--{{ element.content.card_style|default:'default' }}"
+         {% hover_animation_attrs element %}
+         data-reviews-display
+         style="--star-color: {{ element.content.star_color|default:'#f59e0b' }}; --verified-color: {{ element.content.verified_color|default:'#10b981' }};
+                {% base_styles element %}">
+
+    {% if element.content.title or element.content.show_write_review %}
+    <div class="reviews-display__header">
+        <div class="reviews-display__header-text">
+            {% if element.content.title %}
+            <h2 class="reviews-display__title">{{ element.content.title }}</h2>
+            {% endif %}
+            {% if element.content.subtitle %}
+            <p class="reviews-display__subtitle">{{ element.content.subtitle }}</p>
+            {% endif %}
+        </div>
+        {% if element.content.show_write_review and element.content.product_id %}
+        <button class="reviews-display__write-btn" data-action="open-review-modal">
+            <i class="fas fa-pen"></i>
+            {{ element.content.write_review_text|default:"Write a Review" }}
+        </button>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="reviews-display__wrapper reviews-display__wrapper--summary-{{ element.content.summary_position|default:'top' }}">
+        {% if element.content.show_summary|default:True and element_context.stats %}
+        <div class="reviews-display__summary">
+            {% with stats=element_context.stats %}
+            <div class="reviews-display__summary-rating">
+                <span class="reviews-display__summary-score">{{ stats.average_rating|default:"0" }}</span>
+                <div class="reviews-display__summary-stars">
+                    {% for i in "12345" %}
+                    <i class="{% if forloop.counter <= stats.average_rating|default:0 %}fas{% else %}far{% endif %} fa-star"></i>
+                    {% endfor %}
+                </div>
+                <span class="reviews-display__summary-count">{{ stats.total_reviews|default:"0" }} {% mtrans "reviews" %}</span>
+            </div>
+            {% if stats.rating_breakdown %}
+            <div class="reviews-display__breakdown">
+                {% for rating, count in stats.rating_breakdown.items %}
+                <div class="reviews-display__breakdown-row">
+                    <span class="reviews-display__breakdown-label">{{ rating }} {% mtrans "stars" %}</span>
+                    <div class="reviews-display__breakdown-bar">
+                        <div class="reviews-display__breakdown-fill" style="width: {% widthratio count stats.total_reviews 100 %}%;"></div>
+                    </div>
+                    <span class="reviews-display__breakdown-count">{{ count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+        {% endif %}
+
+        {% get_reviews_list element element_context as reviews_list %}
+
+        {% if element.content.layout == 'carousel' %}
+        <div class="reviews-display__carousel" data-reviews-carousel
+             data-autoplay="{{ element.content.carousel_autoplay|default:'false'|lower }}"
+             data-interval="{{ element.content.carousel_interval|default:'5' }}"
+             data-per-view="{{ element.content.columns|default:'3' }}">
+            {% if element.content.show_carousel_arrows|default:True %}
+            <div class="reviews-display__carousel-nav">
+                <button class="reviews-display__carousel-arrow reviews-display__carousel-arrow--prev" aria-label="{% mtrans 'Previous' %}">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="reviews-display__carousel-arrow reviews-display__carousel-arrow--next" aria-label="{% mtrans 'Next' %}">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            {% endif %}
+            <div class="reviews-display__carousel-viewport">
+                <div class="reviews-display__carousel-track" style="--review-columns: {{ element.content.columns|default:'3' }};">
+                    {% for review in reviews_list %}
+                    {% include "page_builder/elements/reviews_display/_review_card.html" %}
+                    {% empty %}
+                    <div class="reviews-display__empty">
+                        <i class="fas fa-star-half-alt"></i>
+                        <p>{% mtrans "No reviews yet" %}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if element.content.show_carousel_dots|default:True %}
+            <div class="reviews-display__carousel-dots"></div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="reviews-display__container" style="--review-columns: {{ element.content.columns|default:'3' }};">
+            {% for review in reviews_list %}
+            {% include "page_builder/elements/reviews_display/_review_card.html" %}
+            {% empty %}
+            <div class="reviews-display__empty">
+                <i class="fas fa-star-half-alt"></i>
+                <p>{% mtrans "No reviews yet" %}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if element.content.show_write_review and element.content.product_id %}
+    <div class="reviews-display__modal" data-review-modal hidden>
+        <div class="reviews-display__modal-backdrop" data-action="close-review-modal"></div>
+        <div class="reviews-display__modal-content">
+            <div class="reviews-display__modal-header">
+                <h3 class="reviews-display__modal-title">{% mtrans "Write a Review" %}</h3>
+                <button class="reviews-display__modal-close" data-action="close-review-modal" aria-label="{% mtrans 'Close' %}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="reviews-display__form" data-review-form data-product-id="{{ element.content.product_id }}">
+                {% csrf_token %}
+                <div class="reviews-display__form-group">
+                    <label class="reviews-display__form-label">{% mtrans "Rating" %} <span class="reviews-display__form-required">*</span></label>
+                    <div class="reviews-display__star-input" data-star-input>
+                        {% for i in "12345" %}
+                        <button type="button" class="reviews-display__star-btn" data-rating="{{ forloop.counter }}">
+                            <i class="far fa-star"></i>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="reviews-display__form-group">
+                    <label class="reviews-display__form-label">{% mtrans "Review Title" %} <span class="reviews-display__form-required">*</span></label>
+                    <input type="text" name="title" class="reviews-display__form-input" required>
+                </div>
+                <div class="reviews-display__form-group">
+                    <label class="reviews-display__form-label">{% mtrans "Your Review" %} <span class="reviews-display__form-required">*</span></label>
+                    <textarea name="comment" class="reviews-display__form-textarea" rows="4" required></textarea>
+                </div>
+                <div class="reviews-display__form-actions">
+                    <button type="submit" class="reviews-display__form-submit">{% mtrans "Submit Review" %}</button>
+                </div>
+                <div class="reviews-display__form-message reviews-display__form-message--success" hidden>
+                    {% mtrans "Thank you for your review! It will be visible once approved." %}
+                </div>
+                <div class="reviews-display__form-message reviews-display__form-message--error" hidden></div>
+                <div class="reviews-display__form-message reviews-display__form-message--login" hidden>
+                    {{ element.content.write_review_login_text|default:"Please sign in to write a review" }}
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</section>

@@ -1,0 +1,88 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "SEO Providers" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'seo_generator/css/provider_admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="provider-admin-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-search-plus"></i>
+                {% trans "SEO Providers" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage SEO generation provider integrations" %}</p>
+            <p class="change-list-stats-subtitle">
+                <span id="results-count">{{ cl.result_count }}</span> {% trans "provider" %}{% if cl.result_count != 1 %}s{% endif %}
+                {% if active_count %}<span class="stat-separator">&middot;</span>{{ active_count }} {% trans "active" %}{% endif %}
+            </p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'seo_generator:provider_browse' %}" class="button primary change-list-action-button">
+                <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Provider Cards -->
+    <div class="provider-cards-grid">
+        {% for result in cl.result_list %}
+        <div class="provider-account-card {% if result.is_active %}active{% else %}inactive{% endif %} {% if result.is_primary %}primary{% endif %}">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <div class="card-badges">
+                    {% if result.is_primary %}
+                    <span class="badge badge-primary"><i class="fas fa-star"></i> {% trans "Primary" %}</span>
+                    {% endif %}
+                    {% if result.is_active %}
+                    <span class="badge badge-active">{% trans "Active" %}</span>
+                    {% else %}
+                    <span class="badge badge-inactive">{% trans "Inactive" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ result.name }}</h3>
+                <p class="card-provider-type">
+                    {% if result.component %}
+                        {{ result.component.name }}
+                    {% else %}
+                        {{ result.provider_key }}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'admin:seo_generator_seoprovideraccount_change' result.pk %}" class="card-action-link">
+                    <i class="fas fa-cog"></i> {% trans "Configure" %}
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>{% trans "No SEO Providers Configured" %}</h3>
+            <p>{% trans "The built-in deterministic provider is available by default. Connect additional providers for AI-powered SEO generation." %}</p>
+            <a href="{% url 'seo_generator:wizard_step1' %}" class="btn btn-primary">
+                <i class="fas fa-plug"></i> {% trans "Connect Provider" %}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

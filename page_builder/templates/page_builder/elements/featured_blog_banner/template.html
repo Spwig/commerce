@@ -1,0 +1,94 @@
+{% load i18n element_tags merchant_trans %}
+{% mtrans "Read Article" as default_button_text %}
+<!-- Featured Blog Banner Element -->
+{% with post=element_context.post %}
+{% if post or element.content.data_source == 'static' %}
+<section class="featured-blog-banner featured-blog-banner--{{ element.content.height|default:'lg' }} featured-blog-banner--{{ element.content.content_position|default:'center' }}"
+         {% hover_animation_attrs element %}
+         style="{% base_styles element %}">
+    <div class="featured-blog-banner__background">
+        {% if element.content.data_source == 'static' and element.content.image %}
+        <img src="{{ element.content.image }}" alt="{{ element.content.title }}" class="featured-blog-banner__image" loading="lazy">
+        {% elif post.featured_image %}
+        <img src="{{ post.featured_image.file.url }}" alt="{{ post.title }}" class="featured-blog-banner__image" loading="lazy">
+        {% endif %}
+
+        {% if element.content.overlay_style|default:'gradient' != 'none' %}
+        <div class="featured-blog-banner__overlay featured-blog-banner__overlay--{{ element.content.overlay_style|default:'gradient' }}"
+             style="--overlay-opacity: {{ element.content.overlay_opacity|default:'0.6' }};"></div>
+        {% endif %}
+    </div>
+
+    <div class="featured-blog-banner__container">
+        <div class="featured-blog-banner__content featured-blog-banner__content--{{ element.content.content_width|default:'medium' }}">
+            {% if element.content.show_category|default:True %}
+            <span class="featured-blog-banner__category">
+                {% if element.content.data_source == 'static' %}
+                {{ element.content.category }}
+                {% elif post.category %}
+                {{ post.category.name }}
+                {% endif %}
+            </span>
+            {% endif %}
+
+            <h2 class="featured-blog-banner__title">
+                {% if element.content.data_source == 'static' %}
+                {{ element.content.title }}
+                {% else %}
+                {{ post.title }}
+                {% endif %}
+            </h2>
+
+            {% if element.content.show_excerpt|default:True %}
+            <p class="featured-blog-banner__excerpt">
+                {% if element.content.data_source == 'static' %}
+                {{ element.content.excerpt }}
+                {% else %}
+                {{ post.excerpt|truncatechars:200 }}
+                {% endif %}
+            </p>
+            {% endif %}
+
+            <div class="featured-blog-banner__meta">
+                {% if element.content.show_author|default:True %}
+                <span class="featured-blog-banner__author">
+                    <i class="fas fa-user"></i>
+                    {% if element.content.data_source == 'static' %}
+                    {{ element.content.author }}
+                    {% elif post.created_by %}
+                    {{ post.created_by.get_full_name|default:post.created_by.username }}
+                    {% endif %}
+                </span>
+                {% endif %}
+
+                {% if element.content.show_date|default:True %}
+                <span class="featured-blog-banner__date">
+                    <i class="far fa-calendar-alt"></i>
+                    {% if element.content.data_source == 'static' %}
+                    {{ element.content.date }}
+                    {% elif post.published_at %}
+                    {{ post.published_at|date:"F j, Y" }}
+                    {% endif %}
+                </span>
+                {% endif %}
+            </div>
+
+            {% if element.content.show_button|default:True %}
+            <a href="{% if element.content.data_source == 'static' %}{{ element.content.url }}{% else %}{{ post.get_absolute_url }}{% endif %}"
+               class="featured-blog-banner__button featured-blog-banner__button--{{ element.content.button_style|default:'primary' }}">
+                {{ element.content.button_text|default:default_button_text }}
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% else %}
+<section class="featured-blog-banner featured-blog-banner--empty">
+    <div class="featured-blog-banner__placeholder">
+        <i class="fas fa-newspaper"></i>
+        <p>{% mtrans "No featured post available" %}</p>
+    </div>
+</section>
+{% endif %}
+{% endwith %}

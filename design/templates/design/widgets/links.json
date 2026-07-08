@@ -1,0 +1,53 @@
+{
+  "type": "links",
+  "icon": "fa-link",
+  "label": "Links",
+  "groups": [
+    {
+      "id": "content",
+      "title": "Settings",
+      "expanded": true,
+      "fields": [
+        { "key": "title", "label": "Title", "type": "text", "placeholder": "Quick Links" },
+        {
+          "key": "list_style",
+          "label": "List Style",
+          "type": "select",
+          "options": [
+            { "value": "vertical", "label": "Vertical" },
+            { "value": "horizontal", "label": "Horizontal" },
+            { "value": "inline", "label": "Inline" }
+          ],
+          "default": "vertical"
+        }
+      ]
+    },
+    {
+      "id": "links",
+      "title": "Links",
+      "expanded": true,
+      "singleColumn": true,
+      "fields": [
+        {
+          "key": "links",
+          "label": "Link Items",
+          "type": "array",
+          "itemSchema": {
+            "text": { "label": "Text", "type": "text", "placeholder": "Link text" },
+            "url": { "label": "URL", "type": "url", "placeholder": "/page/" },
+            "icon": { "label": "Icon", "type": "icon", "placeholder": "fas fa-link" },
+            "target": {
+              "label": "Target",
+              "type": "select",
+              "options": [
+                { "value": "_self", "label": "Same Window" },
+                { "value": "_blank", "label": "New Window" }
+              ],
+              "default": "_self"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

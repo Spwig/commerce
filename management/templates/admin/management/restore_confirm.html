@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Confirm Restore" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/system_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'management/css/restore-confirm.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_restore' %}">{% trans 'Restore' %}</a>
+    &rsaquo; {% trans 'Confirm Restore' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="restore-container">
+        <div class="restore-header">
+            <h1>
+                <i class="fas fa-exclamation-triangle"></i>
+                {% trans "Confirm System Restore" %}
+            </h1>
+            <p>{% trans "You are about to restore your system from a backup. Please review carefully before proceeding." %}</p>
+        </div>
+
+        <!-- Warning Banner -->
+        <div class="warning-banner">
+            <h2>
+                <i class="fas fa-exclamation-circle"></i>
+                {% trans "Important Warnings" %}
+            </h2>
+            <ul>
+                <li>{% trans "This action will replace your current data with the backup data." %}</li>
+                <li>{% trans "Any changes made after the backup was created will be lost." %}</li>
+                <li>{% trans "A pre-restore backup will be created automatically for safety." %}</li>
+                <li>{% trans "The restoration process may take several minutes depending on the backup size." %}</li>
+                <li>{% trans "Your site will be put into maintenance mode during the restore." %}</li>
+            </ul>
+        </div>
+
+        {% if not backup.local_path and backup.remote_uploads.exists %}
+        <div class="alert alert-info" style="display: flex; gap: 12px; align-items: flex-start; padding: 16px; margin-bottom: 20px; border-radius: 8px; background: var(--darkened-bg, #e8f4fd); border: 1px solid var(--primary, #417690);">
+            <i class="fas fa-cloud-download-alt" style="font-size: 1.2em; margin-top: 2px;"></i>
+            <div>
+                <strong>{% trans "Remote Backup" %}</strong><br>
+                {% trans "This backup will be downloaded from remote storage before restoring. This may take additional time depending on your backup size and connection speed." %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Backup Details -->
+        <div class="backup-details">
+            <h3>
+                <i class="fas fa-save"></i>
+                {% trans "Backup Details" %}
+            </h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="label">{% trans "Backup Name" %}</span>
+                    <span class="value">{{ backup.name|default:_("Unnamed Backup") }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">{% trans "Created At" %}</span>
+                    <span class="value">{{ backup.created_at|date:"M j, Y H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">{% trans "Backup Type" %}</span>
+                    <span class="value">{{ backup.get_backup_type_display }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">{% trans "File Size" %}</span>
+                    <span class="value">{% if backup.file_size %}{{ backup.file_size|filesizeformat }}{% else %}{% trans "Unknown" %}{% endif %}</span>
+                </div>
+                {% if backup.is_compressed %}
+                <div class="detail-item">
+                    <span class="label">{% trans "Compressed" %}</span>
+                    <span class="value">{% trans "Yes" %}</span>
+                </div>
+                {% endif %}
+                {% if backup.is_encrypted %}
+                <div class="detail-item">
+                    <span class="label">{% trans "Encrypted" %}</span>
+                    <span class="value">{% trans "Yes" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="post" id="restore-form">
+            {% csrf_token %}
+
+            <!-- Restore Options -->
+            <div class="restore-options">
+                <h3>{% trans "Restore Options" %}</h3>
+                <div class="option-group">
+                    <label>
+                        <input type="checkbox" name="skip_database" value="1">
+                        <div class="option-text">
+                            <div class="option-title">{% trans "Skip Database Restore" %}</div>
+                            <div class="option-desc">{% trans "Keep current database, only restore media files and configuration" %}</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="option-group">
+                    <label>
+                        <input type="checkbox" name="skip_media" value="1">
+                        <div class="option-text">
+                            <div class="option-title">{% trans "Skip Media Files" %}</div>
+                            <div class="option-desc">{% trans "Keep current media files, only restore database and configuration" %}</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="option-group">
+                    <label>
+                        <input type="checkbox" name="skip_config" value="1">
+                        <div class="option-text">
+                            <div class="option-title">{% trans "Skip Configuration" %}</div>
+                            <div class="option-desc">{% trans "Keep current settings and environment configuration" %}</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Final Confirmation -->
+            <div class="confirmation-box">
+                <h3>
+                    <i class="fas fa-shield-alt"></i>
+                    {% trans "Final Confirmation" %}
+                </h3>
+                <p>{% trans "To proceed with the restore, please type" %} <span class="confirm-text">RESTORE</span> {% trans "below:" %}</p>
+                <div class="confirmation-input">
+                    <input type="text" id="confirm-input" placeholder="{% trans 'Type RESTORE to confirm' %}" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'admin:management_restore' %}" class="button default">
+                    <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                </a>
+                <button type="submit" id="restore-btn" class="button danger" disabled>
+                    <i class="fas fa-upload"></i> {% trans "Start Restore" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="restore-config" class="mgmt-hidden"
+     data-msg-confirm-restore="{% trans 'Are you absolutely sure you want to restore from this backup? This action cannot be undone.' %}"
+     data-msg-starting-restore="{% trans 'Starting Restore...' %}"></div>
+<script src="{% static 'management/js/restore.js' %}"></script>
+{% endblock %}

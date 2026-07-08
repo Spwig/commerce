@@ -1,0 +1,21 @@
+{# CTA Button Component #}
+{# Usage: {% include 'email_system/mjml_components/cta_button.mjml' with url=order_url text="View Order" %} #}
+{# Theme tokens: Uses theme.color.primary for background, theme.color.text_inverse for text #}
+
+<mj-section padding="30px 0">
+  <mj-column>
+    <mj-button
+      href="{{ url }}"
+      background-color="{{ theme.color.primary|default:'#2563eb' }}"
+      color="{{ theme.color.text_inverse|default:'#ffffff' }}"
+      font-size="16px"
+      font-weight="600"
+      border-radius="{{ theme.radius.md|default:'0.5rem' }}"
+      padding="14px 32px"
+      inner-padding="14px 32px"
+      align="center"
+    >
+      {{ text }}
+    </mj-button>
+  </mj-column>
+</mj-section>

@@ -1,0 +1,461 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Category" %}: {{ original.name }}{% else %}{% trans "Add New Category" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+<link rel="stylesheet" href="{% static 'seo_generator/admin/seo_generator.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/admin_category_form.css' %}">
+<link rel="stylesheet" href="{% static 'custom_fields/css/custom_fields_admin.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    {% if not is_popup %}
+    <div class="category-admin-header">
+        <div class="header-title">
+            <h1>
+                {% if original %}
+                    {% if original.image_asset %}
+                        <img src="{{ original.get_image_thumbnail }}" alt="{{ original.name }}" class="header-thumbnail">
+                    {% elif original.icon %}
+                        <i class="{{ original.icon }}"></i>
+                    {% else %}
+                        <i class="fas fa-folder"></i>
+                    {% endif %}
+                    {% trans "Edit Category" %}: {{ original.name }}
+                {% else %}
+                    <i class="fas fa-plus"></i> {% trans "Add New Category" %}
+                {% endif %}
+            </h1>
+            {% if original %}
+                <div class="header-meta">
+                    {% if original.parent %}
+                        <span class="meta-item"><i class="fas fa-sitemap"></i> {% trans "Parent" %}: {{ original.parent.name }}</span>
+                    {% endif %}
+                    <span class="meta-item"><i class="fas fa-calendar"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                    <span class="meta-item"><i class="fas fa-box"></i> {{ original.product_set.count }} {% trans "products" %}</span>
+                </div>
+            {% endif %}
+        </div>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="submit" form="category-form" class="util-btn" name="_save" title="{% trans 'Save and return to list' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Form -->
+    <form method="post" id="category-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        <!-- Hidden field for translations data -->
+        <input type="hidden" name="translations_data" id="translations-data-field" value="">
+
+        <!-- Display Form Errors -->
+        {% if adminform.form.errors or adminform.form.non_field_errors %}
+        <div class="form-errors-banner">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="error-content">
+                <h3>{% trans "Please correct the errors below" %}</h3>
+                {% if adminform.form.non_field_errors %}
+                    <ul class="errorlist">
+                        {% for error in adminform.form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if adminform.form.errors %}
+                    <ul class="errorlist">
+                        {% for field, errors in adminform.form.errors.items %}
+                            {% if field != '__all__' %}
+                                <li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tab Navigation -->
+        {% if not is_popup %}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic-info" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic Info" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="media" role="tab" aria-selected="false">
+                <i class="fas fa-images"></i>
+                <span class="label">{% trans "Media" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="display" role="tab" aria-selected="false">
+                <i class="fas fa-eye"></i>
+                <span class="label">{% trans "Display" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="design" role="tab" aria-selected="false">
+                <i class="fas fa-palette"></i>
+                <span class="label">{% trans "Design" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="seo" role="tab" aria-selected="false">
+                <i class="fas fa-search"></i>
+                <span class="label">{% trans "SEO" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="status" role="tab" aria-selected="false">
+                <i class="fas fa-toggle-on"></i>
+                <span class="label">{% trans "Status" %}</span>
+            </button>
+            {% if has_custom_fields %}
+            <button type="button" class="admin-tab-btn" data-tab="custom-fields" role="tab" aria-selected="false">
+                <i class="fas fa-sliders-h"></i>
+                <span class="label">{% trans "Custom Fields" %}</span>
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Basic Information Tab -->
+            <div class="tab-panel active" data-panel="basic-info" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                    <p class="form-card-description">{% trans "Click the globe icon to translate name and description into other languages." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.name.label_tag }}
+                                {{ adminform.form.name }}
+                                {% if adminform.form.name.help_text %}<p class="help">{{ adminform.form.name.help_text }}</p>{% endif %}
+                                {% if adminform.form.name.errors %}<p class="error">{{ adminform.form.name.errors }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.slug.label_tag }}
+                                {{ adminform.form.slug }}
+                                {% if adminform.form.slug.help_text %}<p class="help">{{ adminform.form.slug.help_text }}</p>{% endif %}
+                                {% if adminform.form.slug.errors %}<p class="error">{{ adminform.form.slug.errors }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.parent.label_tag }}
+                                {{ adminform.form.parent }}
+                                {% if adminform.form.parent.help_text %}<p class="help">{{ adminform.form.parent.help_text }}</p>{% endif %}
+                                {% if adminform.form.parent.errors %}<p class="error">{{ adminform.form.parent.errors }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.description.label_tag }}
+                                {{ adminform.form.description }}
+                                {% if adminform.form.description.help_text %}<p class="help">{{ adminform.form.description.help_text }}</p>{% endif %}
+                                {% if adminform.form.description.errors %}<p class="error">{{ adminform.form.description.errors }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if not is_popup %}
+            <!-- Media Tab -->
+            <div class="tab-panel" data-panel="media" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-images"></i> {% trans "Media" %}</h2>
+                    <p class="form-card-description">{% trans "Select images from your media library or choose an icon for this category." %}</p>
+
+                    <div class="image-preview-container">
+                        <div class="image-preview-item">
+                            <div class="image-preview-box" id="image-asset-preview">
+                                {% if original and original.image_asset %}
+                                    <img src="{{ original.get_image_thumbnail }}" alt="{{ original.name }}">
+                                {% else %}
+                                    <div class="placeholder">
+                                        <i class="fas fa-image"></i>
+                                        {% trans "Category Image" %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.image_asset.label_tag }}
+                                {{ adminform.form.image_asset }}
+                                {% if adminform.form.image_asset.help_text %}<p class="help">{{ adminform.form.image_asset.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="image-preview-item">
+                            <div class="image-preview-box" id="banner-asset-preview">
+                                {% if original and original.banner_asset %}
+                                    <img src="{{ original.get_banner_url }}" alt="{{ original.name }} banner">
+                                {% else %}
+                                    <div class="placeholder">
+                                        <i class="fas fa-panorama"></i>
+                                        {% trans "Banner Image" %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.banner_asset.label_tag }}
+                                {{ adminform.form.banner_asset }}
+                                {% if adminform.form.banner_asset.help_text %}<p class="help">{{ adminform.form.banner_asset.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 20px; max-width: 400px;">
+                        {{ adminform.form.icon.label_tag }}
+                        {{ adminform.form.icon }}
+                        {% if adminform.form.icon.help_text %}<p class="help">{{ adminform.form.icon.help_text }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Options Tab -->
+            <div class="tab-panel" data-panel="display" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-eye"></i> {% trans "Display Options" %}</h2>
+                    <p class="form-card-description">{% trans "Configure how products in this category are displayed." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.page_template.label_tag }}
+                                {{ adminform.form.page_template }}
+                                <p class="help">{% trans "Override the site-wide category template. Leave as 'Use Site Default' to use the template set in" %} <a href="{% url 'design:template_config' %}">{% trans "Design > Page Templates" %}</a>.</p>
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.products_per_page.label_tag }}
+                                {{ adminform.form.products_per_page }}
+                                {% if adminform.form.products_per_page.help_text %}<p class="help">{{ adminform.form.products_per_page.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row" style="margin-top: 28px;">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.show_subcategories }} {{ adminform.form.show_subcategories.label }}
+                                </label>
+                                {% if adminform.form.show_subcategories.help_text %}<p class="help">{{ adminform.form.show_subcategories.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Override Section -->
+                {% if adminform.form.out_of_stock_action_override %}
+                <div class="form-card">
+                    <h2><i class="fas fa-cubes"></i> {% trans "Stock Behavior" %}</h2>
+                    <p class="form-card-description">{% trans "Override site-wide stock settings for products in this category." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.out_of_stock_action_override.label_tag }}
+                                {{ adminform.form.out_of_stock_action_override }}
+                                {% if adminform.form.out_of_stock_action_override.help_text %}<p class="help">{{ adminform.form.out_of_stock_action_override.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            {% if adminform.form.allow_backorders_override %}
+                            <div class="form-row" style="margin-top: 28px;">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.allow_backorders_override }} {{ adminform.form.allow_backorders_override.label }}
+                                </label>
+                                {% if adminform.form.allow_backorders_override.help_text %}<p class="help">{{ adminform.form.allow_backorders_override.help_text }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Design & Theme Tab -->
+            <div class="tab-panel" data-panel="design" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-palette"></i> {% trans "Design & Theme" %}</h2>
+                    <p class="form-card-description">{% trans "Customize the visual appearance of this category." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.template_variant.label_tag }}
+                                {{ adminform.form.template_variant }}
+                                {% if adminform.form.template_variant.help_text %}<p class="help">{{ adminform.form.template_variant.help_text }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.css_classes.label_tag }}
+                                {{ adminform.form.css_classes }}
+                                {% if adminform.form.css_classes.help_text %}<p class="help">{{ adminform.form.css_classes.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.layout_config.label_tag }}
+                                {{ adminform.form.layout_config }}
+                                {% if adminform.form.layout_config.help_text %}<p class="help">{{ adminform.form.layout_config.help_text }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.style_overrides.label_tag }}
+                                {{ adminform.form.style_overrides }}
+                                {% if adminform.form.style_overrides.help_text %}<p class="help">{{ adminform.form.style_overrides.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2><i class="fas fa-sitemap"></i> {% trans "Theme Inheritance" %}</h2>
+                    <p class="form-card-description">{% trans "Control how this category's theme is inherited from parent and passed to children." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.inherit_parent_theme }} {{ adminform.form.inherit_parent_theme.label }}
+                                </label>
+                                {% if adminform.form.inherit_parent_theme.help_text %}<p class="help">{{ adminform.form.inherit_parent_theme.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.cascade_theme_to_children }} {{ adminform.form.cascade_theme_to_children.label }}
+                                </label>
+                                {% if adminform.form.cascade_theme_to_children.help_text %}<p class="help">{{ adminform.form.cascade_theme_to_children.help_text }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.cascade_theme_to_products }} {{ adminform.form.cascade_theme_to_products.label }}
+                                </label>
+                                {% if adminform.form.cascade_theme_to_products.help_text %}<p class="help">{{ adminform.form.cascade_theme_to_products.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO Tab -->
+            <div class="tab-panel" data-panel="seo" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-search"></i> {% trans "SEO" %}</h2>
+                    <p class="form-card-description">{% trans "Click the globe icon to translate SEO fields. Use 'Regenerate SEO' to auto-generate." %}</p>
+
+                    <div id="seo-generator-container"></div>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.meta_title.label_tag }}
+                                {{ adminform.form.meta_title }}
+                                {% if adminform.form.meta_title.help_text %}<p class="help">{{ adminform.form.meta_title.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.meta_description.label_tag }}
+                                {{ adminform.form.meta_description }}
+                                {% if adminform.form.meta_description.help_text %}<p class="help">{{ adminform.form.meta_description.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 12px;">
+                        <label class="checkbox-label">
+                            {{ adminform.form.seo_auto_generated }} {{ adminform.form.seo_auto_generated.label }}
+                        </label>
+                        {% if adminform.form.seo_auto_generated.help_text %}<p class="help">{{ adminform.form.seo_auto_generated.help_text }}</p>{% endif %}
+                    </div>
+
+                    <!-- SEO Preview -->
+                    <div class="seo-preview">
+                        <h3><i class="fas fa-eye"></i> {% trans "Search Engine Preview" %}</h3>
+                        <div id="seo-preview-content">
+                            <div class="seo-preview-title" id="seo-preview-title">
+                                {% if original %}{{ original.meta_title|default:original.name }}{% else %}{% trans "Category Title" %}{% endif %}
+                            </div>
+                            <div class="seo-preview-url">
+                                {{ request.scheme }}://{{ request.get_host }}/category/{% if original %}{{ original.slug }}{% else %}category-slug{% endif %}/
+                            </div>
+                            <div class="seo-preview-description" id="seo-preview-description">
+                                {% if original %}{{ original.meta_description|default:original.description|truncatewords:25 }}{% else %}{% trans "Category description will appear here..." %}{% endif %}
+                            </div>
+                        </div>
+                        <p class="seo-preview-disclaimer">
+                            <i class="fas fa-info-circle"></i> {% trans "This is an approximation of how your category might appear in search results." %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Tab -->
+            <div class="tab-panel" data-panel="status" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-toggle-on"></i> {% trans "Status" %}</h2>
+                    <p class="form-card-description">{% trans "Control the visibility and ordering of this category." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.is_active }} {{ adminform.form.is_active.label }}
+                                </label>
+                                {% if adminform.form.is_active.help_text %}<p class="help">{{ adminform.form.is_active.help_text }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.is_featured }} {{ adminform.form.is_featured.label }}
+                                </label>
+                                {% if adminform.form.is_featured.help_text %}<p class="help">{{ adminform.form.is_featured.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.sort_order.label_tag }}
+                                {{ adminform.form.sort_order }}
+                                {% if adminform.form.sort_order.help_text %}<p class="help">{{ adminform.form.sort_order.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if has_custom_fields %}
+            <!-- Custom Fields Tab -->
+            <div class="tab-panel" data-panel="custom-fields" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-sliders-h"></i> {% trans "Custom Fields" %}</h2>
+                    {% include "admin/custom_fields/includes/custom_fields_tab.html" %}
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}{# end not is_popup #}
+        </div>
+
+        <!-- Submit buttons -->
+        <div class="submit-row"{% if not is_popup %} style="display: none;"{% endif %}>
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            {% if not is_popup %}
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{# Translation Editor Initialization #}
+{% include "admin/includes/translation_editor_init.html" %}
+<script src="{% static 'catalog/js/admin_category_form.js' %}"></script>
+{% endblock %}

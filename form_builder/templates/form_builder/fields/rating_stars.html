@@ -1,0 +1,38 @@
+{% load i18n merchant_trans %}
+{# Star Rating Field #}
+{% with config=field.rating_config %}
+{% with max_stars=config.max_stars|default:5 %}
+{% with icon=config.icon|default:"fa-star" %}
+{% with icon_empty=config.icon_empty|default:"fa-star" %}
+{% with size=config.size|default:"lg" %}
+{% with color=config.color|default:"#fbbf24" %}
+
+<div class="rating-stars-wrapper"
+     data-field-name="{{ field.field_name }}"
+     data-max-stars="{{ max_stars }}"
+     data-allow-half="{{ config.allow_half|default:'false' }}"
+     style="--star-color: {{ color }};">
+    <input type="hidden"
+           id="field-{{ field.field_name }}"
+           name="{{ field.field_name }}"
+           {% if field.is_required %}required{% endif %}
+           {% if field.default_value %}value="{{ field.default_value }}"{% endif %}>
+
+    <div class="stars-container size-{{ size }}">
+        {% for i in "12345"|make_list %}
+        {% if forloop.counter <= max_stars %}
+        <button type="button"
+                class="star-btn"
+                data-value="{{ forloop.counter }}"
+                aria-label="{% blocktrans with rating=forloop.counter %}Rate {{ rating }} stars{% endblocktrans %}">
+            <i class="fas {{ icon }} star-icon"></i>
+            <i class="far {{ icon_empty }} star-icon-empty"></i>
+        </button>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <span class="rating-value-display"></span>
+</div>
+
+{% endwith %}{% endwith %}{% endwith %}{% endwith %}{% endwith %}{% endwith %}

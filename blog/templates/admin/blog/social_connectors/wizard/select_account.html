@@ -1,0 +1,98 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/provider-wizard.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'blog/admin/css/social_connector_browse.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <h1>{% trans "Select Account" %}</h1>
+        <p class="wizard-subtitle">{% trans "Choose which account you want to connect for posting" %}</p>
+    </div>
+
+    <!-- Step Indicator (OAuth flow has 5 steps) -->
+    <div class="wizard-steps">
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Authorize" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step active">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Select Account" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Test & Save" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <form method="post" id="account-selection-form">
+            {% csrf_token %}
+
+            {% if selection_template_content %}
+                {# Render provider's bundled selection template #}
+                {{ selection_template_content|safe }}
+            {% else %}
+                {# Fallback generic selection UI #}
+                {% if accounts %}
+                <p class="form-intro">{% trans "Select the account you want to connect:" %}</p>
+                <div class="account-grid">
+                    {% for account in accounts %}
+                    <label class="account-card">
+                        <input type="radio" name="account_id" value="{{ account.id }}" required>
+                        <input type="hidden" name="account_name_{{ account.id }}" value="{{ account.name }}">
+                        {% if account.access_token %}
+                        <input type="hidden" name="account_token_{{ account.id }}" value="{{ account.access_token }}">
+                        {% endif %}
+                        <div class="account-info">
+                            <div class="account-info__name">{{ account.name }}</div>
+                            <div class="account-info__id">ID: {{ account.id }}</div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-accounts-message">
+                    <i class="fas fa-exclamation-triangle no-accounts-message__icon"></i>
+                    <h3>{% trans "No Accounts Found" %}</h3>
+                    <p>{% trans "We couldn't find any accounts that you can manage." %}</p>
+                    <p>{% trans "Please check your permissions and try again." %}</p>
+                </div>
+                {% endif %}
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Wizard Navigation -->
+    <div class="wizard-navigation">
+        <a href="{% url 'blog_admin:wizard_step2' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        {% if accounts %}
+        <button type="submit" form="account-selection-form" class="btn btn-primary">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

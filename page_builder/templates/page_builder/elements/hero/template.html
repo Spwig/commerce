@@ -1,0 +1,80 @@
+{% load i18n element_tags %}
+<!-- Hero Element -->
+<section class="hero{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+id="{% if element.content.id %}{{ element.content.id }}{% else %}hero-{{ element.id }}{% endif %}"
+{% hover_animation_attrs element %}
+{% if element.content.hover_background %}data-hover-bg{% endif %}
+style="
+    {% if element.content.hover_background %}--hover-bg: {{ element.content.hover_background }};{% endif %}
+    {# Min Height - element specific #}
+    {% if element.content.min_height == 'screen' %}min-height: 100vh;
+    {% elif element.content.min_height == '96' %}min-height: 24rem;
+    {% elif element.content.min_height == '80' %}min-height: 20rem;
+    {% elif element.content.min_height == '64' %}min-height: 16rem;
+    {% elif element.content.min_height %}min-height: {{ element.content.min_height }};
+    {% else %}min-height: 100vh;{% endif %}
+
+    {# Padding - element specific #}
+    {% if element.content.padding_top == '8' %}padding-top: 2rem;
+    {% elif element.content.padding_top == '12' %}padding-top: 3rem;
+    {% elif element.content.padding_top == '16' %}padding-top: 4rem;
+    {% elif element.content.padding_top == '20' %}padding-top: 5rem;
+    {% elif element.content.padding_top == '24' %}padding-top: 6rem;
+    {% endif %}
+    {% if element.content.padding_bottom == '8' %}padding-bottom: 2rem;
+    {% elif element.content.padding_bottom == '12' %}padding-bottom: 3rem;
+    {% elif element.content.padding_bottom == '16' %}padding-bottom: 4rem;
+    {% elif element.content.padding_bottom == '20' %}padding-bottom: 5rem;
+    {% elif element.content.padding_bottom == '24' %}padding-bottom: 6rem;
+    {% endif %}
+
+    {# Base properties (background, border, rounded, box_shadow, opacity, z_index, custom_styles) #}
+    {% base_styles element %}
+">
+    <div class="container">
+        <div class="hero__content{% if element.content.text_align == 'center' %} text-center mx-auto{% elif element.content.text_align == 'right' %} text-right{% endif %}"
+             {% if element.content.max_width %}style="max-width: {{ element.content.max_width }};"{% endif %}>
+
+            {% if element.content.title %}
+            <h1 class="hero__title" style="{% if element.content.title_typography %}{{ element.content.title_typography }};{% endif %}{% if element.content.title_color %} color: {{ element.content.title_color }};{% endif %}{% if element.content.title_shadow %} text-shadow: {{ element.content.title_shadow }};{% endif %}">{{ element.content.title }}</h1>
+            {% endif %}
+
+            {% if element.content.subtitle %}
+            <p class="hero__subtitle" style="{% if element.content.subtitle_typography %}{{ element.content.subtitle_typography }};{% endif %}{% if element.content.subtitle_color %} color: {{ element.content.subtitle_color }};{% endif %}{% if element.content.subtitle_shadow %} text-shadow: {{ element.content.subtitle_shadow }};{% endif %}">{{ element.content.subtitle }}</p>
+            {% endif %}
+
+            {% if element.content.description %}
+            <p class="hero__description" style="{% if element.content.description_typography %}{{ element.content.description_typography }};{% endif %}{% if element.content.description_color %} color: {{ element.content.description_color }};{% endif %}{% if element.content.description_shadow %} text-shadow: {{ element.content.description_shadow }};{% endif %}">{{ element.content.description }}</p>
+            {% endif %}
+
+            {% if element.content.button_text or element.content.secondary_button_text %}
+            <div class="hero__actions{% if element.content.text_align == 'center' %} justify-center{% elif element.content.text_align == 'right' %} justify-end{% endif %}">
+                {% if element.content.button_text %}
+                <a href="{{ element.content.button_url|default:'#' }}"
+                   {% if element.content.button_target %}target="{{ element.content.button_target }}"{% endif %}
+                   class="btn {% if element.content.button_style == 'outline' %}btn--outline{% elif element.content.button_style == 'ghost' %}btn--ghost{% else %}btn--primary{% endif %}{% if element.content.button_size == 'lg' %} btn--lg{% elif element.content.button_size == 'sm' %} btn--sm{% endif %}"
+                   style="{% if element.content.button_background %}background: {{ element.content.button_background }};{% endif %}{% if element.content.button_text_color %}color: {{ element.content.button_text_color }};{% endif %}{% if element.content.button_border %}{{ element.content.button_border }};{% endif %}{% if element.content.button_typography %}{{ element.content.button_typography }};{% endif %}{% if element.content.button_padding %}{{ element.content.button_padding }};{% endif %}{% if element.content.button_shadow %}box-shadow: {{ element.content.button_shadow }};{% endif %}">
+                    {{ element.content.button_text }}
+                </a>
+                {% endif %}
+
+                <a href="{{ element.content.secondary_button_url|default:'#' }}"
+                   {% if element.content.secondary_button_target %}target="{{ element.content.secondary_button_target }}"{% endif %}
+                   class="btn {% if element.content.secondary_button_style == 'solid' %}btn--primary{% elif element.content.secondary_button_style == 'ghost' %}btn--ghost{% else %}btn--outline{% endif %}{% if element.content.secondary_button_size == 'lg' %} btn--lg{% elif element.content.secondary_button_size == 'sm' %} btn--sm{% endif %}"
+                   style="{% if not element.content.secondary_button_text %}display: none;{% endif %}{% if element.content.secondary_button_background %}background: {{ element.content.secondary_button_background }};{% endif %}{% if element.content.secondary_button_text_color %}color: {{ element.content.secondary_button_text_color }};{% endif %}{% if element.content.secondary_button_border %}{{ element.content.secondary_button_border }};{% endif %}{% if element.content.secondary_button_typography %}{{ element.content.secondary_button_typography }};{% endif %}{% if element.content.secondary_button_padding %}{{ element.content.secondary_button_padding }};{% endif %}{% if element.content.secondary_button_shadow %}box-shadow: {{ element.content.secondary_button_shadow }};{% endif %}">
+                    {{ element.content.secondary_button_text }}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if element.content.show_scroll_indicator %}
+    <div class="scroll-indicator">
+        <svg class="scroll-indicator__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+    </div>
+    {% endif %}
+</section>
+

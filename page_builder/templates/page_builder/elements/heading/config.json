@@ -1,0 +1,88 @@
+{
+  "element_type": "heading",
+  "name": "Heading",
+  "description": "Semantic heading element with typography controls",
+  "version": "2.0.0",
+  "category": "basic",
+  "icon": "fas fa-heading",
+  "author": "Page Builder System",
+  "element_builder_primitive": true,
+  "tags": ["heading", "typography", "text", "title"],
+  "supports_translation": true,
+  "translation_domain": "heading_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/heading.css"],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-font",
+      "order": 1,
+      "properties": {
+        "content_group": {
+          "type": "property_group",
+          "label": "Heading Content",
+          "columns": 1,
+          "properties": {
+            "text": {
+              "type": "string",
+              "label": "Heading Text",
+              "default": "Heading Text",
+              "translatable": true,
+              "required": true
+            },
+            "tag": {
+              "type": "select",
+              "label": "HTML Tag",
+              "options": [
+                {"value": "h1", "label": "H1"},
+                {"value": "h2", "label": "H2"},
+                {"value": "h3", "label": "H3"},
+                {"value": "h4", "label": "H4"},
+                {"value": "h5", "label": "H5"},
+                {"value": "h6", "label": "H6"}
+              ],
+              "default": "h2",
+              "requires_rerender": true
+            },
+            "anchor": {
+              "type": "string",
+              "label": "Anchor Link ID",
+              "required": false,
+              "help_text": "Optional ID for anchor links (e.g., 'about-us')"
+            },
+            "alignment": {
+              "type": "select",
+              "label": "Text Alignment",
+              "options": [
+                {"value": "left", "label": "Left"},
+                {"value": "center", "label": "Center"},
+                {"value": "right", "label": "Right"}
+              ],
+              "default": "left"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "text": {"type": "string", "label": "Heading Text", "default": "Heading Text", "translatable": true, "required": true},
+    "tag": {"type": "select", "label": "HTML Tag", "options": [{"value": "h1", "label": "H1"}, {"value": "h2", "label": "H2"}, {"value": "h3", "label": "H3"}, {"value": "h4", "label": "H4"}, {"value": "h5", "label": "H5"}, {"value": "h6", "label": "H6"}], "default": "h2", "requires_rerender": true},
+    "anchor": {"type": "string", "label": "Anchor Link ID", "required": false},
+    "alignment": {"type": "select", "label": "Text Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "left"}
+  },
+  "translations": {
+    "en": {"name": "Heading", "description": "Semantic heading element with typography controls"},
+    "es": {"name": "Encabezado", "description": "Elemento de encabezado semantico con controles tipograficos"},
+    "fr": {"name": "En-tete", "description": "Element d'en-tete semantique avec controles typographiques"},
+    "de": {"name": "Uberschrift", "description": "Semantisches Uberschrift-Element mit typografischen Kontrollen"}
+  },
+  "defaults": {
+    "text": "New Heading",
+    "tag": "h2",
+    "size": "xl",
+    "weight": "semibold",
+    "color": "gray-900"
+  }
+}

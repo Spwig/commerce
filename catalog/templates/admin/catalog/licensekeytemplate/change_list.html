@@ -1,0 +1,79 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "License Key Templates" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_license_template.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-file-code"></i>
+                {% trans "License Key Templates" %}
+            </h1>
+            <p class="subtitle">{% trans "Define license key formats and patterns for automatic generation" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_licensekeytemplate_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Template" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Templates" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-file-code"></i>
+            <span>{{ cl.result_count }}</span> {% trans "template" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="template-results">
+        {% include "admin/catalog/licensekeytemplate/partials/template_cards.html" with templates=cl.result_list %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 template{% plural %}{{ counter }} templates{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'templates' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Email Template Translations" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/css/translation-manager.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="translation-manager-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1>
+                <i class="fas fa-language"></i>
+                {% trans "Email Template Translations" %}
+            </h1>
+            <p class="header-description">
+                {% trans "Manage translations for email templates. Use AI translation to automatically translate templates into multiple languages." %}
+            </p>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'email_system:template_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                {% trans "Back to Templates" %}
+            </a>
+            <form method="post" action="{% url 'email_system:bulk_translate_all' %}" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary" data-action="confirm-bulk-translate">
+                    <i class="fas fa-magic"></i>
+                    {% trans "Translate All Missing" %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-primary">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ statistics.total_templates }}</div>
+                <div class="stat-label">{% trans "Email Templates" %}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-info">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ statistics.total_languages }}</div>
+                <div class="stat-label">{% trans "Languages" %}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ statistics.total_complete }}</div>
+                <div class="stat-label">{% trans "Completed" %}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ statistics.total_missing }}</div>
+                <div class="stat-label">{% trans "Missing" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coverage Progress -->
+    <div class="coverage-card">
+        <div class="coverage-header">
+            <h3>
+                <i class="fas fa-chart-line"></i>
+                {% trans "Overall Translation Coverage" %}
+            </h3>
+            <span class="coverage-percentage">{{ statistics.coverage_percentage|floatformat:1 }}%</span>
+        </div>
+        <div class="coverage-bar">
+            <div class="coverage-fill" style="width: {{ statistics.coverage_percentage }}%"></div>
+        </div>
+        <div class="coverage-info">
+            {{ statistics.total_complete }} {% trans "of" %} {{ statistics.total_needed }} {% trans "translations complete" %}
+        </div>
+    </div>
+
+    <!-- Translation Matrix -->
+    <div class="matrix-container">
+        <div class="matrix-header">
+            <h2>
+                <i class="fas fa-table"></i>
+                {% trans "Translation Matrix" %}
+            </h2>
+            <p class="help-text">
+                {% trans "Green cells indicate completed translations. Click 'Translate' to create AI translation jobs for missing languages." %}
+            </p>
+        </div>
+
+        <div class="matrix-scroll">
+            <table class="translation-matrix">
+                <thead>
+                    <tr>
+                        <th class="template-col">{% trans "Template" %}</th>
+                        {% for lang_code, lang_name in supported_languages %}
+                        <th class="language-col">
+                            <div class="lang-header">
+                                <span class="lang-name">{{ lang_name }}</span>
+                                <span class="lang-code">{{ lang_code|upper }}</span>
+                            </div>
+                        </th>
+                        {% endfor %}
+                        <th class="action-col">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in translation_matrix %}
+                    <tr>
+                        <td class="template-name">
+                            <div class="template-info">
+                                <i class="fas fa-envelope"></i>
+                                <span>{{ row.template.get_template_type_display }}</span>
+                            </div>
+                        </td>
+                        {% for lang_code, lang_name in supported_languages %}
+                        <td class="status-cell">
+                            {% for lc, ld in row.languages.items %}
+                                {% if lc == lang_code %}
+                                    {% if ld.job_status %}
+                                        {# Show processing/pending indicator #}
+                                        <div class="status-icon-wrapper">
+                                            <div class="status-icon status-processing{% if ld.job_status == 'processing' %} status-active{% endif %}"
+                                                 title="{% if ld.job_status == 'processing' %}{% trans 'Translation in progress' %}{% else %}{% trans 'Translation queued' %}{% endif %}">
+                                                <i class="fas fa-sync-alt fa-spin"></i>
+                                            </div>
+                                            <span class="processing-badge" title="{% trans 'AI translation in progress' %}">
+                                                {% if ld.job_status == 'processing' %}
+                                                    <i class="fas fa-cog fa-spin"></i> {% trans "Translating" %}
+                                                {% else %}
+                                                    <i class="fas fa-clock"></i> {% trans "Queued" %}
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    {% elif ld.exists %}
+                                        <div class="status-icon-wrapper">
+                                            <div class="status-icon status-complete{% if ld.outdated %} status-outdated{% endif %}"
+                                                 title="{% if ld.outdated %}{% trans 'Translation outdated - base template modified' %}{% else %}{% trans 'Translated' %}{% endif %}">
+                                                <i class="fas fa-check-circle"></i>
+                                                {% if ld.verified %}
+                                                <i class="fas fa-star verified-badge" title="{% trans 'Verified' %}"></i>
+                                                {% endif %}
+                                            </div>
+                                            {% if ld.outdated %}
+                                            <span class="outdated-badge" title="{% trans 'Base template has been modified' %}">
+                                                <i class="fas fa-exclamation-triangle"></i> {% trans "Outdated" %}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="status-icon status-missing" title="{% trans 'Not translated' %}">
+                                            <i class="fas fa-times-circle"></i>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% endfor %}
+                        <td class="action-cell">
+                            <button
+                                type="button"
+                                class="btn-action"
+                                data-action="show-translate-modal"
+                                data-template-id="{{ row.template.id }}"
+                                data-template-name="{{ row.template.get_template_type_display|escapejs }}"
+                                title="{% trans 'Translate Template' %}"
+                            >
+                                <i class="fas fa-language"></i>
+                                {% trans "Translate" %}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Translate Modal -->
+<div id="translateModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>
+                <i class="fas fa-language"></i>
+                <span id="modal-title">{% trans "Translate Template" %}</span>
+            </h2>
+        </div>
+        <form id="translateForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="forceRetranslate" name="force_retranslate" value="false">
+            <div class="modal-body">
+                <p>{% trans "Select languages to translate. Existing translations will be updated with the current template." %}</p>
+                <div class="language-checkboxes">
+                    {% for lang_code, lang_name in supported_languages %}
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="languages" value="{{ lang_code }}">
+                        <span class="checkbox-text">{{ lang_name }} ({{ lang_code|upper }})</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{% trans "Translation jobs will be created and processed automatically by the AI translation service." %}</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-action="hide-translate-modal">
+                    {% trans "Cancel" %}
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-magic"></i>
+                    <span>{% trans "Translate" %}</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'email_system/js/translation-manager.js' %}" defer></script>
+{% endblock %}

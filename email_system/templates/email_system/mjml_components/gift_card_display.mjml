@@ -1,0 +1,180 @@
+{# Gift Card Display Component #}
+{# Usage: {% include 'email_system/mjml_components/gift_card_display.mjml' with gift_card=gift_card %} #}
+{# Theme tokens: Uses theme.color.surface, theme.color.text, theme.color.text_muted, theme.color.primary, theme.color.success, theme.color.error, theme.color.background_secondary #}
+
+<mj-section background-color="{{ theme.color.surface|default:'#ffffff' }}" padding="30px 20px">
+  <mj-column>
+    {# Gift Card Header #}
+    <mj-text
+      font-size="28px"
+      font-weight="bold"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      align="center"
+      padding-bottom="10px"
+    >
+      {{ _("You've Received a Gift Card!") }}
+    </mj-text>
+
+    {# Sender Message #}
+    {% if gift_card.message %}
+    <mj-text
+      font-size="16px"
+      color="{{ theme.color.text_muted|default:'#6b7280' }}"
+      align="center"
+      padding="15px 20px"
+      background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}"
+      border-radius="8px"
+    >
+      <em>"{{ gift_card.message }}"</em>
+      {% if gift_card.sender_name %}
+      <br/><br/>
+      <strong>— {{ gift_card.sender_name }}</strong>
+      {% endif %}
+    </mj-text>
+    {% endif %}
+
+    {# Gift Card Code Card #}
+    <mj-wrapper
+      background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}"
+      border-radius="12px"
+      padding="30px 20px"
+      css-class="gift-card-code-wrapper"
+    >
+      <mj-section background-color="transparent">
+        <mj-column>
+          <mj-text
+            font-size="14px"
+            color="{{ theme.color.text_muted|default:'#6b7280' }}"
+            align="center"
+            text-transform="uppercase"
+            letter-spacing="1px"
+            font-weight="600"
+            padding-bottom="10px"
+          >
+            {{ _("Your Gift Card Code") }}
+          </mj-text>
+
+          <mj-text
+            font-size="32px"
+            font-weight="bold"
+            color="{{ theme.color.primary|default:'#2563eb' }}"
+            align="center"
+            font-family="Monaco, Courier, monospace"
+            letter-spacing="2px"
+            padding="15px 0"
+          >
+            {{ gift_card.code }}
+          </mj-text>
+
+          <mj-text
+            font-size="24px"
+            font-weight="600"
+            color="{{ theme.color.success|default:'#10b981' }}"
+            align="center"
+            padding-top="10px"
+          >
+            {{ gift_card.current_balance }}
+          </mj-text>
+
+          {% if gift_card.expires_at %}
+          <mj-text
+            font-size="13px"
+            color="{{ theme.color.error|default:'#ef4444' }}"
+            align="center"
+            padding-top="10px"
+          >
+            {{ _("Expires") }}: {{ gift_card.expires_at|date:"F d, Y" }}
+          </mj-text>
+          {% endif %}
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+
+    {# How to Use Section #}
+    <mj-text
+      font-size="18px"
+      font-weight="600"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      align="center"
+      padding="30px 0 15px 0"
+    >
+      {{ _("How to Use Your Gift Card") }}
+    </mj-text>
+
+    <mj-text
+      font-size="14px"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      padding="8px 20px"
+      line-height="1.6"
+    >
+      <span style="color: {{ theme.color.primary|default:'#2563eb' }}; font-size: 18px; margin-right: 8px;">1.</span>
+      {{ _("Browse our products and add items to your cart") }}
+    </mj-text>
+
+    <mj-text
+      font-size="14px"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      padding="8px 20px"
+      line-height="1.6"
+    >
+      <span style="color: {{ theme.color.primary|default:'#2563eb' }}; font-size: 18px; margin-right: 8px;">2.</span>
+      {{ _("Proceed to checkout and enter your gift card code") }}
+    </mj-text>
+
+    <mj-text
+      font-size="14px"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      padding="8px 20px"
+      line-height="1.6"
+    >
+      <span style="color: {{ theme.color.primary|default:'#2563eb' }}; font-size: 18px; margin-right: 8px;">3.</span>
+      {{ _("The gift card balance will be applied to your order") }}
+    </mj-text>
+
+    {# CTA Button #}
+    <mj-button
+      href="{{ shop_url }}"
+      background-color="{{ theme.color.primary|default:'#2563eb' }}"
+      color="{{ theme.color.text_inverse|default:'#ffffff' }}"
+      font-size="18px"
+      font-weight="600"
+      border-radius="{{ theme.radius.md|default:'0.5rem' }}"
+      padding="16px 40px"
+      inner-padding="16px 40px"
+      align="center"
+    >
+      {{ _("Start Shopping") }}
+    </mj-button>
+
+    {# Check Balance Link #}
+    <mj-text
+      font-size="13px"
+      color="{{ theme.color.text_muted|default:'#6b7280' }}"
+      align="center"
+      padding-top="20px"
+    >
+      {{ _("Check your balance anytime") }}:
+      <a href="{{ check_balance_url }}" style="color: {{ theme.color.primary|default:'#2563eb' }}; text-decoration: none;">
+        {{ _("Check Gift Card Balance") }}
+      </a>
+    </mj-text>
+  </mj-column>
+</mj-section>
+
+{# Gift Card Terms (Optional) #}
+<mj-section background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}" padding="20px">
+  <mj-column>
+    <mj-text
+      font-size="11px"
+      color="{{ theme.color.text_muted|default:'#6b7280' }}"
+      align="center"
+      line-height="1.5"
+    >
+      {{ _("Gift cards are non-refundable and cannot be redeemed for cash.") }}
+      {% if not gift_card.expires_at %}
+      {{ _("This gift card never expires.") }}
+      {% endif %}
+      {{ _("Gift cards cannot be used to purchase other gift cards.") }}
+    </mj-text>
+  </mj-column>
+</mj-section>

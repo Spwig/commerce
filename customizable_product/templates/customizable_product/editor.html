@@ -1,0 +1,242 @@
+{% load i18n static merchant_trans %}
+<!-- Visual Design Editor -->
+<div class="design-editor" id="design-editor" data-product-id="{{ product.pk }}" data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" style="display:none;">
+
+    <!-- Surface Tabs -->
+    <div class="design-editor__surfaces" id="design-editor-surfaces">
+        <!-- Populated by JS -->
+    </div>
+
+    <!-- Canvas Container -->
+    <div class="design-editor__canvas-wrapper">
+        <div class="design-editor__canvas-viewport" id="design-editor-viewport">
+            <div class="design-editor__mockup-container" id="design-editor-mockup">
+                <img id="design-editor-mockup-img" src="" alt="" class="design-editor__mockup-img">
+                <div class="design-editor__canvas-zone" id="design-editor-zone">
+                    <canvas id="design-editor-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Toolbar -->
+        <div class="design-editor__toolbar" id="design-editor-toolbar">
+            <button type="button" class="design-editor__tool-btn" id="btn-undo" title="{% mtrans 'Undo' %}" disabled>
+                <i class="fas fa-undo"></i>
+            </button>
+            <button type="button" class="design-editor__tool-btn" id="btn-redo" title="{% mtrans 'Redo' %}" disabled>
+                <i class="fas fa-redo"></i>
+            </button>
+            <span class="design-editor__toolbar-divider"></span>
+            <button type="button" class="design-editor__tool-btn" id="btn-zoom-in" title="{% mtrans 'Zoom In' %}">
+                <i class="fas fa-search-plus"></i>
+            </button>
+            <button type="button" class="design-editor__tool-btn" id="btn-zoom-out" title="{% mtrans 'Zoom Out' %}">
+                <i class="fas fa-search-minus"></i>
+            </button>
+            <span class="design-editor__toolbar-divider"></span>
+            <button type="button" class="design-editor__tool-btn" id="btn-duplicate" title="{% mtrans 'Duplicate' %}" disabled>
+                <i class="fas fa-copy"></i>
+            </button>
+            <button type="button" class="design-editor__tool-btn" id="btn-delete" title="{% mtrans 'Delete Selected' %}" disabled>
+                <i class="fas fa-trash"></i>
+            </button>
+            <span class="design-editor__toolbar-divider"></span>
+            <button type="button" class="design-editor__tool-btn" id="btn-fullscreen" title="{% mtrans 'Toggle Fullscreen' %}">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tool Panel (Desktop: side panel, Mobile: bottom sheet) -->
+    <div class="design-editor__tools" id="design-editor-tools">
+        <!-- Tool Buttons -->
+        <div class="design-editor__tool-buttons">
+            <button type="button" class="design-editor__tool-tab active" data-tool="text" id="tool-text">
+                <i class="fas fa-font"></i>
+                <span>{% mtrans "Text" %}</span>
+            </button>
+            <button type="button" class="design-editor__tool-tab" data-tool="image" id="tool-image">
+                <i class="fas fa-image"></i>
+                <span>{% mtrans "Image" %}</span>
+            </button>
+            <button type="button" class="design-editor__tool-tab" data-tool="clipart" id="tool-clipart">
+                <i class="fas fa-icons"></i>
+                <span>{% mtrans "Clipart" %}</span>
+            </button>
+            <button type="button" class="design-editor__tool-tab" data-tool="templates" id="tool-templates">
+                <i class="fas fa-palette"></i>
+                <span>{% mtrans "Templates" %}</span>
+            </button>
+            <button type="button" class="design-editor__tool-tab" data-tool="layers" id="tool-layers">
+                <i class="fas fa-layer-group"></i>
+                <span>{% mtrans "Layers" %}</span>
+            </button>
+        </div>
+
+        <!-- Text Tool Panel -->
+        <div class="design-editor__tool-panel active" id="panel-tool-text">
+            <button type="button" class="design-editor__add-btn" id="btn-add-text">
+                <i class="fas fa-plus"></i> {% mtrans "Add Text" %}
+            </button>
+
+            <!-- Properties (shown when text selected) -->
+            <div class="design-editor__properties" id="text-properties" style="display:none;">
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Font" %}</label>
+                    <select id="prop-font-family" class="design-editor__prop-select">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="design-editor__prop-row design-editor__prop-row--inline">
+                    <div>
+                        <label>{% mtrans "Size" %}</label>
+                        <input type="number" id="prop-font-size" class="design-editor__prop-input" value="24" min="8" max="200">
+                    </div>
+                    <div>
+                        <label>{% mtrans "Color" %}</label>
+                        <input type="color" id="prop-font-color" class="design-editor__prop-color" value="#000000">
+                    </div>
+                </div>
+                <div class="design-editor__prop-row design-editor__prop-row--inline">
+                    <button type="button" class="design-editor__style-btn" id="prop-bold" title="{% mtrans 'Bold' %}">
+                        <i class="fas fa-bold"></i>
+                    </button>
+                    <button type="button" class="design-editor__style-btn" id="prop-italic" title="{% mtrans 'Italic' %}">
+                        <i class="fas fa-italic"></i>
+                    </button>
+                    <button type="button" class="design-editor__style-btn" id="prop-align-left" title="{% mtrans 'Align Left' %}">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <button type="button" class="design-editor__style-btn" id="prop-align-center" title="{% mtrans 'Align Center' %}">
+                        <i class="fas fa-align-center"></i>
+                    </button>
+                    <button type="button" class="design-editor__style-btn" id="prop-align-right" title="{% mtrans 'Align Right' %}">
+                        <i class="fas fa-align-right"></i>
+                    </button>
+                </div>
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Outline" %}</label>
+                    <div class="design-editor__prop-row--inline">
+                        <input type="color" id="prop-stroke-color" class="design-editor__prop-color" value="#ffffff">
+                        <input type="number" id="prop-stroke-width" class="design-editor__prop-input design-editor__prop-input--small" value="0" min="0" max="10" step="0.5">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Upload Tool Panel -->
+        <div class="design-editor__tool-panel" id="panel-tool-image">
+            <button type="button" class="design-editor__add-btn" id="btn-upload-image">
+                <i class="fas fa-upload"></i> {% mtrans "Upload Image" %}
+            </button>
+            <input type="file" id="image-upload-input" accept="image/jpeg,image/png,image/webp" style="display:none;">
+            <p class="design-editor__tool-hint">{% mtrans "Supported: JPG, PNG, WebP" %}</p>
+
+            <!-- Image properties (shown when image selected) -->
+            <div class="design-editor__properties" id="image-properties" style="display:none;">
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Opacity" %}</label>
+                    <input type="range" id="prop-opacity" class="design-editor__prop-range" min="0" max="1" step="0.05" value="1">
+                </div>
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Brightness" %}</label>
+                    <input type="range" id="prop-brightness" class="design-editor__prop-range" min="-1" max="1" step="0.05" value="0">
+                </div>
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Contrast" %}</label>
+                    <input type="range" id="prop-contrast" class="design-editor__prop-range" min="-1" max="1" step="0.05" value="0">
+                </div>
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Saturation" %}</label>
+                    <input type="range" id="prop-saturation" class="design-editor__prop-range" min="-1" max="1" step="0.05" value="0">
+                </div>
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Tint" %}</label>
+                    <div class="design-editor__prop-row--inline">
+                        <input type="color" id="prop-tint-color" class="design-editor__prop-color" value="#ff0000">
+                        <input type="range" id="prop-tint-alpha" class="design-editor__prop-range" min="0" max="1" step="0.05" value="0">
+                    </div>
+                </div>
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Remove Color" %}</label>
+                    <div class="design-editor__prop-row--inline">
+                        <input type="color" id="prop-remove-color" class="design-editor__prop-color" value="#ffffff">
+                        <input type="range" id="prop-remove-distance" class="design-editor__prop-range" min="0" max="1" step="0.02" value="0">
+                    </div>
+                </div>
+                <div class="design-editor__prop-row">
+                    <label>{% mtrans "Rotation" %}</label>
+                    <div class="design-editor__prop-row--inline">
+                        <input type="number" id="prop-rotation" class="design-editor__prop-input design-editor__prop-input--small" value="0" min="0" max="360">
+                        <button type="button" class="design-editor__style-btn" id="prop-rotate-cw" title="{% mtrans 'Rotate 90°' %}">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button type="button" class="design-editor__style-btn" id="prop-rotate-ccw" title="{% mtrans 'Rotate -90°' %}">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button type="button" class="design-editor__style-btn" id="prop-flip-h" title="{% mtrans 'Flip Horizontal' %}">
+                            <i class="fas fa-arrows-alt-h"></i>
+                        </button>
+                        <button type="button" class="design-editor__style-btn" id="prop-flip-v" title="{% mtrans 'Flip Vertical' %}">
+                            <i class="fas fa-arrows-alt-v"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clipart Browser Panel -->
+        <div class="design-editor__tool-panel" id="panel-tool-clipart">
+            <div class="design-editor__clipart-categories" id="clipart-categories">
+                <!-- Populated by JS -->
+            </div>
+            <div class="design-editor__clipart-search">
+                <input type="text" id="clipart-search" class="design-editor__prop-input" placeholder="{% mtrans 'Search clipart...' %}">
+            </div>
+            <div class="design-editor__clipart-grid" id="clipart-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Templates Panel -->
+        <div class="design-editor__tool-panel" id="panel-tool-templates">
+            <div class="design-editor__template-grid" id="template-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Layers Panel -->
+        <div class="design-editor__tool-panel" id="panel-tool-layers">
+            <div class="design-editor__layers-list" id="layers-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Summary -->
+    <div class="design-editor__price" id="design-editor-price">
+        <div class="design-editor__price-line">
+            <span>{% mtrans "Design fee" %}:</span>
+            <span id="design-price-total">{{ currency_symbol }}0.00</span>
+        </div>
+    </div>
+
+    <!-- Save Design -->
+    <div class="design-editor__save-actions">
+        <button type="button" class="design-editor__save-btn" id="btn-save-design">
+            <i class="fas fa-save"></i> {% mtrans "Save Design" %}
+        </button>
+        {% if request.user.is_authenticated %}
+        <button type="button" class="design-editor__save-btn design-editor__save-btn--outline" id="btn-load-design">
+            <i class="fas fa-folder-open"></i> {% mtrans "My Designs" %}
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Mobile Bottom Sheet Handle -->
+<div class="design-editor__sheet-handle" id="design-editor-sheet-handle" style="display:none;">
+    <div class="design-editor__sheet-drag"></div>
+</div>
+
+<!-- Saved designs modal is created dynamically by StorefrontModal in design-editor.js -->

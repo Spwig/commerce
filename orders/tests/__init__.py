@@ -1,0 +1,3 @@
+"""
+Orders app test suite
+"""

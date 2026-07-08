@@ -1,0 +1,781 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Promotion Wizard CSS
+ * Extends wizard-base.css with promotion-specific styles
+ * Theme-aware styles using CSS variables - no hardcoded colors
+ */
+
+/* ==========================================================================
+   Info Box Enhancements
+   ========================================================================== */
+
+.info-box-icon {
+    background: var(--primary-bg);
+    color: var(--primary);
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.info-box-icon i {
+    font-size: 22px;
+}
+
+.info-box-content {
+    flex: 1;
+}
+
+.info-box-content h4 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.info-box-content p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    line-height: 1.5;
+}
+
+.info-box-content ul {
+    margin: 12px 0 0 0;
+    padding-left: 20px;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+.info-box-content ul li {
+    margin: 4px 0;
+}
+
+/* ==========================================================================
+   Checkbox Label Enhancements
+   ========================================================================== */
+
+.checkbox-label {
+    position: relative;
+}
+
+.checkbox-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-custom {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    background: var(--body-bg);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--primary-fg);
+    font-size: 12px;
+}
+
+.checkbox-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.checkbox-text strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.checkbox-description {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    font-weight: 400;
+}
+
+/* ==========================================================================
+   Button Variants (not in wizard-base)
+   ========================================================================== */
+
+.btn-link {
+    background: transparent;
+    border: none;
+    color: var(--body-quiet-color);
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.btn-link:hover {
+    color: var(--body-fg);
+}
+
+.btn-link.btn-danger {
+    color: var(--error-fg);
+}
+
+.btn-link.btn-danger:hover {
+    color: var(--delete-button-hover-bg);
+}
+
+/* ==========================================================================
+   Selector Container (visibility toggle)
+   ========================================================================== */
+
+.selector-container {
+    display: none;
+    margin-top: 20px;
+}
+
+/* ==========================================================================
+   Discount Preview Card
+   ========================================================================== */
+
+.discount-preview-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: var(--primary-fg);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.discount-preview-card .preview-value {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.discount-preview-card .preview-label {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.discount-preview-card .preview-example {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* ==========================================================================
+   Discount Type Cards
+   ========================================================================== */
+
+.discount-type-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.discount-type-card {
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--body-bg);
+}
+
+.discount-type-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.discount-type-card.selected {
+    border-color: var(--primary);
+    background: var(--primary-bg);
+}
+
+.discount-type-card input[type="radio"] {
+    display: none;
+}
+
+.discount-type-card .card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: var(--darkened-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--body-quiet-color);
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.discount-type-card.selected .card-icon {
+    background: var(--primary);
+    color: var(--primary-fg);
+}
+
+.discount-type-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 4px 0;
+}
+
+.discount-type-card p {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin: 0;
+}
+
+.discount-type-card .card-check {
+    display: none;
+    color: var(--primary);
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.discount-type-card.selected .card-check {
+    display: block;
+}
+
+/* ==========================================================================
+   Date Picker Row
+   ========================================================================== */
+
+.date-picker-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.date-picker-row .form-group {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Product Selector
+   ========================================================================== */
+
+.product-target-selector {
+    margin-top: 20px;
+}
+
+.target-type-cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.target-type-card {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--body-bg);
+}
+
+.target-type-card:hover {
+    border-color: var(--primary);
+}
+
+.target-type-card.selected {
+    border-color: var(--primary);
+    background: var(--primary-bg);
+}
+
+.target-type-card input[type="radio"] {
+    display: none;
+}
+
+.target-type-card i {
+    font-size: 24px;
+    color: var(--body-quiet-color);
+    margin-bottom: 8px;
+    transition: color 0.2s ease;
+}
+
+.target-type-card.selected i {
+    color: var(--primary);
+}
+
+.target-type-card span {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--body-fg);
+}
+
+/* Selector Manager (dual-column item selector) */
+.selector-manager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 16px;
+}
+
+.selector-column {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.selector-column h3 {
+    background: var(--primary);
+    color: var(--primary-fg);
+    margin: 0;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.selector-search {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--body-bg);
+    position: relative;
+}
+
+.selector-search input {
+    width: 100%;
+    padding: 10px 12px;
+    padding-left: 36px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 13px;
+}
+
+.selector-search i {
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--body-quiet-color);
+    font-size: 14px;
+}
+
+.selector-actions {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--body-bg);
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.selector-move-btn {
+    padding: 6px 16px;
+    background: var(--primary);
+    color: var(--primary-fg);
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.selector-move-btn:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.selector-move-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.selector-list {
+    padding: 8px;
+    height: 300px;
+    overflow-y: auto;
+    background: var(--body-bg);
+}
+
+.selector-item {
+    padding: 10px 12px;
+    margin: 4px 0;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.selector-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 4px var(--shadow-light);
+    transform: translateY(-1px);
+}
+
+.selector-item.sortable-ghost {
+    opacity: 0.4;
+    background: var(--primary-bg);
+}
+
+.selector-item.selected {
+    background: var(--primary-bg);
+    border-color: var(--primary);
+}
+
+.selector-item .item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-bg);
+    color: var(--primary);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.selector-item .item-thumbnail {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.selector-item .item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.selector-item .item-name {
+    font-weight: 500;
+    color: var(--body-fg);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.selector-item .item-meta {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    margin-top: 2px;
+}
+
+.selector-item .drag-handle {
+    color: var(--body-quiet-color);
+    font-size: 14px;
+    cursor: move;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.selector-item:hover .drag-handle {
+    opacity: 1;
+}
+
+.selector-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--body-quiet-color);
+    font-size: 13px;
+}
+
+.selector-empty i {
+    font-size: 36px;
+    margin-bottom: 12px;
+    opacity: 0.3;
+    display: block;
+}
+
+/* ==========================================================================
+   Review Summary
+   ========================================================================== */
+
+.review-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.review-section {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.review-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.review-section h3 i {
+    color: var(--primary);
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.review-item .review-label {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.review-item .review-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.review-item .review-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    width: fit-content;
+}
+
+.review-item .review-badge.success {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.review-item .review-badge.warning {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+.review-item .review-badge.primary {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+/* Selected items summary */
+.selected-items-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.selected-item-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--body-fg);
+}
+
+.selected-item-tag i {
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   Advanced Settings Toggle
+   ========================================================================== */
+
+.advanced-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 24px;
+}
+
+.advanced-toggle:hover {
+    border-color: var(--primary);
+}
+
+.advanced-toggle .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: var(--body-fg);
+}
+
+.advanced-toggle .toggle-label i {
+    color: var(--body-quiet-color);
+}
+
+.advanced-toggle .toggle-icon {
+    color: var(--body-quiet-color);
+    transition: transform 0.2s ease;
+}
+
+.advanced-toggle.expanded .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.advanced-settings-content {
+    display: none;
+    padding: 20px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-top: -8px;
+}
+
+.advanced-settings-content.show {
+    display: block;
+}
+
+/* ==========================================================================
+   Input with Addon
+   ========================================================================== */
+
+.input-with-addon {
+    display: flex;
+    align-items: stretch;
+}
+
+.input-with-addon .form-control {
+    border-radius: 6px 0 0 6px;
+    border-right: none;
+}
+
+.input-with-addon .input-addon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    font-weight: 600;
+    color: var(--body-quiet-color);
+    min-width: 50px;
+}
+
+.input-with-addon .input-addon:first-child {
+    border-radius: 6px 0 0 6px;
+    border-left: 1px solid var(--border-color);
+    border-right: none;
+}
+
+.input-with-addon .input-addon:first-child + .form-control {
+    border-radius: 0 6px 6px 0;
+    border-right: 1px solid var(--border-color);
+}
+
+/* ==========================================================================
+   Error States
+   ========================================================================== */
+
+.form-control.error {
+    border-color: var(--error-fg);
+}
+
+.error-message {
+    color: var(--error-fg);
+    font-size: 13px;
+    margin-top: 6px;
+    display: none;
+}
+
+.error-message:not(:empty) {
+    display: block;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .discount-type-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .target-type-cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .date-picker-row {
+        grid-template-columns: 1fr;
+    }
+
+    .selector-manager {
+        grid-template-columns: 1fr;
+    }
+
+    .review-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .discount-preview-card .preview-value {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .target-type-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

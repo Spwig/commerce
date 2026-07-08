@@ -1,0 +1,71 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Reward" %}: {{ original }}{% else %}{% trans "Add Reward" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltyreward_form.css' %}">
+{% endblock %}
+
+{% block field_sets %}
+<!-- Floating Preview Card -->
+<div class="reward-preview-float">
+    <div class="reward-preview-card" id="reward-preview-card">
+        <div class="reward-preview-header">
+            <div class="reward-preview-header-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <h3 class="reward-preview-header-title">{% trans "Live Preview" %}</h3>
+        </div>
+
+        <div class="reward-preview-content">
+            <div class="reward-preview-image-container" id="preview-image-container">
+                <i class="fas fa-gift reward-preview-icon-placeholder" id="preview-icon"></i>
+            </div>
+
+            <div class="reward-preview-details">
+                <h2 class="reward-preview-name" id="preview-name">
+                    {% if original %}{{ original.name }}{% else %}{% trans "New Reward" %}{% endif %}
+                </h2>
+
+                <p class="reward-preview-description" id="preview-description">
+                    {% if original %}{{ original.description }}{% else %}{% trans "Enter a description..." %}{% endif %}
+                </p>
+
+                <div class="reward-preview-meta" id="preview-badges">
+                    <!-- Badges will be dynamically updated -->
+                </div>
+
+                <p class="reward-preview-points">
+                    <span id="preview-points">{% if original %}{{ original.points_cost }}{% else %}0{% endif %}</span>
+                    <span class="reward-preview-points-label">{% trans "points" %}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Original Django Admin Fieldsets -->
+{{ block.super }}
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script type="application/json" id="loyaltyreward-form-data">
+{
+    "translations": {
+        "newReward": "{% trans 'New Reward' %}",
+        "enterDescription": "{% trans 'Enter a description...' %}",
+        "active": "{% trans 'Active' %}",
+        "inactive": "{% trans 'Inactive' %}",
+        "featured": "{% trans 'Featured' %}"
+    }
+}
+</script>
+<script src="{% static 'loyalty/admin/js/loyaltyreward_change_form.js' %}"></script>
+{% endblock %}

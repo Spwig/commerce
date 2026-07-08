@@ -1,0 +1,49 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Shipping Provider" %}: {{ original }}{% else %}{% trans "Add Shipping Provider" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <!-- Font Awesome for eye icons -->
+{% endblock %}
+
+{% block field_sets %}
+    {{ block.super }}
+
+    {% if original %}
+        {# Render API Credentials section manually after other fieldsets #}
+        <fieldset class="module aligned shipping-credentials-fieldset">
+            <h2>{% trans "API Credentials" %}</h2>
+            <div class="shipping-description">
+                {% trans "Your API credentials are encrypted and stored securely. Click the eye icon to reveal sensitive fields." %}
+            </div>
+
+            {% for field in adminform.form %}
+                {% if field.name|slice:":11" == "credential_" %}
+                    <div class="form-row field-{{ field.name }}">
+                        <div>
+                            {{ field.errors }}
+                            <label for="{{ field.id_for_label }}" class="required">
+                                {{ field.label }}
+                            </label>
+                            {% if field.help_text %}
+                                <p class="help">{{ field.help_text }}</p>
+                            {% endif %}
+                            {{ field }}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </fieldset>
+
+        <script type="application/json" id="provider-account-config">
+        {
+            "i18n": {
+                "encryptedField": "{% trans 'This field is encrypted and stored securely.' %}"
+            }
+        }
+        </script>
+        <script src="{% static 'shipping/js/provider-account.js' %}"></script>
+    {% endif %}
+{% endblock %}

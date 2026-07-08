@@ -1,0 +1,86 @@
+{% load i18n static element_tags merchant_trans %}
+<!-- Promotion Banner Element -->
+{% with promotion=element_context.promotion %}
+<div class="promo-banner promo-banner--{{ element.content.style|default:'bar' }}"
+     style="--promo-bg: {{ element.content.banner_color|default:'#7c3aed' }}; --promo-text: {{ element.content.text_color|default:'#ffffff' }};
+            {% base_styles element %}"
+     data-dismissible="{{ element.content.dismissible|default:'true' }}"
+     data-auto-hide="{{ element.content.auto_hide_expired|default:'true' }}"
+     data-element-id="{{ element.id }}"
+     {% hover_animation_attrs element %}>
+
+    <div class="promo-banner__container">
+        {% if element.content.icon %}
+        <div class="promo-banner__icon">
+            <i class="{{ element.content.icon }}"></i>
+        </div>
+        {% endif %}
+
+        <div class="promo-banner__content">
+            {% if element.content.show_discount|default:True %}
+            <span class="promo-banner__discount">
+                {% if element.content.data_source == 'dynamic' and promotion.discount_display %}
+                {{ promotion.discount_display }}
+                {% else %}
+                {{ element.content.discount_text|default:"20% OFF" }}
+                {% endif %}
+            </span>
+            {% endif %}
+
+            <div class="promo-banner__text">
+                <strong class="promo-banner__title">
+                    {% if element.content.data_source == 'dynamic' and promotion.name %}
+                    {{ promotion.name }}
+                    {% else %}
+                    {{ element.content.title }}
+                    {% endif %}
+                </strong>
+                <span class="promo-banner__description">
+                    {% if element.content.data_source == 'dynamic' and promotion.description %}
+                    {{ promotion.description }}
+                    {% else %}
+                    {{ element.content.description }}
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        {% if element.content.show_countdown|default:True %}
+        <div class="promo-banner__countdown"
+             data-ends="{% if element.content.data_source == 'dynamic' and promotion.end_date %}{{ promotion.end_date|date:'c' }}{% else %}{{ element.content.end_date }}{% endif %}">
+            <div class="promo-banner__countdown-item">
+                <span class="promo-banner__countdown-value" data-days>00</span>
+                <span class="promo-banner__countdown-label">{% mtrans "Days" %}</span>
+            </div>
+            <span class="promo-banner__countdown-sep">:</span>
+            <div class="promo-banner__countdown-item">
+                <span class="promo-banner__countdown-value" data-hours>00</span>
+                <span class="promo-banner__countdown-label">{% mtrans "Hrs" %}</span>
+            </div>
+            <span class="promo-banner__countdown-sep">:</span>
+            <div class="promo-banner__countdown-item">
+                <span class="promo-banner__countdown-value" data-mins>00</span>
+                <span class="promo-banner__countdown-label">{% mtrans "Min" %}</span>
+            </div>
+            <span class="promo-banner__countdown-sep">:</span>
+            <div class="promo-banner__countdown-item">
+                <span class="promo-banner__countdown-value" data-secs>00</span>
+                <span class="promo-banner__countdown-label">{% mtrans "Sec" %}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if element.content.button_text %}
+        <a href="{{ element.content.button_url|default:'/products/' }}" class="promo-banner__btn">
+            {{ element.content.button_text }}
+        </a>
+        {% endif %}
+
+        {% if element.content.dismissible|default:True %}
+        <button class="promo-banner__close" aria-label="{% mtrans 'Close' %}">
+            <i class="fas fa-times"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endwith %}

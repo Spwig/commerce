@@ -1,0 +1,157 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Widgets" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/widget_updates.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-puzzle-piece"></i>
+                {% trans "Widgets" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage page builder widgets and components" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <button type="button"
+                    class="button secondary change-list-action-button"
+                    id="refresh-updates-btn">
+                <i class="fas fa-sync-alt"></i> {% trans "Refresh Update Status" %}
+            </button>
+            <a href="{% url 'admin:design_widget_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Widget" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or content...' %}"
+                    value="">
+            </div>
+
+            <!-- Widget Type -->
+            <div class="filter-field">
+                <label for="filter-widget-type">
+                    <i class="fas fa-shapes"></i> {% trans "Widget Type" %}
+                </label>
+                <select id="filter-widget-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for type_value, type_label in widget_types %}
+                    <option value="{{ type_value }}">{{ type_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-is-active">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-is-active">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Active" %}</option>
+                    <option value="false">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Widgets" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-puzzle-piece"></i>
+            <span id="widget-count">{{ cl.result_count }}</span> {% trans "widget" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="widget-results">
+        {% include "admin/design/widget/partials/widget_cards.html" with widgets=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count > cl.list_per_page %}
+    <div class="pagination-container">
+        <p class="paginator">
+            <span class="small quiet">{{ cl.result_count }} {% trans "widgets" %}</span>
+        </p>
+        {% if cl.multi_page %}
+            <p class="paginator">
+                {% if cl.page_num > 0 %}
+                    <a href="?p={{ cl.page_num|add:'-1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Previous" %}</a>
+                {% endif %}
+                <span class="this-page">{% trans "Page" %} {{ cl.page_num|add:'1' }} {% trans "of" %} {{ cl.paginator.num_pages }}</span>
+                {% if cl.page_num < cl.paginator.num_pages|add:'-1' %}
+                    <a href="?p={{ cl.page_num|add:'1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Next" %}</a>
+                {% endif %}
+            </p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+<div id="widget-list-config"
+     data-filter-url="{% url 'design_admin:filter_widgets' %}"
+     data-results-container="widget-results"
+     data-results-count="widget-count"
+     style="display:none;"></div>
+<script src="{% static 'design/admin/js/widget-list.js' %}"></script>
+</div>
+{% endblock %}

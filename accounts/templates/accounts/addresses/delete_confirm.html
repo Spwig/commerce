@@ -1,0 +1,146 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete Address" %}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'accounts:address_list' %}" class="text-gray-700 hover:text-blue-600">
+                    {% trans "My Addresses" %}
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-gray-500">{% trans "Delete" %}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Confirmation Card -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <svg class="h-12 w-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-2xl font-bold text-gray-900">{% trans "Delete Address" %}</h1>
+                    <p class="mt-1 text-gray-600">{% trans "This action cannot be undone" %}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <!-- Address Display -->
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-3">
+                            {% if address.address_type == 'shipping' %}
+                                <span class="inline-block px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
+                                    {% trans "Shipping" %}
+                                </span>
+                            {% elif address.address_type == 'billing' %}
+                                <span class="inline-block px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
+                                    {% trans "Billing" %}
+                                </span>
+                            {% else %}
+                                <span class="inline-block px-3 py-1 text-sm font-semibold text-purple-800 bg-purple-100 rounded-full">
+                                    {% trans "Both" %}
+                                </span>
+                            {% endif %}
+
+                            {% if address.is_default %}
+                                <span class="inline-block px-2 py-1 text-xs font-semibold text-amber-800 bg-amber-100 rounded-full">
+                                    {% trans "Default" %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ address.name }}</h3>
+                        {% if address.company %}
+                            <p class="text-sm text-gray-600 mb-1">{{ address.company }}</p>
+                        {% endif %}
+                        <p class="text-sm text-gray-700">{{ address.address1 }}</p>
+                        {% if address.address2 %}
+                            <p class="text-sm text-gray-700">{{ address.address2 }}</p>
+                        {% endif %}
+                        <p class="text-sm text-gray-700">
+                            {{ address.city }}, {{ address.state }} {{ address.postal_code }}
+                        </p>
+                        <p class="text-sm text-gray-700">{{ address.country }}</p>
+                        {% if address.phone %}
+                            <p class="text-sm text-gray-600 mt-2">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                {{ address.phone }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Message -->
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">
+                            {% trans "Warning" %}
+                        </h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <p>{% trans "Are you sure you want to delete this address? This action cannot be undone." %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="text-sm text-gray-600 space-y-2">
+                <p>{% trans "When you delete this address:" %}</p>
+                <ul class="list-disc list-inside space-y-1 ml-2">
+                    <li>{% trans "The address will be permanently removed from your account" %}</li>
+                    <li>{% trans "You cannot undo this action" %}</li>
+                    <li>{% trans "You can always add new addresses later" %}</li>
+                    {% if address.is_default %}
+                    <li class="text-yellow-700 font-medium">
+                        {% trans "This is your default address. After deletion, you may need to set a new default address." %}
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-6 bg-gray-50 border-t border-gray-200">
+            <form method="post">
+                {% csrf_token %}
+                <div class="flex items-center justify-between">
+                    <a href="{% url 'accounts:address_list' %}"
+                       class="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-white transition-colors">
+                        {% trans "Cancel" %}
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                        {% trans "Delete Address" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

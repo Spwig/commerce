@@ -1,0 +1,134 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Search Redirects" %} | {{ site_settings.site_name|default:"Spwig" }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'search/css/search-admin.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-directions"></i>
+                {% trans "Search Redirects" %}
+            </h1>
+            <p class="subtitle">{% trans "Redirects automatically send users to a specific page when they search for certain terms. Great for promotional campaigns or common misspellings." %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:search_searchredirect_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Redirect" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Filter by term or URL...' %}">
+            </div>
+
+            <!-- Match Type -->
+            <div class="filter-field">
+                <label for="filter-match-type">
+                    <i class="fas fa-crosshairs"></i> {% trans "Match Type" %}
+                </label>
+                <select id="filter-match-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="exact">{% trans "Exact" %}</option>
+                    <option value="contains">{% trans "Contains" %}</option>
+                    <option value="starts_with">{% trans "Starts With" %}</option>
+                    <option value="regex">{% trans "Regex" %}</option>
+                </select>
+            </div>
+
+            <!-- Engine -->
+            <div class="filter-field">
+                <label for="filter-engine">
+                    <i class="fas fa-server"></i> {% trans "Engine" %}
+                </label>
+                <select id="filter-engine">
+                    <option value="">{% trans "All Engines" %}</option>
+                    {% for engine in search_engines %}
+                    <option value="{{ engine.slug }}">{{ engine.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Active" %}</option>
+                    <option value="false">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Redirects" %}</h2>
+        <span class="results-count" id="results-count-info">
+            <i class="fas fa-directions"></i>
+            <span id="results-count">0</span> {% trans "redirect" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="redirect-results">
+        <div class="list-row-cards">
+            <div class="list-row-card search-loading-state">
+                <i class="fas fa-spinner fa-spin search-loading-icon"></i>
+                <p>{% trans "Loading redirects..." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination info -->
+    <p class="paginator search-hidden" id="paginator-info">
+        <span id="total-count">0</span> {% trans "redirect" %}{{ cl.result_count|pluralize }}
+    </p>
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'search_admin:redirects_filter' %}"
+         data-results-container="redirect-results"
+         data-results-count="results-count"
+         data-auto-load="true"
+         class="search-hidden"></div>
+</div>
+{% endblock %}

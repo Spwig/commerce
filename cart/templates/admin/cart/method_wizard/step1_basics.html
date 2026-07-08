@@ -1,0 +1,240 @@
+{% extends "admin/cart/method_wizard/base.html" %}
+{% load i18n static %}
+
+{% block form_media %}
+{{ form.media }}
+{% endblock %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-info-circle"></i> {% trans "Method Basics" %}
+</div>
+<p class="step-description">
+    {% trans "Define the core identity and type of this shipping method." %}
+</p>
+
+<form method="post" id="method-basics-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-tag"></i> {% trans "Basic Information" %}
+        </h3>
+
+        <!-- Name -->
+        <div class="form-group">
+            <label for="id_name">
+                {% trans "Method Name" %} <span class="required">*</span>
+            </label>
+            <input type="text"
+                   id="id_name"
+                   name="name"
+                   class="form-control"
+                   value="{{ method_data.name|default:'' }}"
+                   required
+                   placeholder="{% trans 'e.g., Standard Shipping, Express Delivery' %}">
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Customer-facing name for this shipping method" %}
+            </p>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="id_description">{% trans "Description" %}</label>
+            <textarea id="id_description"
+                      name="description"
+                      class="form-control"
+                      rows="3"
+                      placeholder="{% trans 'Optional description of this shipping method' %}">{{ method_data.description|default:'' }}</textarea>
+        </div>
+
+        <!-- Display Icon/Image -->
+        <div class="form-section-title wizard-display-section-title">
+            <i class="fas fa-image"></i> {% trans "Display Icon" %}
+        </div>
+        <p class="help-text wizard-display-section-help">
+            <i class="fas fa-info-circle"></i>
+            {% trans "Select an image from the media library or choose a Font Awesome icon. Image takes priority if both are provided." %}
+        </p>
+
+        <!-- Media Library Image Picker -->
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">{% trans "Custom Image" %}</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+                <div class="alert alert-error">
+                    {{ form.image.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Font Awesome Icon Picker -->
+        <div class="form-group">
+            <label for="{{ form.icon.id_for_label }}">{% trans "Font Awesome Icon" %}</label>
+            {{ form.icon }}
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Choose an icon from Font Awesome library" %}
+            </p>
+            {% if form.icon.errors %}
+                <div class="alert alert-error">
+                    {{ form.icon.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Active Status -->
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox"
+                       id="id_is_active"
+                       name="is_active"
+                       {% if method_data.is_active or method_data.is_active is None %}checked{% endif %}>
+                {% trans "Active" %}
+            </label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Make this method available to customers immediately" %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-cog"></i> {% trans "Method Type & Pricing" %}
+        </h3>
+
+        <!-- Method Type -->
+        <div class="form-group">
+            <label for="id_method_type">
+                {% trans "Method Type" %} <span class="required">*</span>
+            </label>
+            <select id="id_method_type" name="method_type" class="form-control" required>
+                <option value="">{% trans "Select method type..." %}</option>
+                <option value="flat_rate" {% if method_data.method_type == 'flat_rate' %}selected{% endif %}>
+                    {% trans "Flat Rate - Fixed shipping cost" %}
+                </option>
+                <option value="real_time" {% if method_data.method_type == 'real_time' %}selected{% endif %}>
+                    {% trans "Real-Time Carrier Rates - Live rates from carriers" %}
+                </option>
+                <option value="local_pickup" {% if method_data.method_type == 'local_pickup' %}selected{% endif %}>
+                    {% trans "Local Pickup - Customer picks up at location" %}
+                </option>
+                <option value="table_rate" {% if method_data.method_type == 'table_rate' %}selected{% endif %}>
+                    {% trans "Table Rate - Complex rules based on weight/price/destination" %}
+                </option>
+            </select>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Method Types:" %}</strong>
+                <ul>
+                    <li><strong>{% trans "Flat Rate:" %}</strong> {% trans "Fixed shipping cost regardless of order" %}</li>
+                    <li><strong>{% trans "Real-Time:" %}</strong> {% trans "Get live rates from USPS, FedEx, UPS, or DHL" %}</li>
+                    <li><strong>{% trans "Local Pickup:" %}</strong> {% trans "Customer picks up at your location" %}</li>
+                    <li><strong>{% trans "Table Rate:" %}</strong> {% trans "Complex rules based on weight, price, or destination" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Flat Rate Cost (shown only for flat_rate type) -->
+        <div id="flat-rate-section" class="form-group">
+            <label for="id_flat_rate_cost">
+                {% trans "Flat Rate Cost" %} <span class="required">*</span>
+            </label>
+            <input type="number"
+                   id="id_flat_rate_cost"
+                   name="flat_rate_cost"
+                   class="form-control"
+                   value="{{ method_data.flat_rate_cost|default:'' }}"
+                   step="0.01"
+                   min="0"
+                   placeholder="0.00">
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Fixed shipping cost charged to customer" %}
+            </p>
+        </div>
+
+        <!-- Carrier (shown only for real_time type) -->
+        <div id="carrier-section">
+            {% if not form.has_configured_carriers %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>{% trans "No Configured Providers" %}</strong>
+                        <p>
+                            {% trans "You need to configure at least one shipping provider that supports real-time rates before you can use this method type." %}
+                        </p>
+                        <p>
+                            <a href="{% url 'shipping:wizard_step1' %}" class="button default alert-action-link">
+                                <i class="fas fa-plug"></i> {% trans "Connect Provider" %}
+                            </a>
+                            <a href="{% url 'admin:shipping_provideraccount_changelist' %}" class="button secondary">
+                                <i class="fas fa-cog"></i> {% trans "Manage Providers" %}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="form-group">
+                    <label for="{{ form.carrier.id_for_label }}">
+                        {% trans "Carrier" %} <span class="required">*</span>
+                    </label>
+                    {{ form.carrier }}
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Select a configured shipping provider" %}
+                    </p>
+                    {% if form.carrier.errors %}
+                        <div class="alert alert-error">
+                            {{ form.carrier.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>{% trans "Tip:" %}</strong>
+                        {% trans "Only providers that are configured and support real-time rates are shown above." %}
+                        <a href="{% url 'admin:shipping_provideraccount_changelist' %}">{% trans "Manage providers" %}</a>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.carrier_service_code.id_for_label }}">{% trans "Service Code" %}</label>
+                    {{ form.carrier_service_code }}
+                    <p class="help-text">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Specific service code from carrier (optional)" %}
+                    </p>
+                    {% if form.carrier_service_code.errors %}
+                        <div class="alert alert-error">
+                            {{ form.carrier_service_code.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:cart_shippingmethod_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="method-basics-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script src="{% static 'cart/js/wizard_step1.js' %}"></script>
+{% endblock %}

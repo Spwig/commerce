@@ -1,0 +1,237 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/variation_builder.css' %}">
+{% endblock %}
+
+{% block title %}{% trans "Variation Builder" %}: {{ product.name }} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_changelist' %}">{% trans 'Products' %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_change' product.id %}">{{ product.name }}</a>
+    &rsaquo; {% trans 'Variation Builder' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="variation-builder-container">
+    <div class="variation-builder-header">
+        <h1>{% trans "Generate Product Variations" %}</h1>
+        <p class="product-info">
+            <strong>{% trans "Product:" %}</strong> {{ product.name }}
+            <span class="sku-badge">SKU: {{ product.sku }}</span>
+        </p>
+    </div>
+
+    {% if not has_attributes %}
+    <div class="notice-box notice-warning">
+        <svg class="notice-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div class="notice-content">
+            <h3>{% trans "No Attributes Assigned" %}</h3>
+            <p>{% trans "You need to assign at least one attribute to this product before generating variations." %}</p>
+            <p>{% trans "Go back to the product page and add attributes in the 'Product Attributes & Variations' section." %}</p>
+        </div>
+    </div>
+    <div class="action-buttons">
+        <a href="{% url 'admin:catalog_product_change' product.id %}" class="button button-primary">
+            {% trans "Go to Product Page" %}
+        </a>
+    </div>
+    {% else %}
+
+    <form method="post" action="{% url 'catalog_admin:generate_variations' product.id %}" id="variation-form">
+        {% csrf_token %}
+
+        <!-- Step 1: Select Attribute Values -->
+        <div class="builder-section">
+            <div class="section-header">
+                <span class="step-number">1</span>
+                <h2>{% trans "Select Attributes & Values" %}</h2>
+                <p class="section-description">{% trans "Choose which values to include in variations. All combinations will be generated." %}</p>
+            </div>
+
+            <div class="attributes-grid">
+                {% for assignment in assignments %}
+                <div class="attribute-card">
+                    <div class="attribute-header">
+                        <h3>{{ assignment.attribute.name }}</h3>
+                        <span class="attribute-type-badge badge-{{ assignment.attribute.type }}">
+                            {{ assignment.attribute.get_type_display }}
+                        </span>
+                    </div>
+
+                    <div class="attribute-values">
+                        {% for value in assignment.allowed_values.all %}
+                        <label class="value-checkbox {% if assignment.attribute.type == 'color' %}value-color{% endif %}">
+                            <input
+                                type="checkbox"
+                                name="attribute_{{ assignment.attribute.id }}"
+                                value="{{ value.id }}"
+                                class="attr-checkbox"
+                                data-attr-id="{{ assignment.attribute.id }}"
+                                data-attr-name="{{ assignment.attribute.slug }}"
+                                data-value-name="{{ value.slug }}"
+                            >
+                            <span class="value-label">
+                                {% if assignment.attribute.type == 'color' and value.color_hex %}
+                                <span class="color-swatch" style="background-color: {{ value.color_hex }}"></span>
+                                {% endif %}
+                                {{ value.value }}
+                            </span>
+                        </label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="attribute-actions">
+                        <button type="button" class="select-all-btn" data-attr-id="{{ assignment.attribute.id }}">
+                            {% trans "Select All" %}
+                        </button>
+                        <button type="button" class="deselect-all-btn" data-attr-id="{{ assignment.attribute.id }}">
+                            {% trans "Deselect All" %}
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Step 2: SKU Pattern -->
+        <div class="builder-section">
+            <div class="section-header">
+                <span class="step-number">2</span>
+                <h2>{% trans "SKU Pattern" %}</h2>
+                <p class="section-description">{% trans "Define how variant SKUs should be generated. Use placeholders for dynamic values." %}</p>
+            </div>
+
+            <div class="sku-pattern-builder">
+                <div class="form-group">
+                    <label for="sku_pattern">{% trans "SKU Pattern:" %}</label>
+                    <input
+                        type="text"
+                        name="sku_pattern"
+                        id="sku_pattern"
+                        class="sku-input"
+                        placeholder="e.g., {product_sku}-{size}-{color}"
+                        value="{{ product.sku }}-{% for assignment in assignments %}{{{ assignment.attribute.slug }}}{% if not forloop.last %}-{% endif %}{% endfor %}"
+                    >
+                    <div class="help-text">
+                        <strong>{% trans "Available placeholders:" %}</strong>
+                        <ul class="placeholder-list">
+                            <li><code>{product_sku}</code> or <code>{sku}</code> → {{ product.sku }}</li>
+                            {% for assignment in assignments %}
+                            <li><code>{{{ assignment.attribute.slug }}}</code> → {% trans "Attribute value" %}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sku-preview">
+                    <h4>{% trans "Preview:" %}</h4>
+                    <div id="sku-preview-output" class="preview-output">
+                        {% trans "Select attribute values to see SKU preview" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Pricing Strategy -->
+        <div class="builder-section">
+            <div class="section-header">
+                <span class="step-number">3</span>
+                <h2>{% trans "Pricing Strategy" %}</h2>
+                <p class="section-description">{% trans "Choose how variant prices should be calculated relative to the base product price." %}</p>
+            </div>
+
+            <div class="pricing-options">
+                <label class="radio-card">
+                    <input type="radio" name="price_strategy" value="none" checked>
+                    <div class="radio-content">
+                        <h4>{% trans "Inherit Product Price" %}</h4>
+                        <p>{% trans "All variants use the base product price" %} ({{ product.price }})</p>
+                    </div>
+                </label>
+
+                <label class="radio-card">
+                    <input type="radio" name="price_strategy" value="fixed_add">
+                    <div class="radio-content">
+                        <h4>{% trans "Add Fixed Amount" %}</h4>
+                        <div class="price-input-group">
+                            <input type="number" name="price_amount" step="0.01" min="0" placeholder="0.00" class="price-input">
+                            <span class="currency-label">{{ product.price.currency }}</span>
+                        </div>
+                        <p class="example">{% trans "Example:" %} {{ product.price.amount }} + 5.00 = {{ product.price.amount|add:5 }}</p>
+                    </div>
+                </label>
+
+                <label class="radio-card">
+                    <input type="radio" name="price_strategy" value="fixed_subtract">
+                    <div class="radio-content">
+                        <h4>{% trans "Subtract Fixed Amount" %}</h4>
+                        <div class="price-input-group">
+                            <input type="number" name="price_amount" step="0.01" min="0" placeholder="0.00" class="price-input">
+                            <span class="currency-label">{{ product.price.currency }}</span>
+                        </div>
+                        <p class="example">{% trans "Example:" %} {{ product.price.amount }} - 5.00 = {{ product.price.amount|add:-5 }}</p>
+                    </div>
+                </label>
+
+                <label class="radio-card">
+                    <input type="radio" name="price_strategy" value="percentage_add">
+                    <div class="radio-content">
+                        <h4>{% trans "Add Percentage" %}</h4>
+                        <div class="price-input-group">
+                            <input type="number" name="price_amount" step="0.1" min="0" max="100" placeholder="0" class="price-input">
+                            <span class="currency-label">%</span>
+                        </div>
+                        <p class="example">{% trans "Example:" %} {{ product.price.amount }} + 10% = {% widthratio product.price.amount 1 1.1 %}</p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Step 4: Preview & Generate -->
+        <div class="builder-section">
+            <div class="section-header">
+                <span class="step-number">4</span>
+                <h2>{% trans "Preview & Generate" %}</h2>
+                <p class="section-description">{% trans "Review combinations before generating variations." %}</p>
+            </div>
+
+            <div id="preview-section" class="preview-section">
+                <div class="preview-summary">
+                    <div class="summary-stat">
+                        <span class="stat-number" id="total-combinations">0</span>
+                        <span class="stat-label">{% trans "Combinations" %}</span>
+                    </div>
+                </div>
+
+                <div id="combinations-preview" class="combinations-list">
+                    {% trans "Select attribute values to preview combinations" %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'admin:catalog_product_change' product.id %}" class="button button-secondary">
+                {% trans "Cancel" %}
+            </a>
+            <button type="submit" class="button button-primary" id="generate-btn" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14m7-7H5"/>
+                </svg>
+                {% trans "Generate Variations" %}
+            </button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+<script src="{% static 'catalog/js/variation_builder.js' %}"></script>
+{% endblock %}

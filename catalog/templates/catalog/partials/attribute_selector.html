@@ -1,0 +1,155 @@
+{% load i18n merchant_trans %}
+{#
+    Grouped Attribute Selector Widget
+
+    Usage:
+    {% include 'catalog/partials/attribute_selector.html' with attributes=product.available_attributes variants=product.variants %}
+
+    Expected data structure:
+    attributes = [
+        {
+            'id': 1,
+            'name': 'Color',
+            'slug': 'color',
+            'type': 'color',  # text, color, image, button
+            'is_required': True,
+            'values': [
+                {'id': 1, 'value': 'Red', 'slug': 'red', 'color_hex': '#FF0000'},
+                {'id': 2, 'value': 'Blue', 'slug': 'blue', 'color_hex': '#0000FF'}
+            ]
+        },
+        ...
+    ]
+#}
+
+{% if attributes %}
+<div class="attribute-selector" data-product-id="{{ product.id }}" data-product-type="{{ product.product_type }}">
+    {% for attribute in attributes %}
+    <div class="attribute-group" data-attribute-id="{{ attribute.id }}" data-attribute-slug="{{ attribute.slug }}" data-attribute-type="{{ attribute.type }}">
+        <!-- Attribute Label -->
+        <div class="attribute-group__header">
+            <label class="attribute-group__label">
+                {{ attribute.name }}
+                {% if attribute.is_required %}
+                <span class="attribute-group__required">*</span>
+                {% endif %}
+            </label>
+            <span class="attribute-group__selected-value"></span>
+        </div>
+
+        <!-- Attribute Values Container -->
+        <div class="attribute-group__values">
+            {% for value in attribute.values %}
+
+                {% if attribute.type == 'color' %}
+                    {# Color Swatch Display #}
+                    <button type="button"
+                            class="attribute-option attribute-option--color"
+                            data-value-id="{{ value.id }}"
+                            data-value-slug="{{ value.slug }}"
+                            data-value-name="{{ value.value }}"
+                            title="{{ value.value }}"
+                            aria-label="{{ attribute.name }}: {{ value.value }}">
+                        <span class="attribute-option__swatch"
+                              style="background-color: {{ value.color_hex|default:'#CCCCCC' }}">
+                        </span>
+                        <span class="attribute-option__checkmark">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                        {# Tooltip showing color name #}
+                        <span class="attribute-option__tooltip">
+                            {{ value.value }}
+                        </span>
+                    </button>
+
+                {% elif attribute.type == 'button' %}
+                    {# Button Display #}
+                    <button type="button"
+                            class="attribute-option attribute-option--button"
+                            data-value-id="{{ value.id }}"
+                            data-value-slug="{{ value.slug }}"
+                            data-value-name="{{ value.value }}"
+                            aria-label="{{ attribute.name }}: {{ value.value }}">
+                        {{ value.value }}
+                    </button>
+
+                {% elif attribute.type == 'image' %}
+                    {# Image Display #}
+                    <button type="button"
+                            class="attribute-option attribute-option--image"
+                            data-value-id="{{ value.id }}"
+                            data-value-slug="{{ value.slug }}"
+                            data-value-name="{{ value.value }}"
+                            title="{{ value.value }}"
+                            aria-label="{{ attribute.name }}: {{ value.value }}">
+                        {% if value.image_url %}
+                        <img src="{{ value.image_url }}"
+                             alt="{{ value.value }}"
+                             class="attribute-option__image">
+                        {% else %}
+                        {# Placeholder if no image #}
+                        <div class="attribute-option__image-placeholder">
+                            {{ value.value|truncatewords:1 }}
+                        </div>
+                        {% endif %}
+                        <span class="attribute-option__checkmark attribute-option__checkmark--overlay">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </span>
+                    </button>
+
+                {% else %}
+                    {# Text/Default Display #}
+                    <button type="button"
+                            class="attribute-option attribute-option--text"
+                            data-value-id="{{ value.id }}"
+                            data-value-slug="{{ value.slug }}"
+                            data-value-name="{{ value.value }}"
+                            aria-label="{{ attribute.name }}: {{ value.value }}">
+                        {{ value.value }}
+                    </button>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+        {# Error message for this attribute #}
+        <div class="attribute-group__error" role="alert"></div>
+    </div>
+    {% endfor %}
+
+    {# Global Messages #}
+    <div class="attribute-selector__messages">
+        {# Availability message #}
+        <div class="attribute-selector__availability" role="status">
+            <svg class="attribute-selector__availability-icon" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            <span class="attribute-selector__availability-text"></span>
+        </div>
+
+        {# Selected variant info #}
+        <div class="attribute-selector__variant-info">
+            <div class="attribute-selector__variant-details">
+                <div>
+                    <div class="attribute-selector__variant-name"></div>
+                    <div class="attribute-selector__variant-sku"></div>
+                </div>
+                <div class="attribute-selector__variant-price"></div>
+            </div>
+            <div class="attribute-selector__variant-stock"></div>
+        </div>
+    </div>
+
+    {# Hidden input to store selected variant ID for form submission #}
+    <input type="hidden" name="variant_id" id="selected-variant-id" value="">
+</div>
+{# Styles in catalog/static/catalog/css/partials/attribute_selector.css - loaded by parent template #}
+{% else %}
+<div class="attribute-selector__empty">
+    {% mtrans "No attributes available for this product." %}
+</div>
+{% endif %}

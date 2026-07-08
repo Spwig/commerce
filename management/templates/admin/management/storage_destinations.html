@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Remote Storage" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/provider-wizard.css' %}">
+<style>
+.destinations-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+.destinations-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.destinations-header h1 { font-size: 28px; font-weight: 600; color: var(--body-fg); display: flex; align-items: center; gap: 12px; }
+.destinations-header h1 i { color: var(--primary); }
+.destination-card { background: var(--body-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 24px; margin-bottom: 16px; display: flex; align-items: center; gap: 20px; transition: border-color 0.2s ease; }
+.destination-card:hover { border-color: var(--primary); }
+.dest-icon { width: 50px; height: 50px; border-radius: 10px; background: var(--darkened-bg); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--primary); flex-shrink: 0; }
+.dest-info { flex: 1; }
+.dest-name { font-size: 17px; font-weight: 600; color: var(--body-fg); margin-bottom: 4px; }
+.dest-type { font-size: 13px; color: var(--body-quiet-color); }
+.dest-stats { display: flex; gap: 20px; align-items: center; font-size: 13px; color: var(--body-quiet-color); }
+.dest-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.dest-status.connected { background: var(--message-success-bg); color: var(--success-fg); }
+.dest-status.error { background: var(--message-error-bg); color: var(--error-fg); }
+.dest-status.unknown { background: var(--darkened-bg); color: var(--body-quiet-color); }
+.dest-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.dest-actions .btn { padding: 8px 14px; font-size: 13px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; {% trans 'Remote Storage' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="destinations-container">
+    <div class="destinations-header">
+        <h1><i class="fas fa-cloud-upload-alt"></i> {% trans "Remote Storage Destinations" %}</h1>
+        <a href="{% url 'admin:management_storage_wizard_step1' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> {% trans "Add Destination" %}
+        </a>
+    </div>
+
+    {% if destinations %}
+    {% for dest in destinations %}
+    <div class="destination-card">
+        <div class="dest-icon">
+            {% if dest.provider_type == 's3' %}
+            <i class="fas fa-cloud"></i>
+            {% elif dest.provider_type == 'sftp' %}
+            <i class="fas fa-server"></i>
+            {% elif dest.provider_type == 'google_drive' %}
+            <i class="fab fa-google-drive"></i>
+            {% elif dest.provider_type == 'dropbox' %}
+            <i class="fab fa-dropbox"></i>
+            {% endif %}
+        </div>
+        <div class="dest-info">
+            <div class="dest-name">
+                {{ dest.name }}
+                {% if dest.is_default %}
+                <span class="badge badge-success">{% trans "Default" %}</span>
+                {% endif %}
+            </div>
+            <div class="dest-type">{{ dest.get_provider_type_display }}</div>
+        </div>
+        <div class="dest-stats">
+            {% if dest.total_uploads > 0 %}
+            <span><i class="fas fa-upload"></i> {{ dest.total_uploads }} {% trans "uploads" %}</span>
+            <span><i class="fas fa-database"></i> {{ dest.total_bytes_display }}</span>
+            {% endif %}
+            {% if dest.last_upload_at %}
+            <span><i class="fas fa-clock"></i> {{ dest.last_upload_at|timesince }} {% trans "ago" %}</span>
+            {% endif %}
+        </div>
+        <div>
+            <span class="dest-status {{ dest.connection_status }}">
+                {% if dest.connection_status == 'connected' %}
+                <i class="fas fa-check-circle"></i> {% trans "Connected" %}
+                {% elif dest.connection_status == 'error' %}
+                <i class="fas fa-times-circle"></i> {% trans "Error" %}
+                {% else %}
+                <i class="fas fa-question-circle"></i> {% trans "Not Tested" %}
+                {% endif %}
+            </span>
+        </div>
+        <div class="dest-actions">
+            <button type="button" class="btn btn-secondary btn-retest"
+                    data-url="{% url 'admin:management_storage_retest' dest.pk %}"
+                    title="{% trans 'Test Connection' %}">
+                <i class="fas fa-plug"></i>
+            </button>
+            <a href="{% url 'admin:management_storage_delete' dest.pk %}" class="btn btn-secondary"
+               title="{% trans 'Delete' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <h3>{% trans "No Remote Storage Configured" %}</h3>
+        <p>{% trans "Add a remote storage destination to automatically back up your store data off-site." %}</p>
+        <p>{% trans "Supports Amazon S3, Backblaze B2, Wasabi, DigitalOcean Spaces, SFTP, and more." %}</p>
+        <a href="{% url 'admin:management_storage_wizard_step1' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> {% trans "Add Your First Destination" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+(function() {
+    document.querySelectorAll('.btn-retest').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var url = this.dataset.url;
+            var card = this.closest('.destination-card');
+            var statusEl = card.querySelector('.dest-status');
+            var icon = this.querySelector('i');
+
+            icon.className = 'fas fa-spinner fa-spin';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                                   document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
+                    'Content-Type': 'application/json',
+                },
+                body: '{}',
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                icon.className = 'fas fa-plug';
+                if (data.success) {
+                    statusEl.className = 'dest-status connected';
+                    statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Connected';
+                } else {
+                    statusEl.className = 'dest-status error';
+                    statusEl.innerHTML = '<i class="fas fa-times-circle"></i> Error';
+                    alert(data.message);
+                }
+            })
+            .catch(function() {
+                icon.className = 'fas fa-plug';
+                alert('Network error');
+            });
+        });
+    });
+})();
+</script>
+
+<form style="display:none">{% csrf_token %}</form>
+{% endblock %}

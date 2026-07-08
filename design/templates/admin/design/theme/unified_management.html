@@ -1,0 +1,405 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/unified_themes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-palette"></i>
+            {% trans "Theme Management" %}
+        </h1>
+        <div class="subtitle">
+            {% trans "Manage your store's visual themes with Elegant Themes-style interface" %}
+        </div>
+    </div>
+
+    <div class="themes-header-actions">
+        <a href="{% url 'design:theme_package' %}" class="theme-action-btn primary">
+            <i class="fas fa-box-open"></i>
+            {% trans "Package Theme" %}
+        </a>
+        <a href="{% url 'admin:design_theme_changelist' %}" class="theme-action-btn secondary">
+            <i class="fas fa-list"></i>
+            {% trans "View Theme List" %}
+        </a>
+    </div>
+    
+
+    <!-- Active Theme Banner -->
+    {% if active_theme %}
+    <div class="active-theme-banner">
+        <div class="active-theme-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="active-theme-info">
+            <h3>{% trans "Active Theme" %}: {{ active_theme.name }}</h3>
+            <p>{% trans "Version" %} {{ active_theme.version }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filter Bar -->
+    <div class="themes-filter-bar">
+        <div class="filter-tabs">
+            <a href="?filter=all" class="filter-tab {% if filter_type == 'all' %}active{% endif %}">
+                <i class="fas fa-th"></i>
+                {% trans "All Themes" %}
+                <span class="filter-count">{{ all_count }}</span>
+            </a>
+            <a href="?filter=installed" class="filter-tab {% if filter_type == 'installed' %}active{% endif %}">
+                <i class="fas fa-check"></i>
+                {% trans "Installed" %}
+                <span class="filter-count">{{ installed_count }}</span>
+            </a>
+            <a href="?filter=available" class="filter-tab {% if filter_type == 'available' %}active{% endif %}">
+                <i class="fas fa-download"></i>
+                {% trans "Available" %}
+                <span class="filter-count">{{ available_count }}</span>
+            </a>
+        </div>
+
+        <div class="filter-search">
+            <form method="get" action="">
+                <input type="hidden" name="filter" value="{{ filter_type }}">
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ search_query }}"
+                    placeholder="{% trans 'Search themes...' %}"
+                    class="search-input"
+                >
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Themes Grid (Elegant Themes Style - 3 columns) -->
+    {% if themes %}
+    <div class="themes-grid">
+        {% for theme in themes %}
+        <div class="theme-card {% if theme.is_active %}active-card{% endif %}" data-slug="{{ theme.slug }}">
+
+            <!-- Thumbnail with Hover Scroll Animation / Video Preview -->
+            <div class="theme-thumbnail">
+                {% if theme.thumbnail_url %}
+                <div class="theme-thumbnail-scroll">
+                    <img src="{{ theme.thumbnail_url }}" alt="{{ theme.name }}" class="theme-image">
+                </div>
+                {% else %}
+                <div class="theme-thumbnail-placeholder">
+                    <i class="fas fa-image"></i>
+                    <p>{% trans "No Preview" %}</p>
+                </div>
+                {% endif %}
+
+                <!-- Active Badge -->
+                {% if theme.is_active %}
+                <div class="theme-active-badge">
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Active" %}
+                </div>
+                {% endif %}
+
+                <!-- Update Badge -->
+                {% if theme.has_update %}
+                <div class="theme-update-badge">
+                    <i class="fas fa-arrow-circle-up"></i>
+                    {% trans "Update Available" %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Theme Info -->
+            <div class="theme-info">
+                <h3 class="theme-name">{{ theme.name }}</h3>
+
+                <!-- Author Attribution -->
+                <div class="theme-author">
+                    {% if theme.author_details.logo_url %}
+                    <img src="{{ theme.author_details.logo_url }}" alt="{{ theme.author_name }}" class="author-logo">
+                    {% else %}
+                    <i class="fas fa-user-circle"></i>
+                    {% endif %}
+                    <span>{{ theme.author_name }}</span>
+                    {% if theme.author_details.is_verified %}
+                    <i class="fas fa-badge-check verified-badge" title="{% trans 'Verified Author' %}"></i>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <p class="theme-description">{{ theme.description|truncatewords:20 }}</p>
+
+                <!-- Bundled Components -->
+                {% if theme.bundled_component_count > 0 %}
+                <div class="theme-bundled-components">
+                    <div class="bundled-components-header">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <span class="bundled-components-count">
+                            {{ theme.bundled_component_count }} {% trans "Bundled Component" %}{{ theme.bundled_component_count|pluralize }}
+                        </span>
+                    </div>
+                    <div class="bundled-components-list">
+                        {% for component in theme.bundled_components %}
+                        <div class="bundled-component-item">
+                            <span class="component-icon">
+                                {% if component.component_type == 'header' %}
+                                    <i class="fas fa-bars"></i>
+                                {% elif component.component_type == 'footer' %}
+                                    <i class="fas fa-shoe-prints"></i>
+                                {% elif component.component_type == 'section' %}
+                                    <i class="fas fa-layer-group"></i>
+                                {% elif component.component_type == 'utility' %}
+                                    <i class="fas fa-tools"></i>
+                                {% else %}
+                                    <i class="fas fa-cube"></i>
+                                {% endif %}
+                            </span>
+                            <span class="component-name">{{ component.display_name }}</span>
+                            <span class="component-version">v{{ component.version }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Metadata -->
+                <div class="theme-meta">
+                    {% if theme.current_version %}
+                    <div class="theme-meta-item">
+                        <i class="fas fa-code-branch"></i>
+                        <span>v{{ theme.current_version }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if theme.has_update %}
+                    <div class="theme-meta-item update">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>v{{ theme.latest_version }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if theme.locked %}
+                    <div class="theme-meta-item locked">
+                        <i class="fas fa-lock"></i>
+                        <span>{% trans "Locked" %}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="theme-actions">
+                    {% if theme.is_installed %}
+                        {% if not theme.is_active %}
+                        <button
+                            class="theme-btn primary"
+                            data-action="activate-theme"
+                            data-theme-slug="{{ theme.slug }}"
+                            data-theme-version="{{ theme.current_version }}"
+                        >
+                            <i class="fas fa-power-off"></i>
+                            {% trans "Activate" %}
+                        </button>
+                        {% else %}
+                        <button class="theme-btn success disabled" disabled>
+                            <i class="fas fa-check"></i>
+                            {% trans "Active" %}
+                        </button>
+                        {% endif %}
+
+                        {% if theme.has_update %}
+                        <button
+                            class="theme-btn warning"
+                            data-action="update-theme"
+                            data-theme-slug="{{ theme.slug }}"
+                        >
+                            <i class="fas fa-download"></i>
+                            {% trans "Update" %}
+                        </button>
+                        {% endif %}
+
+                        <button
+                            class="theme-btn secondary"
+                            data-action="show-details"
+                            data-theme-slug="{{ theme.slug }}"
+                        >
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Details" %}
+                        </button>
+
+                        <!-- More Options Dropdown -->
+                        <div class="theme-more-dropdown">
+                            <button class="theme-btn secondary" data-action="toggle-dropdown" data-theme-slug="{{ theme.slug }}">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu" id="dropdown-{{ theme.slug }}">
+                                {% if theme.available_versions|length > 1 %}
+                                <a href="#" data-action="show-versions" data-theme-slug="{{ theme.slug }}">
+                                    <i class="fas fa-history"></i>
+                                    {% trans "Version History" %}
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'admin:component_updates_componentregistry_change' theme.id %}">
+                                    <i class="fas fa-cog"></i>
+                                    {% trans "Settings" %}
+                                </a>
+                                {% if not theme.is_active %}
+                                <a href="#" data-action="uninstall-theme" data-theme-slug="{{ theme.slug }}" class="danger">
+                                    <i class="fas fa-trash"></i>
+                                    {% trans "Uninstall" %}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    {% else %}
+                        <!-- Not installed -->
+                        {% if theme.pricing_model == 'paid' %}
+                        <!-- Paid theme - show price and purchase button -->
+                        <span class="theme-price-badge">&euro;{{ theme.price_eur }}</span>
+                        <button
+                            class="theme-btn primary full-width"
+                            data-action="purchase-theme"
+                            data-theme-slug="{{ theme.slug }}"
+                        >
+                            <i class="fas fa-shopping-cart"></i>
+                            {% trans "Purchase" %}
+                        </button>
+                        {% else %}
+                        <!-- Free theme - show install button -->
+                        <button
+                            class="theme-btn primary full-width"
+                            data-action="install-theme"
+                            data-theme-slug="{{ theme.slug }}"
+                        >
+                            <i class="fas fa-download"></i>
+                            {% trans "Install Theme" %}
+                        </button>
+                        {% endif %}
+
+                        <button
+                            class="theme-btn secondary"
+                            data-action="show-details"
+                            data-theme-slug="{{ theme.slug }}"
+                        >
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Details" %}
+                        </button>
+
+                        {% if theme.author_details.homepage %}
+                        <a
+                            href="{{ theme.author_details.homepage }}"
+                            target="_blank"
+                            class="theme-btn secondary"
+                        >
+                            <i class="fas fa-external-link-alt"></i>
+                            {% trans "Learn More" %}
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="themes-empty-state">
+        <i class="fas fa-palette"></i>
+        <h2>{% trans "No Themes Found" %}</h2>
+        <p>{% trans "Try adjusting your search or filters" %}</p>
+    </div>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="themes-filter-bar" style="justify-content: center; margin-top: 1.5rem; gap: 0.75rem;">
+        {% if has_previous %}
+        <a href="?filter={{ filter_type }}&q={{ search_query }}&page={{ page|add:"-1" }}" class="theme-btn secondary">
+            <i class="fas fa-chevron-left"></i>
+            {% trans "Previous" %}
+        </a>
+        {% endif %}
+        <span style="padding: 0.625rem 1rem; font-size: 0.9375rem; color: var(--body-quiet-color);">
+            {% trans "Page" %} {{ page }} {% trans "of" %} {{ total_pages }}
+        </span>
+        {% if has_next %}
+        <a href="?filter={{ filter_type }}&q={{ search_query }}&page={{ page|add:"1" }}" class="theme-btn secondary">
+            {% trans "Next" %}
+            <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Theme Details Modal -->
+<div class="admin-modal-overlay" id="theme-detail-modal">
+    <div class="admin-modal admin-modal--lg">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title">
+                <i class="fas fa-palette"></i>
+                <span id="modal-theme-name">{% trans "Theme Details" %}</span>
+            </h2>
+            <button class="admin-modal-close" id="modal-close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="modal-body">
+            <div style="text-align: center; padding: 2rem; color: var(--body-quiet-color);">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+            </div>
+        </div>
+        <div class="admin-modal-footer" id="modal-footer">
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>{% trans "Processing..." %}</p>
+    </div>
+</div>
+
+<!-- Translation strings for JavaScript -->
+<script type="application/json" id="theme-messages">
+{
+    "activateConfirm": "{% trans 'Activate this theme? All other themes will be deactivated.' %}",
+    "activationFailed": "{% trans 'Activation failed' %}",
+    "installConfirm": "{% trans 'Install this theme?' %}",
+    "installationFailed": "{% trans 'Installation failed' %}",
+    "updateConfirm": "{% trans 'Update this theme to the latest version?' %}",
+    "updateFailed": "{% trans 'Update failed' %}",
+    "uninstallConfirm": "{% trans 'Uninstall this theme? This cannot be undone.' %}",
+    "uninstallFailed": "{% trans 'Uninstall failed' %}",
+    "updateCheckFailed": "{% trans 'Update check failed' %}",
+    "error": "{% trans 'Error' %}",
+    "versionHistoryFor": "{% trans 'Version history for' %}",
+    "toBeImplemented": "{% trans 'To be implemented' %}",
+    "purchaseFailed": "{% trans 'Could not generate purchase URL' %}",
+    "detailsLoadFailed": "{% trans 'Failed to load theme details' %}",
+    "themeDetails": "{% trans 'Theme Details' %}",
+    "screenshots": "{% trans 'Screenshots' %}",
+    "mobileScreenshots": "{% trans 'Mobile Screenshots' %}",
+    "bundledComponents": "{% trans 'Bundled Components' %}",
+    "version": "{% trans 'Version' %}",
+    "author": "{% trans 'Author' %}",
+    "installed": "{% trans 'Installed' %}",
+    "notInstalled": "{% trans 'Not Installed' %}",
+    "noDescription": "{% trans 'No description available' %}"
+}
+</script>
+<!-- External JS for theme management -->
+<script src="{% static 'design/js/unified_theme_management.js' %}"></script>
+
+</div>
+{% endblock %}

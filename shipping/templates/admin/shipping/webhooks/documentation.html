@@ -1,0 +1,124 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Shipping Webhooks" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'shipping/css/admin_webhook_docs.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="webhook-docs">
+    <div class="webhook-section">
+        <h2>{% trans "Webhook Endpoints" %}</h2>
+        <p>
+            {% blocktrans %}
+            This page documents the webhook endpoints for receiving real-time updates from shipping providers.
+            Webhooks allow providers to push tracking updates, label generation confirmations, and error notifications
+            to your system automatically.
+            {% endblocktrans %}
+        </p>
+
+        <div class="webhook-status-row">
+            <strong>{% trans "System Status:" %}</strong>
+            <span class="status-badge status-healthy">{% trans "Operational" %}</span>
+        </div>
+
+        <div class="webhook-health-row">
+            <strong>{% trans "Health Check:" %}</strong>
+            <div class="webhook-url">{{ health_check_url }}</div>
+        </div>
+    </div>
+
+    <div class="webhook-section">
+        <h2>{% trans "Available Endpoints" %}</h2>
+
+        {% for example in webhook_examples %}
+        <div class="webhook-example">
+            <h3>{{ example.provider|title }}</h3>
+            <p>{{ example.description }}</p>
+            <div class="webhook-url">{{ example.url }}</div>
+            <p class="webhook-example-meta">
+                {% trans "Method:" %} <strong>POST</strong><br>
+                {% trans "Content-Type:" %} <strong>application/json</strong><br>
+                {% trans "Authentication:" %} <strong>Signature verification (when configured)</strong>
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="webhook-section">
+        <h2>{% trans "How It Works" %}</h2>
+        <ol>
+            <li><strong>{% trans "Receive:" %}</strong> {% trans "Shipping provider sends POST request to webhook URL" %}</li>
+            <li><strong>{% trans "Log:" %}</strong> {% trans "System logs the webhook payload and headers" %}</li>
+            <li><strong>{% trans "Verify:" %}</strong> {% trans "Signature is verified (if provider supports it)" %}</li>
+            <li><strong>{% trans "Queue:" %}</strong> {% trans "Webhook is queued for asynchronous processing" %}</li>
+            <li><strong>{% trans "Respond:" %}</strong> {% trans "200 OK returned immediately (within milliseconds)" %}</li>
+            <li><strong>{% trans "Process:" %}</strong> {% trans "Background worker processes webhook and updates shipments" %}</li>
+        </ol>
+    </div>
+
+    <div class="webhook-section">
+        <h2>{% trans "Example Webhook Request" %}</h2>
+        <p>{% trans "Here's an example of how a provider would send a webhook:" %}</p>
+
+        <div class="code-block">POST {{ webhook_examples.0.url }}
+Content-Type: application/json
+X-Webhook-Signature: sha256=abc123...
+
+{
+  "id": "webhook_123",
+  "type": "tracking.updated",
+  "data": {
+    "tracking_id": "1Z999AA10123456784",
+    "status": "in_transit",
+    "location": "New York, NY",
+    "timestamp": "2025-10-20T10:00:00Z"
+  }
+}</div>
+
+        <p class="webhook-response-intro">{% trans "The system responds immediately:" %}</p>
+
+        <div class="code-block">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "received",
+  "webhook_id": "uuid-here",
+  "message": "Webhook received and queued for processing",
+  "received_at": "2025-10-20T10:00:00Z"
+}</div>
+    </div>
+
+    <div class="webhook-section">
+        <h2>{% trans "Security" %}</h2>
+        <ul>
+            <li>{% trans "All webhooks are logged for audit purposes" %}</li>
+            <li>{% trans "Signature verification prevents unauthorized webhooks" %}</li>
+            <li>{% trans "HTTPS required in production" %}</li>
+            <li>{% trans "Failed webhooks can be manually retried from admin" %}</li>
+        </ul>
+    </div>
+
+    <div class="webhook-section">
+        <h2>{% trans "Troubleshooting" %}</h2>
+        <p><strong>{% trans "Provider says webhook failed?" %}</strong></p>
+        <ul>
+            <li>{% trans "Check Webhook Logs in admin panel" %}</li>
+            <li>{% trans "Verify the webhook URL is accessible" %}</li>
+            <li>{% trans "Check health endpoint:" %} <code>{{ health_check_url }}</code></li>
+            <li>{% trans "Ensure provider credentials are correct" %}</li>
+        </ul>
+    </div>
+
+    <div class="webhook-docs-footer">
+        <a href="{% url 'admin:shipping_webhooklog_changelist' %}" class="button">
+            {% trans "View Webhook Logs" %}
+        </a>
+        <a href="{% url 'admin:shipping_provideraccount_changelist' %}" class="button">
+            {% trans "Manage Providers" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

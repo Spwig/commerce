@@ -1,0 +1,12 @@
+{% load i18n widget_tags %}
+{# Payment Widget - Displays accepted payment method icons #}
+{# Supports: auto_detect (from active providers), methods (list of slugs), legacy show_X booleans #}
+
+{% get_payment_method_icons config as payment_icons %}
+<div class="widget-payment {{ widget.css_classes }}">
+    <div class="payment-methods">
+        {% for method in payment_icons %}
+            <img src="{{ method.static_path }}" alt="{{ method.label }}" class="payment-icon" loading="lazy">
+        {% endfor %}
+    </div>
+</div>

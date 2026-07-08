@@ -1,0 +1,2756 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Indonesian <LL@li.org>\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Action and method IDs required"
+msgstr "ID aksi dan metode diperlukan"
+
+msgid "{} method(s) enabled"
+msgstr "{} metode aktif"
+
+msgid "{} method(s) disabled"
+msgstr "{} metode dinonaktifkan"
+
+msgid "{} method(s) deleted"
+msgstr "{} metode dihapus"
+
+msgid "Unknown action"
+msgstr "Aksi tidak diketahui"
+
+msgid "Invalid request data"
+msgstr "Data permintaan tidak valid"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "Terjadi kesalahan yang tidak terduga. Silakan coba lagi."
+
+msgid "Basic Information"
+msgstr "Informasi Dasar"
+
+msgid "Geographic Scope"
+msgstr "Cakupan Geografis"
+
+msgid "Application Rules"
+msgstr "Aturan Aplikasi"
+
+msgid "Product Exemptions"
+msgstr "Pengecualian Produk"
+
+msgid "Timestamps"
+msgstr "Waktu Timestamp"
+
+msgid "Rate %"
+msgstr "Tarif %"
+
+msgid "Cart"
+msgstr "Keranjang"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "Masukkan sebagai persentase (contoh: 8.25 untuk 8.25%)"
+
+msgid "Rate (%)"
+msgstr "Tarif (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "Silakan lengkapi Langkah 1 terlebih dahulu"
+
+msgid "Please complete the wizard steps"
+msgstr "Silakan lengkapi langkah-langkah wizard"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "Metode pengiriman \"%(name)s\" berhasil dibuat!"
+
+msgid "Please configure rate tables for this method."
+msgstr "Silakan konfigurasikan tabel tarif untuk metode ini."
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "Gagal membuat metode pengiriman: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "Dapatkan data mini-cart"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    Mengambil isi keranjang saat ini yang diformat untuk komponen mini-cart. "
+"Berfungsi untuk pengguna terautentikasi (keranjang terkait akun pengguna) "
+"dan pengguna anonim (keranjang terkait sesi). Data keranjang mencakup semua "
+"item dengan detail produk, kuantitas, harga, dan gambar. **Use Cases:** - "
+"Muat mini-cart awal pada halaman - Memperbarui keranjang setelah perubahan "
+"eksternal - Memeriksa status keranjang sebelum checkout **Autentikasi:** "
+"Tidak diperlukan (menggunakan sesi untuk pengguna anonim)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "Data keranjang berhasil diambil"
+
+msgid "Update cart item quantity"
+msgstr "Perbarui jumlah item keranjang"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    Memperbarui kuantitas item dalam keranjang. Atur kuantitas menjadi 0 "
+"untuk menghapus item secara keseluruhan. Endpoint memvalidasi ketersediaan "
+"stok sebelum pembaruan dan mengembalikan keranjang yang telah diperbarui "
+"secara lengkap. **Use Cases:** - Tombol increment/decrement kuantitas di "
+"mini-cart - Perubahan langsung pada input kuantitas - Menghapus item "
+"(kuantitas=0) **Autentikasi:** Tidak diperlukan (memvalidasi item termasuk "
+"dalam keranjang pengguna) **Validasi:** - Item harus ada dalam keranjang "
+"pengguna - Kuantitas harus berupa bilangan bulat non-negatif - Ketersediaan "
+"stok diperiksa untuk produk yang dilacak inventaris\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "Keranjang berhasil diperbarui"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "Data permintaan tidak valid atau stok tidak cukup"
+
+msgid "Cart item not found"
+msgstr "Item keranjang tidak ditemukan"
+
+msgid "Remove item from cart"
+msgstr "Hapus item dari keranjang"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    Menghapus item dari keranjang secara keseluruhan. Mengembalikan data "
+"keranjang yang telah diperbarui setelah penghapusan. **Kasus Penggunaan:** - "
+"Tombol hapus pada item keranjang - Mengosongkan item tertentu **Otorisasi:** "
+"Tidak diperlukan (memvalidasi item termasuk dalam keranjang pengguna)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "Item berhasil dihapus"
+
+msgid "Get empty cart recommendations"
+msgstr "Dapatkan rekomendasi keranjang kosong"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    Dapatkan rekomendasi produk cerdas untuk keadaan keranjang kosong. "
+"Mengembalikan saran pribadi yang disusun dalam bagian berlabel berdasarkan: "
+"- **Baru Dilihat**: Produk yang telah dilihat pengguna (berbasis sesi untuk "
+"pengguna anonim) - **Terkait**: Produk dalam kategori yang sama dengan "
+"produk yang baru dilihat - **Diskon**: Produk yang sedang didiskon - "
+"**Tren**: Produk populer berdasarkan tampilan/penjualan - **Dianjurkan**: "
+"Produk yang dipilih oleh editor sebagai cadangan Semua produk yang "
+"dikembalikan telah diverifikasi untuk memastikan stok dan ketersediaan "
+"pembelian. **Penggunaan:** - Keadaan keranjang kosong di mini-cart - Bagian "
+"\"Anda mungkin menyukai\" - Kesempatan penjualan silang **Autentikasi:** "
+"Tidak diperlukan (menggunakan sesi untuk pengguna anonim) **Personalisasi:** "
+"- Pengguna anonim: Berdasarkan produk yang baru dilihat dalam sesi - "
+"Pengguna terautentikasi: Berdasarkan riwayat akun dan preferensi\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "Jumlah maksimum produk yang dikembalikan (default: 6, maks: 12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "Rekomendasi berhasil diambil"
+
+msgid "User"
+msgstr "Pengguna"
+
+msgid "Session Key"
+msgstr "Kunci Sesi"
+
+msgid "Cart Currency"
+msgstr "Mata Uang Keranjang"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"Kode mata uang untuk semua item dalam keranjang ini (misalnya EUR, NZD). "
+"Kosong berarti mata uang default toko."
+
+msgid "Default Layout"
+msgstr "Tata Letak Default"
+
+msgid "Compact View"
+msgstr "Tampilan Kompak"
+
+msgid "Detailed View"
+msgstr "Tampilan Rinci"
+
+msgid "Minimal View"
+msgstr "Tampilan Minimal"
+
+msgid "Sidebar Cart"
+msgstr "Keranjang Sidebar"
+
+msgid "Overlay Cart"
+msgstr "Keranjang Overlay"
+
+msgid "How the cart is displayed"
+msgstr "Cara keranjang ditampilkan"
+
+msgid "Cart Layout"
+msgstr "Tata Letak Keranjang"
+
+msgid "Show Product Images"
+msgstr "Tampilkan Gambar Produk"
+
+msgid "Show Product Variants"
+msgstr "Tampilkan Variasi Produk"
+
+msgid "Show Remove Button"
+msgstr "Tampilkan Tombol Hapus"
+
+msgid "Show Quantity Controls"
+msgstr "Tampilkan Kontrol Kuantitas"
+
+msgid "Show Item Totals"
+msgstr "Tampilkan Total Item"
+
+msgid "Show Cart Summary"
+msgstr "Tampilkan Ringkasan Keranjang"
+
+msgid "Show Savings"
+msgstr "Tampilkan Penghematan"
+
+msgid "Single Page Checkout"
+msgstr "Checkout Halaman Tunggal"
+
+msgid "Multi-Step Checkout"
+msgstr "Checkout Multi-Langkah"
+
+msgid "Accordion Style"
+msgstr "Gaya Accordion"
+
+msgid "Wizard Style"
+msgstr "Gaya Wizard"
+
+msgid "Checkout Flow"
+msgstr "Alur Checkout"
+
+msgid "Shipping Address"
+msgstr "Alamat Pengiriman"
+
+msgid "Shipping Method"
+msgstr "Metode Pengiriman"
+
+msgid "Calculated shipping cost"
+msgstr "Biaya pengiriman yang dihitung"
+
+msgid "Shipping Cost"
+msgstr "Biaya Pengiriman"
+
+msgid "Estimated Delivery Date"
+msgstr "Tanggal Pengiriman yang Diperkirakan"
+
+msgid "Shipping Notes"
+msgstr "Catatan Pengiriman"
+
+msgid "None"
+msgstr "Tidak ada"
+
+msgid "Percentage"
+msgstr "Persentase"
+
+msgid "Fixed Amount"
+msgstr "Jumlah Tetap"
+
+msgid "POS manual discount type"
+msgstr "Jenis Diskon Manual POS"
+
+msgid "POS manual discount value"
+msgstr "Nilai Diskon Manual POS"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "Nilai diskon (persentase atau jumlah tetap)"
+
+msgid "POS discount applied by"
+msgstr "Diskon POS diterapkan oleh"
+
+msgid "POS discount approved by"
+msgstr "Diskon POS disetujui oleh"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "Manajer yang menyetujui diskon jika melebihi batas staf"
+
+msgid "POS discount reason"
+msgstr "Alasan Diskon POS"
+
+msgid "Created At"
+msgstr "Dibuat Pada"
+
+msgid "Updated At"
+msgstr "Diperbarui Pada"
+
+msgid "Shopping Cart"
+msgstr "Keranjang Belanja"
+
+msgid "Shopping Carts"
+msgstr "Keranjang Belanja"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "Keranjang untuk {username}"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "Keranjang (Sesi: {session})"
+
+msgid "No shipping required"
+msgstr "Tidak perlu pengiriman"
+
+msgid "Shipping address required"
+msgstr "Alamat pengiriman diperlukan"
+
+msgid "Available shipping methods retrieved"
+msgstr "Metode pengiriman yang tersedia telah diambil"
+
+msgid "Shipping calculated successfully"
+msgstr "Pengiriman dihitung dengan sukses"
+
+msgid "Invalid gift card code"
+msgstr "Kode kartu hadiah tidak valid"
+
+msgid "Gift card already applied"
+msgstr "Kartu hadiah sudah diterapkan"
+
+msgid "Gift card is not active"
+msgstr "Kartu hadiah tidak aktif"
+
+msgid "Gift card has expired"
+msgstr "Kartu hadiah sudah berakhir"
+
+msgid "Gift card has been fully redeemed"
+msgstr "Kartu hadiah telah sepenuhnya digunakan"
+
+msgid "Gift card cannot be used"
+msgstr "Kartu hadiah tidak dapat digunakan"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"Tidak cocoknya mata uang. Kartu hadiah berada di {card_currency}, keranjang "
+"berada di {cart_currency}"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"Kartu hadiah ini dalam {card_currency}. Silakan ubah mata uang Anda menjadi "
+"{card_currency} untuk menggunakan kartu ini."
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "Kartu hadiah tidak dapat digunakan untuk membeli kartu hadiah lainnya"
+
+msgid "Cart total is already covered"
+msgstr "Total keranjang sudah tertutup"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "Tidak dapat memproses konversi mata uang kartu hadiah"
+
+msgid "Gift card applied successfully"
+msgstr "Kartu hadiah berhasil diterapkan"
+
+msgid "Product"
+msgstr "Produk"
+
+msgid "Variant"
+msgstr "Variasi"
+
+msgid "Quantity"
+msgstr "Jumlah"
+
+msgid "Unit Price"
+msgstr "Harga Satuan"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"Pemodifikasian produk dengan harga yang dihitung: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "Kustomisasi"
+
+msgid "Is Subscription"
+msgstr "Apakah Langganan"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "Apakah item ini akan dibeli sebagai langganan"
+
+msgid "Subscription Plan"
+msgstr "Rencana Langganan"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "Rencana langganan yang dipilih untuk pembayaran berulang"
+
+msgid "Pricing Tier"
+msgstr "Tingkat Harga"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "Tingkat harga yang dipilih (frekuensi pembayaran) untuk langganan"
+
+msgid "Payment Token"
+msgstr "Token Pembayaran"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr ""
+"Metode pembayaran yang disimpan untuk pembayaran langganan (diperlukan untuk "
+"langganan)"
+
+msgid "Parent Bundle"
+msgstr "Bundle Induk"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "Jika ini adalah komponen paket, referensi ke CartItem paket"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"Detail pemesanan: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+
+msgid "Booking Data"
+msgstr "Data Pemesanan"
+
+msgid "Customer notes for this item"
+msgstr "Catatan pelanggan untuk item ini"
+
+msgid "Notes"
+msgstr "Catatan"
+
+msgid "manual discount type"
+msgstr "tipe diskon manual"
+
+msgid "manual discount value"
+msgstr "nilai diskon manual"
+
+msgid "discount applied by"
+msgstr "diskon diterapkan oleh"
+
+msgid "discount approved by"
+msgstr "diskon disetujui oleh"
+
+msgid "discount reason"
+msgstr "alasan diskon"
+
+msgid "Cart Item"
+msgstr "Item Keranjang"
+
+msgid "Cart Items"
+msgstr "Item Keranjang"
+
+msgid "My Wishlist"
+msgstr "Daftar Keinginan Saya"
+
+msgid "Name"
+msgstr "Nama"
+
+msgid "Grid Layout"
+msgstr "Tata Letak Kisi"
+
+msgid "List Layout"
+msgstr "Tata Letak Daftar"
+
+msgid "How wishlist items are displayed"
+msgstr "Cara item daftar keinginan ditampilkan"
+
+msgid "Wishlist Layout"
+msgstr "Tata Letak Daftar Keinginan"
+
+msgid "Is Public"
+msgstr "Apakah Umum"
+
+msgid "Share Slug"
+msgstr "Bagikan Slug"
+
+msgid "Show Prices"
+msgstr "Tampilkan Harga"
+
+msgid "Show Availability"
+msgstr "Tampilkan Ketersediaan"
+
+msgid "Show Add to Cart"
+msgstr "Tampilkan Tambah ke Keranjang"
+
+msgid "Wishlist"
+msgstr "Daftar Keinginan"
+
+msgid "Wishlists"
+msgstr "Daftar Keinginan"
+
+msgid "Low"
+msgstr "Rendah"
+
+msgid "Medium"
+msgstr "Sedang"
+
+msgid "High"
+msgstr "Tinggi"
+
+msgid "Priority"
+msgstr "Prioritas"
+
+msgid "Notify When Available"
+msgstr "Notifikasi Saat Tersedia"
+
+msgid "Notify When On Sale"
+msgstr "Notifikasi Saat Diskon"
+
+msgid "Wishlist Item"
+msgstr "Item Daftar Keinginan"
+
+msgid "Wishlist Items"
+msgstr "Item Daftar Keinginan"
+
+msgid "Viewed At"
+msgstr "Dilihat Pada"
+
+msgid "View Count"
+msgstr "Jumlah Pemlihatan"
+
+msgid "Recently Viewed Product"
+msgstr "Produk yang Dilihat Baru-baru ini"
+
+msgid "Recently Viewed Products"
+msgstr "Produk yang Dilihat Baru-baru ini"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "Sesi: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{product} dilihat oleh {user}"
+
+msgid "Description"
+msgstr "Deskripsi"
+
+msgid "Flat Rate"
+msgstr "Tarif Tetap"
+
+msgid "Free Shipping"
+msgstr "Pengiriman Gratis"
+
+msgid "Weight Based"
+msgstr "Berdasarkan Berat"
+
+msgid "Price Based"
+msgstr "Berdasarkan Harga"
+
+msgid "Real-Time Carrier Rates"
+msgstr "Tarif Pengiriman Waktu Nyata"
+
+msgid "Local Pickup"
+msgstr "Ambil di Lokal"
+
+msgid "Table Rate"
+msgstr "Tarif Tabel"
+
+msgid "Method Type"
+msgstr "Jenis Metode"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "Biaya pengiriman tetap (untuk tipe flat_rate)"
+
+msgid "Flat Rate Cost"
+msgstr "Biaya Tarif Tetap"
+
+msgid "Minimum cart value to qualify"
+msgstr "Nilai keranjang minimum untuk memenuhi syarat"
+
+msgid "Minimum Order Value"
+msgstr "Nilai Pesanan Minimum"
+
+msgid "Maximum cart value to qualify"
+msgstr "Nilai keranjang maksimum untuk memenuhi syarat"
+
+msgid "Maximum Order Value"
+msgstr "Nilai Pesanan Maksimum"
+
+msgid "Minimum cart weight (kg)"
+msgstr "Berat keranjang minimum (kg)"
+
+msgid "Minimum Weight"
+msgstr "Berat Minimum"
+
+msgid "Maximum cart weight (kg)"
+msgstr "Berat keranjang maksimum (kg)"
+
+msgid "Maximum Weight"
+msgstr "Berat Maksimum"
+
+msgid "Shipping Zones"
+msgstr "Zona Pengiriman"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"Zona di mana metode pengiriman ini tersedia. Jika kosong, pembatasan negara/"
+"negara bagian lama akan berlaku."
+
+msgid "Pickup Locations"
+msgstr "Lokasi Pengambilan"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"Lokasi di mana pelanggan dapat mengambil pesanan menggunakan metode "
+"pengiriman ini. Hanya berlaku untuk tipe metode 'local_pickup'."
+
+msgid "Minimum delivery time in business days"
+msgstr "Waktu pengiriman minimum dalam hari kerja"
+
+msgid "Minimum Delivery Days"
+msgstr "Hari Pengiriman Minimum"
+
+msgid "Maximum delivery time in business days"
+msgstr "Waktu pengiriman maksimum dalam hari kerja"
+
+msgid "Maximum Delivery Days"
+msgstr "Hari Pengiriman Maksimum"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "Kelas ikon Font Awesome (contoh: 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "Ikon"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"Gambar metode pengiriman khusus dari perpustakaan media. Jika disediakan, "
+"ini akan mengambil prioritas atas ikon."
+
+msgid "Image"
+msgstr "Gambar"
+
+msgid "Sort Order"
+msgstr "Urutan Pengurutan"
+
+msgid "Is Active"
+msgstr "Aktif"
+
+msgid "Custom Carrier"
+msgstr "Pengirim Khusus"
+
+msgid "Carrier"
+msgstr "Pengirim"
+
+msgid "Carrier-specific service code"
+msgstr "Kode layanan khusus pengirim"
+
+msgid "Carrier Service Code"
+msgstr "Kode Layanan Pengirim"
+
+msgid "Shipping Methods"
+msgstr "Metode Pengiriman"
+
+msgid "Shipping method is not active"
+msgstr "Metode pengiriman tidak aktif"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "Nilai pesanan minimum {value} diperlukan"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "Nilai pesanan maksimum {value} terlampaui"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "Berat minimum {weight}kg diperlukan"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "Berat maksimum {weight}kg terlampaui"
+
+msgid "Cart contains only digital products"
+msgstr "Keranjang hanya berisi produk digital"
+
+msgid "Available"
+msgstr "Tersedia"
+
+msgid "No geographic restrictions"
+msgstr "Tidak ada pembatasan geografis"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "Tersedia di {zone}"
+
+msgid "Not available in your location"
+msgstr "Tidak tersedia di lokasi Anda"
+
+msgid "Available worldwide"
+msgstr "Tersedia di seluruh dunia"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "Kode negara ISO 3166-1 alpha-2"
+
+msgid "Country"
+msgstr "Negara"
+
+msgid "State/Province/Region"
+msgstr "Negara Bagian/Propinsi/Region"
+
+msgid "State"
+msgstr "Negara Bagian"
+
+msgid "City name (optional)"
+msgstr "Nama Kota (opsional)"
+
+msgid "City"
+msgstr "Kota"
+
+msgid "List of specific postal codes (optional)"
+msgstr "Daftar kode pos spesifik (opsional)"
+
+msgid "Postal Codes"
+msgstr "Kode Pos"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "Tarif pajak sebagai desimal (contoh: 0.0825 untuk 8.25%)"
+
+msgid "Rate"
+msgstr "Tarif"
+
+msgid "Sales Tax"
+msgstr "Pajak Penjualan"
+
+msgid "Custom Tax"
+msgstr "Pajak Khusus"
+
+msgid "Tax Type"
+msgstr "Jenis Pajak"
+
+msgid "Apply tax to shipping costs"
+msgstr "Terapkan pajak pada biaya pengiriman"
+
+msgid "Applies to Shipping"
+msgstr "Berlaku untuk Pengiriman"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "Hitung di atas pajak lainnya (pajak majemuk)"
+
+msgid "Compound Tax"
+msgstr "Pajak Gabungan"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr ""
+"Jenis produk yang terbebas dari pajak ini (contoh: ['digital', 'service'])"
+
+msgid "Exempt Product Types"
+msgstr "Jenis Produk yang Bebas Pajak"
+
+msgid "Categories exempt from this tax"
+msgstr "Kategori yang bebas dari pajak ini"
+
+msgid "Exempt Categories"
+msgstr "Kategori yang Bebas Pajak"
+
+msgid "Higher priority rules take precedence"
+msgstr "Aturan dengan prioritas lebih tinggi yang berlaku"
+
+msgid "Tax Rate"
+msgstr "Tarif Pajak"
+
+msgid "Tax Rates"
+msgstr "Tarif Pajak"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "Eropa"
+
+msgid "North America"
+msgstr "Amerika Utara"
+
+msgid "Asia Pacific"
+msgstr "Asia Pasifik"
+
+msgid "Middle East"
+msgstr "Timur Tengah"
+
+msgid "Africa"
+msgstr "Afrika"
+
+msgid "Latin America"
+msgstr "Amerika Latin"
+
+msgid "Oceania"
+msgstr "Oceania"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "Identifikasi unik (contoh: eu_vat, us_sales_tax)"
+
+msgid "Key"
+msgstr "Kunci"
+
+msgid "Font Awesome icon class"
+msgstr "Kelas ikon Font Awesome"
+
+msgid "Default Tax Type"
+msgstr "Jenis Pajak Default"
+
+msgid "Region"
+msgstr "Wilayah"
+
+msgid "Version for tracking rate updates"
+msgstr "Versi untuk melacak pembaruan tarif"
+
+msgid "Version"
+msgstr "Versi"
+
+msgid "Last Updated"
+msgstr "Terakhir Diperbarui"
+
+msgid "Tax Preset Group"
+msgstr "Grup Preset Pajak"
+
+msgid "Tax Preset Groups"
+msgstr "Grup Preset Pajak"
+
+msgid "Preset Group"
+msgstr "Grup Preset"
+
+msgid "Country Code"
+msgstr "Kode Negara"
+
+msgid "Country Name"
+msgstr "Nama Negara"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "Kode Negara Bagian/Propinsi (untuk preset US/CA)"
+
+msgid "State Code"
+msgstr "Kode Negara Bagian"
+
+msgid "State Name"
+msgstr "Nama Negara Bagian"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "Tarif pajak sebagai desimal (contoh: 0.20 untuk 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "Catatan opsional (contoh, 'Meningkat dari 22% pada Juli 2025')"
+
+msgid "Tax Preset Rate"
+msgstr "Tarif Preset Pajak"
+
+msgid "Tax Preset Rates"
+msgstr "Tarif Preset Pajak"
+
+msgid "Billing Address"
+msgstr "Alamat Tagihan"
+
+msgid "Billing Same as Shipping"
+msgstr "Alamat Tagihan Sama dengan Alamat Pengiriman"
+
+msgid "Shipping Address Data"
+msgstr "Data Alamat Pengiriman"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Data alamat pengiriman sementara (tidak disimpan ke model Address sampai "
+"pesanan ditempatkan)"
+
+msgid "Billing Address Data"
+msgstr "Data Alamat Pembayaran"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Data alamat pembayaran sementara (tidak disimpan ke model Address sampai "
+"pesanan ditempatkan)"
+
+msgid "Selected Shipping Method"
+msgstr "Metode Pengiriman yang Dipilih"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "Daftar metode pengiriman yang tersedia dengan tarif yang disimpan"
+
+msgid "Available Shipping Methods"
+msgstr "Metode Pengiriman yang Tersedia"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "Pembreakdownan pajak terperinci berdasarkan yurisdiksi"
+
+msgid "Tax Breakdown"
+msgstr "Pembreakdownan Pajak"
+
+msgid "Tax Amount"
+msgstr "Jumlah Pajak"
+
+msgid "Payment Provider"
+msgstr "Pemberi Pembayaran"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Discount Amount"
+msgstr "Jumlah Diskon"
+
+msgid "Gift Card Discount"
+msgstr "Diskon Kartu Hadiah"
+
+msgid "Total discount from applied gift cards"
+msgstr "Total diskon dari kartu hadiah yang diterapkan"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "Total akhir: subtotal + pengiriman + pajak - diskon"
+
+msgid "Total Amount"
+msgstr "Jumlah Total"
+
+msgid "Cart Review"
+msgstr "Ulasan Keranjang"
+
+msgid "Billing Information"
+msgstr "Informasi Tagihan"
+
+msgid "Payment Method"
+msgstr "Metode Pembayaran"
+
+msgid "Order Review"
+msgstr "Ulasan Pemesanan"
+
+msgid "Step Completed"
+msgstr "Langkah Selesai"
+
+msgid "Expires At"
+msgstr "Berakhir Pada"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "Metadata tambahan (contoh: informasi pembelian pasar)"
+
+msgid "Checkout Session"
+msgstr "Sesi Checkout"
+
+msgid "Checkout Sessions"
+msgstr "Sesi Checkout"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "Pembayaran untuk {cart}"
+
+msgid "Gift Card"
+msgstr "Kartu Hadiah"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "Jumlah dalam mata uang dasar (digunakan untuk perhitungan keranjang)"
+
+msgid "Original Currency Amount"
+msgstr "Jumlah Mata Uang Asli"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Diskon dalam mata uang asli kartu hadiah (untuk kartu hadiah mata uang asing)"
+
+msgid "Exchange Rate"
+msgstr "Kurs Tukar"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "Tarif: mata uang kartu hadiah -> mata uang dasar pada waktu penerapan"
+
+msgid "Applied At"
+msgstr "Diterapkan Pada"
+
+msgid "Applied Gift Card"
+msgstr "Kartu Hadiah yang Diterapkan"
+
+msgid "Applied Gift Cards"
+msgstr "Kartu Hadiah yang Diterapkan"
+
+msgid "This gift card cannot be used"
+msgstr "Kartu hadiah ini tidak dapat digunakan"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "Jumlah diskon melebihi saldo kartu hadiah"
+
+msgid "Total customization price (per unit)"
+msgstr "Harga penyesuaian total (per unit)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "'instant' untuk barang digital, 'shipping' untuk barang fisik"
+
+msgid "True if this item is a component of a bundle"
+msgstr "Benar jika item ini adalah komponen dari paket"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "ID dari CartItem bundel induk jika ini adalah komponen"
+
+msgid "Child items if this is a bundle parent"
+msgstr "Item anak jika ini adalah bundel induk"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr ""
+"Pemetaan dari bundle_item_id ke variant_id untuk variasi yang dipilih "
+"pelanggan"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr ""
+"Daftar bundle_item_ids yang akan dikecualikan (untuk item opsional yang "
+"tidak diinginkan oleh pelanggan)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"Peta dari slot_id ke daftar option_ids yang dipilih untuk produk konfigurabel"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "ID preset konfigurasi yang digunakan sebagai titik awal"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"Detail pemesanan: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "Kuantitas harus minimal 1"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "Rencana langganan diperlukan untuk pembelian langganan"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "Token pembayaran diperlukan untuk pembelian langganan"
+
+msgid "Product not found"
+msgstr "Produk tidak ditemukan"
+
+msgid "This product does not support subscriptions"
+msgstr "Produk ini tidak mendukung langganan"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "Rencana langganan tidak valid atau tidak aktif"
+
+msgid "This plan is not available for this product"
+msgstr "Rencana ini tidak tersedia untuk produk ini"
+
+msgid "Invalid or inactive payment token"
+msgstr "Token pembayaran tidak valid atau tidak aktif"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr ""
+"Tingkat harga tidak ditemukan atau tidak termasuk dalam rencana yang dipilih"
+
+msgid "No pricing tier available for this plan"
+msgstr "Tidak ada tingkat harga yang tersedia untuk rencana ini"
+
+msgid "Quantity cannot be negative"
+msgstr "Kuantitas tidak dapat negatif"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "Kode kartu hadiah (contoh: GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "Jumlah yang diterapkan dari kartu hadiah ini (dalam mata uang dasar)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "Saldo yang tersisa di kartu hadiah setelah penerapan ini"
+
+msgid "Base currency code"
+msgstr "Kode Mata Uang Dasar"
+
+msgid "Gift card's native currency code"
+msgstr "Kode Mata Uang Asli Kartu Hadiah"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Diskon dalam mata uang asli kartu hadiah (untuk kartu hadiah mata uang asing)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr ""
+"Salah satu address_id atau detail alamat lengkap diperlukan. Hilang: {fields}"
+
+msgid "This product requires customization"
+msgstr "Produk ini memerlukan penyesuaian"
+
+msgid "Invalid design token"
+msgstr "Token desain tidak valid"
+
+msgid "Design not found or expired"
+msgstr "Desain tidak ditemukan atau sudah kedaluwarsa"
+
+msgid "This product does not support customization"
+msgstr "Produk ini tidak mendukung pemodifikasian"
+
+msgid "Invalid customization option"
+msgstr "Opsi penyesuaian tidak valid"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "Pempersonalan '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "Pempersonalan yang diperlukan '{name}' tidak tersedia"
+
+msgid "Insufficient stock"
+msgstr "Stok tidak cukup"
+
+msgid "Bundle has no components configured"
+msgstr "Bundle tidak memiliki komponen yang dikonfigurasi"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "Tidak dapat mengecualikan komponen bundel yang tidak opsional: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "Pemilihan variasi diperlukan untuk: {name}"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "Variasi yang dipilih tidak valid untuk: {name}"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "Stok tidak cukup untuk komponen bundel: {name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "Kuantitas bundle diperbarui di keranjang"
+
+msgid "Bundle added to cart"
+msgstr "Bundle ditambahkan ke keranjang"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "Slot yang diperlukan '{name}' tidak memiliki pemilihan."
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "Slot '{name}' memerlukan setidaknya {min} pemilihan."
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "Slot '{name}' memperbolehkan paling banyak {max} pemilihan."
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "ID slot tidak valid: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "Opsi {opt_id} tidak valid untuk slot '{slot}'."
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr ""
+"Pemilihan tidak kompatibel di slot '{slot}'. Beberapa opsi tidak kompatibel "
+"dengan pilihan lain Anda."
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"Pemilihan yang dikecualikan di slot '{slot}'. Beberapa opsi bertentangan "
+"dengan pilihan lain Anda."
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "Stok tidak cukup untuk komponen: {name}"
+
+msgid "Configured product added to cart"
+msgstr "Produk yang dikonfigurasi ditambahkan ke keranjang"
+
+msgid "Either user or session_key must be provided"
+msgstr "Harus disediakan pengguna atau session_key"
+
+msgid "This product is no longer available"
+msgstr "Produk ini tidak tersedia lagi"
+
+msgid "You must be logged in to purchase this product."
+msgstr "Anda harus masuk untuk membeli produk ini."
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr ""
+"Produk ini memerlukan Anda untuk memiliki \"%(required)s\" terlebih dahulu."
+
+msgid "Product variant not found"
+msgstr "Varian produk tidak ditemukan"
+
+msgid "Configuration is required for configurable products"
+msgstr "Konfigurasi diperlukan untuk produk yang dapat dikonfigurasi"
+
+msgid "Booking added to cart"
+msgstr "Pemesanan ditambahkan ke keranjang"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "Stok tidak cukup untuk kuantitas yang diminta"
+
+msgid "Cart item quantity updated"
+msgstr "Kuantitas item keranjang diperbarui"
+
+msgid "Item added to cart"
+msgstr "Item ditambahkan ke keranjang"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr ""
+"Kuantitas komponen tidak dapat diubah secara langsung. Perbarui produk induk "
+"sebagai gantinya."
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"Barang dihapus dari keranjang. Juga dihapus %(names)s (produk yang "
+"diperlukan tidak lagi ada di keranjang)."
+
+msgid "Item removed from cart"
+msgstr "Item dihapus dari keranjang"
+
+msgid "Cart item updated"
+msgstr "Item keranjang diperbarui"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr ""
+"Item komponen tidak dapat dihapus secara langsung. Hapus produk induk "
+"sebagai gantinya."
+
+msgid "Cart cleared"
+msgstr "Keranjang dibersihkan"
+
+msgid "Voucher removed"
+msgstr "Voucher dihapus"
+
+msgid "Voucher not found in cart"
+msgstr "Voucher tidak ditemukan di keranjang"
+
+msgid "Gift card removed"
+msgstr "Kartu hadiah dihapus"
+
+msgid "Gift card not found in cart"
+msgstr "Kartu hadiah tidak ditemukan dalam keranjang"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count} item digabungkan ke dalam keranjang"
+
+msgid "Account creation required to proceed"
+msgstr "Pembuatan akun diperlukan untuk melanjutkan"
+
+msgid "Address not found"
+msgstr "Alamat tidak ditemukan"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "Harus disediakan address_id atau address_data"
+
+msgid "Shipping address set"
+msgstr "Alamat pengiriman telah ditetapkan"
+
+msgid "Billing address must be provided"
+msgstr "Alamat pembayaran harus disediakan"
+
+msgid "Billing address set"
+msgstr "Alamat pembayaran telah ditetapkan"
+
+msgid "Shipping address must be set first"
+msgstr "Alamat pengiriman harus diatur terlebih dahulu"
+
+msgid "Shipping method not found"
+msgstr "Metode pengiriman tidak ditemukan"
+
+msgid "Shipping method selected"
+msgstr "Metode pengiriman telah dipilih"
+
+msgid "Payment provider not found"
+msgstr "Pemroses pembayaran tidak ditemukan"
+
+msgid "Payment provider is not properly configured"
+msgstr "Pemberi pembayaran tidak dikonfigurasikan dengan benar"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "Pemberi pembayaran tidak tersedia untuk lokasi atau mata uang Anda"
+
+msgid "Payment method selected"
+msgstr "Metode pembayaran telah dipilih"
+
+msgid "Cart is empty"
+msgstr "Keranjang kosong"
+
+msgid "Shipping address is required"
+msgstr "Alamat pengiriman diperlukan"
+
+msgid "Shipping method is required"
+msgstr "Metode pengiriman diperlukan"
+
+msgid "Billing address is required"
+msgstr "Alamat pembayaran diperlukan"
+
+msgid "Payment method is required"
+msgstr "Metode pembayaran diperlukan"
+
+msgid "Checkout session has expired"
+msgstr "Sesi checkout telah habis"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "Stok tidak cukup untuk {product}"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr ""
+"\"%(product)s\" memerlukan kepemilikan terlebih dahulu dari \"%(required)s\"."
+
+msgid "Customer email is required"
+msgstr "Email pelanggan diperlukan"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr ""
+"Tidak dapat mengalokasikan gudang untuk pesanan. Silakan hubungi dukungan."
+
+msgid "Insufficient stock to complete order"
+msgstr "Stok tidak cukup untuk menyelesaikan pesanan"
+
+msgid "Error processing order. Please try again."
+msgstr "Kesalahan dalam memproses pesanan. Silakan coba lagi."
+
+msgid "Order created successfully"
+msgstr "Pemesanan berhasil dibuat"
+
+msgid "Wishlist item updated"
+msgstr "Item daftar keinginan diperbarui"
+
+msgid "Item added to wishlist"
+msgstr "Item ditambahkan ke daftar keinginan"
+
+msgid "Item removed from wishlist"
+msgstr "Item dihapus dari daftar keinginan"
+
+msgid "Item moved to cart"
+msgstr "Item dipindahkan ke keranjang"
+
+msgid "Wishlist cleared"
+msgstr "Daftar keinginan dibersihkan"
+
+msgid "Wishlist with this name already exists"
+msgstr "Daftar keinginan dengan nama ini sudah ada"
+
+msgid "Wishlist created"
+msgstr "Daftar keinginan dibuat"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "Pantau keranjang pelanggan yang aktif dan yang ditinggalkan"
+
+msgid "Add"
+msgstr "Tambah"
+
+msgid "cart"
+msgstr "keranjang"
+
+msgid "Filters"
+msgstr "Filter"
+
+msgid "Search"
+msgstr "Cari"
+
+msgid "Search by user, session, or email..."
+msgstr "Cari berdasarkan pengguna, sesi, atau email..."
+
+msgid "User Type"
+msgstr "Jenis Pengguna"
+
+msgid "All Carts"
+msgstr "Semua Keranjang"
+
+msgid "Registered Users"
+msgstr "Pengguna Terdaftar"
+
+msgid "Guest Carts"
+msgstr "Keranjang Pengunjung"
+
+msgid "Cart Status"
+msgstr "Status Keranjang"
+
+msgid "All"
+msgstr "Semua"
+
+msgid "Active (< 24h)"
+msgstr "Aktif (< 24 jam)"
+
+msgid "Abandoned (> 24h)"
+msgstr "Ditinggalkan (> 24 jam)"
+
+msgid "Empty"
+msgstr "Kosong"
+
+msgid "Has Shipping"
+msgstr "Memiliki Pengiriman"
+
+msgid "No Shipping"
+msgstr "Tidak Ada Pengiriman"
+
+msgid "Min Cart Value"
+msgstr "Nilai Keranjang Minimum"
+
+msgid "Min value"
+msgstr "Nilai Minimum"
+
+msgid "Max Cart Value"
+msgstr "Nilai Keranjang Maksimum"
+
+msgid "Max value"
+msgstr "Nilai Maksimum"
+
+msgid "Created From"
+msgstr "Dibuat Dari"
+
+msgid "Created To"
+msgstr "Dibuat Sampai"
+
+msgid "Apply Filters"
+msgstr "Terapkan Filter"
+
+msgid "Clear All"
+msgstr "Hapus Semua"
+
+msgid "Run the selected action"
+msgstr "Lakukan tindakan yang dipilih"
+
+msgid "Go"
+msgstr "Go"
+
+msgid "of"
+msgstr "dari"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s keranjang"
+msgstr[1] "%(counter)s keranjang"
+
+msgid "carts"
+msgstr "keranjang"
+
+msgid "Show all"
+msgstr "Tampilkan Semua"
+
+msgid "Save"
+msgstr "Simpan"
+
+msgid "Add Shipping Method"
+msgstr "Tambah Metode Pengiriman"
+
+msgid "Configure a new shipping method for your store"
+msgstr "Konfigurasikan metode pengiriman baru untuk toko Anda"
+
+msgid "Method Basics"
+msgstr "Dasar Metode"
+
+msgid "Eligibility"
+msgstr "Kelayakan"
+
+msgid "Coverage"
+msgstr "Cakupan"
+
+msgid "Features"
+msgstr "Fitur"
+
+msgid "Review"
+msgstr "Tinjau"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "Definisikan identitas inti dan jenis metode pengiriman ini."
+
+msgid "Method Name"
+msgstr "Nama Metode"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "Contoh: Pengiriman Standar, Pengiriman Ekspres"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "Nama metode pengiriman yang dilihat oleh pelanggan"
+
+msgid "Optional description of this shipping method"
+msgstr "Deskripsi opsional untuk metode pengiriman ini"
+
+msgid "Display Icon"
+msgstr "Ikon Tampilan"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"Pilih gambar dari perpustakaan media atau pilih ikon Font Awesome. Gambar "
+"akan diprioritaskan jika keduanya disediakan."
+
+msgid "Custom Image"
+msgstr "Gambar Kustom"
+
+msgid "Font Awesome Icon"
+msgstr "Ikon Font Awesome"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "Pilih ikon dari perpustakaan Font Awesome"
+
+msgid "Active"
+msgstr "Aktif"
+
+msgid "Make this method available to customers immediately"
+msgstr "Tetapkan metode ini tersedia untuk pelanggan segera"
+
+msgid "Method Type & Pricing"
+msgstr "Jenis Metode & Harga"
+
+msgid "Select method type..."
+msgstr "Pilih jenis metode..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "Tarif Tetap - Biaya pengiriman tetap"
+
+msgid "Free Shipping - No charge"
+msgstr "Pengiriman Gratis - Tidak ada biaya"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "Berdasarkan Berat - Hitung berdasarkan berat keranjang"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "Berdasarkan Harga - Hitung berdasarkan subtotal keranjang"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "Tarif Pengiriman Langsung - Tarif langsung dari penyedia pengiriman"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "Pengambilan Lokal - Pelanggan mengambil di lokasi"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "Tarif Tabel - Aturan kompleks berdasarkan berat/harga/tujuan"
+
+msgid "Method Types:"
+msgstr "Jenis Metode:"
+
+msgid "Flat Rate:"
+msgstr "Tarif Tetap:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "Biaya pengiriman tetap tanpa memandang pesanan"
+
+msgid "Free Shipping:"
+msgstr "Pengiriman Gratis:"
+
+msgid "No shipping charge"
+msgstr "Tidak ada biaya pengiriman"
+
+msgid "Weight/Price Based:"
+msgstr "Berdasarkan Berat/Harga:"
+
+msgid "Calculate using rate tables"
+msgstr "Hitung menggunakan tabel tarif"
+
+msgid "Real-Time:"
+msgstr "Waktu Nyata:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "Dapatkan tarif langsung dari USPS, FedEx, UPS, atau DHL"
+
+msgid "Local Pickup:"
+msgstr "Ambil Sendiri di Lokasi:"
+
+msgid "Customer picks up at your location"
+msgstr "Pelanggan mengambil di lokasi Anda"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "Biaya pengiriman tetap yang dikenakan kepada pelanggan"
+
+msgid "No Configured Providers"
+msgstr "Tidak Ada Pemasok yang Diatur"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"Anda perlu mengonfigurasi setidaknya satu penyedia pengiriman yang mendukung "
+"tarif langsung sebelum Anda dapat menggunakan jenis metode ini."
+
+msgid "Connect Provider"
+msgstr "Hubungkan Pemasok"
+
+msgid "Manage Providers"
+msgstr "Kelola Pemasok"
+
+msgid "Select a configured shipping provider"
+msgstr "Pilih pemasok pengiriman yang telah dikonfigurasi"
+
+msgid "Tip:"
+msgstr "Tips:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"Hanya penyedia yang dikonfigurasi dan mendukung tarif langsung yang "
+"ditampilkan di atas."
+
+msgid "Manage providers"
+msgstr "Kelola pemasok"
+
+msgid "Service Code"
+msgstr "Kode Layanan"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "Kode layanan spesifik dari penyedia (opsional)"
+
+msgid "Cancel"
+msgstr "Batal"
+
+msgid "Next Step"
+msgstr "Langkah Berikutnya"
+
+msgid "Eligibility Conditions"
+msgstr "Kondisi Kelayakan"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr ""
+"Definisikan kapan metode pengiriman ini harus tersedia berdasarkan nilai "
+"keranjang dan beratnya."
+
+msgid "Order Value Restrictions"
+msgstr "Batasan Nilai Pesanan"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr ""
+"Tetapkan persyaratan subtotal keranjang minimum atau maksimum untuk metode "
+"ini."
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "Metode hanya tersedia jika subtotal keranjang setidaknya sejumlah ini"
+
+msgid "No maximum"
+msgstr "Tidak ada maksimum"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "Metode hanya tersedia jika subtotal keranjang di bawah jumlah ini"
+
+msgid "Examples:"
+msgstr "Contoh:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr "Pengiriman gratis untuk pesanan di atas $50: Tetapkan minimum ke 50.00"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr ""
+"Pengiriman ekonomi untuk pesanan di bawah $100: Tetapkan maksimum ke 100.00"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr "Pengiriman standar untuk $25-$200: Tetapkan minimum dan maksimum"
+
+msgid "Weight Restrictions"
+msgstr "Batasan Berat"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr ""
+"Tetapkan persyaratan berat total keranjang minimum atau maksimum untuk "
+"metode ini."
+
+msgid "Minimum Weight (kg)"
+msgstr "Berat Minimum (kg)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr ""
+"Metode hanya tersedia jika berat total keranjang setidaknya sejumlah ini"
+
+msgid "Maximum Weight (kg)"
+msgstr "Berat Maksimum (kg)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "Metode hanya tersedia jika berat total keranjang di bawah jumlah ini"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr ""
+"Pengiriman paket ringan untuk paket di bawah 2kg: Tetapkan maksimum ke 2.00"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr ""
+"Pengiriman barang berat untuk paket di atas 20kg: Tetapkan minimum ke 20.00"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr "Pengiriman standar untuk 0.5kg-10kg: Tetapkan minimum dan maksimum"
+
+msgid "Additional Options"
+msgstr "Opsi Tambahan"
+
+msgid "Requires Shipping Address"
+msgstr "Memerlukan Alamat Pengiriman"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"Pelanggan harus menyediakan alamat pengiriman untuk metode ini (nonaktifkan "
+"untuk barang digital atau pengambilan lokal)"
+
+msgid "Previous"
+msgstr "Sebelumnya"
+
+msgid "Geographic Coverage"
+msgstr "Cakupan Geografis"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr ""
+"Definisikan di mana metode pengiriman ini tersedia menggunakan zona "
+"pengiriman."
+
+msgid "Zone-Based Coverage:"
+msgstr "Cakupan Berbasis Zona:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"Gunakan zona pengiriman untuk cakupan geografis berbasis aturan yang "
+"fleksibel. Pendekatan ini bekerja dengan lancar dengan aturan pengiriman dan "
+"memungkinkan kendali presisi atas tempat metode Anda tersedia."
+
+msgid "Select Shipping Zones"
+msgstr "Pilih Zona Pengiriman"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"Pilih zona pengiriman mana metode ini tersedia. Biarkan kosong untuk "
+"membuatnya tersedia secara global."
+
+msgid "Available Zones"
+msgstr "Zona Tersedia"
+
+msgid "Add selected zones"
+msgstr "Tambahkan zona yang dipilih"
+
+msgid "Add all zones"
+msgstr "Tambahkan semua zona"
+
+msgid "Remove selected zones"
+msgstr "Hapus zona yang dipilih"
+
+msgid "Remove all zones"
+msgstr "Hapus semua zona"
+
+msgid "Selected Zones"
+msgstr "Zona yang Dipilih"
+
+msgid "No shipping zones found!"
+msgstr "Tidak ditemukan zona pengiriman!"
+
+msgid "You need to create shipping zones first."
+msgstr "Anda perlu membuat zona pengiriman terlebih dahulu."
+
+msgid "Create a shipping zone"
+msgstr "Buat zona pengiriman"
+
+msgid "Method Features"
+msgstr "Fitur Metode"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr ""
+"Konfigurasikan perkiraan pengiriman, urutan tampilan, dan fitur spesifik "
+"metode."
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "Pilih lokasi fisik di mana pelanggan dapat mengambil pesanan mereka."
+
+msgid "Available Pickup Locations"
+msgstr "Lokasi Ambil Barang Tersedia"
+
+msgid "Available Locations"
+msgstr "Lokasi Tersedia"
+
+msgid "Selected Locations"
+msgstr "Lokasi yang Dipilih"
+
+msgid "No pickup locations found!"
+msgstr "Tidak ditemukan lokasi ambil barang!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr ""
+"Anda perlu membuat lokasi pengambilan terlebih dahulu untuk metode "
+"pengambilan lokal."
+
+msgid "Create a pickup location"
+msgstr "Buat lokasi ambil barang"
+
+msgid "Carrier API Status"
+msgstr "Status API Pengangkut"
+
+msgid "Carrier:"
+msgstr "Pengangkut:"
+
+msgid "Service Code:"
+msgstr "Kode Layanan:"
+
+msgid "API Configuration Status"
+msgstr "Status Konfigurasi API"
+
+msgid "Checking API credentials..."
+msgstr "Memeriksa kredensial API..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr ""
+"Pastikan kredensial API penyedia Anda dikonfigurasi dalam pengaturan "
+"penyedia pengiriman."
+
+msgid "Enable Rate Caching"
+msgstr "Aktifkan Penyimpanan Tarif"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"Cache tarif penyedia selama 15 menit untuk meningkatkan kinerja dan "
+"mengurangi panggilan API"
+
+msgid "Rate Table Configuration"
+msgstr "Konfigurasi Tabel Tarif"
+
+msgid "Weight-Based Rates:"
+msgstr "Tarif Berbasis Berat:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr ""
+"Anda akan dapat mengonfigurasi tarif bertingkat berdasarkan berat keranjang "
+"setelah metode dibuat."
+
+msgid "Price-Based Rates:"
+msgstr "Tarif Berbasis Harga:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"Anda akan dapat mengonfigurasi tarif bertingkat berdasarkan subtotal "
+"keranjang setelah metode dibuat."
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr "Tabel tarif dapat dikelola dari halaman edit metode setelah pembuatan."
+
+msgid "Delivery Time Estimate"
+msgstr "Estimasi Waktu Pengiriman"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "Berikan pelanggan dengan perkiraan kerangka waktu pengiriman."
+
+msgid "Fastest delivery time in business days"
+msgstr "Waktu pengiriman tercepat dalam hari kerja"
+
+msgid "Slowest delivery time in business days"
+msgstr "Waktu pengiriman terlambat dalam hari kerja"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "Pengiriman Standar: 3-5 hari kerja"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "Pengiriman Ekspres: 1-2 hari kerja"
+
+msgid "International shipping: 7-14 business days"
+msgstr "Pengiriman Internasional: 7-14 hari kerja"
+
+msgid "Display Settings"
+msgstr "Pengaturan Tampilan"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr ""
+"Angka yang lebih rendah muncul terlebih dahulu. Gunakan ini untuk mengontrol "
+"urutan metode yang ditampilkan kepada pelanggan."
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"Tetapkan urutan pengurutan dalam kelipatan 10 (0, 10, 20) untuk memungkinkan "
+"penambahan mudah metode baru antara metode yang sudah ada."
+
+msgid "Review & Create"
+msgstr "Periksa & Buat"
+
+msgid "API credentials verified successfully"
+msgstr "Kredensial API telah diverifikasi dengan sukses"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "Periksa konfigurasi metode pengiriman Anda dan buat metode tersebut."
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Name:"
+msgstr "Nama:"
+
+msgid "Method Type:"
+msgstr "Jenis Metode:"
+
+msgid "Description:"
+msgstr "Deskripsi:"
+
+msgid "Display Icon:"
+msgstr "Ikon Tampilan:"
+
+msgid "Status:"
+msgstr "Status:"
+
+msgid "Inactive"
+msgstr "Tidak Aktif"
+
+msgid "Flat Rate Cost:"
+msgstr "Biaya Tarif Tetap:"
+
+msgid "Min Order Value:"
+msgstr "Nilai Pesanan Minimum:"
+
+msgid "Max Order Value:"
+msgstr "Nilai Pesanan Maksimum:"
+
+msgid "Min Weight:"
+msgstr "Berat Minimum:"
+
+msgid "Max Weight:"
+msgstr "Berat Maksimum:"
+
+msgid "Requires Shipping Address:"
+msgstr "Memerlukan Alamat Pengiriman:"
+
+msgid "Yes"
+msgstr "Ya"
+
+msgid "No"
+msgstr "Tidak"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr ""
+"Tidak ada kondisi kelayakan yang ditetapkan - metode tersedia untuk semua "
+"nilai keranjang dan berat"
+
+msgid "Shipping Zones:"
+msgstr "Zona Pengiriman:"
+
+msgid "Coverage:"
+msgstr "Cakupan:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "Seluruh Dunia (Tidak ada zona yang dipilih)"
+
+msgid "Pickup Locations:"
+msgstr "Lokasi Ambil Barang:"
+
+msgid "location"
+msgstr "lokasi"
+
+msgid "Delivery Time:"
+msgstr "Waktu Pengiriman:"
+
+msgid "Instant Pickup"
+msgstr "Ambil Langsung"
+
+msgid "Delivery Estimate:"
+msgstr "Estimasi Pengiriman:"
+
+msgid "business days"
+msgstr "hari kerja"
+
+msgid "Sort Order:"
+msgstr "Urutan Pengurutan:"
+
+msgid "Rate Caching:"
+msgstr "Penyimpanan Tarif:"
+
+msgid "Enabled"
+msgstr "Diaktifkan"
+
+msgid "What happens next:"
+msgstr "Apa yang terjadi selanjutnya:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "Metode pengiriman Anda akan dibuat dengan pengaturan di atas"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "Anda akan dialihkan untuk mengkonfigurasi tabel tarif untuk metode ini"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr ""
+"Metode ini akan segera tersedia bagi pelanggan (jika kondisi kelayakan "
+"terpenuhi)"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr "Metode ini akan dibuat dalam keadaan tidak aktif - aktifkan saat siap"
+
+msgid "Create Shipping Method"
+msgstr "Buat Metode Pengiriman"
+
+msgid "Creating..."
+msgstr "Membuat..."
+
+msgid "Session"
+msgstr "Sesi"
+
+msgid "Registered"
+msgstr "Terdaftar"
+
+msgid "Guest"
+msgstr "Pengunjung"
+
+msgid "item"
+msgstr "item"
+
+msgid "Shipping Set"
+msgstr "Set Pengiriman"
+
+msgid "Cart Total"
+msgstr "Total Keranjang"
+
+msgid "Items"
+msgstr "Barang"
+
+msgid "Savings"
+msgstr "Penghematan"
+
+msgid "Shipping"
+msgstr "Pengiriman"
+
+msgid "Grand Total"
+msgstr "Total Keseluruhan"
+
+msgid "Updated"
+msgstr "Diperbarui"
+
+msgid "ago"
+msgstr "yang lalu"
+
+msgid "Created"
+msgstr "Dibuat"
+
+msgid "Est. Delivery"
+msgstr "Estimasi Pengiriman"
+
+msgid "View cart details"
+msgstr "Lihat Detail Keranjang"
+
+msgid "Edit cart"
+msgstr "Edit Keranjang"
+
+msgid "Delete cart"
+msgstr "Hapus Keranjang"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "Apakah Anda yakin ingin membersihkan keranjang ini?"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "Tidak ditemukan keranjang belanja yang cocok dengan kriteria Anda."
+
+msgid "Try adjusting your filters or search terms."
+msgstr "Coba sesuaikan filter atau kata kunci pencarian Anda."
+
+msgid "Edit Shipping Method"
+msgstr "Ubah Metode Pengiriman"
+
+msgid "Save and continue editing"
+msgstr "Simpan dan lanjutkan mengedit"
+
+msgid "Please correct the errors below"
+msgstr "Silakan perbaiki kesalahan di bawah ini"
+
+msgid "Basic"
+msgstr "Dasar"
+
+msgid "Pricing"
+msgstr "Harga"
+
+msgid "Display"
+msgstr "Tampilan"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "Opsional: Batasi ketersediaan berdasarkan nilai pesanan atau berat."
+
+msgid "Delivery Time"
+msgstr "Waktu Pengiriman"
+
+msgid "Display Options"
+msgstr "Opsi Tampilan"
+
+msgid "Carrier Integration"
+msgstr "Integrasi Pengangkut"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr ""
+"Konfigurasikan pengaturan khusus penyedia layanan untuk pencarian tarif real-"
+"time."
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "Konfigurasikan opsi pengiriman, tarif, dan metode pengiriman"
+
+msgid "method"
+msgstr "metode"
+
+msgid "active"
+msgstr "aktif"
+
+msgid "Add Method"
+msgstr "Tambah Metode"
+
+msgid "Bulk Actions"
+msgstr "Aksi Massal"
+
+msgid "Enable Selected"
+msgstr "Aktifkan yang Dipilih"
+
+msgid "Disable Selected"
+msgstr "Nonaktifkan yang Dipilih"
+
+msgid "Delete Selected"
+msgstr "Hapus yang Dipilih"
+
+msgid "Apply"
+msgstr "Terapkan"
+
+msgid "selected"
+msgstr "dipilih"
+
+msgid "All Status"
+msgstr "Semua Status"
+
+msgid "All Types"
+msgstr "Semua Jenis"
+
+msgid "Real-Time Rates"
+msgstr "Tarif Waktu Nyata"
+
+msgid "Clear all filters"
+msgstr "Hapus Semua Filter"
+
+msgid "Clear Filters"
+msgstr "Hapus Filter"
+
+msgid "Search methods..."
+msgstr "Cari metode..."
+
+msgid "Select All"
+msgstr "Pilih Semua"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s metode"
+msgstr[1] "%(counter)s metode"
+
+msgid "No shipping methods found"
+msgstr "Tidak ditemukan metode pengiriman"
+
+msgid "Try adjusting your filters or search query."
+msgstr "Coba sesuaikan filter atau query pencarian Anda."
+
+msgid "Get started by creating your first shipping method."
+msgstr "Mulailah dengan membuat metode pengiriman pertama Anda."
+
+msgid "Add First Method"
+msgstr "Tambah Metode Pertama"
+
+msgid "Loading..."
+msgstr "Memuat..."
+
+msgid "Order Value:"
+msgstr "Nilai Pesanan:"
+
+msgid "Weight:"
+msgstr "Berat:"
+
+msgid "Zones:"
+msgstr "Zona:"
+
+msgid "zone"
+msgstr "zona"
+
+msgid "Countries:"
+msgstr "Negara:"
+
+msgid "country"
+msgstr "negara"
+
+msgid "Worldwide"
+msgstr "Seluruh Dunia"
+
+msgid "Pickup:"
+msgstr "Pengambilan:"
+
+msgid "Delivery:"
+msgstr "Pengiriman:"
+
+msgid "Edit method"
+msgstr "Edit Metode"
+
+msgid "Toggle active status"
+msgstr "Ubah Status Aktif"
+
+msgid "Delete method"
+msgstr "Hapus Metode"
+
+msgid "Edit Tax Rate"
+msgstr "Ubah Tingkat Pajak"
+
+msgid "Add Tax Rate"
+msgstr "Tambah Tarif Pajak"
+
+msgid "Geography"
+msgstr "Geografi"
+
+msgid "Rules"
+msgstr "Aturan"
+
+msgid "Exemptions"
+msgstr "Pengecualian"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"Tentukan di mana tarif pajak ini berlaku. Biarkan negara/kota kosong untuk "
+"tarif se-negara."
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "Eksklusikan jenis produk atau kategori tertentu dari tarif pajak ini."
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"Konfigurasikan aturan pajak untuk toko Anda. Tarif pajak akan cocok dengan "
+"alamat pelanggan saat checkout."
+
+msgid "Load Presets"
+msgstr "Muat Preset"
+
+msgid "Total Rules"
+msgstr "Aturan Total"
+
+msgid "Countries"
+msgstr "Negara"
+
+msgid "Tax Types"
+msgstr "Jenis Pajak"
+
+msgid "Search by name, country, state..."
+msgstr "Cari berdasarkan nama, negara, negara bagian..."
+
+msgid "All Countries"
+msgstr "Semua Negara"
+
+msgid "Custom"
+msgstr "Kustom"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Clear"
+msgstr "Hapus"
+
+msgid "Tax Rules"
+msgstr "Aturan Pajak"
+
+msgid "rules"
+msgstr "aturan"
+
+msgid "Load Tax Rate Presets"
+msgstr "Muat Preset Tingkat Pajak"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr ""
+"Tambahkan dengan cepat tarif pajak standar untuk wilayah Anda. Tarif yang "
+"sudah ada tidak akan diduplikasi."
+
+msgid "rates"
+msgstr "tingkat"
+
+msgid "Load"
+msgstr "Muat"
+
+msgid "Close"
+msgstr "Tutup"
+
+msgid "postal codes"
+msgstr "kode pos"
+
+msgid "Shipping Taxed"
+msgstr "Pajak Pengiriman"
+
+msgid "Compound"
+msgstr "Kombinasi"
+
+msgid "Delete"
+msgstr "Hapus"
+
+msgid "No tax rates configured"
+msgstr "Tidak ada tingkat pajak yang dikonfigurasikan"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"Gunakan 'Muat Preset' untuk menambahkan dengan cepat tarif standar untuk "
+"wilayah Anda, atau tambahkan tarif secara manual."
+
+msgid "Get current cart"
+msgstr "Dapatkan keranjang saat ini"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"Mendapatkan keranjang saat ini untuk pengguna atau sesi yang telah "
+"diotorisasi. Mengembalikan item keranjang, subtotal, diskon, pajak, dan "
+"total. Otomatis membuat keranjang jika tidak ada."
+
+msgid "Add item to cart"
+msgstr "Tambahkan item ke keranjang"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"Tambahkan produk ke keranjang dengan kuantitas yang ditentukan. Secara "
+"opsional, sertakan ID variasi, personalisasi, dan catatan. Memvalidasi "
+"ketersediaan stok dan menggabungkan dengan item keranjang yang sudah ada "
+"jika produk/variasi sama. Untuk produk langganan, sertakan "
+"is_subscription=true bersama subscription_plan_id, payment_token_id, dan "
+"secara opsional pricing_tier_id."
+
+msgid "Update cart item"
+msgstr "Perbarui item keranjang"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"Memperbarui kuantitas, personalisasi, atau catatan item keranjang. "
+"Memvalidasi kuantitas baru terhadap ketersediaan stok. Mengembalikan "
+"keranjang yang telah diperbarui dengan total yang dihitung ulang."
+
+msgid "Remove cart item"
+msgstr "Hapus item keranjang"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"Hapus item tertentu dari keranjang. Menghitung ulang total keranjang dan "
+"memverifikasi kembali voucher yang diterapkan terhadap total keranjang baru."
+
+msgid "Clear cart"
+msgstr "Bersihkan keranjang"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"Hapus semua item dari keranjang. Juga menghapus voucher yang diterapkan. "
+"Objek keranjang tetap ada tetapi menjadi kosong."
+
+msgid "Apply voucher code"
+msgstr "Terapkan kode voucher"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"Terapkan kode voucher ke keranjang. Memverifikasi kelayakan voucher, "
+"persyaratan pembelian minimum, dan batas penggunaan. Menghitung dan "
+"menerapkan diskon ke total keranjang."
+
+msgid "Remove voucher"
+msgstr "Hapus voucher"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"Hapus voucher spesifik dari keranjang dengan kode. Hitung ulang total "
+"keranjang tanpa diskon voucher. Pengguna dapat menerapkan voucher kembali "
+"nanti jika memenuhi syarat."
+
+msgid "Apply gift card"
+msgstr "Terapkan kartu hadiah"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"Terapkan kode kartu hadiah ke keranjang. Memvalidasi status, saldo, dan mata "
+"uang kartu hadiah. Kartu hadiah tidak dapat digunakan untuk membeli kartu "
+"hadiah lainnya. Jumlah yang diterapkan terbatas pada saldo kartu hadiah atau "
+"total keranjang yang tersisa."
+
+msgid "Remove gift card"
+msgstr "Hapus kartu hadiah"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"Hapus kartu hadiah spesifik dari keranjang dengan kode. Saldo kartu hadiah "
+"tidak terpengaruh sampai proses checkout selesai. Pengguna dapat menerapkan "
+"kartu hadiah kembali."
+
+msgid "Get cart summary"
+msgstr "Dapatkan ringkasan keranjang"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"Dapatkan ringkasan keranjang ringan dengan jumlah item, subtotal, dan total. "
+"Lebih cepat daripada akhir titik keranjang penuh. Berguna untuk badge "
+"keranjang header atau tampilan total cepat."
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"Item komponen tidak dapat diubah secara langsung. Perbarui produk induknya "
+"sebagai gantinya."
+
+msgid "List user wishlists"
+msgstr "Daftar daftar keinginan pengguna"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"Dapatkan semua daftar keinginan untuk pengguna yang telah diverifikasi. "
+"Pengguna dapat memiliki beberapa daftar keinginan untuk tujuan yang berbeda "
+"(misalnya, 'Ulang Tahun', 'Perkawinan', 'Ide'). Mengembalikan nama daftar "
+"keinginan, jumlah item, dan pengaturan privasi."
+
+msgid "Create wishlist"
+msgstr "Buat daftar keinginan"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"Buat daftar keinginan baru untuk pengguna yang telah diverifikasi. Tentukan "
+"nama, deskripsi, dan pengaturan privasi (umum/terbatas). Daftar keinginan "
+"umum dapat dibagikan melalui URL."
+
+msgid "Get wishlist details"
+msgstr "Dapatkan detail daftar keinginan"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"Dapatkan informasi detail tentang daftar keinginan spesifik termasuk semua "
+"item, harga, ketersediaan, dan pengaturan berbagi. Hanya dapat diakses oleh "
+"pemilik daftar keinginan kecuali daftar keinginan tersebut dibagikan secara "
+"publik."
+
+msgid "Update wishlist"
+msgstr "Perbarui daftar keinginan"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"Perbarui informasi daftar keinginan termasuk nama, deskripsi, atau "
+"pengaturan privasi. Dapat membuat daftar keinginan menjadi publik atau "
+"privat. Hanya pemilik yang dapat memperbarui."
+
+msgid "Partially update wishlist"
+msgstr "Perbarui sebagian daftar keinginan"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"Perbarui bidang daftar keinginan spesifik tanpa mengirimkan data daftar "
+"keinginan lengkap. Berguna untuk mengaktifkan/menonaktifkan privasi atau "
+"mengganti nama daftar keinginan."
+
+msgid "Delete wishlist"
+msgstr "Hapus daftar keinginan"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"Hapus permanen daftar keinginan dan semua item di dalamnya. Tidak dapat "
+"dikembalikan. Hanya pemilik yang dapat menghapusnya."
+
+msgid "Add item to wishlist"
+msgstr "Tambahkan item ke daftar keinginan"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"Tambahkan produk ke daftar keinginan dengan variasi, kuantitas, dan catatan "
+"opsional. Mencegah duplikasi. Bisa ditambahkan ke daftar keinginan default "
+"atau spesifikkan ID daftar keinginan."
+
+msgid "Remove item from wishlist"
+msgstr "Hapus item dari daftar keinginan"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"Hapus item tertentu dari daftar keinginan. Item dapat ditambahkan kembali "
+"nanti. Tidak memengaruhi ketersediaan produk."
+
+msgid "Move item to cart"
+msgstr "Pindahkan item ke keranjang"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"Pindahkan item daftar keinginan langsung ke keranjang belanja. Memvalidasi "
+"ketersediaan stok. Item akan dihapus dari daftar keinginan setelah "
+"penambahan keranjang berhasil."
+
+msgid "Get public wishlist by share slug"
+msgstr "Dapatkan daftar keinginan publik berdasarkan slug bagikan"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"Lihat daftar keinginan publik menggunakan slug URL berbagi. Siapa pun yang "
+"memiliki tautan dapat melihat daftar keinginan publik. Berguna untuk daftar "
+"hadiah dan daftar keinginan yang dibagikan dengan keluarga/teman."
+
+msgid "ID of the wishlist item to remove"
+msgstr "ID item daftar keinginan yang akan dihapus"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "ID item daftar keinginan yang akan dipindahkan ke keranjang"
+
+msgid "Share slug of the public wishlist"
+msgstr "Bagikan slug daftar keinginan publik"
+
+msgid "Wishlist not found"
+msgstr "Daftar Keinginan Tidak Ditemukan"
+
+msgid "Get checkout session"
+msgstr "Dapatkan sesi checkout"
+
+msgid "Set shipping address"
+msgstr "Atur alamat pengiriman"
+
+msgid "Set billing address"
+msgstr "Atur alamat pembayaran"
+
+msgid "Get available shipping methods"
+msgstr "Dapatkan metode pengiriman yang tersedia"
+
+msgid "Get available payment providers"
+msgstr "Dapatkan penyedia pembayaran yang tersedia"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"Mengembalikan penyedia pembayaran yang tersedia untuk negara dan mata uang "
+"pelanggan. Penyaringan berdasarkan negara pengiriman, kemampuan penyedia, "
+"dan konfigurasi pedagang."
+
+msgid "Set shipping method"
+msgstr "Atur metode pengiriman"
+
+msgid "Set payment method"
+msgstr "Atur metode pembayaran"
+
+msgid "Validate checkout"
+msgstr "Validasi checkout"
+
+msgid "Complete checkout"
+msgstr "Selesaikan checkout"
+
+msgid "Get recently viewed products"
+msgstr "Dapatkan produk yang dilihat baru-baru ini"
+
+msgid "Get recently viewed details"
+msgstr "Dapatkan detail produk yang dilihat baru-baru ini"
+
+msgid "List shipping methods"
+msgstr "Daftar metode pengiriman"
+
+msgid "Get shipping method details"
+msgstr "Dapatkan detail metode pengiriman"
+
+msgid "List tax rates"
+msgstr "Daftar tarif pajak"
+
+msgid "Get tax rate details"
+msgstr "Dapatkan detail tarif pajak"
+
+msgid "Create tax rate"
+msgstr "Buat tarif pajak"
+
+msgid "Update tax rate"
+msgstr "Perbarui tarif pajak"
+
+msgid "Partial update tax rate"
+msgstr "Perbarui sebagian tingkat pajak"
+
+msgid "Delete tax rate"
+msgstr "Hapus tarif pajak"
+
+msgid "Calculate applicable taxes"
+msgstr "Hitung pajak yang berlaku"
+
+msgid "Tax rates grouped by country"
+msgstr "Tingkat pajak dikelompokkan berdasarkan negara"
+
+msgid "Load preset tax rates"
+msgstr "Muat tarif pajak prasetel"
+
+msgid "List tax preset groups"
+msgstr "Daftar grup prasetel pajak"
+
+msgid "Get preset group details"
+msgstr "Dapatkan detail kelompok prasetel"
+
+msgid "List rates in a preset group"
+msgstr "Daftar tarif dalam kelompok prasetel"

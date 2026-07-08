@@ -1,0 +1,73 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Newsletter" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/admin/css/newsletter_create.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="newsletter-header">
+    <h1>
+        <i class="fas fa-plus-circle"></i>
+        {% trans "Create Newsletter" %}
+    </h1>
+    <p class="subtitle">
+        {% trans "Create a new newsletter template to send to your customers" %}
+    </p>
+</div>
+
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="subject">
+                {% trans "Subject Line" %}
+            </label>
+            {% trans "New Newsletter" as default_subject %}
+            <input
+                type="text"
+                id="subject"
+                name="subject"
+                required
+                placeholder="{% trans 'Enter newsletter subject...' %}"
+                value="{{ request.POST.subject|default:default_subject }}"
+            >
+            <div class="help-text">
+                {% trans "This will appear in your recipients' inbox" %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="language_code">
+                {% trans "Language" %}
+            </label>
+            <select id="language_code" name="language_code">
+                {% for lang_code, lang_name in available_languages %}
+                <option value="{{ lang_code }}" {% if lang_code == default_language and not request.POST.language_code or request.POST.language_code == lang_code %}selected{% endif %}>
+                    {{ lang_name }}
+                </option>
+                {% endfor %}
+            </select>
+            <div class="help-text">
+                {% trans "Select the language for this newsletter. Only languages you have enabled for your store are shown." %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-check"></i>
+                {% trans "Create & Edit Design" %}
+            </button>
+            <a href="{% url 'email_system:newsletter_list' %}" class="btn-secondary">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

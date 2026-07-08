@@ -1,0 +1,63 @@
+{
+  "type": "menu",
+  "icon": "fa-bars",
+  "label": "Menu",
+  "groups": [
+    {
+      "id": "source",
+      "title": "Menu Source",
+      "expanded": true,
+      "fields": [
+        { "key": "menu_id", "label": "Select Menu", "type": "select", "dynamicOptions": "menus", "placeholder": "Choose a menu..." }
+      ]
+    },
+    {
+      "id": "display",
+      "title": "Display Options",
+      "expanded": true,
+      "fields": [
+        {
+          "key": "display_type",
+          "label": "Display Style",
+          "type": "select",
+          "options": [
+            { "value": "horizontal", "label": "Horizontal" },
+            { "value": "vertical", "label": "Vertical" },
+            { "value": "dropdown", "label": "Dropdown" },
+            { "value": "mega", "label": "Mega Menu" }
+          ],
+          "default": "horizontal"
+        },
+        { "key": "show_icons", "label": "Show Icons", "type": "toggle", "default": false },
+        { "key": "mega_dropdown", "label": "Enable Mega Dropdown", "type": "toggle", "default": false, "help": "Show large dropdown panels" },
+        {
+          "key": "dropdown_columns",
+          "label": "Dropdown Columns",
+          "type": "number",
+          "default": 4,
+          "min": 2,
+          "max": 6,
+          "help": "Number of columns in mega dropdown"
+        },
+        { "key": "show_images", "label": "Show Featured Images", "type": "toggle", "default": false, "help": "Show images in mega dropdown" }
+      ]
+    },
+    {
+      "id": "mobile",
+      "title": "Mobile Settings",
+      "expanded": false,
+      "fields": [
+        { "key": "sticky", "label": "Sticky on Scroll", "type": "toggle", "default": false },
+        {
+          "key": "mobile_breakpoint",
+          "label": "Mobile Breakpoint",
+          "type": "number",
+          "default": 768,
+          "min": 320,
+          "max": 1200,
+          "help": "Screen width to switch to mobile view (px)"
+        }
+      ]
+    }
+  ]
+}

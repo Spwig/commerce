@@ -1,0 +1,289 @@
+{% load i18n static %}
+<div class="setup-instructions-content">
+    <div class="instruction-header">
+        <i class="fas fa-check-circle"></i>
+        <h3>{% trans "Built-in SMTP Server" %}</h3>
+        <p class="lead">{% trans "Your platform includes a professional SMTP server that's ready to use. We'll handle all the technical setup automatically." %}</p>
+    </div>
+
+    <div class="alert alert-success">
+        <i class="fas fa-bolt"></i>
+        <strong>{% trans "Zero Configuration Required" %}</strong><br>
+        {% trans "No management commands, no server configuration. Just enter your email details and we'll set everything up for you automatically." %}
+    </div>
+
+    <div class="benefits-section">
+        <h4>{% trans "What You Get" %}</h4>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <i class="fas fa-dollar-sign"></i>
+                <h5>{% trans "No Monthly Fees" %}</h5>
+                <p>{% trans "Completely free - no subscription costs or rate limits." %}</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-shield-alt"></i>
+                <h5>{% trans "Automatic DKIM Signing" %}</h5>
+                <p>{% trans "Professional email authentication configured automatically." %}</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-lock"></i>
+                <h5>{% trans "Privacy First" %}</h5>
+                <p>{% trans "Your emails stay on your server - no third-party access." %}</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-infinity"></i>
+                <h5>{% trans "Unlimited Sending" %}</h5>
+                <p>{% trans "Only limited by your server capacity." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="how-it-works-section">
+        <h4>{% trans "How It Works" %}</h4>
+        <div class="workflow-steps">
+            <div class="workflow-step">
+                <div class="workflow-number">1</div>
+                <div class="workflow-content">
+                    <h5>{% trans "You Provide Email Details" %}</h5>
+                    <p>{% trans "Enter your sending email address in the next step (e.g., noreply@yourdomain.com)" %}</p>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-number">2</div>
+                <div class="workflow-content">
+                    <h5>{% trans "We Generate DKIM Keys" %}</h5>
+                    <p>{% trans "Cryptographic keys are automatically created and encrypted in your database" %}</p>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-number">3</div>
+                <div class="workflow-content">
+                    <h5>{% trans "We Start the SMTP Server" %}</h5>
+                    <p>{% trans "The built-in server starts automatically and begins signing all outgoing emails" %}</p>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-number">4</div>
+                <div class="workflow-content">
+                    <h5>{% trans "Configure DNS Records" %}</h5>
+                    <p>{% trans "We'll show you exactly which DNS records to add for optimal deliverability" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <strong>{% trans "What Happens Next?" %}</strong><br>
+        {% trans "After you enter your email address, we'll automatically generate DKIM keys, start the SMTP server, and guide you through adding DNS records. The entire process takes about 2 minutes." %}
+    </div>
+
+    <div class="technical-note">
+        <h5>{% trans "Technical Details" %}</h5>
+        <ul>
+            <li>{% trans "Only your shop can send through this email provider for security" %}</li>
+            <li>{% trans "DKIM keys use RSA 2048-bit encryption for enhanced security" %}</li>
+            <li>{% trans "All emails are automatically signed before sending to ensure your emails are delivered and avoid hitting spam and junk folders" %}</li>
+        </ul>
+    </div>
+
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>{% trans "Important for Production Use" %}</strong><br>
+        {% trans "After setup, you'll need to add DNS records (SPF, DKIM, DMARC, PTR) with your domain provider for optimal email deliverability. We'll provide detailed instructions in Step 4." %}
+    </div>
+</div>
+
+<style>
+/* Inline CSS for setup instructions - uses theme CSS variables for dark/light mode support */
+.setup-instructions-content {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--body-fg);
+}
+
+.instruction-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.instruction-header i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: var(--success-color);
+}
+
+.instruction-header h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: var(--body-loud-color);
+}
+
+.instruction-header .lead {
+    font-size: 16px;
+    color: var(--body-quiet-color);
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: var(--message-success-bg);
+    border-color: var(--success-color);
+    color: var(--body-fg);
+}
+
+.alert-info {
+    background: var(--blue-subtle);
+    border-color: var(--info-color);
+    color: var(--body-fg);
+}
+
+.alert-warning {
+    background: var(--message-warning-bg);
+    border-color: var(--warning-color);
+    color: var(--body-fg);
+}
+
+.alert i {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.benefits-section {
+    margin: 30px 0;
+}
+
+.benefits-section h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--body-loud-color);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.benefit-card {
+    padding: 20px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.benefit-card i {
+    font-size: 32px;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.benefit-card h5 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: var(--body-loud-color);
+}
+
+.benefit-card p {
+    font-size: 14px;
+    color: var(--body-quiet-color);
+    margin: 0;
+}
+
+.how-it-works-section {
+    margin: 40px 0;
+}
+
+.how-it-works-section h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--body-loud-color);
+}
+
+.workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.workflow-step {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    background: var(--darkened-bg);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.workflow-number {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.workflow-content h5 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+}
+
+.workflow-content p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--body-quiet-color);
+}
+
+.technical-note {
+    margin: 30px 0;
+    padding: 20px;
+    background: var(--darkened-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.technical-note h5 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+}
+
+.technical-note ul {
+    margin: 0;
+    padding-left: 25px;
+}
+
+.technical-note li {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+@media (max-width: 768px) {
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

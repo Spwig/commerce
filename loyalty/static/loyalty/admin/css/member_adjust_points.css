@@ -1,0 +1,159 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Member Adjust Points
+ *
+ * Description: Admin interface styles for member_adjust_points.html
+ * Template: loyalty/templates/admin/loyalty/member_adjust_points.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+.adjust-points-container {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.member-info-card {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.member-info-card h3 {
+    margin: 0 0 1rem 0;
+    color: var(--body-fg);
+    font-size: 1.25rem;
+}
+
+.member-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.info-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.info-value-warning {
+    color: var(--warning-fg, #f59e0b);
+}
+
+.info-value-muted {
+    color: var(--body-quiet-color);
+}
+
+.member-id-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+}
+
+.adjust-form {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+.adjust-form .form-row {
+    margin-bottom: 1.5rem;
+}
+
+.adjust-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.adjust-form input[type="number"],
+.adjust-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 1rem;
+}
+
+.adjust-form input[type="number"]:focus,
+.adjust-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.adjust-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.adjust-form .help-text {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--button-fg);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover, var(--primary));
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--close-button-bg);
+    color: var(--body-fg);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: var(--close-button-hover-bg);
+}

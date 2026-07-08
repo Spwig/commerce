@@ -1,0 +1,178 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Webhook Logs" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'shipping/css/admin_webhook_log.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-satellite-dish"></i>
+                {% trans "Webhook Logs" %}
+            </h1>
+            <p class="subtitle">{% trans "Inbound webhook events from shipping providers" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <button type="button" class="button secondary" data-action="reload-page">
+                <i class="fas fa-sync-alt"></i> {% trans "Refresh" %}
+            </button>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats Summary -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon text-warning"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ pending_count }}</div>
+            <div class="label">{% trans "Pending" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-success"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ processed_count }}</div>
+            <div class="label">{% trans "Processed" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-error"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="value">{{ failed_count }}</div>
+            <div class="label">{% trans "Failed" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-list"></i></div>
+            <div class="value">{{ cl.result_count }}</div>
+            <div class="label">{% trans "Total" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search provider, endpoint, error...' %}"
+                    value="{{ request.GET.q|default:'' }}">
+            </div>
+
+            <!-- Provider Filter -->
+            <div class="filter-field">
+                <label for="filter-provider">
+                    <i class="fas fa-truck"></i> {% trans "Provider" %}
+                </label>
+                <select id="filter-provider">
+                    <option value="">{% trans "All Providers" %}</option>
+                    {% for provider in providers %}
+                    <option value="{{ provider }}" {% if request.GET.provider_key__exact == provider %}selected{% endif %}>{{ provider }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Processing Status Filter -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-tasks"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="pending" {% if request.GET.processing_status__exact == 'pending' %}selected{% endif %}>{% trans "Pending" %}</option>
+                    <option value="processed" {% if request.GET.processing_status__exact == 'processed' %}selected{% endif %}>{% trans "Processed" %}</option>
+                    <option value="failed" {% if request.GET.processing_status__exact == 'failed' %}selected{% endif %}>{% trans "Failed" %}</option>
+                </select>
+            </div>
+
+            <!-- HTTP Status Filter -->
+            <div class="filter-field">
+                <label for="filter-http-status">
+                    <i class="fas fa-exchange-alt"></i> {% trans "HTTP Status" %}
+                </label>
+                <select id="filter-http-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="2xx" {% if request.GET.status_code__gte == '200' and request.GET.status_code__lt == '300' %}selected{% endif %}>{% trans "2xx Success" %}</option>
+                    <option value="4xx" {% if request.GET.status_code__gte == '400' and request.GET.status_code__lt == '500' %}selected{% endif %}>{% trans "4xx Client Error" %}</option>
+                    <option value="5xx" {% if request.GET.status_code__gte == '500' %}selected{% endif %}>{% trans "5xx Server Error" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+                <button type="button" class="button default" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-satellite-dish"></i>
+            <span id="log-count">{{ cl.result_count }}</span> {% trans "webhook log" %}{{ cl.result_count|pluralize:"s" }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="webhook-results">
+        {% include "admin/shipping/webhooklog/log_cards.html" with logs=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 log entry{% plural %}{{ counter }} log entries{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'log entries' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url "shipping_admin:filter_webhook_logs" %}"
+     data-results-container="webhook-results"
+     data-results-count="log-count"
+     class="webhook-log-hidden"></div>
+</div>
+{% endblock %}

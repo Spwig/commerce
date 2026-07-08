@@ -1,0 +1,316 @@
+{% load i18n static admin_urls core_extras %}
+{% get_site_settings as site_settings %}
+
+<header class="admin-header">
+    <!-- Store Branding -->
+    {% trans "My New Spwig Store" as default_store_name %}
+    <a href="{{ site_settings.site_url|default:'/' }}" class="header-brand" target="_blank" rel="noopener">
+        <div class="store-logo">
+            {% with logo_url=site_settings|get_site_logo_url:'square' favicon_url=site_settings|get_favicon_url %}
+                {% if logo_url %}
+                    <img src="{{ logo_url }}" alt="{{ site_settings.site_name }} Logo">
+                {% elif favicon_url %}
+                    <img src="{{ favicon_url }}" alt="{{ site_settings.site_name }} Logo">
+                {% else %}
+                    <i class="fas fa-store"></i>
+                {% endif %}
+            {% endwith %}
+        </div>
+        <h1 class="store-name">{{ site_settings.site_name|default:default_store_name }}</h1>
+    </a>
+
+
+    <!-- User Tools -->
+    <div class="header-tools">
+        <!-- Language Switcher -->
+        {% include "components/language_switcher.html" %}
+
+        <!-- Help Button -->
+        <button class="help-toggle-btn" id="helpToggleBtn"
+                data-action="toggle-help-drawer"
+                title="{% trans 'Get Help' %}"
+                aria-label="{% trans 'Toggle Help' %}">
+            <i class="fas fa-question-circle"></i>
+            <span class="help-btn-text">{% trans "Help" %}</span>
+        </button>
+
+        <!-- Bug Report Button -->
+        <button class="bug-report-btn" id="bugReportBtn"
+                data-action="open-bug-report"
+                title="{% trans 'Report a Bug' %}"
+                aria-label="{% trans 'Report a Bug' %}">
+            <i class="fas fa-bug"></i>
+        </button>
+
+        <div class="user-menu" id="userMenu">
+            <button class="user-menu-toggle" data-action="toggle-user-menu" aria-expanded="false" aria-haspopup="true">
+                <div class="user-avatar">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+                <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+
+            <div class="user-dropdown" id="userDropdown">
+                <!-- Store Management -->
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">{% trans "Store Management" %}</div>
+                    <a href="{{ site_settings.site_url|default:'/' }}" class="dropdown-item" target="_blank" rel="noopener">
+                        <span class="dropdown-item-icon"><i class="fas fa-store"></i></span>
+                        <span class="dropdown-item-text">{% trans "View Store" %}</span>
+                    </a>
+                    <a href="{% url 'admin:index' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-chart-line"></i></span>
+                        <span class="dropdown-item-text">{% trans "Dashboard" %}</span>
+                    </a>
+                    <a href="{% url 'admin:core_sitesettings_changelist' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-cog"></i></span>
+                        <span class="dropdown-item-text">{% trans "Store Settings" %}</span>
+                    </a>
+                    <a href="{% url 'marketplace:browse' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-store"></i></span>
+                        <span class="dropdown-item-text">{% trans "Marketplace" %}</span>
+                    </a>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">{% trans "Quick Actions" %}</div>
+                    <div class="quick-actions">
+                        <a href="{% url 'admin:catalog_product_changelist' %}" class="quick-action">
+                            <span class="quick-action-icon"><i class="fas fa-box"></i></span>
+                            <span class="quick-action-text">{% trans "Products" %}</span>
+                        </a>
+                        <a href="{% url 'admin:orders_order_changelist' %}" class="quick-action">
+                            <span class="quick-action-icon"><i class="fas fa-clipboard-list"></i></span>
+                            <span class="quick-action-text">{% trans "Orders" %}</span>
+                        </a>
+                        <a href="{% url 'admin:auth_user_changelist' %}" class="quick-action">
+                            <span class="quick-action-icon"><i class="fas fa-users"></i></span>
+                            <span class="quick-action-text">{% trans "Users" %}</span>
+                        </a>
+                        <a href="{% url 'admin:catalog_category_changelist' %}" class="quick-action">
+                            <span class="quick-action-icon"><i class="fas fa-folder"></i></span>
+                            <span class="quick-action-text">{% trans "Categories" %}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- System Tools -->
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">{% trans "System Tools" %}</div>
+                    <a href="{% url 'admin:media_library_gallery' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-images"></i></span>
+                        <span class="dropdown-item-text">{% trans "Media Library" %}</span>
+                    </a>
+                    {% if not license_status.is_hosted %}
+                    <a href="{% url 'admin:management_database_browser' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-database"></i></span>
+                        <span class="dropdown-item-text">{% trans "Database" %}</span>
+                    </a>
+                    <a href="{% url 'admin:management_file_manager' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-folder-open"></i></span>
+                        <span class="dropdown-item-text">{% trans "File Manager" %}</span>
+                    </a>
+                    <a href="{% url 'admin:management_systemmetrics_changelist' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-tachometer-alt"></i></span>
+                        <span class="dropdown-item-text">{% trans "System Metrics" %}</span>
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-credit-card"></i></span>
+                        <span class="dropdown-item-text">{% trans "Payment Providers" %}</span>
+                    </a>
+                    <a href="{% url 'setup_wizard:start' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-magic"></i></span>
+                        <span class="dropdown-item-text">{% trans "Setup Wizard" %}</span>
+                    </a>
+                </div>
+
+                <!-- Appearance -->
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">{% trans "Appearance" %}</div>
+                    <div class="theme-toggle-section">
+                        <div>
+                            <button type="button" class="theme-toggle-btn" data-theme="light">
+                                <i class="fas fa-sun"></i>
+                                <span>{% trans "Light" %}</span>
+                            </button>
+                            <button type="button" class="theme-toggle-btn" data-theme="dark">
+                                <i class="fas fa-moon"></i>
+                                <span>{% trans "Dark" %}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Account -->
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">{% trans "Account" %}</div>
+                    <a href="{% url 'admin:accounts_staff_profile' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-user-circle"></i></span>
+                        <span class="dropdown-item-text">{% trans "My Profile" %}</span>
+                    </a>
+                    <a href="{% url 'admin:password_change' %}" class="dropdown-item">
+                        <span class="dropdown-item-icon"><i class="fas fa-key"></i></span>
+                        <span class="dropdown-item-text">{% trans "Change Password" %}</span>
+                    </a>
+                    <a href="{% url 'community_redirect' %}" class="dropdown-item" target="_blank" rel="noopener">
+                        <span class="dropdown-item-icon"><i class="fas fa-comments"></i></span>
+                        <span class="dropdown-item-text">{% trans "Community" %}</span>
+                    </a>
+                    <form method="post" action="{% url 'admin:logout' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item" style="width: 100%; border: none; background: none; cursor: pointer; text-align: left;">
+                            <span class="dropdown-item-icon"><i class="fas fa-sign-out-alt"></i></span>
+                            <span class="dropdown-item-text">{% trans "Sign Out" %}</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" data-action="toggle-sidebar" aria-label="{% trans 'Toggle Menu' %}">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Help Drawer -->
+    <div class="help-drawer" id="helpDrawer" role="dialog" aria-modal="true" aria-labelledby="helpDrawerTitle" aria-hidden="true">
+        <div class="help-drawer-header">
+            <h2 class="help-drawer-title" id="helpDrawerTitle">
+                <i class="fas fa-question-circle"></i>
+                {% trans "Help & Support" %}
+            </h2>
+            <button class="help-drawer-close" data-action="toggle-help-drawer" aria-label="{% trans 'Close help' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="help-drawer-content">
+            <!-- Search Box -->
+            <div class="help-search-box">
+                <i class="fas fa-search help-search-icon"></i>
+                <input type="text"
+                       id="helpSearchInput"
+                       class="help-search-input"
+                       placeholder="{% trans 'Search help topics...' %}"
+                       aria-label="{% trans 'Search help' %}">
+            </div>
+
+            <!-- Community Forum Link -->
+            <div class="help-section" style="border: 1px solid var(--primary, #417690); border-radius: 6px; padding: 16px; margin-bottom: 20px; background: rgba(65, 118, 144, 0.05);">
+                <h3 class="help-section-title" style="margin-top: 0;">
+                    <i class="fas fa-users"></i>
+                    {% trans "Community Forum" %}
+                </h3>
+                <p style="margin: 10px 0; font-size: 14px; color: var(--text-secondary, #666);">
+                    {% trans "Connect with other Spwig merchants, share experiences, and get help from the community." %}
+                </p>
+                <a href="{% url 'community_redirect' %}"
+                   class="help-community-btn"
+                   target="_blank"
+                   rel="noopener"
+                   style="display: inline-block; background: var(--primary, #417690); color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; transition: background 0.2s;">
+                    <i class="fas fa-external-link-alt" style="margin-right: 8px;"></i>
+                    {% trans "Visit Community Forum" %}
+                </a>
+            </div>
+
+            <!-- Report a Bug -->
+            <div class="help-section">
+                <h3 class="help-section-title">
+                    <i class="fas fa-bug"></i>
+                    {% trans "Found a Bug?" %}
+                </h3>
+                <p class="help-bug-description">{% trans "Help us improve Spwig by reporting any issues you encounter." %}</p>
+                <button type="button" class="help-bug-report-btn" data-action="open-bug-report">
+                    <i class="fas fa-bug"></i>
+                    {% trans "Report a Bug" %}
+                </button>
+            </div>
+
+            <!-- Contextual Help Suggestions -->
+            <div class="help-section" id="helpContextSection">
+                <h3 class="help-section-title">
+                    <i class="fas fa-lightbulb"></i>
+                    {% trans "Help for this page" %}
+                </h3>
+                <div class="help-topics-list" id="helpContextTopics">
+                    <div class="help-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        {% trans "Loading..." %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Results -->
+            <div class="help-section hidden" id="helpSearchSection">
+                <h3 class="help-section-title">
+                    <i class="fas fa-search"></i>
+                    {% trans "Search Results" %}
+                </h3>
+                <div class="help-topics-list" id="helpSearchResults">
+                </div>
+            </div>
+
+            <!-- Browse by Category -->
+            <div class="help-section" id="helpCategoriesSection">
+                <h3 class="help-section-title">
+                    <i class="fas fa-folder"></i>
+                    {% trans "Browse Help Topics" %}
+                </h3>
+                <div class="help-categories" id="helpCategories">
+                    <div class="help-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        {% trans "Loading..." %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic Detail View -->
+            <div class="help-topic-detail hidden" id="helpTopicDetail">
+                <button class="help-back-btn" data-action="help-show-categories">
+                    <i class="fas fa-arrow-left"></i>
+                    {% trans "Back" %}
+                </button>
+
+                <div class="help-topic-content" id="helpTopicContent">
+                </div>
+
+                <!-- Feedback Section -->
+                <div class="help-feedback">
+                    <p class="help-feedback-question">{% trans "Was this helpful?" %}</p>
+                    <div class="help-feedback-buttons">
+                        <button class="help-feedback-btn helpful" data-action="help-submit-feedback" data-helpful="true">
+                            <i class="fas fa-thumbs-up"></i>
+                            {% trans "Yes" %}
+                        </button>
+                        <button class="help-feedback-btn not-helpful" data-action="help-submit-feedback" data-helpful="false">
+                            <i class="fas fa-thumbs-down"></i>
+                            {% trans "No" %}
+                        </button>
+                    </div>
+                    <div class="help-feedback-comment hidden" id="helpFeedbackComment">
+                        <textarea id="helpFeedbackText"
+                                  placeholder="{% trans 'Tell us how we can improve this help topic...' %}"
+                                  rows="3"></textarea>
+                        <button class="help-feedback-submit" data-action="help-submit-feedback-comment">
+                            {% trans "Submit Feedback" %}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Related Topics -->
+                <div class="help-related" id="helpRelatedTopics"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Drawer Overlay -->
+    <div class="help-drawer-overlay" id="helpDrawerOverlay" data-action="toggle-help-drawer"></div>
+
+</header>
+<!-- Bug Report Modal (outside header to avoid stacking context issues) -->
+{% include "admin/includes/bug_report_modal.html" %}

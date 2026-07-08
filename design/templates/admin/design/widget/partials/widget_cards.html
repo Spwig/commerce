@@ -1,0 +1,88 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for widget in widgets %}
+    <div class="list-row-card">
+        <div class="card-header">
+            <div>
+                <h3>
+                    <a href="{% url 'admin:design_widget_change' widget.pk %}">
+                        <i class="fas fa-puzzle-piece"></i> {{ widget.name }}
+                    </a>
+                </h3>
+                <div class="card-meta">
+                    <span class="badge badge-{{ widget.widget_type }}">
+                        {{ widget.get_widget_type_display }}
+                    </span>
+                    {% if widget.is_active %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% else %}
+                    <span class="badge badge-secondary">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="widget-info">
+                <div class="info-row">
+                    <strong>{% trans "Type" %}:</strong>
+                    {{ widget.get_widget_type_display }}
+                </div>
+
+                <div class="info-row">
+                    <strong>{% trans "Device Visibility" %}:</strong>
+                    {% if widget.show_on_mobile %}
+                    <i class="fas fa-mobile-alt" title="{% trans 'Mobile' %}"></i>
+                    {% endif %}
+                    {% if widget.show_on_tablet %}
+                    <i class="fas fa-tablet-alt" title="{% trans 'Tablet' %}"></i>
+                    {% endif %}
+                    {% if widget.show_on_desktop %}
+                    <i class="fas fa-desktop" title="{% trans 'Desktop' %}"></i>
+                    {% endif %}
+                    {% if not widget.show_on_mobile and not widget.show_on_tablet and not widget.show_on_desktop %}
+                    <span class="text-muted">{% trans "Hidden on all devices" %}</span>
+                    {% endif %}
+                </div>
+
+                <div class="info-row">
+                    <strong>{% trans "Usage" %}:</strong>
+                    {% if widget.placement_count %}
+                    <span class="badge badge-info">
+                        {{ widget.placement_count }} {% trans "placement" %}{{ widget.placement_count|pluralize }}
+                    </span>
+                    {% else %}
+                    <span class="text-muted">{% trans "Not used" %}</span>
+                    {% endif %}
+                </div>
+
+                <div class="info-row">
+                    <strong>{% trans "Created" %}:</strong>
+                    {{ widget.created_at|date:"SHORT_DATE_FORMAT" }}
+                    {% if widget.created_by %}
+                    {% trans "by" %} {{ widget.created_by.get_full_name|default:widget.created_by.username }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <a href="{% url 'admin:design_widget_change' widget.pk %}" class="button small">
+                <i class="fas fa-edit"></i> {% trans "Edit" %}
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-puzzle-piece"></i>
+        </div>
+        <p>{% trans "No widgets match your filters." %}</p>
+    </div>
+    {% endfor %}
+</div>

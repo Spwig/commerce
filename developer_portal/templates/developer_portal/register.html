@@ -1,0 +1,86 @@
+{% extends "developer_portal/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Apply as Developer" %}{% endblock %}
+
+{% block content %}
+<div class="dev-page">
+    <div class="dev-page-header">
+        <h1>{% trans "Apply as Developer" %}</h1>
+        <p>{% trans "Fill out the form below to apply for a developer account. We'll review your application and get back to you." %}</p>
+    </div>
+
+    <div class="dev-license-callout">
+        <div class="dev-license-callout-icon"><i class="fas fa-gift"></i></div>
+        <div class="dev-license-callout-content">
+            <strong>{% trans "Free Spwig installation included" %}</strong>
+            <p>{% trans "Approved developers receive a free Shop + POS license with perpetual updates — everything you need to build and test your components." %}</p>
+        </div>
+    </div>
+
+    <form method="post" class="dev-form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="dev-form-section">
+            <h2>{% trans "Developer Identity" %}</h2>
+
+            <div class="dev-form-group {% if errors.developer_slug %}has-error{% endif %}">
+                <label for="developer_slug">{% trans "Developer Slug" %} <span class="required">*</span></label>
+                <input type="text" id="developer_slug" name="developer_slug"
+                       value="{{ form_data.developer_slug|default:'' }}"
+                       placeholder="{% trans 'e.g., johndoe-designs' %}"
+                       pattern="[a-z0-9-]+" required>
+                <small>{% trans "Lowercase letters, numbers, and hyphens only. This will be your unique public identifier." %}</small>
+                {% if errors.developer_slug %}
+                    <span class="dev-form-error">{{ errors.developer_slug }}</span>
+                {% endif %}
+            </div>
+
+            <div class="dev-form-group {% if errors.display_name %}has-error{% endif %}">
+                <label for="display_name">{% trans "Display Name" %} <span class="required">*</span></label>
+                <input type="text" id="display_name" name="display_name"
+                       value="{{ form_data.display_name|default:'' }}"
+                       placeholder="{% trans 'e.g., JohnDoe Designs' %}" required>
+                <small>{% trans "Your public name as shown in the marketplace." %}</small>
+                {% if errors.display_name %}
+                    <span class="dev-form-error">{{ errors.display_name }}</span>
+                {% endif %}
+            </div>
+
+            <div class="dev-form-group">
+                <label for="website">{% trans "Website" %}</label>
+                <input type="url" id="website" name="website"
+                       value="{{ form_data.website|default:'' }}"
+                       placeholder="https://example.com">
+                <small>{% trans "Your website, portfolio, or GitHub profile." %}</small>
+            </div>
+
+            <div class="dev-form-group">
+                <label for="bio">{% trans "About You" %}</label>
+                <textarea id="bio" name="bio" rows="4"
+                          placeholder="{% trans 'Tell us about yourself and your experience with web development...' %}">{{ form_data.bio|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <div class="dev-form-section">
+            <h2>{% trans "Terms & Conditions" %}</h2>
+            <div class="dev-form-group {% if errors.terms_accepted %}has-error{% endif %}">
+                <label class="dev-checkbox">
+                    <input type="checkbox" name="terms_accepted" {% if form_data.terms_accepted %}checked{% endif %}>
+                    <span>{% blocktrans with terms_url=terms_url %}I agree to the <a href="{{ terms_url }}" target="_blank">Spwig Developer Terms of Service</a> and understand the review process for component submissions.{% endblocktrans %}</span>
+                </label>
+                {% if errors.terms_accepted %}
+                    <span class="dev-form-error">{{ errors.terms_accepted }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="dev-form-actions">
+            <button type="submit" class="dev-btn dev-btn-primary">
+                <i class="fas fa-paper-plane"></i> {% trans "Submit Application" %}
+            </button>
+            <a href="{% url 'developer_portal:portal' %}" class="dev-btn dev-btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

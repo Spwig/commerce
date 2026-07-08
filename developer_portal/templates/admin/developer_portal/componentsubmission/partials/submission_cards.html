@@ -1,0 +1,123 @@
+{% load i18n static %}
+
+<div class="list-row-cards">
+    {% for item in items %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ item.pk }}" class="action-select">
+        </div>
+        <div class="list-row-card-icon">
+            <i class="fas {{ item.type_icon|default:'fa-puzzle-piece' }}"></i>
+        </div>
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:developer_portal_componentsubmission_change' item.pk %}">{{ item.component_name }}</a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {{ item.developer.display_name }} &middot; {{ item.component_slug }} &middot; v{{ item.version }}
+            </p>
+            <div class="list-row-card-badges">
+                <span class="list-row-card-badge">
+                    <i class="fas {{ item.type_icon|default:'fa-puzzle-piece' }}"></i> {{ item.type_display }}
+                </span>
+                {% if item.is_published %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Published" %}
+                </span>
+                {% endif %}
+                {% if item.is_free %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    {% trans "Free" %}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    &euro;{{ item.price }}
+                </span>
+                {% endif %}
+            </div>
+            <div class="submission-pipeline">
+                {% if item.validation_status == 'passed' %}
+                <span class="submission-pipeline-step step-passed">
+                    <i class="fas fa-check"></i> {% trans "Validated" %}
+                </span>
+                {% elif item.validation_status == 'failed' %}
+                <span class="submission-pipeline-step step-failed">
+                    <i class="fas fa-times"></i> {% trans "Validation Failed" %}
+                </span>
+                {% elif item.validation_status == 'validating' %}
+                <span class="submission-pipeline-step step-active">
+                    <i class="fas fa-spinner fa-spin"></i> {% trans "Validating" %}
+                </span>
+                {% else %}
+                <span class="submission-pipeline-step">
+                    <i class="fas fa-clock"></i> {% trans "Awaiting Validation" %}
+                </span>
+                {% endif %}
+
+                <span class="submission-pipeline-arrow"><i class="fas fa-arrow-right"></i></span>
+
+                {% if item.review_status == 'approved' %}
+                <span class="submission-pipeline-step step-passed">
+                    <i class="fas fa-check"></i> {% trans "Approved" %}
+                </span>
+                {% elif item.review_status == 'rejected' %}
+                <span class="submission-pipeline-step step-failed">
+                    <i class="fas fa-times"></i> {% trans "Rejected" %}
+                </span>
+                {% elif item.review_status == 'in_review' %}
+                <span class="submission-pipeline-step step-active">
+                    <i class="fas fa-search"></i> {% trans "In Review" %}
+                </span>
+                {% elif item.review_status == 'revision_requested' %}
+                <span class="submission-pipeline-step step-warning">
+                    <i class="fas fa-redo"></i> {% trans "Revision" %}
+                </span>
+                {% else %}
+                <span class="submission-pipeline-step">
+                    <i class="fas fa-clock"></i> {% trans "Pending Review" %}
+                </span>
+                {% endif %}
+
+                <span class="submission-pipeline-arrow"><i class="fas fa-arrow-right"></i></span>
+
+                {% if item.is_published %}
+                <span class="submission-pipeline-step step-passed">
+                    <i class="fas fa-rocket"></i> {% trans "Published" %}
+                </span>
+                {% else %}
+                <span class="submission-pipeline-step">
+                    <i class="fas fa-cloud-upload-alt"></i> {% trans "Unpublished" %}
+                </span>
+                {% endif %}
+            </div>
+            <div class="list-row-card-meta">
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i> {{ item.submitted_at|date:"M d, Y" }}
+                </span>
+                {% if item.reviewer %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i> {{ item.reviewer.get_short_name|default:item.reviewer.username }}
+                </span>
+                {% endif %}
+                {% if item.package_size_bytes %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-file-archive"></i> {{ item.package_size_bytes|filesizeformat }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:developer_portal_componentsubmission_change' item.pk %}" class="list-row-card-action" title="{% trans 'Review' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon opacity-50">
+            <i class="fas fa-inbox"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No submissions yet." %}</p>
+    </div>
+    {% endfor %}
+</div>

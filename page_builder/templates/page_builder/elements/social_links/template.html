@@ -1,0 +1,24 @@
+{% load i18n %}
+<!-- Social Links Element -->
+{% with style=element.content.style|default:"icons" size=element.content.size|default:"md" color_scheme=element.content.color_scheme|default:"brand" custom_color=element.content.custom_color|default:"var(--theme-color-text)" alignment=element.content.alignment|default:"center" gap=element.content.gap|default:12 %}
+
+{# Size mapping #}
+{% if size == "sm" %}
+    {% with icon_size="16px" padding="8px" %}
+        {% include "page_builder/elements/social_links/_inner.html" %}
+    {% endwith %}
+{% elif size == "lg" %}
+    {% with icon_size="28px" padding="14px" %}
+        {% include "page_builder/elements/social_links/_inner.html" %}
+    {% endwith %}
+{% elif size == "xl" %}
+    {% with icon_size="36px" padding="18px" %}
+        {% include "page_builder/elements/social_links/_inner.html" %}
+    {% endwith %}
+{% else %}
+    {% with icon_size="20px" padding="10px" %}
+        {% include "page_builder/elements/social_links/_inner.html" %}
+    {% endwith %}
+{% endif %}
+
+{% endwith %}

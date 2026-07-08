@@ -1,0 +1,102 @@
+{# Referral Link Sharing Block Component #}
+{# Usage: {% include 'email_system/mjml_components/referral_link_block.mjml' with referral_link=referral_link %} #}
+{# Theme tokens: Uses theme.color.background_secondary, theme.color.text, theme.color.text_muted, theme.color.primary, theme.color.surface #}
+
+<mj-section background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}" padding="30px 20px">
+  <mj-column>
+    <mj-text font-size="18px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="15px">
+      Your Personal Referral Link
+    </mj-text>
+
+    <!-- Referral Link Box -->
+    <mj-text
+      background-color="{{ theme.color.surface|default:'#ffffff' }}"
+      border="2px dashed {{ theme.color.primary|default:'#2563eb' }}"
+      border-radius="{{ theme.radius.md|default:'0.5rem' }}"
+      padding="15px"
+      font-size="14px"
+      color="{{ theme.color.primary|default:'#2563eb' }}"
+      align="center"
+      font-family="monospace"
+    >
+      {{ referral_link }}
+    </mj-text>
+
+    <mj-text font-size="13px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="10px">
+      Share this link with friends and family to start earning rewards
+    </mj-text>
+  </mj-column>
+</mj-section>
+
+<!-- Social Sharing Buttons -->
+<mj-section background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}" padding="10px 20px 30px 20px">
+  <mj-column>
+    <mj-text font-size="14px" font-weight="600" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="10px">
+      Share via:
+    </mj-text>
+  </mj-column>
+</mj-section>
+
+<mj-section background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}" padding="0px 20px 30px 20px">
+  <mj-group>
+    <!-- Email -->
+    <mj-column width="25%">
+      <mj-button
+        href="mailto:?subject=Check out {{ shop_name }}&body={{ referral_message|urlencode }} {{ referral_link|urlencode }}"
+        background-color="{{ theme.color.secondary|default:'#64748b' }}"
+        color="{{ theme.color.text_inverse|default:'#ffffff' }}"
+        border-radius="{{ theme.radius.md|default:'0.5rem' }}"
+        font-size="12px"
+        padding="8px 12px"
+        inner-padding="8px 12px"
+      >
+        Email
+      </mj-button>
+    </mj-column>
+
+    <!-- WhatsApp -->
+    <mj-column width="25%">
+      <mj-button
+        href="https://wa.me/?text={{ referral_message|urlencode }}%20{{ referral_link|urlencode }}"
+        background-color="#25d366"
+        color="#ffffff"
+        border-radius="{{ theme.radius.md|default:'0.5rem' }}"
+        font-size="12px"
+        padding="8px 12px"
+        inner-padding="8px 12px"
+      >
+        WhatsApp
+      </mj-button>
+    </mj-column>
+
+    <!-- Facebook -->
+    <mj-column width="25%">
+      <mj-button
+        href="https://www.facebook.com/sharer/sharer.php?u={{ referral_link|urlencode }}"
+        background-color="#1877f2"
+        color="#ffffff"
+        border-radius="{{ theme.radius.md|default:'0.5rem' }}"
+        font-size="12px"
+        padding="8px 12px"
+        inner-padding="8px 12px"
+      >
+        Facebook
+      </mj-button>
+    </mj-column>
+
+    <!-- Twitter -->
+    <mj-column width="25%">
+      <mj-button
+        href="https://twitter.com/intent/tweet?text={{ referral_message|urlencode }}&url={{ referral_link|urlencode }}"
+        background-color="#1da1f2"
+        color="#ffffff"
+        border-radius="{{ theme.radius.md|default:'0.5rem' }}"
+        font-size="12px"
+        padding="8px 12px"
+        inner-padding="8px 12px"
+      >
+        Twitter
+      </mj-button>
+    </mj-column>
+  </mj-group>
+</mj-section>

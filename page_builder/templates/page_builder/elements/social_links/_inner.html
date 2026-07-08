@@ -1,0 +1,38 @@
+{% load i18n element_tags merchant_trans %}
+{# Inner template for social links - receives icon_size and padding from parent #}
+<div class="pb-social-links"
+     {% hover_animation_attrs element %}
+     style="display: flex;
+            flex-wrap: wrap;
+            justify-content: {% if alignment == 'left' %}flex-start{% elif alignment == 'right' %}flex-end{% else %}center{% endif %};
+            gap: {{ gap }}px;
+            {% base_styles element %}">
+
+    {% for link in element.content.platforms %}
+        {% with platform=link.platform url=link.url %}
+        {# Brand colors for each platform #}
+        {% if color_scheme == "brand" %}
+            {% if platform == "facebook" %}{% with brand_color="#1877f2" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "twitter" %}{% with brand_color="#000000" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "instagram" %}{% with brand_color="#e4405f" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "linkedin" %}{% with brand_color="#0a66c2" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "youtube" %}{% with brand_color="#ff0000" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "tiktok" %}{% with brand_color="#000000" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "pinterest" %}{% with brand_color="#bd081c" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "whatsapp" %}{% with brand_color="#25d366" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "telegram" %}{% with brand_color="#0088cc" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "snapchat" %}{% with brand_color="#fffc00" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "discord" %}{% with brand_color="#5865f2" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "github" %}{% with brand_color="#181717" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% elif platform == "email" %}{% with brand_color="#374151" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% else %}{% with brand_color="#374151" %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+            {% endif %}
+        {% else %}
+            {% with brand_color=custom_color %}{% include "page_builder/elements/social_links/_link.html" %}{% endwith %}
+        {% endif %}
+        {% endwith %}
+    {% empty %}
+        {# Default social links when none configured #}
+        <span class="text-gray-400 text-sm">{% mtrans "No social links configured" %}</span>
+    {% endfor %}
+</div>

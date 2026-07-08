@@ -1,0 +1,267 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static address_tags %}
+
+{% block extra_head %}
+{{ block.super }}
+{% address_autocomplete_scripts %}
+<!-- GeoIP Meta Tag -->
+<meta name="geo-country" content="{{ request.geo_location.country|default:shop_default_country }}">
+{% endblock %}
+
+{% block title %}
+    {% if address %}
+        {% trans "Edit Address" %}
+    {% else %}
+        {% trans "Add New Address" %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'accounts:address_list' %}" class="text-gray-700 hover:text-blue-600">
+                    {% trans "My Addresses" %}
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-gray-500">
+                        {% if address %}
+                            {% trans "Edit Address" %}
+                        {% else %}
+                            {% trans "Add Address" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Address Form Card -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <svg class="h-12 w-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-2xl font-bold text-gray-900">
+                        {% if address %}
+                            {% trans "Edit Address" %}
+                        {% else %}
+                            {% trans "Add New Address" %}
+                        {% endif %}
+                    </h1>
+                    <p class="mt-1 text-gray-600">{% trans "Enter your address details" %}</p>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" class="p-6">
+            {% csrf_token %}
+
+            <!-- Error Messages -->
+            {% if form.errors %}
+            <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex">
+                    <svg class="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                        <h3 class="text-sm font-medium text-red-800">{% trans "Please correct the following errors:" %}</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc list-inside">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ field|capfirst }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="space-y-6">
+                <!-- Address Type -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                        {% trans "Address Type" %} <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-3 gap-4">
+                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 hover:border-blue-500 focus-within:border-blue-500">
+                            <input type="radio" name="address_type" value="shipping" {% if not address or address.address_type == 'shipping' %}checked{% endif %} class="sr-only" required />
+                            <div class="flex items-center justify-center w-full">
+                                <div class="text-center">
+                                    <svg class="mx-auto h-8 w-8 text-gray-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                    </svg>
+                                    <span class="block text-sm font-medium text-gray-900">{% trans "Shipping" %}</span>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 hover:border-blue-500 focus-within:border-blue-500">
+                            <input type="radio" name="address_type" value="billing" {% if address and address.address_type == 'billing' %}checked{% endif %} class="sr-only" required />
+                            <div class="flex items-center justify-center w-full">
+                                <div class="text-center">
+                                    <svg class="mx-auto h-8 w-8 text-gray-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                    <span class="block text-sm font-medium text-gray-900">{% trans "Billing" %}</span>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 hover:border-blue-500 focus-within:border-blue-500">
+                            <input type="radio" name="address_type" value="both" {% if address and address.address_type == 'both' %}checked{% endif %} class="sr-only" required />
+                            <div class="flex items-center justify-center w-full">
+                                <div class="text-center">
+                                    <svg class="mx-auto h-8 w-8 text-gray-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="block text-sm font-medium text-gray-900">{% trans "Both" %}</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Name -->
+                <div>
+                    <label for="id_name" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Full Name" %} <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="name" id="id_name" value="{% if address %}{{ address.name }}{% endif %}" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="{% trans 'John Doe' %}" />
+                </div>
+
+                <!-- Company (Optional) -->
+                <div>
+                    <label for="id_company" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Company" %} <span class="text-gray-500 text-xs">({% trans "Optional" %})</span>
+                    </label>
+                    <input type="text" name="company" id="id_company" value="{% if address %}{{ address.company }}{% endif %}"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="{% trans 'Company Name Inc.' %}" />
+                </div>
+
+                <!-- Address Line 1 -->
+                <div>
+                    <label for="id_address1" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Address Line 1" %} <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="address1" id="id_address1" value="{% if address %}{{ address.address1 }}{% endif %}" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="{% trans '123 Main Street' %}"
+                           data-address-autocomplete />
+                    <p class="text-sm text-gray-500 mt-1">
+                        {% trans "Start typing to search for your address" %}
+                    </p>
+                </div>
+
+                <!-- Address Line 2 (Optional) -->
+                <div>
+                    <label for="id_address2" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Address Line 2" %} <span class="text-gray-500 text-xs">({% trans "Optional" %})</span>
+                    </label>
+                    <input type="text" name="address2" id="id_address2" value="{% if address %}{{ address.address2 }}{% endif %}"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="{% trans 'Apartment, suite, etc.' %}" />
+                </div>
+
+                <!-- City, State, Postal Code -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-1">
+                        <label for="id_city" class="block text-sm font-medium text-gray-700 mb-1">
+                            {% trans "City" %} <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="city" id="id_city" value="{% if address %}{{ address.city }}{% endif %}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="{% trans 'New York' %}" />
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <label for="id_state" class="block text-sm font-medium text-gray-700 mb-1">
+                            {% trans "State / Province" %} <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="state" id="id_state" value="{% if address %}{{ address.state }}{% endif %}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="{% trans 'NY' %}" />
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <label for="id_postal_code" class="block text-sm font-medium text-gray-700 mb-1">
+                            {% trans "Postal Code" %} <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="postal_code" id="id_postal_code" value="{% if address %}{{ address.postal_code }}{% endif %}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="10001" />
+                    </div>
+                </div>
+
+                <!-- Country -->
+                <div>
+                    <label for="id_country" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Country" %} <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="country" id="id_country" value="{% if address %}{{ address.country }}{% else %}United States{% endif %}" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="{% trans 'United States' %}" />
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label for="id_phone" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Phone Number" %} <span class="text-gray-500 text-xs">({% trans "Optional" %})</span>
+                    </label>
+                    <input type="tel" name="phone" id="id_phone" value="{% if address %}{{ address.phone }}{% endif %}"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="+1 (555) 123-4567" />
+                </div>
+
+                <!-- Set as Default -->
+                <div class="flex items-center">
+                    <input type="checkbox" name="is_default" id="id_is_default" {% if address and address.is_default %}checked{% endif %}
+                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                    <label for="id_is_default" class="ml-2 block text-sm text-gray-900">
+                        {% trans "Set as default address for this type" %}
+                    </label>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="mt-8 flex items-center justify-between pt-6 border-t border-gray-200">
+                <a href="{% url 'accounts:address_list' %}"
+                   class="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    {% trans "Cancel" %}
+                </a>
+                <button type="submit"
+                        class="px-6 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    {% if address %}
+                        {% trans "Update Address" %}
+                    {% else %}
+                        {% trans "Save Address" %}
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'accounts/js/address_form.js' %}"></script>
+{% endblock %}

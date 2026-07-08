@@ -1,0 +1,41 @@
+{% load i18n merchant_trans %}
+{# Product List Layout - matches category/list.html structure #}
+<div class="cat-list-products">
+    {% for product in products %}
+    <article class="cat-list-row{% if element.content.image_position == 'right' %} cat-list-row--img-right{% endif %}">
+        <div class="cat-list-row__image">
+            <a href="{{ product.get_absolute_url }}">
+                {% if product.primary_image_listing_url %}
+                <img src="{{ product.primary_image_listing_url }}" alt="{{ product.name }}" loading="lazy">
+                {% else %}
+                <div class="cat-list-row__placeholder"><i class="fas fa-image"></i></div>
+                {% endif %}
+            </a>
+        </div>
+        <div class="cat-list-row__info">
+            <h3 class="cat-list-row__title"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+            {% if element.content.show_description and product.short_description %}
+            <p class="cat-list-row__desc">{{ product.short_description|striptags|truncatewords:30 }}</p>
+            {% endif %}
+            <div class="cat-list-row__price">
+                {% if product.is_on_sale %}
+                <span class="cat-list-row__price--sale">{{ product.formatted_price }}</span>
+                <span class="cat-list-row__price--original">{{ product.formatted_compare_price }}</span>
+                {% else %}
+                {{ product.formatted_price }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="cat-list-row__actions">
+            <a href="{{ product.get_absolute_url }}" class="btn btn--primary btn--sm">
+                <i class="fas fa-eye"></i> {% mtrans 'View' %}
+            </a>
+        </div>
+    </article>
+    {% empty %}
+    <div class="cat-list-empty">
+        <i class="fas fa-box-open"></i>
+        <p>{% mtrans 'No products to display.' %}</p>
+    </div>
+    {% endfor %}
+</div>

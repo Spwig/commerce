@@ -1,0 +1,279 @@
+{
+  "element_type": "faq_accordion",
+  "name": "FAQ Accordion",
+  "description": "Collapsible FAQ section with SEO-friendly schema markup",
+  "version": "1.0.1",
+  "category": "content",
+  "icon": "fas fa-question-circle",
+  "author": "Page Builder System",
+  "tags": ["faq", "accordion", "questions", "answers", "help", "support"],
+  "supports_translation": true,
+  "translation_domain": "faq_accordion_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/faq-accordion.css"],
+  "scripts": [
+    "/static/page_builder/js/elements/faq-accordion.js"
+  ],
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-question-circle",
+      "order": 1,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Frequently Asked Questions",
+              "translatable": true,
+              "help_text": "Main heading for the FAQ section"
+            },
+            "subtitle": {
+              "type": "string",
+              "label": "Subtitle",
+              "default": "",
+              "translatable": true,
+              "help_text": "Optional description below the title"
+            }
+          }
+        },
+        "items_group": {
+          "type": "property_group",
+          "label": "FAQ Items",
+          "columns": 1,
+          "properties": {
+            "items": {
+              "type": "array",
+              "label": "FAQ Items",
+              "full_width": true,
+              "help_text": "Add your questions and answers",
+              "item_schema": {
+                "type": "object",
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "label": "Question",
+                    "translatable": true,
+                    "required": true
+                  },
+                  "answer": {
+                    "type": "textarea",
+                    "label": "Answer",
+                    "translatable": true,
+                    "required": true,
+                    "rows": 4
+                  },
+                  "is_open": {
+                    "type": "boolean",
+                    "label": "Open by default",
+                    "default": false
+                  }
+                }
+              },
+              "default": [
+                {
+                  "question": "What is your return policy?",
+                  "answer": "We offer a 30-day money-back guarantee on all purchases. If you're not satisfied with your order, simply contact our support team for a full refund.",
+                  "is_open": false
+                },
+                {
+                  "question": "How long does shipping take?",
+                  "answer": "Standard shipping typically takes 3-5 business days. Express shipping options are available at checkout for faster delivery.",
+                  "is_open": false
+                },
+                {
+                  "question": "Do you offer international shipping?",
+                  "answer": "Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by location and will be calculated at checkout.",
+                  "is_open": false
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-sliders-h",
+      "order": 2,
+      "properties": {
+        "behavior_group": {
+          "type": "property_group",
+          "label": "Accordion Behavior",
+          "properties": {
+            "behavior": {
+              "type": "select",
+              "label": "Accordion Behavior",
+              "options": [
+                {"value": "single", "label": "One open at a time"},
+                {"value": "multiple", "label": "Multiple can be open"}
+              ],
+              "default": "single",
+              "help_text": "Whether multiple items can be expanded simultaneously"
+            },
+            "animate": {
+              "type": "boolean",
+              "label": "Animate Open/Close",
+              "default": true
+            }
+          }
+        },
+        "style_group": {
+          "type": "property_group",
+          "label": "Style",
+          "properties": {
+            "style": {
+              "type": "select",
+              "label": "Style",
+              "options": [
+                {"value": "default", "label": "Default"},
+                {"value": "bordered", "label": "Bordered"},
+                {"value": "minimal", "label": "Minimal"},
+                {"value": "cards", "label": "Card Style"}
+              ],
+              "default": "default"
+            },
+            "gap": {
+              "type": "select",
+              "label": "Item Spacing",
+              "options": [
+                {"value": "none", "label": "None"},
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"}
+              ],
+              "default": "sm"
+            }
+          }
+        },
+        "icon_group": {
+          "type": "property_group",
+          "label": "Toggle Icon",
+          "properties": {
+            "icon_style": {
+              "type": "select",
+              "label": "Toggle Icon",
+              "options": [
+                {"value": "chevron", "label": "Chevron"},
+                {"value": "plus", "label": "Plus/Minus"},
+                {"value": "arrow", "label": "Arrow"},
+                {"value": "none", "label": "No Icon"}
+              ],
+              "default": "chevron"
+            },
+            "icon_position": {
+              "type": "select",
+              "label": "Icon Position",
+              "options": [
+                {"value": "right", "label": "Right"},
+                {"value": "left", "label": "Left"}
+              ],
+              "default": "right"
+            }
+          }
+        }
+      }
+    },
+    "colors": {
+      "label": "Colors",
+      "icon": "fas fa-palette",
+      "order": 3,
+      "properties": {
+        "text_colors_group": {
+          "type": "property_group",
+          "label": "Text Colors",
+          "properties": {
+            "question_color": {
+              "type": "color_advanced",
+              "label": "Question Color",
+              "default": "",
+              "utility": "color_picker"
+            },
+            "answer_color": {
+              "type": "color_advanced",
+              "label": "Answer Color",
+              "default": "",
+              "utility": "color_picker"
+            }
+          }
+        },
+        "element_colors_group": {
+          "type": "property_group",
+          "label": "Element Colors",
+          "properties": {
+            "icon_color": {
+              "type": "color_advanced",
+              "label": "Icon Color",
+              "default": "",
+              "utility": "color_picker"
+            },
+            "border_color": {
+              "type": "color_advanced",
+              "label": "Border Color",
+              "default": "",
+              "utility": "color_picker"
+            },
+            "active_background": {
+              "type": "color_advanced",
+              "label": "Active Item Background",
+              "default": "",
+              "utility": "color_picker"
+            }
+          }
+        }
+      }
+    },
+    "seo": {
+      "label": "SEO",
+      "icon": "fas fa-search",
+      "order": 4,
+      "properties": {
+        "seo_group": {
+          "type": "property_group",
+          "label": "Schema Settings",
+          "columns": 1,
+          "properties": {
+            "enable_schema": {
+              "type": "boolean",
+              "label": "Enable FAQ Schema",
+              "default": true,
+              "help_text": "Add schema.org FAQPage markup for search engines"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {"type": "string", "label": "Section Title", "default": "Frequently Asked Questions", "translatable": true},
+    "subtitle": {"type": "string", "label": "Subtitle", "default": "", "translatable": true},
+    "items": {"type": "array", "label": "FAQ Items", "item_schema": {"type": "object", "properties": {"question": {"type": "string", "label": "Question", "translatable": true}, "answer": {"type": "textarea", "label": "Answer", "translatable": true, "rows": 4}, "is_open": {"type": "boolean", "label": "Open by default", "default": false}}}},
+    "behavior": {"type": "select", "label": "Accordion Behavior", "options": [{"value": "single", "label": "One open at a time"}, {"value": "multiple", "label": "Multiple can be open"}], "default": "single"},
+    "style": {"type": "select", "label": "Style", "options": [{"value": "default", "label": "Default"}, {"value": "bordered", "label": "Bordered"}, {"value": "minimal", "label": "Minimal"}, {"value": "cards", "label": "Card Style"}], "default": "default"},
+    "icon_style": {"type": "select", "label": "Toggle Icon", "options": [{"value": "chevron", "label": "Chevron"}, {"value": "plus", "label": "Plus/Minus"}, {"value": "arrow", "label": "Arrow"}, {"value": "none", "label": "No Icon"}], "default": "chevron"},
+    "icon_position": {"type": "select", "label": "Icon Position", "options": [{"value": "right", "label": "Right"}, {"value": "left", "label": "Left"}], "default": "right"},
+    "gap": {"type": "select", "label": "Item Spacing", "options": [{"value": "none", "label": "None"}, {"value": "sm", "label": "Small"}, {"value": "md", "label": "Medium"}, {"value": "lg", "label": "Large"}], "default": "sm"},
+    "animate": {"type": "boolean", "default": true},
+    "question_color": {"type": "color_advanced", "default": ""},
+    "answer_color": {"type": "color_advanced", "default": ""},
+    "icon_color": {"type": "color_advanced", "default": ""},
+    "border_color": {"type": "color_advanced", "default": ""},
+    "active_background": {"type": "color_advanced", "default": ""},
+    "enable_schema": {"type": "boolean", "default": true}
+  },
+  "translations": {
+    "en": {"name": "FAQ Accordion", "description": "Collapsible FAQ section with SEO-friendly schema markup"},
+    "es": {"name": "Preguntas Frecuentes", "description": "Sección de preguntas frecuentes con marcado de esquema SEO"},
+    "fr": {"name": "FAQ Accordéon", "description": "Section FAQ repliable avec balisage de schéma SEO"},
+    "de": {"name": "FAQ Akkordeon", "description": "Zusammenklappbarer FAQ-Bereich mit SEO-freundlichem Schema-Markup"},
+    "pt": {"name": "FAQ Acordeão", "description": "Seção de perguntas frequentes com marcação de esquema SEO"},
+    "zh-hans": {"name": "常见问题", "description": "带有SEO友好架构标记的可折叠常见问题部分"},
+    "ja": {"name": "よくある質問", "description": "SEO対応スキーマ付き折りたたみFAQセクション"}
+  }
+}

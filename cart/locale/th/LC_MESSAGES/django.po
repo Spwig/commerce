@@ -1,0 +1,2650 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Thai <LL@li.org>\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Action and method IDs required"
+msgstr "ต้องการ ID การกระทำและวิธีการ"
+
+msgid "{} method(s) enabled"
+msgstr "{} วิธีการเปิดใช้งานแล้ว"
+
+msgid "{} method(s) disabled"
+msgstr "{} วิธีการปิดใช้งานแล้ว"
+
+msgid "{} method(s) deleted"
+msgstr "{} วิธีการถูกลบแล้ว"
+
+msgid "Unknown action"
+msgstr "การกระทำไม่รู้จัก"
+
+msgid "Invalid request data"
+msgstr "ข้อมูลคำขอไม่ถูกต้อง"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้ง"
+
+msgid "Basic Information"
+msgstr "ข้อมูลพื้นฐาน"
+
+msgid "Geographic Scope"
+msgstr "ขอบเขตทางภูมิศาสตร์"
+
+msgid "Application Rules"
+msgstr "กฎการใช้งาน"
+
+msgid "Product Exemptions"
+msgstr "ข้อยกเว้นของสินค้า"
+
+msgid "Timestamps"
+msgstr "เวลาที่บันทึก"
+
+msgid "Rate %"
+msgstr "อัตรา %"
+
+msgid "Cart"
+msgstr "ตะกร้าสินค้า"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "กรอกเป็นเปอร์เซ็นต์ (เช่น 8.25 สำหรับ 8.25%)"
+
+msgid "Rate (%)"
+msgstr "อัตรา (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "กรุณาทำขั้นตอนที่ 1 ก่อน"
+
+msgid "Please complete the wizard steps"
+msgstr "กรุณาทำตามขั้นตอนของเวิร์ดไวซาร์ด"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "สร้างวิธีการจัดส่ง \"%(name)s\" สำเร็จ!"
+
+msgid "Please configure rate tables for this method."
+msgstr "โปรดตั้งค่าตารางอัตราสำหรับวิธีนี้"
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "ไม่สามารถสร้างวิธีการจัดส่งได้: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "ดึงข้อมูลตะกร้าสินค้าขนาดย่อ"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    ดึงเนื้อหาตะกร้าสินค้าในรูปแบบที่ใช้กับองค์ประกอบ mini-cart "
+"ใช้ได้กับผู้ใช้ที่ได้รับการยืนยันตัวตน (ตะกร้าที่เชื่อมโยงกับบัญชีผู้ใช้) และผู้ใช้ทั่วไป "
+"(ตะกร้าที่เชื่อมโยงกับเซสชัน) ข้อมูลตะกร้าจะรวมสินค้าทั้งหมดพร้อมรายละเอียดสินค้า จำนวน สินค้า "
+"และรูปภาพ **กรณีใช้งาน:** - โหลด mini-cart เริ่มต้นเมื่อเปิดหน้า - "
+"อัปเดตตะกร้าหลังมีการเปลี่ยนแปลงจากภายนอก - ตรวจสอบสถานะตะกร้าก่อนชำระเงิน "
+"**การยืนยันตัวตน:** ไม่จำเป็น (ใช้เซสชันสำหรับผู้ใช้ทั่วไป)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "ดึงข้อมูลตะกร้าสำเร็จ"
+
+msgid "Update cart item quantity"
+msgstr "ปรับปรุงจำนวนสินค้าในตะกร้า"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    อัปเดตจำนวนของสินค้าในตะกร้า ตั้งค่าจำนวนเป็น 0 เพื่อลบสินค้าออกทั้งหมด "
+"ปลายทางจะตรวจสอบความพร้อมของสินค้าก่อนอัปเดตและคืนตะกร้าที่อัปเดตครบถ้วน **กรณีใช้งาน:** "
+"- ปุ่มเพิ่ม/ลดจำนวนใน mini-cart - การเปลี่ยนจำนวนโดยตรง - การลบสินค้า (จำนวน = 0) "
+"**การยืนยันตัวตน:** ไม่จำเป็น (ตรวจสอบว่าสินค้าอยู่ในตะกร้าของผู้ใช้) **การตรวจสอบ:** - "
+"สินค้าต้องอยู่ในตะกร้าของผู้ใช้ - จำนวนต้องเป็นจำนวนเต็มที่ไม่ติดลบ - "
+"ตรวจสอบความพร้อมของสินค้าสำหรับสินค้าที่ติดตามสต็อก\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "อัปเดตตะกร้าสำเร็จ"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "ข้อมูลคำขอไม่ถูกต้องหรือสต็อกไม่เพียงพอ"
+
+msgid "Cart item not found"
+msgstr "ไม่พบสินค้าในตะกร้า"
+
+msgid "Remove item from cart"
+msgstr "ลบสินค้าออกจากตะกร้า"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    ลบสินค้าออกจากตะกร้าทั้งหมด คืนข้อมูลตะกร้าที่ได้รับการอัปเดตหลังการลบ **กรณีการใช้งาน:** "
+"- ปุ่มลบสินค้าในตะกร้า - การลบสินค้าเฉพาะ **การตรวจสอบสิทธิ์:** ไม่จำเป็น "
+"(ตรวจสอบว่าสินค้าเป็นของตะกร้าผู้ใช้)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "ลบสินค้าสำเร็จ"
+
+msgid "Get empty cart recommendations"
+msgstr "ดึงคำแนะนำตะกร้าสินค้าว่าง"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    ได้รับข้อเสนอแนะสินค้าอัจฉริยะสำหรับสถานะตะกร้าสินค้าว่าง "
+"คืนคำแนะนำที่ปรับแต่งตามส่วนที่ระบุไว้ตาม: - **ดูเร็ว ๆ นี้**: สินค้าที่ผู้ใช้ได้รับชม "
+"(สำหรับผู้ใช้ไม่ระบุตัวตนเป็นพื้นฐานของเซสชัน) - **สินค้าที่เกี่ยวข้อง**: "
+"สินค้าในหมวดหมู่เดียวกันกับสินค้าที่ดูเร็ว ๆ นี้ - **สินค้าลดราคา**: สินค้าที่ลดราคาในขณะนี้ - "
+"**สินค้าที่น่าสนใจ**: สินค้าที่ได้รับความนิยมตามจำนวนการดู/การขาย - **สินค้าแนะนำ**: "
+"สินค้าที่เลือกโดยบรรณาธิการเป็นตัวเลือกสำรอง "
+"สินค้าทั้งหมดที่คืนมาได้รับการตรวจสอบว่ามีสต็อกและสามารถซื้อได้จริง **กรณีการใช้งาน:** - "
+"สถานะตะกร้าสินค้าว่างในตะกร้าขนาดเล็ก - ส่วน \"คุณอาจชอบ\" - โอกาสในการขายข้ามสินค้า "
+"**การตรวจสอบสิทธิ์:** ไม่จำเป็น (ใช้เซสชันสำหรับผู้ใช้ไม่ระบุตัวตน) **การปรับแต่ง:** - "
+"ผู้ใช้ไม่ระบุตัวตน: เนื่องจากสินค้าที่ดูเร็ว ๆ ของเซสชัน - ผู้ใช้ที่ผ่านการยืนยันตัวตน: "
+"เนื่องจากประวัติบัญชีและการตั้งค่า\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "จำนวนสินค้าสูงสุดที่จะคืน (ค่าเริ่มต้น: 6, ค่าสูงสุด: 12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "ดึงข้อมูลแนะนำสำเร็จ"
+
+msgid "User"
+msgstr "ผู้ใช้"
+
+msgid "Session Key"
+msgstr "คีย์เซสชัน"
+
+msgid "Cart Currency"
+msgstr "สกุลเงินตะกร้าสินค้า"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"รหัสสกุลเงินสำหรับสินค้าทั้งหมดในตะกร้า (ตัวอย่างเช่น EUR, NZD) "
+"หากว่างหมายถึงสกุลเงินเริ่มต้นของร้านค้า"
+
+msgid "Default Layout"
+msgstr "เค้าโครงเริ่มต้น"
+
+msgid "Compact View"
+msgstr "มุมมองแบบกระชับ"
+
+msgid "Detailed View"
+msgstr "มุมมองแบบละเอียด"
+
+msgid "Minimal View"
+msgstr "มุมมองแบบเรียบง่าย"
+
+msgid "Sidebar Cart"
+msgstr "ตะกร้าสินค้าแบบแถบด้านข้าง"
+
+msgid "Overlay Cart"
+msgstr "ตะกร้าสินค้าแบบแสดงทับ"
+
+msgid "How the cart is displayed"
+msgstr "วิธีการแสดงผลตะกร้าสินค้า"
+
+msgid "Cart Layout"
+msgstr "เค้าโครงตะกร้าสินค้า"
+
+msgid "Show Product Images"
+msgstr "แสดงรูปภาพสินค้า"
+
+msgid "Show Product Variants"
+msgstr "แสดงตัวเลือกของสินค้า"
+
+msgid "Show Remove Button"
+msgstr "แสดงปุ่มลบ"
+
+msgid "Show Quantity Controls"
+msgstr "แสดงตัวควบคุมจำนวน"
+
+msgid "Show Item Totals"
+msgstr "แสดงยอดรวมรายการ"
+
+msgid "Show Cart Summary"
+msgstr "แสดงสรุปตะกร้าสินค้า"
+
+msgid "Show Savings"
+msgstr "แสดงเงินคืน/ส่วนลด"
+
+msgid "Single Page Checkout"
+msgstr "ขั้นตอนชำระเงินแบบหน้าเดียว"
+
+msgid "Multi-Step Checkout"
+msgstr "ขั้นตอนชำระเงินแบบหลายขั้นตอน"
+
+msgid "Accordion Style"
+msgstr "สไตล์แบบพับ"
+
+msgid "Wizard Style"
+msgstr "สไตล์แบบเวิร์ดไวซาร์ด"
+
+msgid "Checkout Flow"
+msgstr "การดำเนินขั้นตอนชำระเงิน"
+
+msgid "Shipping Address"
+msgstr "ที่อยู่จัดส่ง"
+
+msgid "Shipping Method"
+msgstr "วิธีการจัดส่ง"
+
+msgid "Calculated shipping cost"
+msgstr "ค่าจัดส่งที่คำนวณแล้ว"
+
+msgid "Shipping Cost"
+msgstr "ค่าจัดส่ง"
+
+msgid "Estimated Delivery Date"
+msgstr "วันจัดส่งที่คาดการณ์"
+
+msgid "Shipping Notes"
+msgstr "หมายเหตุการจัดส่ง"
+
+msgid "None"
+msgstr "ไม่มี"
+
+msgid "Percentage"
+msgstr "เปอร์เซ็นต์"
+
+msgid "Fixed Amount"
+msgstr "จำนวนคงที่"
+
+msgid "POS manual discount type"
+msgstr "ประเภทส่วนลดมือถือ (POS)"
+
+msgid "POS manual discount value"
+msgstr "ค่าส่วนลดมือถือ (POS)"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "ค่าส่วนลด (เปอร์เซ็นต์หรือจำนวนคงที่)"
+
+msgid "POS discount applied by"
+msgstr "ผู้ใช้ส่วนลดมือถือ (POS)"
+
+msgid "POS discount approved by"
+msgstr "ผู้อนุมัติส่วนลดมือถือ (POS)"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "ผู้จัดการที่อนุมัติส่วนลด หากเกินขีดจำกัดของพนักงาน"
+
+msgid "POS discount reason"
+msgstr "เหตุผลส่วนลดมือถือ (POS)"
+
+msgid "Created At"
+msgstr "สร้างเมื่อ"
+
+msgid "Updated At"
+msgstr "อัปเดตเมื่อ"
+
+msgid "Shopping Cart"
+msgstr "ตะกร้าสินค้า"
+
+msgid "Shopping Carts"
+msgstr "ตะกร้าสินค้า"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "ตะกร้าของ {username}"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "ตะกร้า (เซสชัน: {session})"
+
+msgid "No shipping required"
+msgstr "ไม่จำเป็นต้องจัดส่ง"
+
+msgid "Shipping address required"
+msgstr "ต้องระบุที่อยู่จัดส่ง"
+
+msgid "Available shipping methods retrieved"
+msgstr "วิธีการจัดส่งที่สามารถใช้งานได้ถูกเรียกข้อมูลแล้ว"
+
+msgid "Shipping calculated successfully"
+msgstr "การคำนวณค่าจัดส่งสำเร็จ"
+
+msgid "Invalid gift card code"
+msgstr "รหัสบัตรของขวัญไม่ถูกต้อง"
+
+msgid "Gift card already applied"
+msgstr "บัตรของขวัญถูกใช้แล้ว"
+
+msgid "Gift card is not active"
+msgstr "บัตรของขวัญไม่ได้เปิดใช้งาน"
+
+msgid "Gift card has expired"
+msgstr "บัตรของขวัญหมดอายุแล้ว"
+
+msgid "Gift card has been fully redeemed"
+msgstr "บัตรของขวัญถูกใช้หมดแล้ว"
+
+msgid "Gift card cannot be used"
+msgstr "ไม่สามารถใช้บัตรของขวัญได้"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr "สกุลเงินไม่ตรงกัน บัตรของขวัญอยู่ใน {card_currency} ตะกร้าอยู่ใน {cart_currency}"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"บัตรของขวัญนี้อยู่ใน {card_currency} กรุณาเปลี่ยนสกุลเงินของคุณเป็น {card_currency} "
+"เพื่อใช้งาน"
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "บัตรของขวัญไม่สามารถใช้ซื้อบัตรของขวัญอื่นได้"
+
+msgid "Cart total is already covered"
+msgstr "ยอดรวมในตะกร้าถูกครอบคลุมแล้ว"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "ไม่สามารถประมวลผลการแปลงสกุลเงินของบัตรของขวัญได้"
+
+msgid "Gift card applied successfully"
+msgstr "บัตรของขวัญถูกใช้สำเร็จแล้ว"
+
+msgid "Product"
+msgstr "สินค้า"
+
+msgid "Variant"
+msgstr "รุ่นสินค้า"
+
+msgid "Quantity"
+msgstr "จำนวน"
+
+msgid "Unit Price"
+msgstr "ราคาต่อหน่วย"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"การกำหนดค่าสินค้าที่มีราคาคำนวณ: {customization_option_id: {'value': '...', "
+"'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "การปรับแต่ง"
+
+msgid "Is Subscription"
+msgstr "เป็นสมาชิก"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "ว่ารายการนี้จะถูกซื้อเป็นสมาชิกหรือไม่"
+
+msgid "Subscription Plan"
+msgstr "แผนสมาชิก"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "แผนสมาชิกที่เลือกสำหรับการเรียกเก็บเงินซ้ำ"
+
+msgid "Pricing Tier"
+msgstr "ระดับราคา"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "ระดับราคาที่เลือก (ความถี่ในการเรียกเก็บเงิน) สำหรับการสมัครสมาชิก"
+
+msgid "Payment Token"
+msgstr "โทเคนการชำระเงิน"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr "วิธีการชำระเงินที่บันทึกไว้สำหรับการเรียกเก็บเงินสมาชิก (จำเป็นสำหรับสมาชิก)"
+
+msgid "Parent Bundle"
+msgstr "ชุดพื้นฐาน"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "หากนี่คือส่วนประกอบของชุด โปรดอ้างอิงไปยัง CartItem ของชุด"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"รายละเอียดการจอง: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+
+msgid "Booking Data"
+msgstr "ข้อมูลการจอง"
+
+msgid "Customer notes for this item"
+msgstr "หมายเหตุลูกค้าสำหรับสินค้าชิ้นนี้"
+
+msgid "Notes"
+msgstr "หมายเหตุ"
+
+msgid "manual discount type"
+msgstr "ประเภทส่วนลดแบบกำหนดเอง"
+
+msgid "manual discount value"
+msgstr "ค่าส่วนลดแบบกำหนดเอง"
+
+msgid "discount applied by"
+msgstr "ส่วนลดถูกใช้โดย"
+
+msgid "discount approved by"
+msgstr "ส่วนลดได้รับการอนุมัติโดย"
+
+msgid "discount reason"
+msgstr "เหตุผลของส่วนลด"
+
+msgid "Cart Item"
+msgstr "รายการในตะกร้า"
+
+msgid "Cart Items"
+msgstr "รายการในตะกร้า"
+
+msgid "My Wishlist"
+msgstr "รายการสินค้าที่ต้องการ"
+
+msgid "Name"
+msgstr "ชื่อ"
+
+msgid "Grid Layout"
+msgstr "รูปแบบตาราง"
+
+msgid "List Layout"
+msgstr "รูปแบบรายการ"
+
+msgid "How wishlist items are displayed"
+msgstr "วิธีแสดงรายการสินค้าที่ต้องการ"
+
+msgid "Wishlist Layout"
+msgstr "รูปแบบรายการสินค้าที่ต้องการ"
+
+msgid "Is Public"
+msgstr "เป็นสาธารณะ"
+
+msgid "Share Slug"
+msgstr "ลิงก์แชร์"
+
+msgid "Show Prices"
+msgstr "แสดงราคา"
+
+msgid "Show Availability"
+msgstr "แสดงสถานะสินค้า"
+
+msgid "Show Add to Cart"
+msgstr "แสดงปุ่มเพิ่มลงตะกร้า"
+
+msgid "Wishlist"
+msgstr "รายการสินค้าที่ต้องการ"
+
+msgid "Wishlists"
+msgstr "รายการสินค้าที่ต้องการ"
+
+msgid "Low"
+msgstr "ต่ำ"
+
+msgid "Medium"
+msgstr "ปานกลาง"
+
+msgid "High"
+msgstr "สูง"
+
+msgid "Priority"
+msgstr "ลำดับความสำคัญ"
+
+msgid "Notify When Available"
+msgstr "แจ้งเมื่อมีสินค้า"
+
+msgid "Notify When On Sale"
+msgstr "แจ้งเมื่อมีการลดราคา"
+
+msgid "Wishlist Item"
+msgstr "รายการสินค้าที่ต้องการ"
+
+msgid "Wishlist Items"
+msgstr "รายการสินค้าที่ต้องการ"
+
+msgid "Viewed At"
+msgstr "ดูเมื่อ"
+
+msgid "View Count"
+msgstr "จำนวนครั้งที่ดู"
+
+msgid "Recently Viewed Product"
+msgstr "สินค้าที่ดูล่าสุด"
+
+msgid "Recently Viewed Products"
+msgstr "สินค้าที่ดูล่าสุด"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "เซสชัน: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{product} ถูกดูโดย {user}"
+
+msgid "Description"
+msgstr "คำอธิบาย"
+
+msgid "Flat Rate"
+msgstr "อัตราคงที่"
+
+msgid "Free Shipping"
+msgstr "การจัดส่งฟรี"
+
+msgid "Weight Based"
+msgstr "ตามน้ำหนัก"
+
+msgid "Price Based"
+msgstr "ตามราคา"
+
+msgid "Real-Time Carrier Rates"
+msgstr "อัตราค่าส่งแบบเรียลไทม์จากผู้ให้บริการ"
+
+msgid "Local Pickup"
+msgstr "รับของที่ร้าน"
+
+msgid "Table Rate"
+msgstr "อัตราตามตาราง"
+
+msgid "Method Type"
+msgstr "ประเภทวิธี"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "ค่าจัดส่งคงที่ (สำหรับประเภท flat_rate)"
+
+msgid "Flat Rate Cost"
+msgstr "ค่าใช้จ่ายแบบคงที่"
+
+msgid "Minimum cart value to qualify"
+msgstr "ค่ามินิมัมของตะกร้าเพื่อคุ้มค่า"
+
+msgid "Minimum Order Value"
+msgstr "ค่าสั่งซื้อขั้นต่ำ"
+
+msgid "Maximum cart value to qualify"
+msgstr "ค่าแม็กซิมัมของตะกร้าเพื่อคุ้มค่า"
+
+msgid "Maximum Order Value"
+msgstr "ค่าสั่งซื้อสูงสุด"
+
+msgid "Minimum cart weight (kg)"
+msgstr "น้ำหนักตะกร้าขั้นต่ำ (กิโลกรัม)"
+
+msgid "Minimum Weight"
+msgstr "น้ำหนักขั้นต่ำ"
+
+msgid "Maximum cart weight (kg)"
+msgstr "น้ำหนักตะกร้าสูงสุด (กิโลกรัม)"
+
+msgid "Maximum Weight"
+msgstr "น้ำหนักสูงสุด"
+
+msgid "Shipping Zones"
+msgstr "โซนการจัดส่ง"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr "โซนที่วิธีการจัดส่งนี้สามารถใช้งานได้ หากว่าง ข้อจำกัดตามประเทศ/รัฐแบบเดิมจะถูกนำไปใช้"
+
+msgid "Pickup Locations"
+msgstr "จุดรับของ"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"สถานที่ที่ลูกค้าสามารถรับสินค้าได้ด้วยวิธีการจัดส่งนี้ ใช้ได้เฉพาะกับประเภทวิธีการจัดส่ง "
+"'local_pickup' เท่านั้น"
+
+msgid "Minimum delivery time in business days"
+msgstr "เวลาจัดส่งขั้นต่ำในวันทำการ"
+
+msgid "Minimum Delivery Days"
+msgstr "จำนวนวันจัดส่งขั้นต่ำ"
+
+msgid "Maximum delivery time in business days"
+msgstr "เวลาจัดส่งสูงสุดในวันทำการ"
+
+msgid "Maximum Delivery Days"
+msgstr "จำนวนวันจัดส่งสูงสุด"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "คลาสไอคอน Font Awesome (เช่น 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "ไอคอน"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr "รูปภาพวิธีการจัดส่งแบบกำหนดเองจากไลบรารีสื่อ หากมีการระบุ จะมีความสำคัญเหนือไอคอน"
+
+msgid "Image"
+msgstr "รูปภาพ"
+
+msgid "Sort Order"
+msgstr "ลำดับการจัดเรียง"
+
+msgid "Is Active"
+msgstr "เปิดใช้งาน"
+
+msgid "Custom Carrier"
+msgstr "ผู้ให้บริการแบบกำหนดเอง"
+
+msgid "Carrier"
+msgstr "ผู้ให้บริการ"
+
+msgid "Carrier-specific service code"
+msgstr "รหัสบริการเฉพาะผู้ให้บริการ"
+
+msgid "Carrier Service Code"
+msgstr "รหัสบริการผู้ให้บริการ"
+
+msgid "Shipping Methods"
+msgstr "วิธีการจัดส่ง"
+
+msgid "Shipping method is not active"
+msgstr "วิธีการจัดส่งไม่ได้เปิดใช้งาน"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "ต้องมีมูลค่าคำสั่งซื้อขั้นต่ำ {value}"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "มูลค่าคำสั่งซื้อเกิน {value}"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "ต้องมีน้ำหนักขั้นต่ำ {weight}kg"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "น้ำหนักเกิน {weight}kg"
+
+msgid "Cart contains only digital products"
+msgstr "ตะกร้ามีเพียงสินค้าดิจิทัลเท่านั้น"
+
+msgid "Available"
+msgstr "พร้อมใช้งาน"
+
+msgid "No geographic restrictions"
+msgstr "ไม่มีข้อจำกัดด้านภูมิศาสตร์"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "มีจำหน่ายใน {zone}"
+
+msgid "Not available in your location"
+msgstr "ไม่สามารถใช้งานได้ในพื้นที่ของคุณ"
+
+msgid "Available worldwide"
+msgstr "ใช้งานได้ทั่วโลก"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "รหัสประเทศตามมาตรฐาน ISO 3166-1 alpha-2"
+
+msgid "Country"
+msgstr "ประเทศ"
+
+msgid "State/Province/Region"
+msgstr "รัฐ / จังหวัด / ภูมิภาค"
+
+msgid "State"
+msgstr "รัฐ"
+
+msgid "City name (optional)"
+msgstr "ชื่อเมือง (ไม่บังคับ)"
+
+msgid "City"
+msgstr "เมือง"
+
+msgid "List of specific postal codes (optional)"
+msgstr "รายการรหัสไปรษณีย์เฉพาะ (ไม่บังคับ)"
+
+msgid "Postal Codes"
+msgstr "รหัสไปรษณีย์"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "อัตราภาษีเป็นทศนิยม (เช่น 0.0825 สำหรับ 8.25%)"
+
+msgid "Rate"
+msgstr "อัตรา"
+
+msgid "Sales Tax"
+msgstr "ภาษีขาย"
+
+msgid "Custom Tax"
+msgstr "ภาษีแบบกำหนดเอง"
+
+msgid "Tax Type"
+msgstr "ประเภทภาษี"
+
+msgid "Apply tax to shipping costs"
+msgstr "ใช้ภาษีกับค่าใช้จ่ายการจัดส่ง"
+
+msgid "Applies to Shipping"
+msgstr "ใช้กับค่าจัดส่ง"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "คำนวณเพิ่มเติมจากภาษีอื่น (ภาษีแบบผสม)"
+
+msgid "Compound Tax"
+msgstr "ภาษีแบบผสม"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "ประเภทสินค้าที่ยกเว้นภาษีนี้ (เช่น ['digital', 'service'])"
+
+msgid "Exempt Product Types"
+msgstr "ประเภทสินค้าที่ยกเว้นภาษี"
+
+msgid "Categories exempt from this tax"
+msgstr "หมวดหมู่ที่ยกเว้นภาษีนี้"
+
+msgid "Exempt Categories"
+msgstr "หมวดหมู่ที่ยกเว้นภาษี"
+
+msgid "Higher priority rules take precedence"
+msgstr "กฎที่มีลำดับความสำคัญสูงกว่าจะถูกนำมาใช้ก่อน"
+
+msgid "Tax Rate"
+msgstr "อัตราภาษี"
+
+msgid "Tax Rates"
+msgstr "อัตราภาษี"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "ยุโรป"
+
+msgid "North America"
+msgstr "อเมริกาเหนือ"
+
+msgid "Asia Pacific"
+msgstr "เอเชียแปซิฟิก"
+
+msgid "Middle East"
+msgstr "ตะวันออกกลาง"
+
+msgid "Africa"
+msgstr "แอฟริกา"
+
+msgid "Latin America"
+msgstr "อเมริกาละติน"
+
+msgid "Oceania"
+msgstr "โอเชเลีย"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "ตัวระบุที่ไม่ซ้ำกัน (ตัวอย่างเช่น eu_vat, us_sales_tax)"
+
+msgid "Key"
+msgstr "คีย์"
+
+msgid "Font Awesome icon class"
+msgstr "คลาสไอคอน Font Awesome"
+
+msgid "Default Tax Type"
+msgstr "ประเภทภาษีเริ่มต้น"
+
+msgid "Region"
+msgstr "ภูมิภาค"
+
+msgid "Version for tracking rate updates"
+msgstr "เวอร์ชันสำหรับติดตามการอัปเดตอัตรา"
+
+msgid "Version"
+msgstr "เวอร์ชัน"
+
+msgid "Last Updated"
+msgstr "อัปเดตล่าสุด"
+
+msgid "Tax Preset Group"
+msgstr "กลุ่มการตั้งค่าภาษีล่วงหน้า"
+
+msgid "Tax Preset Groups"
+msgstr "กลุ่มการตั้งค่าภาษีล่วงหน้า"
+
+msgid "Preset Group"
+msgstr "กลุ่มการตั้งค่าล่วงหน้า"
+
+msgid "Country Code"
+msgstr "รหัสประเทศ"
+
+msgid "Country Name"
+msgstr "ชื่อประเทศ"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "รหัสรัฐ/จังหวัด (สำหรับการตั้งค่าล่วงหน้าของสหรัฐอเมริกา/แคนาดา)"
+
+msgid "State Code"
+msgstr "รหัสรัฐ"
+
+msgid "State Name"
+msgstr "ชื่อรัฐ"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "อัตราภาษีเป็นทศนิยม (เช่น 0.20 สำหรับ 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "หมายเหตุเพิ่มเติม (เช่น, 'เพิ่มขึ้นจาก 22% ในเดือนกรกฎาคม 2025')"
+
+msgid "Tax Preset Rate"
+msgstr "อัตราภาษีการตั้งค่าล่วงหน้า"
+
+msgid "Tax Preset Rates"
+msgstr "อัตราภาษีการตั้งค่าล่วงหน้า"
+
+msgid "Billing Address"
+msgstr "ที่อยู่สำหรับการเรียกเก็บเงิน"
+
+msgid "Billing Same as Shipping"
+msgstr "ที่อยู่การเรียกเก็บเงินเหมือนกับที่อยู่จัดส่ง"
+
+msgid "Shipping Address Data"
+msgstr "ข้อมูลที่อยู่สำหรับการจัดส่ง"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr "ข้อมูลที่อยู่จัดส่งชั่วคราว (จะไม่ถูกบันทึกในโมเดล Address จนกว่าจะมีการสั่งซื้อ)"
+
+msgid "Billing Address Data"
+msgstr "ข้อมูลที่อยู่สำหรับการเรียกเก็บเงิน"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr "ข้อมูลที่อยู่การเรียกเก็บเงินชั่วคราว (จะไม่ถูกบันทึกในโมเดล Address จนกว่าจะมีการสั่งซื้อ)"
+
+msgid "Selected Shipping Method"
+msgstr "วิธีจัดส่งที่เลือก"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "รายการวิธีการจัดส่งที่มีอยู่พร้อมอัตราที่ถูกแคชไว้"
+
+msgid "Available Shipping Methods"
+msgstr "วิธีจัดส่งที่สามารถใช้ได้"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "การแยกประเภทภาษีโดยละเอียดตามเขตอำนาจ"
+
+msgid "Tax Breakdown"
+msgstr "การแยกประเภทภาษี"
+
+msgid "Tax Amount"
+msgstr "จำนวนเงินภาษี"
+
+msgid "Payment Provider"
+msgstr "ผู้ให้บริการชำระเงิน"
+
+msgid "Subtotal"
+msgstr "ยอดรวมย่อย"
+
+msgid "Discount Amount"
+msgstr "จำนวนเงินส่วนลด"
+
+msgid "Gift Card Discount"
+msgstr "ส่วนลดจากบัตรของขวัญ"
+
+msgid "Total discount from applied gift cards"
+msgstr "ส่วนลดรวมจากบัตรของขวัญที่ใช้แล้ว"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "ยอดรวมสุดท้าย: ยอดย่อย + ค่าจัดส่ง + ภาษี - ส่วนลด"
+
+msgid "Total Amount"
+msgstr "ยอดรวมทั้งหมด"
+
+msgid "Cart Review"
+msgstr "รีวิวตะกร้าสินค้า"
+
+msgid "Billing Information"
+msgstr "ข้อมูลการเรียกเก็บเงิน"
+
+msgid "Payment Method"
+msgstr "วิธีการชำระเงิน"
+
+msgid "Order Review"
+msgstr "รีวิวคำสั่งซื้อ"
+
+msgid "Step Completed"
+msgstr "ขั้นตอนเสร็จสิ้น"
+
+msgid "Expires At"
+msgstr "หมดอายุที่"
+
+msgid "Metadata"
+msgstr "ข้อมูลเมตา"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "ข้อมูลเพิ่มเติม (เช่น ข้อมูลการซื้อในตลาด)"
+
+msgid "Checkout Session"
+msgstr "เซสชันการชำระเงิน"
+
+msgid "Checkout Sessions"
+msgstr "เซสชันการชำระเงิน"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "ชำระเงินสำหรับ {cart}"
+
+msgid "Gift Card"
+msgstr "บัตรของขวัญ"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "จำนวนเงินในสกุลเงินพื้นฐาน (ใช้สำหรับการคำนวณในตะกร้า)"
+
+msgid "Original Currency Amount"
+msgstr "จำนวนเงินในสกุลเงินเดิม"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr "ส่วนลดในสกุลเงินพื้นเดิมของบัตรของขวัญ (สำหรับบัตรของขวัญที่ใช้สกุลเงินต่างประเทศ)"
+
+msgid "Exchange Rate"
+msgstr "อัตราแลกเปลี่ยน"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "อัตรา: สกุลเงินบัตรของขวัญ -> สกุลเงินพื้นฐาน ณ ขณะที่ใช้งาน"
+
+msgid "Applied At"
+msgstr "ใช้งานที่"
+
+msgid "Applied Gift Card"
+msgstr "บัตรของขวัญที่ใช้งานแล้ว"
+
+msgid "Applied Gift Cards"
+msgstr "บัตรของขวัญที่ใช้งานแล้ว"
+
+msgid "This gift card cannot be used"
+msgstr "บัตรของขวัญนี้ไม่สามารถใช้ได้"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "จำนวนส่วนลดเกินยอดคงเหลือของบัตรของขวัญ"
+
+msgid "Total customization price (per unit)"
+msgstr "ราคาการปรับแต่งทั้งหมด (ต่อหน่วย)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "'instant' สำหรับสินค้าดิจิทัล, 'shipping' สำหรับสินค้าทางกายภาพ"
+
+msgid "True if this item is a component of a bundle"
+msgstr "เป็นจริงหากสินค้านี้เป็นส่วนประกอบของชุด"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "ID ของ CartItem ชุดหลัก หากสิ่งนี้เป็นส่วนประกอบ"
+
+msgid "Child items if this is a bundle parent"
+msgstr "รายการสินค้าย่อย หากเป็นผู้ปกครองของชุดสินค้า"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr "แผนที่ของ bundle_item_id ไปยัง variant_id สำหรับตัวแปรที่ลูกค้าเลือก"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr "รายการของ bundle_item_ids ที่ต้องการยกเว้น (สำหรับสินค้าเสริมที่ลูกค้าไม่ต้องการ)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr "แผนที่ของ slot_id ไปยังรายการ option_ids ที่เลือกสำหรับผลิตภัณฑ์ที่กำหนดค่าได้"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "ID ตั้งค่าเริ่มต้นที่ใช้เป็นจุดเริ่มต้น"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"รายละเอียดการจอง: start_datetime, end_datetime, resource_id, persons, timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "จำนวนต้องอย่างน้อย 1"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "จำเป็นต้องมีแผนการสมัครสมาชิกสำหรับการซื้อการสมัครสมาชิก"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "ต้องการโทเคนการชำระเงินสำหรับการซื้อแบบสมัครสมาชิก"
+
+msgid "Product not found"
+msgstr "ไม่พบสินค้า"
+
+msgid "This product does not support subscriptions"
+msgstr "สินค้านี้ไม่รองรับการสมัครสมาชิก"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "แผนการสมัครสมาชิกไม่ถูกต้องหรือไม่ได้ใช้งาน"
+
+msgid "This plan is not available for this product"
+msgstr "แผนนี้ไม่สามารถใช้ได้กับสินค้านี้"
+
+msgid "Invalid or inactive payment token"
+msgstr "โทเคนการชำระเงินไม่ถูกต้องหรือไม่ได้ใช้งาน"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "ไม่พบระดับราคา หรือไม่ได้เกี่ยวข้องกับแผนที่เลือก"
+
+msgid "No pricing tier available for this plan"
+msgstr "ไม่มีระดับราคาสำหรับแผนนี้"
+
+msgid "Quantity cannot be negative"
+msgstr "จำนวนไม่สามารถเป็นลบได้"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "รหัสบัตรของขวัญ (ตัวอย่างเช่น GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "จำนวนเงินที่ใช้จากบัตรของขวัญนี้ (ในสกุลเงินหลัก)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "ยอดคงเหลือบนบัตรของขวัญหลังจากใช้ครั้งนี้"
+
+msgid "Base currency code"
+msgstr "รหัสสกุลเงินพื้นฐาน"
+
+msgid "Gift card's native currency code"
+msgstr "รหัสสกุลเงินพื้นฐานของบัตรของขวัญ"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr "ส่วนลดในสกุลเงินของบัตรของขวัญ (สำหรับบัตรของขวัญที่ใช้สกุลเงินต่างประเทศ)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr "ต้องการ address_id หรือรายละเอียดที่อยู่ครบถ้วน ขาดหายไป: {fields}"
+
+msgid "This product requires customization"
+msgstr "สินค้านี้ต้องการการปรับแต่ง"
+
+msgid "Invalid design token"
+msgstr "โทเคนการออกแบบไม่ถูกต้อง"
+
+msgid "Design not found or expired"
+msgstr "ไม่พบหรือหมดอายุของดีไซน์"
+
+msgid "This product does not support customization"
+msgstr "สินค้านี้ไม่รองรับการกำหนดค่าเฉพาะ"
+
+msgid "Invalid customization option"
+msgstr "ตัวเลือกการปรับแต่งไม่ถูกต้อง"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "การปรับแต่ง '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "การปรับแต่งที่จำเป็น '{name}' หายไป"
+
+msgid "Insufficient stock"
+msgstr "สต็อกไม่เพียงพอ"
+
+msgid "Bundle has no components configured"
+msgstr "ชุดสินค้ายังไม่มีส่วนประกอบที่ตั้งค่า"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "ไม่สามารถยกเว้นองค์ประกอบชุดที่ไม่ใช่ตัวเลือก: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "ต้องเลือกตัวแปรสำหรับ: {name}"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "เลือกตัวแปรที่ไม่ถูกต้องสำหรับ: {name}"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "สต็อกไม่เพียงพอสำหรับองค์ประกอบชุด: {name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "ปริมาณชุดสินค้าในตะกร้าถูกอัปเดต"
+
+msgid "Bundle added to cart"
+msgstr "ชุดสินค้าถูกเพิ่มลงในตะกร้า"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "ช่องที่จำเป็น '{name}' ไม่มีการเลือก"
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "ช่อง '{name}' ต้องการอย่างน้อย {min} การเลือก"
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "ช่อง '{name}' อนุญาตให้เลือกได้สูงสุด {max} รายการ"
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "ID ช่องไม่ถูกต้อง: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "ตัวเลือก {opt_id} ไม่ถูกต้องสำหรับช่อง '{slot}'"
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr "การเลือกที่ไม่เข้ากันในช่อง '{slot}'. บางตัวเลือกไม่เข้ากับการเลือกอื่นของคุณ"
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr "การเลือกที่ถูกยกเว้นในช่อง '{slot}'. บางตัวเลือกขัดแย้งกับการเลือกอื่นของคุณ"
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "สต็อกไม่เพียงพอสำหรับองค์ประกอบ: {name}"
+
+msgid "Configured product added to cart"
+msgstr "สินค้าที่ตั้งค่าแล้วถูกเพิ่มลงในตะกร้า"
+
+msgid "Either user or session_key must be provided"
+msgstr "ต้องระบุผู้ใช้หรือ session_key"
+
+msgid "This product is no longer available"
+msgstr "สินค้านี้ไม่มีให้บริการอีกต่อไป"
+
+msgid "You must be logged in to purchase this product."
+msgstr "คุณต้องเข้าสู่ระบบเพื่อซื้อสินค้านี้"
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "สินค้านี้ต้องการให้คุณเป็นเจ้าของ \"\" ก่อน %(required)s"
+
+msgid "Product variant not found"
+msgstr "ไม่พบตัวเลือกสินค้า"
+
+msgid "Configuration is required for configurable products"
+msgstr "จำเป็นต้องตั้งค่าสำหรับสินค้าที่กำหนดเองได้"
+
+msgid "Booking added to cart"
+msgstr "การจองถูกเพิ่มลงในตะกร้า"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "สต็อกไม่เพียงพอสำหรับจำนวนที่ต้องการ"
+
+msgid "Cart item quantity updated"
+msgstr "ปริมาณรายการในตะกร้าถูกอัปเดต"
+
+msgid "Item added to cart"
+msgstr "รายการถูกเพิ่มลงในตะกร้า"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr "จำนวนส่วนประกอบไม่สามารถเปลี่ยนโดยตรงได้ โปรดอัปเดตสินค้าหลักแทน"
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr "สินค้าถูกนำออกจากตะกร้า รวมถึง %(names)s (สินค้าที่จำเป็นไม่มีอยู่ในตะกร้าแล้ว)"
+
+msgid "Item removed from cart"
+msgstr "รายการถูกลบออกจากตะกร้า"
+
+msgid "Cart item updated"
+msgstr "รายการในตะกร้าถูกอัปเดต"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr "รายการส่วนประกอบไม่สามารถลบโดยตรงได้ โปรดลบสินค้าหลักแทน"
+
+msgid "Cart cleared"
+msgstr "ตะกร้าถูกล้าง"
+
+msgid "Voucher removed"
+msgstr "คูปองถูกลบ"
+
+msgid "Voucher not found in cart"
+msgstr "ไม่พบคูปองในตะกร้า"
+
+msgid "Gift card removed"
+msgstr "บัตรของขวัญถูกลบ"
+
+msgid "Gift card not found in cart"
+msgstr "ไม่พบบัตรของขวัญในตะกร้า"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "รวม {count} สินค้าเข้าตะกร้า"
+
+msgid "Account creation required to proceed"
+msgstr "จำเป็นต้องสร้างบัญชีเพื่อดำเนินการต่อ"
+
+msgid "Address not found"
+msgstr "ไม่พบที่อยู่"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "ต้องระบุ address_id หรือ address_data"
+
+msgid "Shipping address set"
+msgstr "ที่อยู่สำหรับการจัดส่งถูกตั้งค่า"
+
+msgid "Billing address must be provided"
+msgstr "ต้องระบุที่อยู่สำหรับการเรียกเก็บเงิน"
+
+msgid "Billing address set"
+msgstr "ที่อยู่สำหรับการเรียกเก็บเงินถูกตั้งค่า"
+
+msgid "Shipping address must be set first"
+msgstr "ต้องตั้งค่าที่อยู่จัดส่งก่อน"
+
+msgid "Shipping method not found"
+msgstr "ไม่พบวิธีการจัดส่ง"
+
+msgid "Shipping method selected"
+msgstr "วิธีการจัดส่งถูกเลือก"
+
+msgid "Payment provider not found"
+msgstr "ไม่พบผู้ให้บริการชำระเงิน"
+
+msgid "Payment provider is not properly configured"
+msgstr "ผู้ให้บริการชำระเงินไม่ได้ตั้งค่าอย่างถูกต้อง"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "ผู้ให้บริการชำระเงินไม่สามารถใช้งานได้สำหรับตำแหน่งหรือสกุลเงินของคุณ"
+
+msgid "Payment method selected"
+msgstr "วิธีการชำระเงินถูกเลือก"
+
+msgid "Cart is empty"
+msgstr "ตะกร้าว่าง"
+
+msgid "Shipping address is required"
+msgstr "ต้องระบุที่อยู่สำหรับการจัดส่ง"
+
+msgid "Shipping method is required"
+msgstr "ต้องระบุวิธีการจัดส่ง"
+
+msgid "Billing address is required"
+msgstr "ต้องระบุที่อยู่สำหรับการเรียกเก็บเงิน"
+
+msgid "Payment method is required"
+msgstr "ต้องระบุวิธีการชำระเงิน"
+
+msgid "Checkout session has expired"
+msgstr "เซสชันการชำระเงินหมดอายุ"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "สต็อกไม่เพียงพอสำหรับ {product}"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\" ต้องการการเป็นเจ้าของ \"\" ก่อน %(required)s"
+
+msgid "Customer email is required"
+msgstr "อีเมลของลูกค้าเป็นข้อมูลที่จำเป็น"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "ไม่สามารถจัดสรรคลังสินค้าสำหรับคำสั่งซื้อได้ โปรดติดต่อฝ่ายสนับสนุน"
+
+msgid "Insufficient stock to complete order"
+msgstr "สต็อกไม่เพียงพอสำหรับการสั่งซื้อ"
+
+msgid "Error processing order. Please try again."
+msgstr "เกิดข้อผิดพลาดในการประมวลผลคำสั่งซื้อ โปรดลองอีกครั้ง"
+
+msgid "Order created successfully"
+msgstr "สร้างคำสั่งซื้อสำเร็จ"
+
+msgid "Wishlist item updated"
+msgstr "รายการในรายการโปรดถูกอัปเดต"
+
+msgid "Item added to wishlist"
+msgstr "รายการถูกเพิ่มลงในรายการโปรด"
+
+msgid "Item removed from wishlist"
+msgstr "รายการถูกลบออกจากรายการโปรด"
+
+msgid "Item moved to cart"
+msgstr "รายการถูกย้ายไปยังตะกร้า"
+
+msgid "Wishlist cleared"
+msgstr "รายการโปรดถูกล้าง"
+
+msgid "Wishlist with this name already exists"
+msgstr "รายการโปรดชื่อนี้มีอยู่แล้ว"
+
+msgid "Wishlist created"
+msgstr "สร้างรายการโปรดสำเร็จ"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "ติดตามตะกร้าสินค้าของลูกค้าที่ใช้งานและถูกทิ้งไว้"
+
+msgid "Add"
+msgstr "เพิ่ม"
+
+msgid "cart"
+msgstr "ตะกร้า"
+
+msgid "Filters"
+msgstr "ตัวกรอง"
+
+msgid "Search"
+msgstr "ค้นหา"
+
+msgid "Search by user, session, or email..."
+msgstr "ค้นหาผ่านผู้ใช้, session หรืออีเมล..."
+
+msgid "User Type"
+msgstr "ประเภทผู้ใช้"
+
+msgid "All Carts"
+msgstr "ตะกร้าทั้งหมด"
+
+msgid "Registered Users"
+msgstr "ผู้ใช้ที่ลงทะเบียนแล้ว"
+
+msgid "Guest Carts"
+msgstr "ตะกร้าของผู้เยี่ยมชม"
+
+msgid "Cart Status"
+msgstr "สถานะตะกร้า"
+
+msgid "All"
+msgstr "ทั้งหมด"
+
+msgid "Active (< 24h)"
+msgstr "ใช้งานอยู่ (<24 ชม.)"
+
+msgid "Abandoned (> 24h)"
+msgstr "ถูกทิ้ง (>24 ชม.)"
+
+msgid "Empty"
+msgstr "ว่างเปล่า"
+
+msgid "Has Shipping"
+msgstr "มีการจัดส่ง"
+
+msgid "No Shipping"
+msgstr "ไม่มีการจัดส่ง"
+
+msgid "Min Cart Value"
+msgstr "ค่ามินิมัมของตะกร้า"
+
+msgid "Min value"
+msgstr "ค่ามินิมัม"
+
+msgid "Max Cart Value"
+msgstr "ค่าแมกซิมัมของตะกร้า"
+
+msgid "Max value"
+msgstr "ค่าแมกซิมัม"
+
+msgid "Created From"
+msgstr "สร้างจาก"
+
+msgid "Created To"
+msgstr "สร้างถึง"
+
+msgid "Apply Filters"
+msgstr "ใช้ตัวกรอง"
+
+msgid "Clear All"
+msgstr "ล้างทั้งหมด"
+
+msgid "Run the selected action"
+msgstr "ดำเนินการตามที่เลือก"
+
+msgid "Go"
+msgstr "ดำเนินการ"
+
+msgid "of"
+msgstr "ของ"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s ตะกร้า"
+msgstr[1] "%(counter)s ตะกร้า"
+
+msgid "carts"
+msgstr "ตะกร้าสินค้า"
+
+msgid "Show all"
+msgstr "แสดงทั้งหมด"
+
+msgid "Save"
+msgstr "บันทึก"
+
+msgid "Add Shipping Method"
+msgstr "เพิ่มวิธีการจัดส่ง"
+
+msgid "Configure a new shipping method for your store"
+msgstr "ตั้งค่าวิธีการจัดส่งใหม่สำหรับร้านค้าของคุณ"
+
+msgid "Method Basics"
+msgstr "ข้อมูลพื้นฐานของวิธี"
+
+msgid "Eligibility"
+msgstr "คุณสมบัติ"
+
+msgid "Coverage"
+msgstr "การครอบคลุม"
+
+msgid "Features"
+msgstr "คุณสมบัติ"
+
+msgid "Review"
+msgstr "ตรวจสอบ"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "กำหนดตัวตนหลักและประเภทของวิธีการจัดส่งนี้"
+
+msgid "Method Name"
+msgstr "ชื่อวิธี"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "ตัวอย่างเช่น จัดส่งมาตรฐาน, การจัดส่งแบบเร่งด่วน"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "ชื่อวิธีการจัดส่งสำหรับลูกค้า"
+
+msgid "Optional description of this shipping method"
+msgstr "คำอธิบายเพิ่มเติมสำหรับวิธีการจัดส่งนี้ (ไม่จำเป็น)"
+
+msgid "Display Icon"
+msgstr "ไอคอนแสดงผล"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"เลือกภาพจากไลบรารีสื่อหรือเลือกไอคอนจาก Font Awesome. ถ้าเลือกทั้งสอง ภาพจะมีความสำคัญกว่า"
+
+msgid "Custom Image"
+msgstr "ภาพที่กำหนดเอง"
+
+msgid "Font Awesome Icon"
+msgstr "ไอคอน Font Awesome"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "เลือกไอคอนจากไลบรารี Font Awesome"
+
+msgid "Active"
+msgstr "ใช้งาน"
+
+msgid "Make this method available to customers immediately"
+msgstr "เปิดใช้งานวิธีการนี้ให้ลูกค้าใช้ทันที"
+
+msgid "Method Type & Pricing"
+msgstr "ประเภทและราคาของวิธี"
+
+msgid "Select method type..."
+msgstr "เลือกประเภทวิธี..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "อัตราค่าจัดส่งคงที่ - ค่าจัดส่งคงที่"
+
+msgid "Free Shipping - No charge"
+msgstr "การจัดส่งฟรี - ไม่มีค่าใช้จ่าย"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "คำนวณตามน้ำหนักตะกร้าสินค้า"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "คำนวณตามมูลค่ารวมตะกร้าสินค้า"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "อัตราค่าจัดส่งแบบเรียลไทม์ - อัตราค่าจัดส่งแบบสดจากผู้ให้บริการจัดส่ง"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "รับสินค้าที่ร้าน - ลูกค้ารับสินค้าที่จุดรับสินค้า"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "อัตราค่าจัดส่งแบบตาราง - กฎที่ซับซ้อนโดยพิจารณาจากน้ำหนัก/ราคา/จุดหมาย"
+
+msgid "Method Types:"
+msgstr "ประเภทวิธี:"
+
+msgid "Flat Rate:"
+msgstr "อัตราคงที่:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "ค่าจัดส่งคงที่ไม่ว่าจะสั่งซื้อเท่าไร"
+
+msgid "Free Shipping:"
+msgstr "การจัดส่งฟรี:"
+
+msgid "No shipping charge"
+msgstr "ไม่มีค่าใช้จ่ายในการจัดส่ง"
+
+msgid "Weight/Price Based:"
+msgstr "คำนวณตามน้ำหนัก/ราคา:"
+
+msgid "Calculate using rate tables"
+msgstr "คำนวณโดยใช้ตารางอัตรา"
+
+msgid "Real-Time:"
+msgstr "แบบเรียลไทม์:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "รับอัตราค่าจัดส่งแบบเรียลไทม์จาก USPS, FedEx, UPS หรือ DHL"
+
+msgid "Local Pickup:"
+msgstr "รับของที่ร้าน:"
+
+msgid "Customer picks up at your location"
+msgstr "ลูกค้ารับสินค้าที่จุดรับสินค้าของคุณ"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "ค่าจัดส่งคงที่ที่คิดกับลูกค้า"
+
+msgid "No Configured Providers"
+msgstr "ไม่มีผู้ให้บริการที่ตั้งค่าไว้"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr "คุณจำเป็นต้องตั้งค่าวิธีการจัดส่งอย่างน้อยหนึ่งวิธีที่รองรับอัตราค่าจัดส่งแบบเรียลไทม์ก่อนที่คุณจะสามารถใช้วิธีการนี้ได้"
+
+msgid "Connect Provider"
+msgstr "เชื่อมต่อกับผู้ให้บริการ"
+
+msgid "Manage Providers"
+msgstr "จัดการผู้ให้บริการ"
+
+msgid "Select a configured shipping provider"
+msgstr "เลือกผู้ให้บริการจัดส่งที่ตั้งค่าไว้"
+
+msgid "Tip:"
+msgstr "เคล็ดลับ:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr "เฉพาะผู้ให้บริการที่ตั้งค่าแล้วและรองรับอัตราค่าจัดส่งแบบเรียลไทม์ที่แสดงข้างบน"
+
+msgid "Manage providers"
+msgstr "จัดการผู้ให้บริการ"
+
+msgid "Service Code"
+msgstr "รหัสบริการ"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "รหัสบริการเฉพาะจากผู้ให้บริการ (ไม่จำเป็น)"
+
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+msgid "Next Step"
+msgstr "ขั้นตอนถัดไป"
+
+msgid "Eligibility Conditions"
+msgstr "เงื่อนไขคุณสมบัติ"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr "กำหนดเมื่อใดวิธีการจัดส่งนี้ควรเปิดใช้งาน โดยพิจารณาจากมูลค่าตะกร้าสินค้าและน้ำหนัก"
+
+msgid "Order Value Restrictions"
+msgstr "ข้อจำกัดของค่าคำสั่งซื้อ"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr "ตั้งค่าข้อกำหนดมูลค่ารวมตะกร้าสินค้าขั้นต่ำหรือสูงสุดสำหรับวิธีการนี้"
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อมูลค่ารวมตะกร้าสินค้าอย่างน้อยเท่านี้"
+
+msgid "No maximum"
+msgstr "ไม่มีค่าสูงสุด"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อมูลค่ารวมตะกร้าสินค้าต่ำกว่าเท่านี้"
+
+msgid "Examples:"
+msgstr "ตัวอย่าง:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr "การจัดส่งฟรีสำหรับการสั่งซื้อเกิน $50: ตั้งค่าขั้นต่ำเป็น 50.00"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr "การจัดส่งประหยัดสำหรับการสั่งซื้อต่ำกว่า $100: ตั้งค่าสูงสุดเป็น 100.00"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr "การจัดส่งมาตรฐานสำหรับ $25-$200: ตั้งค่าทั้งขั้นต่ำและสูงสุด"
+
+msgid "Weight Restrictions"
+msgstr "ข้อจำกัดของน้ำหนัก"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr "ตั้งค่าข้อกำหนดน้ำหนักรวมตะกร้าสินค้าขั้นต่ำหรือสูงสุดสำหรับวิธีการนี้"
+
+msgid "Minimum Weight (kg)"
+msgstr "น้ำหนักขั้นต่ำ (กิโลกรัม)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อน้ำหนักรวมตะกร้าสินค้าอย่างน้อยเท่านี้"
+
+msgid "Maximum Weight (kg)"
+msgstr "น้ำหนักสูงสุด (กิโลกรัม)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "วิธีการนี้จะเปิดใช้งานได้ก็ต่อเมื่อน้ำหนักรวมตะกร้าสินค้าต่ำกว่าเท่านี้"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "การจัดส่งสินค้าเบาสำหรับสินค้าน้ำหนักต่ำกว่า 2 กก.: ตั้งค่าสูงสุดเป็น 2.00"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr "การจัดส่งสินค้าหนักสำหรับสินค้าน้ำหนักเกิน 20 กก.: ตั้งค่าขั้นต่ำเป็น 20.00"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr "การจัดส่งมาตรฐานสำหรับ 0.5 กก.-10 กก.: ตั้งค่าทั้งขั้นต่ำและสูงสุด"
+
+msgid "Additional Options"
+msgstr "ตัวเลือกเพิ่มเติม"
+
+msgid "Requires Shipping Address"
+msgstr "ต้องการที่อยู่จัดส่ง"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr "ลูกค้าต้องระบุที่อยู่จัดส่งสำหรับวิธีการนี้ (ปิดใช้งานสำหรับสินค้าดิจิทัลหรือรับสินค้าที่ร้าน)"
+
+msgid "Previous"
+msgstr "ก่อนหน้า"
+
+msgid "Geographic Coverage"
+msgstr "พื้นที่ครอบคลุมทางภูมิศาสตร์"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr "กำหนดว่าวิธีการจัดส่งนี้ใช้ได้ที่ใด โดยใช้โซนจัดส่ง"
+
+msgid "Zone-Based Coverage:"
+msgstr "การให้บริการตามโซน:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"ใช้โซนจัดส่งเพื่อให้ครอบคลุมพื้นที่ได้หลากหลายและกำหนดตามกฎ "
+"วิธีนี้ทำงานได้อย่างราบรื่นกับกฎการจัดส่ง "
+"และช่วยให้คุณควบคุมได้อย่างแม่นยำว่าวิธีการของคุณมีการใช้งานได้ที่ใด"
+
+msgid "Select Shipping Zones"
+msgstr "เลือกโซนการจัดส่ง"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr "เลือกว่าโซนจัดส่งใดที่วิธีการนี้สามารถใช้ได้ ถ้าไม่เลือกจะเปิดใช้งานทั่วโลก"
+
+msgid "Available Zones"
+msgstr "โซนที่สามารถใช้งานได้"
+
+msgid "Add selected zones"
+msgstr "เพิ่มโซนที่เลือกไว้"
+
+msgid "Add all zones"
+msgstr "เพิ่มโซนทั้งหมด"
+
+msgid "Remove selected zones"
+msgstr "ลบโซนที่เลือกไว้"
+
+msgid "Remove all zones"
+msgstr "ลบโซนทั้งหมด"
+
+msgid "Selected Zones"
+msgstr "โซนที่เลือกไว้"
+
+msgid "No shipping zones found!"
+msgstr "ไม่พบโซนการจัดส่ง!"
+
+msgid "You need to create shipping zones first."
+msgstr "คุณจำเป็นต้องสร้างโซนจัดส่งก่อน"
+
+msgid "Create a shipping zone"
+msgstr "สร้างโซนการจัดส่ง"
+
+msgid "Method Features"
+msgstr "คุณสมบัติของวิธีการ"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr "ตั้งค่าการประมาณการจัดส่ง ลำดับการแสดง และคุณสมบัติเฉพาะของวิธีการ"
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "เลือกสถานที่ทางกายภาพที่ลูกค้าสามารถรับสินค้าได้"
+
+msgid "Available Pickup Locations"
+msgstr "สถานที่รับของที่สามารถใช้งานได้"
+
+msgid "Available Locations"
+msgstr "สถานที่ที่สามารถใช้งานได้"
+
+msgid "Selected Locations"
+msgstr "สถานที่ที่เลือกไว้"
+
+msgid "No pickup locations found!"
+msgstr "ไม่พบสถานที่รับของ!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr "คุณจำเป็นต้องสร้างจุดรับสินค้าก่อนสำหรับวิธีการรับสินค้าที่ร้าน"
+
+msgid "Create a pickup location"
+msgstr "สร้างสถานที่รับของ"
+
+msgid "Carrier API Status"
+msgstr "สถานะ API ของผู้ให้บริการจัดส่ง"
+
+msgid "Carrier:"
+msgstr "ผู้ให้บริการจัดส่ง:"
+
+msgid "Service Code:"
+msgstr "รหัสบริการ:"
+
+msgid "API Configuration Status"
+msgstr "สถานะการตั้งค่า API"
+
+msgid "Checking API credentials..."
+msgstr "กำลังตรวจสอบข้อมูลการเข้าถึง API..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr ""
+"ตรวจสอบให้แน่ใจว่าคุณได้ตั้งค่าข้อมูลผู้ให้สิทธิ์ API ของผู้ให้บริการจัดส่งในตั้งค่าวิธีการจัดส่งแล้ว"
+
+msgid "Enable Rate Caching"
+msgstr "เปิดการจัดเก็บอัตราค่าจัดส่ง"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"เก็บอัตราค่าจัดส่งของผู้ให้บริการไว้เป็นเวลา 15 นาที เพื่อเพิ่มประสิทธิภาพและลดการเรียกใช้ API"
+
+msgid "Rate Table Configuration"
+msgstr "การตั้งค่าตารางอัตราค่าจัดส่ง"
+
+msgid "Weight-Based Rates:"
+msgstr "อัตราค่าจัดส่งตามน้ำหนัก:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr "คุณจะสามารถตั้งค่าอัตราค่าจัดส่งแบบหลายระดับตามน้ำหนักตะกร้าสินค้าหลังจากสร้างวิธีการแล้ว"
+
+msgid "Price-Based Rates:"
+msgstr "อัตราค่าจัดส่งตามราคา:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr "คุณจะสามารถตั้งค่าอัตราค่าจัดส่งแบบหลายระดับตามมูลค่ารวมตะกร้าสินค้าหลังจากสร้างวิธีการแล้ว"
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr "ตารางอัตราค่าจัดส่งสามารถจัดการได้จากหน้าแก้ไขวิธีการหลังจากสร้างแล้ว"
+
+msgid "Delivery Time Estimate"
+msgstr "ประมาณการเวลาจัดส่ง"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "ให้ลูกค้าทราบประมาณการเวลาจัดส่ง"
+
+msgid "Fastest delivery time in business days"
+msgstr "เวลาจัดส่งเร็วที่สุดในวันทำการ"
+
+msgid "Slowest delivery time in business days"
+msgstr "เวลาจัดส่งช้าที่สุดในวันทำการ"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "การจัดส่งแบบมาตรฐาน: 3-5 วันทำการ"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "การจัดส่งแบบเร่งด่วน: 1-2 วันทำการ"
+
+msgid "International shipping: 7-14 business days"
+msgstr "การจัดส่งระหว่างประเทศ: 7-14 วันทำการ"
+
+msgid "Display Settings"
+msgstr "การตั้งค่าการแสดงผล"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr "ตัวเลขที่ต่ำกว่าจะแสดงก่อน ใช้เพื่อควบคุมลำดับการจัดแสดงวิธีการต่าง ๆ ให้ลูกค้า"
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"กำหนดลำดับการจัดเรียงเป็นช่วงของ 10 (0, 10, 20) "
+"เพื่อให้สามารถแทรกวิธีการใหม่ระหว่างวิธีการที่มีอยู่ได้ง่าย"
+
+msgid "Review & Create"
+msgstr "ตรวจสอบและสร้าง"
+
+msgid "API credentials verified successfully"
+msgstr "ข้อมูลการเข้าถึง API ได้รับการตรวจสอบแล้วอย่างถูกต้อง"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "ตรวจสอบการตั้งค่าวิธีการจัดส่งของคุณและสร้างมัน"
+
+msgid "Edit"
+msgstr "แก้ไข"
+
+msgid "Name:"
+msgstr "ชื่อ:"
+
+msgid "Method Type:"
+msgstr "ประเภทวิธีการ:"
+
+msgid "Description:"
+msgstr "คำอธิบาย:"
+
+msgid "Display Icon:"
+msgstr "ไอคอนแสดงผล:"
+
+msgid "Status:"
+msgstr "สถานะ:"
+
+msgid "Inactive"
+msgstr "ไม่ใช้งาน"
+
+msgid "Flat Rate Cost:"
+msgstr "ค่าใช้จ่ายคงที่:"
+
+msgid "Min Order Value:"
+msgstr "ค่าสั่งซื้อขั้นต่ำ:"
+
+msgid "Max Order Value:"
+msgstr "ค่าสั่งซื้อสูงสุด:"
+
+msgid "Min Weight:"
+msgstr "น้ำหนักขั้นต่ำ:"
+
+msgid "Max Weight:"
+msgstr "น้ำหนักสูงสุด:"
+
+msgid "Requires Shipping Address:"
+msgstr "ต้องการที่อยู่จัดส่ง:"
+
+msgid "Yes"
+msgstr "ใช่"
+
+msgid "No"
+msgstr "ไม่"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr "ไม่ได้ตั้งค่าเงื่อนไขการคุ้มครอง - วิธีนี้สามารถใช้ได้กับค่าและน้ำหนักตะกร้าทั้งหมด"
+
+msgid "Shipping Zones:"
+msgstr "โซนการจัดส่ง:"
+
+msgid "Coverage:"
+msgstr "พื้นที่ให้บริการ:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "ทั่วโลก (ไม่มีโซนใดถูกเลือก)"
+
+msgid "Pickup Locations:"
+msgstr "สถานที่รับของ:"
+
+msgid "location"
+msgstr "สถานที่"
+
+msgid "Delivery Time:"
+msgstr "เวลาจัดส่ง:"
+
+msgid "Instant Pickup"
+msgstr "รับของทันที"
+
+msgid "Delivery Estimate:"
+msgstr "ประมาณการเวลาจัดส่ง:"
+
+msgid "business days"
+msgstr "วันทำการ"
+
+msgid "Sort Order:"
+msgstr "ลำดับการจัดเรียง:"
+
+msgid "Rate Caching:"
+msgstr "การแคชอัตรา:"
+
+msgid "Enabled"
+msgstr "เปิดใช้งาน"
+
+msgid "What happens next:"
+msgstr "สิ่งที่เกิดขึ้นต่อไป:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "วิธีการจัดส่งของคุณจะถูกสร้างขึ้นด้วยการตั้งค่าด้านบน"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "คุณจะถูกเปลี่ยนเส้นทางไปตั้งค่าตารางอัตราสำหรับวิธีนี้"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr "วิธีนี้จะพร้อมใช้งานทันทีสำหรับลูกค้า (ถ้าตรงตามเงื่อนไขการคุ้มครอง)"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr "วิธีนี้จะถูกสร้างขึ้นในสถานะไม่ใช้งาน - เปิดใช้งานเมื่อพร้อม"
+
+msgid "Create Shipping Method"
+msgstr "สร้างวิธีการจัดส่ง"
+
+msgid "Creating..."
+msgstr "กำลังสร้าง..."
+
+msgid "Session"
+msgstr "เซสชัน"
+
+msgid "Registered"
+msgstr "ผู้ลงทะเบียน"
+
+msgid "Guest"
+msgstr "ผู้เยี่ยมชม"
+
+msgid "item"
+msgstr "สินค้า"
+
+msgid "Shipping Set"
+msgstr "ชุดการจัดส่ง"
+
+msgid "Cart Total"
+msgstr "ยอดรวมตะกร้า"
+
+msgid "Items"
+msgstr "สินค้า"
+
+msgid "Savings"
+msgstr "เงินคืน"
+
+msgid "Shipping"
+msgstr "การจัดส่ง"
+
+msgid "Grand Total"
+msgstr "ยอดรวมทั้งหมด"
+
+msgid "Updated"
+msgstr "อัปเดตแล้ว"
+
+msgid "ago"
+msgstr "ที่ผ่านมา"
+
+msgid "Created"
+msgstr "สร้างขึ้น"
+
+msgid "Est. Delivery"
+msgstr "เวลาจัดส่งประมาณ"
+
+msgid "View cart details"
+msgstr "ดูรายละเอียดตะกร้า"
+
+msgid "Edit cart"
+msgstr "แก้ไขตะกร้า"
+
+msgid "Delete cart"
+msgstr "ลบตะกร้า"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการล้างตะกร้านี้?"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "ไม่พบตะกร้าซื้อสินค้าที่ตรงกับเงื่อนไขของคุณ"
+
+msgid "Try adjusting your filters or search terms."
+msgstr "ลองปรับตัวกรองหรือคำค้นหาของคุณ"
+
+msgid "Edit Shipping Method"
+msgstr "แก้ไขวิธีการจัดส่ง"
+
+msgid "Save and continue editing"
+msgstr "บันทึกและดำเนินการแก้ไขต่อ"
+
+msgid "Please correct the errors below"
+msgstr "กรุณาแก้ไขข้อผิดพลาดด้านล่าง"
+
+msgid "Basic"
+msgstr "พื้นฐาน"
+
+msgid "Pricing"
+msgstr "ราคา"
+
+msgid "Display"
+msgstr "แสดง"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "ตัวเลือก: จำกัดความพร้อมใช้งานตามมูลค่าคำสั่งซื้อหรือน้ำหนัก"
+
+msgid "Delivery Time"
+msgstr "เวลาจัดส่ง"
+
+msgid "Display Options"
+msgstr "ตัวเลือกการแสดงผล"
+
+msgid "Carrier Integration"
+msgstr "การผสานรวมผู้ให้บริการขนส่ง"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr "กำหนดการตั้งค่าเฉพาะผู้ให้บริการสำหรับการค้นหาอัตราค่าจัดส่งแบบเรียลไทม์"
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "ตั้งค่าวิธีการจัดส่ง ค่าธรรมเนียม และวิธีการส่งมอบ"
+
+msgid "method"
+msgstr "วิธี"
+
+msgid "active"
+msgstr "ใช้งานอยู่"
+
+msgid "Add Method"
+msgstr "เพิ่มวิธี"
+
+msgid "Bulk Actions"
+msgstr "การดำเนินการแบบกลุ่ม"
+
+msgid "Enable Selected"
+msgstr "เปิดใช้งานที่เลือก"
+
+msgid "Disable Selected"
+msgstr "ปิดใช้งานที่เลือก"
+
+msgid "Delete Selected"
+msgstr "ลบที่เลือก"
+
+msgid "Apply"
+msgstr "ประยุกต์ใช้"
+
+msgid "selected"
+msgstr "เลือกแล้ว"
+
+msgid "All Status"
+msgstr "ทั้งหมดสถานะ"
+
+msgid "All Types"
+msgstr "ทุกประเภท"
+
+msgid "Real-Time Rates"
+msgstr "อัตราเวลาจริง"
+
+msgid "Clear all filters"
+msgstr "ล้างตัวกรองทั้งหมด"
+
+msgid "Clear Filters"
+msgstr "ล้างตัวกรอง"
+
+msgid "Search methods..."
+msgstr "ค้นหาวิธี..."
+
+msgid "Select All"
+msgstr "เลือกทั้งหมด"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s วิธี"
+msgstr[1] "%(counter)s วิธี"
+
+msgid "No shipping methods found"
+msgstr "ไม่พบวิธีการจัดส่ง"
+
+msgid "Try adjusting your filters or search query."
+msgstr "ลองปรับแต่งตัวกรองหรือคำค้นหาของคุณ"
+
+msgid "Get started by creating your first shipping method."
+msgstr "เริ่มต้นด้วยการสร้างวิธีการจัดส่งแรกของคุณ"
+
+msgid "Add First Method"
+msgstr "เพิ่มวิธีแรก"
+
+msgid "Loading..."
+msgstr "กำลังโหลด..."
+
+msgid "Order Value:"
+msgstr "มูลค่าคำสั่งซื้อ:"
+
+msgid "Weight:"
+msgstr "น้ำหนัก:"
+
+msgid "Zones:"
+msgstr "โซน:"
+
+msgid "zone"
+msgstr "โซน"
+
+msgid "Countries:"
+msgstr "ประเทศ:"
+
+msgid "country"
+msgstr "ประเทศ"
+
+msgid "Worldwide"
+msgstr "ทั่วโลก"
+
+msgid "Pickup:"
+msgstr "รับสินค้า:"
+
+msgid "Delivery:"
+msgstr "จัดส่ง:"
+
+msgid "Edit method"
+msgstr "แก้ไขวิธี"
+
+msgid "Toggle active status"
+msgstr "สลับสถานะการใช้งาน"
+
+msgid "Delete method"
+msgstr "ลบวิธี"
+
+msgid "Edit Tax Rate"
+msgstr "แก้ไขอัตราภาษี"
+
+msgid "Add Tax Rate"
+msgstr "เพิ่มอัตราภาษี"
+
+msgid "Geography"
+msgstr "ภูมิศาสตร์"
+
+msgid "Rules"
+msgstr "กฎ"
+
+msgid "Exemptions"
+msgstr "ข้อยกเว้น"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr "กำหนดว่าอัตราภาษีนี้ใช้ได้ที่ใด ทิ้งชื่อจังหวัด/เมืองว่างไว้หากต้องการอัตราภาษีทั่วประเทศ"
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "ยกเว้นประเภทหรือหมวดหมู่สินค้าเฉพาะจากอัตราภาษีนี้"
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr "ตั้งค่ากฎภาษีสำหรับร้านค้าของคุณ อัตราภาษีจะถูกจับคู่กับที่อยู่ลูกค้าในระหว่างการชำระเงิน"
+
+msgid "Load Presets"
+msgstr "โหลดการตั้งค่าล่วงหน้า"
+
+msgid "Total Rules"
+msgstr "กฎทั้งหมด"
+
+msgid "Countries"
+msgstr "ประเทศ"
+
+msgid "Tax Types"
+msgstr "ประเภทภาษี"
+
+msgid "Search by name, country, state..."
+msgstr "ค้นหาตามชื่อ, ประเทศ, รัฐ..."
+
+msgid "All Countries"
+msgstr "ทั้งหมดประเทศ"
+
+msgid "Custom"
+msgstr "กำหนดเอง"
+
+msgid "Status"
+msgstr "สถานะ"
+
+msgid "Clear"
+msgstr "ล้าง"
+
+msgid "Tax Rules"
+msgstr "กฎภาษี"
+
+msgid "rules"
+msgstr "กฎ"
+
+msgid "Load Tax Rate Presets"
+msgstr "โหลดการตั้งค่าอัตราภาษี"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr "เพิ่มอัตราภาษีมาตรฐานสำหรับภูมิภาคของคุณอย่างรวดเร็ว อัตราภาษีที่มีอยู่จะไม่ถูกซ้ำ"
+
+msgid "rates"
+msgstr "อัตรา"
+
+msgid "Load"
+msgstr "โหลด"
+
+msgid "Close"
+msgstr "ปิด"
+
+msgid "postal codes"
+msgstr "รหัสไปรษณีย์"
+
+msgid "Shipping Taxed"
+msgstr "ภาษีการจัดส่ง"
+
+msgid "Compound"
+msgstr "ผสม"
+
+msgid "Delete"
+msgstr "ลบ"
+
+msgid "No tax rates configured"
+msgstr "ไม่ได้ตั้งค่าอัตราภาษี"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"ใช้ 'โหลดค่าเริ่มต้น' เพื่อเพิ่มอัตราภาษีมาตรฐานสำหรับภูมิภาคของคุณอย่างรวดเร็ว "
+"หรือเพิ่มอัตราภาษีด้วยตนเอง"
+
+msgid "Get current cart"
+msgstr "ดึงตะกร้าสินค้าปัจจุบัน"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"ดึงตะกร้าสินค้าสำหรับผู้ใช้หรือเซสชันที่ได้รับการตรวจสอบสิทธิ์ คืนรายการสินค้า ยอดรวม ส่วนลด ภาษี "
+"และยอดรวมทั้งหมด สร้างตะกร้าอัตโนมัติหากยังไม่มี"
+
+msgid "Add item to cart"
+msgstr "เพิ่มสินค้าลงในตะกร้า"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"เพิ่มสินค้าลงในตะกร้าพร้อมจำนวนที่ระบุไว้ อาจเพิ่ม ID รูปแบบ, การปรับแต่ง, และหมายเหตุได้ "
+"ตรวจสอบความพร้อมของสต็อกและรวมกับรายการตะกร้าที่มีอยู่หากเป็นสินค้า/รูปแบบเดียวกัน "
+"สำหรับสินค้าแบบสมัครสมาชิก ให้รวม is_subscription=true พร้อม subscription_plan_id, "
+"payment_token_id และ pricing_tier_id ได้ตามต้องการ"
+
+msgid "Update cart item"
+msgstr "อัปเดตสินค้าในตะกร้า"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"ปรับปรุงจำนวนสินค้า ข้อกำหนดพิเศษ หรือหมายเหตุในตะกร้า "
+"ตรวจสอบความถูกต้องของจำนวนสินค้าใหม่กับสต็อกที่มีอยู่ คืนตะกร้าที่อัปเดตพร้อมคำนวณยอดรวมใหม่"
+
+msgid "Remove cart item"
+msgstr "ลบสินค้าในตะกร้า"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"ลบสินค้าชิ้นหนึ่งออกจากตะกร้า "
+"คำนวณยอดรวมตะกร้าใหม่และตรวจสอบคูปองที่ใช้ใหม่ตามยอดรวมตะกร้าใหม่"
+
+msgid "Clear cart"
+msgstr "ล้างตะกร้า"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"ลบสินค้าทั้งหมดออกจากตะกร้า รวมถึงคูปองที่ถูกใช้งานแล้ว วัตถุตะกร้าจะยังคงอยู่แต่จะกลายเป็นว่าง"
+
+msgid "Apply voucher code"
+msgstr "ใช้โค้ดส่วนลด"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"ใช้คูปองกับตะกร้า ตรวจสอบคุณสมบัติของคูปอง ข้อกำหนดการซื้อขั้นต่ำ และข้อจำกัดการใช้งาน "
+"คำนวณและใช้ส่วนลดกับยอดรวมตะกร้า"
+
+msgid "Remove voucher"
+msgstr "ลบคูปอง"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"ลบคูปองเฉพาะจากตะกร้าโดยใช้รหัส คำนวณใหม่ยอดรวมตะกร้าโดยไม่มีส่วนลดคูปอง "
+"ผู้ใช้สามารถใช้คูปองอีกครั้งในภายหลังหากมีคุณสมบัติสอดคล้อง"
+
+msgid "Apply gift card"
+msgstr "ใช้บัตรของขวัญ"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"ใช้รหัสบัตรของขวัญกับตะกร้า ตรวจสอบสถานะ ยอดคงเหลือ และสกุลเงินของบัตรของขวัญ "
+"บัตรของขวัญไม่สามารถใช้ซื้อบัตรของขวัญอื่นได้ "
+"จำนวนเงินที่ใช้ได้ถูกจำกัดด้วยยอดคงเหลือของบัตรของขวัญหรือยอดรวมตะกร้าที่เหลืออยู่"
+
+msgid "Remove gift card"
+msgstr "ลบบัตรของขวัญ"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"ลบบัตรของขวัญเฉพาะจากตะกร้าโดยใช้รหัส "
+"ยอดคงเหลือของบัตรของขวัญจะไม่ได้รับผลกระทบจนกว่าการชำระเงินจะเสร็จสิ้น "
+"ผู้ใช้สามารถใช้บัตรของขวัญอีกครั้งได้"
+
+msgid "Get cart summary"
+msgstr "ดูสรุปตะกร้าสินค้า"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"รับสรุปตะกร้าที่มีน้ำหนักเบา พร้อมจำนวนสินค้า ยอดรวมย่อย และยอดรวมทั้งหมด "
+"ทำงานได้เร็วกว่าการเรียกข้อมูลตะกร้าแบบเต็มรูปแบบ "
+"เหมาะสำหรับแสดงผลในป้ายตะกร้าส่วนหัวหรือแสดงยอดรวมอย่างรวดเร็ว"
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr "สินค้าประกอบไม่สามารถแก้ไขโดยตรงได้ ให้อัปเดตสินค้าหลักแทน"
+
+msgid "List user wishlists"
+msgstr "รายการรายการสินค้าที่ต้องการของผู้ใช้"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"ดึงรายการสิ่งที่อยากได้ทั้งหมดสำหรับผู้ใช้ที่ผ่านการยืนยันตัวตน "
+"ผู้ใช้สามารถมีรายการสิ่งที่อยากได้หลายรายการสำหรับวัตถุประสงค์ต่างกัน (เช่น 'วันเกิด', "
+"'วันแต่งงาน', 'ไอเดีย') คืนค่าชื่อรายการสิ่งที่อยากได้ จำนวนสินค้า และการตั้งค่าความเป็นส่วนตัว"
+
+msgid "Create wishlist"
+msgstr "สร้างรายการต้องการ"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"สร้างรายการสิ่งที่อยากได้ใหม่สำหรับผู้ใช้ที่ผ่านการยืนยันตัวตน ระบุชื่อ คำอธิบาย "
+"และการตั้งค่าความเป็นส่วนตัว (สาธารณะ/ส่วนตัว) รายการสิ่งที่อยากได้แบบสาธารณะสามารถแชร์ผ่าน "
+"URL ได้"
+
+msgid "Get wishlist details"
+msgstr "ดูรายละเอียดรายการสินค้าที่ต้องการ"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"ดึงข้อมูลรายละเอียดของรายการที่ต้องการโดยเฉพาะ รวมถึงสินค้า ราคา ความพร้อมใช้งาน "
+"และการตั้งค่าการแชร์ สามารถเข้าถึงได้เฉพาะเจ้าของรายการเว้นแต่รายการนั้นถูกแชร์สาธารณะ"
+
+msgid "Update wishlist"
+msgstr "อัปเดตรายการต้องการ"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"อัปเดตข้อมูลรายการที่ต้องการ รวมถึงชื่อ คำอธิบาย หรือการตั้งค่าความเป็นส่วนตัว "
+"สามารถตั้งค่ารายการให้เป็นสาธารณะหรือส่วนตัวได้ เฉพาะเจ้าของรายการเท่านั้นที่สามารถอัปเดตได้"
+
+msgid "Partially update wishlist"
+msgstr "อัปเดตรายการต้องการบางส่วน"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"อัปเดตฟิลด์รายการต้องการเฉพาะโดยไม่ต้องส่งข้อมูลรายการต้องการทั้งหมด ใช้ได้ดีสำหรับการเปิด/"
+"ปิดโหมดความเป็นส่วนตัวหรือเปลี่ยนชื่อรายการต้องการ"
+
+msgid "Delete wishlist"
+msgstr "ลบรายการต้องการ"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"ลบรายการต้องการของคุณและสิ่งของทั้งหมดในนั้นอย่างถาวร ไม่สามารถยกเลิกได้ "
+"ผู้ที่สามารถลบได้คือเจ้าของเท่านั้น"
+
+msgid "Add item to wishlist"
+msgstr "เพิ่มสินค้าลงในรายการต้องการ"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"เพิ่มสินค้าลงในรายการต้องการ โดยสามารถระบุตัวเลือก จำนวน และหมายเหตุได้ ป้องกันการเพิ่มซ้ำ "
+"สามารถเพิ่มลงในรายการต้องการเริ่มต้น หรือระบุ ID ของรายการต้องการได้"
+
+msgid "Remove item from wishlist"
+msgstr "ลบสินค้าออกจากรายการต้องการ"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"ลบรายการเฉพาะจากรายการต้องการ. สามารถเพิ่มรายการนี้กลับมาได้ในภายหลัง. "
+"ไม่ส่งผลต่อความพร้อมของสินค้า."
+
+msgid "Move item to cart"
+msgstr "ย้ายสินค้าไปยังตะกร้า"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"ย้ายรายการจากรายการต้องการไปยังตะกร้าช้อปปิ้งโดยตรง. ตรวจสอบความพร้อมของสินค้า. "
+"หลังจากเพิ่มรายการลงตะกร้าสำเร็จ รายการจะถูกลบออกจากรายการต้องการ."
+
+msgid "Get public wishlist by share slug"
+msgstr "ดึงรายการต้องการสาธารณะโดยใช้ share slug"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"ดูรายการสิ่งที่ต้องการของสาธารณะโดยใช้ URL ที่แชร์ "
+"ผู้ที่มีลิงก์สามารถดูรายการสิ่งที่ต้องการของสาธารณะได้ "
+"มีประโยชน์สำหรับการลงทะเบียนของขวัญและรายการสิ่งที่ต้องการที่แชร์กับครอบครัว/เพื่อน"
+
+msgid "ID of the wishlist item to remove"
+msgstr "ID ของรายการสินค้าในรายการต้องการที่ต้องการลบ"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "ID ของรายการสินค้าในรายการต้องการที่ต้องการย้ายไปยังตะกร้า"
+
+msgid "Share slug of the public wishlist"
+msgstr "Share slug ของรายการต้องการสาธารณะ"
+
+msgid "Wishlist not found"
+msgstr "ไม่พบรายการโปรด"
+
+msgid "Get checkout session"
+msgstr "เริ่มต้นการชำระเงิน"
+
+msgid "Set shipping address"
+msgstr "ตั้งค่าที่อยู่จัดส่ง"
+
+msgid "Set billing address"
+msgstr "ตั้งค่าที่อยู่ออกใบแจ้งหนี้"
+
+msgid "Get available shipping methods"
+msgstr "ดึงวิธีการจัดส่งที่มีอยู่"
+
+msgid "Get available payment providers"
+msgstr "ดึงผู้ให้บริการชำระเงินที่ใช้ได้"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"คืนค่าตัวเลือกการชำระเงินที่สามารถใช้ได้สำหรับประเทศและสกุลเงินของลูกค้า "
+"ตัวกรองจะพิจารณาจากประเทศที่ส่งของ ความสามารถของผู้ให้บริการ และการตั้งค่าของผู้ขาย"
+
+msgid "Set shipping method"
+msgstr "ตั้งค่าวิธีการจัดส่ง"
+
+msgid "Set payment method"
+msgstr "ตั้งค่าวิธีการชำระเงิน"
+
+msgid "Validate checkout"
+msgstr "ตรวจสอบขั้นตอนการชำระเงิน"
+
+msgid "Complete checkout"
+msgstr "สรุปขั้นตอนการชำระเงิน"
+
+msgid "Get recently viewed products"
+msgstr "ดึงสินค้าที่ดูล่าสุด"
+
+msgid "Get recently viewed details"
+msgstr "ดูรายละเอียดที่ดูล่าสุด"
+
+msgid "List shipping methods"
+msgstr "รายการวิธีการจัดส่ง"
+
+msgid "Get shipping method details"
+msgstr "ดูรายละเอียดวิธีการจัดส่ง"
+
+msgid "List tax rates"
+msgstr "รายการอัตราภาษี"
+
+msgid "Get tax rate details"
+msgstr "ดูรายละเอียดอัตราภาษี"
+
+msgid "Create tax rate"
+msgstr "สร้างอัตราภาษี"
+
+msgid "Update tax rate"
+msgstr "อัปเดตอัตราภาษี"
+
+msgid "Partial update tax rate"
+msgstr "อัปเดตอัตราภาษีบางส่วน"
+
+msgid "Delete tax rate"
+msgstr "ลบอัตราภาษี"
+
+msgid "Calculate applicable taxes"
+msgstr "คำนวณภาษีที่ใช้ได้"
+
+msgid "Tax rates grouped by country"
+msgstr "อัตราภาษีที่จัดกลุ่มตามประเทศ"
+
+msgid "Load preset tax rates"
+msgstr "โหลดอัตราภาษีที่ตั้งไว้ล่วงหน้า"
+
+msgid "List tax preset groups"
+msgstr "รายการกลุ่มอัตราภาษีที่ตั้งไว้ล่วงหน้า"
+
+msgid "Get preset group details"
+msgstr "ดึงรายละเอียดกลุ่มที่ตั้งไว้ล่วงหน้า"
+
+msgid "List rates in a preset group"
+msgstr "รายการอัตราในกลุ่มที่ตั้งไว้ล่วงหน้า"

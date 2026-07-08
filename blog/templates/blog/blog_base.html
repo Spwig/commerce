@@ -1,0 +1,107 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% block blog_title %}{% mtrans "Blog" %}{% endblock %} - {{ site_settings.site_name|default:"Shop" }}{% endblock %}
+
+{% block extra_head %}
+{% block blog_meta %}{% endblock %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'blog/css/blog_base.css' %}">
+{% block blog_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+{% block blog_breadcrumb %}{% endblock %}
+
+<div class="blog-layout blog-layout--padded{% block blog_layout_class %}{% endblock %}">
+    <div class="blog-layout__main">
+        {% block blog_content %}{% endblock %}
+    </div>
+
+    {% block blog_sidebar_wrapper %}
+    <aside class="blog-sidebar">
+        {% block blog_sidebar %}
+        <!-- Search -->
+        <div class="blog-sidebar__section">
+            <h3 class="blog-sidebar__heading">{% mtrans "Search" %}</h3>
+            <form class="blog-sidebar__search-form" action="{% url 'blog:list' %}" method="get">
+                <input type="text" name="search" class="blog-sidebar__search-input"
+                       placeholder="{% mtrans 'Search posts...' %}"
+                       value="{{ search_query|default:'' }}">
+                <button type="submit" class="blog-sidebar__search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Categories -->
+        {% if categories %}
+        <div class="blog-sidebar__section">
+            <h3 class="blog-sidebar__heading">{% mtrans "Categories" %}</h3>
+            <ul class="blog-sidebar__categories">
+                {% for cat in categories %}
+                <li>
+                    <a href="{% url 'blog:category' slug=cat.slug %}"
+                       class="blog-sidebar__category-link{% if current_category == cat.slug %} blog-sidebar__category-link--active{% endif %}">
+                        {{ cat.name }}
+                        <span class="blog-sidebar__category-count">{{ cat.post_count|default:"" }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Tags -->
+        {% if tags %}
+        <div class="blog-sidebar__section">
+            <h3 class="blog-sidebar__heading">{% mtrans "Tags" %}</h3>
+            <div class="blog-sidebar__tags">
+                {% for tag in tags %}
+                <a href="{% url 'blog:tag' slug=tag.slug %}"
+                   class="blog-sidebar__tag{% if current_tag == tag.slug %} blog-sidebar__tag--active{% endif %}">
+                    {{ tag.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Subscribe -->
+        {% if blog_settings.enable_subscriptions %}
+        <div class="blog-sidebar__section">
+            <h3 class="blog-sidebar__heading">{% mtrans "Subscribe" %}</h3>
+            <form id="blog-subscribe-form"
+                  data-subscribe-url="{% url 'blog:subscribe' %}"
+                  data-message-el="subscribe-msg">
+                <input type="email" name="email" class="blog-sidebar__subscribe-input"
+                       placeholder="{% mtrans 'Your email address' %}" required>
+                <button type="submit" class="blog-sidebar__subscribe-btn">
+                    <i class="fas fa-envelope"></i> {% mtrans "Subscribe" %}
+                </button>
+                <div id="subscribe-msg" class="blog-sidebar__subscribe-msg"></div>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- RSS -->
+        {% if blog_settings.rss_enabled %}
+        <a href="{% url 'blog:rss_feed' %}" class="blog-sidebar__rss">
+            <i class="fas fa-rss"></i> {% mtrans "RSS Feed" %}
+        </a>
+        {% endif %}
+        {% endblock %}
+    </aside>
+    {% endblock %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+{% if blog_settings.enable_subscriptions %}
+<script src="{% static 'blog/js/blog-subscribe.js' %}" defer></script>
+{% endif %}
+{% block blog_scripts %}{% endblock %}
+{% endblock %}

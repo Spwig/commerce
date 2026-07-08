@@ -1,0 +1,181 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+.countdown-timer {
+    --countdown-number-color: var(--theme-element-countdown-number-color, var(--theme-color-text, #1a1a1a));
+    --countdown-label-color: var(--theme-element-countdown-label-color, var(--theme-color-text-light, #666));
+    --countdown-card-bg: var(--theme-element-countdown-bg, var(--theme-color-background-secondary, #f5f5f5));
+    --countdown-separator-color: var(--theme-element-countdown-separator-color, var(--theme-color-text-muted, #999));
+    padding: 1.5rem 0;
+}
+
+.countdown-timer__header {
+    margin-bottom: 1.5rem;
+}
+
+.countdown-timer__title {
+    font-size: var(--theme-font-size-2xl, 1.5rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    margin: 0 0 0.25rem;
+    color: var(--countdown-number-color);
+}
+
+.countdown-timer__subtitle {
+    font-size: var(--theme-font-size-base, 1rem);
+    color: var(--countdown-label-color);
+    margin: 0;
+}
+
+.countdown-timer__display {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.countdown-timer__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.countdown-timer__value {
+    position: relative;
+}
+
+.countdown-timer__number {
+    font-size: 2.5rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--countdown-number-color);
+    display: block;
+    padding: 0.5rem 0.75rem;
+}
+
+.countdown-timer__label {
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--countdown-label-color);
+    margin-top: 0.5rem;
+}
+
+.countdown-timer__separator {
+    font-size: 2rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    color: var(--countdown-separator-color);
+    align-self: flex-start;
+    padding-top: 0.5rem;
+    line-height: 1;
+}
+
+/* Flip Card Style */
+.countdown-timer--flip .countdown-timer__value {
+    background: var(--countdown-card-bg);
+    border-radius: var(--theme-radius-md, 0.5rem);
+    box-shadow: var(--theme-shadow-sm, 0 2px 4px rgba(0,0,0,0.1));
+    overflow: hidden;
+}
+
+.countdown-timer--flip .countdown-timer__number {
+    background: linear-gradient(180deg, var(--countdown-card-bg) 50%, var(--theme-color-overlay, rgba(0,0,0,0.05)) 50%);
+}
+
+/* Minimal Style */
+.countdown-timer--minimal .countdown-timer__number {
+    background: none;
+    padding: 0.25rem;
+}
+
+.countdown-timer--minimal .countdown-timer__value {
+    background: none;
+}
+
+/* Bold Style */
+.countdown-timer--bold .countdown-timer__value {
+    background: var(--countdown-card-bg);
+    border-radius: var(--theme-radius-lg, 0.75rem);
+    padding: 0.25rem;
+}
+
+.countdown-timer--bold .countdown-timer__number {
+    font-size: 3rem;
+    font-weight: var(--theme-font-weight-bold, 800);
+}
+
+/* Circular Style */
+.countdown-timer--circular .countdown-timer__unit {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    justify-content: center;
+}
+
+.countdown-timer--circular .countdown-timer__value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid var(--countdown-card-bg);
+    border-radius: 50%;
+}
+
+.countdown-timer--circular .countdown-timer__number {
+    font-size: var(--theme-font-size-2xl, 1.5rem);
+    padding: 0;
+}
+
+.countdown-timer--circular .countdown-timer__label {
+    position: absolute;
+    bottom: -1.5rem;
+}
+
+/* Size Variants */
+.countdown-timer--sm .countdown-timer__number { font-size: 1.75rem; }
+.countdown-timer--sm .countdown-timer__unit { min-width: 45px; }
+.countdown-timer--sm .countdown-timer__label { font-size: 0.65rem; }
+.countdown-timer--sm .countdown-timer__separator { font-size: var(--theme-font-size-2xl, 1.5rem); }
+
+.countdown-timer--lg .countdown-timer__number { font-size: 3.5rem; }
+.countdown-timer--lg .countdown-timer__unit { min-width: 80px; }
+.countdown-timer--lg .countdown-timer__label { font-size: var(--theme-font-size-sm, 0.875rem); }
+.countdown-timer--lg .countdown-timer__separator { font-size: 2.5rem; }
+
+.countdown-timer--xl .countdown-timer__number { font-size: 4.5rem; }
+.countdown-timer--xl .countdown-timer__unit { min-width: 100px; }
+.countdown-timer--xl .countdown-timer__label { font-size: var(--theme-font-size-base, 1rem); }
+.countdown-timer--xl .countdown-timer__separator { font-size: 3rem; }
+
+/* Expired State */
+.countdown-timer__expired {
+    padding: 1rem;
+}
+
+.countdown-timer__expired-message {
+    font-size: var(--theme-font-size-xl, 1.25rem);
+    color: var(--countdown-label-color);
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .countdown-timer__display {
+        gap: 0.25rem;
+    }
+    .countdown-timer__number {
+        font-size: 1.75rem;
+        padding: 0.35rem 0.5rem;
+    }
+    .countdown-timer__unit {
+        min-width: 50px;
+    }
+    .countdown-timer__separator {
+        font-size: var(--theme-font-size-xl, 1.25rem);
+    }
+    .countdown-timer--lg .countdown-timer__number,
+    .countdown-timer--xl .countdown-timer__number {
+        font-size: 2.25rem;
+    }
+}

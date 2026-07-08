@@ -1,0 +1,150 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Update Payment Method" %} - {{ subscription.store_name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li><a href="{% url 'accounts:dashboard' %}" class="text-gray-700 hover:text-blue-600">{% trans "Account" %}</a></li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <a href="{% url 'accounts:hosting_detail' %}" class="text-gray-700 hover:text-blue-600">{% trans "Hosting Subscription" %}</a>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <span class="text-gray-500">{% trans "Update Payment Method" %}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Current Payment Card -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-credit-card text-blue-600 text-xl mr-3"></i>
+                        <h1 class="text-xl font-bold text-gray-900">{% trans "Update Payment Method" %}</h1>
+                    </div>
+                </div>
+
+                <!-- Current Payment Info -->
+                {% if subscription.airwallex_consent_id %}
+                <div class="bg-gray-50 p-4 mx-4 mt-4 rounded-lg border border-gray-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-lock text-gray-400 mr-3"></i>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">{% trans "Current Payment Method" %}</p>
+                            <p class="text-sm text-gray-500 mt-0.5">{% trans "Card on file" %}</p>
+                        </div>
+                        <span class="ml-auto px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check mr-1"></i>{% trans "Active" %}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="p-6">
+                    <!-- Informational Message -->
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded">
+                        <div class="flex">
+                            <i class="fas fa-shield-alt text-blue-400 mt-0.5 mr-3"></i>
+                            <p class="text-sm text-blue-700">
+                                {% trans "Enter your new card details below. Your card will be verified with a small temporary hold." %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Airwallex Drop-in Mount Point -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">{% trans "New Card Details" %}</label>
+                        <div
+                            id="airwallex-card-element"
+                            class="min-h-16 border border-gray-300 rounded-lg bg-white p-3"
+                        >
+                            <!-- Airwallex Drop-in SDK will be mounted here -->
+                        </div>
+                    </div>
+
+                    <form method="post" action="" id="update-payment-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="payment_intent_id" id="payment-intent-id" value="">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button type="submit" id="update-payment-btn" class="inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-credit-card mr-2"></i>
+                                {% trans "Update Payment Method" %}
+                            </button>
+                            <a href="{% url 'accounts:hosting_detail' %}" class="inline-flex items-center justify-center px-6 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                {% trans "Go Back" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Subscription Summary -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">{% trans "Your Subscription" %}</h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Store" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ subscription.store_name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Plan" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ subscription.hosted_plan.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Status" %}</dt>
+                        <dd class="mt-1">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if subscription.status == 'active' %}bg-green-100 text-green-800
+                                {% elif subscription.status == 'past_due' %}bg-amber-100 text-amber-800
+                                {% elif subscription.status == 'suspended' %}bg-red-100 text-red-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ subscription.get_status_display }}
+                            </span>
+                        </dd>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-lock text-gray-400 mt-0.5 mr-3"></i>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-900 mb-1">{% trans "Secure Payment" %}</h3>
+                            <p class="text-sm text-gray-600">{% trans "Your card details are handled securely by Airwallex and are never stored on our servers." %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-2">{% trans "Need help?" %}</h3>
+                    <p class="text-sm text-gray-600 mb-3">{% trans "Our support team is here to help with any questions about your hosting subscription." %}</p>
+                    <a href="mailto:support@spwig.com" class="text-sm text-blue-600 hover:text-blue-800">support@spwig.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

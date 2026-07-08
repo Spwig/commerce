@@ -1,0 +1,1197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Indonesian <LL@li.org>\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Provider Information"
+msgstr "Informasi Provider"
+
+msgid "Configuration"
+msgstr "Konfigurasi"
+
+msgid "Credentials"
+msgstr "Kredensial"
+
+msgid ""
+"Credentials are encrypted and managed through the provider wizard. To update "
+"credentials, reinstall the provider."
+msgstr ""
+"Kredensial dienkripsi dan dikelola melalui wizard penyedia. Untuk "
+"memperbarui kredensial, instal ulang penyedia."
+
+msgid "Sync Status"
+msgstr "Status Sinkronisasi"
+
+msgid "Timestamps"
+msgstr "Waktu Timestamp"
+
+msgid "Name"
+msgstr "Nama"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Primary"
+msgstr "Utama"
+
+msgid "Credentials are encrypted and stored securely"
+msgstr "Kredensial dienkripsi dan disimpan secara aman"
+
+msgid "No credentials configured"
+msgstr "Tidak ada kredensial yang dikonfigurasi"
+
+msgid "Currency Pair"
+msgstr "Pasangan Mata Uang"
+
+msgid "Stale"
+msgstr "Kadaluarsa"
+
+msgid "Fresh"
+msgstr "Baru"
+
+msgid "Order"
+msgstr "Pemesanan"
+
+msgid "Rate"
+msgstr "Kurs"
+
+msgid "Settings"
+msgstr "Pengaturan"
+
+msgid "ACTIVE"
+msgstr "AKTIF"
+
+msgid "INACTIVE"
+msgstr "TIDAK AKTIF"
+
+msgid "Notes"
+msgstr "Catatan"
+
+msgid "List manual exchange rates"
+msgstr "Daftar tingkat pertukaran manual"
+
+msgid ""
+"Returns all manual exchange rates for the current site. Staff authentication "
+"required."
+msgstr ""
+"Mengembalikan semua tingkat pertukaran manual untuk situs saat ini. "
+"Autentikasi staf diperlukan."
+
+msgid "Create a manual exchange rate"
+msgstr "Buat tingkat pertukaran manual"
+
+msgid ""
+"Create a new manual exchange rate for a currency pair. Only one rate per "
+"currency pair is allowed. Manual rates take precedence over provider rates "
+"when active."
+msgstr ""
+"Buat tingkat pertukaran manual baru untuk pasangan mata uang. Hanya satu "
+"tingkat per pasangan mata uang yang diperbolehkan. Tingkat manual mengambil "
+"prioritas atas tingkat penyedia saat aktif."
+
+msgid "Rate created successfully"
+msgstr "Tingkat berhasil dibuat"
+
+msgid "Validation error (duplicate pair, invalid rate, etc.)"
+msgstr "Kesalahan validasi (pasangan duplikat, tingkat tidak valid, dll.)"
+
+msgid "Get manual exchange rate details"
+msgstr "Dapatkan detail tingkat pertukaran manual"
+
+msgid "Retrieve a specific manual exchange rate by ID."
+msgstr "Dapatkan tingkat pertukaran manual spesifik berdasarkan ID."
+
+msgid "Update a manual exchange rate"
+msgstr "Perbarui tingkat pertukaran manual"
+
+msgid "Fully update a manual exchange rate. All fields required."
+msgstr ""
+"Perbarui sepenuhnya tingkat pertukaran manual. Semua bidang diperlukan."
+
+msgid "Rate updated successfully"
+msgstr "Tingkat berhasil diperbarui"
+
+msgid "Partially update a manual exchange rate"
+msgstr "Perbarui sebagian tingkat pertukaran manual"
+
+msgid ""
+"Update specific fields of a manual exchange rate. Commonly used to update "
+"just the rate value."
+msgstr ""
+"Perbarui bidang spesifik dari tingkat pertukaran manual. Biasanya digunakan "
+"untuk memperbarui hanya nilai tingkat."
+
+msgid "Delete a manual exchange rate"
+msgstr "Hapus tingkat pertukaran manual"
+
+msgid ""
+"Permanently delete a manual exchange rate. The system will fall back to "
+"provider rates for this currency pair."
+msgstr ""
+"Hapus permanen tingkat pertukaran manual. Sistem akan kembali ke tingkat "
+"penyedia untuk pasangan mata uang ini."
+
+msgid "Rate deleted successfully"
+msgstr "Tingkat berhasil dihapus"
+
+msgid "Manual exchange rate created successfully."
+msgstr "Kurs manual berhasil dibuat."
+
+msgid "Failed to create manual exchange rate."
+msgstr "Gagal membuat tingkat pertukaran manual."
+
+msgid "Manual exchange rate updated successfully."
+msgstr "Kurs manual berhasil diperbarui."
+
+msgid "Failed to update manual exchange rate."
+msgstr "Gagal memperbarui tingkat pertukaran manual."
+
+msgid "Manual exchange rate deleted successfully."
+msgstr "Kurs manual berhasil dihapus."
+
+msgid "Toggle manual rate active status"
+msgstr "Aktifkan status tingkat manual"
+
+msgid ""
+"Toggle the active/inactive status of a manual exchange rate. When "
+"deactivated, the system falls back to provider rates."
+msgstr ""
+"Ubah status aktif/tidak aktif dari tingkat pertukaran manual. Ketika "
+"dinonaktifkan, sistem akan kembali ke tingkat penyedia."
+
+msgid "Status toggled successfully"
+msgstr "Status berhasil diaktifkan"
+
+msgid "Rate {} successfully"
+msgstr "Kurs {} berhasil"
+
+msgid "activated"
+msgstr "diaktifkan"
+
+msgid "deactivated"
+msgstr "dinonaktifkan"
+
+msgid "Bulk create or update manual rates"
+msgstr "Buat atau perbarui tingkat manual secara massal"
+
+msgid ""
+"Create or update multiple manual exchange rates in a single request. Each "
+"rate is identified by its base_currency + target_currency pair. If a rate "
+"for the pair already exists, it is updated; otherwise a new one is created. "
+"Maximum 100 rates per request.\n"
+"\n"
+"**Request body example:**\n"
+"```json\n"
+"{\n"
+"  \"rates\": [\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"EUR\", \"rate\": "
+"\"0.92\"},\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"GBP\", \"rate\": "
+"\"0.79\", \"is_active\": true}\n"
+"  ]\n"
+"}\n"
+"```"
+msgstr ""
+"Buat atau perbarui beberapa tingkat pertukaran manual dalam satu permintaan. "
+"Setiap tingkat diidentifikasi oleh pasangan base_currency + target_currency-"
+"nya. Jika tingkat untuk pasangan tersebut sudah ada, maka akan diperbarui; "
+"jika tidak, satu yang baru akan dibuat. Maksimal 100 tingkat per permintaan. "
+"**Contoh tubuh permintaan:** ```json {\n"
+"  \"rates\": [\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"EUR\", \"rate\": "
+"\"0.92\"},\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"GBP\", \"rate\": "
+"\"0.79\", \"is_active\": true}\n"
+"  ]\n"
+"} ```"
+
+msgid "Bulk operation completed"
+msgstr "Operasi batch selesai"
+
+msgid "Invalid request data."
+msgstr "Data permintaan tidak valid."
+
+msgid "base_currency, target_currency, and rate are required."
+msgstr "base_currency, target_currency, dan rate diperlukan."
+
+msgid "Base and target currencies must be different."
+msgstr "Mata uang dasar dan target harus berbeda."
+
+msgid "Exchange rate must be greater than zero."
+msgstr "Tingkat pertukaran harus lebih besar dari nol."
+
+msgid "Invalid rate value."
+msgstr "Nilai tingkat tidak valid."
+
+#, python-format
+msgid "Bulk operation completed: %(created)d created, %(updated)d updated."
+msgstr "Operasi batch selesai: %(created)d dibuat, %(updated)d diperbarui."
+
+msgid "Sync manual rates from provider"
+msgstr "Sinkronkan tingkat manual dari penyedia"
+
+msgid ""
+"Auto-populate manual exchange rates from the latest provider rates. Rates "
+"marked as locked (exclude_from_auto_sync) will be skipped. Creates new "
+"manual rates or updates existing unlocked ones."
+msgstr ""
+"Mengisi otomatis kurs pertukaran manual dari kurs terbaru penyedia. Kurs "
+"yang ditandai sebagai terkunci (exclude_from_auto_sync) akan diabaikan. "
+"Membuat kurs manual baru atau memperbarui kurs yang sudah ada yang tidak "
+"terkunci."
+
+msgid "Sync completed"
+msgstr "Sinkronisasi selesai"
+
+msgid "Sync failed"
+msgstr "Sinkronisasi gagal"
+
+msgid "No provider rate available"
+msgstr "Tidak ada tingkat penyedia yang tersedia"
+
+#, python-format
+msgid "Synced from provider on %(date)s"
+msgstr "Disinkronkan dari penyedia pada %(date)s"
+
+#, python-format
+msgid ""
+"Sync complete: %(created)d created, %(updated)d updated, %(skipped)d locked "
+"(skipped)"
+msgstr ""
+"Sinkronisasi selesai: %(created)d dibuat, %(updated)d diperbarui, "
+"%(skipped)d terkunci (dilewati)"
+
+msgid "An error occurred during sync."
+msgstr "Terjadi kesalahan selama sinkronisasi."
+
+msgid "Exchange Rates"
+msgstr "Kurs Tukar"
+
+msgid "Site"
+msgstr "Situs"
+
+msgid "Site this provider account belongs to"
+msgstr "Situs yang dimiliki oleh akun penyedia ini"
+
+msgid "Provider Component"
+msgstr "Komponen Pemasok"
+
+msgid "Exchange rate provider component from update system"
+msgstr "Komponen penyedia kurs dari sistem pembaruan"
+
+msgid "Account Name"
+msgstr "Nama Akun"
+
+msgid ""
+"Friendly name for this provider account (e.g., 'Main Exchange Rate Provider')"
+msgstr ""
+"Nama ramah untuk akun penyedia ini (misalnya, 'Main Exchange Rate Provider')"
+
+msgid "Encrypted Credentials"
+msgstr "Kredensial Terenkripsi"
+
+msgid "Encrypted API credentials for this provider"
+msgstr "Kredensial API terenkripsi untuk penyedia ini"
+
+msgid "Active"
+msgstr "Aktif"
+
+msgid ""
+"Whether this provider account is active and should be used for rate fetching"
+msgstr ""
+"Apakah akun penyedia ini aktif dan harus digunakan untuk pengambilan kurs"
+
+msgid "Primary Provider"
+msgstr "Penyedia Utama"
+
+msgid "Use this provider as primary source for exchange rates"
+msgstr "Gunakan penyedia ini sebagai sumber utama untuk kurs"
+
+msgid "Priority"
+msgstr "Prioritas"
+
+msgid "Priority for fallback chain (lower = higher priority)"
+msgstr ""
+"Prioritas untuk rantai cadangan (lebih rendah = prioritas lebih tinggi)"
+
+msgid "Provider Settings"
+msgstr "Pengaturan Pemasok"
+
+msgid "Provider-specific settings and configuration"
+msgstr "Pengaturan dan konfigurasi spesifik pemilik"
+
+msgid "Last Sync At"
+msgstr "Terakhir Disinkronkan Pada"
+
+msgid "When rates were last successfully fetched"
+msgstr "Kapan kurs terakhir berhasil diambil"
+
+msgid "Pending"
+msgstr "Menunggu"
+
+msgid "Success"
+msgstr "Berhasil"
+
+msgid "Error"
+msgstr "Kesalahan"
+
+msgid "Sync Error Message"
+msgstr "Pesan Kesalahan Sinkronisasi"
+
+msgid "Error message from last sync attempt"
+msgstr "Pesan kesalahan dari upaya sinkronisasi terakhir"
+
+msgid "Exchange Rate Provider Account"
+msgstr "Akun Pemasok Kurs Tukar"
+
+msgid "Exchange Rate Provider Accounts"
+msgstr "Akun Pemasok Kurs Tukar"
+
+msgid "Provider Account"
+msgstr "Akun Pemasok"
+
+msgid "Base Currency"
+msgstr "Mata Uang Dasar"
+
+msgid "Base currency code (e.g., 'USD')"
+msgstr "Kode mata uang dasar (misalnya, 'USD')"
+
+msgid "Target Currency"
+msgstr "Mata Uang Tujuan"
+
+msgid "Target currency code (e.g., 'EUR')"
+msgstr "Kode mata uang tujuan (misalnya, 'EUR')"
+
+msgid "Exchange Rate"
+msgstr "Kurs Tukar"
+
+msgid "Exchange rate from base to target (e.g., 0.85 means 1 USD = 0.85 EUR)"
+msgstr "Kurs dari dasar ke target (misalnya, 0.85 berarti 1 USD = 0.85 EUR)"
+
+msgid "Fetched At"
+msgstr "Diperoleh Pada"
+
+msgid "When this rate was last fetched from provider"
+msgstr "Kapan kurs ini terakhir diambil dari penyedia"
+
+msgid "Provider Name"
+msgstr "Nama Pemberi"
+
+msgid "Name of exchange rate provider used"
+msgstr "Nama penyedia kurs yang digunakan"
+
+msgid "Created At"
+msgstr "Dibuat Pada"
+
+msgid "When this rate snapshot was created"
+msgstr "Kapan snapshot kurs ini dibuat"
+
+msgid "Exchange Rate History"
+msgstr "Riwayat Kurs Tukar"
+
+msgid "Site this manual rate belongs to"
+msgstr "Situs yang termasuk dalam tarif manual ini"
+
+msgid ""
+"Exchange rate from base to target (e.g., 0.85 means 1 base = 0.85 target)"
+msgstr ""
+"Tarif pertukaran dari dasar ke target (misalnya, 0.85 berarti 1 dasar = 0.85 "
+"target)"
+
+msgid "Whether this manual rate is active and should be used for conversions"
+msgstr "Apakah tarif manual ini aktif dan harus digunakan untuk konversi"
+
+msgid "Locked (Exclude from Auto-Sync)"
+msgstr "Terkunci (Dikeluarkan dari Sinkronisasi Otomatis)"
+
+msgid ""
+"When enabled, this rate will not be overwritten by provider sync operations. "
+"Use for rates you manage manually."
+msgstr ""
+"Ketika diaktifkan, tingkat ini tidak akan tertimpa oleh operasi sinkronisasi "
+"penyedia. Gunakan untuk tingkat yang Anda kelola secara manual."
+
+msgid ""
+"Optional notes about this rate (e.g., 'Fixed rate for wholesale customers')"
+msgstr ""
+"Catatan opsional tentang tingkat ini (misalnya, 'Tingkat tetap untuk "
+"pelanggan grosir')"
+
+msgid "Manual Exchange Rate"
+msgstr "Tingkat Pertukaran Manual"
+
+msgid "Manual Exchange Rates"
+msgstr "Tingkat Pertukaran Manual"
+
+msgid "Inactive"
+msgstr "Tidak Aktif"
+
+msgid ""
+"\n"
+"        <h3>Fixer.io Setup</h3>\n"
+"        <ol>\n"
+"            <li>Sign up at <a href=\"https://fixer.io/product\" "
+"target=\"_blank\">fixer.io/product</a></li>\n"
+"            <li>Get your Access Key from the <a href=\"https://fixer.io/"
+"dashboard\" target=\"_blank\">dashboard</a></li>\n"
+"            <li>Enter your Access Key in the credentials field</li>\n"
+"        </ol>\n"
+"        <p><strong>Free Tier:</strong> 100 requests/month (sufficient for ~3 "
+"daily updates)</p>\n"
+"        <p><strong>Paid Plans:</strong> From $10/month for 1,000 requests</"
+"p>\n"
+"        <p><strong>Data Source:</strong> European Central Bank (ECB)</p>\n"
+"        <p><strong>Note:</strong> Free tier only provides EUR as base "
+"currency. Historical rates and custom base currencies require paid plans.</"
+"p>\n"
+"        <p><strong>Best For:</strong> EU-based stores requiring ECB "
+"compliance</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h3>Pengaturan Fixer.io</h3> <ol> <li>Daftar di <a href=\"https://"
+"fixer.io/product\" target=\"_blank\">fixer.io/product</a></li> <li>Dapatkan "
+"Access Key Anda dari <a href=\"https://fixer.io/dashboard\" "
+"target=\"_blank\">dashboard</a></li> <li>Masukkan Access Key Anda ke dalam "
+"bidang kredensial</li> </ol> <p><strong>Tier Gratis:</strong> 100 permintaan/"
+"bulan (cukup untuk ~3 pembaruan harian)</p> <p><strong>Rencana Berbayar:</"
+"strong> Mulai dari $10/bulan untuk 1.000 permintaan</p> <p><strong>Sumber "
+"Data:</strong> Bank Sentral Eropa (ECB)</p> <p><strong>Catatan:</strong> "
+"Tier gratis hanya menyediakan EUR sebagai mata uang dasar. Tingkat historis "
+"dan mata uang dasar khusus memerlukan rencana berbayar.</p> <p><strong>Tepat "
+"Untuk:</strong> Toko berbasis EU yang memerlukan kepatuhan ECB</p>\n"
+"        "
+
+msgid ""
+"\n"
+"        <h3>Open Exchange Rates Setup</h3>\n"
+"        <ol>\n"
+"            <li>Sign up at <a href=\"https://openexchangerates.org/signup\" "
+"target=\"_blank\">openexchangerates.org/signup</a></li>\n"
+"            <li>Get your App ID from the <a href=\"https://openexchangerates."
+"org/account/app-ids\" target=\"_blank\">dashboard</a></li>\n"
+"            <li>Enter your App ID in the credentials field</li>\n"
+"        </ol>\n"
+"        <p><strong>Free Tier:</strong> 1,000 requests/month (sufficient for "
+"~30 daily updates)</p>\n"
+"        <p><strong>Paid Plans:</strong> From $12/month for unlimited "
+"requests and hourly updates</p>\n"
+"        <p><strong>Note:</strong> Free tier only provides USD as base "
+"currency and daily updates. Historical rates and cryptocurrency support "
+"require paid plans.</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h3>Pengaturan Open Exchange Rates</h3> <ol> <li>Daftar di <a "
+"href=\"https://openexchangerates.org/signup\" "
+"target=\"_blank\">openexchangerates.org/signup</a></li> <li>Dapatkan App ID "
+"Anda dari <a href=\"https://openexchangerates.org/account/app-ids\" "
+"target=\"_blank\">dashboard</a></li> <li>Masukkan App ID Anda ke dalam "
+"bidang kredensial</li> </ol> <p><strong>Tier Gratis:</strong> 1.000 "
+"permintaan/bulan (cukup untuk ~30 pembaruan harian)</p> <p><strong>Rencana "
+"Berbayar:</strong> Mulai dari $12/bulan untuk permintaan tak terbatas dan "
+"pembaruan jam demi jam</p> <p><strong>Catatan:</strong> Tier gratis hanya "
+"menyediakan USD sebagai mata uang dasar dan pembaruan harian. Tingkat "
+"historis dan dukungan cryptocurrency memerlukan rencana berbayar.</p>\n"
+"        "
+
+msgid ""
+"List of rate objects with base_currency, target_currency, rate, and optional "
+"is_active/notes"
+msgstr ""
+"Daftar objek tingkat dengan base_currency, target_currency, rate, dan "
+"opsional is_active/notes"
+
+msgid "Exchange Rate Providers"
+msgstr "Penyedia Tingkat Pertukaran"
+
+msgid "Site Admin"
+msgstr "Admin Situs"
+
+msgid "Manage currency exchange rate provider integrations"
+msgstr "Kelola integrasi penyedia kurs mata uang"
+
+msgid "provider"
+msgstr "pemberi"
+
+msgid "active"
+msgstr "aktif"
+
+msgid "Browse Providers"
+msgstr "Lihat Penyedia"
+
+msgid "Bulk Actions"
+msgstr "Aksi Massal"
+
+msgid "Enable Selected"
+msgstr "Aktifkan yang Dipilih"
+
+msgid "Disable Selected"
+msgstr "Nonaktifkan yang Dipilih"
+
+msgid "Set as Primary"
+msgstr "Setel sebagai Utama"
+
+msgid "Sync Rates"
+msgstr "Sinkronkan Kurs"
+
+msgid "Delete Selected"
+msgstr "Hapus yang Dipilih"
+
+msgid "Apply"
+msgstr "Terapkan"
+
+msgid "selected"
+msgstr "dipilih"
+
+msgid "All Sync Statuses"
+msgstr "Semua Status Sinkronisasi"
+
+msgid "All Active Status"
+msgstr "Semua Status Aktif"
+
+msgid "All Providers"
+msgstr "Semua Pemasok"
+
+msgid "Search providers..."
+msgstr "Cari pemberi..."
+
+msgid "Select All"
+msgstr "Pilih Semua"
+
+#, python-format
+msgid "%(counter)s provider"
+msgid_plural "%(counter)s providers"
+msgstr[0] "%(counter)s pemasok"
+msgstr[1] "%(counter)s pemasok"
+
+msgid "No provider accounts found"
+msgstr "Tidak ditemukan akun pemasok"
+
+msgid "Try adjusting your filters or search query."
+msgstr "Coba sesuaikan filter atau query pencarian Anda."
+
+msgid "Get started by connecting your first exchange rate provider."
+msgstr "Mulailah dengan menghubungkan penyedia kurs pertama Anda."
+
+msgid "Browse & Install Providers"
+msgstr "Jelajahi & Pasang Penyedia"
+
+msgid "Loading..."
+msgstr "Memuat..."
+
+msgid "Provider:"
+msgstr "Penyedia:"
+
+msgid "Last synced:"
+msgstr "Terakhir disinkronkan:"
+
+msgid "ago"
+msgstr "yang lalu"
+
+msgid "Never synced"
+msgstr "Pernah disinkronkan"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Disable"
+msgstr "Nonaktifkan"
+
+msgid "Enable"
+msgstr "Aktifkan"
+
+msgid "Delete"
+msgstr "Hapus"
+
+msgid "Set and manage exchange rates manually for currency conversions"
+msgstr ""
+"Atur dan kelola tingkat pertukaran secara manual untuk konversi mata uang"
+
+msgid "rate"
+msgstr "kurs"
+
+msgid "inactive"
+msgstr "tidak aktif"
+
+msgid "locked"
+msgstr "terkunci"
+
+msgid "Sync from Provider"
+msgstr "Sinkronisasi dari Penyedia"
+
+msgid "Add Rate"
+msgstr "Tambah Kurs"
+
+msgid ""
+"Manual rates take precedence over provider-fetched rates. Lock rates to "
+"prevent them from being overwritten during provider sync."
+msgstr ""
+"Tingkat manual memiliki prioritas lebih tinggi dibandingkan tingkat yang "
+"didapatkan dari penyedia. Kunci tingkat untuk mencegahnya tertimpa selama "
+"sinkronisasi penyedia."
+
+msgid "Updated"
+msgstr "Diperbarui"
+
+msgid "Locked"
+msgstr "Terkunci"
+
+msgid "Unlock (allow auto-sync)"
+msgstr "Buka Kunci (izinkan sinkronisasi otomatis)"
+
+msgid "Lock (exclude from auto-sync)"
+msgstr "Kunci (keluarkan dari sinkronisasi otomatis)"
+
+msgid "Deactivate"
+msgstr "Nonaktifkan"
+
+msgid "Activate"
+msgstr "Aktifkan"
+
+msgid "No manual exchange rates"
+msgstr "Tidak ada tingkat pertukaran manual"
+
+msgid ""
+"Add manual exchange rates to define fixed conversion rates between "
+"currencies."
+msgstr ""
+"Tambahkan tingkat pertukaran manual untuk mendefinisikan tingkat konversi "
+"tetap antar mata uang."
+
+msgid "Add Your First Rate"
+msgstr "Tambahkan Kurs Pertama Anda"
+
+msgid "Syncing from Provider"
+msgstr "Sinkronisasi dari Penyedia"
+
+msgid "Fetching latest provider rates and updating unlocked manual rates..."
+msgstr ""
+"Mengambil tingkat penyedia terbaru dan memperbarui tingkat manual yang tidak "
+"terkunci..."
+
+msgid "Browse Exchange Rate Providers"
+msgstr "Lihat Pemasok Kurs Tukar"
+
+msgid "Home"
+msgstr "Beranda"
+
+msgid "Provider Accounts"
+msgstr "Akun Pemasok"
+
+msgid ""
+"Choose an exchange rate provider to integrate with your store. Install new "
+"providers or configure existing ones."
+msgstr ""
+"Pilih penyedia kurs valuta asing untuk diintegrasikan dengan toko Anda. "
+"Pasang penyedia baru atau konfigurasikan penyedia yang sudah ada."
+
+msgid "Update Server Unavailable"
+msgstr "Server Tidak Tersedia untuk Pembaruan"
+
+msgid ""
+"Could not connect to the update server. Showing locally installed providers "
+"only."
+msgstr ""
+"Tidak dapat terhubung ke server pembaruan. Hanya menampilkan penyedia yang "
+"terinstal secara lokal."
+
+msgid "Exchange Rate Provider Marketplace"
+msgstr "Pasar Pemasok Kurs Tukar"
+
+msgid ""
+"Here you can discover and install exchange rate providers to automate your "
+"currency conversion, including live rates, historical data, and multi-"
+"currency support."
+msgstr ""
+"Di sini Anda dapat menemukan dan memasang penyedia kurs valuta asing untuk "
+"mengotomatisasi konversi mata uang, termasuk kurs langsung, data historis, "
+"dan dukungan multi-mata uang."
+
+msgid "What you can do:"
+msgstr "Apa yang dapat Anda lakukan:"
+
+msgid "Browse available exchange rate providers by feature and pricing"
+msgstr ""
+"Lihat penyedia kurs valuta asing yang tersedia berdasarkan fitur dan harga"
+
+msgid "Install new providers with one click"
+msgstr "Pasang penyedia baru dengan satu klik"
+
+msgid "Update installed providers to the latest versions"
+msgstr "Perbarui penyedia yang telah dipasang ke versi terbaru"
+
+msgid "Configure provider settings after installation"
+msgstr "Konfigurasikan pengaturan pemasok setelah pemasangan"
+
+msgid "Getting Started:"
+msgstr "Memulai:"
+
+msgid "Browse providers below and find the right one for you"
+msgstr "Lihat penyedia di bawah ini dan temukan yang sesuai untuk Anda"
+
+msgid "Click 'Install' to add the provider to your store"
+msgstr "Klik 'Pasang' untuk menambahkan penyedia ke toko Anda"
+
+msgid "Navigate to Settings to configure API credentials"
+msgstr "Navigasikan ke Pengaturan untuk mengkonfigurasi kredensial API"
+
+msgid "Test the provider connection and sync exchange rates"
+msgstr "Uji koneksi penyedia dan sinkronkan kurs valuta asing"
+
+#, python-format
+msgid ""
+"\n"
+"                    Currently: %(counter)s provider available\n"
+"                "
+msgid_plural ""
+"\n"
+"                    Currently: %(counter)s providers available\n"
+"                "
+msgstr[0] ""
+"\n"
+"                    Saat ini: %(counter)s penyedia tersedia\n"
+"                "
+msgstr[1] ""
+"\n"
+"                    Currently: %(counter)s provider available\n"
+"                "
+
+msgid "Update Available"
+msgstr "Pembaruan Tersedia"
+
+msgid "Installed"
+msgstr "Terinstal"
+
+msgid "Available"
+msgstr "Tersedia"
+
+msgid "Live Rates"
+msgstr "Kurs Tukar Terkini"
+
+msgid "Historical"
+msgstr "Sejarah"
+
+msgid "Crypto"
+msgstr "Kripto"
+
+msgid "Commodities"
+msgstr "Komoditas"
+
+msgid "Any Base Currency"
+msgstr "Mata Uang Dasar Apa Saja"
+
+msgid "Batch Requests"
+msgstr "Permintaan Batch"
+
+msgid "Free"
+msgstr "Gratis"
+
+msgid "Update"
+msgstr "Perbarui"
+
+msgid "Configure"
+msgstr "Konfigurasi"
+
+msgid "Install"
+msgstr "Instal"
+
+msgid "View Details"
+msgstr "Lihat Detail"
+
+msgid "Learn More"
+msgstr "Pelajari Lebih Lanjut"
+
+msgid "No Providers Available"
+msgstr "Tidak Ada Pemasok yang Tersedia"
+
+msgid ""
+"No exchange rate providers are currently available. Please check your update "
+"server connection or contact support."
+msgstr ""
+"Tidak ada penyedia kurs valuta asing yang tersedia saat ini. Silakan periksa "
+"koneksi server pembaruan Anda atau hubungi dukungan."
+
+msgid "Installing provider..."
+msgstr "Menginstal pemasok..."
+
+msgid "Connect Exchange Rate Provider"
+msgstr "Hubungkan Pemasok Kurs Tukar"
+
+msgid "Follow these steps to connect your exchange rate provider account"
+msgstr ""
+"Ikuti langkah-langkah berikut untuk menghubungkan akun penyedia kurs valuta "
+"asing Anda"
+
+msgid "Select Provider"
+msgstr "Pilih Pemasok"
+
+msgid "Setup Instructions"
+msgstr "Instruksi Pengaturan"
+
+msgid "Enter Credentials"
+msgstr "Masukkan Kredensial"
+
+msgid "Test Connection"
+msgstr "Uji Koneksi"
+
+msgid "Select an Exchange Rate Provider"
+msgstr "Pilih Penyedia Tingkat Tukar"
+
+msgid "Choose the exchange rate provider you want to connect to your store."
+msgstr ""
+"Pilih penyedia kurs valuta asing yang ingin Anda hubungkan ke toko Anda."
+
+msgid "No exchange rate provider components are currently installed."
+msgstr "Tidak ada komponen penyedia kurs valuta asing yang saat ini terinstal."
+
+msgid ""
+"Please download and install exchange rate provider components from the "
+"component registry."
+msgstr ""
+"Silakan unduh dan instal komponen penyedia kurs valuta asing dari registri "
+"komponen."
+
+msgid "Browse Components"
+msgstr "Lihat Komponen"
+
+msgid "Cancel"
+msgstr "Batal"
+
+msgid "Next"
+msgstr "Berikutnya"
+
+#, python-format
+msgid ""
+"\n"
+"        Before entering credentials, review these setup steps for "
+"%(provider)s.\n"
+"        "
+msgstr ""
+"\n"
+"        Sebelum memasukkan kredensial, tinjau langkah-langkah pengaturan "
+"berikut untuk %(provider)s.\n"
+"        "
+
+msgid "Setup Instructions Not Available"
+msgstr "Instruksi Pengaturan Tidak Tersedia"
+
+#, python-format
+msgid ""
+"\n"
+"                    Setup instructions are not available for this version of "
+"%(provider)s.\n"
+"                    Please contact support for assistance or check for an "
+"updated version.\n"
+"                    "
+msgstr ""
+"\n"
+"                    Instruksi pengaturan tidak tersedia untuk versi "
+"%(provider)s ini. Silakan hubungi dukungan untuk bantuan atau periksa versi "
+"terbaru.\n"
+"                    "
+
+msgid "Back"
+msgstr "Kembali"
+
+msgid "Continue to Credentials"
+msgstr "Lanjut ke Kredensial"
+
+msgid "Enter API Credentials"
+msgstr "Masukkan Kredensial API"
+
+#, python-format
+msgid ""
+"\n"
+"        Enter your API credentials for %(provider)s. These will be securely "
+"encrypted and stored.\n"
+"        "
+msgstr ""
+"\n"
+"        Masukkan kredensial API untuk %(provider)s. Kredensial ini akan "
+"dienkripsi dan disimpan secara aman.\n"
+"        "
+
+msgid "Don't have an account yet?"
+msgstr "Belum memiliki akun?"
+
+msgid "You'll need an account to get API credentials."
+msgstr "Anda memerlukan akun untuk mendapatkan kredensial API."
+
+msgid "Sign up here"
+msgstr "Daftar di sini"
+
+msgid "API Credentials"
+msgstr "Kredensial API"
+
+msgid "Select..."
+msgstr "Pilih..."
+
+msgid "No credential fields configured for this provider."
+msgstr "Tidak ada bidang kredensial yang dikonfigurasikan untuk penyedia ini."
+
+msgid ""
+"Your credentials will be encrypted using AES-256 encryption before being "
+"stored in the database."
+msgstr ""
+"Kredensial Anda akan dienkripsi menggunakan enkripsi AES-256 sebelum "
+"disimpan di database."
+
+#, python-format
+msgid ""
+"\n"
+"        Test the connection to %(provider)s to verify your credentials are "
+"correct.\n"
+"        "
+msgstr ""
+"\n"
+"        Uji koneksi ke %(provider)s untuk memverifikasi apakah kredensial "
+"Anda benar.\n"
+"        "
+
+msgid "Testing connection..."
+msgstr "Menguji koneksi..."
+
+msgid "Please wait while we verify your credentials."
+msgstr "Silakan tunggu sementara kami memverifikasi kredensial Anda."
+
+msgid "Click to test the connection with your entered credentials."
+msgstr "Klik untuk menguji koneksi dengan kredensial yang Anda masukkan."
+
+msgid "Connection Successful!"
+msgstr "Koneksi Berhasil!"
+
+msgid "Connection Details"
+msgstr "Detail Koneksi"
+
+msgid "Save & Finish"
+msgstr "Simpan & Selesai"
+
+msgid "Your credentials were verified successfully."
+msgstr "Kredensial Anda telah diverifikasi dengan sukses."
+
+msgid "Connection Failed"
+msgstr "Koneksi Gagal"
+
+msgid "Could not connect to the provider API."
+msgstr "Tidak dapat terhubung ke API penyedia."
+
+msgid "An unexpected error occurred."
+msgstr "Terjadi kesalahan tak terduga."
+
+msgid "Saving..."
+msgstr "Menyimpan..."
+
+msgid "Failed to save provider account."
+msgstr "Gagal menyimpan akun pemasok."
+
+msgid "An error occurred while saving."
+msgstr "Terjadi kesalahan saat menyimpan."
+
+msgid "Provider {} successfully"
+msgstr "Pemasok {} berhasil"
+
+msgid "enabled"
+msgstr "dienabledkan"
+
+msgid "disabled"
+msgstr "dideaktivasi"
+
+msgid "An error occurred while updating the provider."
+msgstr "Terjadi kesalahan saat memperbarui penyedia."
+
+msgid "\"{}\" set as primary provider"
+msgstr "\"{}\" ditetapkan sebagai pemasok utama"
+
+msgid "An error occurred while setting the primary provider."
+msgstr "Terjadi kesalahan saat menetapkan penyedia utama."
+
+msgid "Provider implementation not found"
+msgstr "Implementasi pemasok tidak ditemukan"
+
+msgid ""
+"Failed to decrypt provider credentials. Please reconfigure the provider."
+msgstr "Gagal mendekripsi kredensial penyedia. Silakan atur ulang penyedia."
+
+msgid "Site settings not configured"
+msgstr "Pengaturan situs belum dikonfigurasikan"
+
+msgid "No rates returned from provider"
+msgstr "Tidak ada kurs yang dikembalikan dari pemasok"
+
+msgid "Successfully synced {} exchange rate(s)"
+msgstr "Berhasil menyinkronkan {} kurs tukar"
+
+msgid "Failed to sync exchange rates. Check the provider configuration."
+msgstr "Gagal menyinkronkan kurs valuta asing. Periksa konfigurasi penyedia."
+
+msgid "Provider \"{}\" successfully deleted"
+msgstr "Pemasok \"{}\" berhasil dihapus"
+
+msgid "An error occurred while deleting the provider."
+msgstr "Terjadi kesalahan saat menghapus penyedia."
+
+msgid "Invalid action or no providers selected"
+msgstr "Aksi tidak valid atau tidak ada penyedia yang dipilih"
+
+msgid "{} provider(s) enabled"
+msgstr "{} penyedia aktif"
+
+msgid "{} provider(s) disabled"
+msgstr "{} penyedia dinonaktifkan"
+
+msgid "Please select exactly one provider to set as primary"
+msgstr "Silakan pilih tepat satu penyedia untuk diatur sebagai utama"
+
+msgid "{} provider(s) queued for sync, {} errors: {}"
+msgstr "{} penyedia (s) dalam antrian untuk sinkronisasi, {} kesalahan: {}"
+
+msgid "{} provider(s) queued for sync"
+msgstr "{} penyedia dalam antrian untuk sinkronisasi"
+
+msgid "{} provider(s) deleted"
+msgstr "{} penyedia dihapus"
+
+msgid "Unknown action: {}"
+msgstr "Aksi tidak diketahui: {}"
+
+msgid "An error occurred while performing the bulk action."
+msgstr "Terjadi kesalahan saat melakukan aksi batch."
+
+msgid "An error occurred while updating the rate."
+msgstr "Terjadi kesalahan saat memperbarui tarif."
+
+msgid "unlocked"
+msgstr "terbuka kunci"
+
+msgid "Unlocked"
+msgstr "Terbuka Kunci"
+
+msgid "Provider is already installed. Configure it now."
+msgstr "Penyedia sudah terinstal. Konfigurasikan sekarang."
+
+msgid "Provider not found on update server."
+msgstr "Penyedia tidak ditemukan di server pembaruan."
+
+msgid "Could not determine provider version."
+msgstr "Tidak dapat menentukan versi penyedia."
+
+#, python-format
+msgid "Failed to download provider: %(error)s"
+msgstr "Gagal mengunduh pemulai: %(error)s"
+
+#, python-format
+msgid "Failed to install provider: %(error)s"
+msgstr "Gagal menginstal pemulai: %(error)s"
+
+#, python-format
+msgid "Provider \"%(name)s\" installed successfully! Configure it now."
+msgstr "Pemulai \"%(name)s\" berhasil diinstal! Konfigurasikan sekarang."
+
+msgid "An unexpected error occurred during installation."
+msgstr "Terjadi kesalahan tak terduga selama pemasangan."
+
+msgid "Provider not installed."
+msgstr "Penyedia tidak terinstal."
+
+#, python-format
+msgid "Could not connect to update server: %(error)s"
+msgstr "Tidak dapat terhubung ke server pembaruan: %(error)s"
+
+msgid "Could not determine latest version."
+msgstr "Tidak dapat menentukan versi terbaru."
+
+#, python-format
+msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
+msgstr "Pemulai \"%(name)s\" sudah mutakhir (v%(version)s)."
+
+#, python-format
+msgid "Failed to download update: %(error)s"
+msgstr "Gagal mengunduh pembaruan: %(error)s"
+
+#, python-format
+msgid "Failed to install update: %(error)s"
+msgstr "Gagal menginstal pembaruan: %(error)s"
+
+#, python-format
+msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
+msgstr "Pemulai \"%(name)s\" berhasil diperbarui ke v%(version)s!"
+
+msgid "An unexpected error occurred during the update."
+msgstr "Terjadi kesalahan tak terduga selama pembaruan."
+
+msgid "Connect Exchange Rate Provider - Select Provider"
+msgstr "Hubungkan Penyedia Kurs - Pilih Penyedia"
+
+msgid "Please select a provider."
+msgstr "Silakan pilih penyedia."
+
+msgid "Invalid provider selected."
+msgstr "Penyedia yang dipilih tidak valid."
+
+msgid "Please select a provider first."
+msgstr "Silakan pilih penyedia terlebih dahulu."
+
+#, python-format
+msgid "Setup instructions not found for %(provider)s. Please contact support."
+msgstr ""
+"Instruksi pengaturan tidak ditemukan untuk %(provider)s. Silakan hubungi "
+"dukungan."
+
+#, python-format
+msgid "Error loading provider: %(error)s"
+msgstr "Kesalahan saat memuat penyedia: %(error)s"
+
+msgid "Connect Exchange Rate Provider - Setup Instructions"
+msgstr "Hubungkan Penyedia Kurs - Petunjuk Pengaturan"
+
+msgid "Could not load provider configuration."
+msgstr "Tidak dapat memuat konfigurasi penyedia."
+
+msgid "Connect Exchange Rate Provider - Enter Credentials"
+msgstr "Hubungkan Penyedia Kurs - Masukkan Kredensial"
+
+msgid "Error loading provider configuration."
+msgstr "Kesalahan memuat konfigurasi penyedia."
+
+msgid "Please complete previous steps first."
+msgstr "Silakan lengkapi langkah-langkah sebelumnya terlebih dahulu."
+
+msgid "Provider not found."
+msgstr "Penyedia tidak ditemukan."
+
+msgid "Connect Exchange Rate Provider - Test Connection"
+msgstr "Hubungkan Penyedia Kurs - Uji Koneksi"
+
+msgid "Provider implementation not found."
+msgstr "Implementasi penyedia tidak ditemukan."
+
+msgid "An error occurred while testing the connection."
+msgstr "Terjadi kesalahan saat menguji koneksi."
+
+msgid "Site not configured."
+msgstr "Situs tidak dikonfigurasi."
+
+msgid "Connection test failed"
+msgstr "Uji koneksi gagal"
+
+msgid "Provider connected successfully!"
+msgstr "Pemasok terhubung dengan sukses!"
+
+msgid "An error occurred while saving the provider."
+msgstr "Terjadi kesalahan saat menyimpan penyedia."

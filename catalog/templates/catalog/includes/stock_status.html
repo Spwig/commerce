@@ -1,0 +1,69 @@
+{% load i18n merchant_trans %}
+{# Stock Status Component - Include this on product pages #}
+{# Required context: product (Product object) #}
+
+<div class="stock-status"
+     id="stock-status"
+     data-product-slug="{{ product.slug }}"
+     data-variant-id="">
+
+    <!-- Stock Status Badge (filled by JavaScript) -->
+    <div class="stock-status__badge" id="stock-badge">
+        <span class="stock-status__loading">
+            <i class="fas fa-spinner fa-spin"></i> {% mtrans 'Checking availability...' %}
+        </span>
+    </div>
+
+    <!-- Low Stock Warning (shown dynamically) -->
+    <div class="stock-status__warning stock-hidden" id="low-stock-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="low-stock-message"></span>
+    </div>
+
+    <!-- Ships From Location (shown if enabled) -->
+    <div class="stock-status__ships-from stock-hidden" id="ships-from">
+        <i class="fas fa-warehouse"></i>
+        <span id="ships-from-text"></span>
+    </div>
+
+    <!-- Estimated Delivery (shown if enabled) -->
+    <div class="stock-status__delivery stock-hidden" id="estimated-delivery">
+        <i class="fas fa-truck"></i>
+        <span id="delivery-text"></span>
+    </div>
+
+    <!-- Pre-Order Info (shown if product is pre-order) -->
+    <div class="stock-status__preorder stock-hidden" id="preorder-info">
+        <i class="fas fa-calendar-alt"></i>
+        <span id="preorder-text"></span>
+    </div>
+
+    <!-- Notify Me Form (shown when out of stock) -->
+    <div class="stock-status__notify stock-hidden" id="notify-me-container">
+        <p class="stock-status__notify-title">
+            <i class="fas fa-bell"></i> {% mtrans 'Get notified when this item is back in stock' %}
+        </p>
+        <form class="stock-status__notify-form" id="notify-me-form">
+            <input type="email"
+                   name="email"
+                   id="notify-email"
+                   class="stock-status__notify-input"
+                   placeholder="{% mtrans 'Enter your email' %}"
+                   required>
+            <button type="submit" class="stock-status__notify-btn">
+                <span class="btn-text">{% mtrans 'Notify Me' %}</span>
+                <span class="btn-loading stock-hidden">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </span>
+            </button>
+        </form>
+        <p class="stock-status__notify-disclaimer" id="notify-disclaimer">
+            {% mtrans "We'll send you a one-time email when this product is available." %}
+        </p>
+        <div class="stock-status__notify-success stock-hidden" id="notify-success">
+            <i class="fas fa-check-circle"></i>
+            <span>{% mtrans "You're on the list! We'll email you when it's back." %}</span>
+        </div>
+    </div>
+</div>
+{# Styles in catalog/static/catalog/css/includes/stock_status.css - loaded by parent template #}

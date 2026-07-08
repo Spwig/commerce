@@ -1,0 +1,115 @@
+{% extends "blog/blog_base.html" %}
+{% load i18n merchant_trans %}
+
+{% block blog_title %}{% blocktrans with name=tag.name %}Tag: {{ name }}{% endblocktrans %}{% endblock %}
+
+{% block blog_meta %}
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+<meta property="og:title" content="{% blocktrans with name=tag.name %}Posts tagged: {{ name }}{% endblocktrans %}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% endblock %}
+
+{% block blog_breadcrumb %}
+<nav class="blog-breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <ol class="blog-breadcrumb__list">
+        <li class="blog-breadcrumb__item">
+            <a href="/" class="blog-breadcrumb__link">{% mtrans "Home" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item">
+            <a href="{% url 'blog:list' %}" class="blog-breadcrumb__link">{% mtrans "Blog" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item blog-breadcrumb__item--active">
+            <i class="fas fa-tag blog-breadcrumb__tag-icon"></i> {{ tag.name }}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block blog_content %}
+<div class="blog-page-header">
+    <h1 class="blog-page-header__title">{% blocktrans with name=tag.name %}Posts tagged "{{ name }}"{% endblocktrans %}</h1>
+</div>
+
+<!-- Blog Posts Grid -->
+<section class="blog-grid">
+    {% for post in posts %}
+    <article class="blog-card">
+        <a href="{{ post.get_absolute_url }}" class="blog-card__image-link">
+            <div class="blog-card__image-wrapper">
+                {% if post.featured_image %}
+                    <img class="blog-card__image"
+                         src="{{ post.featured_image.thumbnail_medium }}"
+                         alt="{{ post.title }}"
+                         loading="lazy">
+                {% else %}
+                    <div class="blog-card__image-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </a>
+        <div class="blog-card__body">
+            {% if post.category %}
+                <a href="{% url 'blog:category' slug=post.category.slug %}" class="blog-card__category">{{ post.category.name }}</a>
+            {% endif %}
+            <h2 class="blog-card__title">
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+            </h2>
+            {% if post.excerpt %}
+                <p class="blog-card__excerpt">{{ post.excerpt|truncatewords:25 }}</p>
+            {% endif %}
+            <div class="blog-card__meta">
+                {% if post.published_at %}
+                    <span><i class="far fa-calendar"></i> {{ post.published_at|date:"M d, Y" }}</span>
+                {% endif %}
+                {% if blog_settings.show_reading_time and post.reading_time_minutes %}
+                    <span><i class="far fa-clock"></i> {{ post.reading_time_minutes }} {% mtrans "min read" %}</span>
+                {% endif %}
+            </div>
+            <a href="{{ post.get_absolute_url }}" class="blog-card__read-more">
+                {% mtrans "Read more" %} <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </article>
+    {% empty %}
+    <div class="blog-grid__empty">
+        <i class="fas fa-newspaper"></i>
+        <p>{% mtrans "No posts with this tag yet." %}</p>
+    </div>
+    {% endfor %}
+</section>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav class="blog-pagination" aria-label="{% mtrans 'Blog pagination' %}">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="blog-pagination__link blog-pagination__prev"
+           aria-label="{% mtrans 'Previous page' %}">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="blog-pagination__current" aria-current="page">{{ num }}</span>
+        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+            <a href="?page={{ num }}" class="blog-pagination__link">{{ num }}</a>
+        {% elif num == 1 or num == page_obj.paginator.num_pages %}
+            <a href="?page={{ num }}" class="blog-pagination__link">{{ num }}</a>
+        {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+            <span class="blog-pagination__ellipsis">&hellip;</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="blog-pagination__link blog-pagination__next"
+           aria-label="{% mtrans 'Next page' %}">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

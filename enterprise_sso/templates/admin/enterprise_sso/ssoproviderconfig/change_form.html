@@ -1,0 +1,317 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "SSO Provider Configuration" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'enterprise_sso/css/ssoproviderconfig_change_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    {# ===== Header (uses .admin-page-header from admin-base.css) ===== #}
+    <div class="admin-page-header">
+        <div class="header-content">
+            <h1>
+                <i class="fas fa-shield-alt"></i>
+                {% trans "SSO Provider Configuration" %}
+            </h1>
+            <p class="header-subtitle">
+                {% if is_configured %}
+                <span class="status-badge configured">
+                    <i class="fas fa-check-circle"></i> {% trans "Configured" %}
+                </span>
+                {% else %}
+                <span class="status-badge not-configured">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans "Not Configured" %}
+                </span>
+                {% endif %}
+            </p>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="button" class="util-btn" id="save-btn" title="{% trans 'Save' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    {# ===== Error Banner ===== #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# ===== Form ===== #}
+    <form method="post" id="ssoproviderconfig-form" novalidate>
+        {% csrf_token %}
+
+        {# ===== Tab Navigation ===== #}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="connection" role="tab" aria-selected="true">
+                <i class="fas fa-plug"></i>
+                <span class="label">{% trans "Connection" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="claims" role="tab" aria-selected="false">
+                <i class="fas fa-user-tag"></i>
+                <span class="label">{% trans "Claims & Roles" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="advanced" role="tab" aria-selected="false">
+                <i class="fas fa-sliders-h"></i>
+                <span class="label">{% trans "Advanced" %}</span>
+            </button>
+        </div>
+
+        {# ===== Tab 1: Connection ===== #}
+        <div class="admin-tab-content active" id="tab-connection" role="tabpanel">
+
+            {# Provider Name #}
+            <div class="form-card">
+                <h2><i class="fas fa-id-card"></i> {% trans "Identity Provider" %}</h2>
+                <div class="form-row">
+                    {{ adminform.form.provider_name.label_tag }}
+                    {{ adminform.form.provider_name }}
+                    {% if adminform.form.provider_name.help_text %}<p class="help">{{ adminform.form.provider_name.help_text }}</p>{% endif %}
+                    {% if adminform.form.provider_name.errors %}<p class="error">{{ adminform.form.provider_name.errors }}</p>{% endif %}
+                </div>
+            </div>
+
+            {# Discovery #}
+            <div class="form-card">
+                <h2><i class="fas fa-search"></i> {% trans "OIDC Discovery" %}</h2>
+                <p class="help-text">{% trans "Enter the OIDC Discovery URL and click Auto-Discover to populate the endpoint fields automatically." %}</p>
+                <div class="form-row">
+                    {{ adminform.form.oidc_discovery_url.label_tag }}
+                    <div class="sso-discovery-row">
+                        <div class="discovery-input">
+                            {{ adminform.form.oidc_discovery_url }}
+                        </div>
+                        <button type="button" class="button default" id="btn-auto-discover"
+                                data-discover-url="{{ discover_url }}"
+                                data-msg-empty="{% trans 'Please enter a Discovery URL first.' %}"
+                                data-msg-discovering="{% trans 'Discovering...' %}"
+                                data-msg-failed="{% trans 'Discovery failed:' %}"
+                                data-msg-success="{% trans 'Discovery successful!' %}"
+                                data-msg-endpoints="{% trans 'endpoints populated.' %}"
+                                data-msg-request-failed="{% trans 'Discovery request failed:' %}">
+                            <i class="fas fa-magic"></i> {% trans "Auto-Discover" %}
+                        </button>
+                    </div>
+                    {% if adminform.form.oidc_discovery_url.help_text %}<p class="help">{{ adminform.form.oidc_discovery_url.help_text }}</p>{% endif %}
+                    {% if adminform.form.oidc_discovery_url.errors %}<p class="error">{{ adminform.form.oidc_discovery_url.errors }}</p>{% endif %}
+                </div>
+            </div>
+
+            {# Client Credentials #}
+            <div class="form-card">
+                <h2><i class="fas fa-key"></i> {% trans "Client Credentials" %}</h2>
+                <div class="form-row">
+                    {{ adminform.form.oidc_client_id.label_tag }}
+                    {{ adminform.form.oidc_client_id }}
+                    {% if adminform.form.oidc_client_id.help_text %}<p class="help">{{ adminform.form.oidc_client_id.help_text }}</p>{% endif %}
+                    {% if adminform.form.oidc_client_id.errors %}<p class="error">{{ adminform.form.oidc_client_id.errors }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.oidc_client_secret.label_tag }}
+                    {% if original.oidc_client_secret_encrypted %}
+                    <div class="secret-status configured">
+                        <i class="fas fa-lock"></i> {% trans "Secret is configured" %}
+                    </div>
+                    {% else %}
+                    <div class="secret-status not-configured">
+                        <i class="fas fa-lock-open"></i> {% trans "No secret configured" %}
+                    </div>
+                    {% endif %}
+                    {{ adminform.form.oidc_client_secret }}
+                    {% if adminform.form.oidc_client_secret.help_text %}<p class="help">{{ adminform.form.oidc_client_secret.help_text }}</p>{% endif %}
+                    {% if adminform.form.oidc_client_secret.errors %}<p class="error">{{ adminform.form.oidc_client_secret.errors }}</p>{% endif %}
+                </div>
+            </div>
+
+            {# Quick Setup Guide #}
+            <div class="sso-setup-guide">
+                <div class="guide-title">
+                    <i class="fas fa-info-circle"></i> {% trans "Quick Setup Guide" %}
+                </div>
+                <div class="guide-item">
+                    <strong>{% trans "Redirect URI" %}:</strong>
+                    <code>{{ callback_url }}</code>
+                </div>
+                <div class="guide-item">
+                    <strong>{% trans "Microsoft Entra ID:" %}</strong>
+                    {% trans "App registrations > New > Web platform > Redirect URI" %}
+                </div>
+                <div class="guide-item">
+                    <strong>{% trans "Google Workspace:" %}</strong>
+                    {% trans "Cloud Console > APIs & Services > Credentials > OAuth 2.0 > Redirect URI" %}
+                </div>
+                <div class="guide-item">
+                    <strong>{% trans "Okta:" %}</strong>
+                    {% trans "Applications > New App > OIDC Web > Sign-in redirect URI" %}
+                </div>
+            </div>
+        </div>
+
+        {# ===== Tab 2: Claims & Role Mapping ===== #}
+        <div class="admin-tab-content" id="tab-claims" role="tabpanel">
+
+            {# Claims Mapping #}
+            <div class="form-card">
+                <h2><i class="fas fa-exchange-alt"></i> {% trans "Claims Mapping" %}</h2>
+                <p class="help-text">{% trans "Map OIDC claims to user fields. The defaults work for most providers." %}</p>
+                <div class="two-column-layout">
+                    <div class="column">
+                        <div class="form-row">
+                            {{ adminform.form.claim_email.label_tag }}
+                            {{ adminform.form.claim_email }}
+                            {% if adminform.form.claim_email.help_text %}<p class="help">{{ adminform.form.claim_email.help_text }}</p>{% endif %}
+                            {% if adminform.form.claim_email.errors %}<p class="error">{{ adminform.form.claim_email.errors }}</p>{% endif %}
+                        </div>
+                        <div class="form-row">
+                            {{ adminform.form.claim_first_name.label_tag }}
+                            {{ adminform.form.claim_first_name }}
+                            {% if adminform.form.claim_first_name.help_text %}<p class="help">{{ adminform.form.claim_first_name.help_text }}</p>{% endif %}
+                            {% if adminform.form.claim_first_name.errors %}<p class="error">{{ adminform.form.claim_first_name.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="form-row">
+                            {{ adminform.form.claim_last_name.label_tag }}
+                            {{ adminform.form.claim_last_name }}
+                            {% if adminform.form.claim_last_name.help_text %}<p class="help">{{ adminform.form.claim_last_name.help_text }}</p>{% endif %}
+                            {% if adminform.form.claim_last_name.errors %}<p class="error">{{ adminform.form.claim_last_name.errors }}</p>{% endif %}
+                        </div>
+                        <div class="form-row">
+                            {{ adminform.form.claim_groups.label_tag }}
+                            {{ adminform.form.claim_groups }}
+                            {% if adminform.form.claim_groups.help_text %}<p class="help">{{ adminform.form.claim_groups.help_text }}</p>{% endif %}
+                            {% if adminform.form.claim_groups.errors %}<p class="error">{{ adminform.form.claim_groups.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Role Mapping #}
+            <div class="form-card">
+                <h2><i class="fas fa-users-cog"></i> {% trans "Role Mapping" %}</h2>
+                <p class="help-text">{% trans "Map identity provider groups to staff permissions. Enter comma-separated group names or IDs." %}</p>
+                <div class="form-row">
+                    {{ adminform.form.staff_groups.label_tag }}
+                    {{ adminform.form.staff_groups }}
+                    {% if adminform.form.staff_groups.help_text %}<p class="help">{{ adminform.form.staff_groups.help_text }}</p>{% endif %}
+                    {% if adminform.form.staff_groups.errors %}<p class="error">{{ adminform.form.staff_groups.errors }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.superuser_groups.label_tag }}
+                    {{ adminform.form.superuser_groups }}
+                    {% if adminform.form.superuser_groups.help_text %}<p class="help">{{ adminform.form.superuser_groups.help_text }}</p>{% endif %}
+                    {% if adminform.form.superuser_groups.errors %}<p class="error">{{ adminform.form.superuser_groups.errors }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# ===== Tab 3: Advanced ===== #}
+        <div class="admin-tab-content" id="tab-advanced" role="tabpanel">
+
+            {# OIDC Endpoints #}
+            <div class="form-card">
+                <h2><i class="fas fa-server"></i> {% trans "OIDC Endpoints" %}</h2>
+                <p class="help-text">{% trans "These are auto-populated from the Discovery URL. Only edit manually if needed." %}</p>
+                <div class="form-row">
+                    {{ adminform.form.oidc_authorization_endpoint.label_tag }}
+                    {{ adminform.form.oidc_authorization_endpoint }}
+                    {% if adminform.form.oidc_authorization_endpoint.errors %}<p class="error">{{ adminform.form.oidc_authorization_endpoint.errors }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.oidc_token_endpoint.label_tag }}
+                    {{ adminform.form.oidc_token_endpoint }}
+                    {% if adminform.form.oidc_token_endpoint.errors %}<p class="error">{{ adminform.form.oidc_token_endpoint.errors }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.oidc_userinfo_endpoint.label_tag }}
+                    {{ adminform.form.oidc_userinfo_endpoint }}
+                    {% if adminform.form.oidc_userinfo_endpoint.errors %}<p class="error">{{ adminform.form.oidc_userinfo_endpoint.errors }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.oidc_jwks_endpoint.label_tag }}
+                    {{ adminform.form.oidc_jwks_endpoint }}
+                    {% if adminform.form.oidc_jwks_endpoint.errors %}<p class="error">{{ adminform.form.oidc_jwks_endpoint.errors }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ adminform.form.oidc_end_session_endpoint.label_tag }}
+                    {{ adminform.form.oidc_end_session_endpoint }}
+                    {% if adminform.form.oidc_end_session_endpoint.help_text %}<p class="help">{{ adminform.form.oidc_end_session_endpoint.help_text }}</p>{% endif %}
+                    {% if adminform.form.oidc_end_session_endpoint.errors %}<p class="error">{{ adminform.form.oidc_end_session_endpoint.errors }}</p>{% endif %}
+                </div>
+            </div>
+
+            {# Scopes & Behavior #}
+            <div class="form-card">
+                <h2><i class="fas fa-cog"></i> {% trans "Scopes & Behavior" %}</h2>
+                <div class="form-row">
+                    {{ adminform.form.oidc_scopes.label_tag }}
+                    {{ adminform.form.oidc_scopes }}
+                    {% if adminform.form.oidc_scopes.help_text %}<p class="help">{{ adminform.form.oidc_scopes.help_text }}</p>{% endif %}
+                    {% if adminform.form.oidc_scopes.errors %}<p class="error">{{ adminform.form.oidc_scopes.errors }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    <div class="checkbox-row">
+                        {{ adminform.form.auto_create_users }}
+                        <label for="id_auto_create_users">{{ adminform.form.auto_create_users.label }}</label>
+                    </div>
+                    {% if adminform.form.auto_create_users.help_text %}<p class="help">{{ adminform.form.auto_create_users.help_text }}</p>{% endif %}
+                </div>
+                <div class="form-row">
+                    <div class="checkbox-row">
+                        {{ adminform.form.restrict_to_staff }}
+                        <label for="id_restrict_to_staff">{{ adminform.form.restrict_to_staff.label }}</label>
+                    </div>
+                    {% if adminform.form.restrict_to_staff.help_text %}<p class="help">{{ adminform.form.restrict_to_staff.help_text }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# ===== Hidden Admin Fields (ensures all fields are POSTed) ===== #}
+        <div class="d-none">
+            {% for fieldset in adminform %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                        {{ field.field }}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        {# ===== Hidden Submit Row ===== #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'enterprise_sso/js/ssoproviderconfig_change_form.js' %}" defer></script>
+{% endblock %}

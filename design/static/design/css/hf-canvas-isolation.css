@@ -1,0 +1,985 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Header/Footer Canvas Isolation CSS
+ * Prevents admin theme from leaking into canvas preview
+ *
+ * Strategy:
+ * - hf-layers.css declares layer order (MUST load first)
+ * - CSS layers control cascade priority - unlayered CSS (admin) has LOW priority
+ * - hf-reset layer: Admin theme isolation + variable resets
+ * - hf-builder-ui layer: Builder controls (highest priority)
+ * - Theme CSS is loaded via JavaScript and wrapped in hf-theme layer
+ */
+
+/* =========================================
+   HF-RESET LAYER
+   Admin theme isolation, variable resets
+   ========================================= */
+
+@layer hf-reset {
+  /* =========================================
+     CANVAS ISOLATION BOUNDARY
+     ========================================= */
+
+  .hf-content-preview {
+    /* Re-establish basic box model */
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+
+    /* Background and color from storefront theme */
+    background: var(--theme-color-background, #ffffff);
+    color: var(--theme-color-text, #000000);
+
+    /* Font fallbacks using theme tokens */
+    font-family: var(--theme-font-family-body, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
+    font-size: var(--theme-font-size-base, 1rem);
+    line-height: var(--theme-line-height-normal, 1.6);
+    font-weight: var(--theme-font-weight-normal, 400);
+
+    /* Text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Block admin theme transitions on container */
+    transition: none;
+
+    /* Content preview padding for config buttons */
+    padding-top: 8px;
+  }
+
+  /* =========================================
+     ADMIN VARIABLE RESET
+     Reset admin-specific CSS variables to prevent inheritance
+     ========================================= */
+
+  .hf-content-preview {
+    /* Reset admin theme variables that might leak through */
+    --primary: initial;
+    --secondary: initial;
+    --button-bg: initial;
+    --button-fg: initial;
+    --button-hover-bg: initial;
+    --button-text: initial;
+    --button-border: initial;
+    --link-fg: initial;
+    --body-bg: initial;
+    --body-fg: initial;
+    --input-bg: initial;
+    --input-fg: initial;
+    --input-border: initial;
+    --card-bg: initial;
+    --card-border: initial;
+    --border-color: initial;
+    --blue-accent: initial;
+    --blue-subtle: initial;
+    --shadow-light: initial;
+    --gradient-accent: initial;
+    --accent-text: initial;
+  }
+
+  /* =========================================
+     WIDGET VARIABLE FALLBACKS
+     Safety net to ensure widgets use shop theme colors
+     ========================================= */
+
+  .hf-content-preview {
+    /* Search widget fallbacks */
+    --theme-search-input-bg: var(--theme-color-surface, #ffffff);
+    --theme-search-input-border: var(--theme-color-border, #e0e0e0);
+    --theme-search-input-color: var(--theme-color-text, #333333);
+    --theme-search-input-placeholder: var(--theme-color-text-muted, #999999);
+    --theme-search-input-focus-border: var(--theme-color-primary, #3b82f6);
+    --theme-search-icon-color: var(--theme-color-text-muted, #666666);
+
+    /* Language/Currency widget fallbacks */
+    --theme-widget-language-select-bg: var(--theme-color-surface, #ffffff);
+    --theme-widget-language-select-border: var(--theme-color-border, #e0e0e0);
+    --theme-widget-language-select-color: var(--theme-color-text, #333333);
+    --theme-widget-currency-select-bg: var(--theme-color-surface, #ffffff);
+    --theme-widget-currency-select-border: var(--theme-color-border, #e0e0e0);
+    --theme-widget-currency-select-color: var(--theme-color-text, #333333);
+
+    /* Cart widget fallbacks */
+    --theme-widget-cart-icon-color: var(--theme-color-text, #333333);
+    --theme-widget-cart-badge-bg: var(--theme-color-primary, #3b82f6);
+    --theme-widget-cart-badge-color: #ffffff;
+
+    /* Account widget fallbacks */
+    --theme-widget-account-icon-color: var(--theme-color-text, #333333);
+    --theme-widget-account-dropdown-bg: var(--theme-color-surface, #ffffff);
+    --theme-widget-account-dropdown-border: var(--theme-color-border, #e0e0e0);
+
+    /* Menu widget fallbacks */
+    --theme-widget-menu-link-color: var(--theme-color-text, #333333);
+    --theme-widget-menu-link-hover-color: var(--theme-color-primary, #3b82f6);
+    --theme-widget-menu-dropdown-bg: var(--theme-color-surface, #ffffff);
+
+    /* Header icon color fallback (used by multiple widgets) */
+    --theme-header-icon-color: var(--theme-color-text, #333333);
+    --theme-header-icon-hover-color: var(--theme-color-primary, #3b82f6);
+  }
+
+  /* Reset all children - box model only, allow theme cascade */
+  .hf-content-preview *,
+  .hf-content-preview *::before,
+  .hf-content-preview *::after {
+    box-sizing: border-box;
+  }
+
+  /* =========================================
+     DARK ADMIN THEME NEUTRALIZATION
+     ========================================= */
+
+  /* When admin is in dark mode, ensure canvas stays light */
+  html[data-theme="dark"] .hf-content-preview {
+    background: var(--theme-color-background, #ffffff);
+    color: var(--theme-color-text, #1f2937);
+  }
+
+  /* =========================================
+     CANVAS FRAME STRUCTURE
+     ========================================= */
+
+  .canvas-frame {
+    width: 100%;
+    max-width: 1400px;
+    background: var(--theme-color-background, #ffffff);
+    border-radius: 12px;
+    box-shadow: var(--theme-shadow-base, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+    min-height: 400px;
+    position: relative;
+    overflow: visible;  /* Allow zone config buttons to float above */
+  }
+
+  /* Responsive preview modes */
+  .canvas-frame.mobile-preview {
+    max-width: 480px;            /* Wider than 375px for usable editing space */
+    overflow-x: hidden;          /* Clip horizontal overflow */
+    overflow-y: visible;         /* Allow config buttons to extend above zones */
+  }
+
+  .canvas-frame.tablet-preview {
+    max-width: 768px;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  .canvas-frame.desktop-preview {
+    max-width: 1400px;
+    overflow-x: hidden;          /* Clip horizontal overflow */
+    overflow-y: visible;         /* Allow config buttons above zones */
+  }
+
+  /* Device width boundary guide — subtle dashed line at real phone edge */
+  .canvas-frame.mobile-preview::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 375px;
+    width: 0;
+    border-right: 1px dashed rgba(156, 163, 175, 0.35);
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  /* =========================================
+     HEADER/FOOTER CONTAINER STYLES
+     ========================================= */
+
+  /* Header container */
+  .hf-header-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: var(--theme-color-surface, #ffffff);
+    box-shadow: var(--theme-shadow-base, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+    color: var(--theme-color-text, #000000);
+    padding-top: 24px;  /* Space for zone config buttons on first zone */
+    overflow: visible;  /* Allow zone config buttons to float above */
+  }
+
+  /* Footer container */
+  .hf-footer-container {
+    display: flex;
+    gap: var(--theme-space-8, 2rem);
+    padding: var(--theme-space-8, 2rem);
+    padding-top: calc(var(--theme-space-8, 2rem) + 8px);  /* Extra space for zone config buttons */
+    min-height: 200px;
+    background: var(--theme-color-background-secondary, #f5f5f5);
+    border-top: 1px solid var(--theme-color-border, #e0e0e0);
+    color: var(--theme-color-text, #000000);
+  }
+
+  /* Primary Zone Wrapper */
+  .hf-primary-zone {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-shrink: 0;
+    padding-left: var(--theme-space-4, 1rem);
+    padding-right: var(--theme-space-4, 1rem);
+    box-sizing: border-box;
+    margin-top: 20px;  /* Space for the config button above */
+  }
+
+  /* Full-width zones span entire container */
+  .hf-primary-zone[data-full-width="true"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* =========================================
+     HEADER ZONE-SPECIFIC DEFAULTS
+     ========================================= */
+
+  /* Top Bar Zone - utility links, announcements */
+  .hf-primary-zone[data-primary-zone="top-bar"] {
+    background: var(--theme-header-zones-top-bar-background, var(--theme-color-background-secondary, #f5f5f5));
+    color: var(--theme-header-zones-top-bar-text-color, var(--theme-color-text-muted, #666));
+    min-height: var(--theme-header-zones-top-bar-height, 36px);
+    border-bottom: 1px solid var(--theme-header-zones-top-bar-border-color, var(--theme-color-border, #e0e0e0));
+    font-size: var(--theme-header-zones-top-bar-font-size, var(--theme-font-size-sm, 0.875rem));
+  }
+
+  /* Notification Zone - announcement bar indicator in builder */
+  .hf-primary-zone[data-primary-zone="notification"] {
+    background: var(--theme-header-announcement-bg, var(--theme-color-primary, #2563eb));
+    color: var(--theme-header-announcement-text-color, #fff);
+    min-height: 32px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 0.8rem;
+  }
+
+  .hf-notification-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 16px;
+    opacity: 0.85;
+  }
+
+  .hf-notification-preview i {
+    font-size: 0.75rem;
+  }
+
+  /* Main Header Zone - logo, search, primary actions */
+  .hf-primary-zone[data-primary-zone="main-header"] {
+    background: var(--theme-header-zones-main-header-background, var(--theme-color-surface, #ffffff));
+    color: var(--theme-header-zones-main-header-text-color, var(--theme-color-text, #000));
+    min-height: var(--theme-header-zones-main-header-height, 70px);
+    border-bottom: 1px solid var(--theme-header-zones-main-header-border-color, var(--theme-color-border, #e0e0e0));
+  }
+
+  /* Bottom Bar Zone - secondary navigation */
+  .hf-primary-zone[data-primary-zone="bottom-bar"] {
+    background: var(--theme-header-zones-bottom-bar-background, var(--theme-color-background-secondary, #f5f5f5));
+    color: var(--theme-header-zones-bottom-bar-text-color, var(--theme-color-text, #000));
+    min-height: var(--theme-header-zones-bottom-bar-height, 50px);
+    border-bottom: 1px solid var(--theme-header-zones-bottom-bar-border-color, var(--theme-color-border, #e0e0e0));
+  }
+
+  /* Mega Menu Bar Zone - category navigation */
+  .hf-primary-zone[data-primary-zone="mega-menu-bar"] {
+    background: var(--theme-header-zones-mega-menu-bar-background, var(--theme-color-background-secondary, #f5f5f5));
+    color: var(--theme-header-zones-mega-menu-bar-text-color, var(--theme-color-text, #000));
+    min-height: var(--theme-header-zones-mega-menu-bar-height, 60px);
+    border-bottom: 1px solid var(--theme-header-zones-mega-menu-bar-border-color, var(--theme-color-border, #e0e0e0));
+  }
+
+  /* =========================================
+     FOOTER ZONE-SPECIFIC DEFAULTS
+     ========================================= */
+
+  /* Footer Top Zone - newsletter, CTAs */
+  .hf-footer-container .hf-primary-zone[data-primary-zone="top"],
+  .hf-footer-container .footer-top {
+    background: var(--theme-footer-zones-top-background, transparent);
+    padding-top: var(--theme-footer-zones-top-padding-y, var(--theme-space-12, 3rem));
+    padding-bottom: var(--theme-footer-zones-top-padding-y, var(--theme-space-12, 3rem));
+    border-bottom: 1px solid var(--theme-footer-zones-top-border-color, rgba(255, 255, 255, 0.1));
+  }
+
+  /* Footer Main Zone - columns, links */
+  .hf-footer-container .hf-primary-zone[data-primary-zone="main"],
+  .hf-footer-container .footer-main {
+    background: var(--theme-footer-zones-main-background, transparent);
+    padding-top: var(--theme-footer-zones-main-padding-y, var(--theme-space-8, 2rem));
+    padding-bottom: var(--theme-footer-zones-main-padding-y, var(--theme-space-8, 2rem));
+  }
+
+  /* Footer Bottom Zone - copyright, legal */
+  .hf-footer-container .hf-primary-zone[data-primary-zone="bottom"],
+  .hf-footer-container .hf-primary-zone[data-primary-zone="bottom-bar"],
+  .hf-footer-container .footer-bottom {
+    background: var(--theme-footer-zones-bottom-background, rgba(0, 0, 0, 0.2));
+    padding-top: var(--theme-footer-zones-bottom-padding-y, var(--theme-space-6, 1.5rem));
+    padding-bottom: var(--theme-footer-zones-bottom-padding-y, var(--theme-space-6, 1.5rem));
+    border-top: 1px solid var(--theme-footer-zones-bottom-border-color, rgba(255, 255, 255, 0.1));
+    font-size: var(--theme-footer-zones-bottom-font-size, var(--theme-font-size-sm, 0.875rem));
+  }
+
+  /* =========================================
+     ZONE LAYOUT STYLES
+     ========================================= */
+
+  /* Widget zone containers */
+  .hf-zone {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: var(--theme-space-1, 0.25rem);
+    min-height: 40px;
+    position: relative;
+    flex-shrink: 0;
+    min-width: 0;  /* Allow zones to shrink below content size */
+  }
+
+  /* =========================================
+     ZONE PROPORTIONS (consistent widths)
+     ========================================= */
+
+  /* Base zone alignment */
+  .hf-zone[data-zone$="_left"] {
+    justify-content: flex-start;
+  }
+
+  .hf-zone[data-zone$="_center"] {
+    justify-content: center;
+  }
+
+  .hf-zone[data-zone$="_right"] {
+    justify-content: flex-end;
+    gap: var(--theme-space-2, 0.5rem);
+  }
+
+  .hf-zone[data-zone$="_full"] {
+    justify-content: center;
+    flex: 1;
+    width: 100%;
+  }
+
+  /* Two-zone layout: Left + Right = 50% / 50% */
+  .hf-primary-zone > .hf-zone[data-zone$="_left"]:first-child:nth-last-child(2),
+  .hf-primary-zone > .hf-zone[data-zone$="_right"]:last-child:nth-child(2) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  /* Three-zone layout: Left + Center + Right = 25% / 50% / 25% */
+  .hf-primary-zone > .hf-zone[data-zone$="_left"]:first-child:nth-last-child(3) {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+
+  .hf-primary-zone > .hf-zone[data-zone$="_center"]:nth-child(2):nth-last-child(2) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .hf-primary-zone > .hf-zone[data-zone$="_right"]:last-child:nth-child(3) {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+
+  /* Single zone takes full width */
+  .hf-primary-zone > .hf-zone:only-child {
+    flex: 1;
+    max-width: none;
+  }
+
+  /* Two-zone: Left + Center = 50% / 50% */
+  .hf-primary-zone > .hf-zone[data-zone$="_left"]:first-child:nth-last-child(2) + .hf-zone[data-zone$="_center"]:last-child {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  /* Two-zone: Center + Right = 50% / 50% */
+  .hf-primary-zone > .hf-zone[data-zone$="_center"]:first-child:nth-last-child(2) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .hf-primary-zone > .hf-zone[data-zone$="_center"]:first-child + .hf-zone[data-zone$="_right"]:last-child:nth-child(2) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  /* =========================================
+     RESPONSIVE ZONE PROPORTIONS
+     Adjust zones for mobile/tablet preview
+     ========================================= */
+
+  /* MOBILE VIEW - Zones stay in a row but use flexible sizing */
+  .canvas-frame.mobile-preview .hf-primary-zone {
+    gap: 0;
+    padding: 0 var(--theme-space-2, 0.5rem);
+  }
+
+  .canvas-frame.mobile-preview .hf-primary-zone > .hf-zone {
+    flex: 1 1 auto !important;
+    max-width: none !important;
+    min-width: 0;
+  }
+
+  .canvas-frame.mobile-preview .hf-zone {
+    flex-wrap: wrap;
+    gap: var(--theme-space-1, 0.25rem);
+  }
+
+  /* Empty zones shrink, populated zones expand — maximize usable space */
+  .canvas-frame.mobile-preview .hf-primary-zone > .hf-zone.empty {
+    flex: 0 1 48px !important;
+    min-width: 36px !important;
+  }
+
+  .canvas-frame.mobile-preview .hf-primary-zone > .hf-zone:not(.empty) {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  /* TABLET VIEW - Adjust 3-zone proportions to 30/40/30 */
+  .canvas-frame.tablet-preview .hf-primary-zone > .hf-zone[data-zone$="_left"]:first-child:nth-last-child(3) {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+
+  .canvas-frame.tablet-preview .hf-primary-zone > .hf-zone[data-zone$="_center"]:nth-child(2):nth-last-child(2) {
+    flex: 0 0 40%;
+    max-width: 40%;
+  }
+
+  .canvas-frame.tablet-preview .hf-primary-zone > .hf-zone[data-zone$="_right"]:last-child:nth-child(3) {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+
+  /* Tablet widgets can wrap if needed */
+  .canvas-frame.tablet-preview .hf-zone {
+    flex-wrap: wrap;
+  }
+
+  /* Footer zone layouts */
+  .hf-footer-columns .hf-zone {
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+  }
+
+  /* Widget base styles */
+  .hf-widget {
+    display: block;
+    position: relative;
+    min-width: 0;       /* Allow shrinking in flex context */
+    overflow: hidden;   /* Prevent content from blowing out */
+  }
+
+  /* =========================================
+     MOBILE PREVIEW - WIDGET MIRRORING
+     Mirror real @media mobile styles inside
+     the builder canvas mobile preview mode
+     ========================================= */
+
+  /* Language widget: hide form select, show globe trigger */
+  .canvas-frame.mobile-preview .widget-language .language-form { display: none; }
+  .canvas-frame.mobile-preview .widget-language .language-mobile-trigger { display: inline-flex; }
+
+  /* Search widget: show icon-only mode */
+  .canvas-frame.mobile-preview .widget-search .search-input-wrapper { display: none; }
+  .canvas-frame.mobile-preview .widget-search .search-mobile-trigger { display: inline-flex; }
+
+  /* Cart widget: compact mode - hide text labels */
+  .canvas-frame.mobile-preview .widget-cart .cart-text { display: none; }
+
+  /* Account widget: compact mode - hide name label */
+  .canvas-frame.mobile-preview .widget-account .account-name { display: none; }
+
+  /* Currency widget: compact mode */
+  .canvas-frame.mobile-preview .widget-currency .currency-label { display: none; }
+
+  /* Hamburger toggle: visible in mobile preview */
+  .canvas-frame.mobile-preview .header-mobile-toggle { display: flex; }
+
+  /* Device visibility in builder preview */
+  .canvas-frame.mobile-preview .widget-wrapper[data-hide-mobile="true"] { display: none !important; }
+  .canvas-frame.tablet-preview .widget-wrapper[data-hide-tablet="true"] { display: none !important; }
+  .canvas-frame.desktop-preview .widget-wrapper[data-hide-desktop="true"] { display: none !important; }
+}
+
+
+/* =========================================
+   HF-BUILDER-UI LAYER
+   Builder controls - highest priority
+   ========================================= */
+
+@layer hf-builder-ui {
+  /* Ensure Font Awesome icons work properly */
+  .hf-content-preview i.fa,
+  .hf-content-preview i.fas,
+  .hf-content-preview i.far,
+  .hf-content-preview i.fab,
+  .hf-content-preview .control-btn i {
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands' !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+  }
+
+  /* Zone Configuration Button - positioned outside zone to avoid overlap with widgets */
+  .zone-config-btn {
+    position: absolute;
+    top: -16px;  /* Position above the zone */
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    background: rgba(59, 130, 246, 0.95);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s, background 0.2s;
+    z-index: 200;  /* Higher than widget controls (100) */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 12px;
+  }
+
+  .zone-config-btn::after {
+    content: 'Configure';
+    position: absolute;
+    right: 100%;
+    margin-right: 6px;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 500;
+    background: rgba(59, 130, 246, 0.95);
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .zone-config-btn:hover::after {
+    opacity: 1;
+  }
+
+  .zone-config-btn:hover {
+    background: rgba(59, 130, 246, 1);
+    transform: scale(1.05);
+  }
+
+  .hf-primary-zone:hover .zone-config-btn {
+    opacity: 1;
+  }
+
+  .zone-config-btn i {
+    font-size: 0.75rem;
+  }
+
+  /* Widget wrappers - builder UI styling */
+  .hf-content-preview .widget-wrapper {
+    background: transparent !important;
+    border: 1px solid #e5e7eb !important;
+    position: relative !important;
+    padding: 8px !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+    min-height: 36px !important;
+    min-width: 0 !important;    /* Allow shrinking below content size */
+    overflow: visible !important; /* Allow controls to extend above wrapper */
+    cursor: pointer !important;  /* Indicate clickable */
+  }
+
+  /* Compact widget wrappers for mobile/tablet preview */
+  .canvas-frame.mobile-preview .hf-content-preview .widget-wrapper {
+    padding: 4px !important;
+    border-radius: 4px !important;
+    min-height: 32px !important;
+  }
+
+  .canvas-frame.tablet-preview .hf-content-preview .widget-wrapper {
+    padding: 6px !important;
+  }
+
+  .hf-content-preview .widget-wrapper:hover {
+    background: rgba(59, 130, 246, 0.03) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* Widget controls */
+  .hf-content-preview .widget-controls {
+    position: absolute !important;
+    top: -12px !important;
+    right: 8px !important;
+    display: flex !important;
+    gap: 4px !important;
+    background: #ffffff !important;
+    padding: 4px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s ease !important;
+    z-index: 100 !important;
+  }
+
+  .hf-content-preview .widget-wrapper:hover > .widget-controls {
+    opacity: 1 !important;
+  }
+
+  .hf-content-preview .widget-controls .control-btn {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    border: 1px solid #e5e7eb !important;
+    background: #ffffff !important;
+    color: #4b5563 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+  }
+
+  .hf-content-preview .widget-controls .control-btn:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .hf-content-preview .widget-controls .edit-btn:hover {
+    background: #3b82f6 !important;
+    color: white !important;
+    border-color: #3b82f6 !important;
+  }
+
+  .hf-content-preview .widget-controls .delete-btn:hover {
+    background: #ef4444 !important;
+    color: white !important;
+    border-color: #ef4444 !important;
+  }
+
+  .hf-content-preview .widget-controls .move-btn:hover {
+    background: #10b981 !important;
+    color: white !important;
+    border-color: #10b981 !important;
+  }
+
+  /* Selected widget */
+  .hf-content-preview .widget-wrapper.selected {
+    border-color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  }
+
+  /* Drop zones - high specificity to override theme CSS */
+  .hf-content-preview .widget-drop-zone,
+  .hf-content-preview div.widget-drop-zone,
+  .hf-content-preview .hf-zone .widget-drop-zone {
+    background: #f9fafb !important;
+    border: 2px dashed #d1d5db !important;
+    color: #6b7280 !important;
+    padding: 20px !important;
+    text-align: center !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+    min-height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+
+  .hf-content-preview .widget-drop-zone:hover,
+  .hf-content-preview div.widget-drop-zone:hover {
+    border-color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+  }
+
+  .hf-content-preview .widget-drop-zone.drag-over,
+  .hf-content-preview div.widget-drop-zone.drag-over {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+  }
+
+  /* Widget type labels — positioned at bottom-left to avoid colliding with controls */
+  .hf-content-preview .widget-type-label {
+    position: absolute !important;
+    bottom: -8px !important;
+    left: 8px !important;
+    background: #3b82f6 !important;
+    color: white !important;
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s ease !important;
+    z-index: 101 !important;
+  }
+
+  .hf-content-preview .widget-wrapper:hover > .widget-type-label {
+    opacity: 1 !important;
+  }
+
+  /* Zone visual indicators - high specificity to override theme CSS */
+  .hf-content-preview .hf-zone,
+  .hf-content-preview div.hf-zone {
+    border: 1px dashed transparent !important;
+    transition: all 0.2s ease !important;
+    min-height: 60px !important;
+    position: relative !important;
+  }
+
+  /* Empty zones - always show dashed border */
+  .hf-content-preview .hf-zone.empty,
+  .hf-content-preview div.hf-zone.empty {
+    border-color: #d1d5db !important;
+    background: rgba(249, 250, 251, 0.5) !important;  /* Semi-transparent to show zone background */
+  }
+
+  .hf-content-preview .hf-zone.empty:hover,
+  .hf-content-preview div.hf-zone.empty:hover {
+    border-color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.08) !important;
+  }
+
+  /* Non-empty zones - show subtle border on hover to indicate zone boundaries */
+  .hf-content-preview .hf-zone:not(.empty):hover,
+  .hf-content-preview div.hf-zone:not(.empty):hover {
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    background: rgba(59, 130, 246, 0.02) !important;
+    border-radius: 4px !important;
+  }
+
+  /* Non-empty zones - show visual feedback when dragging over */
+  .hf-content-preview .hf-zone.drag-over,
+  .hf-content-preview div.hf-zone.drag-over,
+  .hf-content-preview .hf-primary-zone .hf-zone.drag-over {
+    border-color: #10b981 !important;
+    border-style: solid !important;
+    border-width: 2px !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+    box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.3) !important;
+    outline: 2px dashed #10b981 !important;
+    outline-offset: -4px !important;
+  }
+
+  .hf-content-preview .zone-label {
+    position: absolute !important;
+    top: 4px !important;
+    left: 8px !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    color: #9ca3af !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s ease !important;
+  }
+
+  .hf-content-preview .hf-zone:hover .zone-label {
+    opacity: 1 !important;
+  }
+
+  /* =========================================
+     COMPACT MOBILE PREVIEW CHROME
+     ========================================= */
+
+  /* Compact drop zones — icon-only on mobile */
+  .canvas-frame.mobile-preview .hf-content-preview .widget-drop-zone {
+    padding: 8px 4px !important;
+    min-height: 36px !important;
+  }
+
+  .canvas-frame.mobile-preview .hf-content-preview .widget-drop-zone span {
+    display: none !important;
+  }
+
+  .canvas-frame.mobile-preview .hf-content-preview .widget-drop-zone i {
+    font-size: 14px !important;
+  }
+
+  /* Compact zone config buttons for mobile */
+  .canvas-frame.mobile-preview .zone-config-btn {
+    width: 22px;
+    height: 22px;
+    top: -12px;
+    right: 4px;
+    font-size: 10px;
+  }
+
+  .canvas-frame.mobile-preview .zone-config-btn::after {
+    display: none;  /* Hide "Configure" tooltip — no room */
+  }
+
+  /* Compact widget controls for mobile */
+  .canvas-frame.mobile-preview .hf-content-preview .widget-controls .control-btn {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 11px !important;
+  }
+
+  .canvas-frame.mobile-preview .hf-content-preview .widget-type-label {
+    font-size: 9px !important;
+    padding: 1px 4px !important;
+  }
+
+  /* Focus styles for accessibility */
+  .hf-content-preview *:focus {
+    outline: 2px solid var(--theme-color-primary, #3b82f6) !important;
+    outline-offset: 2px !important;
+  }
+}
+
+/* ============================================
+   WIDGET INSERT ZONES
+   (between existing widgets for precise drop positioning)
+   ============================================ */
+
+/* Hidden by default - zero height */
+.hf-content-preview .hf-widget-insert-zone {
+  height: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  transition: all 0.15s ease !important;
+  pointer-events: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+/* Show when dragging widget from sidebar - becomes visible */
+body.is-dragging-widget .hf-content-preview .hf-widget-insert-zone {
+  height: 24px !important;
+  margin: 4px 0 !important;
+  opacity: 1 !important;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(59, 130, 246, 0.08) 40%,
+    rgba(59, 130, 246, 0.08) 60%,
+    transparent 100%) !important;
+  border: 2px dashed transparent !important;
+  pointer-events: auto !important;
+  border-radius: 4px !important;
+}
+
+/* Center line indicator */
+body.is-dragging-widget .hf-content-preview .hf-widget-insert-zone::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 10% !important;
+  right: 10% !important;
+  top: 50% !important;
+  height: 2px !important;
+  background: #3b82f6 !important;
+  opacity: 0.5 !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Hover/drag-over expansion */
+body.is-dragging-widget .hf-content-preview .hf-widget-insert-zone:hover,
+.hf-content-preview .hf-widget-insert-zone.drag-over {
+  height: 36px !important;
+  margin: 6px 0 !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 2px dashed #3b82f6 !important;
+}
+
+/* Show indicator text on hover */
+.hf-content-preview .hf-widget-insert-zone .insert-indicator {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #3b82f6 !important;
+  opacity: 0 !important;
+  transition: opacity 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.hf-content-preview .hf-widget-insert-zone.drag-over .insert-indicator {
+  opacity: 1 !important;
+  background: white !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ============================================
+   ZONE PROPORTIONS DURING DRAG
+   (maintain min-height and show drop hints)
+   ============================================ */
+
+/* Zones should maintain layout during drag */
+body.is-dragging-widget .hf-content-preview .hf-zone:not(.empty) {
+  border: 1px dashed #d1d5db !important;
+  background: rgba(249, 250, 251, 0.3) !important;
+  min-height: 48px !important;
+}
+
+body.is-dragging-widget .hf-content-preview .hf-zone:not(.empty):hover {
+  border-color: #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.05) !important;
+}
+
+/* ============================================
+   SORTABLE WIDGET STATES
+   (reordering via move button)
+   ============================================ */
+
+/* Widget being dragged (hidden, replaced by ghost) */
+.hf-content-preview .widget-wrapper.hf-widget-drag {
+  opacity: 0 !important;
+}
+
+/* Ghost placeholder where widget will land */
+.hf-content-preview .widget-wrapper.hf-widget-ghost {
+  opacity: 0.4 !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 2px dashed #3b82f6 !important;
+  border-radius: 4px !important;
+}
+
+/* Widget being grabbed */
+.hf-content-preview .widget-wrapper.hf-widget-chosen {
+  opacity: 0.9 !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  transform: scale(1.02) !important;
+  z-index: 1000 !important;
+}
+
+/* Widget actively moving */
+.hf-content-preview .widget-wrapper.is-moving {
+  cursor: grabbing !important;
+}
+
+/* Move button cursor */
+.hf-content-preview .widget-controls .move-btn {
+  cursor: grab !important;
+}
+
+.hf-content-preview .widget-controls .move-btn:active {
+  cursor: grabbing !important;
+}
+
+/* During reordering, dim insert zones to avoid confusion */
+body.is-reordering-widget .hf-content-preview .hf-widget-insert-zone {
+  opacity: 0.3 !important;
+  pointer-events: none !important;
+}

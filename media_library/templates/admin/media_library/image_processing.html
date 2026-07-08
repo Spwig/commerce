@@ -1,0 +1,149 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Image Processing" %} | {{ site_title|default:_('Spwig Admin') }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'media_library/admin/css/image_processing.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'design:dashboard' %}">{% trans 'Design Dashboard' %}</a>
+    &rsaquo; {% trans 'Image Processing' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="image-processing-header">
+        <h1><i class="fas fa-images"></i> {% trans "Image Processing & Thumbnails" %}</h1>
+        <p class="image-processing-subtitle">{% trans "Configure thumbnail sizes, manage image optimization, and regenerate thumbnails" %}</p>
+    </div>
+
+    <!-- Persistent Regeneration Status Banner -->
+    <div id="regeneration-status-banner" class="regeneration-status-banner site-settings-hidden">
+        <div class="regeneration-status-content">
+            <div class="regeneration-status-icon">
+                <i class="fas fa-sync-alt fa-spin"></i>
+            </div>
+            <div class="regeneration-status-info">
+                <div class="regeneration-status-title">
+                    {% trans "Thumbnail Regeneration in Progress" %}
+                </div>
+                <div class="regeneration-status-message" id="banner-status-message">
+                    {% trans "Processing images..." %}
+                </div>
+                <div class="regeneration-status-progress-bar">
+                    <div class="regeneration-status-progress-fill" id="banner-progress-fill"></div>
+                </div>
+            </div>
+            <button type="button" class="regeneration-status-dismiss" data-action="dismiss-banner" title="{% trans 'Dismiss (process continues in background)' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Current Configuration Display -->
+    <fieldset class="module">
+        <h2><i class="fas fa-ruler-combined"></i> {% trans "Configured Thumbnail Sizes" %}</h2>
+        <div class="images-info-box">
+            <div id="thumbnail-sizes-display" class="images-grid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="images-info-note">
+                <i class="fas fa-info-circle"></i>
+                <span id="thumbnail-config-note">
+                    {% trans "Loading configuration..." %}
+                </span>
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- Manage Thumbnail Sizes -->
+    <fieldset class="module site-settings-hidden" id="manage-sizes-section">
+        <h2><i class="fas fa-edit"></i> {% trans "Manage Thumbnail Sizes" %}</h2>
+        <div class="site-settings-presets-banner">
+            <div class="site-settings-presets-banner-title">
+                <i class="fas fa-lock"></i> {% trans "System Presets Protected" %}
+            </div>
+            <div class="text-opacity-90">
+                {% trans "9 default thumbnail sizes are protected system presets. You cannot delete them or change their names, but you can modify their dimensions and settings." %}
+            </div>
+        </div>
+        <p class="help">
+            {% trans "Add, edit, or remove thumbnail sizes. Active sizes will be generated for all product images." %}
+        </p>
+        <div id="thumbnail-sizes-editor">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        <div class="regenerate-controls site-settings-controls-spaced">
+            <button type="button" class="regenerate-btn" data-action="show-add-size-form">
+                <i class="fas fa-plus"></i> {% trans "Add New Size" %}
+            </button>
+            <button type="button" class="regenerate-btn" data-action="save-thumbnail-sizes">
+                <i class="fas fa-save"></i> {% trans "Save Changes" %}
+            </button>
+        </div>
+    </fieldset>
+
+    <!-- Image Processing Stats -->
+    <fieldset class="module">
+        <h2><i class="fas fa-chart-bar"></i> {% trans "Image Library Statistics" %}</h2>
+        <div class="images-info-box">
+            <div id="image-stats-display" class="images-grid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- Regenerate Thumbnails Section -->
+    <fieldset class="module">
+        <h2><i class="fas fa-sync-alt"></i> {% trans "Regenerate Thumbnails" %}</h2>
+        <p class="help">
+            {% trans "Regenerate all product image thumbnails. This is useful after changing thumbnail sizes or importing products without thumbnails." %}
+        </p>
+        <div class="regenerate-controls">
+            <button type="button" id="regenerate-thumbnails-btn" data-action="regenerate-thumbnails" class="regenerate-btn">
+                <i class="fas fa-sync-alt"></i> {% trans "Regenerate All Product Thumbnails" %}
+            </button>
+            <div id="regenerate-status" class="regenerate-status"></div>
+        </div>
+        <div id="last-regeneration-info" class="last-regeneration-info site-settings-hidden">
+            <i class="fas fa-clock"></i>
+            <span id="last-regeneration-text"></span>
+        </div>
+        <div id="regenerate-progress" class="regenerate-progress">
+            <div class="regenerate-progress-bar-container">
+                <div id="regenerate-progress-bar" class="regenerate-progress-bar"></div>
+            </div>
+            <div id="regenerate-progress-text" class="regenerate-progress-text"></div>
+        </div>
+    </fieldset>
+
+    <!-- Performance Tips -->
+    <fieldset class="module">
+        <h2><i class="fas fa-lightbulb"></i> {% trans "High Performance Tips" %}</h2>
+        <ul class="performance-tips-list">
+            <li>{% trans "All thumbnails are automatically generated in WebP format for faster loading" %}</li>
+            <li>{% trans "Regenerating thumbnails is safe and can be done at any time without affecting originals" %}</li>
+        </ul>
+    </fieldset>
+</div>
+
+<script type="application/json" id="image-processing-data">
+{
+    "urls": {
+        "thumbnailSizes": "{% url 'media_library_admin:thumbnail_sizes_api' %}",
+        "saveThumbnailSizes": "{% url 'media_library_admin:save_thumbnail_sizes_api' %}",
+        "deleteThumbnailSize": "{% url 'media_library_admin:delete_thumbnail_size_api' size_id=0 %}",
+        "imageStats": "{% url 'media_library_admin:image_stats_api' %}",
+        "regenerateThumbnails": "{% url 'media_library_admin:regenerate_thumbnails' %}",
+        "regenerateThumbnailsStatus": "{% url 'media_library_admin:regenerate_thumbnails_status' %}"
+    }
+}
+</script>
+<script src="{% static 'media_library/admin/js/image_processing.js' %}"></script>
+{% endblock %}

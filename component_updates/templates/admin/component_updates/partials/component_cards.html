@@ -1,0 +1,226 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/version-history.css' %}">
+
+<div class="list-row-cards">
+    {% for component in components %}
+    <div class="list-row-card{% if component.locked %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ component.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if component.logo %}
+                <img src="{{ component.logo.url }}" alt="{{ component.name }}" class="component-logo-contain">
+            {% elif component.thumbnail_url %}
+                <img src="{{ component.thumbnail_url }}" alt="{{ component.name }}" class="component-logo-cover">
+            {% else %}
+                {% if component.component_type == 'widget' %}
+                    <i class="fas fa-th-large text-primary icon-size-28"></i>
+                {% elif component.component_type == 'theme' %}
+                    <i class="fas fa-palette text-primary icon-size-28"></i>
+                {% elif component.component_type == 'shipping_provider' %}
+                    <i class="fas fa-truck text-primary icon-size-28"></i>
+                {% elif component.component_type == 'payment_provider' %}
+                    <i class="fas fa-credit-card text-primary icon-size-28"></i>
+                {% elif component.component_type == 'email_provider' %}
+                    <i class="fas fa-envelope text-primary icon-size-28"></i>
+                {% elif component.component_type == 'exchange_rate_provider' %}
+                    <i class="fas fa-exchange-alt text-primary icon-size-28"></i>
+                {% elif component.component_type == 'header_template' %}
+                    <i class="fas fa-window-maximize text-primary icon-size-28"></i>
+                {% elif component.component_type == 'footer_template' %}
+                    <i class="fas fa-window-minimize text-primary icon-size-28"></i>
+                {% elif component.component_type == 'utility' %}
+                    <i class="fas fa-tools text-primary icon-size-28"></i>
+                {% elif component.component_type == 'element' %}
+                    <i class="fas fa-shapes text-primary icon-size-28"></i>
+                {% elif component.component_type == 'product_feed_provider' %}
+                    <i class="fas fa-rss text-primary icon-size-28"></i>
+                {% else %}
+                    <i class="fas fa-puzzle-piece text-primary icon-size-28"></i>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:component_updates_componentregistry_change' component.pk %}">
+                    {{ component.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-tag"></i> {{ component.get_component_type_display }}
+                {% if component.author %}
+                    <span class="ml-12"><i class="fas fa-user"></i> {{ component.author }}</span>
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Update Status Badge -->
+                {% if component.locked %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-lock"></i> {% trans "Locked" %}
+                    </span>
+                {% elif component.update_available %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-cloud-download-alt"></i> {% trans "Update Available" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Up to Date" %}
+                    </span>
+                {% endif %}
+
+                <!-- Auto Update Badge -->
+                {% if component.auto_update %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-robot"></i> {% trans "Auto Update" %}
+                    </span>
+                {% endif %}
+
+                <!-- Update Channel Badge -->
+                {% if component.update_channel %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-code-branch"></i> {{ component.update_channel.get_name_display }}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if component.description %}
+            <div class="list-row-card-description">
+                {{ component.description|truncatewords:25 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Current Version" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        v{{ component.current_version }}
+                    </span>
+                </div>
+                {% if component.update_available and component.latest_version %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Latest Version" %}</span>
+                    <span class="list-row-card-stat-value text-warning font-weight-600">
+                        v{{ component.latest_version }}
+                    </span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Last Checked" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if component.last_checked %}
+                            {{ component.last_checked|timesince }} {% trans "ago" %}
+                        {% else %}
+                            {% trans "Never" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Installed" %}: {{ component.installed_at|date:"M d, Y" }}</span>
+                </div>
+                {% if component.last_updated %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>{% trans "Updated" %}: {{ component.last_updated|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+                {% if component.lock_reason %}
+                <div class="list-row-card-meta-item text-error">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{{ component.lock_reason|truncatewords:10 }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:component_updates_componentregistry_change' component.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            {% if component.update_available and not component.locked %}
+            <button type="button"
+               class="list-row-card-action list-row-card-action-warning"
+               data-action="install-update" data-pk="{{ component.pk }}"
+               title="{% trans 'Install update' %}">
+                <i class="fas fa-download"></i>
+            </button>
+            {% endif %}
+            {% if component.locked %}
+            <button type="button"
+               class="list-row-card-action"
+               data-action="toggle-lock" data-pk="{{ component.pk }}" data-lock="false"
+               title="{% trans 'Unlock component' %}">
+                <i class="fas fa-unlock"></i>
+            </button>
+            {% else %}
+            <button type="button"
+               class="list-row-card-action"
+               data-action="toggle-lock" data-pk="{{ component.pk }}" data-lock="true"
+               title="{% trans 'Lock component' %}">
+                <i class="fas fa-lock"></i>
+            </button>
+            {% endif %}
+            <button type="button"
+               class="list-row-card-action"
+               data-action="view-changelog" data-slug="{{ component.slug }}" data-name="{{ component.name }}"
+               title="{% trans 'View changelog' %}">
+                <i class="fas fa-scroll"></i>
+            </button>
+            <a href="{% url 'admin:component_updates_componentversion_changelist' %}?component__id__exact={{ component.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View version history' %}">
+                <i class="fas fa-history"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-puzzle-piece"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No components found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Changelog Modal -->
+<div id="changelog-modal" class="admin-modal-overlay">
+    <div class="admin-modal admin-modal--md">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title">
+                <i class="fas fa-scroll"></i>
+                <span id="changelog-modal-title">{% trans "Version History" %}</span>
+            </h2>
+            <button type="button" class="admin-modal-close" data-action="close-changelog-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body" id="changelog-modal-body">
+            <p class="version-history-loading">
+                <i class="fas fa-spinner fa-spin"></i> {% trans "Loading..." %}
+            </p>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="button" data-action="close-changelog-modal">
+                {% trans "Close" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+{% include "providers_common/includes/version_history_i18n.html" %}
+<script type="application/json" id="component-cards-i18n">{"confirmInstall": "{% trans 'Are you sure you want to install the update for this component?' %}", "failedInstall": "{% trans 'Failed to install update.' %}", "errorInstall": "{% trans 'Error installing update. Please try again.' %}", "confirmLock": "{% trans 'Are you sure you want to lock this component?' %}", "confirmUnlock": "{% trans 'Are you sure you want to unlock this component?' %}", "failedLock": "{% trans 'Failed to update lock status.' %}", "errorLock": "{% trans 'Error updating lock status. Please try again.' %}"}</script>
+<script src="{% static 'providers_common/js/version-history.js' %}"></script>
+<script src="{% static 'component_updates/admin/js/component-cards.js' %}"></script>

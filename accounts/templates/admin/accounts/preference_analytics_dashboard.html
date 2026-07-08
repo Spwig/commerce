@@ -1,0 +1,211 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Preference Analytics" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/admin/css/preference-analytics.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:accounts_communicationpreference_changelist' %}">{% trans 'Communication Preferences' %}</a>
+    &rsaquo; {% trans 'Analytics Dashboard' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <form method="get">
+            <div class="filter-group">
+                <label for="period">{% trans "Period" %}</label>
+                <select name="period" id="period">
+                    <option value="today" {% if period == 'today' %}selected{% endif %}>{% trans "Today" %}</option>
+                    <option value="last_7_days" {% if period == 'last_7_days' %}selected{% endif %}>{% trans "Last 7 Days" %}</option>
+                    <option value="last_30_days" {% if period == 'last_30_days' %}selected{% endif %}>{% trans "Last 30 Days" %}</option>
+                    <option value="this_month" {% if period == 'this_month' %}selected{% endif %}>{% trans "This Month" %}</option>
+                    <option value="last_quarter" {% if period == 'last_quarter' %}selected{% endif %}>{% trans "Last Quarter" %}</option>
+                    <option value="this_year" {% if period == 'this_year' %}selected{% endif %}>{% trans "This Year" %}</option>
+                    <option value="custom" {% if period == 'custom' %}selected{% endif %}>{% trans "Custom Range" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-group{% if period != 'custom' %} hidden{% endif %}" id="custom-dates">
+                <label for="start_date">{% trans "Start Date" %}</label>
+                <input type="date" name="start_date" id="start_date" value="{{ start_date }}">
+            </div>
+
+            <div class="filter-group{% if period != 'custom' %} hidden{% endif %}" id="custom-dates-end">
+                <label for="end_date">{% trans "End Date" %}</label>
+                <input type="date" name="end_date" id="end_date" value="{{ end_date }}">
+            </div>
+
+            <div class="filter-group">
+                <label>
+                    <input type="checkbox" name="compare" value="true" {% if compare %}checked{% endif %}>
+                    {% trans "Compare with previous period" %}
+                </label>
+            </div>
+
+            <div class="filter-group">
+                <button type="submit">{% trans "Apply Filters" %}</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="action-cards">
+        <div class="action-card">
+            <h3>{% trans "Unverified Users" %}</h3>
+            <div class="value">{{ action_cards.unverified_users }}</div>
+            <a href="{% url 'admin:accounts_communicationpreference_changelist' %}?email_verified__exact=0&email_marketing__exact=1" class="link">
+                {% trans "View all" %} →
+            </a>
+        </div>
+
+        <div class="action-card">
+            <h3>{% trans "Recent Unsubscribes" %}</h3>
+            <div class="value">{{ action_cards.recent_unsubscribes }}</div>
+            <p class="action-card__subtitle">{% trans "Last 7 days" %}</p>
+        </div>
+
+        <div class="action-card">
+            <h3>{% trans "Pending Verifications" %}</h3>
+            <div class="value">{{ action_cards.pending_verifications }}</div>
+            <p class="action-card__subtitle">{% trans "Awaiting confirmation" %}</p>
+        </div>
+
+        <div class="action-card">
+            <h3>{% trans "Total Subscribers" %}</h3>
+            <div class="value">{{ action_cards.total_subscribers }}</div>
+            <p class="action-card__subtitle">{% trans "Active marketing subscribers" %}</p>
+        </div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="metric-cards">
+        <div class="metric-card">
+            <h3>{% trans "Opt-In Rates" %}</h3>
+
+            <div class="metric-item">
+                <span class="metric-label">{% trans "Marketing Opt-In" %}</span>
+                <div>
+                    <span class="metric-value">{{ opt_in_metrics.marketing_opted_in.percentage|floatformat:1 }}%</span>
+                    {% if compare and opt_in_metrics.changes %}
+                    <span class="metric-change {% if opt_in_metrics.changes.marketing_opted_in > 0 %}positive{% else %}negative{% endif %}">
+                        {% if opt_in_metrics.changes.marketing_opted_in > 0 %}+{% endif %}{{ opt_in_metrics.changes.marketing_opted_in|floatformat:1 }}%
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="metric-item">
+                <span class="metric-label">{% trans "Email Verified" %}</span>
+                <div>
+                    <span class="metric-value">{{ opt_in_metrics.email_verified.percentage|floatformat:1 }}%</span>
+                    {% if compare and opt_in_metrics.changes %}
+                    <span class="metric-change {% if opt_in_metrics.changes.email_verified > 0 %}positive{% else %}negative{% endif %}">
+                        {% if opt_in_metrics.changes.email_verified > 0 %}+{% endif %}{{ opt_in_metrics.changes.email_verified|floatformat:1 }}%
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="metric-item">
+                <span class="metric-label">{% trans "SMS Opt-In" %}</span>
+                <div>
+                    <span class="metric-value">{{ opt_in_metrics.sms_opted_in.percentage|floatformat:1 }}%</span>
+                    {% if compare and opt_in_metrics.changes %}
+                    <span class="metric-change {% if opt_in_metrics.changes.sms_opted_in > 0 %}positive{% else %}negative{% endif %}">
+                        {% if opt_in_metrics.changes.sms_opted_in > 0 %}+{% endif %}{{ opt_in_metrics.changes.sms_opted_in|floatformat:1 }}%
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <h3>{% trans "Verification Funnel" %}</h3>
+
+            <div class="metric-item">
+                <span class="metric-label">{% trans "Total Signups" %}</span>
+                <span class="metric-value">{{ verification_funnel.signup }}</span>
+            </div>
+
+            <div class="metric-item">
+                <span class="metric-label">{% trans "Opted Into Marketing" %}</span>
+                <div>
+                    <span class="metric-value">{{ verification_funnel.opted_in }}</span>
+                    <span class="metric-change">{{ verification_funnel.conversion_rates.signup_to_opted_in|floatformat:1 }}%</span>
+                </div>
+            </div>
+
+            <div class="metric-item">
+                <span class="metric-label">{% trans "Email Verified" %}</span>
+                <div>
+                    <span class="metric-value">{{ verification_funnel.verified }}</span>
+                    <span class="metric-change">{{ verification_funnel.conversion_rates.opted_in_to_verified|floatformat:1 }}%</span>
+                </div>
+            </div>
+
+            <div class="metric-item">
+                <span class="metric-label">{% trans "Active Subscribers" %}</span>
+                <div>
+                    <span class="metric-value">{{ verification_funnel.active }}</span>
+                    <span class="metric-change">{{ verification_funnel.conversion_rates.verified_to_active|floatformat:1 }}%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-section">
+        <div class="chart-container">
+            <h3>{% trans "Opt-Ins Over Time" %}</h3>
+            <div class="chart-wrapper">
+                <canvas id="optInTrendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>{% trans "App Preference Breakdown" %}</h3>
+            <div class="chart-wrapper">
+                <canvas id="appBreakdownChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="preference-analytics-data">
+{
+    "chartData": {
+        "optInTrend": {{ opt_in_trend|safe }},
+        "appBreakdown": {
+            "blog": {{ app_breakdown.blog }},
+            "loyalty": {{ app_breakdown.loyalty }},
+            "referrals": {{ app_breakdown.referrals }},
+            "affiliate": {{ app_breakdown.affiliate }}
+        }
+    },
+    "translations": {
+        "newOptIns": "{% trans 'New Opt-Ins' %}",
+        "blog": "{% trans 'Blog' %}",
+        "loyalty": "{% trans 'Loyalty' %}",
+        "referrals": "{% trans 'Referrals' %}",
+        "affiliate": "{% trans 'Affiliate' %}"
+    }
+}
+</script>
+<script src="{% static 'accounts/admin/js/preference_analytics_dashboard.js' %}"></script>
+{% endblock %}
+
+

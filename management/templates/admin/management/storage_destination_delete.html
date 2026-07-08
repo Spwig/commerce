@@ -1,0 +1,52 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Delete Remote Storage Destination" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/provider-wizard.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_storage_destinations' %}">{% trans 'Remote Storage' %}</a>
+    &rsaquo; {% trans 'Delete' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container" style="max-width: 600px;">
+    <div class="wizard-content">
+        <div class="wizard-step-content" style="min-height: auto;">
+            <h2 class="step-title">{% trans "Delete Remote Storage Destination" %}</h2>
+            <p class="step-description">
+                {% blocktrans with name=destination.name %}
+                Are you sure you want to delete <strong>"{{ name }}"</strong>?
+                This will remove the destination configuration. Existing backups on the remote storage will not be deleted.
+                {% endblocktrans %}
+            </p>
+
+            <div class="alert alert-warning" style="margin: 20px 0;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>{% trans "This action cannot be undone. You will need to reconfigure the destination if you want to use it again." %}</div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="wizard-actions">
+                    <a href="{% url 'admin:management_storage_destinations' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                    </a>
+                    <button type="submit" class="btn" style="background: var(--error-fg); color: var(--primary-fg);">
+                        <i class="fas fa-trash"></i> {% trans "Delete Destination" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,137 @@
+{
+  "element_type": "divider",
+  "name": "Divider",
+  "description": "Horizontal line to separate content sections",
+  "version": "3.0.0",
+  "category": "layout",
+  "icon": "fas fa-minus",
+  "author": "Spwig",
+  "element_builder_primitive": true,
+  "tags": ["divider", "separator", "line", "hr"],
+  "supports_translation": false,
+  "template_file": "template.html",
+  "inherit_base": true,
+  "disable_base_properties": [
+    "typography_group",
+    "colors_group",
+    "background_group",
+    "border_group",
+    "spacing_group"
+  ],
+  "css_files": ["page_builder/css/elements/divider.css"],
+  "tabs": {
+    "basic": {
+      "label": "Basic",
+      "icon": "fas fa-sliders-h",
+      "order": 1,
+      "properties": {
+        "line_style_group": {
+          "type": "property_group",
+          "label": "Line Style",
+          "properties": {
+            "style": {
+              "type": "select",
+              "label": "Style",
+              "options": [
+                {"value": "solid", "label": "Solid"},
+                {"value": "dashed", "label": "Dashed"},
+                {"value": "dotted", "label": "Dotted"},
+                {"value": "double", "label": "Double"},
+                {"value": "groove", "label": "Groove"},
+                {"value": "ridge", "label": "Ridge"},
+                {"value": "gradient", "label": "Gradient Fade"},
+                {"value": "shadow", "label": "Shadow Line"}
+              ],
+              "default": "solid"
+            },
+            "thickness": {
+              "type": "number",
+              "label": "Thickness (px)",
+              "default": null,
+              "placeholder": "Theme default",
+              "help_text": "Leave empty to use theme default",
+              "min": 1,
+              "max": 20
+            },
+            "line_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "utility": "color_picker",
+              "default": null,
+              "placeholder": "Theme default",
+              "help_text": "Leave empty to use theme color"
+            }
+          }
+        },
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout",
+          "properties": {
+            "width": {
+              "type": "select",
+              "label": "Width",
+              "options": [
+                {"value": "100%", "label": "Full Width"},
+                {"value": "75%", "label": "75%"},
+                {"value": "50%", "label": "50%"},
+                {"value": "33%", "label": "33%"},
+                {"value": "25%", "label": "25%"}
+              ],
+              "default": "100%"
+            },
+            "alignment": {
+              "type": "select",
+              "label": "Alignment",
+              "options": [
+                {"value": "left", "label": "Left"},
+                {"value": "center", "label": "Center"},
+                {"value": "right", "label": "Right"}
+              ],
+              "default": "center"
+            }
+          }
+        },
+        "margin_group": {
+          "type": "property_group",
+          "label": "Vertical Spacing",
+          "properties": {
+            "margin_top": {
+              "type": "number",
+              "label": "Top (px)",
+              "default": null,
+              "placeholder": "Theme default",
+              "help_text": "Leave empty to use theme spacing",
+              "min": 0,
+              "max": 200
+            },
+            "margin_bottom": {
+              "type": "number",
+              "label": "Bottom (px)",
+              "default": null,
+              "placeholder": "Theme default",
+              "help_text": "Leave empty to use theme spacing",
+              "min": 0,
+              "max": 200
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "style": {"type": "select", "label": "Line Style", "options": [{"value": "solid", "label": "Solid"}, {"value": "dashed", "label": "Dashed"}, {"value": "dotted", "label": "Dotted"}, {"value": "double", "label": "Double"}, {"value": "groove", "label": "Groove"}, {"value": "ridge", "label": "Ridge"}, {"value": "gradient", "label": "Gradient Fade"}, {"value": "shadow", "label": "Shadow Line"}], "default": "solid"},
+    "thickness": {"type": "number", "label": "Thickness (px)", "default": null, "placeholder": "Theme default", "min": 1, "max": 20},
+    "line_color": {"type": "color_advanced", "label": "Line Color", "utility": "color_picker", "default": null, "placeholder": "Theme default"},
+    "width": {"type": "select", "label": "Width", "options": [{"value": "100%", "label": "Full Width"}, {"value": "75%", "label": "75%"}, {"value": "50%", "label": "50%"}, {"value": "33%", "label": "33%"}, {"value": "25%", "label": "25%"}], "default": "100%"},
+    "alignment": {"type": "select", "label": "Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "center"},
+    "margin_top": {"type": "number", "label": "Top Margin (px)", "default": null, "placeholder": "Theme default", "min": 0, "max": 200},
+    "margin_bottom": {"type": "number", "label": "Bottom Margin (px)", "default": null, "placeholder": "Theme default", "min": 0, "max": 200}
+  },
+  "translations": {
+    "en": {"name": "Divider", "description": "Horizontal line to separate content sections"},
+    "es": {"name": "Divisor", "description": "Linea horizontal para separar secciones de contenido"},
+    "fr": {"name": "Diviseur", "description": "Ligne horizontale pour separer les sections de contenu"},
+    "de": {"name": "Trenner", "description": "Horizontale Linie zur Trennung von Inhaltsabschnitten"},
+    "ar": {"name": "fasl", "description": "kht afqy lfsl aqsam almhtwy"}
+  }
+}

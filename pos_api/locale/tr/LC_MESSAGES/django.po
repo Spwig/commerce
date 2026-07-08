@@ -1,0 +1,1493 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "POS API"
+msgstr "POS API"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "Bu uç noktaya erişmek için geçerli bir POS lisansı gerekir."
+
+msgid "POS access requires a staff account."
+msgstr "POS erişimi için personel hesabı gerekir."
+
+msgid "You are not assigned to this terminal."
+msgstr "Bu terminalde atanan değilsiniz."
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "İzininiz yok: %(label)s."
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "Bundl variant seçimleri: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "Çıkarılacak isteğe bağlı BundleItem ID'leri listesi"
+
+msgid "Search by email, phone, or name"
+msgstr "E-posta, telefon veya isime göre ara"
+
+msgid "ID of the product to adjust stock for."
+msgstr "Stokunu ayarlamak istediğiniz ürünün ID'si."
+
+msgid "ID of the variant (required for variable products)."
+msgstr "Değişken ürünler için gereken varyant ID'si."
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"Ayarlamaların türü: \"receive\" (al), stok ekler (örn. yeni sevkiyat), "
+"\"damage\" (hasar), stok kaldırır (örn. kırılmış ürün), \"recount\" (tekrar "
+"sayım), on_hand sayısını mutlak olarak ayarlar, \"return\" (iade), stok geri"
+" ekler (örn. müşteri iadesi)."
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"\"receive\"/\"return\" için eklenecek birimler. \"damage\" için kaldırılacak"
+" birimler. \"recount\" için yeni mutlak on_hand sayısı."
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "Bu ayarlama için gerekli açıklama (denetim izi)."
+
+msgid "Optional UUID for offline deduplication."
+msgstr "Çevrimdışı yinelenmeyi önlemek için isteğe bağlı UUID."
+
+msgid "Signed quantity delta."
+msgstr "İmzalı miktar farkı."
+
+msgid "Last four digits of card number (digits only)"
+msgstr "Kart numarasının son dört hanesi (sadece rakamlar)"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr "Ödenecek miktar. Eğer sağlanmazsa, kalan tam bakiye ödenecektir."
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr ""
+"Terminal sağlayıcısından alınan Ödeme ID'si (örneğin Stripe PaymentIntent "
+"ID)"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr ""
+"Sağlayıcıya özel okuyucu ID'si (örneğin Adyen POIID, Square device_id)"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "Durum sorgulamak için sağlayıcıya özel işlem ID'si"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr ""
+"İlk durum -- genellikle asenkron sağlayıcılar için \"pending\", senkron "
+"(Adyen) için \"succeeded\""
+
+msgid "Current payment status"
+msgstr "Mevcut ödeme durumu"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "Sağlayıcı ödeme kimliği (başarılı olduğunda)"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "İptal sebebi (iptal edildiğinde)"
+
+msgid "POS staff login"
+msgstr "POS personel girişi"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr ""
+"POS erişimi için bir personel kimliği doğrulaması yapar. Erişim ve yenileme "
+"token'ları döndürür. Admin API (MobileTokenAuthentication) ile aynı token "
+"sisteminde çalışır."
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "Giriş başarılı, token'lar ve terminal yapılandırması döner"
+
+msgid "Invalid credentials"
+msgstr "Geçersiz kimlik bilgileri"
+
+msgid "User is not a staff member"
+msgstr "Kullanıcı bir personel değildir"
+
+msgid "Refresh POS access token"
+msgstr "POS erişim jetonunu yenile"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "Yeniden token bir yeni erişim token'ı için değiştirilir."
+
+msgid "New access token"
+msgstr "Yeni erişim jetonu"
+
+msgid "Invalid or expired refresh token"
+msgstr "Geçersiz veya süresi dolmuş yenileme jetonu"
+
+msgid "POS logout"
+msgstr "POS çıkış"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "Geçerli erişim ve yeniden token'ları geçersiz kılar."
+
+msgid "Logged out successfully"
+msgstr "Başarıyla çıkış yapıldı"
+
+msgid "Get current POS cart"
+msgstr "Mevcut POS sepetini al"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr ""
+"Kimliği doğrulanmış kasa görevlisi için mevcut sepeti döndürür. Sepet yoksa "
+"yeni bir sepet oluşturur. Personel kimlik doğrulaması ve geçerli POS lisansı"
+" gerekir."
+
+msgid "Add item to POS cart"
+msgstr "POS sepetine ürün ekle"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"Kasa görevlisinin sepetine ürün ekler. Ürün ID'si veya barkod ile eklemeyi "
+"destekler. product_id olmadan barkod sağlanırsa, ürün otomatik olarak "
+"çözülür. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "Geçersiz ürün, varyant veya yetersiz stok"
+
+msgid "Update cart item quantity"
+msgstr "Sepet ürün miktarını güncelle"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Sepet öğesinin miktarını günceller. Öğeyi kaldırmak için miktarı 0 olarak "
+"ayarlayın. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "Geçersiz miktar veya yetersiz stok"
+
+msgid "Cart item not found"
+msgstr "Sepet ürün bulunamadı"
+
+msgid "Remove item from cart"
+msgstr "Sepetten ürün çıkar"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Sepetten belirli bir öğe kaldır. Personel kimlik doğrulaması ve geçerli POS "
+"lisansı gerekir."
+
+msgid "Apply voucher to cart"
+msgstr "Sepete kupon uygula"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr ""
+"Sepete bir kupon/indirim kodu uygulayın. Aynı anda yalnızca bir kupon aktif "
+"olabilir. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Invalid or expired voucher code"
+msgstr "Geçersiz veya süresi dolmuş kupon kodu"
+
+msgid "Remove voucher from cart"
+msgstr "Sepetten kuponu kaldır"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Uygulanan kuponu sepetten kaldır. Personel kimlik doğrulaması ve geçerli POS"
+" lisansı gerekir."
+
+msgid "No voucher applied"
+msgstr "Kupon uygulanmadı"
+
+msgid "Apply gift card to cart"
+msgstr "Hediye kartını sepete uygula"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Sepete bir hediye kartı kodu uygulayın, toplamın bir kısmını veya tamamını "
+"karşılamak için. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "Geçersiz hediye kartı veya yetersiz bakiye"
+
+msgid "Clear all items from cart"
+msgstr "Sepetteki tüm öğeleri temizle"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Sepetten tüm öğeleri, kuponları ve hediye kartlarını kaldırın. Personel "
+"kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Apply manual discount to cart item"
+msgstr "Sepet öğesine el ile indirim uygula"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Belirli bir sepet öğesine personel el ile indirimi uygula. İndirim personel "
+"sınırlarını aşıyorsa requires_approval=true döndürür. Personel kimlik "
+"doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Discount applied or requires approval"
+msgstr "İndirim uygulandı veya onay gerektiriyor"
+
+msgid "Invalid discount or not authorized"
+msgstr "Geçersiz indirim veya yetkilendirme yok"
+
+msgid "Remove manual discount from cart item"
+msgstr "Sepetteki el ile indirimi kaldır"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Belirli bir sepet öğesinden personel el ile indirimi kaldır. Personel kimlik"
+" doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Discount removed"
+msgstr "İndirim kaldırıldı"
+
+msgid "Apply manual discount to cart"
+msgstr "El ile indirimi sepete uygula"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Tüm sepete personel el ile indirimi uygula. İndirim personel sınırlarını "
+"aşıyorsa requires_approval=true döndürür. Personel kimlik doğrulaması ve "
+"geçerli POS lisansı gerekir."
+
+msgid "Remove manual discount from cart"
+msgstr "El ile indirimi sepetten kaldır"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Sepetteki personel el ile indirimini kaldır. Personel kimlik doğrulama ve "
+"geçerli POS lisansı gerekir."
+
+msgid "Verify manager PIN"
+msgstr "Yönetici PIN'ini doğrula"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Bir indirim onaylayabilen yöneticinin PIN'inin geçerli olup olmadığını "
+"doğrula. Geçerli ise yöneticinin adını döndür. Personel kimlik doğrulaması "
+"ve geçerli POS lisansı gerekir."
+
+msgid "PIN verification result"
+msgstr "PIN doğrulama sonucu"
+
+msgid "Approve discount with manager PIN"
+msgstr "Yönetici PIN'ini kullanarak indirimi onayla"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Personel limitlerini aşan bir indirim uygulamak için yöneticinin onayı "
+"gerekir. Devam etmek için geçerli bir yönetici PIN'i gereklidir. Personel "
+"kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Discount approved and applied"
+msgstr "İndirim onaylandı ve uygulandı"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "Geçersiz PIN veya indirim parametreleri"
+
+msgid "Park current cart"
+msgstr "Mevcut sepeti park et"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Müşterinin başka bir müşteriye hizmet verilmesi gereken durumlarda geçici "
+"olarak ayrılmak zorunda olduğu zamanlar için mevcut sepet durumunu kaydedin."
+" Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Cart parked successfully"
+msgstr "Sepet başarıyla park edildi"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "Sepet boş veya park edilemez"
+
+msgid "List parked carts"
+msgstr "Park edilmiş sepetleri listele"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr ""
+"Mevcut terminal için tüm park edilmiş sepetleri al. Personel kimlik "
+"doğrulama ve geçerli POS lisansı gerekir."
+
+msgid "List of parked carts"
+msgstr "Park edilmiş sepetler listesi"
+
+msgid "Restore parked cart"
+msgstr "Park edilmiş sepeti geri yükle"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr ""
+"Parked bir sepeti, mevcut sepet içeriğini değiştirerek geri yükleyin. Geri "
+"yükleme işleminden önce mevcut sepet temizlenecektir. İş gücü kimlik "
+"doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Cart restored successfully"
+msgstr "Sepet başarıyla geri yüklendi"
+
+msgid "Current cart is not empty"
+msgstr "Mevcut sepet boş değil"
+
+msgid "Parked cart not found"
+msgstr "Duraklatılmış sepet bulunamadı"
+
+msgid "Delete parked cart"
+msgstr "Duraklatılmış sepeti sil"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Parked bir sepeti kalıcı olarak silin. Bu işlem geri alınamaz. İş gücü "
+"kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Parked cart deleted"
+msgstr "Duraklatılmış sepet silindi"
+
+msgid "List POS products"
+msgstr "POS ürünleri listele"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"Mağaza içinde satış için mevcut olan ürünleri, satış kanalına göre "
+"filtreleyerek döndürür. Bir terminal tanımlandığında, depo özelı stok "
+"düzeylerini de içerir. Resimleri olan ürünler, depo bazlı popülerliğe göre "
+"ilk olarak sıralanır."
+
+msgid "Search by name, SKU, or barcode"
+msgstr "İsim, SKU veya barkod ile ara"
+
+msgid "Filter by category ID"
+msgstr "Kategori ID'sine göre filtrele"
+
+msgid "Warehouse for stock levels"
+msgstr "Stok seviyeleri için depo"
+
+msgid "Page number (default: 1)"
+msgstr "Sayfa numarası (varsayılan: 1)"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "Sayfa başına öğeler (varsayılan: 50, maks: 200)"
+
+msgid "Get product detail"
+msgstr "Ürün detayını al"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr "Ürünün tam detaylarını, varyasyonlarını ve depo stoklarını döndürür."
+
+msgid "Barcode lookup"
+msgstr "Barkod sorgulama"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr ""
+"Barkod ile ürün ya da varyasyonu ara. Tarama için hızlı ve indeksli arama."
+
+msgid "No product found with this barcode"
+msgstr "Bu barkodla ürün bulunamadı"
+
+msgid "List categories"
+msgstr "Kategorileri listele"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "POS ürün gezintisi için kategori ağacını döndürür."
+
+msgid "Process cash payment"
+msgstr "Nakit ödeme işleme"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Nakit ödemeli bir POS işlemi tamamlayın. Tutarın sipariş toplamını "
+"kapsadığını doğrular ve para üstünü hesaplar. channel='pos' ile bir Order "
+"oluşturur ve bir POSPayment kaydı oluşturur. Terminalde açık bir şifte "
+"gerekir. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "Boş sepet veya yetersiz nakit ödeme"
+
+msgid "Process card payment"
+msgstr "Kart ödeme işleme"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Kart ödemeli bir POS işlemi tamamlayın. Kart işleminin dışardan bir kart "
+"terminali tarafından yapılacağı varsayılır. Bu uç nokta kart referansını ve "
+"son dört rakamı kaydeder. Terminalde açık bir şifte gerekir. Personel kimlik"
+" doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Empty cart"
+msgstr "Sepeti boşalt"
+
+msgid "Check gift card balance"
+msgstr "Hediye kartı bakiyesini kontrol et"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr ""
+"POS ödeme için hediye kartının bakiyesini kontrol edin. Geçerliyse mevcut "
+"bakiyeyi, geçersizse bir hata mesajı döndürür. Personel kimlik doğrulaması "
+"gerekir."
+
+msgid "Gift card balance info"
+msgstr "Hediye kartı bakiye bilgisi"
+
+msgid "Invalid gift card or missing code"
+msgstr "Geçersiz hediye kartı veya eksik kod"
+
+msgid "Process gift card payment"
+msgstr "Hediye kartı ödemeyi işle"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Bir hediye kartı kullanarak bir POS işlemi tamamlayın. Hediye kartının "
+"yeterli bakiyeye sahip olduğundan emin olun. Hediye kartı bakiyesi sipariş "
+"toplamından azsa, yerine split tender uç noktasını kullanın. Terminalde açık"
+" bir şifre gerekir. Personel kimlik doğrulaması ve geçerli POS lisansı "
+"gerekir."
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "Boş sepet, geçersiz hediye kartı veya yetersiz bakiye"
+
+msgid "Process split tender payment"
+msgstr "Ayrık ödeme işleme"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Bir POS işlemi, birden fazla ödeme yöntemi kullanılarak (ödeme bölünmesi) "
+"tamamlayabilirsiniz. Tüm ödemelerin toplamı, sipariş toplamını kaplamalıdır."
+" Toplam sipariş miktarını aşıyorsa, son nakit ödemesine göre iade "
+"hesaplanır. Terminalde açık bir şifte gerekir. Personel kimlik doğrulaması "
+"ve geçerli POS lisansı gerekir."
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "Boş sepet, geçersiz ödemeler veya yetersiz toplam"
+
+msgid "Process terminal card payment"
+msgstr "Terminal kart ödemeyi işle"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Entegre kart terminali ödemeleriyle bir POS işlemi tamamlayabilirsiniz. "
+"Önceden terminal SDK aracılığıyla ödeme toplanmış ve provider_payment_id "
+"(örneğin Stripe PaymentIntent) alınmış olmalıdır. Bu uç nokta, sipariş "
+"oluşturulmadan önce ödemenin başarılı olup olmadığını doğrular. Terminalde "
+"açık bir şifte gerekir. Personel kimlik doğrulaması ve geçerli POS lisansı "
+"gerekir."
+
+msgid "Empty cart or payment verification failed"
+msgstr "Boş sepet veya ödeme doğrulaması başarısız oldu"
+
+msgid "Search customers"
+msgstr "Müşteri Ara"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Müşterileri e-posta, telefon, ad veya soyadı üzerinden ara. En fazla 20 "
+"eşleşen sonuç döndürür. Minimum 2 karakter gerekir. Personel kimlik "
+"doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "Arama sorgusu (e-posta, telefon veya isim). En az 2 karakter."
+
+msgid "Search query too short"
+msgstr "Arama sorgusu çok kısa"
+
+msgid "Create walk-in customer"
+msgstr "Walk-in müşteri oluştur"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"Bir walk-in satış için yeni bir müşteri oluşturun. Belirtilen e-posta "
+"adresine sahip bir müşteri zaten varsa, yinelenen bir müşteri oluşturmak "
+"yerine mevcut müşteriyi döndürür. Gerçek anlamda anonim walk-in müşteriler "
+"için e-posta isteğe bağlıdır. Personel kimlik doğrulaması ve geçerli POS "
+"lisansı gerekir."
+
+msgid "Existing customer found with this email"
+msgstr "Bu e-posta adresiyle bir müşteri zaten mevcut"
+
+msgid "Get customer details"
+msgstr "Müşteri detaylarını al"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Müşteri ayrıntılarını, iletişim bilgilerini ve yakın tarihli sipariş "
+"geçmişini alır. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "List stock levels for warehouse"
+msgstr "Depo için stok seviyelerini listele"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Terminalin depolarındaki stok seviyelerini sayfalı olarak döndürür. Ürün adı"
+" veya SKU ile arama ve düşük stok veya stok yok olan öğeler için filtreleme "
+"destekler. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Search by product name or SKU"
+msgstr "Ürün adı veya SKU ile ara"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "Sadece düşük stok eşiğindeki veya altında olan öğeleri döndür"
+
+msgid "Only return items with zero available stock"
+msgstr "Sadece mevcut stoku sıfır olan öğeleri döndür"
+
+msgid "Warehouse not determined"
+msgstr "Depo belirlenmedi"
+
+msgid "Get product stock detail"
+msgstr "Ürün stok detaylarını al"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr ""
+"Terminalin depolarındaki belirli bir ürünün stok seviyelerini, varyant "
+"düzeyinde ayrım dahil, döndürür. Personel kimlik doğrulaması ve geçerli POS "
+"lisansı gerekir."
+
+msgid "Check stock across all locations"
+msgstr "Tüm lokasyonlarda stok durumunu kontrol et"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Ürünün tüm depo konumlarında stok seviyelerini döndürür. Bir stokta "
+"bulunmayan ürünün başka bir konumda mevcut olup olmadığını kontrol etmek "
+"için yararlıdır. Mevcut terminalin deposu is_current=true ile işaretlenir. "
+"Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Adjust stock levels"
+msgstr "Stok seviyelerini ayarla"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"Terminalin depolarındaki bir ürünün stokunu ayarla. Dört ayarlama türünü "
+"destekler: 'receive' (kargo dan stok ekle), 'damage' (hasarlı/kayıp stok "
+"kaldır), 'recount' (fiziksel sayım dan mutlak on_hand ayarla), 'return' "
+"(müşteri iadesinden stok geri ekle). Değişmez bir StockMovement denetim "
+"kaydı oluşturur. Personel kimlik doğrulaması, geçerli POS lisansı ve "
+"pos_stock_adjustment izni gerekir."
+
+msgid "Stock adjusted successfully"
+msgstr "Stok başarıyla ayarlandı"
+
+msgid "Validation error or warehouse not determined"
+msgstr "Doğrulama hatası veya depo belirlenemedi"
+
+msgid "Permission denied or POS license required"
+msgstr "İzin verilmedi veya POS lisansı gerekli"
+
+msgid "Product or stock item not found"
+msgstr "Ürün veya stok öğesi bulunamadı"
+
+msgid "List stock movement history"
+msgstr "Stok hareket geçmişini listele"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Terminalin deposu için sayfalı stok hareket kayıtlarını döndürür. Son stok "
+"değişikliklerini denetlemek için yararlıdır (düzeltmeler, hasarlar, yeniden "
+"sayım, iade). Ürün ve hareket türüne göre filtreleme destekler. Personel "
+"kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Filter movements by product ID"
+msgstr "Ürün ID'sine göre hareketleri filtrele"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr ""
+"Dahil edilecek hareket türlerini virgülle ayırın (örneğin 'damage,recount')"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "Sayfa başına öğeler (varsayılan: 20, maks: 100)"
+
+msgid "Get customer loyalty info"
+msgstr "Müşteri sadakat bilgilerini al"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"Müşterinin sadakat üyeliği durumu, seviyesi ve puan bakiyesini alır. Müşteri"
+" aktif bir sadakat üyeliği yoksa `is_member: false` döndürür. Personel "
+"kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"Sadakat üyelik bilgisi. `is_member`, müşteriye aktif bir üyelik olduğunda "
+"true değerini alır. True olduğunda `tier_name`, `tier_color` ve "
+"`available_points` içerir."
+
+msgid "Preview loyalty points for cart"
+msgstr "Sepet için sadakat puanlarını önizle"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Belirli bir sepet toplamı için müşteriye kazandıracak olan loyality "
+"puanlarını hesaplar. Müşteri aktif bir loyality üyeliği yoksa 0 döndürür. İş"
+" gücü kimlik doğrulaması ve geçerli POS lisansı gerektirir."
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr ""
+"Sepet toplamı ondalık bir dize olarak (örneğin '49.99'). Varsayılan olarak "
+"'0'dır."
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr ""
+"Puan önizlemesi. `points_preview`, belirli bir sepet toplamı için müşteriye "
+"kazandıracak olan puan sayısını ifade eder."
+
+msgid "List POS orders"
+msgstr "POS siparişlerini listele"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Tarih aralığı, köken, müşteri, kasır ve arama için gelişmiş filtreleme ile "
+"siparişleri döndürür. İade senaryoları için web siparişlerinin "
+"görüntülenmesini destekler. Varsayılan: yalnızca bu terminalden bugünün "
+"siparişleri. Arama modu: 'search' sağlandığında, tarih/köken/kasır "
+"filtreleri atlanır ve sipariş numarası, müşteri adı, e-posta veya telefon "
+"numarasına göre herhangi bir sipariş bulunur. Personel kimlik doğrulaması ve"
+" geçerli POS lisansı gerekir."
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr ""
+"Aralık filtresi için başlangıç tarihi (ISO formatı, varsayılan: bugün). "
+"Arama sağlandığında ihmal edilir."
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr ""
+"Aralık filtresi için bitiş tarihi (ISO formatı, varsayılan: bugün). Arama "
+"sağlandığında ihmal edilir."
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr ""
+"Sipariş kaynağı filtresi: this_terminal (varsayılan), all_pos, all (web "
+"dahil). Arama sağlandığında bu filtre yok sayılır."
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr ""
+"Müşteri kullanıcı ID'sine göre filtrele. Arama sağlandığında ihmal edilir."
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr ""
+"Kasaya görevli ID'sine göre filtrele. Arama sağlandığında ihmal edilir."
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr ""
+"Sipariş numarası, müşteri adı, e-posta veya telefon numarasına göre tüm "
+"siparişlerde arama yapın. Tarih/çıkış filtrelerini atlar."
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "Sipariş durumuna göre filtrele (her iki modda geçerlidir)"
+
+msgid "Get order details"
+msgstr "Sipariş detaylarını al"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Öğeler ve ödeme analizini içeren tam sipariş detaylarını döndürür. Hem POS "
+"hem de web siparişlerini (iade senaryoları için) destekler. Personel kimlik "
+"doğrulaması ve geçerli bir POS lisansı gerektirir."
+
+msgid "Get receipt data for printing"
+msgstr "Baskı için fatura verilerini al"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"Bir POS siparişi için fatura formatında veri döndürür, mağaza bilgisi, "
+"ürünler, ödemeler ve alt bilgi metni içerir. ESC/POS termal yazıcılar için "
+"tasarlanmıştır. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Process order refund"
+msgstr "Sipariş iadesini işle"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Bir POS siparişi için tam veya kısmi iade işlemini gerçekleştirir. Kısmi "
+"iadeler için iade edilecek ürünleri ve miktarları belirtin. Bu, bir Iade "
+"kaydı oluşturur ve sipariş ve shift toplamlarını günceller. Terminalde açık "
+"bir shift gereklidir. Personel kimlik doğrulaması ve geçerli POS lisansı "
+"gerekir."
+
+msgid "Refund processed successfully"
+msgstr "İade başarıyla işlendi"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "Geçersiz iade talebi veya sipariş zaten iade edildi"
+
+msgid "Void a POS order"
+msgstr "Bir POS siparişini iptal et"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Mevcut shift'ten bir POS siparişini iptal eder. Sadece mevcut açık shift "
+"sırasında oluşturulan siparişler iptal edilebilir. Bu, tam bir iade "
+"oluşturur ve tüm ödeme ve envanter değişikliklerini geri alır. Terminalde "
+"açık bir shift gereklidir. Personel kimlik doğrulaması ve geçerli POS "
+"lisansı gerekir."
+
+msgid "Order voided successfully"
+msgstr "Sipariş başarıyla iptal edildi"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "Sipariş iptal edilemez (geçerli vardiya dışı)"
+
+msgid "List POS cashiers"
+msgstr "POS kasalara bak"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"POS siparişlerini işleyen personel listesini döndürür. Kasiyer filtresi "
+"açılır menüsünü doldurmak için kullanılır. Personel kimlik doğrulaması ve "
+"geçerli POS lisansı gerektirir."
+
+msgid "List of cashiers"
+msgstr "Kasa listesi"
+
+msgid "Send digital receipt"
+msgstr "Dijital fatura gönder"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Müşteriye e-posta, SMS veya WhatsApp üzerinden dijital bir fiş gönderir. "
+"Fiş, Celery görevi aracılığıyla asenkron olarak gönderilir. Personel kimlik "
+"doğrulaması ve geçerli POS lisansı gerektirir."
+
+msgid "Receipt queued for sending"
+msgstr "Fatura gönderim için kuyruğa alındı"
+
+msgid "Get receipt sending status"
+msgstr "Fatura gönderim durumu al"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr ""
+"Bir sipariş için hangi dijital fişlerin gönderildiğini kontrol eder. E-posta"
+" ve SMS/WhatsApp teslimatları için zaman damgaları döndürür."
+
+msgid "Receipt status"
+msgstr "Fatura durumu"
+
+msgid "Get current shift summary"
+msgstr "Mevcut shift özeti al"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Terminaldeki mevcut kasaya ait açık şifre özeti döndürür, toplamlar, işlem "
+"sayısı ve ödeme yöntemi analizi dahil. Hiçbir şifre açık değilse null şifre "
+"döndürür. Personel kimlik doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Open a new shift"
+msgstr "Yeni shift aç"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Terminalde yeni bir şifre başlatır. Her terminalde her zaman yalnızca bir "
+"açık şifre izin verilir. Açılış nakit miktarını kaydeder. Personel kimlik "
+"doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Invalid opening cash amount"
+msgstr "Geçersiz açılış nakit miktarı"
+
+msgid "A shift is already open on this terminal"
+msgstr "Bu terminalde bir vardiya zaten açıktır"
+
+msgid "Close current shift"
+msgstr "Mevcut shift kapat"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Mevcut açık şifreyi kapatır. Kapanış nakit miktarını kaydeder ve beklenen "
+"ile gerçek nakit farkını hesaplar. Personel kimlik doğrulaması ve geçerli "
+"POS lisansı gerekir."
+
+msgid "Record cash movement"
+msgstr "Nakit hareketi kaydet"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Vardiya sırasında nakit giriş veya çıkış hareketini kaydedin. Örnekler: "
+"nakit dengesi ekleme, depozitöre çıkarma, küçük harcamalar. Terminalde açık "
+"bir vardiya gerektirir. Personel kimlik doğrulaması ve geçerli POS lisansı "
+"gerekir."
+
+msgid "Cash movement recorded"
+msgstr "Nakit hareketi kaydedildi"
+
+msgid "Invalid movement data"
+msgstr "Geçersiz hareket verisi"
+
+msgid "Get daily sales report"
+msgstr "Günlük satış raporu al"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Terminal için toplam günlük satış raporu döndürür, toplamlar, işlem sayısı, "
+"ortalama işlem değeri ve ödeme yöntemi analizi içerir. Personel kimlik "
+"doğrulaması ve geçerli POS lisansı gerekir."
+
+msgid "Report date (ISO format, default: today)"
+msgstr "Rapor tarihi (ISO formatı, varsayılan: bugün)"
+
+msgid "Get top selling products"
+msgstr "En çok satan ürünleri al"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr ""
+"Belirtilen tarihe göre terminalin en çok satan ürünleri, satılan ürün "
+"miktarına göre sıralanmış şekilde döndürür. Personel kimlik doğrulaması ve "
+"geçerli POS lisansı gerekir."
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "İade edilecek ürün sayısı (varsayılan: 10, maks: 50)"
+
+msgid "Sync products since timestamp"
+msgstr "Tarih damgasından sonra ürünleri senkronize et"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Verilen zaman damgasından sonra oluşturulmuş veya güncellenmiş ürünleri "
+"döndürür. POS terminalinin yerel veritabanına ürün senkronizasyonu için "
+"kullanılır. Bir sonraki senkronizasyon isteği için sync_token döndürür. İş "
+"gücünün yetkilendirilmesi ve geçerli POS lisansı gereklidir."
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr ""
+"Değişiklikleri almak için ISO tarihsel damgası. Tam senkronizasyon için "
+"atla."
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "Sayfa başına öğeler (varsayılan: 100, maks: 200)"
+
+msgid "Sync customers since timestamp"
+msgstr "Tarih damgasından sonra müşterileri senkronize et"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Verilen zaman damgasından sonra oluşturulmuş veya sipariş vermiş müşterileri"
+" döndürür. Çevrimdışı müşteri arama işlemi için kullanılır. İş gücünün "
+"yetkilendirilmesi ve geçerli POS lisansı gereklidir."
+
+msgid "Customer sync data"
+msgstr "Müşteri senkronizasyon verisi"
+
+msgid "Upload offline transactions"
+msgstr "Çevrimdışı işlemler yükle"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Terminal çevrimdışı iken işlenen işlemlerin toplu yükleme işlemini yapar. "
+"Her işlem, ürünler ve ödemelerle birlikte bir Sipariş oluşturur. local_id, "
+"idempotans için kullanılır - yinelenen yükleme işlemleri tespit edilir ve "
+"atlanır. İş gücünün yetkilendirilmesi ve geçerli POS lisansı gereklidir."
+
+msgid "Upload results with success/failure per transaction"
+msgstr "İşlem başına başarı/başarısızlık ile sonuçları yükle"
+
+msgid "Get sync status"
+msgstr "Senkronizasyon durumu al"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Senkronizasyon planlaması için geçerli sunucu zamanını ve veritabanı "
+"sayımını döndürür. Personel kimlik doğrulaması ve geçerli POS lisansı "
+"gerekir."
+
+msgid "Get sync version info"
+msgstr "Senkronizasyon sürüm bilgisi al"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr ""
+"Müşteri uyumluluk kontrolü için API sürümünü ve veri şeması sürümünü "
+"döndürür. Şema sürümü arttığında müşterilerin temizlemesi ve yeniden "
+"senkronize etmesi gerekir."
+
+msgid "Version information"
+msgstr "Sürüm bilgisi"
+
+msgid "Upload offline stock adjustments"
+msgstr "Çevrimdışı stok ayarlamalarını yükle"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"Terminal çevrimdışı iken kuyruğa alınan stok düzenlemelerini toplu olarak "
+"yükle. Her düzenleme, çoğaltmaları önlemek için bir idempotency anahtarı "
+"kullanır. Personel kimlik doğrulaması, geçerli POS lisansı ve stok "
+"düzenlemesi izni gerekir."
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "Düzenleme başına başarı/başarısızlık ile sonuçları yükle"
+
+msgid "POS license or permission required"
+msgstr "POS lisansı veya izin gerekli"
+
+msgid "Sync orders for offline cache"
+msgstr "Çevrimdışı önbellek için siparişleri senkronize et"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"POS terminal üzerindeki çevrimdışı önbellekleme için siparişleri döndürür. "
+"Siparişler, terminalin senkronizasyon limitine kadar web siparişlerinden "
+"önceliklidir. 'since' parametresi aracılığıyla delta senkronizasyonu "
+"destekler. Personel kimlik doğrulaması ve geçerli bir POS lisansı gerekir."
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr ""
+"Delta senkronizasyonu için ISO zaman damgası. Tam senkronizasyon için atla."
+
+msgid "Register POS terminal"
+msgstr "POS terminalini kaydet"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr ""
+"Bir eşleştirme kodu kullanarak yeni bir cihazı POS terminali olarak "
+"kaydeder. Eşleştirme kodu, terminal oluşturulduğunda admin panelinde "
+"üretilir."
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "Terminal başarıyla kaydedildi, terminal yapılandırmasını döndürür"
+
+msgid "Invalid or expired pairing code"
+msgstr "Geçersiz veya sona ermiş eşleştirme kodu"
+
+msgid "Get terminal configuration"
+msgstr "Terminal konfigürasyonunu al"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr ""
+"Mevcut terminalin yapılandırmasını, donanım ayarlarını da dahil ederek "
+"döndürür."
+
+msgid "Terminal heartbeat"
+msgstr "Terminal nabzı"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr ""
+"Terminalin çevrimiçi olduğunu bildirir. Her 60 saniyede bir çağrılmalıdır."
+
+msgid "Heartbeat recorded"
+msgstr "Nabzın kaydedildi"
+
+msgid "Get receipt template"
+msgstr "Fatura şablonunu al"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr ""
+"Terminalin depo için fatura şablonunu döndürür. Depo özel bir şablon yoksa, "
+"varsayılan şablon (hiçbir depo atamadı) kullanılır. Hiçbir şablon yoksa "
+"mantıklı varsayılanlar döndürür."
+
+msgid "Receipt template data"
+msgstr "Fatura şablonu verisi"
+
+msgid "Get promo slides"
+msgstr "Promosyon kaydırma al"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr ""
+"Terminalin depoları için promosyon kaydırakları döndürür. Kaydıraklar, "
+"müşteriye yönelik ekran üzerinde boş zamanlarda görüntülenir."
+
+msgid "List of promo slides with image URLs"
+msgstr "Resim URL'leriyle birlikte promosyon kaydırma listesi"
+
+msgid "Generate display pairing code"
+msgstr "Gösterge eşleştirme kodu oluştur"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr ""
+"Müşteri ekranı kimlik doğrulaması için kısa ömürlü 6 hanelik bir eşleştirme "
+"kodu oluşturur. Kod 5 dakika sonra sona erer ve yalnızca bir kez "
+"kullanılabilir. Yeni bir kod oluşturmak, bu terminal için mevcut ve "
+"kullanılmamış tüm kodları geçersiz kılar."
+
+msgid "Pairing code generated"
+msgstr "Eşleştirme kodu oluşturuldu"
+
+msgid "List managers for unlock override"
+msgstr "Kilit açma geçersizleştirmesi için yöneticileri listele"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr ""
+"Yönetici geçersizleştirme kilidini açma akışı için yönetici listesini "
+"(kimlik ve isim) döndürün."
+
+msgid "List of managers"
+msgstr "Yöneticiler listesi"
+
+msgid "Verify unlock PIN"
+msgstr "Kilit açma PIN'ini doğrula"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr ""
+"Terminali kilitleme amacıyla bir kasırcı veya yönetici PIN'i doğrulayın. 3 "
+"başarısız denemeden sonra yalnızca yönetici PIN'i kabul edilecektir. Tüm "
+"denemeler, denetim amaçlı kaydedilir."
+
+msgid "PIN verified successfully"
+msgstr "PIN başarıyla doğrulandı"
+
+msgid "Invalid PIN"
+msgstr "Geçersiz PIN"
+
+msgid "Log terminal lock event"
+msgstr "Terminal kilitleme olayını kaydet"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr ""
+"Terminal kilitlendiğinde (el ile veya otomatik kilit zaman aşımı ile) log "
+"tut. Bu uç nokta yalnızca denetim günlüğü için kullanılır ve terminalin "
+"durumunu değiştirmez."
+
+msgid "Event logged successfully"
+msgstr "Olay başarıyla kaydedildi"
+
+msgid "Invalid event type"
+msgstr "Geçersiz olay türü"
+
+msgid "Verify unlock card"
+msgstr "Kilidi açma kartını doğrula"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr ""
+"Terminali kilitlemek için personel kimlik kartı swipecini doğrula. Kart "
+"verisi hashlenir ve depolanan kart hash'leri ile karşılaştırılır. 3 "
+"başarısız PIN denemesi sonra yalnızca yönetici kartları kabul edilir."
+
+msgid "Card verified successfully"
+msgstr "Kart başarıyla doğrulandı"
+
+msgid "Card not recognized"
+msgstr "Kart tanınamadı"
+
+msgid "Register staff unlock card"
+msgstr "Personel kilidi açma kartını kaydet"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr ""
+"Mevcut kullanıcının hızlı terminal kilidini açmak için bir kart çekme "
+"işlemini kaydola."
+
+msgid "Card registered successfully"
+msgstr "Kart başarıyla kaydedildi"
+
+msgid "Card already registered to another user"
+msgstr "Kart başka bir kullanıcıya zaten kayıtlı"
+
+msgid "Remove staff unlock card"
+msgstr "Personel kilidi açma kartını kaldır"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "Mevcut kullanıcının kayıtlı kilidi açma kartını kaldır."
+
+msgid "Card removed successfully"
+msgstr "Kart başarıyla kaldırıldı"
+
+msgid "Set cashier PIN"
+msgstr "Kasaya PIN ayarla"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"Terminalin kilitleme/kilidi açma için mevcut kullanıcının kasa PIN'ini "
+"ayarla veya güncelle. PIN 4-6 haneli olmalıdır. Hem pin hem de pin_confirm "
+"eşleşmelidir."
+
+msgid "PIN set successfully"
+msgstr "PIN başarıyla ayarlandı"
+
+msgid "Get terminal provider config"
+msgstr "Terminal sağlayıcı yapılandırmasını al"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"Mevcut terminal için terminal sağlayıcısı yapılandırmasını döndürür, "
+"entegrasyon modu (sdk, cloud veya manual) ve bağlı okuyucu ayrıntılarını "
+"içerir. POS frontend'inin başlangıçta entegre kart okuyucusunun mevcut olup "
+"olmadığını ve hangi ödeme akışını kullanacağını belirlemek için kullanılır."
+
+msgid "Create connection token"
+msgstr "Bağlantı token'ı oluştur"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"SDK modunda terminal sağlayıcıları için kısa ömürlü bir bağlantı tokenı "
+"oluşturur (örneğin Stripe Terminal JS SDK). SDK başlatıldığında frontend, "
+"okuyucuyla doğrudan bağlantı kurmak için bu uç noktayı çağırır. SDK "
+"yalnızca. Bulut sağlayıcıları bağlantı tokenları kullanmaz. Sağlayıcı SDK "
+"tokenlarını desteklemiyorsa 400 döndürür."
+
+msgid "List card readers"
+msgstr "Kart okuyucularını listele"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"Terminal sağlayıcısından mevcut kart okuyucularını listeler. Hem SDK modu "
+"hem de bulut modu sağlayıcılar için çalışır. Her okuyucu nesnesi şu alanları"
+" içerir: id, etiket, tür, seri_numarası ve durum."
+
+msgid "Create payment intent for terminal"
+msgstr "Terminal için ödeme niyeti oluştur"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"Terminal okuyucusunda kart_var olan toplama için bir PaymentIntent "
+"oluşturur. Frontend, döndürülen client_secret'i kullanarak SDK üzerinden "
+"ödeme toplar. SDK yalnızca. Bulut sağlayıcıları initiate-cloud-payment "
+"kullanmalıdır. Para birimi belirtilmezse, terminalin yapılandırılmış para "
+"birimine varsayılan olarak ayarlanır."
+
+msgid "Capture/verify terminal payment"
+msgstr "Terminal ödemeyi yakala/doğrula"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr ""
+"Terminal okuyucu üzerinde bir PaymentIntent'in başarıyla işlendiğini "
+"doğrular ve sağlayıcıdan kart ayrıntılarını (marka, son4) döndürür. SDK "
+"yalnızca."
+
+msgid "Cancel terminal payment"
+msgstr "Terminal ödemeyi iptal et"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"Terminal okuyucu üzerinde bekleyen bir PaymentIntent'i iptal eder (örneğin "
+"müşteri iptal etti). SDK yalnızca. Bulut sağlayıcıları cancel-cloud-payment "
+"kullanmalıdır."
+
+msgid "Initiate cloud payment on reader"
+msgstr "Okuyucuda bulut ödemesi başlat"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"Ödeme talebini sağlayıcının bulut API'si aracılığıyla kart okuyucuya "
+"gönderir. Bulut modu terminal sağlayıcıları için yalnızca (Adyen, Square, "
+"SumUp, Zettle). Bulut yalnızca. Sağlayıcı SDK modu kullanıyorsa 400 "
+"döndürür. Para birimi belirtilmemişse, terminalin yapılandırılmış para "
+"birimine varsayılan olarak ayarlanır."
+
+msgid "Check cloud payment status"
+msgstr "Bulut ödemeyi kontrol et"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"Bulut tarafından başlatılan bir ödemeye ait durumu sorgular. Mevcut durumu "
+"döndürür: pending, succeeded, failed veya canceled. Durum 'succeeded' ise, "
+"yanıt card_brand, last4 ve sağlayıcı payment_id'yi içerir. Durum 'canceled' "
+"ise, cancel_reason içerir. Frontend, durum 'pending' olana kadar her 2 "
+"saniyede bir sorgulamalıdır."
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr ""
+"Initiate-cloud-payment tarafından döndürülen sağlayıcıya özel işlem kimliği"
+
+msgid "Cancel cloud payment"
+msgstr "Bulut ödemeyi iptal et"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr ""
+"Okuyucu üzerinde bekleyen, bulut tarafından başlatılan bir ödemeyi iptal et."
+" Sadece bulut. Davranış sağlayıcıya göre değişebilir."
+
+msgid "Begin WebAuthn registration"
+msgstr "WebAuthn kaydı başlat"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr ""
+"Biometrik kayıt için kayıt seçeneklerini oluştur. Zorlama ve kimlik "
+"doğrulama oluşturma seçeneklerini döndür."
+
+msgid "Registration options"
+msgstr "Kayıt seçenekleri"
+
+msgid "Complete WebAuthn registration"
+msgstr "WebAuthn kaydını tamamla"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr "Biometrik kilidi açmak için doğrulama ve kimlik bilgisi depola."
+
+msgid "Credential registered"
+msgstr "Kimlik doğrulama bilgisi kaydedildi"
+
+msgid "Verification failed"
+msgstr "Doğrulama başarısız oldu"
+
+msgid "Begin WebAuthn authentication"
+msgstr "WebAuthn kimlik doğrulaması başlat"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"Biometrik kilidi açmak için kimlik doğrulama zorlaması oluştur. Kilitli "
+"kullanıcı ve tüm yöneticiler için allowCredentials döndür. failed_attempts "
+">= 3 ise sadece yönetici kimlik doğrulama bilgileri dahil edilir."
+
+msgid "Authentication options"
+msgstr "Kimlik doğrulama seçenekleri"
+
+msgid "No credentials registered"
+msgstr "Kimlik doğrulama bilgisi kaydedilmemiş"
+
+msgid "Complete WebAuthn authentication"
+msgstr "WebAuthn kimlik doğrulamasını tamamla"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "Biometrik doğrulamayı doğrula ve terminali kilitle."
+
+msgid "Authentication successful"
+msgstr "Kimlik doğrulama başarılı"

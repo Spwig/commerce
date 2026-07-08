@@ -1,0 +1,90 @@
+{% load i18n element_tags merchant_trans %}
+<!-- FAQ Accordion Element -->
+<section class="faq-accordion faq-accordion--{{ element.content.style|default:'default' }} faq-accordion--gap-{{ element.content.gap|default:'sm' }}"
+         data-faq-accordion
+         data-behavior="{{ element.content.behavior|default:'single' }}"
+         data-animate="{{ element.content.animate|default:'true' }}"
+         {% hover_animation_attrs element %}
+         style="{% if element.content.question_color %}--faq-question-color: {{ element.content.question_color }};{% endif %}
+                {% if element.content.answer_color %}--faq-answer-color: {{ element.content.answer_color }};{% endif %}
+                {% if element.content.icon_color %}--faq-icon-color: {{ element.content.icon_color }};{% endif %}
+                {% if element.content.border_color %}--faq-border-color: {{ element.content.border_color }};{% endif %}
+                {% if element.content.active_background %}--faq-active-bg: {{ element.content.active_background }};{% endif %}
+                {% base_styles element %}">
+
+    {% if element.content.title %}
+    <div class="faq-accordion__header">
+        <h2 class="faq-accordion__title">{{ element.content.title }}</h2>
+        {% if element.content.subtitle %}
+        <p class="faq-accordion__subtitle">{{ element.content.subtitle }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="faq-accordion__list" role="list">
+        {% for item in element.content.items %}
+        <div class="faq-accordion__item {% if item.is_open %}faq-accordion__item--open{% endif %}" role="listitem">
+            <button class="faq-accordion__question"
+                    aria-expanded="{{ item.is_open|yesno:'true,false' }}"
+                    aria-controls="faq-answer-{{ forloop.counter }}">
+                {% if element.content.icon_position|default:'right' == 'left' %}
+                <span class="faq-accordion__icon faq-accordion__icon--{{ element.content.icon_style|default:'chevron' }}">
+                    {% if element.content.icon_style == 'plus' %}
+                    <i class="fas fa-plus"></i>
+                    {% elif element.content.icon_style == 'arrow' %}
+                    <i class="fas fa-arrow-down"></i>
+                    {% elif element.content.icon_style != 'none' %}
+                    <i class="fas fa-chevron-down"></i>
+                    {% endif %}
+                </span>
+                {% endif %}
+                <span class="faq-accordion__question-text">{{ item.question }}</span>
+                {% if element.content.icon_position|default:'right' == 'right' %}
+                <span class="faq-accordion__icon faq-accordion__icon--{{ element.content.icon_style|default:'chevron' }}">
+                    {% if element.content.icon_style == 'plus' %}
+                    <i class="fas fa-plus"></i>
+                    {% elif element.content.icon_style == 'arrow' %}
+                    <i class="fas fa-arrow-down"></i>
+                    {% elif element.content.icon_style != 'none' %}
+                    <i class="fas fa-chevron-down"></i>
+                    {% endif %}
+                </span>
+                {% endif %}
+            </button>
+            <div class="faq-accordion__answer"
+                 id="faq-answer-{{ forloop.counter }}"
+                 {% if not item.is_open %}hidden{% endif %}>
+                <div class="faq-accordion__answer-content">
+                    {{ item.answer|linebreaks }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-question-circle empty-state__icon"></i>
+            <p class="empty-state__text">{% mtrans "Add FAQ items to display" %}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if element.content.enable_schema|default:True and element.content.items %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {% for item in element.content.items %}
+            {
+                "@type": "Question",
+                "name": "{{ item.question|escapejs }}",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "{{ item.answer|escapejs }}"
+                }
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    }
+    </script>
+    {% endif %}
+</section>

@@ -1,0 +1,55 @@
+{% extends "blog/blog_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block blog_title %}{% mtrans "Unsubscribe" %}{% endblock %}
+
+{% block blog_breadcrumb %}
+<nav class="blog-breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <ol class="blog-breadcrumb__list">
+        <li class="blog-breadcrumb__item">
+            <a href="/" class="blog-breadcrumb__link">{% mtrans "Home" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item">
+            <a href="{% url 'blog:list' %}" class="blog-breadcrumb__link">{% mtrans "Blog" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item blog-breadcrumb__item--active">{% mtrans "Unsubscribe" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block blog_sidebar_wrapper %}{% endblock %}
+
+{% block blog_content %}
+<div class="blog-message-card">
+    <div class="blog-message-card__icon blog-message-card__icon--warning">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h1 class="blog-message-card__title">{% mtrans "Unsubscribe?" %}</h1>
+    <p class="blog-message-card__text">
+        {% blocktrans with email=subscriber.email %}Are you sure you want to unsubscribe {{ email }} from blog notifications?{% endblocktrans %}
+    </p>
+
+    <div class="blog-unsubscribe__reason-wrapper">
+        <label for="unsubscribe-reason" class="blog-unsubscribe__reason-label">
+            {% mtrans "Reason (optional):" %}
+        </label>
+        <textarea id="unsubscribe-reason" rows="2"
+                  class="blog-unsubscribe__reason-textarea"
+                  placeholder="{% mtrans 'Tell us why you are leaving...' %}"></textarea>
+    </div>
+
+    <a href="{% url 'blog:unsubscribe' token=subscriber.unsubscribe_token %}?confirm=1"
+       id="confirm-unsubscribe-btn"
+       class="blog-message-card__btn blog-message-card__btn--danger">
+        {% mtrans "Yes, Unsubscribe" %}
+    </a>
+
+    <a href="{% url 'blog:list' %}" class="blog-message-card__link">
+        {% mtrans "No, keep me subscribed" %} &rarr;
+    </a>
+</div>
+{% endblock %}
+
+{% block blog_scripts %}
+<script src="{% static 'blog/js/blog-unsubscribe.js' %}" defer></script>
+{% endblock %}

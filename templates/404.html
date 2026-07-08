@@ -1,0 +1,66 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans 'Page Not Found' %} - {% trans 'Shop' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/pages/error-404.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="error-page">
+    <div class="container">
+        <div class="error-page__content">
+            <div class="error-page__icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h1 class="error-page__code">404</h1>
+            <h2 class="error-page__title">{% trans "Page Not Found" %}</h2>
+            <p class="error-page__text">
+                {% trans "Sorry, we couldn't find the page you're looking for. It may have been moved or no longer exists." %}
+            </p>
+            <div class="error-page__actions">
+                <a href="/" class="btn btn--primary">
+                    <i class="fas fa-home"></i>
+                    {% trans 'Go to Homepage' %}
+                </a>
+                <a href="/category/" class="btn btn--outline">
+                    <i class="fas fa-shopping-bag"></i>
+                    {% trans 'Browse Products' %}
+                </a>
+            </div>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="error-page__help">
+            <h3 class="error-page__help-title">{% trans 'Helpful Links' %}</h3>
+            <ul class="error-page__links">
+                <li>
+                    <a href="/">
+                        <i class="fas fa-home"></i>
+                        {% trans 'Home' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="/category/">
+                        <i class="fas fa-th-large"></i>
+                        {% trans 'Categories' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="/page/faq/">
+                        <i class="fas fa-question-circle"></i>
+                        {% trans 'FAQ' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="/page/contact/">
+                        <i class="fas fa-envelope"></i>
+                        {% trans 'Contact Us' %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,348 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ component.name }} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="{{ upgrade_server_origin }}" crossorigin>
+<link rel="dns-prefetch" href="{{ upgrade_server_origin }}">
+<link rel="stylesheet" type="text/css" href="{% static 'marketplace/css/marketplace.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="marketplace-page">
+    <div class="marketplace-back">
+        <a href="{% url 'marketplace:browse' %}">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Marketplace" %}
+        </a>
+    </div>
+
+    <div class="marketplace-detail">
+        <div class="marketplace-detail-main">
+            <!-- Screenshot & video carousel -->
+            <div class="marketplace-carousel" id="carousel">
+                <div class="marketplace-carousel-main">
+                    {% if component.thumbnail_url %}
+                    <img src="{{ component.thumbnail_url }}" alt="{{ component.name }}" id="carousel-main-img" fetchpriority="high" decoding="async">
+                    {% endif %}
+                    <video id="carousel-main-video" class="marketplace-hidden" controls playsinline preload="none">
+                        <source id="carousel-video-source" src="" type="">
+                    </video>
+                </div>
+                {% if component.preview_images or component.preview_videos %}
+                <div class="marketplace-carousel-thumbs">
+                    {% if component.thumbnail_url %}
+                    <button class="marketplace-carousel-thumb active" data-type="image" data-src="{{ component.thumbnail_url }}">
+                        <img src="{{ component.thumbnail_url }}" alt="" loading="lazy" decoding="async">
+                    </button>
+                    {% endif %}
+                    {% for img in component.preview_images %}
+                    <button class="marketplace-carousel-thumb" data-type="image" data-src="{{ img }}">
+                        <img src="{{ img }}" alt="" loading="lazy" decoding="async">
+                    </button>
+                    {% endfor %}
+                    {% for vid in component.preview_videos %}
+                    <button class="marketplace-carousel-thumb marketplace-carousel-thumb-video"
+                            data-type="video" data-src="{{ vid.url }}" data-mime="{{ vid.mime_type }}">
+                        <img src="{{ component.thumbnail_url }}" alt="" loading="lazy" decoding="async">
+                        <span class="marketplace-carousel-play-icon"><i class="fas fa-play"></i></span>
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="marketplace-detail-sidebar">
+            <h1>{{ component.name }}</h1>
+            <p class="marketplace-detail-author">
+                {% trans "by" %} <strong>{{ component.author.name }}</strong>
+                {% if component.author.is_verified %}
+                <i class="fas fa-check-circle marketplace-verified" title="{% trans 'Verified Author' %}"></i>
+                {% endif %}
+            </p>
+
+            <div class="marketplace-detail-meta-row">
+                {% if component.type_icon %}<i class="fas {{ component.type_icon }}"></i> {% endif %}
+                {{ component.type_display }}
+                &middot; v{{ component.current_version }}
+            </div>
+
+            {% if component.rating_count %}
+            <div class="marketplace-detail-rating">
+                <div class="marketplace-stars" data-rating="{{ component.average_rating }}">
+                    {% for i in "12345" %}
+                    <i class="fas fa-star"></i>
+                    {% endfor %}
+                </div>
+                <span>{{ component.average_rating }} ({{ component.rating_count }} {% trans "reviews" %})</span>
+            </div>
+            {% endif %}
+
+            <div class="marketplace-detail-actions">
+                {% if component.is_installed %}
+                <div class="marketplace-badge marketplace-badge-installed">
+                    <i class="fas fa-check"></i> {% trans "Installed" %}
+                    {% if component.installed_version %}
+                    <small>v{{ component.installed_version }}</small>
+                    {% endif %}
+                </div>
+                {% elif component.pricing_model == 'paid' and not component.is_entitled %}
+                <div class="marketplace-detail-price">
+                    &euro;{{ component.price_eur }}
+                </div>
+                <button class="marketplace-btn marketplace-btn-primary marketplace-btn-lg"
+                        id="btn-purchase" data-slug="{{ component.slug }}">
+                    <i class="fas fa-shopping-cart"></i> {% trans "Purchase" %}
+                </button>
+                {% else %}
+                {% if component.pricing_model == 'free' %}
+                <span class="marketplace-badge marketplace-badge-free">{% trans "Free" %}</span>
+                {% endif %}
+                <button class="marketplace-btn marketplace-btn-primary marketplace-btn-lg"
+                        id="btn-install" data-slug="{{ component.slug }}" data-version="{{ component.current_version }}">
+                    <i class="fas fa-download"></i> {% trans "Install" %}
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="marketplace-detail-info">
+                <div class="marketplace-detail-info-row">
+                    <span class="marketplace-detail-info-label">{% trans "License" %}</span>
+                    <span>{{ component.license|default:"MIT" }}</span>
+                </div>
+                {% if component.requires_platform_version %}
+                <div class="marketplace-detail-info-row">
+                    <span class="marketplace-detail-info-label">{% trans "Requires" %}</span>
+                    <span>Spwig {{ component.requires_platform_version }}</span>
+                </div>
+                {% endif %}
+                <div class="marketplace-detail-info-row">
+                    <span class="marketplace-detail-info-label">{% trans "Downloads" %}</span>
+                    <span>{{ component.download_count|default:"0" }}</span>
+                </div>
+                {% if component.has_country_scope %}
+                <div class="marketplace-detail-info-row marketplace-detail-countries-row">
+                    <span class="marketplace-detail-info-label">{% trans "Availability" %}</span>
+                    {% if component.supported_countries %}
+                    <span class="marketplace-country-toggle" id="country-toggle">
+                        {{ component.supported_countries|length }} {% trans "countries" %}
+                        <i class="fas fa-chevron-down"></i>
+                    </span>
+                    {% else %}
+                    <span><i class="fas fa-globe"></i> {% trans "Global" %}</span>
+                    {% endif %}
+                </div>
+                {% if component.supported_countries %}
+                <div class="marketplace-country-list marketplace-hidden" id="country-list">
+                    {% for code in component.supported_countries %}
+                    <span class="marketplace-country-tag">{{ code }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endif %}
+                <div class="marketplace-detail-info-row">
+                    <span class="marketplace-detail-info-label">{% trans "Updated" %}</span>
+                    <span>{{ component.updated_at|truncatechars:10 }}</span>
+                </div>
+                {% if component.homepage_url %}
+                <div class="marketplace-detail-info-row">
+                    <span class="marketplace-detail-info-label">{% trans "Website" %}</span>
+                    <a href="{{ component.homepage_url }}" target="_blank" rel="noopener">{% trans "Visit" %} <i class="fas fa-external-link-alt"></i></a>
+                </div>
+                {% endif %}
+                {% if component.documentation_url %}
+                <div class="marketplace-detail-info-row">
+                    <span class="marketplace-detail-info-label">{% trans "Docs" %}</span>
+                    <a href="{{ component.documentation_url }}" target="_blank" rel="noopener">{% trans "View" %} <i class="fas fa-external-link-alt"></i></a>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if component.author.description or component.author.logo_url %}
+            <div class="marketplace-developer-card">
+                <h3>{% trans "Developer" %}</h3>
+                <div class="marketplace-developer-header">
+                    {% if component.author.logo_url %}
+                    <img src="{{ component.author.logo_url }}" alt="{{ component.author.name }}"
+                         class="marketplace-developer-logo">
+                    {% else %}
+                    <div class="marketplace-developer-logo marketplace-developer-logo-placeholder">
+                        {{ component.author.name|first }}
+                    </div>
+                    {% endif %}
+                    <div class="marketplace-developer-meta">
+                        <strong>{{ component.author.name }}</strong>
+                        {% if component.author.is_verified %}
+                        <i class="fas fa-check-circle marketplace-verified"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if component.author.description %}
+                <p class="marketplace-developer-bio">{{ component.author.description|truncatewords:40 }}</p>
+                {% endif %}
+                {% if component.author.homepage %}
+                <a href="{{ component.author.homepage }}" target="_blank" rel="noopener"
+                   class="marketplace-developer-link">
+                    <i class="fas fa-globe"></i> {% trans "Visit Website" %}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tabs: Description / Changelog / Reviews -->
+    <div class="marketplace-tabs">
+        <div class="marketplace-tab-buttons">
+            <button class="marketplace-tab-btn active" data-tab="description">{% trans "Description" %}</button>
+            <button class="marketplace-tab-btn" data-tab="changelog">{% trans "Changelog" %}</button>
+            <button class="marketplace-tab-btn" data-tab="reviews">
+                {% trans "Reviews" %}
+                {% if component.rating_count %}
+                <span class="marketplace-tab-count">{{ component.rating_count }}</span>
+                {% endif %}
+            </button>
+        </div>
+
+        <div class="marketplace-tab-content active" id="tab-description">
+            <div class="marketplace-description">
+                {{ component.description|linebreaksbr }}
+            </div>
+        </div>
+
+        <div class="marketplace-tab-content" id="tab-changelog">
+            {% if component.versions %}
+            <div class="marketplace-changelog">
+                {% for ver in component.versions %}
+                <div class="marketplace-changelog-entry">
+                    <div class="marketplace-changelog-header">
+                        <strong>v{{ ver.version }}</strong>
+                        <span class="marketplace-badge marketplace-badge-channel">{{ ver.channel }}</span>
+                        {% if ver.security_update %}
+                        <span class="marketplace-badge marketplace-badge-security">{% trans "Security" %}</span>
+                        {% endif %}
+                        {% if ver.breaking_changes %}
+                        <span class="marketplace-badge marketplace-badge-breaking">{% trans "Breaking" %}</span>
+                        {% endif %}
+                        {% if ver.published_at %}
+                        <time>{{ ver.published_at|truncatechars:10 }}</time>
+                        {% endif %}
+                    </div>
+                    {% if ver.changelog %}
+                    <p>{{ ver.changelog|linebreaksbr }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="marketplace-empty-tab">{% trans "No changelog available." %}</p>
+            {% endif %}
+        </div>
+
+        <div class="marketplace-tab-content" id="tab-reviews">
+            {% if component.reviews_summary %}
+            <div class="marketplace-reviews-summary">
+                <div class="marketplace-reviews-avg">
+                    <span class="marketplace-reviews-avg-number">{{ component.average_rating }}</span>
+                    <div class="marketplace-stars" data-rating="{{ component.average_rating }}">
+                        {% for i in "12345" %}<i class="fas fa-star"></i>{% endfor %}
+                    </div>
+                    <small>{{ component.rating_count }} {% trans "reviews" %}</small>
+                </div>
+                <div class="marketplace-rating-bars">
+                    {% for star in "54321" %}
+                    {% with count=component.reviews_summary|default_if_none:"" %}
+                    <div class="marketplace-rating-bar-row">
+                        <span>{{ star }} <i class="fas fa-star"></i></span>
+                        <div class="marketplace-rating-bar">
+                            <div class="marketplace-rating-bar-fill" data-star="{{ star }}"></div>
+                        </div>
+                        <span class="marketplace-rating-bar-count" data-star="{{ star }}">0</span>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="marketplace-reviews-list" id="reviews-list">
+                {% for review in component.recent_reviews %}
+                <div class="marketplace-review-card">
+                    <div class="marketplace-review-header">
+                        <div class="marketplace-review-avatar">{{ review.author_name|first }}</div>
+                        <div class="marketplace-review-meta">
+                            <strong>{{ review.author_name }}</strong>
+                            {% if review.is_verified_purchase %}
+                            <span class="marketplace-badge marketplace-badge-verified">{% trans "Verified" %}</span>
+                            {% endif %}
+                            <div class="marketplace-stars marketplace-stars-sm" data-rating="{{ review.rating }}">
+                                {% for i in "12345" %}<i class="fas fa-star"></i>{% endfor %}
+                            </div>
+                            <time>{{ review.created_at|truncatechars:10 }}</time>
+                        </div>
+                    </div>
+                    {% if review.title %}<h4>{{ review.title }}</h4>{% endif %}
+                    {% if review.comment %}<p>{{ review.comment }}</p>{% endif %}
+                    {% if review.developer_response %}
+                    <div class="marketplace-review-response">
+                        <div class="marketplace-review-response-header">
+                            <i class="fas fa-reply"></i>
+                            <strong>{% trans "Developer Response" %}</strong>
+                            {% if review.developer_response_at %}
+                            <span class="marketplace-review-response-date">{{ review.developer_response_at|truncatechars:10 }}</span>
+                            {% endif %}
+                        </div>
+                        <p class="marketplace-review-response-text">{{ review.developer_response }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="marketplace-empty-tab">{% trans "No reviews yet." %}</p>
+                {% endfor %}
+            </div>
+
+            {% if component.is_installed %}
+            <div class="marketplace-review-form" id="review-form">
+                <h3>{% trans "Write a Review" %}</h3>
+                <div class="marketplace-star-selector" id="star-selector">
+                    <label>{% trans "Your Rating" %}</label>
+                    <div class="marketplace-star-input">
+                        {% for i in "12345" %}
+                        <i class="far fa-star" data-value="{{ i }}"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="marketplace-form-group">
+                    <label for="review-title">{% trans "Title" %}</label>
+                    <input type="text" id="review-title" maxlength="200" placeholder="{% trans 'Summary of your experience...' %}">
+                </div>
+                <div class="marketplace-form-group">
+                    <label for="review-comment">{% trans "Comment" %}</label>
+                    <textarea id="review-comment" rows="4" placeholder="{% trans 'Share your experience with this component...' %}"></textarea>
+                </div>
+                <button class="marketplace-btn marketplace-btn-primary" id="btn-submit-review"
+                        data-slug="{{ component.slug }}">
+                    <i class="fas fa-paper-plane"></i> {% trans "Submit Review" %}
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="marketplace-config-data">
+{
+    "browseUrl": "{% url "marketplace:browse_api" %}",
+    "installUrl": "{% url "marketplace:install_ajax" %}",
+    "reviewUrl": "{% url "marketplace:review_ajax" %}",
+    "detailBaseUrl": "/{{ LANGUAGE_CODE }}/admin/marketplace/",
+    "csrfToken": "{{ csrf_token }}",
+    "componentSlug": "{{ component.slug|escapejs }}",
+    "reviewsSummary": {{ component.reviews_summary_json|safe }},
+    "ratingCount": {{ component.rating_count|default:"0" }}
+}
+</script>
+<script src="{% static 'marketplace/js/marketplace.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,280 @@
+{
+  "element_type": "button",
+  "name": "Button",
+  "description": "Interactive button element with customizable styles",
+  "version": "2.0.0",
+  "category": "basic",
+  "icon": "fas fa-hand-pointer",
+  "author": "Page Builder System",
+  "element_builder_primitive": true,
+  "tags": ["button", "interactive", "action", "link"],
+  "supports_translation": true,
+  "translation_domain": "button_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/button.css"],
+  "disable_base_properties": [
+    "text_color"
+  ],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-font",
+      "order": 1,
+      "properties": {
+        "content_group": {
+          "type": "property_group",
+          "label": "Button Content",
+          "columns": 1,
+          "properties": {
+            "text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "Button Text",
+              "translatable": true,
+              "required": true
+            },
+            "url": {
+              "type": "link_selector",
+              "label": "Link URL",
+              "default": "#",
+              "required": false
+            },
+            "target": {
+              "type": "select",
+              "label": "Link Target",
+              "options": [
+                {"value": "_self", "label": "Same Window"},
+                {"value": "_blank", "label": "New Window"},
+                {"value": "_parent", "label": "Parent Frame"},
+                {"value": "_top", "label": "Top Frame"}
+              ],
+              "default": "_self"
+            }
+          }
+        },
+        "accessibility_group": {
+          "type": "property_group",
+          "label": "Accessibility",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Tooltip Text",
+              "translatable": true,
+              "required": false
+            },
+            "aria_label": {
+              "type": "string",
+              "label": "Accessibility Label",
+              "translatable": true,
+              "required": false
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "label": "Appearance",
+      "icon": "fas fa-palette",
+      "order": 2,
+      "properties": {
+        "style_group": {
+          "type": "property_group",
+          "label": "Button Style",
+          "properties": {
+            "color": {
+              "type": "select",
+              "label": "Color",
+              "options": [
+                {"value": "primary", "label": "Primary"},
+                {"value": "secondary", "label": "Secondary"},
+                {"value": "neutral", "label": "Neutral"},
+                {"value": "danger", "label": "Danger"}
+              ],
+              "default": "primary"
+            },
+            "variant": {
+              "type": "select",
+              "label": "Variant",
+              "options": [
+                {"value": "solid", "label": "Solid"},
+                {"value": "outline", "label": "Outline"},
+                {"value": "ghost", "label": "Ghost"}
+              ],
+              "default": "solid"
+            },
+            "size": {
+              "type": "select",
+              "label": "Size",
+              "options": [
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"}
+              ],
+              "default": "md"
+            },
+            "full_width": {
+              "type": "boolean",
+              "label": "Full Width",
+              "default": false
+            },
+            "rounded": {
+              "type": "boolean",
+              "label": "Pill Shape",
+              "default": false
+            }
+          }
+        },
+        "icon_group": {
+          "type": "property_group",
+          "label": "Icons",
+          "columns": 1,
+          "properties": {
+            "icon_before": {
+              "type": "icon_picker",
+              "label": "Icon Before",
+              "required": false
+            },
+            "icon_before_style": {
+              "type": "select",
+              "label": "Icon Before Style",
+              "options": [
+                {"value": "solid", "label": "Solid (fas)"},
+                {"value": "regular", "label": "Regular (far)"},
+                {"value": "light", "label": "Light (fal)"},
+                {"value": "duotone", "label": "Duotone (fad)"},
+                {"value": "brands", "label": "Brands (fab)"}
+              ],
+              "default": "solid"
+            },
+            "icon_after": {
+              "type": "icon_picker",
+              "label": "Icon After",
+              "required": false
+            },
+            "icon_after_style": {
+              "type": "select",
+              "label": "Icon After Style",
+              "options": [
+                {"value": "solid", "label": "Solid (fas)"},
+                {"value": "regular", "label": "Regular (far)"},
+                {"value": "light", "label": "Light (fal)"},
+                {"value": "duotone", "label": "Duotone (fad)"},
+                {"value": "brands", "label": "Brands (fab)"}
+              ],
+              "default": "solid"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "text": {
+      "type": "string",
+      "label": "Button Text",
+      "default": "Button Text",
+      "translatable": true,
+      "required": true
+    },
+    "url": {
+      "type": "link_selector",
+      "label": "Link URL",
+      "default": "#",
+      "required": false
+    },
+    "target": {
+      "type": "select",
+      "label": "Link Target",
+      "options": [
+        {"value": "_self", "label": "Same Window"},
+        {"value": "_blank", "label": "New Window"},
+        {"value": "_parent", "label": "Parent Frame"},
+        {"value": "_top", "label": "Top Frame"}
+      ],
+      "default": "_self"
+    },
+    "color": {
+      "type": "select",
+      "label": "Button Color",
+      "options": [
+        {"value": "primary", "label": "Primary"},
+        {"value": "secondary", "label": "Secondary"},
+        {"value": "neutral", "label": "Neutral"},
+        {"value": "danger", "label": "Danger"}
+      ],
+      "default": "primary"
+    },
+    "variant": {
+      "type": "select",
+      "label": "Button Variant",
+      "options": [
+        {"value": "solid", "label": "Solid"},
+        {"value": "outline", "label": "Outline"},
+        {"value": "ghost", "label": "Ghost"}
+      ],
+      "default": "solid"
+    },
+    "size": {
+      "type": "select",
+      "label": "Button Size",
+      "options": [
+        {"value": "sm", "label": "Small"},
+        {"value": "md", "label": "Medium"},
+        {"value": "lg", "label": "Large"}
+      ],
+      "default": "md"
+    },
+    "full_width": {
+      "type": "boolean",
+      "label": "Full Width",
+      "default": false
+    },
+    "rounded": {
+      "type": "boolean",
+      "label": "Pill Shape",
+      "default": false
+    },
+    "icon_before": {"type": "icon_picker", "default": ""},
+    "icon_before_style": {"type": "select", "default": "solid"},
+    "icon_after": {"type": "icon_picker", "default": ""},
+    "icon_after_style": {"type": "select", "default": "solid"}
+  },
+  "translations": {
+    "en": {
+      "name": "Button",
+      "description": "Interactive button element with customizable styles"
+    },
+    "es": {
+      "name": "Boton",
+      "description": "Elemento de boton interactivo con estilos personalizables"
+    },
+    "fr": {
+      "name": "Bouton",
+      "description": "Element de bouton interactif avec des styles personnalisables"
+    },
+    "de": {
+      "name": "Schaltflache",
+      "description": "Interaktives Button-Element mit anpassbaren Stilen"
+    },
+    "pt": {
+      "name": "Botao",
+      "description": "Elemento de botao interativo com estilos personalizaveis"
+    },
+    "zh-hans": {
+      "name": "Button",
+      "description": "Interactive button element with customizable styles"
+    },
+    "ja": {
+      "name": "Button",
+      "description": "Interactive button element with customizable styles"
+    }
+  },
+  "defaults": {
+    "text": "Click Me",
+    "url": "#",
+    "style": "primary",
+    "size": "md"
+  }
+}

@@ -1,0 +1,185 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Gift Cards" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_gift_card.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-gift"></i>
+                {% trans "Gift Cards" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage gift card balances, track redemptions, and resend delivery emails" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_giftcard_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Gift Card" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="dashboard-stats-grid mb-20">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-gift"></i></div>
+            <div class="value">{{ stats.total }}</div>
+            <div class="label">{% trans "Total Gift Cards" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon icon-color-success"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ stats.active }}</div>
+            <div class="label">{% trans "Active" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon icon-color-primary"><i class="fas fa-wallet"></i></div>
+            <div class="value">{{ stats.total_balance }}</div>
+            <div class="label">{% trans "Total Balance" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon icon-color-warning"><i class="fas fa-chart-pie"></i></div>
+            <div class="value">{{ stats.partially_used }}</div>
+            <div class="label">{% trans "Partially Used" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Code, email, or name...' %}"
+                    value="">
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                    <option value="expired">{% trans "Expired" %}</option>
+                    <option value="fully_redeemed">{% trans "Fully Redeemed" %}</option>
+                    <option value="partially_used">{% trans "Partially Used" %}</option>
+                </select>
+            </div>
+
+            <!-- Balance -->
+            <div class="filter-field">
+                <label for="filter-balance">
+                    <i class="fas fa-wallet"></i> {% trans "Balance" %}
+                </label>
+                <select id="filter-balance">
+                    <option value="">{% trans "Any Balance" %}</option>
+                    <option value="has_balance">{% trans "Has Balance" %}</option>
+                    <option value="zero_balance">{% trans "Zero Balance" %}</option>
+                </select>
+            </div>
+
+            <!-- Date Range -->
+            <div class="filter-field">
+                <label for="filter-date">
+                    <i class="fas fa-calendar"></i> {% trans "Created" %}
+                </label>
+                <select id="filter-date">
+                    <option value="">{% trans "Any Time" %}</option>
+                    <option value="today">{% trans "Today" %}</option>
+                    <option value="week">{% trans "This Week" %}</option>
+                    <option value="month">{% trans "This Month" %}</option>
+                    <option value="year">{% trans "This Year" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Gift Cards" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-gift"></i>
+            <span id="gift-card-count">{{ cl.result_count }}</span> {% trans "gift card" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="gift-card-results">
+        {% include "admin/catalog/giftcard/partials/gift_card_cards.html" with gift_cards=cl.result_list %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 gift card{% plural %}{{ counter }} gift cards{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'gift cards' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url 'catalog_admin:filter_gift_cards' %}"
+     data-results-container="gift-card-results"
+     data-results-count="gift-card-count"
+     style="display:none;"></div>
+</div>
+{% endblock %}

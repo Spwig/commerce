@@ -1,0 +1,511 @@
+{% extends "admin/migration/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-plug"></i>
+        {% trans "Configure Connection" %}
+    </h3>
+    <p>{% trans "Provide the connection details for your" %} {{ job.get_platform_display }} {% trans "store." %}</p>
+</div>
+
+<form method="post" action="{% url 'admin:migration_wizard_step2' job.id %}" id="connection-form" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if job.platform == 'woocommerce' %}
+    <!-- WooCommerce API Connection -->
+    <div class="content-box">
+        <h3><i class="fab fa-wordpress"></i> {% trans "WooCommerce REST API" %}</h3>
+
+        <div class="form-row">
+            <label for="store_url">
+                {% trans "Store URL" %} <span class="required">*</span>
+            </label>
+            <input type="url"
+                   name="store_url"
+                   id="store_url"
+                   placeholder="https://yourstore.com"
+                   value="{{ job.connection_config.store_url|default:'' }}"
+                   required>
+            <div class="help">{% trans "Your WooCommerce store URL (e.g., https://yourstore.com)" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label for="consumer_key">
+                {% trans "Consumer Key" %} <span class="required">*</span>
+            </label>
+            <input type="text"
+                   name="consumer_key"
+                   id="consumer_key"
+                   placeholder="ck_xxxxxxxxxxxx"
+                   value="{{ job.connection_config.consumer_key|default:'' }}"
+                   required>
+            <div class="help">{% trans "Your WooCommerce REST API consumer key" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label for="consumer_secret">
+                {% trans "Consumer Secret" %} <span class="required">*</span>
+            </label>
+            <input type="text"
+                   name="consumer_secret"
+                   id="consumer_secret"
+                   placeholder="cs_xxxxxxxxxxxx"
+                   value="{{ job.connection_config.consumer_secret|default:'' }}"
+                   required>
+            <div class="help">{% trans "Your WooCommerce REST API consumer secret" %}</div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-question-circle"></i>
+            <div>
+                <strong>{% trans "How to get API credentials" %}</strong>
+                <ol>
+                    <li>{% trans "Log in to your WordPress admin panel" %}</li>
+                    <li>{% trans "Go to WooCommerce > Settings > Advanced > REST API" %}</li>
+                    <li>{% trans "Click 'Add key' and create a new API key with Read permissions" %}</li>
+                    <li>{% trans "Copy the Consumer Key and Consumer Secret here" %}</li>
+                </ol>
+                <p class="connection-note">
+                    <i class="fas fa-shield-alt"></i> {% trans "Note: Read-only permissions are sufficient for data migration. We will not modify your WooCommerce store." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="test_connection" checked>
+                {% trans "Test connection before proceeding" %}
+            </label>
+        </div>
+    </div>
+
+    {% elif job.platform == 'shopify' %}
+    <!-- Shopify API Connection -->
+    <div class="content-box">
+        <h3><i class="fab fa-shopify"></i> {% trans "Shopify Admin API" %}</h3>
+
+        <div class="form-row">
+            <label for="store_domain">
+                {% trans "Store Domain" %} <span class="required">*</span>
+            </label>
+            <input type="text"
+                   name="store_domain"
+                   id="store_domain"
+                   placeholder="yourstore.myshopify.com"
+                   value="{{ job.connection_config.store_domain|default:'' }}"
+                   required>
+            <div class="help">{% trans "Your Shopify store domain (e.g., yourstore.myshopify.com)" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label for="client_id">
+                {% trans "Client ID" %} <span class="required">*</span>
+            </label>
+            <input type="text"
+                   name="client_id"
+                   id="client_id"
+                   placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                   value="{{ job.connection_config.client_id|default:'' }}"
+                   required>
+            <div class="help">{% trans "Client ID from your Shopify app's Settings page" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label for="client_secret">
+                {% trans "Client Secret" %} <span class="required">*</span>
+            </label>
+            <input type="password"
+                   name="client_secret"
+                   id="client_secret"
+                   placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                   value="{{ job.connection_config.client_secret|default:'' }}"
+                   required>
+            <div class="help">{% trans "Secret from your Shopify app's Settings page" %}</div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-question-circle"></i>
+            <div>
+                <strong>{% trans "Need help getting your API credentials?" %}</strong>
+                <p class="connection-note">
+                    {% trans "Setting up a Shopify app takes about 10 minutes. Our step-by-step guide with screenshots will walk you through it." %}
+                </p>
+                <button type="button" class="setup-guide-trigger" id="open-setup-guide">
+                    <i class="fas fa-book-open"></i>
+                    {% trans "Open Setup Guide" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Shopify Setup Guide Modal (uses admin-modal system) -->
+        <div class="admin-modal-overlay" id="shopify-setup-guide">
+            <div class="admin-modal admin-modal--lg">
+                <div class="admin-modal-header">
+                    <h3 class="admin-modal-title">
+                        <i class="fab fa-shopify"></i>
+                        {% trans "Shopify API Setup Guide" %}
+                    </h3>
+                    <button type="button" class="admin-modal-close" id="close-setup-guide">&times;</button>
+                </div>
+
+                <div class="admin-modal-body">
+                    <!-- Step 1: Open Developer Dashboard -->
+                    <div class="guide-step active" data-guide-step="1">
+                        <h3>
+                            <span class="guide-step-number">1</span>
+                            {% trans "Open the Shopify Developer Dashboard" %}
+                        </h3>
+                        <p class="guide-step-subtitle">{% trans "Sign in with the same account you use to manage your store." %}</p>
+                        <ol>
+                            <li>{% trans "Go to" %} <a href="https://dev.shopify.com/dashboard/" target="_blank" rel="noopener">dev.shopify.com/dashboard</a></li>
+                            <li>{% trans "Sign in with your Shopify account" %}</li>
+                        </ol>
+                        <div class="guide-callout">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "If this is your first time visiting the Developer Dashboard, Shopify may ask you to agree to developer terms. This is normal — accept and continue." %}
+                        </div>
+                        <img src="{% static 'migration/img/dev-dashboard.png' %}" alt="{% trans 'Shopify Developer Dashboard' %}" class="guide-screenshot" loading="lazy">
+                    </div>
+
+                    <!-- Step 2: Create App -->
+                    <div class="guide-step" data-guide-step="2">
+                        <h3>
+                            <span class="guide-step-number">2</span>
+                            {% trans "Create a New App" %}
+                        </h3>
+                        <p class="guide-step-subtitle">{% trans "Create a private app that Spwig will use to read your store data." %}</p>
+                        <ol>
+                            <li>{% trans "In the left sidebar, click" %} <strong>{% trans "Apps" %}</strong></li>
+                            <li>{% trans "Click the" %} <strong>{% trans "Create app" %}</strong> {% trans "button (top-right corner)" %}</li>
+                            <li>{% trans "Scroll past 'Start with Shopify CLI' to the" %} <strong>{% trans "Start from Dev Dashboard" %}</strong> {% trans "section" %}</li>
+                            <li>{% trans "Enter app name:" %} <code>Spwig Migration</code></li>
+                            <li>{% trans "Click" %} <strong>{% trans "Create" %}</strong></li>
+                        </ol>
+                        <img src="{% static 'migration/img/dev-create-an-app.png' %}" alt="{% trans 'Create app in Dev Dashboard' %}" class="guide-screenshot" loading="lazy">
+                    </div>
+
+                    <!-- Step 3: Create Version with Scopes -->
+                    <div class="guide-step" data-guide-step="3">
+                        <h3>
+                            <span class="guide-step-number">3</span>
+                            {% trans "Create an App Version with Permissions" %}
+                        </h3>
+                        <p class="guide-step-subtitle">{% trans "Configure which data the app can access. We only need read-only access." %}</p>
+                        <ol>
+                            <li>{% trans "In the left sidebar, click" %} <strong>{% trans "Versions" %}</strong></li>
+                            <li>{% trans "Click" %} <strong>{% trans "Create version" %}</strong></li>
+                            <li>{% trans "Set the" %} <strong>{% trans "App URL" %}</strong> {% trans "to:" %}
+                                <code class="guide-scope-block">https://shopify.dev/apps/default-app-home</code>
+                            </li>
+                            <li>{% trans "Select the newest" %} <strong>{% trans "Webhooks API Version" %}</strong></li>
+                            <li>{% trans "Scroll to" %} <strong>{% trans "Access — Scopes" %}</strong> {% trans "and paste:" %}
+                                <code class="guide-scope-block">read_customers,read_discounts,read_files,read_orders,read_products,read_content</code>
+                            </li>
+                            <li>{% trans "Click" %} <strong>{% trans "Release" %}</strong></li>
+                        </ol>
+
+                        <img src="{% static 'migration/img/dev-scope-input.png' %}" alt="{% trans 'Scope input field' %}" class="guide-screenshot" loading="lazy">
+
+                        <table class="guide-scope-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Scope" %}</th>
+                                    <th>{% trans "What it accesses" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>read_products</code></td><td>{% trans "Products, variants, images, collections" %}</td></tr>
+                                <tr><td><code>read_customers</code></td><td>{% trans "Customer names, emails, addresses" %}</td></tr>
+                                <tr><td><code>read_orders</code></td><td>{% trans "Orders from the last 60 days" %}</td></tr>
+                                <tr><td><code>read_content</code></td><td>{% trans "Blog posts and pages" %}</td></tr>
+                                <tr><td><code>read_discounts</code></td><td>{% trans "Discount codes and rules" %}</td></tr>
+                                <tr><td><code>read_files</code></td><td>{% trans "Uploaded media files" %}</td></tr>
+                            </tbody>
+                        </table>
+
+                        <img src="{% static 'migration/img/dev-scope-selection.png' %}" alt="{% trans 'Scope selection UI' %}" class="guide-screenshot" loading="lazy">
+
+                        <div class="guide-callout">
+                            <i class="fas fa-history"></i>
+                            {% trans "Want to migrate your full order history? Add" %} <code>read_all_orders</code> {% trans "to the scopes above. Without it, only orders from the last 60 days are accessible." %}
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Copy Credentials -->
+                    <div class="guide-step" data-guide-step="4">
+                        <h3>
+                            <span class="guide-step-number">4</span>
+                            {% trans "Copy Your Client ID and Secret" %}
+                        </h3>
+                        <p class="guide-step-subtitle">{% trans "These are the two values you will paste into Spwig." %}</p>
+                        <ol>
+                            <li>{% trans "In the left sidebar, click" %} <strong>{% trans "Settings" %}</strong></li>
+                            <li>{% trans "Find the" %} <strong>{% trans "Credentials" %}</strong> {% trans "section" %}</li>
+                            <li>{% trans "Copy the" %} <strong>{% trans "Client ID" %}</strong> {% trans "(click the copy icon)" %}</li>
+                            <li>{% trans "Click the eye icon to reveal the" %} <strong>{% trans "Secret" %}</strong>{% trans ", then copy it" %}</li>
+                        </ol>
+                        <img src="{% static 'migration/img/dev-credentials.png' %}" alt="{% trans 'App credentials page' %}" class="guide-screenshot" loading="lazy">
+                        <div class="guide-callout">
+                            <i class="fas fa-shield-alt"></i>
+                            {% trans "Treat the Secret like a password. Spwig encrypts it and only uses it during migration. You can delete the app from Shopify after your migration is complete." %}
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Distribution & Install -->
+                    <div class="guide-step" data-guide-step="5">
+                        <h3>
+                            <span class="guide-step-number">5</span>
+                            {% trans "Set Up Distribution and Install" %}
+                        </h3>
+                        <p class="guide-step-subtitle">{% trans "Your app needs to be installed on your store before it can access data." %}</p>
+                        <ol>
+                            <li>{% trans "Click your app name to return to the overview page" %}</li>
+                            <li>{% trans "Scroll to" %} <strong>{% trans "Distribution" %}</strong> {% trans "and click" %} <strong>{% trans "Select distribution method" %}</strong></li>
+                        </ol>
+                        <img src="{% static 'migration/img/dev-select-distribution-method.png' %}" alt="{% trans 'Select distribution method' %}" class="guide-screenshot" loading="lazy">
+                        <ol start="3">
+                            <li>{% trans "Select" %} <strong>{% trans "Custom distribution" %}</strong> {% trans "and confirm" %}</li>
+                        </ol>
+                        <img src="{% static 'migration/img/dev-custom-distribution.png' %}" alt="{% trans 'Custom distribution option' %}" class="guide-screenshot" loading="lazy">
+                        <ol start="4">
+                            <li>{% trans "Enter your store domain (e.g.," %} <code>yourstore.myshopify.com</code>{% trans ") and click" %} <strong>{% trans "Generate link" %}</strong></li>
+                        </ol>
+                        <img src="{% static 'migration/img/dev-generate-link.png' %}" alt="{% trans 'Generate install link' %}" class="guide-screenshot" loading="lazy">
+                        <ol start="5">
+                            <li>{% trans "Copy the install link and paste it into your browser" %}</li>
+                        </ol>
+                        <img src="{% static 'migration/img/dev-generated-link-copy.png' %}" alt="{% trans 'Copy the generated link' %}" class="guide-screenshot" loading="lazy">
+                        <ol start="6">
+                            <li>{% trans "On your Shopify admin, review the permissions and click" %} <strong>{% trans "Install" %}</strong></li>
+                        </ol>
+                        <img src="{% static 'migration/img/dev-install-permissions.png' %}" alt="{% trans 'Install app permissions screen' %}" class="guide-screenshot" loading="lazy">
+                        <div class="guide-callout">
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Done! Your app is now installed. Return to this page and paste your Client ID and Secret into the fields above." %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer setup-guide-footer">
+                    <span class="setup-guide-step-counter" id="guide-step-counter">
+                        {% trans "Step" %} <span id="guide-current-step">1</span> / 5
+                    </span>
+                    <div class="setup-guide-nav">
+                        <button type="button" class="button secondary" id="guide-prev" disabled>
+                            <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                        </button>
+                        <button type="button" class="button primary" id="guide-next">
+                            {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button type="button" class="button primary" id="guide-done" hidden>
+                            <i class="fas fa-check"></i> {% trans "Got it" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="test_connection" checked>
+                {% trans "Test connection before proceeding" %}
+            </label>
+        </div>
+    </div>
+
+    {% elif job.platform == 'magento' %}
+    <!-- Magento API Connection -->
+    <div class="content-box">
+        <h3><i class="fab fa-magento"></i> {% trans "Magento 2 REST API" %}</h3>
+
+        <div class="form-row">
+            <label for="store_url">
+                {% trans "Store URL" %} <span class="required">*</span>
+            </label>
+            <input type="url"
+                   name="store_url"
+                   id="store_url"
+                   placeholder="https://yourstore.com"
+                   value="{{ job.connection_config.store_url|default:'' }}"
+                   required>
+            <div class="help">{% trans "Your Magento store URL (e.g., https://yourstore.com)" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label for="access_token">
+                {% trans "Access Token" %} <span class="required">*</span>
+            </label>
+            <input type="password"
+                   name="access_token"
+                   id="access_token"
+                   placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                   value="{{ job.connection_config.access_token|default:'' }}"
+                   required>
+            <div class="help">{% trans "Integration Access Token from your Magento admin" %}</div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-question-circle"></i>
+            <div>
+                <strong>{% trans "How to get your Access Token" %}</strong>
+                <ol>
+                    <li>{% trans "Log in to your Magento admin panel" %}</li>
+                    <li>{% trans "Go to System > Integrations" %}</li>
+                    <li>{% trans "Click 'Add New Integration'" %}</li>
+                    <li>{% trans "Set the name to" %} <code>Spwig Migration</code></li>
+                    <li>{% trans "Under the API tab, set Resource Access to 'All'" %}</li>
+                    <li>{% trans "Save and click 'Activate'" %}</li>
+                    <li>{% trans "Click 'Allow' on the confirmation popup" %}</li>
+                    <li>{% trans "Copy the Access Token value and paste it above" %}</li>
+                </ol>
+                <p class="connection-note">
+                    <i class="fas fa-shield-alt"></i> {% trans "Note: Read-only access is sufficient. We will not modify your Magento store. You can revoke the integration after migration." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="test_connection" checked>
+                {% trans "Test connection before proceeding" %}
+            </label>
+        </div>
+    </div>
+
+    {% elif job.platform == 'csv' %}
+    <!-- CSV Import -->
+    <div class="content-box">
+        <h3><i class="fas fa-file-csv"></i> {% trans "CSV File Upload" %}</h3>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>{% trans "CSV Import Instructions" %}</strong>
+                <p>{% trans "Upload CSV files for each data type you want to import. You can import some or all of the following:" %}</p>
+                <ul>
+                    <li>{% trans "Products (required)" %}</li>
+                    <li>{% trans "Categories (optional)" %}</li>
+                    <li>{% trans "Customers (optional)" %}</li>
+                    <li>{% trans "Orders (optional)" %}</li>
+                    <li>{% trans "Reviews (optional)" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="products_csv">
+                {% trans "Products CSV" %} <span class="required">*</span>
+            </label>
+            <input type="file" name="products_csv" id="products_csv" accept=".csv" required>
+            <div class="help">
+                {% trans "CSV file containing your products" %}
+                <a href="{% url 'admin:migration_download_template' 'products' %}" class="button secondary">
+                    <i class="fas fa-download"></i> {% trans "Download Template" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="categories_csv">{% trans "Categories CSV" %}</label>
+            <input type="file" name="categories_csv" id="categories_csv" accept=".csv">
+            <div class="help">
+                {% trans "Optional: CSV file containing your product categories" %}
+                <a href="{% url 'admin:migration_download_template' 'categories' %}" class="button secondary">
+                    <i class="fas fa-download"></i> {% trans "Download Template" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="customers_csv">{% trans "Customers CSV" %}</label>
+            <input type="file" name="customers_csv" id="customers_csv" accept=".csv">
+            <div class="help">
+                {% trans "Optional: CSV file containing your customers" %}
+                <a href="{% url 'admin:migration_download_template' 'customers' %}" class="button secondary">
+                    <i class="fas fa-download"></i> {% trans "Download Template" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="orders_csv">{% trans "Orders CSV" %}</label>
+            <input type="file" name="orders_csv" id="orders_csv" accept=".csv">
+            <div class="help">
+                {% trans "Optional: CSV file containing your orders" %}
+                <a href="{% url 'admin:migration_download_template' 'orders' %}" class="button secondary">
+                    <i class="fas fa-download"></i> {% trans "Download Template" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="reviews_csv">{% trans "Reviews CSV" %}</label>
+            <input type="file" name="reviews_csv" id="reviews_csv" accept=".csv">
+            <div class="help">
+                {% trans "Optional: CSV file containing your product reviews" %}
+                <a href="{% url 'admin:migration_download_template' 'reviews' %}" class="button secondary">
+                    <i class="fas fa-download"></i> {% trans "Download Template" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <div class="wizard-nav">
+        <a href="{% url 'admin:migration_wizard_step1' %}" class="button secondary">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back" %}
+        </a>
+        <button type="submit" class="button primary" id="submit-button">
+            {% trans "Next: Preview Data" %}
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+
+<script type="application/json" id="step2-data">
+{
+    "config": {
+        "platform": "{{ job.platform|escapejs }}",
+        "testConnectionUrl": "{% url 'admin:migration_test_connection' job.id %}"
+    },
+    "translations": {
+        "saving": "{% trans 'Saving...' %}",
+        "processing": "{% trans 'Processing...' %}",
+        "loadingPreview": "{% trans 'Loading preview...' %}",
+        "testingConnection": "{% trans 'Testing connection...' %}",
+        "verifyingCredentials": "{% trans 'Verifying API credentials' %}",
+        "countingProducts": "{% trans 'Counting products' %}",
+        "countingCategories": "{% trans 'Counting categories' %}",
+        "countingCustomers": "{% trans 'Counting customers' %}",
+        "countingOrders": "{% trans 'Counting orders' %}",
+        "countingBlogPosts": "{% trans 'Counting blog posts' %}",
+        "preparingNext": "{% trans 'Preparing the next step' %}",
+        "connectionSuccessful": "{% trans 'Connection successful' %}",
+        "connectionFailed": "{% trans 'Connection failed' %}",
+        "connectionError": "{% trans 'Connection error' %}",
+        "credentialsVerified": "{% trans 'Credentials verified' %}",
+        "productsCountedDone": "{% trans 'Products counted' %}",
+        "categoriesCountedDone": "{% trans 'Categories counted' %}",
+        "customersCountedDone": "{% trans 'Customers counted' %}",
+        "ordersCountedDone": "{% trans 'Orders counted' %}",
+        "blogPostsCountedDone": "{% trans 'Blog posts counted' %}",
+        "retryConnection": "{% trans 'Retry Connection' %}",
+        "exchangingCredentials": "{% trans 'Exchanging credentials for access token' %}",
+        "tokenObtained": "{% trans 'Access token obtained' %}",
+        "verifyingAccess": "{% trans 'Verifying API access' %}",
+        "accessVerified": "{% trans 'API access verified' %}",
+        "scanningStore": "{% trans 'Scanning store data' %}",
+        "scanComplete": "{% trans 'Store scan complete' %}",
+        "countingCollections": "{% trans 'Counting collections' %}",
+        "collectionsCountedDone": "{% trans 'Collections counted' %}",
+        "countingDiscounts": "{% trans 'Counting discounts' %}",
+        "discountsCountedDone": "{% trans 'Discounts counted' %}"
+    }
+}
+</script>
+<script src="{% static 'migration/js/wizard_step2.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,72 @@
+{
+  "type": "cart",
+  "icon": "fa-shopping-cart",
+  "label": "Cart",
+  "groups": [
+    {
+      "id": "behavior",
+      "title": "Behavior",
+      "expanded": true,
+      "fields": [
+        {
+          "key": "click_action",
+          "label": "Click Action",
+          "type": "select",
+          "options": [
+            { "value": "open_mini_cart", "label": "Open Mini-Cart (Recommended)" },
+            { "value": "link_to_cart", "label": "Go to Cart Page" }
+          ],
+          "default": "open_mini_cart",
+          "help": "Choose what happens when users click the cart button"
+        },
+        {
+          "key": "cart_url",
+          "label": "Cart Page URL",
+          "type": "url",
+          "default": "/cart/",
+          "placeholder": "/cart/",
+          "help": "URL for cart page (only used when Click Action is 'Go to Cart Page')"
+        }
+      ]
+    },
+    {
+      "id": "display",
+      "title": "Display Options",
+      "expanded": true,
+      "fields": [
+        {
+          "key": "icon_style",
+          "label": "Icon Style",
+          "type": "select",
+          "options": [
+            { "value": "cart", "label": "Shopping Cart" },
+            { "value": "bag", "label": "Shopping Bag" },
+            { "value": "basket", "label": "Shopping Basket" }
+          ],
+          "default": "cart"
+        },
+        {
+          "key": "show_text",
+          "label": "Show Text Label",
+          "type": "toggle",
+          "default": false,
+          "help": "Display 'Cart' text next to the icon"
+        },
+        {
+          "key": "text",
+          "label": "Button Text",
+          "type": "text",
+          "placeholder": "Cart",
+          "help": "Custom text label (leave empty for default)"
+        },
+        {
+          "key": "show_total",
+          "label": "Show Cart Total",
+          "type": "toggle",
+          "default": false,
+          "help": "Display the cart total amount"
+        }
+      ]
+    }
+  ]
+}

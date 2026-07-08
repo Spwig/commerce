@@ -1,0 +1,2681 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Hindi <LL@li.org>\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Action and method IDs required"
+msgstr "कार्रवाई और विधि IDs आवश्यक हैं"
+
+msgid "{} method(s) enabled"
+msgstr "विधि(ओं) को योग्य करें {}"
+
+msgid "{} method(s) disabled"
+msgstr "विधि(ओं) को अयोग्य करें {}"
+
+msgid "{} method(s) deleted"
+msgstr "{} विधि(ओं) को हटा दिया गया"
+
+msgid "Unknown action"
+msgstr "अज्ञात कार्रवाई"
+
+msgid "Invalid request data"
+msgstr "अमान्य अनुरोध डेटा"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "अप्रत्याशित त्रुटि हुई। कृपया पुनः प्रयास करें।"
+
+msgid "Basic Information"
+msgstr "आधारभूत जानकारी"
+
+msgid "Geographic Scope"
+msgstr "भूगोलीय क्षेत्र"
+
+msgid "Application Rules"
+msgstr "अनुप्रयोग के नियम"
+
+msgid "Product Exemptions"
+msgstr "उत्पाद छूट"
+
+msgid "Timestamps"
+msgstr "टाइमस्टैंप"
+
+msgid "Rate %"
+msgstr "दर %"
+
+msgid "Cart"
+msgstr "कार्ट"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "प्रतिशत के रूप में दर्ज करें (उदाहरण के लिए, 8.25 के लिए 8.25%)"
+
+msgid "Rate (%)"
+msgstr "दर (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "कृपया पहले स्टेप 1 पूरा करें"
+
+msgid "Please complete the wizard steps"
+msgstr "कृपया मैजिक स्टेप पूरा करें"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "शिपिंग मेथड \"%(name)s\" सफलतापूर्वक बनाया गया!"
+
+msgid "Please configure rate tables for this method."
+msgstr "कृपया इस विधि के लिए दर तालिम की सेटिंग करें।"
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "शिपिंग मेथड बनाने में विफल रहा: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "मिनी कार्ट डेटा प्राप्त करें"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    मिनी-कार्ट कम्पोनेंट के लिए वर्तमान कार्ट के अंतर्गत डेटा प्राप्त करें। यह अधिकृत "
+"उपयोगकर्ताओं (कार्ट उपयोगकर्ता खाता से जुड़ा हुआ है) और अज्ञात उपयोगकर्ताओं (कार्ट सेशन से "
+"जुड़ा हुआ है) दोनों के लिए काम करता है। कार्ट डेटा सभी आइटमों के साथ शामिल होता है, जिसमें "
+"उत्पाद विवरण, मात्रा, मूल्य और चित्र शामिल होता है। **उपयोग के मामले:** - पृष्ठ पर "
+"मिनी-कार्ट के लोड के लिए प्रारंभिक - बाहरी परिवर्तन के बाद कार्ट के ताज़ा करना - चेकआउट "
+"से पहले कार्ट की स्थिति की जांच करें **सुरक्षा प्रमाणीकरण:** कोई आवश्यक नहीं (अज्ञात "
+"उपयोगकर्ताओं के लिए सेशन का उपयोग करता है)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "कार्ट डेटा सफलतापूर्वक प्राप्त कर लिया गया"
+
+msgid "Update cart item quantity"
+msgstr "कार्ट आइटम की मात्रा अपडेट करें"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    कार्ट में एक आइटम की मात्रा अपडेट करें। मात्रा को 0 रखकर आइटम को पूरी तरह से हटा "
+"सकते हैं। अपडेट करने से पहले अंतर्निहित बिंदु बाजार उपलब्धता की जांच करता है और पूर्ण अपडेट "
+"कार्ट लौटाता है। **उपयोग के मामले:** - मिनी-कार्ट में मात्रा बढ़ाने/घटाने के बटन - मात्रा "
+"इनपुट के सीधे बदलाव - आइटम हटाना (मात्रा = 0) **सुरक्षा प्रमाणीकरण:** कोई आवश्यक नहीं "
+"(आइटम की जांच करता है कि यह उपयोगकर्ता के कार्ट के अंतर्गत है) **सत्यापन:** - आइटम "
+"उपयोगकर्ता के कार्ट में होना चाहिए - मात्रा एक गैर-ऋणात्मक पूर्णांक होना चाहिए - इन्वेंटरी-"
+"ट्रैक किए गए उत्पादों के लिए बाजार उपलब्धता की जांच की जाती है\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "कार्ट सफलतापूर्वक अपडेट कर दिया गया"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "अमान्य अनुरोध डेटा या कम भंडार"
+
+msgid "Cart item not found"
+msgstr "कार्ट आइटम नहीं मिला"
+
+msgid "Remove item from cart"
+msgstr "कार्ट से आइटम हटाएं"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    कार्ट से एक आइटम पूरी तरह से हटाएं। हटाने के बाद अपडेट कार्ट डेटा लौटाता है। "
+"**उपयोग के मामले:** - कार्ट आइटम पर डिलीट बटन - विशिष्ट आइटम को हटाना **सुरक्षा:** "
+"कोई आवश्यक नहीं (आइटम का सत्यापन उपयोगकर्ता के कार्ट के लिए होता है)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "आइटम सफलतापूर्वक हटा दिया गया"
+
+msgid "Get empty cart recommendations"
+msgstr "खाली कार्ट अनुशंसाएं प्राप्त करें"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    रिक्त कार्ट स्थिति के लिए बुद्धिमान उत्पाद प्रस्ताव लाएं। व्यक्तिगत टिप्पणियों को "
+"निर्दिष्ट अनुभागों में संगठित करके लौटाता है: - **अपने द्वारा देखे गए**: उपयोगकर्ता द्वारा "
+"जो उत्पाद ब्राउज किए गए हैं (अनामिक उपयोगकर्ताओं के लिए सेशन आधारित) - **संबंधित**: "
+"हाल ही में देखे गए आइटम की श्रेणियों में उत्पाद - **विक्रय में**: वर्तमान में छूट वाले उत्पाद - "
+"**लोकप्रिय**: दृश्य/विक्रय द्वारा लोकप्रिय उत्पाद - **विशेष**: संपादक द्वारा चुने गए "
+"उत्पाद जो बैकअप के रूप में हैं सभी लौटे उत्पाद वर्तमान में स्टॉक में हैं और खरीदे जा सकते हैं। "
+"**उपयोग के मामले:** - मिनी-कार्ट में रिक्त कार्ट स्थिति - \"आपको शायद पसंद हो सकता "
+"है\" अनुभाग - क्रॉस-बेच अवसर **सुरक्षा:** कोई आवश्यक नहीं (अनामिक उपयोगकर्ताओं के लिए "
+"सेशन का उपयोग करता है) **व्यक्तिगतकरण:** - अनामिक उपयोगकर्ता: सेशन के आधार पर हाल "
+"ही में देखे गए उत्पादों पर आधारित - प्रमाणित उपयोगकर्ता: खाता ऐतिहासिक और पसंदों के "
+"आधार पर\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "वापस करने के लिए उत्पादों की अधिकतम संख्या (डिफ़ॉल्ट: 6, अधिकतम: 12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "सिफारिशें सफलतापूर्वक प्राप्त कर ली गईं"
+
+msgid "User"
+msgstr "उपयोगकर्ता"
+
+msgid "Session Key"
+msgstr "सेशन की"
+
+msgid "Cart Currency"
+msgstr "कार्ट मुद्रा"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"इस कार्ट में सभी आइटम के लिए मुद्रा कोड (उदा. EUR, NZD)। खाली होने का मतलब है कि "
+"स्टोर की डिफ़ॉल्ट मुद्रा।"
+
+msgid "Default Layout"
+msgstr "डिफ़ॉल्ट लेआउट"
+
+msgid "Compact View"
+msgstr "संक्षिप्त दृश्य"
+
+msgid "Detailed View"
+msgstr "विस्तृत दृश्य"
+
+msgid "Minimal View"
+msgstr "न्यूनतम दृश्य"
+
+msgid "Sidebar Cart"
+msgstr "साइडबार कार्ट"
+
+msgid "Overlay Cart"
+msgstr "ओवरले कार्ट"
+
+msgid "How the cart is displayed"
+msgstr "कार्ट कैसे दिखाया जाता है"
+
+msgid "Cart Layout"
+msgstr "कार्ट लेआउट"
+
+msgid "Show Product Images"
+msgstr "उत्पाद चित्र दिखाएं"
+
+msgid "Show Product Variants"
+msgstr "उत्पाद वेरिएंट दिखाएं"
+
+msgid "Show Remove Button"
+msgstr "हटाएं बटन दिखाएं"
+
+msgid "Show Quantity Controls"
+msgstr "मात्रा नियंत्रण दिखाएं"
+
+msgid "Show Item Totals"
+msgstr "आइटम कुल दिखाएं"
+
+msgid "Show Cart Summary"
+msgstr "कार्ट सारांश दिखाएं"
+
+msgid "Show Savings"
+msgstr "बचत दिखाएं"
+
+msgid "Single Page Checkout"
+msgstr "एक पृष्ठ चेकआउट"
+
+msgid "Multi-Step Checkout"
+msgstr "बहु-चरण चेकआउट"
+
+msgid "Accordion Style"
+msgstr "एक्कोर्डियन स्टाइल"
+
+msgid "Wizard Style"
+msgstr "मैजिक स्टाइल"
+
+msgid "Checkout Flow"
+msgstr "चेकआउट फ्लो"
+
+msgid "Shipping Address"
+msgstr "शिपिंग पता"
+
+msgid "Shipping Method"
+msgstr "शिपिंग विधि"
+
+msgid "Calculated shipping cost"
+msgstr "गणना शिपिंग लागत"
+
+msgid "Shipping Cost"
+msgstr "शिपिंग लागत"
+
+msgid "Estimated Delivery Date"
+msgstr "अनुमानित डिलीवरी तिथि"
+
+msgid "Shipping Notes"
+msgstr "शिपिंग नोट्स"
+
+msgid "None"
+msgstr "कोई नहीं"
+
+msgid "Percentage"
+msgstr "प्रतिशत"
+
+msgid "Fixed Amount"
+msgstr "निश्चित राशि"
+
+msgid "POS manual discount type"
+msgstr "POS मैनुअल छूट प्रकार"
+
+msgid "POS manual discount value"
+msgstr "POS मैनुअल छूट मूल्य"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "छूट की मात्रा (प्रतिशत या निश्चित राशि)"
+
+msgid "POS discount applied by"
+msgstr "POS छूट लागू करता है"
+
+msgid "POS discount approved by"
+msgstr "POS छूट मंजूर करता है"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "यदि छूट कर्मचारी सीमा से अधिक है तो छूट को अनुमोदित करने वाला प्रबंधक"
+
+msgid "POS discount reason"
+msgstr "POS छूट कारण"
+
+msgid "Created At"
+msgstr "बनाया गया"
+
+msgid "Updated At"
+msgstr "अपडेट किया गया"
+
+msgid "Shopping Cart"
+msgstr "खरीदारी कार्ट"
+
+msgid "Shopping Carts"
+msgstr "खरीदारी कार्ट्स"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "{username} के लिए कार्ट"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "कार्ट (सेशन: {session})"
+
+msgid "No shipping required"
+msgstr "कोई शिपिंग आवश्यक नहीं"
+
+msgid "Shipping address required"
+msgstr "शिपिंग पता आवश्यक"
+
+msgid "Available shipping methods retrieved"
+msgstr "उपलब्ध शिपिंग विधि प्राप्त"
+
+msgid "Shipping calculated successfully"
+msgstr "शिपिंग सफलतापूर्वक गणना की गई"
+
+msgid "Invalid gift card code"
+msgstr "अमान्य गिफ्ट कार्ड कोड"
+
+msgid "Gift card already applied"
+msgstr "गिफ्ट कार्ड पहले से लागू कर दिया गया है"
+
+msgid "Gift card is not active"
+msgstr "गिफ्ट कार्ड सक्रिय नहीं है"
+
+msgid "Gift card has expired"
+msgstr "गिफ्ट कार्ड अप्रचलित हो गया है"
+
+msgid "Gift card has been fully redeemed"
+msgstr "गिफ्ट कार्ड पूरी तरह से लाभान्वित कर दिया गया है"
+
+msgid "Gift card cannot be used"
+msgstr "गिफ्ट कार्ड का उपयोग नहीं किया जा सकता"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"मुद्रा मिलान नहीं हो पा रहा। गिफ्ट कार्ड {card_currency} में है, कार्ट "
+"{cart_currency} में है"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"यह गिफ्ट कार्ड {card_currency} में है। इसका उपयोग करने के लिए अपनी मुद्रा को "
+"{card_currency} में बदलें।"
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "गिफ्ट कार्ड का उपयोग अन्य गिफ्ट कार्ड के खरीदने के लिए नहीं किया जा सकता है"
+
+msgid "Cart total is already covered"
+msgstr "कार्ट कुल पहले से ढका जा चुका है"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "गिफ्ट कार्ड के मुद्रा परिवर्तन को प्रक्रिया करने में असमर्थ"
+
+msgid "Gift card applied successfully"
+msgstr "गिफ्ट कार्ड सफलतापूर्वक लागू कर दिया गया है"
+
+msgid "Product"
+msgstr "उत्पाद"
+
+msgid "Variant"
+msgstr "वैरिएंट"
+
+msgid "Quantity"
+msgstr "मात्रा"
+
+msgid "Unit Price"
+msgstr "इकाई मूल्य"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"गणना के साथ उत्पाद विशेषताएं: {customization_option_id: {'value': '...', "
+"'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "अनुकूलन"
+
+msgid "Is Subscription"
+msgstr "सदस्यता है"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "क्या यह आइटम एक सदस्यता के रूप में खरीदा जाएगा"
+
+msgid "Subscription Plan"
+msgstr "सदस्यता योजना"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "दोहराए जाने वाले बिलिंग के लिए चुनी गई सदस्यता योजना"
+
+msgid "Pricing Tier"
+msgstr "मूल्य श्रेणी"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "सदस्यता के लिए चुना गया मूल्य वर्ग (बिलिंग आवृत्ति)"
+
+msgid "Payment Token"
+msgstr "भुगतान टोकन"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr "सदस्यता बिलिंग के लिए सहेजी गई भुगतान विधि (सदस्यता के लिए आवश्यक)"
+
+msgid "Parent Bundle"
+msgstr "माता पैकेज"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "यदि यह एक पैकेज घटक है, तो पैकेज कार्ट आइटम के संदर्भ के लिए"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"बुकिंग विवरण: {start_datetime, end_datetime, resource_id, persons, timezone}"
+
+msgid "Booking Data"
+msgstr "बुकिंग डेटा"
+
+msgid "Customer notes for this item"
+msgstr "इस आइटम के लिए ग्राहक के टिप्पणी"
+
+msgid "Notes"
+msgstr "टिप्पणियाँ"
+
+msgid "manual discount type"
+msgstr "मैन्युअल छूट प्रकार"
+
+msgid "manual discount value"
+msgstr "मैन्युअल छूट मूल्य"
+
+msgid "discount applied by"
+msgstr "छूट द्वारा लागू किया गया"
+
+msgid "discount approved by"
+msgstr "छूट द्वारा अनुमोदित किया गया"
+
+msgid "discount reason"
+msgstr "छूट कारण"
+
+msgid "Cart Item"
+msgstr "कार्ट आइटम"
+
+msgid "Cart Items"
+msgstr "कार्ट आइटम्स"
+
+msgid "My Wishlist"
+msgstr "मेरी विशिष्ट सूची"
+
+msgid "Name"
+msgstr "नाम"
+
+msgid "Grid Layout"
+msgstr "ग्रिड लेआउट"
+
+msgid "List Layout"
+msgstr "सूची लेआउट"
+
+msgid "How wishlist items are displayed"
+msgstr "विशिष्ट सूची आइटम कैसे प्रदर्शित किए जाते हैं"
+
+msgid "Wishlist Layout"
+msgstr "विशिष्ट सूची लेआउट"
+
+msgid "Is Public"
+msgstr "सार्वजनिक है"
+
+msgid "Share Slug"
+msgstr "शेयर स्लग"
+
+msgid "Show Prices"
+msgstr "मूल्य दिखाएं"
+
+msgid "Show Availability"
+msgstr "उपलब्धता दिखाएं"
+
+msgid "Show Add to Cart"
+msgstr "कार्ट में जोड़ें दिखाएं"
+
+msgid "Wishlist"
+msgstr "विशिष्ट सूची"
+
+msgid "Wishlists"
+msgstr "विशिष्ट सूची"
+
+msgid "Low"
+msgstr "कम"
+
+msgid "Medium"
+msgstr "मध्यम"
+
+msgid "High"
+msgstr "उच्च"
+
+msgid "Priority"
+msgstr "अधिकता"
+
+msgid "Notify When Available"
+msgstr "उपलब्ध होने पर सूचना दें"
+
+msgid "Notify When On Sale"
+msgstr "बिक्री पर सूचना दें"
+
+msgid "Wishlist Item"
+msgstr "विशिष्ट सूची आइटम"
+
+msgid "Wishlist Items"
+msgstr "विशिष्ट सूची आइटम्स"
+
+msgid "Viewed At"
+msgstr "देखा गया था"
+
+msgid "View Count"
+msgstr "दृश्य गिनती"
+
+msgid "Recently Viewed Product"
+msgstr "हालिया देखा गया उत्पाद"
+
+msgid "Recently Viewed Products"
+msgstr "हालिया देखे गए उत्पाद"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "सेशन: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{user} द्वारा {product} को देखा गया"
+
+msgid "Description"
+msgstr "विवरण"
+
+msgid "Flat Rate"
+msgstr "समतल दर"
+
+msgid "Free Shipping"
+msgstr "मुफ़्त शिपिंग"
+
+msgid "Weight Based"
+msgstr "वजन आधारित"
+
+msgid "Price Based"
+msgstr "मूल्य आधारित"
+
+msgid "Real-Time Carrier Rates"
+msgstr "वास्तविक समय वाले डिलीवरी दर"
+
+msgid "Local Pickup"
+msgstr "स्थानीय ले जाए"
+
+msgid "Table Rate"
+msgstr "टेबल दर"
+
+msgid "Method Type"
+msgstr "विधि प्रकार"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "निश्चित शिपिंग लागत (प्लैट रेट प्रकार के लिए)"
+
+msgid "Flat Rate Cost"
+msgstr "समान दर लागत"
+
+msgid "Minimum cart value to qualify"
+msgstr "योग्यता के लिए न्यूनतम कार्ट मूल्य"
+
+msgid "Minimum Order Value"
+msgstr "न्यूनतम कमांड मूल्य"
+
+msgid "Maximum cart value to qualify"
+msgstr "योग्यता के लिए अधिकतम कार्ट मूल्य"
+
+msgid "Maximum Order Value"
+msgstr "अधिकतम कमांड मूल्य"
+
+msgid "Minimum cart weight (kg)"
+msgstr "न्यूनतम कार्ट वजन (किलोग्राम)"
+
+msgid "Minimum Weight"
+msgstr "न्यूनतम वजन"
+
+msgid "Maximum cart weight (kg)"
+msgstr "अधिकतम कार्ट वजन (किलोग्राम)"
+
+msgid "Maximum Weight"
+msgstr "अधिकतम वजन"
+
+msgid "Shipping Zones"
+msgstr "डिलीवरी क्षेत्र"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"शिपिंग विधि के लिए उपलब्ध क्षेत्र। यदि खाली है तो पुराने देश/राज्य प्रतिबंध लागू होंगे।"
+
+msgid "Pickup Locations"
+msgstr "ले जाने के स्थान"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"ग्राहक इस शिपिंग विधि का उपयोग करके कौन सी स्थानों पर अपने ऑर्डर ले सकते हैं। केवल "
+"'local_pickup' विधि प्रकार के लिए लागू होता है।"
+
+msgid "Minimum delivery time in business days"
+msgstr "व्यावसायिक दिनों में न्यूनतम डिलीवरी समय"
+
+msgid "Minimum Delivery Days"
+msgstr "न्यूनतम डिलीवरी दिन"
+
+msgid "Maximum delivery time in business days"
+msgstr "व्यावसायिक दिनों में अधिकतम डिलीवरी समय"
+
+msgid "Maximum Delivery Days"
+msgstr "अधिकतम डिलीवरी दिन"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "फॉन्ट अवेज़ आइकॉन क्लास (उदाहरण के लिए, 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "आइकॉन"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"मीडिया लाइब्रेरी से शिपिंग विधि के लिए आवश्यक छवि। यदि प्रदान किया गया है, तो आइकॉन "
+"के बजाय यह प्राथमिकता देता है।"
+
+msgid "Image"
+msgstr "चित्र"
+
+msgid "Sort Order"
+msgstr "क्रमबद्ध करें"
+
+msgid "Is Active"
+msgstr "सक्रिय है"
+
+msgid "Custom Carrier"
+msgstr "कस्टम डिलीवरी"
+
+msgid "Carrier"
+msgstr "डिलीवरी"
+
+msgid "Carrier-specific service code"
+msgstr "विशिष्ट डिलीवरी सेवा कोड"
+
+msgid "Carrier Service Code"
+msgstr "डिलीवरी सेवा कोड"
+
+msgid "Shipping Methods"
+msgstr "डिलीवरी विधियां"
+
+msgid "Shipping method is not active"
+msgstr "डिलीवरी विधि सक्रिय नहीं है"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "न्यूनतम ऑर्डर मूल्य {value} की आवश्यकता है"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "अधिकतम ऑर्डर मूल्य {value} से अधिक है"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "न्यूनतम वजन {weight}केजी की आवश्यकता है"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "अधिकतम वजन {weight}केजी से अधिक है"
+
+msgid "Cart contains only digital products"
+msgstr "कार्ट में केवल डिजिटल उत्पाद हैं"
+
+msgid "Available"
+msgstr "उपलब्ध"
+
+msgid "No geographic restrictions"
+msgstr "भूगोलिक प्रतिबंध नहीं"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "{zone} में उपलब्ध"
+
+msgid "Not available in your location"
+msgstr "आपके स्थान में उपलब्ध नहीं"
+
+msgid "Available worldwide"
+msgstr "विश्वव्यापी उपलब्ध"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "ISO 3166-1 अल्फा-2 देश कोड"
+
+msgid "Country"
+msgstr "देश"
+
+msgid "State/Province/Region"
+msgstr "राज्य/प्रांत/क्षेत्र"
+
+msgid "State"
+msgstr "राज्य"
+
+msgid "City name (optional)"
+msgstr "शहर का नाम (वैकल्पिक)"
+
+msgid "City"
+msgstr "शहर"
+
+msgid "List of specific postal codes (optional)"
+msgstr "विशिष्ट पोस्टल कोडों की सूची (वैकल्पिक)"
+
+msgid "Postal Codes"
+msgstr "पोस्टल कोड"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "कर दर दशमलव के रूप में (उदाहरण के लिए, 0.0825 के लिए 8.25%)"
+
+msgid "Rate"
+msgstr "दर"
+
+msgid "Sales Tax"
+msgstr "विक्रय कर"
+
+msgid "Custom Tax"
+msgstr "कस्टम कर"
+
+msgid "Tax Type"
+msgstr "कर प्रकार"
+
+msgid "Apply tax to shipping costs"
+msgstr "कर को डिलीवरी लागत पर लागू करें"
+
+msgid "Applies to Shipping"
+msgstr "शिपिंग पर लागू होता है"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "अन्य करों के ऊपर गणना (संयुक्त कर)"
+
+msgid "Compound Tax"
+msgstr "संयुक्त कर"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "इस कर से छूट उत्पाद प्रकार (उदाहरण के लिए, ['digital', 'service'])"
+
+msgid "Exempt Product Types"
+msgstr "कर मुक्त उत्पाद प्रकार"
+
+msgid "Categories exempt from this tax"
+msgstr "इस कर से मुक्त श्रेणियाँ"
+
+msgid "Exempt Categories"
+msgstr "कर मुक्त श्रेणियाँ"
+
+msgid "Higher priority rules take precedence"
+msgstr "उच्च प्राथमिकता वाले नियम अधिक प्रासंगिक होते हैं"
+
+msgid "Tax Rate"
+msgstr "कर दर"
+
+msgid "Tax Rates"
+msgstr "कर दरें"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "यूरोप"
+
+msgid "North America"
+msgstr "उत्तरी अमेरिका"
+
+msgid "Asia Pacific"
+msgstr "एशियाई प्रशांत"
+
+msgid "Middle East"
+msgstr "मध्य पूर्व"
+
+msgid "Africa"
+msgstr "अफ्रीका"
+
+msgid "Latin America"
+msgstr "लैटिन अमेरिका"
+
+msgid "Oceania"
+msgstr "ओशियानिया"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "अद्वितीय पहचानक (जैसे, eu_vat, us_sales_tax)"
+
+msgid "Key"
+msgstr "की"
+
+msgid "Font Awesome icon class"
+msgstr "फॉंट अवेज़ आइकॉन क्लास"
+
+msgid "Default Tax Type"
+msgstr "मूल्य टैक्स प्रकार"
+
+msgid "Region"
+msgstr "क्षेत्र"
+
+msgid "Version for tracking rate updates"
+msgstr "अपडेट के लिए वर्जन"
+
+msgid "Version"
+msgstr "वर्जन"
+
+msgid "Last Updated"
+msgstr "अंतिम अपडेट"
+
+msgid "Tax Preset Group"
+msgstr "टैक्स प्रीसेट समूह"
+
+msgid "Tax Preset Groups"
+msgstr "टैक्स प्रीसेट समूह"
+
+msgid "Preset Group"
+msgstr "प्रीसेट समूह"
+
+msgid "Country Code"
+msgstr "देश कोड"
+
+msgid "Country Name"
+msgstr "देश का नाम"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "राज्य/प्रांत कोड (US/CA प्रीसेट के लिए)"
+
+msgid "State Code"
+msgstr "राज्य कोड"
+
+msgid "State Name"
+msgstr "राज्य का नाम"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "कर दर दशमलव के रूप में (उदाहरण के लिए, 0.20 के लिए 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "वैकल्पिक टिप्पणियाँ (जैसे, 'जुलाई 2025 में 22% तक बढ़ा')"
+
+msgid "Tax Preset Rate"
+msgstr "टैक्स प्रीसेट दर"
+
+msgid "Tax Preset Rates"
+msgstr "टैक्स प्रीसेट दर"
+
+msgid "Billing Address"
+msgstr "बिलिंग पता"
+
+msgid "Billing Same as Shipping"
+msgstr "बिलिंग शिपिंग के समान है"
+
+msgid "Shipping Address Data"
+msgstr "स्पेसिफिकेशन पता डेटा"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr "अस्थायी शिपिंग पता डेटा (आदेश देने तक Address मॉडल में नहीं सहेजा गया)"
+
+msgid "Billing Address Data"
+msgstr "बिलिंग पता डेटा"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr "अस्थायी बिलिंग पता डेटा (आदेश देने तक Address मॉडल में नहीं सहेजा गया)"
+
+msgid "Selected Shipping Method"
+msgstr "चुनी गई शिपिंग विधि"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "कैश किए गए उपलब्ध शिपिंग विधियों की सूची दर के साथ"
+
+msgid "Available Shipping Methods"
+msgstr "उपलब्ध शिपिंग विधियाँ"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "अधिकार के आधार पर विस्तृत टैक्स वितरण"
+
+msgid "Tax Breakdown"
+msgstr "टैक्स वितरण"
+
+msgid "Tax Amount"
+msgstr "टैक्स राशि"
+
+msgid "Payment Provider"
+msgstr "भुगतान प्रदाता"
+
+msgid "Subtotal"
+msgstr "उप-कुल"
+
+msgid "Discount Amount"
+msgstr "छूट की राशि"
+
+msgid "Gift Card Discount"
+msgstr "गिफ्ट कार्ड छूट"
+
+msgid "Total discount from applied gift cards"
+msgstr "लागू गिफ्ट कार्ड से कुल छूट"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "अंतिम कुल: उप-कुल + शिपिंग + कर - छूट"
+
+msgid "Total Amount"
+msgstr "कुल राशि"
+
+msgid "Cart Review"
+msgstr "कार्ट समीक्षा"
+
+msgid "Billing Information"
+msgstr "बिलिंग जानकारी"
+
+msgid "Payment Method"
+msgstr "भुगतान विधि"
+
+msgid "Order Review"
+msgstr "ऑर्डर समीक्षा"
+
+msgid "Step Completed"
+msgstr "चरण पूरा"
+
+msgid "Expires At"
+msgstr "मौजूदा तिथि"
+
+msgid "Metadata"
+msgstr "मेटाडेटा"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "अतिरिक्त मेटाडेटा (उदाहरण के लिए, मार्केटप्लेस खरीदारी जानकारी)"
+
+msgid "Checkout Session"
+msgstr "चेकआउट सेशन"
+
+msgid "Checkout Sessions"
+msgstr "चेकआउट सेशन"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "{cart} के लिए चेकआउट"
+
+msgid "Gift Card"
+msgstr "गिफ्ट कार्ड"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "मूल मुद्रा में राशि (कार्ट की गणना के लिए उपयोग किया जाता है)"
+
+msgid "Original Currency Amount"
+msgstr "मूल मुद्रा राशि"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr "गिफ्ट कार्ड की स्थानीय मुद्रा में छूट (विदेशी मुद्रा वाले गिफ्ट कार्ड के लिए)"
+
+msgid "Exchange Rate"
+msgstr "विनिमय दर"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "दर: गिफ्ट कार्ड मुद्रा -> मूल मुद्रा आवेदन के समय"
+
+msgid "Applied At"
+msgstr "लागू करें"
+
+msgid "Applied Gift Card"
+msgstr "लागू गिफ्ट कार्ड"
+
+msgid "Applied Gift Cards"
+msgstr "लागू गिफ्ट कार्ड"
+
+msgid "This gift card cannot be used"
+msgstr "यह गिफ्ट कार्ड उपयोग नहीं किया जा सकता है"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "छूट की राशि गिफ्ट कार्ड शेष से अधिक है"
+
+msgid "Total customization price (per unit)"
+msgstr "कुल अनुकूलन मूल्य (प्रति इकाई)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "'instant' डिजिटल आइटम के लिए, 'shipping' भौतिक आइटम के लिए"
+
+msgid "True if this item is a component of a bundle"
+msgstr "यह आइटम एक बंडल के एक घटक है या नहीं"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "यदि यह एक घटक है तो मातृ बंडल CartItem के ID"
+
+msgid "Child items if this is a bundle parent"
+msgstr "बच्चा आइटम यदि यह बंडल पेरेंट है"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr "ग्राहक द्वारा चुने गए वेरिएंट के लिए bundle_item_id से variant_id का मैप"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr ""
+"अपवर्जित करने के लिए bundle_item_ids की सूची (ग्राहक को नहीं चाहिए वैकल्पिक आइटम के "
+"लिए)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr "कॉन्फिगरेबल उत्पादों के लिए चुने गए विकल्पों की सूची के लिए slot_id के मानचित्र"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "सेटिंग प्रीसेट ID के रूप में शुरुआत के लिए उपयोग किया गया"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"बुकिंग विवरण: start_datetime, end_datetime, resource_id, persons, timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "मात्रा कम से कम 1 होनी चाहिए"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "सदस्यता खरीद के लिए सदस्यता योजना आवश्यक है"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "सब्सक्रिप्शन खरीदारी के लिए भुगतान टोकन आवश्यक है"
+
+msgid "Product not found"
+msgstr "उत्पाद नहीं मिला"
+
+msgid "This product does not support subscriptions"
+msgstr "यह उत्पाद सब्सक्रिप्शन के समर्थन के लिए नहीं है"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "अमान्य या बंद ग्राहक योजना"
+
+msgid "This plan is not available for this product"
+msgstr "यह योजना इस उत्पाद के लिए उपलब्ध नहीं है"
+
+msgid "Invalid or inactive payment token"
+msgstr "अमान्य या बंद भुगतान टोकन"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "मूल्य टीयर नहीं मिला या चुनी गई योजना से संबंधित नहीं है"
+
+msgid "No pricing tier available for this plan"
+msgstr "इस योजना के लिए कोई मूल्य वर्ग उपलब्ध नहीं है"
+
+msgid "Quantity cannot be negative"
+msgstr "मात्रा ऋणात्मक नहीं हो सकती"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "गिफ्ट कार्ड कोड (जैसे, GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "इस उपहार कार्ड से लागू राशि (मूल मुद्रा में)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "इस आवेदन के बाद गिफ्ट कार्ड पर शेष राशि"
+
+msgid "Base currency code"
+msgstr "मूल मुद्रा कोड"
+
+msgid "Gift card's native currency code"
+msgstr "गिफ्ट कार्ड की मूल मुद्रा कोड"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr "उपहार कार्ड की मूल अपनी अपनी मुद्रा में छूट (विदेशी मुद्रा उपहार कार्ड के लिए)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr "या तो address_id या पूरे पता विवरण की आवश्यकता है। लापता: {fields}"
+
+msgid "This product requires customization"
+msgstr "इस उत्पाद को अनुकूलन की आवश्यकता है"
+
+msgid "Invalid design token"
+msgstr "अमान्य डिज़ाइन टोकन"
+
+msgid "Design not found or expired"
+msgstr "डिज़ाइन नहीं मिला या अप्रभावी हो गया"
+
+msgid "This product does not support customization"
+msgstr "यह उत्पाद विशेषता के समर्थन के बिना है"
+
+msgid "Invalid customization option"
+msgstr "अमान्य अनुकूलन विकल्प"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "स्वादीकरण '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "आवश्यक स्वादीकरण '{name}' लापता है"
+
+msgid "Insufficient stock"
+msgstr "अपर्याप्त स्टॉक"
+
+msgid "Bundle has no components configured"
+msgstr "बंडल में कोई घटक निर्धारित नहीं है"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "अनिवार्य बंडल घटक को हटाया जा नहीं सकता: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "{name} के लिए वेरिएंट चयन आवश्यक है"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "{name} के लिए अमान्य वेरिएंट चुना गया है"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "बंडल घटक के लिए पर्याप्त स्टॉक नहीं है: {name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "कार्ट में बंडल मात्रा अपडेट की गई है"
+
+msgid "Bundle added to cart"
+msgstr "बंडल कार्ट में जोड़ा गया है"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "आवश्यक स्लॉट '{name}' में कोई चयन नहीं है।"
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "स्लॉट '{name}' कम से कम {min} चयन की आवश्यकता है।"
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "स्लॉट '{name}' अधिकतम {max} चयन तक अनुमति देता है।"
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "अमान्य स्लॉट ID: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "विकल्प {opt_id} स्लॉट '{slot}' के लिए अमान्य है।"
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr "स्लॉट '{slot}' में असंगत चयन। कुछ विकल्प आपके अन्य चयनों के साथ संगत नहीं हैं।"
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"स्लॉट '{slot}' में बाहर किया गया चयन। कुछ विकल्प आपके अन्य चयनों के साथ टकराते हैं।"
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "घटक के लिए पर्याप्त स्टॉक नहीं है: {name}"
+
+msgid "Configured product added to cart"
+msgstr "निर्धारित उत्पाद कार्ट में जोड़ा गया है"
+
+msgid "Either user or session_key must be provided"
+msgstr "या तो उपयोगकर्ता या सेशन_की देना आवश्यक है"
+
+msgid "This product is no longer available"
+msgstr "यह उत्पाद अब उपलब्ध नहीं है"
+
+msgid "You must be logged in to purchase this product."
+msgstr "आपको इस उत्पाद को खरीदने के लिए लॉग इन करना आवश्यक है।"
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "इस उत्पाद के लिए आपको पहले \"\" के मालिक होना आवश्यक है। %(required)s"
+
+msgid "Product variant not found"
+msgstr "उत्पाद वेरिएंट नहीं मिला"
+
+msgid "Configuration is required for configurable products"
+msgstr "विन्यासित उत्पादों के लिए सेटिंग आवश्यक है"
+
+msgid "Booking added to cart"
+msgstr "बुकिंग कार्ट में जोड़ दी गई"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "अनुरोधित मात्रा के लिए अपर्याप्त स्टॉक"
+
+msgid "Cart item quantity updated"
+msgstr "कार्ट आइटम मात्रा अपडेट की गई है"
+
+msgid "Item added to cart"
+msgstr "आइटम कार्ट में जोड़ा गया है"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr "घटक मात्राएं सीधे बदली नहीं जा सकती हैं। बजाय अपने माता उत्पाद को अपडेट करें।"
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"कार्ट से आइटम हटा दिया गया। इसके साथ ही %(names)s भी हटा दिया गया (आवश्यक उत्पाद "
+"कार्ट में नहीं है)"
+
+msgid "Item removed from cart"
+msgstr "आइटम कार्ट से हटा दिया गया है"
+
+msgid "Cart item updated"
+msgstr "कार्ट आइटम अपडेट किया गया है"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr "घटक आइटम्स को सीधे हटाया जा सकता है। बजाय माता उत्पाद को हटाएं।"
+
+msgid "Cart cleared"
+msgstr "कार्ट साफ कर दिया गया है"
+
+msgid "Voucher removed"
+msgstr "वौचर हटा दिया गया है"
+
+msgid "Voucher not found in cart"
+msgstr "कार्ट में वौचर नहीं मिला"
+
+msgid "Gift card removed"
+msgstr "गिफ्ट कार्ड हटा दिया गया है"
+
+msgid "Gift card not found in cart"
+msgstr "कार्ट में गिफ्ट कार्ड नहीं मिला"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count} आइटम कार्ट में मर्ज कर दिए गए"
+
+msgid "Account creation required to proceed"
+msgstr "आगे बढ़ने के लिए खाता बनाना आवश्यक है"
+
+msgid "Address not found"
+msgstr "पता नहीं मिला"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "या तो address_id या address_data देना आवश्यक है"
+
+msgid "Shipping address set"
+msgstr "शिपिंग पता सेट कर दिया गया है"
+
+msgid "Billing address must be provided"
+msgstr "बिलिंग पता प्रदान करना आवश्यक है"
+
+msgid "Billing address set"
+msgstr "बिलिंग पता सेट कर दिया गया है"
+
+msgid "Shipping address must be set first"
+msgstr "शिपिंग पता पहले सेट करना आवश्यक है"
+
+msgid "Shipping method not found"
+msgstr "शिपिंग विधि नहीं मिली"
+
+msgid "Shipping method selected"
+msgstr "शिपिंग विधि चुनी गई है"
+
+msgid "Payment provider not found"
+msgstr "भुगतान प्रदाता नहीं मिला"
+
+msgid "Payment provider is not properly configured"
+msgstr "भुगतान प्रदाता सही तरीके से सेट अप नहीं किया गया है"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "आपके स्थान या मुद्रा के लिए भुगतान प्रदाता उपलब्ध नहीं है"
+
+msgid "Payment method selected"
+msgstr "भुगतान विधि चुनी गई है"
+
+msgid "Cart is empty"
+msgstr "कार्ट रिक्त है"
+
+msgid "Shipping address is required"
+msgstr "शिपिंग पता आवश्यक है"
+
+msgid "Shipping method is required"
+msgstr "शिपिंग विधि आवश्यक है"
+
+msgid "Billing address is required"
+msgstr "बिलिंग पता आवश्यक है"
+
+msgid "Payment method is required"
+msgstr "भुगतान विधि आवश्यक है"
+
+msgid "Checkout session has expired"
+msgstr "चेकआउट सेशन समाप्त हो गया है"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "{product} के लिए पर्याप्त स्टॉक नहीं है"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\" के लिए \"\" के पहले से ही मालिक होना आवश्यक है। %(required)s"
+
+msgid "Customer email is required"
+msgstr "ग्राहक के ईमेल की आवश्यकता है"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "आदेश के लिए वेयरहाउस आवंटित करने में असमर्थ। समर्थन से संपर्क करें।"
+
+msgid "Insufficient stock to complete order"
+msgstr "ऑर्डर पूरा करने के लिए अपर्याप्त स्टॉक"
+
+msgid "Error processing order. Please try again."
+msgstr "आदेश के प्रोसेसिंग में त्रुटि। कृपया पुनः प्रयास करें।"
+
+msgid "Order created successfully"
+msgstr "ऑर्डर सफलतापूर्वक बनाया गया है"
+
+msgid "Wishlist item updated"
+msgstr "विशिष्ट सूची आइटम अपडेट किया गया है"
+
+msgid "Item added to wishlist"
+msgstr "आइटम विशिष्ट सूची में जोड़ा गया है"
+
+msgid "Item removed from wishlist"
+msgstr "आइटम विशिष्ट सूची से हटा दिया गया है"
+
+msgid "Item moved to cart"
+msgstr "आइटम कार्ट में ले जाया गया है"
+
+msgid "Wishlist cleared"
+msgstr "विशिष्ट सूची साफ कर दी गई है"
+
+msgid "Wishlist with this name already exists"
+msgstr "इस नाम के साथ विश्लेषण सूची पहले से ही मौजूद है"
+
+msgid "Wishlist created"
+msgstr "विशिष्ट सूची बनाई गई है"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "सक्रिय और छोड़े गए ग्राहक कार्ट की निगरानी करें"
+
+msgid "Add"
+msgstr "जोड़ें"
+
+msgid "cart"
+msgstr "कार्ट"
+
+msgid "Filters"
+msgstr "फ़िल्टर"
+
+msgid "Search"
+msgstr "खोजें"
+
+msgid "Search by user, session, or email..."
+msgstr "उपयोगकर्ता, सेशन या ईमेल द्वारा खोजें..."
+
+msgid "User Type"
+msgstr "उपयोगकर्ता प्रकार"
+
+msgid "All Carts"
+msgstr "सभी कार्ट"
+
+msgid "Registered Users"
+msgstr "पंजीकृत उपयोगकर्ता"
+
+msgid "Guest Carts"
+msgstr "अतिथि कार्ट"
+
+msgid "Cart Status"
+msgstr "कार्ट स्थिति"
+
+msgid "All"
+msgstr "सभी"
+
+msgid "Active (< 24h)"
+msgstr "सक्रिय (< 24h)"
+
+msgid "Abandoned (> 24h)"
+msgstr "त्याग दिया गया (> 24h)"
+
+msgid "Empty"
+msgstr "रिक्त"
+
+msgid "Has Shipping"
+msgstr "शिपिंग है"
+
+msgid "No Shipping"
+msgstr "कोई शिपिंग"
+
+msgid "Min Cart Value"
+msgstr "न्यूनतम कार्ट मूल्य"
+
+msgid "Min value"
+msgstr "न्यूनतम मूल्य"
+
+msgid "Max Cart Value"
+msgstr "अधिकतम कार्ट मूल्य"
+
+msgid "Max value"
+msgstr "अधिकतम मूल्य"
+
+msgid "Created From"
+msgstr "बनाया गया अनुसार"
+
+msgid "Created To"
+msgstr "बनाया गया तक"
+
+msgid "Apply Filters"
+msgstr "फ़िल्टर लागू करें"
+
+msgid "Clear All"
+msgstr "सब कुछ साफ करें"
+
+msgid "Run the selected action"
+msgstr "चुनी गई कार्रवाई चलाएं"
+
+msgid "Go"
+msgstr "जाएं"
+
+msgid "of"
+msgstr "के"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s कार्ट"
+msgstr[1] "%(counter)s कार्ट्स"
+
+msgid "carts"
+msgstr "कार्ट"
+
+msgid "Show all"
+msgstr "सभी दिखाएं"
+
+msgid "Save"
+msgstr "सहेजें"
+
+msgid "Add Shipping Method"
+msgstr "शिपिंग विधि जोड़ें"
+
+msgid "Configure a new shipping method for your store"
+msgstr "अपने स्टोर के लिए एक नई शिपिंग विधि के लिए सेटिंग करें"
+
+msgid "Method Basics"
+msgstr "विधि के आधार"
+
+msgid "Eligibility"
+msgstr "योग्यता"
+
+msgid "Coverage"
+msgstr "कवरेज"
+
+msgid "Features"
+msgstr "विशेषताएं"
+
+msgid "Review"
+msgstr "समीक्षा"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "इस शिपिंग विधि की मूल पहचान और प्रकार को परिभाषित करें।"
+
+msgid "Method Name"
+msgstr "विधि का नाम"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "जैसे, मानक शिपिंग, एक्सप्रेस डिलीवरी"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "इस शिपिंग विधि के लिए ग्राहक-मुखी नाम"
+
+msgid "Optional description of this shipping method"
+msgstr "इस शिपिंग विधि का वैकल्पिक विवरण"
+
+msgid "Display Icon"
+msgstr "आइकॉन दिखाएं"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"मीडिया लाइब्रेरी से एक छवि चुनें या फॉन्ट अवेज़ आइकॉन चुनें। यदि दोनों प्रदान किए जाते हैं, "
+"तो छवि की प्राथमिकता होती है।"
+
+msgid "Custom Image"
+msgstr "कस्टम इमेज"
+
+msgid "Font Awesome Icon"
+msgstr "फॉंट अवेज़ आइकॉन"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "फॉन्ट अवेज़ लाइब्रेरी से एक आइकॉन चुनें"
+
+msgid "Active"
+msgstr "सक्रिय"
+
+msgid "Make this method available to customers immediately"
+msgstr "ग्राहकों के लिए तुरंत इस विधि को उपलब्ध करें"
+
+msgid "Method Type & Pricing"
+msgstr "विधि के प्रकार और मूल्य"
+
+msgid "Select method type..."
+msgstr "विधि प्रकार चुनें..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "फ्लैट रेट - निर्धारित शिपिंग लागत"
+
+msgid "Free Shipping - No charge"
+msgstr "मुफ्त शिपिंग - कोई शुल्क नहीं"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "वजन आधारित - कार्ट वजन द्वारा गणना"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "कीमत आधारित - कार्ट सबटोटल द्वारा गणना"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "रियल-टाइम कैरियर रेट - कैरियर से लाइव रेट"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "लोकल पिकअप - ग्राहक स्थान पर ले जाता है"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "टेबल रेट - वजन/कीमत/गंतव्य के आधार पर जटिल नियम"
+
+msgid "Method Types:"
+msgstr "विधि प्रकार:"
+
+msgid "Flat Rate:"
+msgstr "फ्लैट दर:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "ऑर्डर के बिना निर्धारित शिपिंग लागत"
+
+msgid "Free Shipping:"
+msgstr "मुफ्त शिपिंग:"
+
+msgid "No shipping charge"
+msgstr "कोई शिपिंग शुल्क नहीं"
+
+msgid "Weight/Price Based:"
+msgstr "वजन/मूल्य आधारित:"
+
+msgid "Calculate using rate tables"
+msgstr "दर तालिका का उपयोग करके गणना करें"
+
+msgid "Real-Time:"
+msgstr "रियल-टाइम:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "USPS, FedEx, UPS या DHL से लाइव रेट प्राप्त करें"
+
+msgid "Local Pickup:"
+msgstr "स्थानीय पिकअप:"
+
+msgid "Customer picks up at your location"
+msgstr "ग्राहक अपने स्थान पर ले जाता है"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "ग्राहक को निर्धारित शिपिंग लागत लगाई जाती है"
+
+msgid "No Configured Providers"
+msgstr "कोई निर्धारित प्रोवाइडर नहीं"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"इस विधि प्रकार का उपयोग करने से पहले आपको कम से कम एक शिपिंग प्रदाता को वास्तविक समय "
+"रेट समर्थन के साथ निर्माण करना होगा।"
+
+msgid "Connect Provider"
+msgstr "प्रोवाइडर कनेक्ट करें"
+
+msgid "Manage Providers"
+msgstr "प्रोवाइडर प्रबंधित करें"
+
+msgid "Select a configured shipping provider"
+msgstr "एक निर्धारित शिपिंग प्रोवाइडर चुनें"
+
+msgid "Tip:"
+msgstr "सुझाव:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"केवल उन प्रदाताओं को ऊपर दिखाया जाता है जो निर्मित और वास्तविक समय रेट समर्थन करते हैं।"
+
+msgid "Manage providers"
+msgstr "प्रोवाइडर प्रबंधित करें"
+
+msgid "Service Code"
+msgstr "सेवा कोड"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "कैरियर से विशिष्ट सेवा कोड (वैकल्पिक)"
+
+msgid "Cancel"
+msgstr "रद्द करें"
+
+msgid "Next Step"
+msgstr "अगला कदम"
+
+msgid "Eligibility Conditions"
+msgstr "योग्यता की शर्तें"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr ""
+"कार्ट के मूल्य और वजन के आधार पर इस शिपिंग विधि के उपलब्ध होने के समय को परिभाषित करें।"
+
+msgid "Order Value Restrictions"
+msgstr "आदेश मूल्य प्रतिबंध"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr "इस विधि के लिए कार्ट सबटोटल की न्यूनतम या अधिकतम आवश्यकताएं निर्धारित करें।"
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट सबटोटल इस राशि के बराबर या अधिक हो।"
+
+msgid "No maximum"
+msgstr "कोई अधिकतम नहीं"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट सबटोटल इस राशि से कम हो।"
+
+msgid "Examples:"
+msgstr "उदाहरण:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr "$50 से अधिक के ऑर्डर के लिए मुफ्त शिपिंग: न्यूनतम 50.00 रखें"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr "$100 से कम के ऑर्डर के लिए अर्थव्यवस्था शिपिंग: अधिकतम 100.00 रखें"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr "$25-$200 के लिए मानक शिपिंग: दोनों न्यूनतम और अधिकतम रखें"
+
+msgid "Weight Restrictions"
+msgstr "वजन प्रतिबंध"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr "इस विधि के लिए कार्ट के कुल वजन की न्यूनतम या अधिकतम आवश्यकताएं निर्धारित करें।"
+
+msgid "Minimum Weight (kg)"
+msgstr "न्यूनतम वजन (किलोग्राम)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट के कुल वजन इस मूल्य के बराबर या अधिक हो।"
+
+msgid "Maximum Weight (kg)"
+msgstr "अधिकतम वजन (किलोग्राम)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "केवल तब यह विधि उपलब्ध होगी जब कार्ट के कुल वजन इस मूल्य से कम हो।"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "2 किलोग्राम से कम पैकेज के लिए हल्का पैकेज शिपिंग: अधिकतम 2.00 रखें"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr "20 किलोग्राम से अधिक पैकेज के लिए भारी भाड़ा: न्यूनतम 20.00 रखें"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr "0.5 किलोग्राम-10 किलोग्राम के लिए मानक शिपिंग: दोनों न्यूनतम और अधिकतम रखें"
+
+msgid "Additional Options"
+msgstr "अतिरिक्त विकल्प"
+
+msgid "Requires Shipping Address"
+msgstr "शिपिंग पता आवश्यक है"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"इस विधि के लिए ग्राहक को एक शिपिंग पता प्रदान करना आवश्यक है (डिजिटल वस्तुओं या लोकल "
+"पिकअप के लिए अक्षम करें)"
+
+msgid "Previous"
+msgstr "पिछला"
+
+msgid "Geographic Coverage"
+msgstr "भौगोलिक कवरेज"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr "शिपिंग जोन के उपयोग से इस शिपिंग विधि के उपलब्ध होने के स्थान को परिभाषित करें।"
+
+msgid "Zone-Based Coverage:"
+msgstr "क्षेत्र-आधारित कवरेज:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"उपयोग करें शिपिंग जोन लचीले, नियम-आधारित भौगोलिक कवरेज के लिए। यह दृष्टिकोण शिपिंग "
+"नियमों के साथ सुगमता से काम करता है और आपकी विधियों के उपलब्ध होने के स्थान पर नियंत्रण "
+"की अनुमति देता है।"
+
+msgid "Select Shipping Zones"
+msgstr "शिपिंग क्षेत्र चुनें"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"इस विधि के लिए कौन-से शिपिंग जोन उपलब्ध हैं उनका चयन करें। विश्वव्यापी उपलब्ध करने के लिए "
+"खाली छोड़ दें।"
+
+msgid "Available Zones"
+msgstr "उपलब्ध क्षेत्र"
+
+msgid "Add selected zones"
+msgstr "चुने गए क्षेत्र जोड़ें"
+
+msgid "Add all zones"
+msgstr "सभी क्षेत्र जोड़ें"
+
+msgid "Remove selected zones"
+msgstr "चुने गए क्षेत्र हटाएं"
+
+msgid "Remove all zones"
+msgstr "सभी क्षेत्र हटाएं"
+
+msgid "Selected Zones"
+msgstr "चुने गए क्षेत्र"
+
+msgid "No shipping zones found!"
+msgstr "कोई शिपिंग क्षेत्र नहीं मिला!"
+
+msgid "You need to create shipping zones first."
+msgstr "आपको पहले शिपिंग जोन बनाने की आवश्यकता है।"
+
+msgid "Create a shipping zone"
+msgstr "एक शिपिंग क्षेत्र बनाएं"
+
+msgid "Method Features"
+msgstr "विधि विशेषताएं"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr "डिलीवरी अनुमानों, प्रदर्शन क्रम और विधि-विशिष्ट विशेषताओं के निर्माण करें।"
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "ग्राहक अपने ऑर्डर ले जा सकते हैं उन भौतिक स्थानों का चयन करें।"
+
+msgid "Available Pickup Locations"
+msgstr "उपलब्ध पिकअप स्थान"
+
+msgid "Available Locations"
+msgstr "उपलब्ध स्थान"
+
+msgid "Selected Locations"
+msgstr "चुने गए स्थान"
+
+msgid "No pickup locations found!"
+msgstr "कोई पिकअप स्थान नहीं मिला!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr "लोकल पिकअप विधियों के लिए आपको पहले पिकअप स्थान बनाने की आवश्यकता है।"
+
+msgid "Create a pickup location"
+msgstr "एक पिकअप स्थान बनाएं"
+
+msgid "Carrier API Status"
+msgstr "कैरियर API स्थिति"
+
+msgid "Carrier:"
+msgstr "कैरियर:"
+
+msgid "Service Code:"
+msgstr "सेवा कोड:"
+
+msgid "API Configuration Status"
+msgstr "API संfiguration स्थिति"
+
+msgid "Checking API credentials..."
+msgstr "API प्रमाणपत्र की जांच कर रहा है..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr "अपने कैरियर API योग्यता को शिपिंग प्रदाता सेटिंग में निर्मित करें।"
+
+msgid "Enable Rate Caching"
+msgstr "रेट कैशिंग योग्य करें"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr "15 मिनट के लिए कैरियर रेट कैश करें ताकि प्रदर्शन में सुधार और API कॉल कम कर सकें।"
+
+msgid "Rate Table Configuration"
+msgstr "रेट टेबल संfiguration"
+
+msgid "Weight-Based Rates:"
+msgstr "वजन-आधारित रेट:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr ""
+"विधि बनाने के बाद आप कार्ट वजन के आधार पर टियर्ड रेट के निर्माण के लिए सक्षम होंगे।"
+
+msgid "Price-Based Rates:"
+msgstr "कीमत-आधारित रेट:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"विधि बनाने के बाद आप कार्ट सबटोटल के आधार पर टियर्ड रेट के निर्माण के लिए सक्षम होंगे।"
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr "रेट टेबल बनाने के बाद विधि के संपादन पृष्ठ से प्रबंधित किए जा सकते हैं।"
+
+msgid "Delivery Time Estimate"
+msgstr "वितरण समय अनुमान"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "ग्राहकों को एक अनुमानित डिलीवरी समय अवधि प्रदान करें।"
+
+msgid "Fastest delivery time in business days"
+msgstr "व्यावसायिक दिनों में सबसे तेज़ डिलीवरी समय"
+
+msgid "Slowest delivery time in business days"
+msgstr "व्यावसायिक दिनों में सबसे धीमा डिलीवरी समय"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "मानक शिपिंग: 3-5 व्यावसायिक दिन"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "त्वरित शिपिंग: 1-2 व्यावसायिक दिन"
+
+msgid "International shipping: 7-14 business days"
+msgstr "अंतरराष्ट्रीय शिपिंग: 7-14 व्यावसायिक दिन"
+
+msgid "Display Settings"
+msgstr "प्रदर्शन सेटिंग्स"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr ""
+"निम्न संख्या पहले दिखाई देती हैं। इसका उपयोग ग्राहकों के लिए विधियों के प्रदर्शन के क्रम को "
+"नियंत्रित करने के लिए करें।"
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"मौजूदा विधियों के बीच नई विधियों के आसान प्रवर्तन की अनुमति देने के लिए 10 के अंतराल (0, "
+"10, 20) में छानबीन के क्रम निर्धारित करें।"
+
+msgid "Review & Create"
+msgstr "समीक्षा और बनाएं"
+
+msgid "API credentials verified successfully"
+msgstr "API प्रमाणपत्र सफलता पूर्वक सत्यापित किया गया"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "अपने शिपिंग मेथड कॉन्फ़िगरेशन की जांच करें और इसे बनाएं।"
+
+msgid "Edit"
+msgstr "संपादित करें"
+
+msgid "Name:"
+msgstr "नाम:"
+
+msgid "Method Type:"
+msgstr "विधि प्रकार:"
+
+msgid "Description:"
+msgstr "विवरण:"
+
+msgid "Display Icon:"
+msgstr "प्रदर्शन आइकॉन:"
+
+msgid "Status:"
+msgstr "स्थिति:"
+
+msgid "Inactive"
+msgstr "असक्रिय"
+
+msgid "Flat Rate Cost:"
+msgstr "समतल दर लागत:"
+
+msgid "Min Order Value:"
+msgstr "न्यूनतम कमांड मूल्य:"
+
+msgid "Max Order Value:"
+msgstr "अधिकतम कमांड मूल्य:"
+
+msgid "Min Weight:"
+msgstr "न्यूनतम वजन:"
+
+msgid "Max Weight:"
+msgstr "अधिकतम वजन:"
+
+msgid "Requires Shipping Address:"
+msgstr "शिपिंग पता आवश्यक है:"
+
+msgid "Yes"
+msgstr "हां"
+
+msgid "No"
+msgstr "नहीं"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr ""
+"कोई योग्यता की शर्तें नहीं निर्धारित - यह मेथड सभी कार्ट मूल्यों और वजनों के लिए उपलब्ध है"
+
+msgid "Shipping Zones:"
+msgstr "शिपिंग क्षेत्र:"
+
+msgid "Coverage:"
+msgstr "कवरेज:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "विश्वव्यापी (कोई क्षेत्र चुना नहीं)"
+
+msgid "Pickup Locations:"
+msgstr "पिकअप स्थान:"
+
+msgid "location"
+msgstr "स्थान"
+
+msgid "Delivery Time:"
+msgstr "वितरण समय:"
+
+msgid "Instant Pickup"
+msgstr "तत्काल पिकअप"
+
+msgid "Delivery Estimate:"
+msgstr "वितरण अनुमान:"
+
+msgid "business days"
+msgstr "व्यावसायिक दिन"
+
+msgid "Sort Order:"
+msgstr "सॉर्ट ऑर्डर:"
+
+msgid "Rate Caching:"
+msgstr "रेट कैशिंग:"
+
+msgid "Enabled"
+msgstr "सक्रिय"
+
+msgid "What happens next:"
+msgstr "अगला क्या होता है:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "आपका शिपिंग मेथड ऊपर दिए गए सेटिंग्स के साथ बनाया जाएगा"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "आप इस मेथड के लिए रेट टेबल कॉन्फ़िगर करने के लिए रिडायरेक्ट किए जाएंगे"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr ""
+"यदि योग्यता की शर्तें पूरी हो जाती हैं, तो ग्राहकों के लिए यह मेथड तुरंत उपलब्ध हो जाएगा"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr "मेथड को अक्रिय रूप से बनाया जाएगा - तैयार होने पर इसे सक्रिय करें"
+
+msgid "Create Shipping Method"
+msgstr "शिपिंग विधि बनाएं"
+
+msgid "Creating..."
+msgstr "बनाना..."
+
+msgid "Session"
+msgstr "सेशन"
+
+msgid "Registered"
+msgstr "पंजीकृत"
+
+msgid "Guest"
+msgstr "अतिथि"
+
+msgid "item"
+msgstr "वस्तु"
+
+msgid "Shipping Set"
+msgstr "शिपिंग सेट"
+
+msgid "Cart Total"
+msgstr "कार्ट कुल"
+
+msgid "Items"
+msgstr "वस्तुएं"
+
+msgid "Savings"
+msgstr "बचत"
+
+msgid "Shipping"
+msgstr "वितरण"
+
+msgid "Grand Total"
+msgstr "कुल कुल"
+
+msgid "Updated"
+msgstr "अपडेट किया गया"
+
+msgid "ago"
+msgstr "पहले"
+
+msgid "Created"
+msgstr "बनाया गया"
+
+msgid "Est. Delivery"
+msgstr "अनुमानित डिलिवरी"
+
+msgid "View cart details"
+msgstr "कार्ट विवरण देखें"
+
+msgid "Edit cart"
+msgstr "कार्ट संपादित करें"
+
+msgid "Delete cart"
+msgstr "कार्ट हटाएं"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "क्या आप इस कार्ट को साफ करना चाहते हैं?"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "आपके मानदंडों के अनुसार कोई खरीददारी कार्ट नहीं मिला।"
+
+msgid "Try adjusting your filters or search terms."
+msgstr "अपने फ़िल्टर या खोज शब्दों को समायोजित करें।"
+
+msgid "Edit Shipping Method"
+msgstr "स्पेसिफिकेशन विधि संपादित करें"
+
+msgid "Save and continue editing"
+msgstr "सहेजें और संपादन जारी रखें"
+
+msgid "Please correct the errors below"
+msgstr "कृपया नीचे दिए गए त्रुटियों को सुधारें"
+
+msgid "Basic"
+msgstr "मूल"
+
+msgid "Pricing"
+msgstr "मूल्य"
+
+msgid "Display"
+msgstr "प्रदर्शन"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "वैकल्पिक: आदेश के मूल्य या भार के आधार पर उपलब्धता को सीमित करें।"
+
+msgid "Delivery Time"
+msgstr "स्पेसिफिकेशन समय"
+
+msgid "Display Options"
+msgstr "प्रदर्शन विकल्प"
+
+msgid "Carrier Integration"
+msgstr "वाहक एकीकरण"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr "वास्तविक समय दर खोज के लिए वाहक-विशिष्ट सेटिंग्स कॉन्फ़िगर करें।"
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "शिपिंग विकल्पों, दरों और डिलीवरी विधियों को कॉन्फ़िगर करें"
+
+msgid "method"
+msgstr "विधि"
+
+msgid "active"
+msgstr "सक्रिय"
+
+msgid "Add Method"
+msgstr "विधि जोड़ें"
+
+msgid "Bulk Actions"
+msgstr "बैच कार्रवाई"
+
+msgid "Enable Selected"
+msgstr "चयनित एनेबल करें"
+
+msgid "Disable Selected"
+msgstr "चयनित डिसेबल करें"
+
+msgid "Delete Selected"
+msgstr "चुने गए को हटाएं"
+
+msgid "Apply"
+msgstr "लागू करें"
+
+msgid "selected"
+msgstr "चुने गए"
+
+msgid "All Status"
+msgstr "सभी स्थिति"
+
+msgid "All Types"
+msgstr "सभी प्रकार"
+
+msgid "Real-Time Rates"
+msgstr "रियल-टाइम दरें"
+
+msgid "Clear all filters"
+msgstr "सभी फ़िल्टर क्लियर करें"
+
+msgid "Clear Filters"
+msgstr "फ़िल्टर क्लियर करें"
+
+msgid "Search methods..."
+msgstr "विधियों की तलाश करें..."
+
+msgid "Select All"
+msgstr "सभी चुनें"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s विधि"
+msgstr[1] "%(counter)s विधियां"
+
+msgid "No shipping methods found"
+msgstr "कोई शिपिंग विधि नहीं मिली"
+
+msgid "Try adjusting your filters or search query."
+msgstr "अपने फिल्टर्स या खोज प्रश्न को समायोजित करने के प्रयास करें।"
+
+msgid "Get started by creating your first shipping method."
+msgstr "अपने पहले शिपिंग मेथड के बनाने से शुरू करें।"
+
+msgid "Add First Method"
+msgstr "पहली विधि जोड़ें"
+
+msgid "Loading..."
+msgstr "लोड हो रहा है..."
+
+msgid "Order Value:"
+msgstr "ऑर्डर मूल्य:"
+
+msgid "Weight:"
+msgstr "वजन:"
+
+msgid "Zones:"
+msgstr "जोन:"
+
+msgid "zone"
+msgstr "जोन"
+
+msgid "Countries:"
+msgstr "देश:"
+
+msgid "country"
+msgstr "देश"
+
+msgid "Worldwide"
+msgstr "विश्वव्यापी"
+
+msgid "Pickup:"
+msgstr "पिकअप:"
+
+msgid "Delivery:"
+msgstr "डिलिवरी:"
+
+msgid "Edit method"
+msgstr "विधि संपादित करें"
+
+msgid "Toggle active status"
+msgstr "सक्रिय स्थिति टॉगल करें"
+
+msgid "Delete method"
+msgstr "विधि हटाएं"
+
+msgid "Edit Tax Rate"
+msgstr "कर दर संपादित करें"
+
+msgid "Add Tax Rate"
+msgstr "कर दर जोड़ें"
+
+msgid "Geography"
+msgstr "भूगोल"
+
+msgid "Rules"
+msgstr "नियम"
+
+msgid "Exemptions"
+msgstr "छूट"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"निर्धारित करें कि यह कर दर कहाँ लागू होता है। देश भर के दरों के लिए राज्य/शहर खाली छोड़ "
+"दें।"
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "इस कर दर से विशिष्ट उत्पाद प्रकार या श्रेणियों को बाहर रखें।"
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"अपने स्टोर के टैक्स नियमों को कॉन्फ़िगर करें। चेकआउट के दौरान टैक्स दरों को ग्राहक पतों के साथ "
+"मिलाया जाता है।"
+
+msgid "Load Presets"
+msgstr "प्रीसेट लोड करें"
+
+msgid "Total Rules"
+msgstr "कुल नियम"
+
+msgid "Countries"
+msgstr "देश"
+
+msgid "Tax Types"
+msgstr "कर प्रकार"
+
+msgid "Search by name, country, state..."
+msgstr "नाम, देश, राज्य द्वारा खोजें..."
+
+msgid "All Countries"
+msgstr "सभी देश"
+
+msgid "Custom"
+msgstr "स्वयं के अनुसार"
+
+msgid "Status"
+msgstr "स्थिति"
+
+msgid "Clear"
+msgstr "साफ करें"
+
+msgid "Tax Rules"
+msgstr "कर नियम"
+
+msgid "rules"
+msgstr "नियम"
+
+msgid "Load Tax Rate Presets"
+msgstr "कर दर पूर्वनिर्धारित लोड करें"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr ""
+"अपने क्षेत्र के लिए मानक टैक्स दरें त्वरित रूप से जोड़ें। अस्तित्व में वाली दरें दोहराई नहीं जाएंगी।"
+
+msgid "rates"
+msgstr "दर"
+
+msgid "Load"
+msgstr "लोड करें"
+
+msgid "Close"
+msgstr "बंद करें"
+
+msgid "postal codes"
+msgstr "पोस्टल कोड"
+
+msgid "Shipping Taxed"
+msgstr "शिपिंग कर"
+
+msgid "Compound"
+msgstr "संयोजित"
+
+msgid "Delete"
+msgstr "हटाएं"
+
+msgid "No tax rates configured"
+msgstr "कोई कर दर निर्धारित नहीं की गई है"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"'लोड प्रीसेट्स' का उपयोग करके अपने क्षेत्र के लिए मानक दरें त्वरित रूप से जोड़ें, या दरें मनमाने "
+"तौर पर जोड़ें।"
+
+msgid "Get current cart"
+msgstr "वर्तमान कार्ट प्राप्त करें"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"प्रमाणित उपयोगकर्ता या सेशन के लिए वर्तमान कार्ट प्राप्त करें। कार्ट आइटम, सबटोटल, छूट, "
+"कर और कुल लौटाता है। यदि कार्ट मौजूद नहीं है तो स्वत: कार्ट बनाता है।"
+
+msgid "Add item to cart"
+msgstr "कार्ट में आइटम जोड़ें"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"कार्ट में निर्दिष्ट मात्रा के साथ एक उत्पाद जोड़ें। वैकल्पिक रूप से वेरिएंट ID, स्वाद और नोट्स "
+"शामिल करें। स्टॉक उपलब्धता के सत्यापन के साथ, यदि समान उत्पाद/वेरिएंट है तो वर्तमान कार्ट "
+"आइटम के साथ मिलाएं। सब्सक्रिप्शन उत्पादों के लिए, is_subscription=true के साथ "
+"subscription_plan_id, payment_token_id शामिल करें और वैकल्पिक रूप से "
+"pricing_tier_id।"
+
+msgid "Update cart item"
+msgstr "कार्ट आइटम अपडेट करें"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"कार्ट आइटम की मात्रा, अनुकूलन या नोट्स को अपडेट करें। नई मात्रा को स्टॉक उपलब्धता के "
+"खिलाफ सत्यापित करता है। अपडेट कार्ट के साथ पुनः गणना किए गए कुल राशि के साथ लौटता है।"
+
+msgid "Remove cart item"
+msgstr "कार्ट आइटम हटाएं"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"कार्ट से एक विशिष्ट आइटम हटाएं। कार्ट के कुल राशि की पुनः गणना करता है और नए कार्ट कुल "
+"के खिलाफ कोई भी लागू कूपन को पुनः सत्यापित करता है।"
+
+msgid "Clear cart"
+msgstr "कार्ट साफ करें"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"कार्ट से सभी आइटम हटाएं। इसके साथ ही लागू किए गए कोई भी वौचर भी हटा दिए जाएंगे। "
+"कार्ट ऑब्जेक्ट बरकरार रहता है लेकिन खाली हो जाएगा।"
+
+msgid "Apply voucher code"
+msgstr "वौचर कोड लागू करें"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"कार्ट पर एक वौचर कोड लागू करें। वौचर के पात्रता, न्यूनतम खरीदारी की आवश्यकताओं और "
+"उपयोग सीमाओं की जांच करता है। कार्ट के कुल राशि पर छूट की गणना करता है और लागू करता है।"
+
+msgid "Remove voucher"
+msgstr "वौचर हटाएं"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"कोड द्वारा कार्ट से एक विशिष्ट वौचर हटाएं। वौचर छूट के बिना कार्ट कुल की पुनः गणना करें। "
+"यदि पात्र हो तो उपयोगकर्ता बाद में वौचर को पुनः लागू कर सकता है।"
+
+msgid "Apply gift card"
+msgstr "गिफ्ट कार्ड लागू करें"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"कार्ट पर एक गिफ्ट कार्ड कोड लागू करें। गिफ्ट कार्ड की स्थिति, शेष और मुद्रा की जांच करें। "
+"एक गिफ्ट कार्ड का उपयोग अन्य गिफ्ट कार्ड खरीदने के लिए नहीं किया जा सकता है। लागू किया "
+"गया राशि गिफ्ट कार्ड शेष या शेष कार्ट कुल तक सीमित है।"
+
+msgid "Remove gift card"
+msgstr "गिफ्ट कार्ड हटाएं"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"कोड द्वारा कार्ट से एक विशिष्ट गिफ्ट कार्ड हटाएं। चेकआउट पूरा होने तक गिफ्ट कार्ड के बैलेंस "
+"पर कोई प्रभाव नहीं पड़ता। उपयोगकर्ता गिफ्ट कार्ड को पुनः लागू कर सकता है।"
+
+msgid "Get cart summary"
+msgstr "कार्ट समारह प्राप्त करें"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"आइटम की संख्या, सबटोटल और कुल के साथ हल्का कार्ट समारह लें। पूर्ण कार्ट अंत बिंदु की तुलना "
+"में तेज है। हेडर कार्ट बैज या त्वरित कुल प्रदर्शन के लिए उपयोगी है।"
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"कॉम्पोनेंट आइटम्स को सीधे संशोधित नहीं किया जा सकता। बर्बर उत्पाद के बजाय इसे अपडेट करें।"
+
+msgid "List user wishlists"
+msgstr "उपयोगकर्ता की इच्छाओं की सूची"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"अधिकृत उपयोगकर्ता के लिए सभी इच्छा सूची प्राप्त करें। उपयोगकर्ता अलग-अलग उद्देश्यों (जैसे, "
+"'जन्मदिन', 'विवाह', 'अवधारणाएं') के लिए कई इच्छा सूची बना सकते हैं। इच्छा सूची के नाम, "
+"आइटम काउंट और गोपनीयता सेटिंग्स लौटाता है।"
+
+msgid "Create wishlist"
+msgstr "विश्लेषण सूची बनाएं"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"अधिकृत उपयोगकर्ता के लिए एक नई इच्छा सूची बनाएं। नाम, विवरण और गोपनीयता सेटिंग "
+"(सार्वजनिक/निजी) का उल्लेख करें। सार्वजनिक इच्छा सूची URL के माध्यम से साझा की जा सकती "
+"है।"
+
+msgid "Get wishlist details"
+msgstr "इच्छा विवरण प्राप्त करें"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"एक विशिष्ट विश्लेषण सूची के बारे में विस्तृत जानकारी प्राप्त करें, जिसमें सभी आइटम, मूल्य, "
+"उपलब्धता और साझाकरने के सेटिंग शामिल हैं। यह केवल विश्लेषण सूची के मालिक द्वारा एक्सेस किया "
+"जा सकता है, अगर सार्वजनिक रूप से साझा नहीं किया गया है।"
+
+msgid "Update wishlist"
+msgstr "विश्लेषण सूची अपडेट करें"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"विश्लेषण सूची की जानकारी अपडेट करें, जिसमें नाम, विवरण या गोपनीयता सेटिंग शामिल हैं। आप "
+"विश्लेषण सूची को सार्वजनिक या गोपनीय बना सकते हैं। केवल मालिक अपडेट कर सकता है।"
+
+msgid "Partially update wishlist"
+msgstr "इच्छा आंशिक रूप से अपडेट करें"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"कुल विश्लिस्ट डेटा भेजे बिना विश्लिस्ट के विशिष्ट क्षेत्रों को अपडेट करें। गोपनीयता बदलने या "
+"विश्लिस्ट का नाम बदलने के लिए उपयोगी है।"
+
+msgid "Delete wishlist"
+msgstr "विश्लेषण सूची हटाएं"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"एक विश्लेषण सूची और इसके सभी आइटम को अपने द्वारा हमेशा के लिए हटा दें। इसे वापस नहीं "
+"किया जा सकता। केवल मालिक ही इसे हटा सकता है।"
+
+msgid "Add item to wishlist"
+msgstr "वस्तु को विश्लेषण सूची में जोड़ें"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"वैकल्पिक वेरिएंट, मात्रा और टिप्पणियों के साथ एक उत्पाद को विश्लिस्ट में जोड़ें। डुप्लिकेट को "
+"रोकता है। डिफ़ॉल्ट विश्लिस्ट में जोड़ सकता है या विश्लिस्ट ID का निर्दिष्ट कर सकता है।"
+
+msgid "Remove item from wishlist"
+msgstr "वस्तु को विश्लेषण सूची से हटाएं"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"विश्लेषण सूची से एक विशिष्ट आइटम हटाएं। आइटम को बाद में फिर से जोड़ा जा सकता है। यह "
+"उत्पाद उपलब्धता पर कोई प्रभाव नहीं डालता।"
+
+msgid "Move item to cart"
+msgstr "वस्तु को कार्ट में बदलें"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"विश्लेषण सूची से आइटम को तुरंत खरीदारी कार्ट में बदलें। स्टॉक उपलब्धता का सत्यापन करता है। "
+"कार्ट में सफल जोड़ने के बाद आइटम विश्लेषण सूची से हटा दिया जाता है।"
+
+msgid "Get public wishlist by share slug"
+msgstr "शेयर स्लग द्वारा सार्वजनिक विश्लेषण सूची प्राप्त करें"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"साझा करने वाले URL slug का उपयोग करके एक सार्वजनिक ईच्छा सूची देखें। लिंक के साथ कोई भी "
+"सार्वजनिक ईच्छा सूची देख सकता है। उपहार पंजीकरण और परिवार/दोस्तों के साथ साझा की गई "
+"ईच्छा सूची के लिए उपयोगी है।"
+
+msgid "ID of the wishlist item to remove"
+msgstr "हटाए जाने वाले विश्लेषण सूची आइटम का ID"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "कार्ट में ले जाए जाने वाले विश्लेषण सूची आइटम का ID"
+
+msgid "Share slug of the public wishlist"
+msgstr "सार्वजनिक विश्लेषण सूची का साझा करें slug"
+
+msgid "Wishlist not found"
+msgstr "विश्लेषण सूची नहीं मिली"
+
+msgid "Get checkout session"
+msgstr "चेकआउट सेशन प्राप्त करें"
+
+msgid "Set shipping address"
+msgstr "शिपिंग पता सेट करें"
+
+msgid "Set billing address"
+msgstr "बिलिंग पता सेट करें"
+
+msgid "Get available shipping methods"
+msgstr "उपलब्ध शिपिंग विधियाँ प्राप्त करें"
+
+msgid "Get available payment providers"
+msgstr "उपलब्ध भुगतान प्रदाताओं को प्राप्त करें"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"ग्राहक के देश और मुद्रा के लिए उपलब्ध भुगतान प्रदाताओं को लौटाता है। डिलीवरी देश, प्रदाता "
+"क्षमताओं और व्यापारी विन्यास के आधार पर फ़िल्टर किया जाता है।"
+
+msgid "Set shipping method"
+msgstr "शिपिंग विधि सेट करें"
+
+msgid "Set payment method"
+msgstr "भुगतान विधि सेट करें"
+
+msgid "Validate checkout"
+msgstr "चेकआउट का वैधता परीक्षण करें"
+
+msgid "Complete checkout"
+msgstr "चेकआउट पूरा करें"
+
+msgid "Get recently viewed products"
+msgstr "हाल ही में देखे गए उत्पाद प्राप्त करें"
+
+msgid "Get recently viewed details"
+msgstr "हाल ही में देखे गए विवरण प्राप्त करें"
+
+msgid "List shipping methods"
+msgstr "वितरण विधियों की सूची प्राप्त करें"
+
+msgid "Get shipping method details"
+msgstr "वितरण विधि विवरण प्राप्त करें"
+
+msgid "List tax rates"
+msgstr "कर दरों की सूची"
+
+msgid "Get tax rate details"
+msgstr "कर दर विवरण प्राप्त करें"
+
+msgid "Create tax rate"
+msgstr "कर दर बनाएं"
+
+msgid "Update tax rate"
+msgstr "कर दर अपडेट करें"
+
+msgid "Partial update tax rate"
+msgstr "कर दर आंशिक रूप से अपडेट करें"
+
+msgid "Delete tax rate"
+msgstr "कर दर हटाएं"
+
+msgid "Calculate applicable taxes"
+msgstr "लागू कर की गणना करें"
+
+msgid "Tax rates grouped by country"
+msgstr "देश के अनुसार कर दरों के समूह"
+
+msgid "Load preset tax rates"
+msgstr "पूर्वनिर्धारित कर दर लोड करें"
+
+msgid "List tax preset groups"
+msgstr "कर पूर्वनिर्धारित समूहों की सूची"
+
+msgid "Get preset group details"
+msgstr "पूर्व-निर्धारित समूह विवरण प्राप्त करें"
+
+msgid "List rates in a preset group"
+msgstr "एक पूर्व-सेट ग्रुप में दरें सूचीबद्ध करें"

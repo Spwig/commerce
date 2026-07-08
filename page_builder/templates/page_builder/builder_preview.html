@@ -1,0 +1,90 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+
+    <!-- Favicon -->
+    {% load core_extras %}
+    {% favicon_meta %}
+
+    <!-- Core Admin Theme Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+
+    <!-- Admin Base Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- Builder Preview Styles -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/builder-preview.css' %}">
+
+</head>
+<body>
+    <div class="preview-toolbar">
+        <div class="zoom-control">
+            <label for="zoom"><i class="fas fa-search"></i> {% trans "Zoom" %}:</label>
+            <input id="zoom" type="range" min="25" max="100" value="75">
+            <span class="zoom-value">75%</span>
+        </div>
+
+        {% include 'page_builder/includes/preview_language_switcher.html' %}
+
+        <div class="device-buttons">
+            <button data-device="desktop" class="active" title="{% trans 'Desktop' %}">
+                <i class="fas fa-desktop"></i>
+            </button>
+            <button data-device="tablet" title="{% trans 'Tablet' %}">
+                <i class="fas fa-tablet-alt"></i>
+            </button>
+            <button data-device="mobile" title="{% trans 'Mobile' %}">
+                <i class="fas fa-mobile-alt"></i>
+            </button>
+            <button class="orientation-toggle" title="{% trans 'Toggle Orientation' %}">
+                <i class="fas fa-rotate"></i>
+            </button>
+        </div>
+
+        <button class="close-preview" data-action="close-preview" title="{% trans 'Close' %}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div id="frame-wrapper">
+        <div class="device-frame desktop" style="transform: translate(-50%, -50%);">
+            <div class="loading-indicator active">
+                <div class="loading-spinner"></div>
+            </div>
+            <iframe id="preview" src="{{ preview_url }}" loading="eager"></iframe>
+
+            <!-- Glass sheen overlay -->
+            <div class="glass-sheen"></div>
+
+            <div class="device-label"></div>
+
+            <!-- Desktop elements -->
+            <div class="monitor-stand"></div>
+            <div class="monitor-base"></div>
+
+            <!-- Tablet elements -->
+            <div class="volume-buttons">
+                <div class="volume-up"></div>
+                <div class="volume-down"></div>
+            </div>
+
+            <!-- Mobile elements -->
+            <div class="notch"></div>
+            <div class="mute-switch"></div>
+
+            <!-- Shared power button -->
+            <div class="power-button"></div>
+        </div>
+    </div>
+
+    <script src="{% static 'page_builder/js/builder-preview.js' %}"></script>
+</body>
+</html>

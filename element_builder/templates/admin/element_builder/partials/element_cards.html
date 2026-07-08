@@ -1,0 +1,84 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for element in elements %}
+    <div class="list-row-card{% if not element.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ element.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="{{ element.icon }}"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:element_builder_customelement_change' element.pk %}">
+                    {{ element.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">{{ element.description|default:"-"|truncatewords:15 }}</p>
+
+            <div class="list-row-card-badges">
+                {% if element.is_active %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                </span>
+                {% endif %}
+
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-database"></i> {{ element.get_target_model_label }}
+                </span>
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-tag"></i> {{ element.category }}
+                </span>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ element.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ element.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:element_builder_customelement_builder' element.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Open Builder' %}">
+                <i class="fas fa-hammer"></i>
+            </a>
+            <a href="{% url 'admin:element_builder_customelement_change' element.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:element_builder_customelement_delete' element.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-puzzle-piece"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No custom elements found." %}</p>
+        <p class="card-empty-state-subtitle">
+            <a href="{% url 'admin:element_builder_customelement_add' %}">{% trans "Create your first custom element" %}</a>
+        </p>
+    </div>
+    {% endfor %}
+</div>

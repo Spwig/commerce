@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extrastyle %}
+{{ block.super }}
+<!-- Global Admin Base Styles - Shared utilities, logo-plate system, etc. -->
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+<!-- Notification animations -->
+<link rel="stylesheet" href="{% static 'core/admin/css/notification-animations.css' %}">
+
+<!-- Toast & modal extras (AdminModal utility) -->
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-toast.css' %}">
+
+<!-- Load theme CSS based on user preference -->
+{% if admin_theme == 'dark' %}
+    <link id="theme-css" rel="stylesheet" type="text/css" href="{% static 'core/admin/css/themes/dark.css' %}">
+{% else %}
+    <link id="theme-css" rel="stylesheet" type="text/css" href="{% static 'core/admin/css/themes/light.css' %}">
+{% endif %}
+
+{% endblock %}
+
+{% block extrahead %}
+<meta charset="UTF-8">
+{{ block.super }}
+<!-- CSRF token for JavaScript -->
+<meta name="csrf-token" content="{{ csrf_token }}">
+
+<!-- Theme data for theme-init.js -->
+<meta name="admin-theme" content="{{ admin_theme|default:'dark' }}">
+<meta name="switch-theme-url" content="{% url 'admin_switch_theme' %}">
+
+<!-- Theme Initialization - Must run before page render to prevent FOUC -->
+<script src="{% static 'core/admin/js/theme-init.js' %}"></script>
+
+<!-- Global Admin Base - Core sidebar and component functionality -->
+<script src="{% static 'core/admin/js/admin-base.js' %}" defer></script>
+
+<!-- Global Admin Utilities - Must load before app-specific scripts -->
+<script src="{% static 'core/admin/js/admin-utils.js' %}"></script>
+
+<!-- Global Admin Modal & Toast - Replaces native alert/confirm/prompt -->
+<script src="{% static 'core/admin/js/admin-modal.js' %}"></script>
+
+<!-- Global Admin Tabs - Unified tab management -->
+<script src="{% static 'core/admin/js/admin-tabs.js' %}" defer></script>
+
+<!-- Favicon -->
+{% load core_extras %}
+{% favicon_meta %}
+{% endblock %}
+
+{% block header %}{% endblock %}

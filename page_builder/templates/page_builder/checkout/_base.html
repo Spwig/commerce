@@ -1,0 +1,77 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static address_tags merchant_trans %}
+
+{% block title %}{% mtrans 'Checkout' %} - {{ site_settings.site_name|default:'Shop' }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/checkout-base.css' %}">
+{% address_autocomplete_scripts %}
+{% block checkout_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:cart' %}" class="breadcrumb__link">{% mtrans 'Cart' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'Checkout' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% mtrans 'Checkout' %}</h1>
+    </div>
+</section>
+
+<!-- Checkout Content -->
+<section class="section">
+    <div class="container">
+        <!-- Error messages -->
+        {% if messages %}
+        <div id="checkout-messages">
+            {% for message in messages %}
+            <div class="checkout-alert checkout-alert--{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if multi_currency_enabled and current_currency.code != site_settings.default_currency %}
+        <div class="checkout-alert checkout-alert--info checkout-currency-notice">
+            {% load currency_tags %}
+            {% mtrans 'All prices are charged in' %} {% currency_symbol site_settings.default_currency %} ({{ site_settings.default_currency }})
+        </div>
+        {% endif %}
+
+        {% block checkout_layout %}{% endblock %}
+    </div>
+</section>
+
+<!-- Loading Overlay -->
+<div class="checkout-loading-overlay" id="checkout-loading" hidden>
+    <div class="checkout-spinner"></div>
+</div>
+
+<!-- Pass context to JS -->
+<script id="checkout-config" type="application/json">
+{
+    "geoCountry": "{{ geo_country|escapejs }}",
+    "userEmail": "{{ user_email|escapejs }}",
+    "cartUrl": "{% url 'page_builder:cart' %}",
+    "currency": "{{ site_settings.default_currency|escapejs }}",
+    "templateOptions": {{ template_options_json|default:"{}"|safe }},
+    "accountCreationTiming": "{{ account_creation_timing|escapejs }}",
+    "showSocialAuth": {{ show_social_auth|yesno:"true,false" }},
+    "accountCreationMessage": "{{ account_creation_message|escapejs }}"
+}
+</script>
+{% block checkout_scripts %}{% endblock %}
+{% endblock %}

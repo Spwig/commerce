@@ -1,0 +1,230 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * POS Terminal Change Form Styles
+ * Variant C: Two-mode (Add/Edit) layout
+ * Scoped to .posterminal-change-form
+ */
+
+/* ==============================================
+ * Hide default Django chrome
+ * ============================================== */
+.posterminal-change-form + .submit-row,
+.posterminal-change-form ~ .submit-row {
+    display: none !important;
+}
+
+.posterminal-change-form #hidden-submit-row {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.posterminal-change-form .hidden-fieldsets {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* ==============================================
+ * Dashboard Header - additional scoped styles
+ * ============================================== */
+.posterminal-change-form .meta-item i {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+.posterminal-change-form .pairing-code-inline {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* ==============================================
+ * Status Badges
+ * ============================================== */
+.posterminal-change-form .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.posterminal-change-form .status-badge.online {
+    background: color-mix(in srgb, var(--success-fg, #28a745) 15%, transparent);
+    color: var(--success-fg, #28a745);
+}
+
+.posterminal-change-form .status-badge.online i {
+    color: var(--success-fg, #28a745);
+    font-size: 8px;
+}
+
+.posterminal-change-form .status-badge.offline {
+    background: color-mix(in srgb, var(--error-fg, #dc3545) 15%, transparent);
+    color: var(--error-fg, #dc3545);
+}
+
+.posterminal-change-form .status-badge.offline i {
+    color: var(--error-fg, #dc3545);
+    font-size: 8px;
+}
+
+.posterminal-change-form .status-badge.active {
+    background: color-mix(in srgb, var(--success-fg, #28a745) 15%, transparent);
+    color: var(--success-fg, #28a745);
+}
+
+.posterminal-change-form .status-badge.inactive {
+    background: color-mix(in srgb, var(--body-quiet-color) 15%, transparent);
+    color: var(--body-quiet-color);
+}
+
+/* ==============================================
+ * Form Cards - scoped overrides
+ * ============================================== */
+.posterminal-change-form .form-card:last-child {
+    margin-bottom: 0;
+}
+
+.posterminal-change-form .card-description {
+    margin: -8px 0 16px;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    line-height: 1.5;
+}
+
+/* ==============================================
+ * Form Rows
+ * ============================================== */
+.posterminal-change-form .form-row {
+    margin-bottom: 16px;
+    padding: 0;
+}
+
+.posterminal-change-form .form-row:last-child {
+    margin-bottom: 0;
+}
+
+.posterminal-change-form .form-row.hidden {
+    display: none;
+}
+
+.posterminal-change-form .form-row label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--body-fg);
+    font-size: 13px;
+}
+
+.posterminal-change-form .form-row label.required::after {
+    content: " *";
+    color: var(--error-fg, #dc3545);
+}
+
+.posterminal-change-form .form-row .help {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin: 4px 0 0 0;
+    line-height: 1.4;
+}
+
+.posterminal-change-form .form-row .error,
+.posterminal-change-form .field-errors .error {
+    font-size: 12px;
+    color: var(--error-fg);
+    margin: 4px 0 0 0;
+    display: block;
+}
+
+.posterminal-change-form .form-row.errors {
+    border-left: 3px solid var(--error-fg);
+    padding-left: 12px;
+}
+
+.posterminal-change-form .form-row input[type="text"],
+.posterminal-change-form .form-row input[type="number"],
+.posterminal-change-form .form-row input[type="url"],
+.posterminal-change-form .form-row select,
+.posterminal-change-form .form-row textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ==============================================
+ * Pairing Code Display
+ * ============================================== */
+.posterminal-change-form .pairing-code-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--primary);
+    background: var(--darkened-bg);
+    padding: 12px 20px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 8px;
+    user-select: all;
+}
+
+/* Hide the actual input when we display the code prominently */
+.posterminal-change-form .pairing-code-display + input[type="text"],
+.posterminal-change-form .pairing-code-display + select {
+    margin-top: 8px;
+}
+
+/* ==============================================
+ * Tab Content Panels
+ * ============================================== */
+.posterminal-change-form .admin-tab-content {
+    display: none;
+    animation: ptFadeIn 0.25s ease;
+}
+
+.posterminal-change-form .admin-tab-content.active {
+    display: block;
+}
+
+@keyframes ptFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==============================================
+ * Autocomplete widget (assigned_users)
+ * ============================================== */
+.posterminal-change-form .select2-container {
+    width: 100% !important;
+}
+
+/* ==============================================
+ * Responsive Design
+ * ============================================== */
+@media (max-width: 768px) {
+    .posterminal-change-form .pairing-code-display {
+        font-size: 22px;
+        letter-spacing: 3px;
+        padding: 10px 16px;
+    }
+
+    .posterminal-change-form .admin-tabs {
+        overflow-x: auto;
+    }
+}

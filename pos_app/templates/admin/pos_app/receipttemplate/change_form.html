@@ -1,0 +1,139 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block title %}{% if original %}{% trans "Edit Receipt Template" %}{% else %}{% trans "Add Receipt Template" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block content %}
+<div class="receipt-admin-layout">
+  <div class="receipt-form-col">
+    {{ block.super }}
+  </div>
+
+  <div class="receipt-preview-col">
+    <div class="receipt-preview-panel"
+         id="receipt-preview"
+         data-warehouse-name="{{ original.warehouse.pos_display_name|default:original.warehouse.name|default:'Your Store' }}"
+         data-warehouse-address="{{ original.get_effective_address|default:'123 Main Street, City' }}"
+         data-warehouse-phone="{{ original.get_effective_phone|default:'+1 555-0123' }}"
+         data-warehouse-email="{{ original.get_effective_email|default:'store@example.com' }}">
+      <div class="receipt-preview-header">
+        <h3>{% trans "Receipt Preview" %}</h3>
+        <span class="preview-badge">{% trans "Live" %}</span>
+      </div>
+      <div class="receipt-preview-body">
+        <div class="receipt-mockup{% if original.paper_width == '58' %} paper-58{% endif %}">
+
+          {# Logo #}
+          <div class="receipt-logo{% if not original.logo %} receipt-hidden{% endif %}">
+            {% if original.logo %}
+              <img src="{{ original.logo.file.url }}" alt="Logo">
+            {% endif %}
+          </div>
+
+          {# Store name #}
+          <div class="receipt-store-name">{{ original.get_effective_header|default:"Your Store" }}</div>
+
+          {# Store info #}
+          <div class="receipt-store-address receipt-store-info{% if not original.show_store_address %} receipt-hidden{% endif %}">{{ original.get_effective_address|default:"123 Main Street, City" }}</div>
+          <div class="receipt-store-phone receipt-store-info{% if not original.show_store_phone %} receipt-hidden{% endif %}">{{ original.get_effective_phone|default:"+1 555-0123" }}</div>
+          <div class="receipt-store-email receipt-store-info{% if not original.show_store_email %} receipt-hidden{% endif %}">{{ original.get_effective_email|default:"store@example.com" }}</div>
+
+          {# Business info #}
+          <div class="receipt-business-info{% if not original.tax_id_number and not original.business_registration %} receipt-hidden{% endif %}">
+            {% if original.tax_id_label and original.tax_id_number %}{{ original.tax_id_label }}: {{ original.tax_id_number }}{% elif original.tax_id_number %}Tax ID: {{ original.tax_id_number }}{% endif %}
+            {% if original.business_registration %}{% if original.tax_id_number %} | {% endif %}Reg: {{ original.business_registration }}{% endif %}
+          </div>
+
+          <hr class="receipt-divider">
+
+          {# Meta #}
+          <div class="receipt-meta">Receipt: #ORD-2026-001234</div>
+          <div class="receipt-meta">Date: {% now "M d, Y H:i" %}</div>
+          <div class="receipt-meta receipt-meta-cashier{% if not original.show_cashier %} receipt-hidden{% endif %}">Cashier: Sarah J.</div>
+          <div class="receipt-meta receipt-meta-terminal{% if not original.show_terminal_name %} receipt-hidden{% endif %}">Terminal: Front Register</div>
+
+          <hr class="receipt-divider">
+
+          {# Items #}
+          <div class="receipt-items">
+            <div class="receipt-item">
+              <div class="receipt-item-name">Premium T-Shirt (Blue, M)</div>
+              <div class="receipt-item-detail">
+                <span>2 x 29.00</span>
+                <span>58.00</span>
+              </div>
+              <div class="receipt-item-sku{% if not original.show_sku %} receipt-hidden{% endif %}">SKU: TSH-BLU-M</div>
+            </div>
+            <div class="receipt-item">
+              <div class="receipt-item-name">Organic Coffee Beans 250g</div>
+              <div class="receipt-item-detail">
+                <span>1 x 14.50</span>
+                <span>14.50</span>
+              </div>
+              <div class="receipt-item-sku{% if not original.show_sku %} receipt-hidden{% endif %}">SKU: COF-ORG-250</div>
+            </div>
+            <div class="receipt-item">
+              <div class="receipt-item-name">Canvas Tote Bag</div>
+              <div class="receipt-item-detail">
+                <span>1 x 12.00</span>
+                <span>12.00</span>
+              </div>
+              <div class="receipt-item-sku{% if not original.show_sku %} receipt-hidden{% endif %}">SKU: BAG-CVS-01</div>
+            </div>
+          </div>
+
+          <hr class="receipt-divider">
+
+          {# Totals #}
+          <div class="receipt-totals">
+            <div class="receipt-total-line">
+              <span>Subtotal</span>
+              <span>84.50</span>
+            </div>
+            <div class="receipt-total-line">
+              <span>Tax</span>
+              <span>17.75</span>
+            </div>
+            <div class="receipt-total-line grand-total">
+              <span>TOTAL</span>
+              <span>102.25</span>
+            </div>
+          </div>
+
+          <hr class="receipt-divider">
+
+          {# Payments #}
+          <div class="receipt-payments">
+            <div class="receipt-payment-line">
+              <span>Cash</span>
+              <span>110.00</span>
+            </div>
+            <div class="receipt-payment-line">
+              <span>Change</span>
+              <span>7.75</span>
+            </div>
+          </div>
+
+          <hr class="receipt-divider">
+
+          {# Footer #}
+          <div class="receipt-footer">
+            <div class="receipt-footer-text{% if not original.footer_text %} receipt-hidden{% endif %}">{{ original.footer_text|default:"Thank you for your purchase!" }}</div>
+            <div class="receipt-return-policy{% if not original.return_policy %} receipt-hidden{% endif %}">{{ original.return_policy|default:"" }}</div>
+          </div>
+
+          {# QR Code #}
+          <div class="receipt-qr-section{% if not original.qr_enabled %} receipt-hidden{% endif %}">
+            <div class="receipt-qr-placeholder">QR</div>
+            <div class="receipt-qr-label">{{ original.qr_label|default:"" }}</div>
+          </div>
+
+          {# Branding #}
+          <div class="receipt-branding{% if not original.show_powered_by %} receipt-hidden{% endif %}">Powered by Spwig POS</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

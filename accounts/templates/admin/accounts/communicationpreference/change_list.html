@@ -1,0 +1,137 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Communication Preferences" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-envelope-open-text"></i>
+                {% trans "Communication Preferences" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage customer email, SMS, and marketing communication preferences" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'preference_analytics_dashboard' %}" class="button">
+                <i class="fas fa-chart-line"></i> {% trans "View Analytics" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by email, username, or name...' %}"
+                    value="">
+            </div>
+
+            <!-- Email Status -->
+            <div class="filter-field">
+                <label for="filter-email">
+                    <i class="fas fa-envelope"></i> {% trans "Email" %}
+                </label>
+                <select id="filter-email">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Enabled" %}</option>
+                    <option value="false">{% trans "Disabled" %}</option>
+                </select>
+            </div>
+
+            <!-- SMS Status -->
+            <div class="filter-field">
+                <label for="filter-sms">
+                    <i class="fas fa-sms"></i> {% trans "SMS" %}
+                </label>
+                <select id="filter-sms">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Enabled" %}</option>
+                    <option value="false">{% trans "Disabled" %}</option>
+                </select>
+            </div>
+
+            <!-- Marketing Status -->
+            <div class="filter-field">
+                <label for="filter-marketing">
+                    <i class="fas fa-bullhorn"></i> {% trans "Marketing" %}
+                </label>
+                <select id="filter-marketing">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="opted_in">{% trans "Opted In" %}</option>
+                    <option value="opted_out">{% trans "Opted Out" %}</option>
+                </select>
+            </div>
+
+            <!-- Consent Source -->
+            <div class="filter-field">
+                <label for="filter-source">
+                    <i class="fas fa-clipboard-list"></i> {% trans "Consent Source" %}
+                </label>
+                <select id="filter-source">
+                    <option value="">{% trans "All Sources" %}</option>
+                    {% for value, label in consent_source_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Preferences" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-envelope-open-text"></i>
+            <span id="preference-count">{{ cl.result_count }}</span> {% trans "preference" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="preference-results">
+        {% include "admin/accounts/communicationpreference/partials/preference_cards.html" with preferences=cl.result_list %}
+    </div>
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'filter_communication_preferences' %}"
+         data-results-container="preference-results"
+         data-results-count="preference-count"
+         style="display:none;"></div>
+</div>
+{% endblock %}

@@ -1,0 +1,2707 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Action and method IDs required"
+msgstr "アクションとメソッドIDが必要です"
+
+msgid "{} method(s) enabled"
+msgstr "\"{} メソッドが有効です\""
+
+msgid "{} method(s) disabled"
+msgstr "\"{} メソッドが無効です\""
+
+msgid "{} method(s) deleted"
+msgstr "{} メソッドが削除されました"
+
+msgid "Unknown action"
+msgstr "不明なアクション"
+
+msgid "Invalid request data"
+msgstr "無効なリクエストデータ"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "予期せぬエラーが発生しました。もう一度お試しください。"
+
+msgid "Basic Information"
+msgstr "基本情報"
+
+msgid "Geographic Scope"
+msgstr "地理的範囲"
+
+msgid "Application Rules"
+msgstr "適用規則"
+
+msgid "Product Exemptions"
+msgstr "商品免除"
+
+msgid "Timestamps"
+msgstr "タイムスタンプ"
+
+msgid "Rate %"
+msgstr "割引率（％）"
+
+msgid "Cart"
+msgstr "カート"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "パーセントで入力してください（例：8.25は8.25%）"
+
+msgid "Rate (%)"
+msgstr "割引率（％）"
+
+msgid "Please complete Step 1 first"
+msgstr "まずステップ1を完了してください"
+
+msgid "Please complete the wizard steps"
+msgstr "ウィザードの手順をすべて完了してください"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "配送方法 \"%(name)s\" が正常に作成されました！"
+
+msgid "Please configure rate tables for this method."
+msgstr "この方法のレート表を設定してください。"
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "配送方法の作成に失敗しました: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "ミニカートデータを取得"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    ミニカート コンポーネント用に現在のカート内容を取得します。認証済みユー"
+"ザー（カートがユーザー アカウントにリンク）と匿名ユーザー（カートがセッション"
+"にリンク）の両方で動作します。カートデータには、すべての商品の詳細情報、数"
+"量、価格、画像が含まれます。**使用例:** - ページの初期ミニカート読み込み - 外"
+"部変更後のカートの再読み込み - 支払い前のカートステータスの確認 **認証:** 必"
+"要なし（匿名ユーザーの場合、セッションを使用）\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "カートデータが正常に取得されました"
+
+msgid "Update cart item quantity"
+msgstr "カートアイテムの数量を更新"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    カート内の商品の数量を更新します。数量を0に設定すると、商品を完全に削除し"
+"ます。更新前に在庫の可用性を検証し、更新後のフルなカートを返します。**使用例:"
+"** - ミニカート内の数量を増減するボタン - 直接数量入力の変更 - 商品の削除（数"
+"量=0） **認証:** 必要なし（商品がユーザーのカートに属しているかを検証） **検"
+"証:** - 商品はユーザーのカートに存在する必要があります - 数量は非負の整数でな"
+"ければなりません - 在庫を追跡している商品については、在庫の可用性が確認されま"
+"す\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "カートが正常に更新されました"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "無効なリクエストデータまたは在庫不足"
+
+msgid "Cart item not found"
+msgstr "カートアイテムが見つかりません"
+
+msgid "Remove item from cart"
+msgstr "カートから商品を削除"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    カートからアイテムを完全に削除します。削除後の更新されたカートデータを返"
+"します。**使用例:** - カートアイテムの削除ボタン - 特定のアイテムのクリア **"
+"認証:** 必要なし（アイテムがユーザーのカートに属していることを検証）\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "商品が正常に削除されました"
+
+msgid "Get empty cart recommendations"
+msgstr "空のカートの推奨を取得"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    空のカート状態向けのインテリジェントな商品おすすめを取得します。返却され"
+"るおすすめは、以下のようにラベル付きセクションに整理されています：- **最近閲"
+"覧済み**：ユーザーが閲覧した商品（匿名ユーザーはセッションベース）- **関連商"
+"品**：最近閲覧した商品と同じカテゴリにある商品- **セール中**：現在割引中の商"
+"品- **トレンド**：閲覧数/販売数に基づく人気商品- **特選**：編集者が選んだ商品"
+"（代替用）返却されるすべての商品は在庫ありで購入可能であることが確認されてい"
+"ます。**利用例**：- ミニカートの空状態- \"あなたに合ったおすすめ\"セクショ"
+"ン- クロスセル機会**認証**：不要（匿名ユーザーはセッションを使用）**パーソナ"
+"ライズ**：- 匿名ユーザー：セッションで閲覧した商品に基づく- 認証済みユー"
+"ザー：アカウント履歴と設定に基づく\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "返す商品の最大数（デフォルト: 6、最大: 12）"
+
+msgid "Recommendations retrieved successfully"
+msgstr "おすすめが正常に取得されました"
+
+msgid "User"
+msgstr "ユーザー"
+
+msgid "Session Key"
+msgstr "セッションキー"
+
+msgid "Cart Currency"
+msgstr "カート通貨"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"このカート内のすべてのアイテムの通貨コード（例: EUR, NZD）。空欄の場合はスト"
+"アのデフォルト通貨を使用します。"
+
+msgid "Default Layout"
+msgstr "デフォルトレイアウト"
+
+msgid "Compact View"
+msgstr "コンパクトビュー"
+
+msgid "Detailed View"
+msgstr "詳細ビュー"
+
+msgid "Minimal View"
+msgstr "最小限ビュー"
+
+msgid "Sidebar Cart"
+msgstr "サイドバーカート"
+
+msgid "Overlay Cart"
+msgstr "オーバーレイカート"
+
+msgid "How the cart is displayed"
+msgstr "カートの表示方法"
+
+msgid "Cart Layout"
+msgstr "カートレイアウト"
+
+msgid "Show Product Images"
+msgstr "商品画像を表示"
+
+msgid "Show Product Variants"
+msgstr "商品バリエーションを表示"
+
+msgid "Show Remove Button"
+msgstr "削除ボタンを表示"
+
+msgid "Show Quantity Controls"
+msgstr "数量コントロールを表示"
+
+msgid "Show Item Totals"
+msgstr "アイテム合計を表示"
+
+msgid "Show Cart Summary"
+msgstr "カートサマリーを表示"
+
+msgid "Show Savings"
+msgstr "節約額を表示"
+
+msgid "Single Page Checkout"
+msgstr "単一ページチェックアウト"
+
+msgid "Multi-Step Checkout"
+msgstr "複数ステップチェックアウト"
+
+msgid "Accordion Style"
+msgstr "アコーディオンスタイル"
+
+msgid "Wizard Style"
+msgstr "ウィザードスタイル"
+
+msgid "Checkout Flow"
+msgstr "チェックアウトフロー"
+
+msgid "Shipping Address"
+msgstr "配送先住所"
+
+msgid "Shipping Method"
+msgstr "配送方法"
+
+msgid "Calculated shipping cost"
+msgstr "計算された配送コスト"
+
+msgid "Shipping Cost"
+msgstr "配送コスト"
+
+msgid "Estimated Delivery Date"
+msgstr "予想到着日"
+
+msgid "Shipping Notes"
+msgstr "配送注意事項"
+
+msgid "None"
+msgstr "なし"
+
+msgid "Percentage"
+msgstr "パーセント"
+
+msgid "Fixed Amount"
+msgstr "固定金額"
+
+msgid "POS manual discount type"
+msgstr "POS手動割引タイプ"
+
+msgid "POS manual discount value"
+msgstr "POS手動割引値"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "割引額（パーセントまたは固定金額）"
+
+msgid "POS discount applied by"
+msgstr "POS割引適用者"
+
+msgid "POS discount approved by"
+msgstr "POS割引承認者"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "スタッフの制限を超えた場合に割引を承認したマネージャー"
+
+msgid "POS discount reason"
+msgstr "POS割引理由"
+
+msgid "Created At"
+msgstr "作成日時"
+
+msgid "Updated At"
+msgstr "更新日時"
+
+msgid "Shopping Cart"
+msgstr "ショッピングカート"
+
+msgid "Shopping Carts"
+msgstr "ショッピングカート（複数）"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "{username} のカート"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "セッション: {session} のカート"
+
+msgid "No shipping required"
+msgstr "配送不要"
+
+msgid "Shipping address required"
+msgstr "配送先住所が必要です"
+
+msgid "Available shipping methods retrieved"
+msgstr "利用可能な配送方法を取得しました"
+
+msgid "Shipping calculated successfully"
+msgstr "配送が正常に計算されました"
+
+msgid "Invalid gift card code"
+msgstr "無効なギフトカードコード"
+
+msgid "Gift card already applied"
+msgstr "ギフトカードはすでに適用されています"
+
+msgid "Gift card is not active"
+msgstr "ギフトカードはアクティブではありません"
+
+msgid "Gift card has expired"
+msgstr "ギフトカードは期限切れです"
+
+msgid "Gift card has been fully redeemed"
+msgstr "ギフトカードは完全に使用されました"
+
+msgid "Gift card cannot be used"
+msgstr "ギフトカードは使用できません"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"通貨不一致。ギフトカードは {card_currency} 円、カートは {cart_currency} 円で"
+"す。"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"このギフトカードは{card_currency}で表示されています。使用するには、通貨を"
+"{card_currency}に切り替えてください。"
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "ギフトカードは他のギフトカードを購入するために使用することはできません"
+
+msgid "Cart total is already covered"
+msgstr "カート合計はすでにカバーされています"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "ギフトカードの通貨変換を処理できません"
+
+msgid "Gift card applied successfully"
+msgstr "ギフトカードが正常に適用されました"
+
+msgid "Product"
+msgstr "商品"
+
+msgid "Variant"
+msgstr "バリエーション"
+
+msgid "Quantity"
+msgstr "数量"
+
+msgid "Unit Price"
+msgstr "単価"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"計算された価格を持つ商品カスタマイズ: {カスタマイズオプションID: {'値': "
+"'...', '計算価格': '10.00'}}"
+
+msgid "Customizations"
+msgstr "カスタマイズ"
+
+msgid "Is Subscription"
+msgstr "サブスクリプションか"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "このアイテムがサブスクリプションとして購入されるかどうか"
+
+msgid "Subscription Plan"
+msgstr "サブスクリプションプラン"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "再発行のために選択されたサブスクリプションプラン"
+
+msgid "Pricing Tier"
+msgstr "価格階層"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "サブスクリプション用に選択された価格階層（請求頻度）"
+
+msgid "Payment Token"
+msgstr "支払いトークン"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr ""
+"サブスクリプション請求のために保存された支払い方法（サブスクリプションには必"
+"要）"
+
+msgid "Parent Bundle"
+msgstr "親パック"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "これがバンドルコンポーネントである場合、バンドルCartItemへの参照"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"予約の詳細: {start_datetime, end_datetime, resource_id, persons, timezone}"
+
+msgid "Booking Data"
+msgstr "予約データ"
+
+msgid "Customer notes for this item"
+msgstr "この商品の顧客メモ"
+
+msgid "Notes"
+msgstr "メモ"
+
+msgid "manual discount type"
+msgstr "手動割引タイプ"
+
+msgid "manual discount value"
+msgstr "手動割引値"
+
+msgid "discount applied by"
+msgstr "割引適用者"
+
+msgid "discount approved by"
+msgstr "割引承認者"
+
+msgid "discount reason"
+msgstr "割引理由"
+
+msgid "Cart Item"
+msgstr "カートアイテム"
+
+msgid "Cart Items"
+msgstr "カートアイテム一覧"
+
+msgid "My Wishlist"
+msgstr "私のウィッシュリスト"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Grid Layout"
+msgstr "グリッドレイアウト"
+
+msgid "List Layout"
+msgstr "リストレイアウト"
+
+msgid "How wishlist items are displayed"
+msgstr "ウィッシュリストアイテムの表示方法"
+
+msgid "Wishlist Layout"
+msgstr "ウィッシュリストレイアウト"
+
+msgid "Is Public"
+msgstr "公開か"
+
+msgid "Share Slug"
+msgstr "共有スラッグ"
+
+msgid "Show Prices"
+msgstr "価格を表示"
+
+msgid "Show Availability"
+msgstr "在庫状況を表示"
+
+msgid "Show Add to Cart"
+msgstr "カートに追加ボタンを表示"
+
+msgid "Wishlist"
+msgstr "ウィッシュリスト"
+
+msgid "Wishlists"
+msgstr "ウィッシュリスト一覧"
+
+msgid "Low"
+msgstr "低い"
+
+msgid "Medium"
+msgstr "中程度"
+
+msgid "High"
+msgstr "高い"
+
+msgid "Priority"
+msgstr "優先順位"
+
+msgid "Notify When Available"
+msgstr "在庫があるときに通知"
+
+msgid "Notify When On Sale"
+msgstr "セール時に通知"
+
+msgid "Wishlist Item"
+msgstr "ウィッシュリストアイテム"
+
+msgid "Wishlist Items"
+msgstr "ウィッシュリストアイテム一覧"
+
+msgid "Viewed At"
+msgstr "閲覧日時"
+
+msgid "View Count"
+msgstr "閲覧回数"
+
+msgid "Recently Viewed Product"
+msgstr "最近閲覧した商品"
+
+msgid "Recently Viewed Products"
+msgstr "最近見た商品"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "セッション: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{user} によって {product} が閲覧されました"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Flat Rate"
+msgstr "固定料金"
+
+msgid "Free Shipping"
+msgstr "無料配送"
+
+msgid "Weight Based"
+msgstr "重量に基づく"
+
+msgid "Price Based"
+msgstr "価格に基づく"
+
+msgid "Real-Time Carrier Rates"
+msgstr "リアルタイムの運送会社料金"
+
+msgid "Local Pickup"
+msgstr "ローカルピックアップ"
+
+msgid "Table Rate"
+msgstr "テーブルレート"
+
+msgid "Method Type"
+msgstr "方法タイプ"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "固定配送コスト（flat_rateタイプ用）"
+
+msgid "Flat Rate Cost"
+msgstr "固定料金コスト"
+
+msgid "Minimum cart value to qualify"
+msgstr "資格を得るための最小カート価値"
+
+msgid "Minimum Order Value"
+msgstr "最小注文価値"
+
+msgid "Maximum cart value to qualify"
+msgstr "資格を得るための最大カート価値"
+
+msgid "Maximum Order Value"
+msgstr "最大注文価値"
+
+msgid "Minimum cart weight (kg)"
+msgstr "最小カート重量（kg）"
+
+msgid "Minimum Weight"
+msgstr "最小重量"
+
+msgid "Maximum cart weight (kg)"
+msgstr "最大カート重量（kg）"
+
+msgid "Maximum Weight"
+msgstr "最大重量"
+
+msgid "Shipping Zones"
+msgstr "配送ゾーン"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"この配送方法が利用可能なゾーン。空白の場合、旧来の国/州の制限が適用されます。"
+
+msgid "Pickup Locations"
+msgstr "ピックアップ場所"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"この配送方法を使用して注文を受け取ることができる場所。これは'local_pickup'メ"
+"ソッドタイプにのみ適用されます。"
+
+msgid "Minimum delivery time in business days"
+msgstr "営業日に基づく最小配達時間"
+
+msgid "Minimum Delivery Days"
+msgstr "最小配達日数"
+
+msgid "Maximum delivery time in business days"
+msgstr "営業日に基づく最大配達時間"
+
+msgid "Maximum Delivery Days"
+msgstr "最大配達日数"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "Font Awesomeアイコンクラス（例：'fa-truck', 'fa-box'）"
+
+msgid "Icon"
+msgstr "アイコン"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"メディアライブラリからカスタム配送方法の画像。提供された場合は、アイコンより"
+"も優先されます。"
+
+msgid "Image"
+msgstr "画像"
+
+msgid "Sort Order"
+msgstr "並び順"
+
+msgid "Is Active"
+msgstr "アクティブですか"
+
+msgid "Custom Carrier"
+msgstr "カスタムキャリア"
+
+msgid "Carrier"
+msgstr "キャリア"
+
+msgid "Carrier-specific service code"
+msgstr "キャリア固有サービスコード"
+
+msgid "Carrier Service Code"
+msgstr "キャリアサービスコード"
+
+msgid "Shipping Methods"
+msgstr "配送方法"
+
+msgid "Shipping method is not active"
+msgstr "配送方法がアクティブではありません"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "最小注文価格 {value} 円が必要です"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "最大注文価格 {value} 円を超えた"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "最小重量 {weight}kg 必要です"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "最大重量 {weight}kg を超えました"
+
+msgid "Cart contains only digital products"
+msgstr "カートにはデジタル商品のみが含まれています"
+
+msgid "Available"
+msgstr "利用可能"
+
+msgid "No geographic restrictions"
+msgstr "地理的制限なし"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "{zone} で利用可能"
+
+msgid "Not available in your location"
+msgstr "現在の場所では利用できません"
+
+msgid "Available worldwide"
+msgstr "世界中で利用可能"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "ISO 3166-1 alpha-2 国コード"
+
+msgid "Country"
+msgstr "国"
+
+msgid "State/Province/Region"
+msgstr "州/県/地域"
+
+msgid "State"
+msgstr "州"
+
+msgid "City name (optional)"
+msgstr "都市名（任意）"
+
+msgid "City"
+msgstr "市"
+
+msgid "List of specific postal codes (optional)"
+msgstr "特定の郵便番号リスト（任意）"
+
+msgid "Postal Codes"
+msgstr "郵便番号"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "税率（小数点表記、例：0.0825は8.25%）"
+
+msgid "Rate"
+msgstr "料金"
+
+msgid "Sales Tax"
+msgstr "売上税"
+
+msgid "Custom Tax"
+msgstr "カスタム税"
+
+msgid "Tax Type"
+msgstr "税種類"
+
+msgid "Apply tax to shipping costs"
+msgstr "税を配送コストに適用する"
+
+msgid "Applies to Shipping"
+msgstr "配送に適用"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "他の税金の上に計算する（複合税）"
+
+msgid "Compound Tax"
+msgstr "複合税"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "この税金から免除される商品タイプ（例：['デジタル', 'サービス']）"
+
+msgid "Exempt Product Types"
+msgstr "免税対象商品種別"
+
+msgid "Categories exempt from this tax"
+msgstr "この税金から除外されるカテゴリ"
+
+msgid "Exempt Categories"
+msgstr "除外カテゴリ"
+
+msgid "Higher priority rules take precedence"
+msgstr "優先度の高い規則が優先されます"
+
+msgid "Tax Rate"
+msgstr "税率"
+
+msgid "Tax Rates"
+msgstr "税率一覧"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "ヨーロッパ"
+
+msgid "North America"
+msgstr "北アメリカ"
+
+msgid "Asia Pacific"
+msgstr "アジア太平洋"
+
+msgid "Middle East"
+msgstr "中東"
+
+msgid "Africa"
+msgstr "アフリカ"
+
+msgid "Latin America"
+msgstr "ラテンアメリカ"
+
+msgid "Oceania"
+msgstr "オセアニア"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "ユニーク識別子（例：eu_vat、us_sales_tax）"
+
+msgid "Key"
+msgstr "キー"
+
+msgid "Font Awesome icon class"
+msgstr "Font Awesomeアイコンクラス"
+
+msgid "Default Tax Type"
+msgstr "デフォルト税率種別"
+
+msgid "Region"
+msgstr "地域"
+
+msgid "Version for tracking rate updates"
+msgstr "レート更新を追跡するバージョン"
+
+msgid "Version"
+msgstr "バージョン"
+
+msgid "Last Updated"
+msgstr "最終更新日時"
+
+msgid "Tax Preset Group"
+msgstr "税設定グループ"
+
+msgid "Tax Preset Groups"
+msgstr "税設定グループ一覧"
+
+msgid "Preset Group"
+msgstr "設定グループ"
+
+msgid "Country Code"
+msgstr "国コード"
+
+msgid "Country Name"
+msgstr "国名"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "州/県コード（米国/カナダ用）"
+
+msgid "State Code"
+msgstr "州コード"
+
+msgid "State Name"
+msgstr "州名"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "税率（小数点表記、例：0.20は20%）"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "オプションのノート（例: '2025年7月に22％上昇'）"
+
+msgid "Tax Preset Rate"
+msgstr "税金プリセットレート"
+
+msgid "Tax Preset Rates"
+msgstr "税金プリセットレート一覧"
+
+msgid "Billing Address"
+msgstr "請求先住所"
+
+msgid "Billing Same as Shipping"
+msgstr "請求先と配送先が同じ"
+
+msgid "Shipping Address Data"
+msgstr "配送先アドレスデータ"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"一時的な配送先データ（注文が確定するまでAddressモデルに保存されません）"
+
+msgid "Billing Address Data"
+msgstr "請求先アドレスデータ"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"一時的な請求先データ（注文が確定するまでAddressモデルに保存されません）"
+
+msgid "Selected Shipping Method"
+msgstr "選択された配送方法"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "料金付きで利用可能な配送方法の一覧（キャッシュ）"
+
+msgid "Available Shipping Methods"
+msgstr "利用可能な配送方法"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "管轄区域別詳細な税金内訳"
+
+msgid "Tax Breakdown"
+msgstr "税金内訳"
+
+msgid "Tax Amount"
+msgstr "税額"
+
+msgid "Payment Provider"
+msgstr "支払いプロバイダー"
+
+msgid "Subtotal"
+msgstr "小計"
+
+msgid "Discount Amount"
+msgstr "割引額"
+
+msgid "Gift Card Discount"
+msgstr "ギフトカードによる割引"
+
+msgid "Total discount from applied gift cards"
+msgstr "適用されたギフトカードからの総割引"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "最終合計：小計＋送料＋税－割引"
+
+msgid "Total Amount"
+msgstr "合計金額"
+
+msgid "Cart Review"
+msgstr "カート確認"
+
+msgid "Billing Information"
+msgstr "請求情報"
+
+msgid "Payment Method"
+msgstr "支払い方法"
+
+msgid "Order Review"
+msgstr "注文確認"
+
+msgid "Step Completed"
+msgstr "ステップ完了"
+
+msgid "Expires At"
+msgstr "有効期限"
+
+msgid "Metadata"
+msgstr "メタデータ"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "追加メタデータ（例：マーケットプレイス購入情報）"
+
+msgid "Checkout Session"
+msgstr "チェックアウトセッション"
+
+msgid "Checkout Sessions"
+msgstr "チェックアウトセッション一覧"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "{cart} のチェックアウト"
+
+msgid "Gift Card"
+msgstr "ギフトカード"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "ベース通貨での金額（カート計算用）"
+
+msgid "Original Currency Amount"
+msgstr "オリジナル通貨金額"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr "ギフトカードのネイティブ通貨での割引（外国通貨ギフトカード用）"
+
+msgid "Exchange Rate"
+msgstr "為替レート"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "レート：ギフトカード通貨 → アプリケーション時のベース通貨"
+
+msgid "Applied At"
+msgstr "適用日時"
+
+msgid "Applied Gift Card"
+msgstr "適用されたギフトカード"
+
+msgid "Applied Gift Cards"
+msgstr "適用されたギフトカード一覧"
+
+msgid "This gift card cannot be used"
+msgstr "このギフトカードは使用できません"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "割引額がギフトカードの残高を超えています"
+
+msgid "Total customization price (per unit)"
+msgstr "カスタマイズの合計価格（単位あたり）"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "デジタル商品の場合は 'instant'、物理商品の場合は 'shipping'"
+
+msgid "True if this item is a component of a bundle"
+msgstr "このアイテムがバンドルの構成要素である場合にtrue"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "これがコンポーネントの場合の親バンドル CartItem の ID"
+
+msgid "Child items if this is a bundle parent"
+msgstr "このアイテムがバンドルの親アイテムである場合の子アイテム"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr ""
+"顧客が選択したバリエーション用の bundle_item_id から variant_id へのマップ"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr ""
+"顧客が不要と判断したオプションアイテムを除外する bundle_item_ids のリスト"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"slot_idから選択されたoption_idsのリストへのマッピング（設定可能な製品用）"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "構成のプリセットIDは開始点として使用されます"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"予約の詳細: start_datetime, end_datetime, resource_id, persons, timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "数量は1以上でなければなりません"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "サブスクリプション購入にはサブスクリプションプランが必要です"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "サブスクリプション購入には支払いトークンが必要です"
+
+msgid "Product not found"
+msgstr "商品が見つかりません"
+
+msgid "This product does not support subscriptions"
+msgstr "この商品はサブスクリプションをサポートしていません"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "無効またはアクティブでないサブスクリプションプラン"
+
+msgid "This plan is not available for this product"
+msgstr "このプランはこの商品には利用できません"
+
+msgid "Invalid or inactive payment token"
+msgstr "無効またはアクティブでない支払いトークン"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "料金階層が見つからないか、選択したプランに属していません"
+
+msgid "No pricing tier available for this plan"
+msgstr "このプランには価格階層がありません"
+
+msgid "Quantity cannot be negative"
+msgstr "数量は負の値であってはなりません"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "ギフトカードコード（例：GC-XXXX-XXXX-XXXX）"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "このギフトカードから適用された金額（基準通貨で）"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "この適用後、ギフトカードの残高"
+
+msgid "Base currency code"
+msgstr "基準通貨コード"
+
+msgid "Gift card's native currency code"
+msgstr "ギフトカードの本通貨コード"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr "ギフトカードの通貨で表された割引額（外国通貨のギフトカード用）"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr "address_id または完全な住所詳細が必要です。欠落: {fields}"
+
+msgid "This product requires customization"
+msgstr "この商品はカスタマイズが必要です"
+
+msgid "Invalid design token"
+msgstr "無効なデザイントークン"
+
+msgid "Design not found or expired"
+msgstr "デザインが見つからないか期限切れです"
+
+msgid "This product does not support customization"
+msgstr "この商品はカスタマイズに対応していません"
+
+msgid "Invalid customization option"
+msgstr "無効なカスタマイズオプション"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "カスタマイズ '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "必要なカスタマイズ '{name}' が欠落しています"
+
+msgid "Insufficient stock"
+msgstr "在庫が不足しています"
+
+msgid "Bundle has no components configured"
+msgstr "バンドルにはコンポーネントが設定されていません"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "非必須のバンドルコンポーネントを除外することはできません: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "{name} に対してバリエーション選択が必要です"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "{name} に対して無効なバリエーションを選択しました"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "{name} というバンドルコンポーネントの在庫が不足しています"
+
+msgid "Bundle quantity updated in cart"
+msgstr "カート内のバンドル数量が更新されました"
+
+msgid "Bundle added to cart"
+msgstr "バンドルがカートに追加されました"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "必要なスロット '{name}' に選択肢がありません。"
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "スロット '{name}' には少なくとも {min} 個の選択肢が必要です。"
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "スロット '{name}' には最大 {max} 個の選択肢が許可されています。"
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "無効なスロットID: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "オプション {opt_id} はスロット '{slot}' には有効ではありません。"
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr ""
+"スロット '{slot}' に互換性のない選択がされています。他の選択肢と互換性のない"
+"オプションが含まれています。"
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"スロット '{slot}' に除外された選択がされています。他の選択肢と競合するオプ"
+"ションが含まれています。"
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "{name}コンポーネントの在庫が不足しています"
+
+msgid "Configured product added to cart"
+msgstr "設定された商品がカートに追加されました"
+
+msgid "Either user or session_key must be provided"
+msgstr "ユーザーまたはsession_keyのいずれかを提供する必要があります"
+
+msgid "This product is no longer available"
+msgstr "この商品は現在利用不可です"
+
+msgid "You must be logged in to purchase this product."
+msgstr "この商品を購入するにはログインする必要があります。"
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr ""
+"この製品をお持ちになるには、まず\"%(required)s\"をお持ちになる必要がありま"
+"す。"
+
+msgid "Product variant not found"
+msgstr "商品のバリエーションが見つかりません"
+
+msgid "Configuration is required for configurable products"
+msgstr "カスタマイズ可能な商品には設定が必要です"
+
+msgid "Booking added to cart"
+msgstr "予約がカートに追加されました"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "要求された数量の在庫が不足しています"
+
+msgid "Cart item quantity updated"
+msgstr "カート内のアイテム数量が更新されました"
+
+msgid "Item added to cart"
+msgstr "アイテムがカートに追加されました"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr ""
+"コンポーネントの数量は直接変更できません。代わりに親商品を更新してください。"
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"カートからアイテムが削除されました。%(names)s も削除されました（必要な商品が"
+"カートにありません）。"
+
+msgid "Item removed from cart"
+msgstr "アイテムがカートから削除されました"
+
+msgid "Cart item updated"
+msgstr "カート内のアイテムが更新されました"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr ""
+"コンポーネントアイテムは直接削除できません。代わりに親商品を削除してくださ"
+"い。"
+
+msgid "Cart cleared"
+msgstr "カートがクリアされました"
+
+msgid "Voucher removed"
+msgstr "クーポンが削除されました"
+
+msgid "Voucher not found in cart"
+msgstr "カート内にクーポンが見つかりません"
+
+msgid "Gift card removed"
+msgstr "ギフトカードが削除されました"
+
+msgid "Gift card not found in cart"
+msgstr "ギフトカードがカート内に見つかりません"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count}個のアイテムがカートに統合されました"
+
+msgid "Account creation required to proceed"
+msgstr "進行するにはアカウントの作成が必要です"
+
+msgid "Address not found"
+msgstr "住所が見つかりません"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "address_idまたはaddress_dataのいずれかを提供する必要があります"
+
+msgid "Shipping address set"
+msgstr "配送先住所が設定されました"
+
+msgid "Billing address must be provided"
+msgstr "請求先住所を入力してください"
+
+msgid "Billing address set"
+msgstr "請求先住所が設定されました"
+
+msgid "Shipping address must be set first"
+msgstr "配送先住所を最初に設定する必要があります"
+
+msgid "Shipping method not found"
+msgstr "配送方法が見つかりません"
+
+msgid "Shipping method selected"
+msgstr "配送方法を選択しました"
+
+msgid "Payment provider not found"
+msgstr "支払いプロバイダーが見つかりません"
+
+msgid "Payment provider is not properly configured"
+msgstr "支払いプロバイダーは適切に設定されていません"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "支払いプロバイダーは現在の場所や通貨に対して利用可能ではありません"
+
+msgid "Payment method selected"
+msgstr "支払い方法を選択しました"
+
+msgid "Cart is empty"
+msgstr "カートは空です"
+
+msgid "Shipping address is required"
+msgstr "配送先住所が必要です"
+
+msgid "Shipping method is required"
+msgstr "配送方法が必要です"
+
+msgid "Billing address is required"
+msgstr "請求先住所が必要です"
+
+msgid "Payment method is required"
+msgstr "支払い方法が必要です"
+
+msgid "Checkout session has expired"
+msgstr "チェックアウトセッションが期限切れです"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "{product}の在庫が不足しています"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\" は \"%(required)s\" の事前の所有が必要です。"
+
+msgid "Customer email is required"
+msgstr "顧客のメールアドレスは必須です"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "注文のための倉庫配分ができません。サポートにお問い合わせください。"
+
+msgid "Insufficient stock to complete order"
+msgstr "注文を完了するための在庫が不足しています"
+
+msgid "Error processing order. Please try again."
+msgstr "注文処理中にエラーが発生しました。再度お試しください。"
+
+msgid "Order created successfully"
+msgstr "注文が正常に作成されました"
+
+msgid "Wishlist item updated"
+msgstr "お気に入りアイテムが更新されました"
+
+msgid "Item added to wishlist"
+msgstr "アイテムがお気に入りリストに追加されました"
+
+msgid "Item removed from wishlist"
+msgstr "アイテムがお気に入りリストから削除されました"
+
+msgid "Item moved to cart"
+msgstr "アイテムがカートに移動されました"
+
+msgid "Wishlist cleared"
+msgstr "お気に入りリストがクリアされました"
+
+msgid "Wishlist with this name already exists"
+msgstr "この名前のウィッシュリストは既に存在します"
+
+msgid "Wishlist created"
+msgstr "お気に入りリストが作成されました"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "アクティブおよび放棄されたカスタマーカートを監視"
+
+msgid "Add"
+msgstr "追加"
+
+msgid "cart"
+msgstr "カート"
+
+msgid "Filters"
+msgstr "フィルター"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Search by user, session, or email..."
+msgstr "ユーザー、セッション、またはメールで検索..."
+
+msgid "User Type"
+msgstr "ユーザー種別"
+
+msgid "All Carts"
+msgstr "すべてのカート"
+
+msgid "Registered Users"
+msgstr "登録ユーザー"
+
+msgid "Guest Carts"
+msgstr "ゲストカート"
+
+msgid "Cart Status"
+msgstr "カートステータス"
+
+msgid "All"
+msgstr "すべて"
+
+msgid "Active (< 24h)"
+msgstr "アクティブ（24時間未満）"
+
+msgid "Abandoned (> 24h)"
+msgstr "放置された（24時間以上）"
+
+msgid "Empty"
+msgstr "空"
+
+msgid "Has Shipping"
+msgstr "配送あり"
+
+msgid "No Shipping"
+msgstr "配送なし"
+
+msgid "Min Cart Value"
+msgstr "最小カート価格"
+
+msgid "Min value"
+msgstr "最小値"
+
+msgid "Max Cart Value"
+msgstr "最大カート価格"
+
+msgid "Max value"
+msgstr "最大値"
+
+msgid "Created From"
+msgstr "作成日時（開始）"
+
+msgid "Created To"
+msgstr "作成日時（終了）"
+
+msgid "Apply Filters"
+msgstr "フィルターを適用"
+
+msgid "Clear All"
+msgstr "すべてクリア"
+
+msgid "Run the selected action"
+msgstr "選択したアクションを実行"
+
+msgid "Go"
+msgstr "実行"
+
+msgid "of"
+msgstr "中の"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s カート"
+msgstr[1] "%(counter)s カート"
+
+msgid "carts"
+msgstr "カート"
+
+msgid "Show all"
+msgstr "すべて表示"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Add Shipping Method"
+msgstr "配送方法を追加"
+
+msgid "Configure a new shipping method for your store"
+msgstr "新しい配送方法をストアに設定"
+
+msgid "Method Basics"
+msgstr "基本情報"
+
+msgid "Eligibility"
+msgstr "対象地域"
+
+msgid "Coverage"
+msgstr "対象地域"
+
+msgid "Features"
+msgstr "機能"
+
+msgid "Review"
+msgstr "確認"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "この配送方法の基本的なアイデンティティと種類を定義します。"
+
+msgid "Method Name"
+msgstr "配送方法名"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "例：標準配送、スピードデリバリー"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "顧客向けのこの配送方法の名称"
+
+msgid "Optional description of this shipping method"
+msgstr "この配送方法のオプション説明"
+
+msgid "Display Icon"
+msgstr "アイコン表示"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"メディアライブラリから画像を選択するか、Font Awesomeのアイコンを選択します。"
+"両方とも提供されている場合は画像が優先されます。"
+
+msgid "Custom Image"
+msgstr "カスタム画像"
+
+msgid "Font Awesome Icon"
+msgstr "Font Awesome アイコン"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "Font Awesomeライブラリからアイコンを選択します"
+
+msgid "Active"
+msgstr "アクティブ"
+
+msgid "Make this method available to customers immediately"
+msgstr "この方法をすぐに顧客に利用可能にします"
+
+msgid "Method Type & Pricing"
+msgstr "配送種別と料金設定"
+
+msgid "Select method type..."
+msgstr "配送種別を選択..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "固定料金 - 固定配送コスト"
+
+msgid "Free Shipping - No charge"
+msgstr "無料配送 - 料金なし"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "重量に基づく - カートの重量で計算"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "価格に基づく - カートの小計で計算"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "リアルタイムのキャリアレート - キャリアからのライブレート"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "ローカルピックアップ - 顧客が場所で受け取ります"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "テーブルレート - 重量/価格/目的地に基づく複雑なルール"
+
+msgid "Method Types:"
+msgstr "配送種別:"
+
+msgid "Flat Rate:"
+msgstr "固定料金:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "注文に関係なく固定された配送コスト"
+
+msgid "Free Shipping:"
+msgstr "無料配送:"
+
+msgid "No shipping charge"
+msgstr "配送料金なし"
+
+msgid "Weight/Price Based:"
+msgstr "重量/価格に基づく:"
+
+msgid "Calculate using rate tables"
+msgstr "料金表を使用して計算"
+
+msgid "Real-Time:"
+msgstr "リアルタイム:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "USPS、FedEx、UPS、またはDHLからリアルタイムのレートを取得します"
+
+msgid "Local Pickup:"
+msgstr "ローカルピックアップ:"
+
+msgid "Customer picks up at your location"
+msgstr "顧客があなたの場所で受け取ります"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "顧客に課金される固定配送コスト"
+
+msgid "No Configured Providers"
+msgstr "設定されたプロバイダーなし"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"この方法タイプを使用する前に、リアルタイムレートをサポートする少なくとも1つの"
+"配送プロバイダーを設定する必要があります。"
+
+msgid "Connect Provider"
+msgstr "プロバイダーに接続"
+
+msgid "Manage Providers"
+msgstr "プロバイダー管理"
+
+msgid "Select a configured shipping provider"
+msgstr "設定された配送プロバイダーを選択"
+
+msgid "Tip:"
+msgstr "ヒント:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"上記には、設定されリアルタイムレートをサポートするプロバイダーのみが表示され"
+"ます。"
+
+msgid "Manage providers"
+msgstr "プロバイダー管理"
+
+msgid "Service Code"
+msgstr "サービスコード"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "キャリアからの特定のサービスコード（任意）"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Next Step"
+msgstr "次のステップ"
+
+msgid "Eligibility Conditions"
+msgstr "適用条件"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr ""
+"カートの値と重量に基づいて、この配送方法が利用可能であるべきタイミングを定義"
+"します。"
+
+msgid "Order Value Restrictions"
+msgstr "注文価格制限"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr "この方法に対するカートの小計の最小または最大要件を設定します。"
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "カートの小計がこの額以上の場合にのみ利用可能な方法"
+
+msgid "No maximum"
+msgstr "最大値なし"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "カートの小計がこの額未満の場合にのみ利用可能な方法"
+
+msgid "Examples:"
+msgstr "例:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr "50ドル以上の注文に対して無料配送：最小値を50.00に設定"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr "100ドル未満の注文に対して経済配送：最大値を100.00に設定"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr "標準配送（$25〜$200）：最小値と最大値を設定"
+
+msgid "Weight Restrictions"
+msgstr "重量制限"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr "この配送方法の最小または最大のカート総重量を設定"
+
+msgid "Minimum Weight (kg)"
+msgstr "最小重量（kg）"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr "この配送方法は、カートの総重量がこの値以上の場合にのみ利用可能"
+
+msgid "Maximum Weight (kg)"
+msgstr "最大重量（kg）"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "この配送方法は、カートの総重量がこの値未満の場合にのみ利用可能"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "2kg以下のパッケージ向けの軽量パレット配送：最大値を2.00に設定"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr "20kgを超えるパッケージ向けの重量運賃：最小値を20.00に設定"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr "0.5kg〜10kgの標準配送：最小値と最大値を設定"
+
+msgid "Additional Options"
+msgstr "その他のオプション"
+
+msgid "Requires Shipping Address"
+msgstr "配送先住所が必要"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"この配送方法を使用するには、顧客は配送先住所を提供する必要があります（デジタ"
+"ル商品やローカルピックアップでは無効にする）"
+
+msgid "Previous"
+msgstr "前へ"
+
+msgid "Geographic Coverage"
+msgstr "地理的範囲"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr "配送ゾーンを使用して、この配送方法が利用可能な地域を定義します。"
+
+msgid "Zone-Based Coverage:"
+msgstr "ゾーンベースのカバレッジ:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"柔軟でルールに基づいた地理的なカバー範囲を提供するために、配送ゾーンを使用し"
+"ます。このアプローチは、配送ルールとシームレスに動作し、あなたの配送方法がど"
+"の地域で利用可能かを正確に制御することができます。"
+
+msgid "Select Shipping Zones"
+msgstr "配送ゾーンを選択"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"この配送方法が利用可能な配送ゾーンを選択します。世界中で利用可能にする場合は"
+"空欄にしてください。"
+
+msgid "Available Zones"
+msgstr "利用可能なゾーン"
+
+msgid "Add selected zones"
+msgstr "選択されたゾーンを追加"
+
+msgid "Add all zones"
+msgstr "すべてのゾーンを追加"
+
+msgid "Remove selected zones"
+msgstr "選択されたゾーンを削除"
+
+msgid "Remove all zones"
+msgstr "すべてのゾーンを削除"
+
+msgid "Selected Zones"
+msgstr "選択されたゾーン"
+
+msgid "No shipping zones found!"
+msgstr "配送ゾーンが見つかりません！"
+
+msgid "You need to create shipping zones first."
+msgstr "まず、配送ゾーンを作成する必要があります。"
+
+msgid "Create a shipping zone"
+msgstr "配送ゾーンを作成"
+
+msgid "Method Features"
+msgstr "方法の機能"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr "配達予測、表示順序、および配送方法固有の機能を設定します。"
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "顧客が注文を受け取ることができる物理的な場所を選択します。"
+
+msgid "Available Pickup Locations"
+msgstr "利用可能なピックアップ場所"
+
+msgid "Available Locations"
+msgstr "利用可能な場所"
+
+msgid "Selected Locations"
+msgstr "選択された場所"
+
+msgid "No pickup locations found!"
+msgstr "ピックアップ場所が見つかりません！"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr "ローカルピックアップのためのピックアップ場所を作成する必要があります。"
+
+msgid "Create a pickup location"
+msgstr "ピックアップ場所を作成"
+
+msgid "Carrier API Status"
+msgstr "キャリアAPIステータス"
+
+msgid "Carrier:"
+msgstr "キャリア:"
+
+msgid "Service Code:"
+msgstr "サービスコード:"
+
+msgid "API Configuration Status"
+msgstr "API設定状態"
+
+msgid "Checking API credentials..."
+msgstr "API資格情報を確認中..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr ""
+"キャリアAPI認証情報が配送プロバイダー設定で適切に構成されていることを確認して"
+"ください。"
+
+msgid "Enable Rate Caching"
+msgstr "レートキャッシュを有効にする"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"キャリア料金を15分間キャッシュしてパフォーマンスを向上させ、API呼び出しを削減"
+"します"
+
+msgid "Rate Table Configuration"
+msgstr "レートテーブル設定"
+
+msgid "Weight-Based Rates:"
+msgstr "重量に基づくレート:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr ""
+"この配送方法が作成された後、カートの重量に基づいて段階的な料金を設定できま"
+"す。"
+
+msgid "Price-Based Rates:"
+msgstr "価格に基づくレート:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"この配送方法が作成された後、カートの小計に基づいて段階的な料金を設定できま"
+"す。"
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr "この配送方法が作成された後、料金表は編集ページから管理できます。"
+
+msgid "Delivery Time Estimate"
+msgstr "配達時間の推定"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "顧客に対して、配達期間の見積もりを提供します。"
+
+msgid "Fastest delivery time in business days"
+msgstr "営業日に最も早い配達時間"
+
+msgid "Slowest delivery time in business days"
+msgstr "営業日に最も遅い配達時間"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "標準配送：3〜5営業日"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "エクスプレス配送：1〜2営業日"
+
+msgid "International shipping: 7-14 business days"
+msgstr "国際配送：7〜14営業日"
+
+msgid "Display Settings"
+msgstr "表示設定"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr ""
+"数字が小さい方が最初に表示されます。これにより、顧客に表示される配送方法の順"
+"序を制御できます。"
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"新しい配送方法を既存のもの間に容易に挿入できるように、ソート順序を10の倍数"
+"（0、10、20など）で割り当てます。"
+
+msgid "Review & Create"
+msgstr "確認して作成"
+
+msgid "API credentials verified successfully"
+msgstr "API資格情報が正常に確認されました"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "配送方法の設定を確認し、作成してください。"
+
+msgid "Edit"
+msgstr "編集"
+
+msgid "Name:"
+msgstr "名前:"
+
+msgid "Method Type:"
+msgstr "メソッドタイプ:"
+
+msgid "Description:"
+msgstr "説明:"
+
+msgid "Display Icon:"
+msgstr "アイコンを表示:"
+
+msgid "Status:"
+msgstr "ステータス:"
+
+msgid "Inactive"
+msgstr "非アクティブ"
+
+msgid "Flat Rate Cost:"
+msgstr "固定レートコスト:"
+
+msgid "Min Order Value:"
+msgstr "最小注文価格:"
+
+msgid "Max Order Value:"
+msgstr "最大注文価格:"
+
+msgid "Min Weight:"
+msgstr "最小重量:"
+
+msgid "Max Weight:"
+msgstr "最大重量:"
+
+msgid "Requires Shipping Address:"
+msgstr "配送先住所が必要です:"
+
+msgid "Yes"
+msgstr "はい"
+
+msgid "No"
+msgstr "いいえ"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr ""
+"適格条件が設定されていません - この方法はすべてのカート値と重さに対して利用可"
+"能です"
+
+msgid "Shipping Zones:"
+msgstr "配送ゾーン:"
+
+msgid "Coverage:"
+msgstr "カバレッジ:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "全世界（選択されたゾーンなし）"
+
+msgid "Pickup Locations:"
+msgstr "ピックアップ場所:"
+
+msgid "location"
+msgstr "場所"
+
+msgid "Delivery Time:"
+msgstr "配達時間:"
+
+msgid "Instant Pickup"
+msgstr "即時ピックアップ"
+
+msgid "Delivery Estimate:"
+msgstr "配達予想日数:"
+
+msgid "business days"
+msgstr "営業日"
+
+msgid "Sort Order:"
+msgstr "並べ替え順序:"
+
+msgid "Rate Caching:"
+msgstr "レートキャッシュ:"
+
+msgid "Enabled"
+msgstr "有効"
+
+msgid "What happens next:"
+msgstr "次に何が起こるか:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "上記の設定で配送方法が作成されます"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "この方法の料金表を設定するためにリダイレクトされます"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr "この方法は適格条件が満たされた場合、すぐに顧客に利用可能になります"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr ""
+"この方法は非アクティブ状態で作成されます - 準備ができたらアクティブにします"
+
+msgid "Create Shipping Method"
+msgstr "配送方法を作成"
+
+msgid "Creating..."
+msgstr "作成中..."
+
+msgid "Session"
+msgstr "セッション"
+
+msgid "Registered"
+msgstr "登録済み"
+
+msgid "Guest"
+msgstr "ゲスト"
+
+msgid "item"
+msgstr "アイテム"
+
+msgid "Shipping Set"
+msgstr "配送セット"
+
+msgid "Cart Total"
+msgstr "カート合計"
+
+msgid "Items"
+msgstr "アイテム"
+
+msgid "Savings"
+msgstr "節約"
+
+msgid "Shipping"
+msgstr "配送"
+
+msgid "Grand Total"
+msgstr "合計金額"
+
+msgid "Updated"
+msgstr "更新日時"
+
+msgid "ago"
+msgstr "前に"
+
+msgid "Created"
+msgstr "作成日時"
+
+msgid "Est. Delivery"
+msgstr "おおよその到着日"
+
+msgid "View cart details"
+msgstr "カート詳細を見る"
+
+msgid "Edit cart"
+msgstr "カートを編集"
+
+msgid "Delete cart"
+msgstr "カートを削除"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "このカートをクリアすることを確認しますか？"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "あなたの基準に一致するショッピングカートが見つかりませんでした。"
+
+msgid "Try adjusting your filters or search terms."
+msgstr "フィルターや検索語句を調整してみてください。"
+
+msgid "Edit Shipping Method"
+msgstr "配送方法の編集"
+
+msgid "Save and continue editing"
+msgstr "保存して編集を続ける"
+
+msgid "Please correct the errors below"
+msgstr "以下のエラーを修正してください"
+
+msgid "Basic"
+msgstr "基本"
+
+msgid "Pricing"
+msgstr "価格"
+
+msgid "Display"
+msgstr "表示"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "オプション: 注文金額または重量に基づいて在庫を制限します。"
+
+msgid "Delivery Time"
+msgstr "納品時間"
+
+msgid "Display Options"
+msgstr "表示オプション"
+
+msgid "Carrier Integration"
+msgstr "配送業者統合"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr "リアルタイム料金照会用の配送業者固有の設定を構成します。"
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "配送オプション、料金、および配達方法を設定します"
+
+msgid "method"
+msgstr "方法"
+
+msgid "active"
+msgstr "アクティブ"
+
+msgid "Add Method"
+msgstr "方法を追加"
+
+msgid "Bulk Actions"
+msgstr "一括操作"
+
+msgid "Enable Selected"
+msgstr "選択したものを有効にする"
+
+msgid "Disable Selected"
+msgstr "選択したものを無効にする"
+
+msgid "Delete Selected"
+msgstr "選択したものを削除"
+
+msgid "Apply"
+msgstr "適用"
+
+msgid "selected"
+msgstr "選択された"
+
+msgid "All Status"
+msgstr "すべてのステータス"
+
+msgid "All Types"
+msgstr "すべての種類"
+
+msgid "Real-Time Rates"
+msgstr "リアルタイムレート"
+
+msgid "Clear all filters"
+msgstr "すべてのフィルターをクリア"
+
+msgid "Clear Filters"
+msgstr "フィルターをクリア"
+
+msgid "Search methods..."
+msgstr "方法を検索..."
+
+msgid "Select All"
+msgstr "すべてを選択"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s method"
+msgstr[1] "%(counter)s method"
+
+msgid "No shipping methods found"
+msgstr "配送方法が見つかりません"
+
+msgid "Try adjusting your filters or search query."
+msgstr "フィルターまたは検索クエリーを調整してみてください。"
+
+msgid "Get started by creating your first shipping method."
+msgstr "最初の配送方法を作成することで始めることができます。"
+
+msgid "Add First Method"
+msgstr "最初の方法を追加"
+
+msgid "Loading..."
+msgstr "読み込み中..."
+
+msgid "Order Value:"
+msgstr "注文価値:"
+
+msgid "Weight:"
+msgstr "重量:"
+
+msgid "Zones:"
+msgstr "ゾーン:"
+
+msgid "zone"
+msgstr "ゾーン"
+
+msgid "Countries:"
+msgstr "国:"
+
+msgid "country"
+msgstr "国"
+
+msgid "Worldwide"
+msgstr "全世界"
+
+msgid "Pickup:"
+msgstr "取り置き:"
+
+msgid "Delivery:"
+msgstr "配送:"
+
+msgid "Edit method"
+msgstr "方法を編集"
+
+msgid "Toggle active status"
+msgstr "アクティブステータスを切り替える"
+
+msgid "Delete method"
+msgstr "方法を削除"
+
+msgid "Edit Tax Rate"
+msgstr "税率の編集"
+
+msgid "Add Tax Rate"
+msgstr "税率を追加"
+
+msgid "Geography"
+msgstr "地理"
+
+msgid "Rules"
+msgstr "ルール"
+
+msgid "Exemptions"
+msgstr "免除"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"この税率が適用される場所を定義します。全国的な税率の場合は、州/都市を空のまま"
+"にしてください。"
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "この税率から特定の商品タイプやカテゴリを除外します。"
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"店舗の税則を設定します。税額はチェックアウト時に顧客住所と照合されます。"
+
+msgid "Load Presets"
+msgstr "プリセットを読み込む"
+
+msgid "Total Rules"
+msgstr "合計ルール"
+
+msgid "Countries"
+msgstr "国"
+
+msgid "Tax Types"
+msgstr "税金の種類"
+
+msgid "Search by name, country, state..."
+msgstr "名前、国、州などで検索..."
+
+msgid "All Countries"
+msgstr "すべての国"
+
+msgid "Custom"
+msgstr "カスタム"
+
+msgid "Status"
+msgstr "ステータス"
+
+msgid "Clear"
+msgstr "クリア"
+
+msgid "Tax Rules"
+msgstr "税金のルール"
+
+msgid "rules"
+msgstr "ルール"
+
+msgid "Load Tax Rate Presets"
+msgstr "税率のプリセットを読み込む"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr "地域の標準的な税率を素早く追加します。既存の税率は重複しません。"
+
+msgid "rates"
+msgstr "税率"
+
+msgid "Load"
+msgstr "読み込む"
+
+msgid "Close"
+msgstr "閉じる"
+
+msgid "postal codes"
+msgstr "郵便番号"
+
+msgid "Shipping Taxed"
+msgstr "配送税込み"
+
+msgid "Compound"
+msgstr "複合"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "No tax rates configured"
+msgstr "税率の設定がありません"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"'プリセット読み込み'を使用して、地域の標準的な税率を素早く追加します、または"
+"手動で追加します。"
+
+msgid "Get current cart"
+msgstr "現在のカートを取得"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"認証されたユーザーまたはセッションの現在のカートを取得します。カートアイテ"
+"ム、小計、割引、税金、合計を返します。カートが存在しない場合は自動的に作成し"
+"ます。"
+
+msgid "Add item to cart"
+msgstr "商品をカートに追加"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"指定された数量で商品をカートに追加します。必要に応じて、バリエーションID、カ"
+"スタマイズ、およびメモを含めることができます。在庫の有無を検証し、同じ商品/バ"
+"リエーションの既存のカート項目とマージします。サブスクリプション商品の場合"
+"は、subscription_plan_id、payment_token_id、および任意のpricing_tier_idととも"
+"にis_subscription=trueを含めます。"
+
+msgid "Update cart item"
+msgstr "カート商品を更新"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"カート内の商品数量、カスタマイズ、またはメモを更新します。在庫の可用性に基づ"
+"いて新しい数量を検証し、再計算された合計値を含む更新されたカートを返します。"
+
+msgid "Remove cart item"
+msgstr "カート内の商品を削除"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"カートから特定の商品を削除します。新しいカート合計に基づいてカート合計を再計"
+"算し、適用された割引券を再検証します。"
+
+msgid "Clear cart"
+msgstr "カートを空にする"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"カートからすべてのアイテムを削除します。適用されたクーポンも削除されます。"
+"カートオブジェクトは保持されますが、空になります。"
+
+msgid "Apply voucher code"
+msgstr "クーポンコードを適用"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"カートにクーポンコードを適用します。クーポンの有効性、最低購入金額の要件、使"
+"用制限を検証し、カート合計に対する割引を計算して適用します。"
+
+msgid "Remove voucher"
+msgstr "クーポンを削除"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"コードを使用してカートから特定の割引券を削除します。割引券の割引を除いた再計"
+"算されたカート合計を表示します。該当する場合、ユーザーは後で再度割引券を適用"
+"できます。"
+
+msgid "Apply gift card"
+msgstr "ギフトカードを適用"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"ギフトカードコードをカートに適用します。ギフトカードのステータス、残高、通貨"
+"を検証します。ギフトカードは他のギフトカードの購入には使用できません。適用さ"
+"れる金額はギフトカードの残高または残りのカート合計に限定されます。"
+
+msgid "Remove gift card"
+msgstr "ギフトカードを削除"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"コードによってカートから特定のギフトカードを削除します。支払いが完了するまで"
+"はギフトカードの残高は変更されません。ユーザーはギフトカードを再適用できま"
+"す。"
+
+msgid "Get cart summary"
+msgstr "カートの概要を取得"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"アイテム数、小計、合計を含む軽量なカートの概要を取得します。フルカートエンド"
+"ポイントよりも高速です。ヘッダーのカートバッジやクイック合計表示に有用です。"
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"コンポーネントアイテムは直接変更できません。代わりに親商品を更新してくださ"
+"い。"
+
+msgid "List user wishlists"
+msgstr "ユーザーのウィッシュリストを一覧表示"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"認証されたユーザーのすべてのウィッシュリストを取得します。ユーザーは、さまざ"
+"まな目的（例: '誕生日'、'結婚式'、'アイデア'）のために複数のウィッシュリスト"
+"を持つことができます。ウィッシュリストの名前、アイテム数、プライバシー設定を"
+"返します。"
+
+msgid "Create wishlist"
+msgstr "ウィッシュリストを作成"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"認証されたユーザー用の新しいウィッシュリストを作成します。名前、説明、プライ"
+"バシー設定（公開/非公開）を指定します。公開されたウィッシュリストはURLを介し"
+"て共有できます。"
+
+msgid "Get wishlist details"
+msgstr "ウィッシュリストの詳細を取得"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"特定のウィッシュリストの詳細情報を取得し、すべてのアイテム、価格、在庫状況、"
+"共有設定を含めます。公開されていない限り、ウィッシュリストの所有者だけがアク"
+"セスできます。"
+
+msgid "Update wishlist"
+msgstr "ウィッシュリストを更新"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"ウィッシュリストの情報を更新し、名前、説明、またはプライバシー設定を含めるこ"
+"とができます。ウィッシュリストを公開または非公開にできます。更新できるのは所"
+"有者だけです。"
+
+msgid "Partially update wishlist"
+msgstr "ウィッシュリストを部分的に更新"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"フルなウィッシュリストデータを送信せずに、特定のウィッシュリストフィールドを"
+"更新します。プライバシーの切り替えやウィッシュリストの名前の変更に便利です。"
+
+msgid "Delete wishlist"
+msgstr "ウィッシュリストを削除"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"お気に入りリストとそのすべての項目を永久に削除します。この操作は元に戻せませ"
+"ん。削除できるのは所有者だけです。"
+
+msgid "Add item to wishlist"
+msgstr "アイテムをウィッシュリストに追加"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"オプションでバリエーション、数量、およびメモを含めて商品をウィッシュリストに"
+"追加します。重複を防ぎます。デフォルトのウィッシュリストに追加するか、ウィッ"
+"シュリストIDを指定して追加できます。"
+
+msgid "Remove item from wishlist"
+msgstr "アイテムをウィッシュリストから削除"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"ウィッシュリストから特定のアイテムを削除します。後で再度追加できます。在庫状"
+"況には影響しません。"
+
+msgid "Move item to cart"
+msgstr "アイテムをカートに移動"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"ウィッシュリストのアイテムを直接ショッピングカートに移動します。在庫状況を確"
+"認し、カートへの追加が成功した後、ウィッシュリストからアイテムが削除されま"
+"す。"
+
+msgid "Get public wishlist by share slug"
+msgstr "共有スラッグで公開されたお気に入りリストを取得"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"共有URLスラッグを使用してパブリックなウィッシュリストを表示します。このリンク"
+"を持つ人は、パブリックなウィッシュリストを閲覧できます。贈り物登録や家族・友"
+"人に共有するウィッシュリストに便利です。"
+
+msgid "ID of the wishlist item to remove"
+msgstr "削除するウィッシュリストアイテムのID"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "カートに移動するウィッシュリストアイテムのID"
+
+msgid "Share slug of the public wishlist"
+msgstr "公開ウィッシュリストの共有用スラッグ"
+
+msgid "Wishlist not found"
+msgstr "お気に入りリストが見つかりません"
+
+msgid "Get checkout session"
+msgstr "チェックアウトセッションを取得"
+
+msgid "Set shipping address"
+msgstr "配送先住所を設定"
+
+msgid "Set billing address"
+msgstr "請求先住所を設定"
+
+msgid "Get available shipping methods"
+msgstr "利用可能な配送方法を取得"
+
+msgid "Get available payment providers"
+msgstr "利用可能な支払いプロバイダーを取得"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"顧客の国と通貨に対応した支払いプロバイダを返します。配送可能な国、プロバイダ"
+"の機能、および店舗の設定に基づいてフィルタリングされます。"
+
+msgid "Set shipping method"
+msgstr "配送方法を設定"
+
+msgid "Set payment method"
+msgstr "支払い方法を設定"
+
+msgid "Validate checkout"
+msgstr "チェックアウトを確認"
+
+msgid "Complete checkout"
+msgstr "チェックアウトを完了"
+
+msgid "Get recently viewed products"
+msgstr "最近見た商品を取得"
+
+msgid "Get recently viewed details"
+msgstr "最近見た詳細を取得"
+
+msgid "List shipping methods"
+msgstr "配送方法を一覧表示"
+
+msgid "Get shipping method details"
+msgstr "配送方法の詳細を取得"
+
+msgid "List tax rates"
+msgstr "税率の一覧"
+
+msgid "Get tax rate details"
+msgstr "税率の詳細を取得"
+
+msgid "Create tax rate"
+msgstr "税率を作成"
+
+msgid "Update tax rate"
+msgstr "税率を更新"
+
+msgid "Partial update tax rate"
+msgstr "税率を部分的に更新"
+
+msgid "Delete tax rate"
+msgstr "税率を削除"
+
+msgid "Calculate applicable taxes"
+msgstr "適用可能な税額を計算"
+
+msgid "Tax rates grouped by country"
+msgstr "国別にグループ化された税率"
+
+msgid "Load preset tax rates"
+msgstr "事前設定の消費税率を読み込み"
+
+msgid "List tax preset groups"
+msgstr "消費税率事前設定グループを一覧表示"
+
+msgid "Get preset group details"
+msgstr "プリセットグループの詳細を取得"
+
+msgid "List rates in a preset group"
+msgstr "事前設定グループ内のレートを一覧表示"

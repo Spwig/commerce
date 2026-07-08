@@ -1,0 +1,39 @@
+{% load i18n merchant_trans %}
+{# Cart Widget - Renders cart button that opens mini-cart or links to cart page #}
+{# Uses theme widget tokens: --theme-widget-cart-{property} #}
+
+<div class="widget-cart {{ widget.css_classes }}">
+    {% if config.click_action == 'link_to_cart' %}
+    {# Option 1: Link to cart page #}
+    <a href="{{ config.cart_url|default:'/cart/' }}"
+       class="widget-cart-button"
+       aria-label="{% mtrans 'View cart' %}">
+    {% else %}
+    {# Option 2: Open mini-cart (default) #}
+    <button type="button"
+            class="widget-cart-button"
+            data-open-mini-cart
+            aria-label="{% mtrans 'Open cart' %}">
+    {% endif %}
+        <span class="widget-cart-icon">
+            <i class="fas fa-shopping-{{ config.icon_style|default:'cart' }}"></i>
+            <span class="widget-cart-count" data-cart-count style="display: none;">0</span>
+        </span>
+        {% if config.show_text %}
+        <span class="widget-cart-text">
+            {% if config.text %}
+                {{ config.text }}
+            {% else %}
+                {% mtrans "Cart" %}
+            {% endif %}
+        </span>
+        {% endif %}
+        {% if config.show_total %}
+        <span class="widget-cart-total" data-cart-total></span>
+        {% endif %}
+    {% if config.click_action == 'link_to_cart' %}
+    </a>
+    {% else %}
+    </button>
+    {% endif %}
+</div>

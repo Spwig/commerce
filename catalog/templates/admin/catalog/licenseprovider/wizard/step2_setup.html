@@ -1,0 +1,70 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+    <link rel="stylesheet" href="{% static 'catalog/admin/css/licenseprovider_step2_setup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <h1>{% trans "Connect License Provider" %}</h1>
+        <p class="wizard-subtitle">{{ provider_name }}</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="wizard-steps">
+        <div class="step completed">
+            <div class="step-number">✓</div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step active">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Setup" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Credentials" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Test & Save" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <div class="wizard-step-content">
+            <h2 class="step-title">{% trans "Setup Instructions" %}</h2>
+            <p class="step-description">
+                {% trans "Follow these steps to prepare your" %} {{ provider_name }} {% trans "account before connecting." %}
+            </p>
+
+            <div class="setup-instructions">
+                {{ instructions_html|safe }}
+            </div>
+
+            <form method="post" id="setup-continue-form">
+                {% csrf_token %}
+
+                <!-- Navigation -->
+                <div class="wizard-actions">
+                    <a href="{% url 'catalog_admin:license_provider_wizard_step1' %}" class="button">
+                        ← {% trans "Back" %}
+                    </a>
+                    <button type="submit" class="button default">
+                        {% trans "Continue" %} →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% include "providers_common/includes/manifest_i18n.html" %}
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Customer Subscriptions" %} | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'subscriptions/css/subscription-admin.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="subscription-admin-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-users"></i>
+                {% trans "Customer Subscriptions" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage active subscriptions, billing cycles, and customer recurring payments" %}</p>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    name="filter_search"
+                    placeholder="{% trans 'Search by user, email, or subscription ID...' %}"
+                    value="{{ request.GET.search }}">
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status" name="filter_status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="trial" {% if request.GET.status == 'trial' %}selected{% endif %}>{% trans "Trial" %}</option>
+                    <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>{% trans "Active" %}</option>
+                    <option value="past_due" {% if request.GET.status == 'past_due' %}selected{% endif %}>{% trans "Past Due" %}</option>
+                    <option value="paused" {% if request.GET.status == 'paused' %}selected{% endif %}>{% trans "Paused" %}</option>
+                    <option value="canceled" {% if request.GET.status == 'canceled' %}selected{% endif %}>{% trans "Canceled" %}</option>
+                    <option value="expired" {% if request.GET.status == 'expired' %}selected{% endif %}>{% trans "Expired" %}</option>
+                </select>
+            </div>
+
+            <!-- Plan -->
+            <div class="filter-field">
+                <label for="filter-plan">
+                    <i class="fas fa-tag"></i> {% trans "Plan" %}
+                </label>
+                <select id="filter-plan" name="filter_plan">
+                    <option value="">{% trans "All Plans" %}</option>
+                    {% for plan in plans %}
+                    <option value="{{ plan.id }}" {% if request.GET.plan == plan.id|stringformat:"s" %}selected{% endif %}>
+                        {{ plan.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Product -->
+            <div class="filter-field">
+                <label for="filter-product">
+                    <i class="fas fa-box"></i> {% trans "Product" %}
+                </label>
+                <select id="filter-product" name="filter_product">
+                    <option value="">{% trans "All Products" %}</option>
+                    {% for product in products %}
+                    <option value="{{ product.id }}" {% if request.GET.product == product.id|stringformat:"s" %}selected{% endif %}>
+                        {{ product.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Provider Mode -->
+            <div class="filter-field">
+                <label for="filter-provider-mode">
+                    <i class="fas fa-cogs"></i> {% trans "Provider Mode" %}
+                </label>
+                <select id="filter-provider-mode" name="filter_provider_mode">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="native" {% if request.GET.provider_mode == 'native' %}selected{% endif %}>{% trans "Native" %}</option>
+                    <option value="fallback" {% if request.GET.provider_mode == 'fallback' %}selected{% endif %}>{% trans "Fallback" %}</option>
+                </select>
+            </div>
+
+            <!-- Payment Provider -->
+            <div class="filter-field">
+                <label for="filter-payment-provider">
+                    <i class="fas fa-credit-card"></i> {% trans "Payment Provider" %}
+                </label>
+                <select id="filter-payment-provider" name="filter_payment_provider">
+                    <option value="">{% trans "All Providers" %}</option>
+                    {% for provider in payment_providers %}
+                    <option value="{{ provider.id }}" {% if request.GET.payment_provider == provider.id|stringformat:"s" %}selected{% endif %}>
+                        {{ provider.display_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Subscriptions" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-users"></i>
+            <span id="subscription-count">{{ cl.result_count }}</span> {% trans "subscription" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="subscription-results">
+        {% include "admin/subscriptions/partials/subscription_cards.html" with subscriptions=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 subscription{% plural %}{{ counter }} subscriptions{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'subscriptions' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     class="hidden"
+     data-filter-url="{% url 'subscriptions:filter_customer_subscriptions' %}"
+     data-results-container="subscription-results"
+     data-results-count="subscription-count"></div>
+</div>
+{% endblock %}

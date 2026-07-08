@@ -1,0 +1,109 @@
+{% extends "themes/base.html" %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% mtrans "My Badges" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'loyalty/css/customer.css' %}">
+<link rel="stylesheet" href="{% static 'loyalty/css/customer/badges.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'loyalty/js/customer.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-dashboard">
+    <div class="container">
+        {# Breadcrumb #}
+        <nav class="breadcrumb">
+            <a href="{% url 'loyalty:customer_dashboard' %}">{% mtrans "Loyalty Dashboard" %}</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>{% mtrans "My Badges" %}</span>
+        </nav>
+
+        {# Page Header #}
+        <div class="badges-page-header">
+            <div>
+                <h1>{% mtrans "My Badges" %}</h1>
+                <p>{% mtrans "Track your achievements and unlock new badges" %}</p>
+            </div>
+
+            <div class="badges-progress-badge">
+                <span class="badges-progress-count">{{ earned_count }}/{{ total_count }}</span>
+                <span class="badges-progress-label">{% mtrans "Badges Earned" %}</span>
+            </div>
+        </div>
+
+        {# Earned Badges Section #}
+        <div class="dashboard-section">
+            <h2 class="badges-section-title">
+                <i class="fas fa-trophy"></i> {% mtrans "Earned Badges" %}
+            </h2>
+
+            {% if earned_badges %}
+            <div class="badges-full-grid">
+                {% for member_badge in earned_badges %}
+                <div class="badge-full-card badge-full-card-earned">
+                    <div class="badge-full-icon" data-color="{{ member_badge.badge.icon|default:'' }}">
+                        <i class="fas {{ member_badge.badge.icon|default:'fa-star' }}"></i>
+                    </div>
+                    <div class="badge-full-name">{{ member_badge.badge.name }}</div>
+                    <div class="badge-full-description">{{ member_badge.badge.description|truncatewords:15 }}</div>
+                    <div class="badge-earned-date">
+                        <i class="fas fa-check-circle"></i>
+                        {{ member_badge.earned_at|date:"M d, Y" }}
+                    </div>
+                    {% if member_badge.badge.points_reward > 0 %}
+                    <div class="badge-points-reward">
+                        <i class="fas fa-star"></i>
+                        +{{ member_badge.badge.points_reward }} {% mtrans "points" %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="badges-empty-state">
+                <div class="badges-empty-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3>{% mtrans "No badges earned yet" %}</h3>
+                <p>{% mtrans "Keep shopping and engaging to earn your first badge!" %}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {# Available Badges Section #}
+        {% if available_badges %}
+        <div class="dashboard-section">
+            <h2 class="badges-section-title">
+                <i class="fas fa-lock-open"></i> {% mtrans "Available to Earn" %}
+            </h2>
+
+            <div class="badges-full-grid">
+                {% for badge in available_badges %}
+                <div class="badge-full-card">
+                    <div class="badge-full-icon badge-full-icon-locked">
+                        <i class="fas {{ badge.icon|default:'fa-star' }}"></i>
+                    </div>
+                    <div class="badge-full-name">{{ badge.name }}</div>
+                    <div class="badge-full-description">{{ badge.description|truncatewords:15 }}</div>
+                    {% if badge.points_reward > 0 %}
+                    <div class="badge-points-reward">
+                        <i class="fas fa-star"></i>
+                        +{{ badge.points_reward }} {% mtrans "points" %}
+                    </div>
+                    {% endif %}
+                    <div class="badge-locked-label">
+                        <i class="fas fa-lock"></i> {% mtrans "Not yet earned" %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

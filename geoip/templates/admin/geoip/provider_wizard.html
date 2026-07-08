@@ -1,0 +1,385 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'geoip/admin/css/providers.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'geoip/admin/css/dashboard.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/wizard-base.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="wizard-header">
+        <a href="{% url 'admin:geoip_geolocation_changelist' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Dashboard" %}
+        </a>
+        <h1>{% trans "Setup" %} {{ provider_config.name }}</h1>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="wizard-progress">
+        <div class="progress-step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Prerequisites" %}</div>
+        </div>
+        <div class="progress-step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Configuration" %}</div>
+        </div>
+        <div class="progress-step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Settings" %}</div>
+        </div>
+        <div class="progress-step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Verify" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <!-- Step 1: Prerequisites -->
+        <div class="wizard-step active" id="step-1">
+            <h2>{% trans "Prerequisites" %}</h2>
+
+            {% if provider_type == 'maxmind' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-user-plus"></i> {% trans "1. Create a MaxMind Account" %}</h3>
+                <p>{% trans "Sign up for a free MaxMind account to access GeoLite2 databases. MaxMind offers both free and commercial IP geolocation databases." %}</p>
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button default">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Sign Up for MaxMind" %}
+                </a>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-database"></i> {% trans "2. Choose Your Database" %}</h3>
+                <p>{% trans "MaxMind offers several database options:" %}</p>
+                <ul>
+                    <li><strong>{% trans "GeoLite2 Free" %}</strong> - {% trans "Free forever, updated weekly" %}</li>
+                    <li><strong>{% trans "GeoIP2 Precision" %}</strong> - {% trans "From $100/month, daily updates, higher accuracy" %}</li>
+                </ul>
+                <p>{% trans "The free GeoLite2 databases provide excellent accuracy for most e-commerce needs." %}</p>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "3. Generate Your License Key" %}</h3>
+                <p>{% trans "After signing up:" %}</p>
+                <ol>
+                    <li>{% trans "Log into your MaxMind account" %}</li>
+                    <li>{% trans "Go to 'My License Keys' under 'Services'" %}</li>
+                    <li>{% trans "Click 'Generate new license key'" %}</li>
+                    <li>{% trans "Name it (e.g., 'E-commerce Site')" %}</li>
+                    <li>{% trans "Copy the license key - you'll need it in the next step" %}</li>
+                </ol>
+                <a href="{{ provider_config.dashboard_url }}" target="_blank" class="button secondary">
+                    <i class="fas fa-external-link-alt"></i> {% trans "MaxMind Account Dashboard" %}
+                </a>
+            </div>
+
+            {% elif provider_type == 'ipapi' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-user-plus"></i> {% trans "1. Create an ipapi Account" %}</h3>
+                <p>{% trans "Sign up for ipapi's IP geolocation service. They offer a generous free tier perfect for small to medium e-commerce sites." %}</p>
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button default">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Sign Up for ipapi" %}
+                </a>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-rocket"></i> {% trans "2. Select Your Plan" %}</h3>
+                <p>{% trans "ipapi pricing tiers:" %}</p>
+                <ul>
+                    <li><strong>{% trans "Free" %}</strong> - {% trans "1,000 requests/month, HTTP only" %}</li>
+                    <li><strong>{% trans "Basic" %}</strong> - {% trans "$12/month for 50,000 requests" %}</li>
+                    <li><strong>{% trans "Professional" %}</strong> - {% trans "$59/month for 300,000 requests" %}</li>
+                </ul>
+                <p>{% trans "Start with the free tier to test the integration, then upgrade as your traffic grows." %}</p>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "3. Get Your API Key" %}</h3>
+                <p>{% trans "Your API key is available immediately after signup:" %}</p>
+                <ol>
+                    <li>{% trans "Log into your ipapi dashboard" %}</li>
+                    <li>{% trans "Your API key is displayed at the top" %}</li>
+                    <li>{% trans "Copy the key for configuration" %}</li>
+                </ol>
+                <a href="{{ provider_config.dashboard_url }}" target="_blank" class="button secondary">
+                    <i class="fas fa-external-link-alt"></i> {% trans "ipapi Dashboard" %}
+                </a>
+            </div>
+
+            {% elif provider_type == 'ipinfo' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-user-plus"></i> {% trans "1. Create an IPinfo Account" %}</h3>
+                <p>{% trans "IPinfo provides accurate IP data with excellent uptime. Their free tier offers 50,000 requests per month." %}</p>
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button default">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Sign Up for IPinfo" %}
+                </a>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-chart-line"></i> {% trans "2. Choose Your Plan" %}</h3>
+                <p>{% trans "IPinfo plans:" %}</p>
+                <ul>
+                    <li><strong>{% trans "Free" %}</strong> - {% trans "50,000 requests/month" %}</li>
+                    <li><strong>{% trans "Basic" %}</strong> - {% trans "$49/month for 250,000 requests" %}</li>
+                    <li><strong>{% trans "Standard" %}</strong> - {% trans "$249/month for 2.5M requests" %}</li>
+                </ul>
+                <p>{% trans "IPinfo includes ASN, company, and carrier data even in the free tier." %}</p>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "3. Access Your API Token" %}</h3>
+                <p>{% trans "Get your API token:" %}</p>
+                <ol>
+                    <li>{% trans "Sign in to your IPinfo account" %}</li>
+                    <li>{% trans "Go to the Dashboard" %}</li>
+                    <li>{% trans "Your token is displayed prominently" %}</li>
+                    <li>{% trans "Copy the token for setup" %}</li>
+                </ol>
+                <a href="{{ provider_config.dashboard_url }}" target="_blank" class="button secondary">
+                    <i class="fas fa-external-link-alt"></i> {% trans "IPinfo Dashboard" %}
+                </a>
+            </div>
+
+            {% else %}
+            <!-- Generic provider setup -->
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-user-plus"></i> {% trans "1. Create an Account" %}</h3>
+                <p>{% trans "Sign up for" %} {{ provider_config.name }}. {% trans "They offer competitive pricing and reliable service." %}</p>
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button default">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Sign Up" %}
+                </a>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "2. Get Your API Credentials" %}</h3>
+                <p>{% trans "After signing up, obtain your API credentials from the dashboard." %}</p>
+                <a href="{{ provider_config.dashboard_url }}" target="_blank" class="button secondary">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Account Dashboard" %}
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>{% trans "Provider Information" %}</strong>
+                    <p>{% trans "Free tier:" %} {{ provider_config.free_tier }}</p>
+                    <p>{% trans "Paid plans:" %} {{ provider_config.paid_tier }}</p>
+                    <p>{% trans "Update frequency:" %} {{ provider_config.update_frequency }}</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-database"></i>
+                <div>
+                    <strong>{% trans "Available Data Points" %}</strong>
+                    <p>{{ provider_config.data_points|join:", " }}</p>
+                </div>
+            </div>
+
+            <div class="wizard-nav">
+                <button type="button" class="button default" data-action="next-step">
+                    {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Configuration -->
+        <div class="wizard-step" id="step-2">
+            <h2>{% trans "Configuration" %}</h2>
+
+            <form id="provider-config-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="step" value="2">
+
+                <fieldset class="module aligned">
+                    <h3>{% trans "API Credentials" %}</h3>
+
+                    {% if 'api_key' in provider_config.requires %}
+                    <div class="form-row">
+                        <label for="api_key" class="required">{% trans "API Key:" %}</label>
+                        <input type="text" name="api_key" id="api_key" class="vTextField" required
+                               value="{{ existing_provider.config.api_key|default:'' }}"
+                               placeholder="{% trans 'Enter your API key' %}">
+                        <div class="help">{% trans "Your provider API key for authentication" %}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if 'license_key' in provider_config.requires %}
+                    <div class="form-row">
+                        <label for="license_key" class="required">{% trans "License Key:" %}</label>
+                        <input type="text" name="license_key" id="license_key" class="vTextField" required
+                               value="{{ existing_provider.config.license_key|default:'' }}"
+                               placeholder="{% trans 'Enter your license key' %}">
+                        <div class="help">{% trans "Your MaxMind license key" %}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if 'api_secret' in provider_config.requires %}
+                    <div class="form-row">
+                        <label for="api_secret" class="required">{% trans "API Secret/Region:" %}</label>
+                        <input type="text" name="api_secret" id="api_secret" class="vTextField" required
+                               value="{{ existing_provider.config.api_secret|default:'' }}"
+                               placeholder="{% trans 'Enter API secret or region' %}">
+                        <div class="help">{% trans "Additional authentication parameter if required" %}</div>
+                    </div>
+                    {% endif %}
+                </fieldset>
+
+                <div class="test-connection">
+                    <h3>{% trans "Test Connection" %}</h3>
+                    <p>{% trans "Test your configuration with a sample IP address:" %}</p>
+                    <div class="test-controls">
+                        <input type="text" id="test-ip" value="8.8.8.8" placeholder="IP Address">
+                        <button type="button" class="button secondary" data-action="test-connection">
+                            <i class="fas fa-vial"></i> {% trans "Test" %}
+                        </button>
+                    </div>
+                    <div id="test-result"></div>
+                </div>
+
+                <div class="wizard-nav">
+                    <button type="button" class="button secondary" data-action="prev-step">
+                        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                    </button>
+                    <button type="button" class="button default" data-action="next-step">
+                        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 3: Settings -->
+        <div class="wizard-step" id="step-3">
+            <h2>{% trans "Settings" %}</h2>
+
+            <form id="provider-settings-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="step" value="3">
+
+                <fieldset class="module aligned">
+                    <h3>{% trans "Provider Settings" %}</h3>
+
+                    <div class="form-row">
+                        <label for="is_active">{% trans "Active:" %}</label>
+                        <input type="checkbox" name="is_active" id="is_active"
+                               {% if not existing_provider or existing_provider.is_active %}checked{% endif %}>
+                        <div class="help">{% trans "Enable this provider for IP lookups" %}</div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="priority">{% trans "Priority:" %}</label>
+                        <input type="number" name="priority" id="priority" class="vIntegerField"
+                               value="{{ existing_provider.priority|default:10 }}" min="1" max="100">
+                        <div class="help">{% trans "Lower numbers have higher priority (1-100)" %}</div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="cache_duration">{% trans "Cache Duration (seconds):" %}</label>
+                        <input type="number" name="cache_duration" id="cache_duration" class="vIntegerField"
+                               value="{{ existing_provider.config.cache_duration|default:86400 }}" min="0">
+                        <div class="help">{% trans "How long to cache IP lookups (86400 = 24 hours)" %}</div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="timeout">{% trans "Timeout (seconds):" %}</label>
+                        <input type="number" name="timeout" id="timeout" class="vIntegerField"
+                               value="{{ existing_provider.config.timeout|default:5 }}" min="1" max="30">
+                        <div class="help">{% trans "Maximum time to wait for API response" %}</div>
+                    </div>
+
+                    {% if provider_config.supports_batch %}
+                    <div class="form-row">
+                        <label for="batch_size">{% trans "Batch Size:" %}</label>
+                        <input type="number" name="batch_size" id="batch_size" class="vIntegerField"
+                               value="{{ existing_provider.config.batch_size|default:100 }}" min="1" max="1000">
+                        <div class="help">{% trans "Number of IPs to process in a single batch request" %}</div>
+                    </div>
+                    {% endif %}
+                </fieldset>
+
+                <div class="wizard-nav">
+                    <button type="button" class="button secondary" data-action="prev-step">
+                        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                    </button>
+                    <button type="button" class="button default" data-action="next-step">
+                        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 4: Verify -->
+        <div class="wizard-step" id="step-4">
+            <h2>{% trans "Verify Configuration" %}</h2>
+
+            <div class="config-summary">
+                <h3>{% trans "Configuration Summary" %}</h3>
+                <dl class="summary-list">
+                    <dt>{% trans "Provider:" %}</dt>
+                    <dd>{{ provider_config.name }}</dd>
+
+                    <dt>{% trans "Status:" %}</dt>
+                    <dd><span class="status-badge active">{% trans "Active" %}</span></dd>
+
+                    <dt>{% trans "Priority:" %}</dt>
+                    <dd><span id="summary-priority">10</span></dd>
+
+                    <dt>{% trans "Cache Duration:" %}</dt>
+                    <dd><span id="summary-cache">24 hours</span></dd>
+
+                    <dt>{% trans "API Endpoint:" %}</dt>
+                    <dd class="endpoint-url">{{ provider_config.endpoint|default:"API Configured" }}</dd>
+                </dl>
+            </div>
+
+            <div class="final-test">
+                <h3>{% trans "Final Test" %}</h3>
+                <p>{% trans "Run a final test to verify everything is working correctly:" %}</p>
+                <button type="button" class="button default" data-action="run-final-test">
+                    <i class="fas fa-check-circle"></i> {% trans "Run Test" %}
+                </button>
+                <div id="final-test-result"></div>
+            </div>
+
+            <form id="final-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="step" value="4">
+                <input type="hidden" name="test_connection" value="1">
+
+                <!-- Hidden fields to carry over all settings -->
+                <div id="hidden-fields"></div>
+
+                <div class="wizard-nav">
+                    <button type="button" class="button secondary" data-action="prev-step">
+                        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                    </button>
+                    <button type="submit" class="button default">
+                        <i class="fas fa-save"></i> {% trans "Save Configuration" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Wizard configuration data island (no inline JS) -->
+    <div id="wizard-config" data-current-step="{{ step|default:1 }}" class="geoip-hidden"></div>
+
+    <!-- Translations for JS -->
+    <script type="application/json" id="geoip-translations">
+    {
+        "testing": "{% trans 'Testing...' %}",
+        "running_final_test": "{% trans 'Running final test...' %}",
+        "success": "{% trans 'Success!' %}",
+        "all_tests_passed": "{% trans 'All tests passed!' %}",
+        "provider_configured": "{% trans 'Your provider is configured correctly and ready to use.' %}"
+    }
+    </script>
+
+    <script src="{% static 'geoip/admin/js/geoip-admin.js' %}"></script>
+{% endblock %}

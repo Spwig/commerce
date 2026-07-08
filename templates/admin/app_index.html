@@ -1,0 +1,56 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {{ app_list.0.name }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    {% if app_list %}
+        {% for app in app_list %}
+            <div class="module" style="margin-bottom: 30px;">
+                <table style="width: 100%;">
+                    <caption>
+                        <h2 style="font-size: 1.5em; margin: 0 0 15px 0;">
+                            {{ app.name }}
+                        </h2>
+                    </caption>
+                    {% for model in app.models %}
+                        <tr class="model-{{ model.object_name|lower }}">
+                            <th scope="row">
+                                <a href="{{ model.admin_url }}" style="font-weight: 500;">
+                                    {{ model.name }}
+                                </a>
+                            </th>
+                            <td>
+                                {% if model.add_url %}
+                                    <a href="{{ model.add_url }}" class="addlink">
+                                        {% trans 'Add' %}
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if model.admin_url %}
+                                    <a href="{{ model.admin_url }}" class="changelink">
+                                        {% if model.view_only %}
+                                            {% trans 'View' %}
+                                        {% else %}
+                                            {% trans 'Change' %}
+                                        {% endif %}
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>{% trans "You don't have permission to view or edit anything." %}</p>
+    {% endif %}
+</div>
+{% endblock %}

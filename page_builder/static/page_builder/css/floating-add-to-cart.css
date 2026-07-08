@@ -1,0 +1,156 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* =============================================================================
+   Floating Add-to-Cart Bar
+   Sticky bar shown when the main add-to-cart button scrolls out of view.
+   Controlled by product-floating-cart.js
+   ============================================================================= */
+
+.floating-cart-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    background: var(--theme-surface-color, #fff);
+    box-shadow: var(--theme-shadow-lg, 0 -2px 12px rgba(0, 0, 0, 0.1));
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.floating-cart-bar--bottom {
+    bottom: 0;
+    transform: translateY(100%);
+}
+
+.floating-cart-bar--top {
+    top: 0;
+    transform: translateY(-100%);
+    box-shadow: var(--theme-shadow-lg, 0 2px 12px rgba(0, 0, 0, 0.1));
+}
+
+.floating-cart-bar.floating-cart-bar--visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.floating-cart-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    max-width: var(--theme-container-width, 1280px);
+    margin: 0 auto;
+}
+
+.floating-cart-bar__product {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.floating-cart-bar__image {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: var(--theme-border-radius, 8px);
+    flex-shrink: 0;
+}
+
+.floating-cart-bar__details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.floating-cart-bar__name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--theme-text-color, #1a1a2e);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.floating-cart-bar__price {
+    font-size: 0.875rem;
+    color: var(--theme-text-muted, #6b7280);
+    line-height: 1.3;
+}
+
+.floating-cart-bar__price .price--sale {
+    color: var(--theme-sale-color, #dc2626);
+    font-weight: 600;
+}
+
+.floating-cart-bar__price .price--compare {
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+    font-size: 0.8125rem;
+}
+
+.floating-cart-bar__actions {
+    flex-shrink: 0;
+}
+
+.floating-cart-bar__btn {
+    padding: 0.625rem 1.5rem;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+}
+
+.floating-cart-bar__btn i {
+    margin-right: 0.375rem;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+    .floating-cart-bar__inner {
+        padding: 0.625rem 1rem;
+    }
+
+    .floating-cart-bar__image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .floating-cart-bar__name {
+        font-size: 0.8125rem;
+    }
+
+    .floating-cart-bar__price {
+        font-size: 0.8125rem;
+    }
+
+    .floating-cart-bar__btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .floating-cart-bar__btn span {
+        display: none;
+    }
+
+    .floating-cart-bar__btn i {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-cart-bar__details {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .floating-cart-bar__image {
+        display: none;
+    }
+}

@@ -1,0 +1,93 @@
+{% load i18n static element_tags merchant_trans %}
+<!-- Gift Card Promo Element -->
+<section class="gift-card-promo gift-card-promo--{{ element.content.style|default:'card' }}"
+         {% hover_animation_attrs element %}
+         style="--gc-primary: {{ element.content.primary_color|default:'#6366f1' }}; --gc-secondary: {{ element.content.secondary_color|default:'#ec4899' }};
+                {% base_styles element %}">
+
+    <div class="gift-card-promo__container">
+        {% if element.content.image %}
+        <div class="gift-card-promo__image-wrapper">
+            <img src="{{ element.content.image }}" alt="{% mtrans 'Gift Card' %}" class="gift-card-promo__image" loading="lazy">
+        </div>
+        {% else %}
+        <div class="gift-card-promo__visual">
+            <div class="gift-card-promo__card-preview">
+                <div class="gift-card-promo__card-gradient"></div>
+                <i class="fas fa-gift gift-card-promo__card-icon"></i>
+                <span class="gift-card-promo__card-text">{% mtrans "Gift Card" %}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="gift-card-promo__content">
+            <h2 class="gift-card-promo__title">{{ element.content.title }}</h2>
+            <p class="gift-card-promo__description">{{ element.content.description }}</p>
+
+            {% if element.content.show_denominations|default:True %}
+            <div class="gift-card-promo__denominations gift-card-promo__denominations--{{ element.content.denominations_display|default:'buttons' }}">
+                <span class="gift-card-promo__denom-label">{% mtrans "Select Amount:" %}</span>
+
+                {% if element.content.denominations_display == 'dropdown' %}
+                <select class="gift-card-promo__select">
+                    {% for denom in element.content.denominations %}
+                    <option value="{{ denom.value }}">{{ denom.label }}</option>
+                    {% endfor %}
+                    {% if element.content.allow_custom_amount %}
+                    <option value="custom">{% mtrans "Custom Amount" %}</option>
+                    {% endif %}
+                </select>
+                {% elif element.content.denominations_display == 'cards' %}
+                <div class="gift-card-promo__denom-cards">
+                    {% for denom in element.content.denominations %}
+                    <button class="gift-card-promo__denom-card{% if forloop.first %} gift-card-promo__denom-card--selected{% endif %}" data-value="{{ denom.value }}">
+                        {{ denom.label }}
+                    </button>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="gift-card-promo__denom-buttons">
+                    {% for denom in element.content.denominations %}
+                    <button class="gift-card-promo__denom-btn{% if forloop.first %} gift-card-promo__denom-btn--selected{% endif %}" data-value="{{ denom.value }}">
+                        {{ denom.label }}
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if element.content.allow_custom_amount %}
+                <div class="gift-card-promo__custom">
+                    <label class="gift-card-promo__custom-label">{% mtrans "Or enter custom amount:" %}</label>
+                    <div class="gift-card-promo__custom-input-wrapper">
+                        <span class="gift-card-promo__currency">$</span>
+                        <input type="number"
+                               class="gift-card-promo__custom-input"
+                               min="{{ element.content.min_amount|default:10 }}"
+                               max="{{ element.content.max_amount|default:500 }}"
+                               placeholder="{{ element.content.min_amount|default:10 }} - {{ element.content.max_amount|default:500 }}">
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <a href="{{ element.content.button_url|default:'/gift-cards/' }}" class="gift-card-promo__btn">
+                <i class="fas fa-shopping-cart"></i>
+                {{ element.content.button_text }}
+            </a>
+
+            <div class="gift-card-promo__features">
+                <span class="gift-card-promo__feature">
+                    <i class="fas fa-bolt"></i>
+                    {% mtrans "Instant Delivery" %}
+                </span>
+                <span class="gift-card-promo__feature">
+                    <i class="fas fa-infinity"></i>
+                    {% mtrans "Never Expires" %}
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Denomination selection JS loaded via config.json scripts — gift-card-promo.js #}

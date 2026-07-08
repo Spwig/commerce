@@ -1,0 +1,143 @@
+{% load static i18n theme_tags %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}{% trans "Affiliate Portal" context "portal" %}{% endblock %} | {{ site_settings.site_name }}</title>
+
+    {# Favicon #}
+    {% if site_settings.get_favicon_url %}
+    <link rel="icon" href="{{ site_settings.get_favicon_url }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ site_settings.get_favicon_url }}" type="image/x-icon">
+    {% endif %}
+
+    {# CSS Loading Order: Base -> Theme Variables -> Brand Overrides -> Affiliate #}
+
+    {# 1. Base Component CSS (structure, layouts, utilities) #}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" media="all">
+
+    {# 2. Theme Variables CSS (colors, typography, spacing) #}
+    {% active_theme_css_url as theme_css %}
+    {% if theme_css %}
+        <link rel="stylesheet" href="{{ theme_css }}" media="all">
+    {% endif %}
+
+    {# 3. Brand/Custom Tokens from branding builder (if available) #}
+    {% if brand_css_url %}
+        <link rel="stylesheet" href="{{ brand_css_url }}" media="all">
+    {% endif %}
+
+    {# 4. Affiliate-specific CSS #}
+    <link rel="stylesheet" href="{% static 'affiliate/css/affiliate.css' %}">
+
+    {# Font Awesome Icons #}
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="affiliate-portal-body">
+    <form class="hidden">{% csrf_token %}</form>
+    <div class="affiliate-portal">
+        {% block header %}
+        <header class="affiliate-header">
+            <nav class="affiliate-nav">
+                {% if user.is_authenticated and user.affiliate_profile %}
+                    {# Full navigation for logged-in affiliates #}
+                    <a href="{% url 'affiliate:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <i class="fas fa-home"></i>
+                        <span>{% trans "Dashboard" context "navigation" %}</span>
+                    </a>
+                    <a href="{% url 'affiliate:programs' %}" class="{% if request.resolver_match.url_name == 'programs' %}active{% endif %}">
+                        <i class="fas fa-briefcase"></i>
+                        <span>{% trans "Programs" context "navigation" %}</span>
+                    </a>
+                    <a href="{% url 'affiliate:links' %}" class="{% if request.resolver_match.url_name == 'links' %}active{% endif %}">
+                        <i class="fas fa-link"></i>
+                        <span>{% trans "Links" context "navigation" %}</span>
+                    </a>
+                    <a href="{% url 'affiliate:commissions' %}" class="{% if request.resolver_match.url_name == 'commissions' %}active{% endif %}">
+                        <i class="fas fa-coins"></i>
+                        <span>{% trans "Commissions" context "navigation" %}</span>
+                    </a>
+                    <a href="{% url 'affiliate:payouts' %}" class="{% if request.resolver_match.url_name == 'payouts' %}active{% endif %}">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>{% trans "Payouts" context "navigation" %}</span>
+                    </a>
+                {% else %}
+                    {# Minimal navigation for non-affiliates and guests #}
+                    <a href="/">
+                        <i class="fas fa-store"></i>
+                        <span>{% trans "Return to Store" context "navigation" %}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'affiliate:portal' %}">
+                            <i class="fas fa-users"></i>
+                            <span>{% trans "Affiliate Program" context "navigation" %}</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'account_login' %}?next={{ request.path }}">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>{% trans "Login" context "navigation" %}</span>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </nav>
+        </header>
+        {% endblock %}
+
+        <main class="affiliate-content">
+            {% block messages %}
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endblock %}
+
+            {% block content_header %}
+            <div class="affiliate-header">
+                <h1>{% block page_title %}{% trans "Affiliate Portal" context "portal" %}{% endblock %}</h1>
+                {% block page_description %}{% endblock %}
+            </div>
+            {% endblock %}
+
+            {% block content %}
+            {# Main content goes here #}
+            {% endblock %}
+        </main>
+
+        {% block footer %}
+        <footer class="affiliate-footer">
+            <p>
+                {% blocktrans with year=current_year site_name=site_settings.site_name %}
+                    &copy; {{ year }} {{ site_name }}. All rights reserved.
+                {% endblocktrans %}
+            </p>
+            <p>
+                <small>{% trans "Powered by Spwig Affiliate Management System" context "footer" %}</small>
+            </p>
+        </footer>
+        {% endblock %}
+    </div>
+
+    {# JavaScript #}
+    <script src="{% static 'affiliate/js/affiliate-portal.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

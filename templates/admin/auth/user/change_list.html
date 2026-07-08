@@ -1,0 +1,188 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static humanize %}
+
+{% block title %}{% trans "Users" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'accounts/admin/js/user-list.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {# Page Header #}
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-users"></i>
+                {% trans "User Management" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage user accounts, staff permissions, and access control" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:auth_user_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add User" %}
+            </a>
+        </div>
+    </div>
+
+    {# Stats #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value">{{ total_count|default:"0" }}</div>
+            <div class="label">{% trans "Total Users" %}</div>
+            <small class="stat-meta">{% trans "all accounts" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-user-tie"></i></div>
+            <div class="value">{{ staff_count|default:"0" }}</div>
+            <div class="label">{% trans "Staff Members" %}</div>
+            <small class="stat-meta">{% trans "with admin access" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ active_count|default:"0" }}</div>
+            <div class="label">{% trans "Active Users" %}</div>
+            <small class="stat-meta">{% trans "can login" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-crown"></i></div>
+            <div class="value">{{ superuser_count|default:"0" }}</div>
+            <div class="label">{% trans "Superusers" %}</div>
+            <small class="stat-meta">{% trans "full access" %}</small>
+        </div>
+    </div>
+
+    {# Filters Panel #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            {# Search #}
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Username, email, name...' %}"
+                    value="">
+            </div>
+
+            {# Staff Status #}
+            <div class="filter-field">
+                <label for="filter-staff">
+                    <i class="fas fa-user-tie"></i> {% trans "Staff Status" %}
+                </label>
+                <select id="filter-staff">
+                    <option value="">{% trans "All Users" %}</option>
+                    <option value="true">{% trans "Staff Only" %}</option>
+                    <option value="false">{% trans "Non-Staff" %}</option>
+                </select>
+            </div>
+
+            {# Active Status #}
+            <div class="filter-field">
+                <label for="filter-active">
+                    <i class="fas fa-toggle-on"></i> {% trans "Active Status" %}
+                </label>
+                <select id="filter-active">
+                    <option value="">{% trans "All Users" %}</option>
+                    <option value="true">{% trans "Active" %}</option>
+                    <option value="false">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            {# Superuser Status #}
+            <div class="filter-field">
+                <label for="filter-superuser">
+                    <i class="fas fa-crown"></i> {% trans "Superuser" %}
+                </label>
+                <select id="filter-superuser">
+                    <option value="">{% trans "All Users" %}</option>
+                    <option value="true">{% trans "Superusers" %}</option>
+                    <option value="false">{% trans "Regular Users" %}</option>
+                </select>
+            </div>
+
+            {# Groups Filter #}
+            <div class="filter-field">
+                <label for="filter-group">
+                    <i class="fas fa-users-cog"></i> {% trans "Group" %}
+                </label>
+                <select id="filter-group">
+                    <option value="">{% trans "All Groups" %}</option>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Results Info #}
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-users"></i>
+            <span id="user-count">{{ cl.result_count }}</span>
+            {% trans "user" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    {# Actions bar for bulk operations #}
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-user" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {# User Cards Results #}
+    <div id="user-results">
+        {% include "admin/auth/user/partials/user_cards.html" with users=cl.result_list %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    {# Pagination #}
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 user{% plural %}{{ counter }} users{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'users' %}
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

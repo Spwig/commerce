@@ -1,0 +1,20 @@
+{% load element_builder_tags %}
+{# Custom Element Wrapper Template
+   Used when custom elements are rendered within page_builder.
+   Receives: custom_element, model_instance, request
+#}
+
+{% if custom_element and custom_element.root_element %}
+<div class="pb-custom-element"
+     data-custom-element="{{ custom_element.slug }}"
+     data-target-model="{{ custom_element.target_model }}"
+     {% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+     {% if element.content.custom_class %}class="pb-custom-element {{ element.content.custom_class }}"{% endif %}>
+
+    {# Render the custom element tree with bindings applied #}
+    {% render_custom_element custom_element model_instance %}
+
+</div>
+{% else %}
+<!-- Custom element "{{ custom_element.slug|default:'unknown' }}" has no structure defined -->
+{% endif %}

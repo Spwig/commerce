@@ -1,0 +1,263 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit SMS Provider" %}: {{ original.display_name }}{% else %}{% trans "Add SMS Provider" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'sms_system/css/smsprovideraccount_change_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="smsprovideraccount-change-form">
+
+    {# --- HEADER --- #}
+    {% if not is_popup %}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    {% if original %}
+                        <i class="fas fa-sms"></i> {% trans "Edit SMS Provider" %}: {{ original.display_name }}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Add SMS Provider" %}
+                    {% endif %}
+                </h1>
+                {% if original %}
+                <div class="header-meta">
+                    <span class="meta-item"><i class="fas fa-plug"></i> {{ original.provider_key }}</span>
+                    <span class="meta-item"><i class="fas fa-calendar"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                    {% if original.is_active %}
+                    <span class="status-badge active">{% trans "Active" %}</span>
+                    {% else %}
+                    <span class="status-badge inactive">{% trans "Inactive" %}</span>
+                    {% endif %}
+                    {% if original.is_default_sms %}
+                    <span class="status-badge default-sms"><i class="fas fa-comment"></i> {% trans "Default SMS" %}</span>
+                    {% endif %}
+                    {% if original.is_default_whatsapp %}
+                    <span class="status-badge default-wa"><i class="fab fa-whatsapp"></i> {% trans "Default WhatsApp" %}</span>
+                    {% endif %}
+                    {% if original.connection_status == 'success' %}
+                    <span class="status-badge connected"><i class="fas fa-check-circle"></i> {% trans "Connected" %}</span>
+                    {% elif original.connection_status == 'failed' %}
+                    <span class="status-badge error"><i class="fas fa-exclamation-triangle"></i> {% trans "Failed" %}</span>
+                    {% else %}
+                    <span class="status-badge unknown"><i class="fas fa-question-circle"></i> {% trans "Untested" %}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="sms-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="sms-save-btn" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- ERROR BANNER --- #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# --- FORM --- #}
+    <form method="post" id="smsprovideraccount_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {# --- TAB NAVIGATION --- #}
+        {% if not is_popup %}
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="credentials" role="tab" aria-selected="false">
+                <i class="fas fa-key"></i>
+                <span class="label">{% trans "Credentials" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="defaults" role="tab" aria-selected="false">
+                <i class="fas fa-star"></i>
+                <span class="label">{% trans "Defaults" %}</span>
+            </button>
+            {% if original %}
+            <button type="button" class="admin-tab-btn" data-tab="status" role="tab" aria-selected="false">
+                <i class="fas fa-signal"></i>
+                <span class="label">{% trans "Status" %}</span>
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# === TAB: BASIC === #}
+        <div class="admin-tab-content active" id="tab-basic" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-basic' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.field.name == 'is_active' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: CREDENTIALS === #}
+        <div class="admin-tab-content" id="tab-credentials" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-credentials' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-key"></i> {% trans "Provider Credentials" %}</h2>
+                    {% if fieldset.description %}
+                    <p class="form-card-description">{{ fieldset.description }}</p>
+                    {% endif %}
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% empty %}
+                        <p class="form-card-description form-card-description-compact">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Select a provider in the Basic tab to see credential fields." %}
+                        </p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: DEFAULTS === #}
+        <div class="admin-tab-content" id="tab-defaults" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-defaults' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-star"></i> {% trans "Default Settings" %}</h2>
+                    <p class="form-card-description">{% trans "Configure which messaging channels use this provider by default." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.field.label }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# === TAB: STATUS (edit-only) === #}
+        {% if original %}
+        <div class="admin-tab-content" id="tab-status" role="tabpanel">
+            {# Connection Status #}
+            {% for fieldset in adminform %}
+                {% if 'tab-status' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-signal"></i> {% trans "Connection Status" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.is_readonly %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                <div class="readonly">{{ field.contents }}</div>
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            {# Timestamps #}
+            {% for fieldset in adminform %}
+                {% if 'tab-timestamps' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-clock"></i> {% trans "Timestamps" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if field.is_readonly %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                <div class="readonly">{{ field.contents }}</div>
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {# --- HIDDEN SUBMIT ROW --- #}
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'sms_system/js/smsprovideraccount_change_form.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n currency_tags %}
+
+{% block title %}{% trans "Cohort Dashboard" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'customers/css/ltv_admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Deprecation Notice -->
+    <div class="deprecation-notice">
+        <i class="fas fa-exclamation-triangle deprecation-icon"></i>
+        <div>
+            <strong>{% trans "Notice: This dashboard has been moved" %}</strong>
+            <p>
+                {% trans "Cohort analytics are now integrated into the main Customer Analytics dashboard. Please use the" %}
+                <a href="{% url 'customers:dashboard' %}?tab=cohorts">
+                    {% trans "Customer Analytics > Cohort Analytics" %}
+                </a>
+                {% trans "tab instead. This standalone dashboard will be removed in a future update." %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-users-cog"></i>
+            {% trans "Customer Cohort Analytics" %}
+        </h1>
+        <p class="subtitle">
+            {% trans "Track customer retention, lifetime value, and behavior by acquisition cohort" %}
+        </p>
+    </div>
+
+    <!-- Cohort Summary Stats -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+            <div class="stat-value">{{ total_cohorts }}</div>
+            <div class="stat-label">{% trans "Total Cohorts" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-value">{{ customers_in_cohorts }}</div>
+            <div class="stat-label">{% trans "Customers in Cohorts" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+            <div class="stat-value">
+                {% if best_cohort %}
+                    {{ best_cohort.average_ltv.amount|format_currency:site_settings.default_currency }}
+                {% else %}
+                    --
+                {% endif %}
+            </div>
+            <div class="stat-label">
+                {% trans "Best Cohort LTV" %}
+                {% if best_cohort %}
+                    <small>({{ best_cohort.cohort_date|date:"M Y" }})</small>
+                {% endif %}
+            </div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-plus"></i></div>
+            <div class="stat-value">
+                {% if newest_cohort %}
+                    {{ newest_cohort.customer_count }}
+                {% else %}
+                    --
+                {% endif %}
+            </div>
+            <div class="stat-label">
+                {% trans "Latest Cohort Size" %}
+                {% if newest_cohort %}
+                    <small>({{ newest_cohort.cohort_date|date:"M Y" }})</small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-actions-section">
+        <h2 class="dashboard-section-title">
+            <i class="fas fa-bolt"></i>
+            {% trans "Quick Actions" %}
+        </h2>
+        <div class="dashboard-actions-grid">
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h3>{% trans "LTV Settings" %}</h3>
+                <p class="description">{% trans "Configure calculation methods" %}</p>
+                <a href="{% url 'customers:ltv_settings' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Configure" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-sync"></i>
+                </div>
+                <h3>{% trans "Rebuild Cohorts" %}</h3>
+                <p class="description">{% trans "Recalculate all cohort metrics" %}</p>
+                <button id="rebuildCohortsButton" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Rebuild" %}
+                </button>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>{% trans "Customer Dashboard" %}</h3>
+                <p class="description">{% trans "View customer analytics" %}</p>
+                <a href="{% url 'customers:dashboard' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cohort Comparison Chart -->
+    <div class="dashboard-section">
+        <h2>
+            <i class="fas fa-chart-bar"></i>
+            {% trans "Cohort Comparison" %}
+        </h2>
+        <p class="help-text">
+            {% trans "Compare lifetime value and retention across different customer cohorts" %}
+        </p>
+
+        <div class="chart-tabs">
+            <button class="chart-tab active" data-chart="ltv">
+                {% trans "Average LTV" %}
+            </button>
+            <button class="chart-tab" data-chart="retention">
+                {% trans "Retention Rate" %}
+            </button>
+            <button class="chart-tab" data-chart="customers">
+                {% trans "Cohort Size" %}
+            </button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="cohortComparisonChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Cohort Details Table -->
+    <div class="dashboard-section">
+        <h2>
+            <i class="fas fa-table"></i>
+            {% trans "Cohort Details" %}
+        </h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped cohort-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Cohort" %}</th>
+                        <th>{% trans "Customers" %}</th>
+                        <th>{% trans "Total Revenue" %}</th>
+                        <th>{% trans "Avg LTV" %}</th>
+                        <th>{% trans "Avg Orders" %}</th>
+                        <th>{% trans "Retention (3M)" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cohort in cohorts %}
+                    <tr data-cohort-id="{{ cohort.id }}">
+                        <td>
+                            <strong>{{ cohort.cohort_date|date:"F Y" }}</strong>
+                            <br>
+                            <small class="text-muted">{{ cohort.cohort_date|timesince }} {% trans "ago" %}</small>
+                        </td>
+                        <td>
+                            <span class="value-highlight">{{ cohort.customer_count }}</span>
+                        </td>
+                        <td>
+                            {% if cohort.total_revenue %}
+                                {{ cohort.total_revenue.amount|format_currency:site_settings.default_currency }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if cohort.average_ltv %}
+                                <span class="ltv-badge">
+                                    {{ cohort.average_ltv.amount|format_currency:site_settings.default_currency }}
+                                </span>
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ cohort.average_orders|floatformat:1|default:"--" }}
+                        </td>
+                        <td>
+                            {% if cohort.retention_rate_month_3 %}
+                                <div class="retention-bar">
+                                    <div class="retention-fill" data-width style="--retention-width: {{ cohort.retention_rate_month_3 }}%"></div>
+                                    <span class="retention-label">{{ cohort.retention_rate_month_3|floatformat:0 }}%</span>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">{% trans "Too new" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn-icon view-cohort-details"
+                                    data-cohort-id="{{ cohort.id }}"
+                                    data-cohort-name="{{ cohort.cohort_date|date:'F Y' }}"
+                                    title="{% trans 'View retention curve' %}">
+                                <i class="fas fa-chart-line"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <p class="empty-state">
+                                <i class="fas fa-inbox"></i><br>
+                                {% trans "No cohorts found. Cohorts will be created automatically as customers make their first purchases." %}
+                            </p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Retention Curve Modal -->
+    <div id="retentionModal" class="admin-modal-overlay">
+        <div class="admin-modal admin-modal--lg">
+            <div class="admin-modal-header">
+                <h2 class="admin-modal-title" id="modalCohortName">{% trans "Cohort Retention Curve" %}</h2>
+                <button class="admin-modal-close" data-action="close-retention-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal-body">
+                <div class="chart-container">
+                    <canvas id="retentionCurveChart"></canvas>
+                </div>
+                <div id="retentionStats" class="retention-stats"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="cohort-dashboard-data">
+{
+    "config": {
+        "cohortDataApiUrl": "{% url 'customers:cohort_data_api' %}",
+        "recalculateLtvUrl": "{% url 'customers:recalculate_ltv' %}",
+        "csrfToken": "{{ csrf_token }}"
+    },
+    "translations": {
+        "averageLtv": "{% trans 'Average LTV' %}",
+        "lifetimeValue": "{% trans 'Lifetime Value ($)' %}",
+        "retentionRate3m": "{% trans 'Retention Rate (3M)' %}",
+        "retentionPercent": "{% trans 'Retention (%)' %}",
+        "cohortSize": "{% trans 'Cohort Size' %}",
+        "numberOfCustomers": "{% trans 'Number of Customers' %}",
+        "cohortMonth": "{% trans 'Cohort Month' %}",
+        "rebuildConfirm": "{% trans 'This will rebuild all cohorts and recalculate metrics. Continue?' %}",
+        "retentionCurve": "{% trans 'Retention Curve' %}",
+        "notEnoughData": "{% trans 'Not enough data for retention curve' %}",
+        "month": "{% trans 'Month' %}",
+        "retentionRate": "{% trans 'Retention Rate' %}",
+        "monthsSinceFirstPurchase": "{% trans 'Months Since First Purchase' %}",
+        "cohortSizeLabel": "{% trans 'Cohort Size' %}:",
+        "totalRevenueLabel": "{% trans 'Total Revenue' %}:",
+        "avgLtvLabel": "{% trans 'Avg LTV' %}:",
+        "rebuilding": "{% trans 'Rebuilding...' %}",
+        "rebuildQueued": "{% trans 'Cohort rebuild task queued. This may take several minutes.' %}",
+        "errorRebuilding": "{% trans 'Error rebuilding cohorts' %}",
+        "rebuildLabel": "{% trans 'Rebuild' %}",
+        "networkError": "{% trans 'Network error. Please try again.' %}"
+    }
+}
+</script>
+<script src="{% static 'customers/js/cohort_dashboard.js' %}"></script>
+{% endblock %}

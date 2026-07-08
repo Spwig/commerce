@@ -1,0 +1,28 @@
+{% load i18n %}
+{% if results %}
+    <div class="customer-results-list">
+        {% for result in results %}
+            <div class="customer-result-item" data-customer-id="{{ result.id }}" data-email="{{ result.email }}" data-full-name="{{ result.full_name }}">
+                <div class="customer-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <div class="customer-info">
+                    <div class="customer-name">{{ result.display_name }}</div>
+                    <div class="customer-email">{{ result.email }}</div>
+                </div>
+
+                <div class="customer-actions">
+                    <button type="button" class="btn btn-sm btn-primary btn-select-customer" data-id="{{ result.id }}">
+                        {% trans "Select" %}
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="no-results">
+        <i class="fas fa-search"></i>
+        <p>{% trans "No customers found matching" %} "{{ search_term }}"</p>
+    </div>
+{% endif %}

@@ -1,0 +1,146 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for subscriber in subscribers %}
+    <div class="list-row-card{% if not subscriber.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ subscriber.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-user-circle text-primary icon-size-32"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:blog_blogsubscriber_change' subscriber.pk %}">
+                    {{ subscriber.email }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if subscriber.name %}
+                    <i class="fas fa-id-badge"></i> {{ subscriber.name }}
+                {% else %}
+                    <i class="fas fa-id-badge"></i> {% trans "No name provided" %}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Verification Status -->
+                {% if subscriber.verification_status == 'verified' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Verified" %}
+                    </span>
+                {% elif subscriber.verification_status == 'pending' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Bounced" %}
+                    </span>
+                {% endif %}
+
+                <!-- Active Status -->
+                {% if subscriber.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-toggle-on"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-toggle-off"></i> {% trans "Unsubscribed" %}
+                    </span>
+                {% endif %}
+
+                <!-- Frequency -->
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-bell"></i> {{ subscriber.get_notification_frequency_display }}
+                </span>
+
+                <!-- Language -->
+                {% if subscriber.language_code %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-language"></i> {{ subscriber.language_code|upper }}
+                    </span>
+                {% endif %}
+
+                <!-- Linked User -->
+                {% if subscriber.user %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-user-check"></i> {% trans "Registered User" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Categories" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        {% if subscriber.subscribed_categories.count > 0 %}
+                            {{ subscriber.subscribed_categories.count }}
+                        {% else %}
+                            {% trans "All" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if subscriber.verified_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-check-double"></i>
+                    <span>{% trans "Verified" %}: {{ subscriber.verified_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if subscriber.last_digest_sent_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>{% trans "Last digest" %}: {{ subscriber.last_digest_sent_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Subscribed" %}: {{ subscriber.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if subscriber.unsubscribed_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-times"></i>
+                    <span>{% trans "Unsubscribed" %}: {{ subscriber.unsubscribed_at|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:blog_blogsubscriber_change' subscriber.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit subscriber' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if subscriber.user %}
+            <a href="{% url 'admin:accounts_user_change' subscriber.user.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View user account' %}">
+                <i class="fas fa-user"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:blog_blogsubscriber_delete' subscriber.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete subscriber' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-users-slash"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No subscribers found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,234 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "POS Terminals" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'pos_app/css/pos_changelist.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="pos-terminals-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-cash-register"></i>
+                {% trans "POS Terminals" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage your point-of-sale terminals and device pairings" %}</p>
+        </div>
+        {% if has_store_locations %}
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:pos_app_posterminal_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Terminal" %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not has_store_locations %}
+    <!-- Store Location Setup Panel -->
+    <div class="pos-store-setup">
+        <div class="pos-store-setup-header">
+            <i class="fas fa-store"></i>
+            <div>
+                <h2>{% trans "Set Up Your Store Location" %}</h2>
+                <p>{% trans "Before adding POS terminals, you need to designate at least one warehouse as a physical store location." %}</p>
+            </div>
+        </div>
+
+        {% if main_warehouse %}
+        <!-- Single warehouse: quick enable -->
+        <div class="pos-store-setup-card" id="store-setup-card">
+            <div class="pos-store-setup-card-header">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <strong>{{ main_warehouse.name }}</strong>
+                    {% if main_warehouse.address_line1 %}
+                    <span class="pos-store-setup-address">
+                        {{ main_warehouse.address_line1 }}{% if main_warehouse.city %}, {{ main_warehouse.city }}{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="pos-store-setup-field">
+                <label for="store-display-name">{% trans "Store Display Name" %}</label>
+                <input type="text"
+                       id="store-display-name"
+                       value="{{ main_warehouse.name }}"
+                       placeholder="{% trans 'e.g. Downtown Store' %}"
+                       maxlength="200">
+                <p class="help">{% trans "A short name shown in the POS interface and on receipts." %}</p>
+            </div>
+
+            <button type="button" class="button primary" id="enable-store-btn"
+                    data-warehouse-id="{{ main_warehouse.pk }}">
+                <i class="fas fa-check"></i> {% trans "Enable as Store Location" %}
+            </button>
+        </div>
+
+        {% elif warehouse_count > 1 %}
+        <!-- Multiple warehouses: direct to warehouse admin -->
+        <div class="pos-store-setup-card">
+            <p>
+                {% blocktrans with count=warehouse_count %}
+                You have {{ count }} warehouses configured. Enable "POS / Retail Store" on the warehouses that have physical store locations with POS terminals.
+                {% endblocktrans %}
+            </p>
+            <a href="{% url 'admin:catalog_warehouse_changelist' %}" class="button primary">
+                <i class="fas fa-warehouse"></i> {% trans "Go to Warehouse Management" %}
+            </a>
+        </div>
+
+        {% else %}
+        <!-- No warehouses at all -->
+        <div class="pos-store-setup-card">
+            <p>{% trans "You need to create a warehouse first. A warehouse represents a location where your stock is kept, including physical stores." %}</p>
+            <a href="{% url 'admin:catalog_warehouse_add' %}" class="button primary">
+                <i class="fas fa-plus"></i> {% trans "Create Warehouse" %}
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="pos-store-setup-hint">
+            <i class="fas fa-info-circle"></i>
+            {% blocktrans %}
+            Need multiple store locations? You can enable any warehouse as a store location from <strong>Warehouse Management</strong>.
+            {% endblocktrans %}
+            <a href="{% url 'admin:catalog_warehouse_changelist' %}">{% trans "Manage Warehouses" %}</a>
+        </div>
+    </div>
+
+    {% else %}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or pairing code...' %}"
+                    value="">
+            </div>
+
+            <!-- Warehouse -->
+            <div class="filter-field">
+                <label for="filter-warehouse">
+                    <i class="fas fa-store"></i> {% trans "Store Location" %}
+                </label>
+                <select id="filter-warehouse">
+                    <option value="">{% trans "All Locations" %}</option>
+                    {% for wh in warehouses %}
+                    <option value="{{ wh.id }}">{{ wh.pos_display_name|default:wh.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- Connection -->
+            <div class="filter-field">
+                <label for="filter-connection">
+                    <i class="fas fa-wifi"></i> {% trans "Connection" %}
+                </label>
+                <select id="filter-connection">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="online">{% trans "Online" %}</option>
+                    <option value="offline">{% trans "Offline" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters">
+                <span class="active-filters-label">{% trans "Active:" %}</span>
+            </div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Terminals" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-cash-register"></i>
+            <span id="terminal-count">{{ cl.result_count }}</span> {% trans "terminal" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="terminal-results">
+        {% include "admin/pos_app/posterminal/partials/terminal_cards.html" with terminals=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count > 0 %}
+    <p class="paginator">
+        {{ cl.result_count }} {% trans "terminal" %}{{ cl.result_count|pluralize }}
+        {% if cl.show_all_url %}
+            | <a href="{{ cl.show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    {% endif %}
+
+    <script type="application/json" id="terminal-list-translations">
+    {
+        "enabling": "{% trans 'Enabling...' %}",
+        "enableStoreLocation": "{% trans 'Enable as Store Location' %}",
+        "somethingWentWrong": "{% trans 'Something went wrong. Please try again.' %}",
+        "confirmUnlock": "{% trans 'Send remote unlock signal to this terminal?' %}",
+        "failedUnlock": "{% trans 'Failed to unlock terminal.' %}"
+    }
+    </script>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'pos_app/admin/js/terminal-list.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,63 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Subscription Admin Interface Styles
+ * Only includes subscription-specific overrides
+ * All base styles come from admin-base.css
+ */
+
+/* Subscription-specific: Filter error state display in line 70 of template */
+.subscription-admin-container .list-row-card-description {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline-color);
+}
+
+/* AJAX error state card */
+.card-error-state {
+    text-align: center;
+    padding: 40px;
+    border: 2px dashed var(--error-fg);
+    background: var(--error-bg);
+}
+
+.card-error-icon {
+    color: var(--error-fg);
+}
+
+.card-error-title {
+    color: var(--error-fg);
+}
+
+.card-error-reload-btn {
+    margin-top: 16px;
+}
+
+/* Status badge classes used by admin.py format_html */
+.sub-status {
+    font-weight: bold;
+}
+
+.sub-status-info {
+    color: #3498db;
+}
+
+.sub-status-success {
+    color: #27ae60;
+}
+
+.sub-status-error {
+    color: #e74c3c;
+}
+
+.sub-status-warning {
+    color: #f39c12;
+}
+
+.sub-status-muted {
+    color: #95a5a6;
+}
+
+.sub-status-note {
+    font-weight: normal;
+}

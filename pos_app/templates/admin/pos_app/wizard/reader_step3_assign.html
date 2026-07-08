@@ -1,0 +1,127 @@
+{% extends "admin/pos_app/wizard/reader_base.html" %}
+{% load i18n static %}
+
+{% block wizard_header %}
+<h1>
+    <div class="wizard-icon-large">
+        <i class="fas fa-link"></i>
+    </div>
+    {% trans "Assign to Terminal" %}
+</h1>
+<p class="wizard-subtitle">{% trans "Optionally assign this reader to a POS terminal. You can always change this later." %}</p>
+{% endblock %}
+
+{% block wizard_content %}
+<form method="post" id="assign-form">
+    {% csrf_token %}
+
+    <div class="assign-container">
+        <!-- Reader Summary -->
+        <div class="reader-summary">
+            <div class="reader-summary-icon">
+                {% if reader.reader_type == 'stripe_s700' %}
+                    <i class="fas fa-tablet-alt"></i>
+                {% elif reader.reader_type == 'bbpos_wisepos_e' %}
+                    <i class="fas fa-mobile-alt"></i>
+                {% elif reader.reader_type == 'manual' %}
+                    <i class="fas fa-keyboard"></i>
+                {% else %}
+                    <i class="fas fa-wifi"></i>
+                {% endif %}
+            </div>
+            <div class="reader-summary-info">
+                {% if reader %}
+                    <h3>{{ reader.reader_label }}</h3>
+                    <div class="reader-summary-meta">
+                        <span><i class="fas fa-credit-card"></i> {{ provider.display_name }}</span>
+                        {% if reader.reader_type %}
+                            <span><i class="fas fa-microchip"></i> {{ reader.reader_type }}</span>
+                        {% endif %}
+                        {% if reader.serial_number %}
+                            <span><i class="fas fa-barcode"></i> {{ reader.serial_number }}</span>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <h3>{% trans "New Manual Reader" %}</h3>
+                    <div class="reader-summary-meta">
+                        <span><i class="fas fa-credit-card"></i> {{ provider.display_name }}</span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="reader-summary-status">
+                <span class="status-badge success">
+                    <i class="fas fa-check-circle"></i> {% trans "Ready" %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Configuration Form -->
+        <div class="assign-form-panel">
+            {% if is_manual or not reader %}
+            <div class="form-field">
+                <label for="reader_label">{% trans "Reader Label" %}</label>
+                <input type="text"
+                       id="reader_label"
+                       name="reader_label"
+                       value="{{ reader.reader_label|default:'' }}"
+                       placeholder="{% trans 'e.g., Front Counter Reader' %}"
+                       maxlength="200"
+                       {% if is_manual %}required{% endif %}>
+                <p class="help-text">{% trans "A friendly name to identify this reader." %}</p>
+            </div>
+            {% endif %}
+
+            <div class="form-field">
+                <label for="terminal_id">{% trans "Assign to Terminal" %}</label>
+                <select id="terminal_id" name="terminal_id">
+                    <option value="">{% trans "— Don't assign (configure later)" %}</option>
+                    {% for terminal in terminals %}
+                    <option value="{{ terminal.id }}"
+                            {% if terminal.card_reader %}data-has-reader="true"{% endif %}>
+                        {{ terminal.name }}
+                        {% if terminal.warehouse %}({{ terminal.warehouse.pos_display_name|default:terminal.warehouse.name }}){% endif %}
+                        {% if terminal.card_reader %} — {% trans "Has reader" %}{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                <p class="help-text">{% trans "Select which POS terminal should use this card reader." %}</p>
+            </div>
+
+            <div id="reassign-warning" class="warning-notice pos-hidden">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>{% trans "This terminal already has a card reader assigned. The existing assignment will be removed." %}</p>
+            </div>
+
+            <div class="form-field checkbox-field">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="add_another" id="add_another">
+                    <span class="checkbox-custom"></span>
+                    {% trans "Add another reader after saving" %}
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="wizard-actions">
+        {% if is_manual %}
+        <a href="{% url 'pos_admin:reader_wizard_step1' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        {% else %}
+        <a href="{% url 'pos_admin:reader_wizard_step2' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        {% endif %}
+        <button type="submit" class="btn btn-primary" id="save-btn">
+            <i class="fas fa-check"></i> {% trans "Save & Finish" %}
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script type="application/json" id="reader-step3-i18n">
+{"saveAndAddAnother": "{% trans 'Save & Add Another' %}", "saveAndFinish": "{% trans 'Save & Finish' %}"}
+</script>
+<script src="{% static 'pos_app/admin/js/reader-wizard.js' %}"></script>
+{% endblock %}

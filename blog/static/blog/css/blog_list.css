@@ -1,0 +1,95 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Blog Frontend
+ *
+ * Description: Frontend styles for blog_list.html
+ * Template: blog/templates/blog/blog_list.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - Theme CSS variables (loaded via page_builder/base.html or admin base)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* ==========================================================================
+   Featured Hero
+   ========================================================================== */
+.blog-featured {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .blog-featured {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+    }
+    .blog-featured__primary {
+        grid-row: 1 / 3;
+    }
+}
+
+.blog-featured__primary .blog-card__image-wrapper {
+    aspect-ratio: 16 / 10;
+}
+
+.blog-featured__primary .blog-card__title {
+    font-size: 1.5rem;
+}
+
+.blog-featured__primary .blog-card__excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.blog-featured__secondary .blog-card {
+    flex-direction: row;
+}
+
+@media (min-width: 768px) {
+    .blog-featured__secondary .blog-card__image-wrapper {
+        width: 180px;
+        min-height: 100%;
+        aspect-ratio: auto;
+    }
+}
+
+.blog-featured__secondary .blog-card__title {
+    font-size: 1rem;
+}
+
+.blog-featured__secondary .blog-card__excerpt {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .blog-featured__secondary .blog-card {
+        flex-direction: column;
+    }
+    .blog-featured__secondary .blog-card__image-wrapper {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+.blog-featured__badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    background: var(--theme-color-primary, #2563eb);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 0.25rem;
+    z-index: 1;
+}

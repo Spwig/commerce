@@ -1,0 +1,208 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Payout Providers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'payout_providers/css/admin_provider_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'payout_providers/js/admin_provider_list.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-money-bill-transfer"></i>
+                {% trans "Payout Providers" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage payout provider accounts for affiliate payments" %}</p>
+            <p class="change-list-stats-subtitle">
+                <span id="provider-count">{{ cl.result_count }}</span> {% trans "provider" %}{% if cl.result_count != 1 %}s{% endif %}
+                {% if active_count %}<span class="stat-separator">·</span>{{ active_count }} {% trans "active" %}{% endif %}
+                {% if connected_count %}<span class="stat-separator">·</span>{{ connected_count }} {% trans "connected" %}{% endif %}
+            </p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{{ browse_url }}" class="button primary change-list-action-button">
+                <i class="fas fa-store"></i> {% trans "Browse & Install Providers" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search"><i class="fas fa-search"></i> {% trans "Search" %}</label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Search providers...' %}">
+            </div>
+            <!-- Connection Status -->
+            <div class="filter-field">
+                <label for="filter-status"><i class="fas fa-plug"></i> {% trans "Connection Status" %}</label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="connected">{% trans "Connected" %} ({{ connected_count }})</option>
+                    <option value="failed">{% trans "Failed" %} ({{ failed_count }})</option>
+                    <option value="untested">{% trans "Untested" %} ({{ untested_count }})</option>
+                </select>
+            </div>
+            <!-- Active Status -->
+            <div class="filter-field">
+                <label for="filter-active"><i class="fas fa-toggle-on"></i> {% trans "Active Status" %}</label>
+                <select id="filter-active">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %} ({{ active_count }})</option>
+                    <option value="inactive">{% trans "Inactive" %} ({{ inactive_count }})</option>
+                </select>
+            </div>
+            <!-- Provider Type -->
+            {% if provider_type_counts %}
+            <div class="filter-field">
+                <label for="filter-provider-type"><i class="fas fa-money-bill-transfer"></i> {% trans "Provider Type" %}</label>
+                <select id="filter-provider-type">
+                    <option value="">{% trans "All Provider Types" %}</option>
+                    {% for type_data in provider_type_counts %}
+                    <option value="{{ type_data.type }}">{{ type_data.name }} ({{ type_data.count }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+        </div>
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div class="provider-toolbar">
+        <div class="toolbar-left">
+            <div class="bulk-actions">
+                <select id="bulk-action-select" class="bulk-action-dropdown">
+                    <option value="">{% trans "Bulk Actions" %}</option>
+                    <option value="enable">{% trans "Enable Selected" %}</option>
+                    <option value="disable">{% trans "Disable Selected" %}</option>
+                    <option value="set_default">{% trans "Set as Default" %}</option>
+                    <option value="test_connection">{% trans "Test Connections" %}</option>
+                    <option value="delete">{% trans "Delete Selected" %}</option>
+                </select>
+                <button id="apply-bulk-action" class="button" disabled>{% trans "Apply" %}</button>
+                <span id="selected-count" class="selected-count payout-hidden">
+                    <span id="selected-number">0</span> {% trans "selected" %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Select All -->
+    <div class="select-all-bar">
+        <label>
+            <input type="checkbox" id="select-all-providers">
+            {% trans "Select All" %}
+        </label>
+    </div>
+
+    <!-- Results Container (loaded via AJAX) -->
+    <div id="provider-results">
+        {% if cl.result_list %}
+            <div class="providers-grid">
+                {% for provider in cl.result_list %}
+                    {% include "admin/payout_providers/payoutprovideraccount/provider_card.html" %}
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if cl.result_count > 20 %}
+                <div class="pagination-container">
+                    {% if cl.result_count %}
+                        <p class="pagination-info">
+                            {% blocktrans count counter=cl.result_count %}{{ counter }} provider{% plural %}{{ counter }} providers{% endblocktrans %}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <i class="fas fa-money-bill-transfer"></i>
+                <h2>{% trans "No payout provider accounts found" %}</h2>
+                <p>{% trans "Get started by connecting your first payout provider for affiliate payments." %}</p>
+                <a href="{{ browse_url }}" class="button primary">
+                    <i class="fas fa-store"></i> {% trans "Browse & Install Providers" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay payout-hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading..." %}</p>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- i18n Data Island for JavaScript -->
+    <script type="application/json" id="payout-providers-i18n">
+    {
+        "active": "{% trans 'Active' %}",
+        "inactive": "{% trans 'Inactive' %}",
+        "enable": "{% trans 'Enable' %}",
+        "disable": "{% trans 'Disable' %}",
+        "toggleFailed": "{% trans 'Failed to toggle provider status' %}",
+        "defaultFailed": "{% trans 'Failed to set default provider' %}",
+        "testSuccess": "{% trans 'Connection test successful!' %}",
+        "testFailed": "{% trans 'Connection test failed' %}",
+        "testError": "{% trans 'An error occurred during connection test.' %}",
+        "genericError": "{% trans 'An error occurred. Please try again.' %}",
+        "selectActionWarning": "{% trans 'Please select an action and at least one provider' %}",
+        "confirmDelete": "{% trans 'Are you sure you want to delete {count} provider(s)? This action cannot be undone.' %}",
+        "selectOneDefault": "{% trans 'Please select exactly one provider to set as default' %}",
+        "bulkFailed": "{% trans 'Bulk action failed' %}"
+    }
+    </script>
+
+    <!-- AdminListFilters Init -->
+    <script nonce="{{ request.csp_nonce }}">
+    document.addEventListener('DOMContentLoaded', function() {
+        var lang = document.documentElement.lang || 'en';
+        window.AdminListFilters.init({
+            url: '/' + lang + '/admin/payout-providers/accounts/filter/',
+            resultsContainer: 'provider-results',
+            resultsCount: 'provider-count'
+        });
+    });
+    </script>
+</div>
+{% endblock %}

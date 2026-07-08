@@ -1,0 +1,179 @@
+{% extends "affiliate/base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "My Payouts" context "affiliate" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate/payouts.css' %}">
+{% endblock %}
+
+{% block page_title %}{% trans "Payouts" context "affiliate" %}{% endblock %}
+
+{% block page_description %}
+<p>{% trans "Manage your payout requests and history" context "affiliate" %}</p>
+{% endblock %}
+
+{% block content %}
+{# Payout Request Modal #}
+<div id="payoutRequestModal" class="affiliate-modal hidden">
+    <div class="affiliate-modal-backdrop" data-action="close-payout-modal"></div>
+    <div class="affiliate-modal-content">
+        <div class="affiliate-modal-header">
+            <h2><i class="fas fa-money-bill-wave"></i> {% trans "Request Payout" context "modal" %}</h2>
+            <button type="button" class="affiliate-modal-close" data-action="close-payout-modal">&times;</button>
+        </div>
+        <form id="payoutRequestForm">
+            <input type="hidden" id="payoutAffiliateId" value="{{ affiliate_id }}">
+            <div class="payout-balance-summary">
+                <div class="payout-available">
+                    <span class="payout-available-label">{% trans "Available Balance" context "payout" %}</span>
+                    <span class="payout-available-value">${{ available_balance|floatformat:2|intcomma }}</span>
+                </div>
+                {% if minimum_payout > 0 %}
+                <div class="payout-minimum">
+                    {% blocktrans with min=minimum_payout|floatformat:2 %}Minimum: ${{ min }}{% endblocktrans %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="affiliate-form-group">
+                <label for="payoutAmount">{% trans "Amount" context "form" %}</label>
+                <input type="number" id="payoutAmount" name="amount" step="0.01" min="{{ minimum_payout }}" max="{{ available_balance }}" value="{{ available_balance|floatformat:2 }}" required>
+            </div>
+            <div class="affiliate-form-group">
+                <label for="payoutMethod">{% trans "Payment Method" context "form" %}</label>
+                <select id="payoutMethod" name="method" required>
+                    <option value="paypal">{% trans "PayPal" context "payment" %}</option>
+                    <option value="bank_transfer">{% trans "Bank Transfer" context "payment" %}</option>
+                </select>
+            </div>
+            <div id="payoutRequestError" class="affiliate-alert affiliate-alert-danger hidden"></div>
+            <div id="payoutRequestSuccess" class="affiliate-alert affiliate-alert-success hidden"></div>
+            <div class="affiliate-modal-actions">
+                <button type="button" class="btn-affiliate btn-affiliate-secondary" data-action="close-payout-modal">{% trans "Cancel" %}</button>
+                <button type="submit" class="btn-affiliate btn-affiliate-success">
+                    <i class="fas fa-paper-plane"></i> {% trans "Submit Request" context "action" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="payouts-container">
+    {# Balance Overview #}
+    <div class="balance-overview">
+        <div class="balance-card primary">
+            <div class="balance-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="balance-info">
+                <span class="balance-label">{% trans "Available Balance" context "balance" %}</span>
+                <span class="balance-value">${{ available_balance|floatformat:2|intcomma }}</span>
+            </div>
+            {% if available_balance >= minimum_payout %}
+            <button type="button" class="btn-affiliate btn-affiliate-success" data-action="request-payout">
+                <i class="fas fa-money-bill-wave"></i> {% trans "Request Payout" context "action" %}
+            </button>
+            {% endif %}
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-icon pending">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="balance-info">
+                <span class="balance-label">{% trans "Pending Approval" context "balance" %}</span>
+                <span class="balance-value">${{ pending_approval|floatformat:2|intcomma }}</span>
+            </div>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-icon processing">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="balance-info">
+                <span class="balance-label">{% trans "Pending Payouts" context "balance" %}</span>
+                <span class="balance-value">${{ pending_payouts|floatformat:2|intcomma }}</span>
+            </div>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="balance-info">
+                <span class="balance-label">{% trans "Total Paid" context "balance" %}</span>
+                <span class="balance-value">${{ total_paid|floatformat:2|intcomma }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if minimum_payout > 0 %}
+    <div class="payout-info-banner">
+        <i class="fas fa-info-circle"></i>
+        {% blocktrans with min=minimum_payout|floatformat:2 %}
+            Minimum payout threshold: ${{ min }}
+        {% endblocktrans %}
+    </div>
+    {% endif %}
+
+    {# Payout History #}
+    <h2 class="section-title">{% trans "Payout History" context "affiliate" %}</h2>
+
+    {% if payouts %}
+        <div class="affiliate-table-container">
+            <table class="affiliate-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Date" context "table" %}</th>
+                        <th>{% trans "Amount" context "table" %}</th>
+                        <th>{% trans "Method" context "table" %}</th>
+                        <th>{% trans "Status" context "table" %}</th>
+                        <th>{% trans "Processed" context "table" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payout in payouts %}
+                    <tr>
+                        <td>{{ payout.created_at|date:"M d, Y" }}</td>
+                        <td class="payout-amount">${{ payout.amount|floatformat:2|intcomma }}</td>
+                        <td>{{ payout.get_payout_method_display|default:"-" }}</td>
+                        <td>
+                            <span class="badge-affiliate badge-{{ payout.status }}">
+                                {{ payout.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if payout.processed_at %}
+                                {{ payout.processed_at|date:"M d, Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+        <nav class="pagination-nav">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a></li>
+                {% endif %}
+                <li class="current">{% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}</li>
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-money-bill-wave"></i>
+            <h3>{% trans "No Payouts Yet" context "empty" %}</h3>
+            <p>{% trans "Once you have earned commissions and meet the minimum threshold, you can request a payout." context "empty" %}</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

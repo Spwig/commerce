@@ -1,0 +1,50 @@
+{% extends "admin/search/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Content Types" %}</h2>
+    <p class="step-description">{% trans "Select which content types this search engine will index and include in results." %}</p>
+
+    <form method="post" id="wizard-form">
+        {% csrf_token %}
+
+        <div class="form-section">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>{% trans "Note" %}</strong>
+                    <p>{% trans "Leave all unchecked to search all content types. Select specific types to limit what this engine searches." %}</p>
+                </div>
+            </div>
+
+            <div class="content-type-grid">
+                {% for type_id, type_name, type_icon, type_desc in content_type_choices %}
+                <label class="content-type-card">
+                    <input type="checkbox" name="content_types" value="{{ type_id }}"
+                           {% if type_id in wizard_data.content_types %}checked{% endif %}>
+                    <div>
+                        <div class="content-type-card__header">
+                            <i class="{{ type_icon }} content-type-card__icon"></i>
+                            <strong class="content-type-card__name">{{ type_name }}</strong>
+                        </div>
+                        <p class="content-type-card__desc">{{ type_desc }}</p>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'search_admin:engine_wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="wizard-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

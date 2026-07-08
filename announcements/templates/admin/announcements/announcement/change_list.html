@@ -1,0 +1,133 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Announcements" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'announcements/admin/css/announcements.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-bullhorn"></i>
+                {% trans "Announcements" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage store announcements displayed in headers and footers" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:announcements_announcement_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Announcement" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filter Tabs -->
+    <div class="admin-tabs">
+        <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if not request.GET.is_enabled and not request.GET.expired %}active{% endif %}"
+           data-filter="all">
+            <i class="fas fa-th"></i>
+            <span class="label">{% trans "All" %}<br>({{ all_count }})</span>
+        </a>
+        <a href="?is_enabled=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.is_enabled == '1' %}active{% endif %}"
+           data-filter="enabled">
+            <i class="fas fa-check-circle"></i>
+            <span class="label">{% trans "Enabled" %}<br>({{ enabled_count }})</span>
+        </a>
+        <a href="?is_enabled=0{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.is_enabled == '0' %}active{% endif %}"
+           data-filter="disabled">
+            <i class="fas fa-times-circle"></i>
+            <span class="label">{% trans "Disabled" %}<br>({{ disabled_count }})</span>
+        </a>
+        <a href="?expired=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.expired == '1' %}active{% endif %}"
+           data-filter="expired">
+            <i class="fas fa-hourglass-end"></i>
+            <span class="label">{% trans "Expired" %}<br>({{ expired_count }})</span>
+        </a>
+    </div>
+
+    <!-- Search -->
+    <div class="announcements-toolbar">
+        <div class="toolbar-right">
+            <div class="search-bar">
+                <form method="get" action="" class="search-form">
+                    {% for key, value in request.GET.items %}
+                        {% if key != 'q' %}
+                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endif %}
+                    {% endfor %}
+                    <input type="text"
+                           name="q"
+                           value="{{ request.GET.q }}"
+                           placeholder="{% trans 'Search announcements...' %}"
+                           class="search-input"
+                           id="announcement-search">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcements List -->
+    {% if cl.result_list %}
+        <div id="announcements-container" class="list-row-cards">
+            {% for obj in cl.result_list %}
+                {% include "admin/announcements/announcement/partials/announcement_cards.html" with announcement=obj %}
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if cl.result_count > 0 and cl.result_count > cl.list_per_page %}
+        <div class="pagination-container">
+            <p class="paginator">
+                <span class="small quiet">{{ cl.result_count }} {% trans "announcements" %}</span>
+            </p>
+            {% if cl.multi_page %}
+                <p class="paginator">
+                    {% if cl.page_num > 0 %}
+                        <a href="?p={{ cl.page_num|add:'-1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Previous" %}</a>
+                    {% endif %}
+                    <span class="this-page">{% trans "Page" %} {{ cl.page_num|add:'1' }} {% trans "of" %} {{ cl.paginator.num_pages }}</span>
+                    {% if cl.page_num < cl.paginator.num_pages|add:'-1' %}
+                        <a href="?p={{ cl.page_num|add:'1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Next" %}</a>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="announcements-empty-state">
+            <i class="fas fa-bullhorn"></i>
+            <h2>{% trans "No Announcements Found" %}</h2>
+            <p>
+                {% if request.GET.q %}
+                    {% trans "No announcements match your search query." %}
+                {% else %}
+                    {% trans "Create your first announcement to display in your store's header or footer." %}
+                {% endif %}
+            </p>
+            <a href="{% url 'admin:announcements_announcement_add' %}" class="button default">
+                <i class="fas fa-plus"></i> {% trans "Create Announcement" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,247 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static order_filters %}
+
+{% block title %}{% trans "Orders" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/vendor/css/flatpickr.min.css' %}">
+<link rel="stylesheet" href="{% static 'orders/css/admin-orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-shopping-cart"></i>
+                {% trans "Order Management" %}
+            </h1>
+            <p class="subtitle">{% trans "Track, process, and manage customer orders" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:orders_order_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Order" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="admin-tabs">
+        <a href="?status=all{% if current_search %}&q={{ current_search }}{% endif %}"
+           class="admin-tab-btn {% if current_status == 'all' %}active{% endif %}">
+            <i class="fas fa-list"></i>
+            <span class="label">
+                {% trans "All Orders" %} <span class="count">{{ total_orders }}</span>
+            </span>
+        </a>
+        <a href="?status=pending{% if current_search %}&q={{ current_search }}{% endif %}"
+           class="admin-tab-btn {% if current_status == 'pending' %}active{% endif %}">
+            <i class="fas fa-clock"></i>
+            <span class="label">
+                {% trans "Pending" %} <span class="count">{{ pending_count }}</span>
+            </span>
+        </a>
+        <a href="?status=processing{% if current_search %}&q={{ current_search }}{% endif %}"
+           class="admin-tab-btn {% if current_status == 'processing' %}active{% endif %}">
+            <i class="fas fa-cog"></i>
+            <span class="label">
+                {% trans "Processing" %} <span class="count">{{ processing_count }}</span>
+            </span>
+        </a>
+        <a href="?status=shipped{% if current_search %}&q={{ current_search }}{% endif %}"
+           class="admin-tab-btn {% if current_status == 'shipped' %}active{% endif %}">
+            <i class="fas fa-shipping-fast"></i>
+            <span class="label">
+                {% trans "Shipped" %} <span class="count">{{ shipped_count }}</span>
+            </span>
+        </a>
+        <a href="?status=delivered{% if current_search %}&q={{ current_search }}{% endif %}"
+           class="admin-tab-btn {% if current_status == 'delivered' %}active{% endif %}">
+            <i class="fas fa-check-circle"></i>
+            <span class="label">
+                {% trans "Delivered" %} <span class="count">{{ delivered_count }}</span>
+            </span>
+        </a>
+        <a href="?status=cancelled{% if current_search %}&q={{ current_search }}{% endif %}"
+           class="admin-tab-btn {% if current_status == 'cancelled' %}active{% endif %}">
+            <i class="fas fa-times-circle"></i>
+            <span class="label">
+                {% trans "Cancelled" %} <span class="count">{{ cancelled_count }}</span>
+            </span>
+        </a>
+        <a href="?status=refunded{% if current_search %}&q={{ current_search }}{% endif %}"
+           class="admin-tab-btn {% if current_status == 'refunded' %}active{% endif %}">
+            <i class="fas fa-undo"></i>
+            <span class="label">
+                {% trans "Refunded" %} <span class="count">{{ refunded_count }}</span>
+            </span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="orders-content">
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <form method="get" action="" class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text"
+                       name="q"
+                       value="{{ current_search }}"
+                       placeholder="{% trans 'Search orders by ID, customer name, email, phone, or product...' %}"
+                       autocomplete="off">
+                {% if current_status and current_status != 'all' %}
+                    <input type="hidden" name="status" value="{{ current_status }}">
+                {% endif %}
+                <button type="submit"></button>
+            </form>
+            <div class="date-filter">
+                <input type="text"
+                       id="date-from"
+                       class="date-input"
+                       placeholder="{% trans 'From' %}"
+                       readonly>
+                <span>—</span>
+                <input type="text"
+                       id="date-to"
+                       class="date-input"
+                       placeholder="{% trans 'To' %}"
+                       readonly>
+            </div>
+        </div>
+
+        <!-- Orders Grid -->
+        <div id="orders-grid" class="orders-grid">
+            {% if recent_orders %}
+                {% for order in recent_orders %}
+                <a href="{% url 'admin:orders_order_change' order.pk %}" class="order-card">
+                    <!-- Header Row: Order Number + Status Badge -->
+                    <div class="orders-card-header">
+                        <span class="order-number">#{{ order.order_number }}</span>
+                        <span class="order-status {{ order.status }}">{{ order.get_status_display }}</span>
+                    </div>
+
+                    <!-- Content Row: All order details -->
+                    <div class="orders-card-content">
+                        <!-- Customer Info -->
+                        <div class="order-customer">
+                            <i class="fas fa-user"></i>
+                            <span>
+                                {% if order.user %}
+                                    {% if order.user.get_full_name %}
+                                        {{ order.user.get_full_name }}
+                                    {% else %}
+                                        {{ order.user.username }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ order.email }}
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Product Thumbnails -->
+                        <div class="product-thumbnails">
+                            {% for item in order.top_level_items|slice:":3" %}
+                                <div class="product-thumbnail">
+                                    {% if item.product.images.first %}
+                                        <img src="{{ item.product.images.first.thumbnail_small }}" alt="{{ item.product.name }}">
+                                    {% else %}
+                                        <div class="product-thumbnail-placeholder">
+                                            <i class="fas fa-box"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                            {% with top_count=order.top_level_items.count %}
+                            {% if top_count > 3 %}
+                                <div class="more-items">
+                                    +{{ top_count|add:"-3" }}
+                                </div>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+
+                        <!-- Item Count -->
+                        <div class="order-item-count">
+                            <i class="fas fa-box"></i>
+                            <span>{{ order.total_item_quantity }} {% if order.total_item_quantity == 1 %}{% trans "item" %}{% else %}{% trans "items" %}{% endif %}</span>
+                        </div>
+
+                        <!-- Shipping Location -->
+                        {% if order.shipping_city or order.shipping_country %}
+                        <div class="order-shipping-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>
+                                {% if order.shipping_city %}{{ order.shipping_city }}{% endif %}{% if order.shipping_city and order.shipping_country %}, {% endif %}{% if order.shipping_country %}{{ order.shipping_country }}{% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <!-- Order Date / Tracking Number -->
+                        {% if order.status in 'shipped,delivered' and order.tracking_number %}
+                            <span class="order-tracking">
+                                <i class="fas fa-truck"></i>
+                                {{ order.tracking_number }}
+                            </span>
+                        {% else %}
+                            <span class="order-date">
+                                <i class="far fa-calendar"></i>
+                                {{ order.created_at|date:"M d, Y" }}
+                            </span>
+                        {% endif %}
+
+                        <!-- Order Total -->
+                        <span class="order-total">{{ order.total_amount.currency }} {{ order.total_amount.amount }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>{% trans "No Orders Yet" %}</h3>
+                    <p>{% trans "Orders will appear here once customers start placing them." %}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Load More Button -->
+        {% if has_more_orders %}
+        <div class="load-more-section">
+            <a href="?page={{ current_page|add:1 }}{% if current_status and current_status != 'all' %}&status={{ current_status }}{% endif %}{% if current_search %}&q={{ current_search }}{% endif %}"
+               class="btn">
+                <i class="fas fa-arrow-down"></i>
+                {% trans "Load More Orders" %}
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading hidden">
+            <i class="fas fa-spinner"></i>
+            <p>{% trans "Loading orders..." %}</p>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button id="show-admin-table-btn" class="btn">
+                <i class="fas fa-table"></i>
+                {% trans "Show Full Admin Table View" %}
+            </button>
+            <p class="mt-8 text-size-12 text-muted text-center">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Use table view for bulk actions (shipping documents, status changes, etc.)" %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Django's default changelist (hidden by default) -->
+<div id="admin-table-view">
+    {{ block.super }}
+</div>
+
+<script src="{% static 'core/vendor/js/flatpickr.min.js' %}"></script>
+<script src="{% static 'orders/admin/js/order-list.js' %}" defer></script>
+
+{% endblock %}

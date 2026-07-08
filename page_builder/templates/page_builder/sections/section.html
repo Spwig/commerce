@@ -1,0 +1,41 @@
+<!-- Section Wrapper -->
+<section 
+    class="page-section section-generic {% if section.template_variant %}variant-{{ section.template_variant }}{% endif %} 
+           {% if section.get_css_classes %}{{ section.get_css_classes }}{% endif %}
+           {% if not section.show_on_mobile %}hidden md:block{% endif %}
+           {% if not section.show_on_tablet %}hidden lg:block{% endif %}
+           {% if not section.show_on_desktop %}block lg:hidden{% endif %}"
+    data-section-id="{{ section.id }}"
+    data-section-type="generic"
+    {% if section.animation_type != 'none' %}
+    data-aos="{{ section.animation_type }}"
+    {% if section.animation_delay %}data-aos-delay="{{ section.animation_delay }}"{% endif %}
+    {% endif %}
+    style="
+        {% if section.background_type == 'color' and section.background_config.color %}
+        background-color: {{ section.background_config.color }};
+        {% elif section.background_type == 'gradient' and section.background_config.gradient %}
+        background: {{ section.background_config.gradient }};
+        {% elif section.background_type == 'image' and section.background_config.image %}
+        background-image: url('{{ section.background_config.image }}');
+        background-size: {{ section.background_config.size|default:'cover' }};
+        background-position: {{ section.background_config.position|default:'center' }};
+        background-repeat: {{ section.background_config.repeat|default:'no-repeat' }};
+        {% endif %}
+        {% for property, value in section.style_overrides.items %}
+        {{ property }}: {{ value }};
+        {% endfor %}
+    "
+>
+    <div class="
+        {% if section.width == 'full' %}w-full
+        {% elif section.width == 'contained' %}container
+        {% elif section.width == 'narrow' %}container-narrow
+        {% elif section.width == 'wide' %}container-wide
+        {% else %}container
+        {% endif %}
+    ">
+        <!-- Include generic section template -->
+        {% include "page_builder/sections/generic.html" with section=section elements=section.get_elements_ordered %}
+    </div>
+</section>

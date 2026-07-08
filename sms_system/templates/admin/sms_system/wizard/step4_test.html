@@ -1,0 +1,100 @@
+{% extends "admin/sms_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_title_tag %}{% trans "Test Connection" %}{% endblock %}
+{% block wizard_title %}{% trans "Test Connection" %}{% endblock %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Test Connection" %}</h2>
+    <p class="step-description">{% trans "We've tested the connection to your provider." %}</p>
+
+    <div class="test-results {% if test_result.success %}success{% else %}error{% endif %}">
+        <div class="test-result-icon">
+            {% if test_result.success %}
+            <i class="fas fa-check-circle"></i>
+            {% else %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% endif %}
+        </div>
+        <h3>
+            {% if test_result.success %}
+            {% trans "Connection Successful" %}
+            {% else %}
+            {% trans "Connection Failed" %}
+            {% endif %}
+        </h3>
+        <p>
+            {% if test_result.success %}
+            {{ test_result.message|default:_("Successfully connected to the SMS provider.") }}
+            {% else %}
+            {{ test_result.error|default:_("Failed to connect to the SMS provider.") }}
+            {% endif %}
+        </p>
+
+        {% if test_result.account_name %}
+        <div class="test-details">
+            <h4>{% trans "Account Details" %}</h4>
+            <table class="test-details-table">
+                <tr>
+                    <th>{% trans "Account" %}</th>
+                    <td>{{ test_result.account_name }}</td>
+                </tr>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <form method="post" id="test-form">
+        {% csrf_token %}
+
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-cog"></i> {% trans "Default Settings" %}
+            </h3>
+            <p class="step-description">{% trans "Configure how this account should be used." %}</p>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_default_sms" {% if provider.capabilities.sms %}checked{% endif %}>
+                    <span>{% trans "Set as default for SMS messages" %}</span>
+                </label>
+            </div>
+
+            {% if provider.capabilities.whatsapp %}
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_default_whatsapp" checked>
+                    <span>{% trans "Set as default for WhatsApp messages" %}</span>
+                </label>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if not test_result.success %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{% trans "Connection test failed" %}</strong>
+                <p>{% trans "Check your credentials and try again, or save anyway if you're sure they're correct." %}</p>
+                <label class="checkbox-label">
+                    <input type="checkbox" name="save_anyway">
+                    <span>{% trans "Save account anyway (not recommended)" %}</span>
+                </label>
+            </div>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'sms_system:wizard_step3' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="test-form" class="btn btn-success">
+        <i class="fas fa-check"></i> {% trans "Create Account" %}
+    </button>
+</div>
+{% endblock %}

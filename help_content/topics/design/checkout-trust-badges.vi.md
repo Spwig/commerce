@@ -1,0 +1,5 @@
+---
+title: Checkout Trust Badges
+---
+
+...

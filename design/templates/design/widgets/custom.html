@@ -1,0 +1,17 @@
+{% load i18n %}
+{# Custom widget - renders raw content with optional wrapper #}
+<div class="widget-custom {{ widget.css_classes }}" {% if config.id %}id="{{ config.id }}"{% endif %}>
+    {{ content|safe }}
+</div>
+
+{% if config.javascript %}
+<script nonce="{{ request.csp_nonce }}">
+    {{ config.javascript|safe }}
+</script>
+{% endif %}
+
+{% if widget.custom_css %}
+<style>
+    {{ widget.custom_css|safe }}
+</style>
+{% endif %}

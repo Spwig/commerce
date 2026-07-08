@@ -1,0 +1,1247 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "POS API"
+msgstr "POS API"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "要访问此端点，需要有效的POS许可证。"
+
+msgid "POS access requires a staff account."
+msgstr "POS访问需要员工账户。"
+
+msgid "You are not assigned to this terminal."
+msgstr "您未被分配到此终端。"
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "您没有权限：%(label)s。"
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "捆绑商品变体选择: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "要排除的可选 BundleItem ID 列表"
+
+msgid "Search by email, phone, or name"
+msgstr "通过电子邮件、电话或姓名搜索"
+
+msgid "ID of the product to adjust stock for."
+msgstr "要调整库存的产品的 ID。"
+
+msgid "ID of the variant (required for variable products)."
+msgstr "变体的ID（可变产品需要）。"
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"调整类型：\"receive\" 增加库存（例如新发货），\"damage\" 减少库存（例如破损物品），\"recount\" 设置绝对的 "
+"on_hand 数量，\"return\" 将库存加回去（例如客户退货）。"
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"对于 receive/return：要添加的单位数。对于 damage：要移除的单位数。对于 recount：新的绝对 on_hand 数量。"
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "此调整所需的解释（审计跟踪）。"
+
+msgid "Optional UUID for offline deduplication."
+msgstr "用于离线去重的可选UUID。"
+
+msgid "Signed quantity delta."
+msgstr "已签名的数量差额。"
+
+msgid "Last four digits of card number (digits only)"
+msgstr "卡号的最后四位（仅数字）"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr "要收取的金额。如果不提供，将收取剩余的全部余额。"
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr "来自终端提供商的付款 ID（例如 Stripe PaymentIntent ID）"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr "提供商特定的读卡器 ID（例如 Adyen POIID, Square device_id）"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "特定提供商的交易ID，用于状态轮询"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr "初始状态 -- 通常异步提供商为\"pending\"，同步提供商（如Adyen）为\"succeeded\""
+
+msgid "Current payment status"
+msgstr "当前付款状态"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "供应商付款ID（付款成功时）"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "取消原因（取消时）"
+
+msgid "POS staff login"
+msgstr "POS员工登录"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr "为POS访问认证一名员工。返回访问和刷新令牌。使用与管理员API（MobileTokenAuthentication）相同的令牌系统。"
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "登录成功，返回令牌和终端配置"
+
+msgid "Invalid credentials"
+msgstr "凭证无效"
+
+msgid "User is not a staff member"
+msgstr "用户不是工作人员"
+
+msgid "Refresh POS access token"
+msgstr "刷新POS访问令牌"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "使用刷新令牌换取新的访问令牌。"
+
+msgid "New access token"
+msgstr "新访问令牌"
+
+msgid "Invalid or expired refresh token"
+msgstr "无效或已过期的刷新令牌"
+
+msgid "POS logout"
+msgstr "POS注销"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "使当前的访问令牌和刷新令牌失效。"
+
+msgid "Logged out successfully"
+msgstr "成功登出"
+
+msgid "Get current POS cart"
+msgstr "获取当前POS购物车"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr "返回已认证收银员的当前购物车。如果不存在购物车则创建新的。需要员工认证和有效的POS许可证。"
+
+msgid "Add item to POS cart"
+msgstr "将商品添加到POS购物车"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"将产品添加到收银员的购物车。支持通过产品ID或条形码添加。当提供条形码而没有product_id时，会自动解析产品。需要员工身份验证和有效的POS许可证。"
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "无效的产品、变体或库存不足"
+
+msgid "Update cart item quantity"
+msgstr "更新购物车商品数量"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr "更新购物车中商品的数量。将数量设置为0以移除该商品。需要员工身份验证和有效的POS许可证。"
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "数量无效或库存不足"
+
+msgid "Cart item not found"
+msgstr "未找到购物车商品"
+
+msgid "Remove item from cart"
+msgstr "从购物车中移除商品"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr "从购物车中移除特定商品。需要员工身份验证和有效的POS许可证。"
+
+msgid "Apply voucher to cart"
+msgstr "将优惠券应用到购物车"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr "将优惠券/折扣码应用到购物车。一次只能激活一个优惠券。需要员工身份验证和有效的POS许可证。"
+
+msgid "Invalid or expired voucher code"
+msgstr "无效或已过期的优惠券代码"
+
+msgid "Remove voucher from cart"
+msgstr "从购物车中移除优惠券"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr "从购物车中移除已应用的优惠券。需要员工身份验证和有效的POS许可证。"
+
+msgid "No voucher applied"
+msgstr "未应用优惠券"
+
+msgid "Apply gift card to cart"
+msgstr "将礼品卡应用到购物车"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr "将礼品卡码应用到购物车以支付部分或全部总额。需要员工身份验证和有效的POS许可证。"
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "礼品卡无效或余额不足"
+
+msgid "Clear all items from cart"
+msgstr "清空购物车所有商品"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr "从购物车中移除所有商品、优惠券和礼品卡。需要员工身份验证和有效的POS许可证。"
+
+msgid "Apply manual discount to cart item"
+msgstr "将手动折扣应用于购物车商品"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"对购物车中的特定商品应用员工手动折扣。如果折扣超过员工限制，将返回requires_approval=true。需要员工身份验证和有效的POS许可证。"
+
+msgid "Discount applied or requires approval"
+msgstr "已应用折扣或需要批准"
+
+msgid "Invalid discount or not authorized"
+msgstr "无效折扣或未授权"
+
+msgid "Remove manual discount from cart item"
+msgstr "从购物车商品中移除手动折扣"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr "从特定购物车商品中移除员工手动折扣。需要员工身份验证和有效的POS许可证。"
+
+msgid "Discount removed"
+msgstr "已移除折扣"
+
+msgid "Apply manual discount to cart"
+msgstr "向购物车应用手动折扣"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"对整个购物车应用员工手动折扣。如果折扣超出员工限制，将返回requires_approval=true。需要员工身份验证和有效的POS许可证。"
+
+msgid "Remove manual discount from cart"
+msgstr "从购物车移除手动折扣"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr "从购物车中移除员工手动折扣。需要员工身份验证和有效的POS许可证。"
+
+msgid "Verify manager PIN"
+msgstr "验证经理PIN码"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr "验证经理的PIN是否有效，该经理有权批准折扣。如果有效，返回经理的姓名。需要员工身份验证和有效的POS许可证。"
+
+msgid "PIN verification result"
+msgstr "PIN码验证结果"
+
+msgid "Approve discount with manager PIN"
+msgstr "使用经理PIN码批准折扣"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr "在经理批准的情况下应用超出员工限制的折扣。需要有效的经理PIN才能继续。需要员工身份验证和有效的POS许可证。"
+
+msgid "Discount approved and applied"
+msgstr "折扣已批准并应用"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "无效的PIN码或折扣参数"
+
+msgid "Park current cart"
+msgstr "暂存当前购物车"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr "保存当前购物车状态，以便以后恢复。当顾客需要离开而需要为其他顾客服务时使用。需要员工身份验证和有效的POS许可证。"
+
+msgid "Cart parked successfully"
+msgstr "购物车成功停放"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "购物车为空或无法停放"
+
+msgid "List parked carts"
+msgstr "列出停放的购物车"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr "获取当前终端的所有停放购物车。需要员工身份验证和有效的POS许可证。"
+
+msgid "List of parked carts"
+msgstr "停放的购物车列表"
+
+msgid "Restore parked cart"
+msgstr "恢复停放的购物车"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr "恢复已停放的购物车，替换当前购物车内容。恢复前当前购物车内容将被清除。需要员工身份验证和有效的POS许可证。"
+
+msgid "Cart restored successfully"
+msgstr "购物车成功恢复"
+
+msgid "Current cart is not empty"
+msgstr "当前购物车不为空"
+
+msgid "Parked cart not found"
+msgstr "未找到停放的购物车"
+
+msgid "Delete parked cart"
+msgstr "删除停放的购物车"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr "永久删除停放的购物车。此操作不可逆。需要员工身份验证和有效的POS许可证。"
+
+msgid "Parked cart deleted"
+msgstr "已删除停放的购物车"
+
+msgid "List POS products"
+msgstr "列出POS产品"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"返回可用于店内销售的产品，按销售渠道进行过滤。当识别到终端时，包括特定仓库的库存水平。带有图片的产品会优先显示，并按每个仓库的受欢迎程度排序。"
+
+msgid "Search by name, SKU, or barcode"
+msgstr "按名称、SKU 或条形码搜索"
+
+msgid "Filter by category ID"
+msgstr "按分类ID筛选"
+
+msgid "Warehouse for stock levels"
+msgstr "用于库存水平的仓库"
+
+msgid "Page number (default: 1)"
+msgstr "页码（默认：1）"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "每页显示项目数（默认：50，最大：200）"
+
+msgid "Get product detail"
+msgstr "获取产品详情"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr "返回包括变体和仓库库存的完整产品详情。"
+
+msgid "Barcode lookup"
+msgstr "条形码查询"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr "通过条形码查找产品或变体。快速的索引查找，适用于扫描。"
+
+msgid "No product found with this barcode"
+msgstr "未找到与此条形码对应的产品"
+
+msgid "List categories"
+msgstr "列出分类"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "返回用于POS产品导航的分类树。"
+
+msgid "Process cash payment"
+msgstr "处理现金支付"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"通过现金完成POS交易。验证支付金额是否足以覆盖订单总额并计算找零。创建一个channel='pos'的订单和一个POSPayment记录。需要终端上有开启的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "购物车为空或现金支付不足"
+
+msgid "Process card payment"
+msgstr "处理银行卡支付"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"通过银行卡完成POS交易。假设卡片处理由外部卡片终端处理。此端点记录卡片参考号和最后四位数字。需要终端上有开启的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Empty cart"
+msgstr "清空购物车"
+
+msgid "Check gift card balance"
+msgstr "查看礼品卡余额"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr "检查礼品卡余额以用于POS结账。如果礼品卡有效，返回当前余额；如果无效，返回错误信息。需要员工身份验证。"
+
+msgid "Gift card balance info"
+msgstr "礼品卡余额信息"
+
+msgid "Invalid gift card or missing code"
+msgstr "礼品卡无效或缺少代码"
+
+msgid "Process gift card payment"
+msgstr "处理礼品卡支付"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"使用礼品卡完成POS交易。验证礼品卡余额是否充足。如果礼品卡余额少于订单总额，请改用拆分付款接口。需要终端上有一个开启的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "购物车为空、礼品卡无效或余额不足"
+
+msgid "Process split tender payment"
+msgstr "处理分账支付"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"使用多种支付方式完成POS交易（分拆付款）。所有支付的总金额必须覆盖订单总额。如果总金额超过订单金额，则找零基于最后一次现金支付计算。需要终端上有一个开启的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "购物车为空、支付无效或总金额不足"
+
+msgid "Process terminal card payment"
+msgstr "处理终端卡支付"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"使用集成的卡片终端支付完成POS交易。前端必须已通过终端SDK收集支付并获得provider_payment_id（例如Stripe "
+"PaymentIntent）。此端点在创建订单前验证支付是否成功。需要终端上有一个开启的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Empty cart or payment verification failed"
+msgstr "购物车为空或支付验证失败"
+
+msgid "Search customers"
+msgstr "搜索客户"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr "通过电子邮件、电话、名字或姓氏搜索客户。返回最多20个匹配结果。至少需要2个字符。需要员工身份验证和有效的POS许可证。"
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "搜索查询（电子邮件、电话或姓名）。最少2个字符。"
+
+msgid "Search query too short"
+msgstr "搜索内容太短"
+
+msgid "Create walk-in customer"
+msgstr "创建到店客户"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"为到店顾客创建新客户。如果已存在具有给定电子邮件的客户，则返回现有客户而不是创建重复客户。对于真正匿名的到店顾客，电子邮件是可选的。需要员工身份验证和有效的POS许可证。"
+
+msgid "Existing customer found with this email"
+msgstr "已找到与此电子邮件关联的现有客户"
+
+msgid "Get customer details"
+msgstr "获取客户详情"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr "检索客户详细信息，包括联系方式和最近的订单历史。需要员工身份验证和有效的POS许可证。"
+
+msgid "List stock levels for warehouse"
+msgstr "列出仓库库存水平"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr "返回终端仓库的分页库存水平。支持按产品名称或SKU搜索，并可筛选低库存或无库存商品。需要员工身份验证和有效的POS许可证。"
+
+msgid "Search by product name or SKU"
+msgstr "按产品名称或SKU搜索"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "仅返回库存低于或等于最低库存阈值的商品"
+
+msgid "Only return items with zero available stock"
+msgstr "仅返回可用库存为零的商品"
+
+msgid "Warehouse not determined"
+msgstr "未确定仓库"
+
+msgid "Get product stock detail"
+msgstr "获取产品库存详情"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr "返回终端仓库中特定产品的库存水平，包括变体级别的细分。需要员工身份验证和有效的POS许可证。"
+
+msgid "Check stock across all locations"
+msgstr "检查所有地点的库存"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"返回产品在所有仓库位置的库存水平。可用于检查缺货商品是否在其他位置有货。当前终端的仓库会标记为 "
+"is_current=true。需要员工身份验证和有效的POS许可证。"
+
+msgid "Adjust stock levels"
+msgstr "调整库存水平"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"调整终端仓库中产品的库存。支持四种调整类型：'receive'（从发货中增加库存）、'damage'（移除损坏/丢失的库存）、'recount'（根据实物盘点设置绝对的"
+" on_hand 数量）、'return'（将库存退回给客户）。创建一个不可变的 StockMovement 审计记录。需要员工身份验证、有效的 POS"
+" 许可证和 pos_stock_adjustment 权限。"
+
+msgid "Stock adjusted successfully"
+msgstr "库存调整成功"
+
+msgid "Validation error or warehouse not determined"
+msgstr "验证错误或未确定仓库"
+
+msgid "Permission denied or POS license required"
+msgstr "权限被拒绝或需要POS许可证"
+
+msgid "Product or stock item not found"
+msgstr "未找到产品或库存项目"
+
+msgid "List stock movement history"
+msgstr "列出库存变动历史"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"返回终端仓库的分页库存变动记录。适用于审核最近的库存变更（调整、损坏、重新盘点、退货）。支持按产品和变动类型进行筛选。需要员工身份验证和有效的POS许可证。"
+
+msgid "Filter movements by product ID"
+msgstr "按产品ID筛选变动"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr "要包含的逗号分隔的移动类型（例如：'damage,recount'）"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "每页项目数（默认：20，最大：100）"
+
+msgid "Get customer loyalty info"
+msgstr "获取客户忠诚度信息"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"获取客户的忠诚度会员状态、等级和积分余额。如果客户没有活跃的忠诚度会员资格，将返回 `is_member: "
+"false`。需要员工身份验证和有效的POS许可证。"
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"忠诚会员信息。`is_member` 表示客户是否有活跃的会员资格。当为 true 时，包括 `tier_name`、`tier_color` 和 "
+"`available_points`。"
+
+msgid "Preview loyalty points for cart"
+msgstr "预览购物车忠诚度积分"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr "计算客户在给定购物车总额下可获得的忠诚度积分。如果客户没有活跃的忠诚度会员资格，则返回 0。需要员工身份验证和有效的 POS 许可证。"
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr "购物车总金额作为十进制字符串（例如 '49.99'）。默认为 '0'。"
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr "积分预览。`points_preview` 是客户在给定购物车总额下可获得的积分数量。"
+
+msgid "List POS orders"
+msgstr "列出POS订单"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"通过日期范围、来源、客户、收银员和搜索等高级过滤条件返回订单。支持查看用于退货场景的网络订单。默认：仅返回此终端今天的订单。搜索模式：当提供 "
+"'search' 时，将绕过日期/来源/收银员过滤条件，通过订单编号、客户姓名、电子邮件或电话查找任何订单。需要员工身份验证和有效的 POS 许可证。"
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr "范围筛选的起始日期（ISO 格式，默认：今天）。当提供搜索时会被忽略。"
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr "范围筛选的结束日期（ISO 格式，默认：今天）。当提供搜索时会被忽略。"
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr "订单来源过滤器：this_terminal（默认），all_pos，all（包含网页）。当提供搜索时会被忽略。"
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr "按客户用户ID筛选。当提供搜索时会被忽略。"
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr "按收银员员工ID筛选。当提供搜索时会被忽略。"
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr "通过订单号、客户名称、电子邮件或电话搜索所有订单。绕过日期/来源筛选。"
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "按订单状态筛选（两种模式均适用）"
+
+msgid "Get order details"
+msgstr "获取订单详情"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr "返回完整的订单详情，包括商品和付款明细。支持POS和网页订单（用于退货场景）。需要员工身份验证和有效的POS许可证。"
+
+msgid "Get receipt data for printing"
+msgstr "获取打印收据数据"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"返回POS订单的收据格式数据，包括商店信息、商品、支付信息和页脚文本。专为ESC/POS热敏打印机设计。需要员工身份验证和有效的POS许可证。"
+
+msgid "Process order refund"
+msgstr "处理订单退款"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"处理POS订单的全额或部分退款。对于部分退款，请指定要退款的商品和数量。创建退款记录并更新订单和班次总额。需要终端上处于开启状态的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Refund processed successfully"
+msgstr "退款处理成功"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "无效的退款请求或订单已退款"
+
+msgid "Void a POS order"
+msgstr "作废POS订单"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"取消当前班次的POS订单。只有在当前开放班次期间创建的订单才能被作废。这将创建一个全额退款并撤销所有支付和库存更改。需要终端上有开放的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Order voided successfully"
+msgstr "订单作废成功"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "无法作废订单（非当前班次）"
+
+msgid "List POS cashiers"
+msgstr "列出POS收银员"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr "返回已处理POS订单的员工列表。用于填充收银员筛选下拉菜单。需要员工身份验证和有效的POS许可证。"
+
+msgid "List of cashiers"
+msgstr "收银员列表"
+
+msgid "Send digital receipt"
+msgstr "发送电子收据"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr "通过电子邮件、短信或WhatsApp向客户发送数字收据。收据通过Celery任务异步发送。需要员工身份验证和有效的POS许可证。"
+
+msgid "Receipt queued for sending"
+msgstr "收据已排队发送"
+
+msgid "Get receipt sending status"
+msgstr "获取收据发送状态"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr "检查订单已发送的数字收据。返回电子邮件和短信/WhatsApp送达的时间戳。"
+
+msgid "Receipt status"
+msgstr "收据状态"
+
+msgid "Get current shift summary"
+msgstr "获取当前班次摘要"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"返回终端上当前收银员的开放班次摘要，包括总额、交易数量和支付方式细分。如果没有开放班次，则返回 null 班次。需要员工身份验证和有效的 POS "
+"许可证。"
+
+msgid "Open a new shift"
+msgstr "开启新班次"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr "在终端上开始一个新的班次。任何时候每个终端只允许有一个开放班次。记录初始现金金额。需要员工身份验证和有效的 POS 许可证。"
+
+msgid "Invalid opening cash amount"
+msgstr "初始现金金额无效"
+
+msgid "A shift is already open on this terminal"
+msgstr "此终端上已有班次正在运行"
+
+msgid "Close current shift"
+msgstr "关闭当前班次"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr "关闭当前开启的班次。记录结账时的现金金额，并计算预期与实际现金差异。需要员工身份验证和有效的POS许可证。"
+
+msgid "Record cash movement"
+msgstr "记录现金流动"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr "在班次期间记录现金收入或支出。示例：添加备用金、取出用于存款、小额现金。需要终端上开启的班次。需要员工身份验证和有效的POS许可证。"
+
+msgid "Cash movement recorded"
+msgstr "现金流动已记录"
+
+msgid "Invalid movement data"
+msgstr "无效的流动数据"
+
+msgid "Get daily sales report"
+msgstr "获取每日销售报告"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr "返回终端的汇总每日销售报告，包括总额、交易数量、平均交易价值和支付方式细分。需要员工身份验证和有效的POS许可证。"
+
+msgid "Report date (ISO format, default: today)"
+msgstr "报告日期（ISO格式，默认：今天）"
+
+msgid "Get top selling products"
+msgstr "获取热销产品"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr "返回终端在指定日期的热销产品，按销售数量排名。需要员工身份验证和有效的POS许可证。"
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "要返回的产品数量（默认：10，最大：50）"
+
+msgid "Sync products since timestamp"
+msgstr "从时间戳同步产品"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"返回自给定时间戳以来创建或更新的产品。用于将产品增量同步到POS终端的本地数据库。返回用于下一次同步请求的sync_token。需要员工身份验证和有效的POS许可证。"
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr "用于获取自该ISO时间戳以来更改的标记。省略以执行完整同步。"
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "每页显示项目数（默认：100，最大：200）"
+
+msgid "Sync customers since timestamp"
+msgstr "从时间戳同步客户"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr "返回自给定时间戳以来创建或下单的客户。用于离线客户查询。需要员工身份验证和有效的POS许可证。"
+
+msgid "Customer sync data"
+msgstr "客户同步数据"
+
+msgid "Upload offline transactions"
+msgstr "上传离线交易"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"批量上传终端离线期间处理的交易。每笔交易会创建一个包含商品和支付的订单。使用 local_id "
+"来保证幂等性——检测并跳过重复上传。需要员工身份验证和有效的 POS 许可证。"
+
+msgid "Upload results with success/failure per transaction"
+msgstr "按交易上传成功/失败结果"
+
+msgid "Get sync status"
+msgstr "获取同步状态"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr "返回当前服务器时间和数据库计数，用于同步规划。需要员工身份验证和有效的 POS 许可证。"
+
+msgid "Get sync version info"
+msgstr "获取同步版本信息"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr "返回 API 版本和数据模式版本，用于客户端兼容性检查。当模式版本增加时，客户端应清除并重新同步。"
+
+msgid "Version information"
+msgstr "版本信息"
+
+msgid "Upload offline stock adjustments"
+msgstr "上传离线库存调整"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr "批量上传终端离线期间排队的库存调整。每个调整使用幂等性密钥以防止重复。需要员工身份验证、有效的 POS 许可证和库存调整权限。"
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "按调整上传成功/失败结果"
+
+msgid "POS license or permission required"
+msgstr "需要POS许可证或权限"
+
+msgid "Sync orders for offline cache"
+msgstr "为离线缓存同步订单"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"在POS终端上返回用于离线缓存的订单。POS订单在终端的同步限制内优先于网页订单。支持通过'since'参数进行增量同步。需要员工身份验证和有效的POS许可证。"
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr "用于增量同步的ISO时间戳。省略以执行完整同步。"
+
+msgid "Register POS terminal"
+msgstr "注册POS终端"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr "使用配对码将新设备注册为POS终端。配对码在创建终端时由管理员面板生成。"
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "终端注册成功，返回终端配置"
+
+msgid "Invalid or expired pairing code"
+msgstr "无效或过期的配对码"
+
+msgid "Get terminal configuration"
+msgstr "获取终端配置"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr "返回当前终端的配置，包括硬件设置。"
+
+msgid "Terminal heartbeat"
+msgstr "终端心跳"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr "报告终端在线状态。应每60秒调用一次。"
+
+msgid "Heartbeat recorded"
+msgstr "心跳记录"
+
+msgid "Get receipt template"
+msgstr "获取收据模板"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr "返回终端仓库的收据模板。如果仓库未分配具体模板，则回退到默认模板（无仓库分配）。如果根本没有模板，则返回合理的默认值。"
+
+msgid "Receipt template data"
+msgstr "收据模板数据"
+
+msgid "Get promo slides"
+msgstr "获取促销幻灯片"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr "返回终端仓库的促销幻灯片。幻灯片会在客户面向的显示屏上在空闲期间显示。"
+
+msgid "List of promo slides with image URLs"
+msgstr "包含图片URL的促销幻灯片列表"
+
+msgid "Generate display pairing code"
+msgstr "生成显示配对码"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr "生成一个短期有效的6位配对码用于客户显示屏认证。该代码5分钟后过期，且只能使用一次。生成新代码将使此终端上所有未使用的现有代码失效。"
+
+msgid "Pairing code generated"
+msgstr "已生成配对码"
+
+msgid "List managers for unlock override"
+msgstr "列出用于解锁覆盖的管理员"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr "返回用于管理器覆盖解锁流程的管理器列表（ID和名称）"
+
+msgid "List of managers"
+msgstr "管理员列表"
+
+msgid "Verify unlock PIN"
+msgstr "验证解锁PIN"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr "验证收银员或经理的PIN码以解锁终端。3次失败尝试后，将仅接受经理的PIN码。所有尝试记录将用于审计。"
+
+msgid "PIN verified successfully"
+msgstr "PIN验证成功"
+
+msgid "Invalid PIN"
+msgstr "无效的PIN码"
+
+msgid "Log terminal lock event"
+msgstr "记录终端锁定事件"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr "当终端被锁定（手动或通过自动锁定超时）时进行记录。此端点仅用于审计日志，不会改变终端状态。"
+
+msgid "Event logged successfully"
+msgstr "事件记录成功"
+
+msgid "Invalid event type"
+msgstr "无效的事件类型"
+
+msgid "Verify unlock card"
+msgstr "验证解锁卡"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr "通过验证员工ID卡刷卡以解锁终端。卡数据会被哈希处理，并与存储的卡哈希进行比较。在3次PIN码失败尝试后，仅接受管理员卡。"
+
+msgid "Card verified successfully"
+msgstr "卡片验证成功"
+
+msgid "Card not recognized"
+msgstr "卡片未被识别"
+
+msgid "Register staff unlock card"
+msgstr "注册员工解锁卡"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr "为当前用户的快速终端解锁注册刷卡。"
+
+msgid "Card registered successfully"
+msgstr "卡片注册成功"
+
+msgid "Card already registered to another user"
+msgstr "该卡已注册到其他用户"
+
+msgid "Remove staff unlock card"
+msgstr "移除员工解锁卡"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "移除当前用户已注册的解锁卡。"
+
+msgid "Card removed successfully"
+msgstr "卡片移除成功"
+
+msgid "Set cashier PIN"
+msgstr "设置收银员PIN码"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr "设置或更新当前用户的收银员PIN码，用于终端锁定/解锁。PIN码必须为4到6位数字。PIN码和PIN确认码必须一致。"
+
+msgid "PIN set successfully"
+msgstr "PIN 设置成功"
+
+msgid "Get terminal provider config"
+msgstr "获取终端提供商配置"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"返回当前终端的终端提供商配置，包括集成模式（sdk、cloud 或 manual）和已连接的读卡器详细信息。POS "
+"前端在启动时使用此信息来确定是否可用集成式读卡器以及使用哪种支付流程。"
+
+msgid "Create connection token"
+msgstr "创建连接令牌"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"为SDK模式的终端提供商（例如Stripe Terminal JS "
+"SDK）创建一个短期连接令牌。前端在初始化SDK时调用此端点，以与读卡器建立直接连接。仅限SDK使用。云服务提供商不使用连接令牌。如果提供商不支持SDK令牌，将返回400。"
+
+msgid "List card readers"
+msgstr "列出卡读取器"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"从终端提供商列出可用的卡片读取器。适用于SDK模式和云模式提供商。每个读取器对象包含：id、label、type、serial_number 和 "
+"status。"
+
+msgid "Create payment intent for terminal"
+msgstr "为终端创建支付意图"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"为终端读取器上的 card_present 收集创建 PaymentIntent。前端使用返回的 client_secret 通过 SDK "
+"收集付款。仅适用于 SDK。云提供商应使用 initiate-cloud-payment。如果省略货币，将默认使用终端配置的货币。"
+
+msgid "Capture/verify terminal payment"
+msgstr "捕获/验证终端支付"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr "验证终端读卡器上的 PaymentIntent 是否已成功处理，并从提供商返回卡片详情（品牌、最后四位数字）。仅限 SDK。"
+
+msgid "Cancel terminal payment"
+msgstr "取消终端支付"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"取消终端读卡器上的待处理 PaymentIntent（例如客户取消）。仅限 SDK。云服务提供商应使用 cancel-cloud-payment。"
+
+msgid "Initiate cloud payment on reader"
+msgstr "在读卡器上启动云支付"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"通过提供商的云API向刷卡器发送支付请求。仅适用于云模式终端提供商（Adyen、Square、SumUp、Zettle）。仅限云模式。如果提供商使用SDK模式，将返回400。如果未指定货币，将默认使用终端配置的货币。"
+
+msgid "Check cloud payment status"
+msgstr "检查云支付状态"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"轮询由云发起的支付状态。返回当前状态：待处理、成功、失败或已取消。当状态为'succeeded'时，响应包括card_brand、last4和提供商的payment_id。当状态为'canceled'时，包括cancel_reason。前端应在状态不再是'pending'之前，每2秒轮询一次。"
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr "由 initiate-cloud-payment 返回的特定提供商交易 ID"
+
+msgid "Cancel cloud payment"
+msgstr "取消云支付"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr "在读卡器上取消待处理的云启动支付。仅限云服务。行为因提供商而异。"
+
+msgid "Begin WebAuthn registration"
+msgstr "开始WebAuthn注册"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr "生成用于生物特征注册的选项。返回挑战和凭证创建选项。"
+
+msgid "Registration options"
+msgstr "注册选项"
+
+msgid "Complete WebAuthn registration"
+msgstr "完成 WebAuthn 注册"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr "验证身份验证并存储用于生物识别解锁的凭证。"
+
+msgid "Credential registered"
+msgstr "凭证已注册"
+
+msgid "Verification failed"
+msgstr "验证失败"
+
+msgid "Begin WebAuthn authentication"
+msgstr "开始 WebAuthn 认证"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"生成用于生物识别解锁的认证挑战。返回被锁定用户的allowCredentials以及所有管理员的allowCredentials。如果失败尝试次数 >="
+" 3，仅包含管理员凭证。"
+
+msgid "Authentication options"
+msgstr "认证选项"
+
+msgid "No credentials registered"
+msgstr "未注册凭证"
+
+msgid "Complete WebAuthn authentication"
+msgstr "完成 WebAuthn 认证"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "验证生物特征断言并解锁终端。"
+
+msgid "Authentication successful"
+msgstr "认证成功"

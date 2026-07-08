@@ -1,0 +1,194 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with name=original.name %}Edit Attribute: {{ name }}{% endblocktrans %}
+    {% else %}
+        {% trans "Add New Attribute" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_attribute.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/productattribute_change_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="attribute-change-form">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    {% if original %}
+                        <i class="fas fa-sliders-h"></i>
+                        {% trans "Edit Attribute:" %} {{ original.name }}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Add New Attribute" %}
+                    {% endif %}
+                </h1>
+                {% if original %}
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-th-list"></i>
+                        {{ original.get_type_display }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-list-ol"></i>
+                        {{ value_count }} {% trans "values" %}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        {% blocktrans with date=original.created_at|date:"N j, Y" %}Created {{ date }}{% endblocktrans %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="attribute-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="attribute-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Banner -->
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Form -->
+    <form method="post" id="productattribute_form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic Info" %}</span>
+            </button>
+            {% if original %}
+            <button type="button" class="admin-tab-btn" data-tab="values" role="tab" aria-selected="false">
+                <i class="fas fa-list-ul"></i>
+                <span class="label">{% trans "Values" %}</span>
+            </button>
+            {% endif %}
+            <button type="button" class="admin-tab-btn" data-tab="translations" role="tab" aria-selected="false">
+                <i class="fas fa-globe"></i>
+                <span class="label">{% trans "Translations" %}</span>
+            </button>
+        </div>
+
+        <!-- Basic Info Tab -->
+        <div class="admin-tab-content active" id="tab-basic" role="tabpanel">
+            <div class="form-card">
+                <h2><i class="fas fa-info-circle"></i> {% trans "Attribute Details" %}</h2>
+                <p class="form-card-description">{% trans "Define the attribute name, type, and behavior." %}</p>
+
+                <div class="two-column-layout">
+                    <div class="column">
+                        <div class="form-row field-name{% if adminform.form.name.errors %} errors{% endif %}">
+                            {{ adminform.form.name.label_tag }}
+                            {{ adminform.form.name }}
+                            {% if adminform.form.name.help_text %}<p class="help">{{ adminform.form.name.help_text }}</p>{% endif %}
+                            {% if adminform.form.name.errors %}<p class="error">{{ adminform.form.name.errors }}</p>{% endif %}
+                        </div>
+                        <div class="form-row field-slug{% if adminform.form.slug.errors %} errors{% endif %}">
+                            {{ adminform.form.slug.label_tag }}
+                            {{ adminform.form.slug }}
+                            {% if adminform.form.slug.help_text %}<p class="help">{{ adminform.form.slug.help_text }}</p>{% endif %}
+                            {% if adminform.form.slug.errors %}<p class="error">{{ adminform.form.slug.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="form-row field-type{% if adminform.form.type.errors %} errors{% endif %}">
+                            {{ adminform.form.type.label_tag }}
+                            {{ adminform.form.type }}
+                            {% if adminform.form.type.help_text %}<p class="help">{{ adminform.form.type.help_text }}</p>{% endif %}
+                            {% if adminform.form.type.errors %}<p class="error">{{ adminform.form.type.errors }}</p>{% endif %}
+                        </div>
+                        <div class="form-row field-sort_order{% if adminform.form.sort_order.errors %} errors{% endif %}">
+                            {{ adminform.form.sort_order.label_tag }}
+                            {{ adminform.form.sort_order }}
+                            {% if adminform.form.sort_order.help_text %}<p class="help">{{ adminform.form.sort_order.help_text }}</p>{% endif %}
+                            {% if adminform.form.sort_order.errors %}<p class="error">{{ adminform.form.sort_order.errors }}</p>{% endif %}
+                        </div>
+                        <div class="form-row field-is_required">
+                            <label class="checkbox-label">
+                                {{ adminform.form.is_required }} {{ adminform.form.is_required.label }}
+                            </label>
+                            {% if adminform.form.is_required.help_text %}<p class="help">{{ adminform.form.is_required.help_text }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Values Tab (edit only) -->
+        {% if original %}
+        <div class="admin-tab-content" id="tab-values" role="tabpanel">
+            {% for inline_admin_formset in inline_admin_formsets %}
+                {% if inline_admin_formset.opts.verbose_name == 'attribute value' %}
+                <div class="form-card">
+                    <h2><i class="fas fa-list-ul"></i> {% trans "Attribute Values" %}</h2>
+                    <p class="form-card-description">{% trans "Manage the available values for this attribute (e.g., Small, Medium, Large for Size)." %}</p>
+                    {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Translations Tab -->
+        <div class="admin-tab-content" id="tab-translations" role="tabpanel">
+            <div class="form-card">
+                <h2><i class="fas fa-globe"></i> {% trans "Translations" %}</h2>
+                <p class="form-card-description">{% trans "Provide translated names for this attribute in different languages." %}</p>
+                <div class="form-row field-translations{% if adminform.form.translations.errors %} errors{% endif %}">
+                    {{ adminform.form.translations.label_tag }}
+                    {{ adminform.form.translations }}
+                    {% if adminform.form.translations.help_text %}<p class="help">{{ adminform.form.translations.help_text }}</p>{% endif %}
+                    {% if adminform.form.translations.errors %}<p class="error">{{ adminform.form.translations.errors }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden submit row -->
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'catalog/js/productattribute_change_form.js' %}"></script>
+{% endblock %}

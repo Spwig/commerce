@@ -1,0 +1,159 @@
+{% load i18n static unit_filters %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for license in licenses %}
+    <div class="list-row-card{% if not license.status == 'active' %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ license.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-key text-primary icon-size-32"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_licensekey_change' license.pk %}">
+                    <code class="text-size-14">{{ license.key }}</code>
+                </a>
+                <button type="button" class="copy-license-key util-btn small" data-key="{{ license.key }}" title="{% trans 'Copy to clipboard' %}">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if license.digital_asset %}
+                    <i class="fas fa-file"></i> {{ license.digital_asset.product.name }} - {{ license.digital_asset.filename }}
+                {% else %}
+                    <i class="fas fa-question-circle"></i> {% trans "No asset assigned" %}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if license.status == 'active' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% elif license.status == 'expired' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-clock"></i> {% trans "Expired" %}
+                    </span>
+                {% elif license.status == 'revoked' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-ban"></i> {% trans "Revoked" %}
+                    </span>
+                {% elif license.status == 'suspended' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-pause-circle"></i> {% trans "Suspended" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-tag"></i> {{ license.get_key_type_display }}
+                </span>
+
+                {% if license.max_activations %}
+                    {% if license.current_activations >= license.max_activations %}
+                        <span class="list-row-card-badge list-row-card-badge-error">
+                            <i class="fas fa-exclamation-triangle"></i> {% trans "Activation limit reached" %}
+                        </span>
+                    {% elif license.current_activations >= license.max_activations|floatformat:0|mul:"0.8" %}
+                        <span class="list-row-card-badge list-row-card-badge-warning">
+                            <i class="fas fa-exclamation-circle"></i> {% trans "Near activation limit" %}
+                        </span>
+                    {% endif %}
+                {% endif %}
+
+                {% if license.expires_at %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-calendar-times"></i> {% trans "Expires" %}: {{ license.expires_at|date:"M d, Y" }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Activations" %}</span>
+                    <span class="list-row-card-stat-value" style="color: {% if license.max_activations and license.current_activations >= license.max_activations %}var(--error-fg){% elif license.max_activations and license.current_activations >= license.max_activations|floatformat:0|mul:'0.8' %}var(--warning-fg){% else %}var(--success-fg){% endif %};">
+                        {{ license.current_activations }}{% if license.max_activations %}/{{ license.max_activations }}{% else %}/∞{% endif %}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Issued" %}</span>
+                    <span class="list-row-card-stat-value">{{ license.issued_at|date:"M d, Y" }}</span>
+                </div>
+                {% if license.order_item %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Order" %}</span>
+                    <span class="list-row-card-stat-value">{{ license.order_item.order.order_number }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if license.user %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{{ license.user.email }}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Created" %}: {{ license.created_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if license.expires_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-hourglass-end"></i>
+                    <span>
+                        {% if license.expires_at > now %}
+                            {% trans "Expires in" %}: {{ license.expires_at|timeuntil }}
+                        {% else %}
+                            {% trans "Expired" %}: {{ license.expires_at|timesince }} {% trans "ago" %}
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_licensekey_change' license.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit license key' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if license.user %}
+            <a href="{% url 'admin:accounts_customerprofile_changelist' %}?user__email={{ license.user.email }}"
+               class="list-row-card-action"
+               title="{% trans 'View customer' %}">
+                <i class="fas fa-user"></i>
+            </a>
+            {% endif %}
+            {% if license.order_item %}
+            <a href="{% url 'admin:orders_order_change' license.order_item.order.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View order' %}">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            {% endif %}
+            {% if license.digital_asset %}
+            <a href="{% url 'admin:catalog_digitalasset_change' license.digital_asset.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View digital asset' %}">
+                <i class="fas fa-file-download"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-key"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No license keys found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

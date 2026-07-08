@@ -1,0 +1,145 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Issued Rewards" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'referrals/admin/css/referral_change_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'referrals/admin/js/change-lists.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if cl.formset and cl.formset.errors %}
+        <p class="errornote">
+            {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+        {{ cl.formset.management_form }}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-gifts"></i>
+                {% trans "Issued Rewards" %}
+            </h1>
+            <p class="subtitle">{% trans "View and manage rewards issued to referrers and referees. To configure reward rules, visit Referral Settings." %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:referrals_referralreward_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Reward" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filters-panel" class="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filter Rewards" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+                <span class="filters-toggle-text">{% trans "Toggle Filters" %}</span>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text"
+                       id="filter-search"
+                       placeholder="{% trans 'Referrer email, voucher code...' %}"
+                       autocomplete="off">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-flag"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                    <option value="issued">{% trans "Issued" %}</option>
+                    <option value="revoked">{% trans "Revoked" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-reward-type">
+                    <i class="fas fa-gift"></i> {% trans "Reward Type" %}
+                </label>
+                <select id="filter-reward-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="percentage">{% trans "Percentage" %}</option>
+                    <option value="fixed">{% trans "Fixed Amount" %}</option>
+                    <option value="custom">{% trans "Custom" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-expired">
+                    <i class="fas fa-clock"></i> {% trans "Expiration" %}
+                </label>
+                <select id="filter-expired">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="expired">{% trans "Expired" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-sort">
+                    <i class="fas fa-sort"></i> {% trans "Sort By" %}
+                </label>
+                <select id="filter-sort">
+                    <option value="-created_at">{% trans "Newest First" %}</option>
+                    <option value="created_at">{% trans "Oldest First" %}</option>
+                    <option value="-amount">{% trans "Highest Value" %}</option>
+                    <option value="amount">{% trans "Lowest Value" %}</option>
+                    <option value="expires_at">{% trans "Expiring Soon" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button button-secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="filter-results-summary">
+        <span id="results-count">{{ cl.result_count }}</span>
+        {% blocktranslate count counter=cl.result_count %}reward found{% plural %}rewards found{% endblocktranslate %}
+    </div>
+
+    <!-- Results Container -->
+    <div id="results-container">
+        {% include "admin/referrals/partials/reward_cards.html" with rewards=cl.result_list %}
+    </div>
+
+    {% block pagination %}{% pagination cl %}{% endblock %}
+
+</div>
+<script type="application/json" id="referrals-changelist-config">
+{
+    "confirm_reject_attribution": "{% trans "Reject this referral attribution?" %}",
+    "confirm_revoke_reward": "{% trans "Revoke this reward?" %}",
+    "action_failed": "{% trans "Action failed. Please try again." %}",
+    "error_performing_action": "{% trans "Error performing action. Please try again." %}"
+}
+</script>
+{% endblock %}

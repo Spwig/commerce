@@ -1,0 +1,223 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ==========================================================================
+   Product Designer Template
+   Full-width design editor with compact product header bar.
+   Optimized for customizable products where the visual editor is primary.
+   Extends product-base.css - only designer-specific overrides here
+   ========================================================================== */
+
+/* Section wrapper */
+.product-section--designer {
+    padding: var(--theme-space-6, 1.5rem) 0 var(--theme-space-10, 2.5rem);
+}
+
+/* --------------------------------------------------------------------------
+   Designer Header - compact bar with title, price, variants, add-to-cart
+   -------------------------------------------------------------------------- */
+.designer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--theme-space-6, 1.5rem);
+    padding-bottom: var(--theme-space-5, 1.25rem);
+    margin-bottom: var(--theme-space-5, 1.25rem);
+    border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.designer-header__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.designer-header__title {
+    font-size: var(--theme-font-size-xl, 1.5rem);
+    font-weight: var(--theme-font-weight-bold, 700);
+    margin: 0;
+    line-height: 1.3;
+    color: var(--theme-color-text-primary, #111827);
+}
+
+.designer-header__desc {
+    margin: var(--theme-space-1, 0.25rem) 0 0;
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-secondary, #6b7280);
+    line-height: 1.4;
+}
+
+/* Actions row: price + variants + qty + add to cart */
+.designer-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-4, 1rem);
+    flex-shrink: 0;
+}
+
+.designer-header__price .price {
+    font-size: var(--theme-font-size-lg, 1.25rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    white-space: nowrap;
+}
+
+.designer-header__price .price--sale {
+    color: var(--theme-color-accent, #ef4444);
+}
+
+.designer-header__price .price--compare {
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-tertiary, #9ca3af);
+    text-decoration: line-through;
+    margin-left: var(--theme-space-1, 0.25rem);
+}
+
+/* Variants (inline compact) */
+.designer-header__variants {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+}
+
+.designer-header__variant-select {
+    padding: var(--theme-space-1, 0.25rem) var(--theme-space-3, 0.75rem);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-md, 0.5rem);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    background: var(--theme-color-background, #fff);
+    color: var(--theme-color-text-primary, #111827);
+    cursor: pointer;
+}
+
+.variant-swatch--sm {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+}
+
+/* Cart actions (qty + button) */
+.designer-header__cart {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+}
+
+.quantity-selector--compact {
+    transform: scale(0.9);
+    transform-origin: center;
+}
+
+.designer-header__cart .btn--add-to-cart {
+    white-space: nowrap;
+}
+
+/* Region unavailable */
+.designer-header__unavailable {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    color: var(--theme-color-text-secondary, #6b7280);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+/* --------------------------------------------------------------------------
+   Editor Wrapper - expand to full container width
+   -------------------------------------------------------------------------- */
+.designer-editor-wrapper {
+    margin-top: var(--theme-space-4, 1rem);
+}
+
+/* Override editor layout for designer template: full-width, not cramped */
+.designer-editor-wrapper .design-editor {
+    max-width: 100%;
+}
+
+/* Make canvas viewport wider in designer template */
+.designer-editor-wrapper .design-editor__canvas-wrapper {
+    flex: 1;
+    min-height: 500px;
+}
+
+/* Fallback gallery when no editor */
+.designer-fallback-gallery {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive: Tablet (< 968px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 968px) {
+    .designer-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .designer-header__actions {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .designer-header__cart {
+        margin-left: auto;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive: Mobile (< 768px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .product-section--designer {
+        padding: var(--theme-space-4, 1rem) 0;
+    }
+
+    .designer-header {
+        gap: var(--theme-space-3, 0.75rem);
+        padding-bottom: var(--theme-space-3, 0.75rem);
+        margin-bottom: var(--theme-space-3, 0.75rem);
+    }
+
+    .designer-header__title {
+        font-size: var(--theme-font-size-lg, 1.25rem);
+    }
+
+    .designer-header__actions {
+        gap: var(--theme-space-3, 0.75rem);
+    }
+
+    .designer-header__cart {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .designer-header__cart .btn--add-to-cart {
+        flex: 1;
+    }
+
+    .quantity-selector--compact {
+        transform: none;
+    }
+
+    .designer-editor-wrapper .design-editor {
+        max-width: none;
+    }
+
+    .designer-editor-wrapper .design-editor__canvas-wrapper {
+        min-height: 350px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive: Small Mobile (< 480px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+    .designer-header__price .price {
+        font-size: var(--theme-font-size-base, 1rem);
+    }
+
+    .designer-header__variants {
+        width: 100%;
+    }
+
+    .designer-header__variant-select {
+        flex: 1;
+    }
+}

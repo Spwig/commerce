@@ -1,0 +1,115 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Review & Save" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/provider-wizard.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_storage_destinations' %}">{% trans 'Remote Storage' %}</a>
+    &rsaquo; {% trans 'Review & Save' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <div class="wizard-header">
+        <h1>{% trans "Review & Save" %}</h1>
+        <p class="wizard-subtitle">{% trans "Confirm your remote storage configuration" %}</p>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="wizard-steps">
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step active">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Review & Save" %}</div>
+        </div>
+    </div>
+
+    <div class="wizard-content">
+        <div class="wizard-step-content">
+            <div class="summary-card">
+                <h3><i class="fas fa-cloud-upload-alt"></i> {{ destination_name }}</h3>
+                <div class="summary-row">
+                    <span class="summary-label">{% trans "Provider" %}</span>
+                    <span class="summary-value">{{ provider_name }}</span>
+                </div>
+                {% for item in summary_items %}
+                {% if item.value %}
+                <div class="summary-row">
+                    <span class="summary-label">{{ item.label }}</span>
+                    <span class="summary-value">{{ item.value }}</span>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <form method="post" id="step3-form">
+                {% csrf_token %}
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-sliders-h"></i> {% trans "Options" %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="is_default">
+                            <span>{% trans "Set as default destination" %}</span>
+                        </label>
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Automatically upload all backups to this destination." %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="retention_days">{% trans "Remote Retention (days)" %}</label>
+                        <select id="retention_days" name="retention_days" class="form-control" style="max-width: 300px;">
+                            <option value="0">{% trans "Keep forever" %}</option>
+                            <option value="7">7 {% trans "days" %}</option>
+                            <option value="14">14 {% trans "days" %}</option>
+                            <option value="30" selected>30 {% trans "days" %}</option>
+                            <option value="60">60 {% trans "days" %}</option>
+                            <option value="90">90 {% trans "days" %}</option>
+                            <option value="180">180 {% trans "days" %}</option>
+                            <option value="365">365 {% trans "days" %}</option>
+                        </select>
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Automatically delete backups older than this from the remote destination." %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wizard-actions">
+                    <a href="{% url 'admin:management_storage_wizard_step2' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> {% trans "Save Destination" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

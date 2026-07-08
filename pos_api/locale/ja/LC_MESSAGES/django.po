@@ -1,0 +1,1274 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "POS API"
+msgstr "POS API"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "このエンドポイントにアクセスするには、有効なPOSライセンスが必要です。"
+
+msgid "POS access requires a staff account."
+msgstr "POSアクセスにはスタッフアカウントが必要です。"
+
+msgid "You are not assigned to this terminal."
+msgstr "この端末に割り当てられておりません。"
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "ご権限がありません: %(label)s。"
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "バンドルバリアント選択: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "除外するオプションのBundleItem IDのリスト"
+
+msgid "Search by email, phone, or name"
+msgstr "メール、電話番号、または名前で検索"
+
+msgid "ID of the product to adjust stock for."
+msgstr "在庫を調整する製品のID。"
+
+msgid "ID of the variant (required for variable products)."
+msgstr "バリアントのID（変数商品の場合に必須）。"
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"調整の種類: \"receive\" は在庫を追加します（例: 新規納品）,\"damage\" は在庫を削除します（例: "
+"傷んだ商品）,\"recount\" は在庫数を絶対値に設定します,\"return\" は在庫を戻します（例: 顧客からの返品）。"
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"\"receive/return\" は追加する単位数を入力してください。\"damage\" "
+"は削除する単位数を入力してください。\"recount\" は新しい絶対値の on_hand 数を入力してください。"
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "この調整に関する説明（監査トレール用）。"
+
+msgid "Optional UUID for offline deduplication."
+msgstr "オフラインでの重複排除用のUUID（任意）。"
+
+msgid "Signed quantity delta."
+msgstr "サイン付き数量の変化量。"
+
+msgid "Last four digits of card number (digits only)"
+msgstr "カード番号の最後の4桁（数字のみ）"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr "請求金額。指定されない場合、残高の全額が請求されます。"
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr "端末プロバイダーからの支払いID（例: Stripe PaymentIntent ID）"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr "プロバイダー固有のリーダーID（例: Adyen POIID, Square device_id）"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "プロバイダ固有のトランザクションIDでステータスのポーリングを行います"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr "初期ステータス - 非同期プロバイダでは通常\"pending\"、同期プロバイダ（Adyen）では\"succeeded\""
+
+msgid "Current payment status"
+msgstr "現在の支払いステータス"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "プロバイダー支払いID（成功時）"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "キャンセルの理由（キャンセル時）"
+
+msgid "POS staff login"
+msgstr "POSスタッフログイン"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr ""
+"POSへのアクセスのためにスタッフメンバーを認証します。アクセストークンとリフレッシュトークンを返します。Admin "
+"API（MobileTokenAuthentication）と同じトークンシステムを使用します。"
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "ログインに成功し、トークンと端末構成を返します"
+
+msgid "Invalid credentials"
+msgstr "資格情報が無効です"
+
+msgid "User is not a staff member"
+msgstr "ユーザーはスタッフではありません"
+
+msgid "Refresh POS access token"
+msgstr "POSアクセストークンを再発行"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "リフレッシュトークンを新しいアクセストークンと交換します。"
+
+msgid "New access token"
+msgstr "新しいアクセストークン"
+
+msgid "Invalid or expired refresh token"
+msgstr "無効または期限切れのリフレッシュトークン"
+
+msgid "POS logout"
+msgstr "POSログアウト"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "現在のアクセストークンとリフレッシュトークンを無効にします。"
+
+msgid "Logged out successfully"
+msgstr "ログアウトに成功しました"
+
+msgid "Get current POS cart"
+msgstr "現在のPOSカートを取得"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr ""
+"認証されたレジ係の現在のカートを返します。カートが存在しない場合は新しいカートを作成します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Add item to POS cart"
+msgstr "アイテムをPOSカートに追加"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"カシャーのカートに商品を追加します。商品IDまたはバーコードで追加が可能です。product_idが指定されていない場合、バーコードから商品を自動的に解決します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "無効な商品、バリエーション、または在庫不足"
+
+msgid "Update cart item quantity"
+msgstr "カートアイテムの数量を更新"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr "カート内の商品の数量を更新します。数量を0に設定すると商品が削除されます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "数量が無効または在庫不足です"
+
+msgid "Cart item not found"
+msgstr "カートアイテムが見つかりません"
+
+msgid "Remove item from cart"
+msgstr "カートからアイテムを削除"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr "カートから特定の商品を削除します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Apply voucher to cart"
+msgstr "クーポンをカートに適用"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr "カートに割引コード/クーポンコードを適用します。一度に有効なクーポンは1つだけです。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Invalid or expired voucher code"
+msgstr "無効または期限切れのクーポンコード"
+
+msgid "Remove voucher from cart"
+msgstr "カートからクーポンを削除"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr "適用された割引券をカートから削除します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "No voucher applied"
+msgstr "適用されたクーポンはありません"
+
+msgid "Apply gift card to cart"
+msgstr "ギフトカードをカートに適用"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr "カートにギフトカードコードを適用して、合計金額の一部または全部を支払うことができます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "無効なギフトカードまたは残高不足"
+
+msgid "Clear all items from cart"
+msgstr "カートからすべてのアイテムをクリア"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr "カートからすべての商品、クーポン、ギフトカードを削除します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Apply manual discount to cart item"
+msgstr "カートアイテムに手動割引を適用"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"特定のカート商品にスタッフによる手動割引を適用します。割引がスタッフの上限を超える場合、requires_approval=trueが返されます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Discount applied or requires approval"
+msgstr "割引が適用済みまたは承認が必要"
+
+msgid "Invalid discount or not authorized"
+msgstr "無効な割引または権限がありません"
+
+msgid "Remove manual discount from cart item"
+msgstr "カートアイテムから手動割引を削除"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr "特定のカートアイテムからスタッフによる手動割引を削除します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Discount removed"
+msgstr "割引が削除されました"
+
+msgid "Apply manual discount to cart"
+msgstr "カートに手動で割引を適用"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"全カートにスタッフによる手動割引を適用します。割引がスタッフの上限を超える場合、requires_approval=trueが返されます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Remove manual discount from cart"
+msgstr "カートから手動割引を削除"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr "カートからスタッフによる手動割引を削除します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Verify manager PIN"
+msgstr "マネージャーPINを確認"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"マネージャーが割引を承認できるかどうかを確認するためのPINが有効であるかを確認します。有効な場合、マネージャーの名前を返します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "PIN verification result"
+msgstr "PIN確認結果"
+
+msgid "Approve discount with manager PIN"
+msgstr "マネージャーPINで割引を承認"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"スタッフの制限を超える割引を適用するには、マネージャーの承認が必要です。進めるには有効なマネージャーPINが必要です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Discount approved and applied"
+msgstr "割引が承認され適用されました"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "無効なPINまたは割引パラメータ"
+
+msgid "Park current cart"
+msgstr "現在のカートを保留"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"現在のカートの状態を後で復元するために保存します。顧客が一時的に離れ、別の顧客を対応する必要があるときに使用します。スタッフの認証と有効なPOSライセンスが必要です。"
+
+msgid "Cart parked successfully"
+msgstr "カートが正常に保留されました"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "カートが空または駐車できません。"
+
+msgid "List parked carts"
+msgstr "保留されたカートを一覧表示"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr "現在の端末用に駐車されたすべてのカートを取得します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "List of parked carts"
+msgstr "保留されたカートの一覧"
+
+msgid "Restore parked cart"
+msgstr "保留されたカートを復元"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr ""
+"駐車されたカートを復元し、現在のカートの内容を置き換えます。復元する前に現在のカートはクリアされます。スタッフの認証と有効なPOSライセンスが必要です。"
+
+msgid "Cart restored successfully"
+msgstr "カートが正常に復元されました"
+
+msgid "Current cart is not empty"
+msgstr "現在のカートは空ではありません"
+
+msgid "Parked cart not found"
+msgstr "保留されたカートが見つかりません"
+
+msgid "Delete parked cart"
+msgstr "保留されたカートを削除"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr "駐車されたカートを永久に削除します。この操作は元に戻せません。スタッフの認証と有効なPOSライセンスが必要です。"
+
+msgid "Parked cart deleted"
+msgstr "保留されたカートが削除されました"
+
+msgid "List POS products"
+msgstr "POS商品一覧"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"販売チャネルでフィルタされた、店舗販売用の商品を返します。端末が識別された場合、倉庫固有の在庫レベルも含まれます。画像付き商品は先に表示され、倉庫ごとの人気順に並べられます。"
+
+msgid "Search by name, SKU, or barcode"
+msgstr "名前、SKU、またはバーコードで検索"
+
+msgid "Filter by category ID"
+msgstr "カテゴリIDでフィルタ"
+
+msgid "Warehouse for stock levels"
+msgstr "在庫レベル用倉庫"
+
+msgid "Page number (default: 1)"
+msgstr "ページ番号（デフォルト: 1）"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "1ページあたりのアイテム数 (デフォルト: 50, 最大: 200)"
+
+msgid "Get product detail"
+msgstr "商品詳細を取得"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr "製品の詳細情報を含め、バリエーションと倉庫在庫情報を返します。"
+
+msgid "Barcode lookup"
+msgstr "バーコード検索"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr "バーコードで製品またはバリエーションを検索します。スキャン用の高速なインデックス検索です。"
+
+msgid "No product found with this barcode"
+msgstr "このバーコードで製品が見つかりません"
+
+msgid "List categories"
+msgstr "カテゴリ一覧"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "POS製品ナビゲーション用のカテゴリツリーを返します。"
+
+msgid "Process cash payment"
+msgstr "現金決済を処理"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"現金によるPOS取引を完了します。提示された金額が注文合計をカバーしているかを検証し、おつりを計算します。channel='pos'を持つOrderを作成し、POSPaymentのレコードを作成します。端末でオープンなシフトが必要です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "カートが空または現金が不足しています"
+
+msgid "Process card payment"
+msgstr "カード決済を処理"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"カードによるPOS取引を完了します。カード処理は外部のカード端末によって行われると仮定されます。このエンドポイントは、カードの参照情報と最後の4桁を記録します。端末でオープンなシフトが必要です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Empty cart"
+msgstr "カートが空です"
+
+msgid "Check gift card balance"
+msgstr "ギフトカードの残高を確認"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr ""
+"POSチェックアウト用のギフトカードの残高を確認します。有効な場合は現在の残高を、無効な場合はエラーメッセージを返します。スタッフ認証が必要です。"
+
+msgid "Gift card balance info"
+msgstr "ギフトカード残高情報"
+
+msgid "Invalid gift card or missing code"
+msgstr "無効なギフトカードまたはコードがありません"
+
+msgid "Process gift card payment"
+msgstr "ギフトカード支払いを処理"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"ギフトカードを使用してPOS取引を完了します。ギフトカードの残高が十分であることを確認します。ギフトカードの残高が注文合計より少ないと、代わりに分割決済エンドポイントを使用してください。端末でオープンシフトが必要です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "カートが空、無効なギフトカード、または残高が不足しています"
+
+msgid "Process split tender payment"
+msgstr "分割払いを処理"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"複数の支払い方法（分割決済）を使用してPOS取引を完了します。すべての支払いの合計は注文合計をカバーする必要があります。合計が注文金額を超える場合、最後の現金支払いに対しておつが計算されます。端末でオープンシフトが必要です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "カートが空、無効な支払い、または総額が不足しています"
+
+msgid "Process terminal card payment"
+msgstr "端末カード支払いを処理"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"統合されたカード端末支払いを使用してPOS取引を完了します。フロントエンドはすでに端末SDKを通じて支払いを収集し、provider_payment_id（例:"
+" Stripe "
+"PaymentIntent）を取得しておく必要があります。このエンドポイントは、注文を作成する前に支払いが成功したことを確認します。端末でのオープンシフトが必要です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Empty cart or payment verification failed"
+msgstr "カートが空または支払いの確認に失敗しました"
+
+msgid "Search customers"
+msgstr "顧客を検索"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"メール、電話番号、名前、姓のいずれかで顧客を検索します。最大20件の一致結果を返します。2文字以上が必要です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "検索クエリ（メールアドレス、電話番号、または名前）。最小2文字。"
+
+msgid "Search query too short"
+msgstr "検索クエリが短すぎます"
+
+msgid "Create walk-in customer"
+msgstr "来店顧客を作成"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"来店販売用の新しい顧客を作成します。指定されたメールアドレスを持つ顧客が既に存在する場合、重複した顧客を作成する代わりに既存の顧客を返します。完全に匿名の来店顧客の場合、メールアドレスは任意です。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Existing customer found with this email"
+msgstr "このメールアドレスに関連する既存の顧客が見つかりました"
+
+msgid "Get customer details"
+msgstr "顧客の詳細を取得"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr "顧客の詳細情報を含め、連絡先情報および最近の注文履歴を取得します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "List stock levels for warehouse"
+msgstr "倉庫の在庫レベルを一覧表示"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"端末の倉庫の在庫レベルをページ単位で返します。商品名またはSKUで検索し、在庫が少ないまたは在庫がない商品をフィルタリングできます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Search by product name or SKU"
+msgstr "製品名またはSKUで検索"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "在庫が低めのしきい値以下にあるアイテムのみを返す"
+
+msgid "Only return items with zero available stock"
+msgstr "在庫数がゼロの商品のみを返す"
+
+msgid "Warehouse not determined"
+msgstr "倉庫が未確定です"
+
+msgid "Get product stock detail"
+msgstr "製品在庫の詳細を取得"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr ""
+"特定の製品の端末の倉庫における在庫レベルを返します。これは、バリアントレベルの詳細も含みます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Check stock across all locations"
+msgstr "すべての場所における在庫を確認"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"すべての倉庫の場所における製品の在庫レベルを返します。在庫切れの商品が他の場所で利用可能かどうかを確認するために役立ちます。現在の端末の倉庫はis_current=trueでマークされます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Adjust stock levels"
+msgstr "在庫レベルを調整"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"端末の倉庫にある製品の在庫を調整します。4つの調整タイプをサポートしています：'receive'（出荷から在庫を追加）、'damage'（破損・紛失した在庫を削除）、'recount'（実物数えに基づいてon_handを絶対値に設定）、'return'（顧客返品から在庫を戻す）。StockMovementの変更履歴を変更不可で作成します。スタッフ認証、有効なPOSライセンス、pos_stock_adjustmentの権限が必要です。"
+
+msgid "Stock adjusted successfully"
+msgstr "在庫が正常に調整されました"
+
+msgid "Validation error or warehouse not determined"
+msgstr "検証エラーまたは倉庫が未指定"
+
+msgid "Permission denied or POS license required"
+msgstr "権限が拒否されたか、POSライセンスが必要です"
+
+msgid "Product or stock item not found"
+msgstr "製品または在庫アイテムが見つかりません"
+
+msgid "List stock movement history"
+msgstr "在庫の動き履歴を一覧表示"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"端末の倉庫の在庫変動記録をページ付きで返します。最近の在庫変更（調整、破損、再点検、返品）の監査に役立ちます。製品と変動タイプでフィルタリングをサポートしています。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Filter movements by product ID"
+msgstr "製品IDで動きをフィルタリング"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr "含める在庫変動タイプ（例: 'damage,recount'）"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "1ページあたりのアイテム数（デフォルト: 20、最大: 100）"
+
+msgid "Get customer loyalty info"
+msgstr "顧客のロイヤルティ情報取得"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"顧客のロイヤリティ会員資格のステータス、ランク、ポイント残高を取得します。顧客に有効なロイヤリティ会員資格がない場合、`is_member: "
+"false`を返します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"ロイヤルティ会員情報。`is_member`は顧客がアクティブな会員資格を持っているかどうかを示します。trueの場合、`tier_name`、`tier_color`、`available_points`が含まれます。"
+
+msgid "Preview loyalty points for cart"
+msgstr "カート用のロイヤルティポイントプレビュー"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"指定されたカート合計に対して顧客が獲得するロイヤルティポイントを計算します。顧客がアクティブなロイヤルティ会員資格を持っていない場合は0を返します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr "小数点付きのカート合計（例: '49.99'）。デフォルトは '0' です。"
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr "ポイントのプレビュー。`points_preview` は、指定されたカート合計に対して顧客が獲得するポイント数です。"
+
+msgid "List POS orders"
+msgstr "POS注文の一覧"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"日付範囲、出典、顧客、レジ係、検索などの高度なフィルタリングで注文を返します。返品シナリオのためのウェブ注文の表示をサポートしています。デフォルト: "
+"この端末からの本日のみの注文。検索モード: "
+"'search'が指定された場合、日付/出典/レジ係のフィルタはバイパスされ、注文番号、顧客名、メール、電話番号で任意の注文を検索できます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr "範囲フィルタの開始日（ISO形式、デフォルト: 今日）。検索が提供されている場合は無視されます。"
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr "範囲フィルタの終了日（ISO形式、デフォルト: 今日）。検索が提供されている場合は無視されます。"
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr ""
+"注文の発生元フィルター: this_terminal（デフォルト）、all_pos、all（Webを含む）。検索が指定されている場合は無視されます。"
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr "顧客ユーザーIDでフィルタリングします。検索が提供されている場合は無視されます。"
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr "レジスタッフIDでフィルタリングします。検索が提供されている場合は無視されます。"
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr "注文番号、顧客名、メール、または電話番号を使ってすべての注文を検索できます。日付/出典のフィルターをバイパスします。"
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "注文ステータスでフィルタリングします（どちらのモードにも適用されます）"
+
+msgid "Get order details"
+msgstr "注文詳細を取得"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"アイテムや支払いの詳細を含む注文の完全な情報を返します。POSおよびウェブ注文（返品シナリオ用）をサポートしています。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Get receipt data for printing"
+msgstr "印刷用のレシートデータ取得"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"POS注文のレシート形式のデータを返します。店舗情報、商品、支払い、およびフッターのテキストが含まれます。ESC/POS熱転写プリンタ用に設計されています。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Process order refund"
+msgstr "注文の返金を処理"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"POS注文の全額または部分的な返金を処理します。部分返金の場合は、返金する商品と数量を指定してください。返金レコードを作成し、注文およびシフトの合計を更新します。端末でシフトが開いている必要があります。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Refund processed successfully"
+msgstr "返金が正常に処理されました"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "無効な返金リクエスト、または注文はすでに返金済みです"
+
+msgid "Void a POS order"
+msgstr "POS注文を無効にする"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"現在のシフトからPOS注文をキャンセルします。現在開いているシフト中に作成された注文のみがキャンセル可能です。これにより、全額の返金が行われ、支払いおよび在庫の変更がすべて元に戻されます。端末に開いているシフトが必要であり、スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Order voided successfully"
+msgstr "注文が正常に無効になりました"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "注文を無効にできません（現在のシフトからではありません）"
+
+msgid "List POS cashiers"
+msgstr "POSレジ係の一覧"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"POS注文を処理したスタッフメンバーのリストを返します。レジフィルタドロップダウンを埋めるために使用されます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "List of cashiers"
+msgstr "レジ係の一覧"
+
+msgid "Send digital receipt"
+msgstr "デジタル領収書を送信"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"顧客に電子領収書をメール、SMS、またはWhatsApp経由で送信します。領収書はCeleryタスクを介して非同期で送信されます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Receipt queued for sending"
+msgstr "レシートの送信がキューイングされています"
+
+msgid "Get receipt sending status"
+msgstr "レシート送信ステータスを取得"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr "注文に対してどの電子領収書が送信されたかを確認します。メールおよびSMS/WhatsAppの配信時刻を返します。"
+
+msgid "Receipt status"
+msgstr "レシートステータス"
+
+msgid "Get current shift summary"
+msgstr "現在のシフトの概要を取得"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"端末上の現在のレジ係のオープンシフトの概要を返します。合計、取引数、支払い方法の詳細が含まれます。シフトがオープンしていない場合はnullシフトを返します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Open a new shift"
+msgstr "新しいシフトを開く"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"端末で新しいシフトを開始します。一度に1つの端末につき1つのオープンシフトのみが許可されています。開店時の現金額を記録します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Invalid opening cash amount"
+msgstr "初期現金額が無効です"
+
+msgid "A shift is already open on this terminal"
+msgstr "この端末ではすでにシフトが開かれています"
+
+msgid "Close current shift"
+msgstr "現在のシフトを終了"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"現在開いているシフトを終了します。終了時の現金額を記録し、予想と実際の現金の差額を計算します。スタッフの認証と有効なPOSライセンスが必要です。"
+
+msgid "Record cash movement"
+msgstr "現金の動きを記録"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"シフト中に現金の入金または出金を記録します。例: "
+"浮動金の追加、預金用の引き出し、小切手。端末で開いているシフトが必要です。スタッフの認証と有効なPOSライセンスが必要です。"
+
+msgid "Cash movement recorded"
+msgstr "現金の動きが記録されました"
+
+msgid "Invalid movement data"
+msgstr "無効な動きデータ"
+
+msgid "Get daily sales report"
+msgstr "日々の販売レポートを取得"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"端末の集計された日次の販売レポートを返します。合計、取引数、平均取引金額、支払い方法の詳細が含まれます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Report date (ISO format, default: today)"
+msgstr "レポート日付（ISO形式、デフォルト: 今日）"
+
+msgid "Get top selling products"
+msgstr "売れ筋商品を取得"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr "指定された日付における端末の売上上位商品を、販売数量順に返します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "返す商品数（デフォルト: 10、最大: 50）"
+
+msgid "Sync products since timestamp"
+msgstr "タイムスタンプ以降の商品を同期"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"指定されたタイムスタンプ以降に作成または更新された商品を返します。POS端末のローカルデータベースへのインクリメンタルな商品同期に使用されます。次の同期リクエスト用のsync_tokenも返します。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr "変更を取得するためのISOタイムスタンプ。フル同期の場合は省略してください。"
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "1ページあたりの項目数（デフォルト: 100、最大: 200）"
+
+msgid "Sync customers since timestamp"
+msgstr "タイムスタンプ以降の顧客を同期"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"指定されたタイムスタンプ以降に作成されたか、注文を置いた顧客を返します。オフラインでの顧客検索に使用されます。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "Customer sync data"
+msgstr "顧客同期データ"
+
+msgid "Upload offline transactions"
+msgstr "オフライン取引をアップロード"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"端末がオフラインだったときに処理された取引をバッチアップロードします。各取引はアイテムと支払いとともに注文を作成します。local_idを使用してidempotencyを確保しており、重複したアップロードは検出され、スキップされます。スタッフ認証および有効なPOSライセンスが必要です。"
+
+msgid "Upload results with success/failure per transaction"
+msgstr "取引ごとの成功/失敗結果をアップロード"
+
+msgid "Get sync status"
+msgstr "同期ステータスを取得"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr "同期計画用の現在のサーバー時刻とデータベースのカウントを返します。スタッフ認証および有効なPOSライセンスが必要です。"
+
+msgid "Get sync version info"
+msgstr "同期バージョン情報を取得"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr ""
+"クライアントの互換性チェック用にAPIバージョンとデータスキーマバージョンを返します。スキーマバージョンが増加した場合、クライアントはキャッシュをクリアし再同期する必要があります。"
+
+msgid "Version information"
+msgstr "バージョン情報"
+
+msgid "Upload offline stock adjustments"
+msgstr "オフライン在庫調整のアップロード"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"端末がオフラインだった間にキューイングされた在庫調整をバッチアップロードします。各調整は重複を防ぐためにidempotencyキーを使用します。スタッフ認証、有効なPOSライセンス、在庫調整権限が必要です。"
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "調整ごとの成功/失敗結果をアップロード"
+
+msgid "POS license or permission required"
+msgstr "POSライセンスまたは権限が必要です"
+
+msgid "Sync orders for offline cache"
+msgstr "オフラインキャッシュ用の注文を同期"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"POS端末でのオフラインキャッシュ用に注文を返します。端末の同期上限内では、POS注文がウェブ注文よりも優先されます。'since'パラメータを通じてデルタ同期をサポートしています。スタッフ認証と有効なPOSライセンスが必要です。"
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr "デルタ同期用のISOタイムスタンプ。フル同期の場合は省略。"
+
+msgid "Register POS terminal"
+msgstr "POS端末を登録"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr "ペアリングコードを使用して、新しいデバイスをPOS端末として登録します。ペアリングコードは、端末を作成するときに管理パネルで生成されます。"
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "端末が正常に登録されました。端末の設定を返します。"
+
+msgid "Invalid or expired pairing code"
+msgstr "無効または期限切れのペアリングコード"
+
+msgid "Get terminal configuration"
+msgstr "端末設定を取得"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr "現在の端末の設定、ハードウェア設定を含めて返します。"
+
+msgid "Terminal heartbeat"
+msgstr "端末のハートビート"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr "端末がオンラインであることを報告します。60秒ごとに呼び出す必要があります。"
+
+msgid "Heartbeat recorded"
+msgstr "ハートビートが記録されました"
+
+msgid "Get receipt template"
+msgstr "レシートテンプレートを取得"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr ""
+"端末の倉庫用のレシートテンプレートを返します。倉庫に特定のテンプレートが指定されていない場合は、デフォルトテンプレート（倉庫が割り当てられていない）を使用します。テンプレートが一切存在しない場合は、合理的なデフォルト値を返します。"
+
+msgid "Receipt template data"
+msgstr "レシートテンプレートデータ"
+
+msgid "Get promo slides"
+msgstr "プロモーションスライドを取得"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr "端末の倉庫用のプロモーションスライドを返します。スライドは、顧客が対面で操作するディスプレイ上に、アイドル時間中に表示されます。"
+
+msgid "List of promo slides with image URLs"
+msgstr "画像URL付きのプロモーションスライドの一覧"
+
+msgid "Generate display pairing code"
+msgstr "ディスプレイペアリングコードを生成"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr ""
+"顧客のディスプレイ認証用に、一時的な6桁のペアリングコードを生成します。このコードは5分後に期限切れとなり、一度だけ使用可能です。新しいコードを生成すると、この端末の既存の未使用コードは無効になります。"
+
+msgid "Pairing code generated"
+msgstr "ペアリングコードが生成されました"
+
+msgid "List managers for unlock override"
+msgstr "アンロックオーバーライド用の管理者一覧"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr "マネージャーの上書き解除フロー用のマネージャー（IDと名前）の一覧を返す"
+
+msgid "List of managers"
+msgstr "管理者一覧"
+
+msgid "Verify unlock PIN"
+msgstr "アンロックPINを確認"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr ""
+"端末を解除するためにレジ係またはマネージャーのPINを認証してください。3回の失敗後は、マネージャーのPINのみが受け入れられます。すべての試行は監査のために記録されます。"
+
+msgid "PIN verified successfully"
+msgstr "PINが正常に確認されました"
+
+msgid "Invalid PIN"
+msgstr "無効なPIN"
+
+msgid "Log terminal lock event"
+msgstr "端末ロックイベントを記録"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr ""
+"端末がロックされたタイミングを記録します（手動または自動ロックタイムアウトによるもの）。このエンドポイントは監査ログ用であり、端末の状態を変更しません。"
+
+msgid "Event logged successfully"
+msgstr "イベントが正常に記録されました"
+
+msgid "Invalid event type"
+msgstr "無効なイベントタイプ"
+
+msgid "Verify unlock card"
+msgstr "解除カードを確認"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr ""
+"スタッフIDカードをスワイプして端末をアンロックする認証を行います。カードデータはハッシュ化され、保存されたカードハッシュと比較されます。PIN入力失敗が3回続くと、管理者カードのみが受け入れられます。"
+
+msgid "Card verified successfully"
+msgstr "カードが正常に確認されました"
+
+msgid "Card not recognized"
+msgstr "カードが認識されません"
+
+msgid "Register staff unlock card"
+msgstr "スタッフ解除カードを登録"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr "現在のユーザーのクイック端末解除用にカードスワイプを登録します。"
+
+msgid "Card registered successfully"
+msgstr "カードが正常に登録されました"
+
+msgid "Card already registered to another user"
+msgstr "このカードはすでに他のユーザーに登録されています。"
+
+msgid "Remove staff unlock card"
+msgstr "スタッフ解除カードを削除"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "現在のユーザーが登録した解除用カードを削除します。"
+
+msgid "Card removed successfully"
+msgstr "カードが正常に削除されました"
+
+msgid "Set cashier PIN"
+msgstr "レジ係のPINを設定"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"端末のロック/アンロック用の現金出納員のPINを設定または更新します。PINは4〜6桁でなければなりません。PINとpin_confirmは一致する必要があります。"
+
+msgid "PIN set successfully"
+msgstr "PINが正常に設定されました"
+
+msgid "Get terminal provider config"
+msgstr "端末プロバイダの設定を取得"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"現在の端末の端末プロバイダー構成を返します。統合モード（sdk、cloud、またはmanual）と接続されたリーダーの詳細が含まれます。POSフロントエンドが起動時に統合されたカードリーダーが利用可能かどうか、およびどの支払いフローを使用するかを判断するために使用されます。"
+
+msgid "Create connection token"
+msgstr "接続トークンを作成"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"SDKモードの端末プロバイダ（例: Stripe Terminal JS "
+"SDK）用の短命な接続トークンを作成します。フロントエンドはSDKを初期化する際、このエンドポイントを呼び出してリーダーと直接接続します。SDK専用です。クラウドプロバイダは接続トークンを使用しません。プロバイダがSDKトークンをサポートしない場合、400を返します。"
+
+msgid "List card readers"
+msgstr "カードリーダー一覧"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"端末プロバイダーから利用可能なカードリーダーを一覧表示します。SDKモードとクラウドモードの両方のプロバイダーで動作します。各リーダーオブジェクトには、id、label、type、serial_number、statusが含まれます。"
+
+msgid "Create payment intent for terminal"
+msgstr "端末用の支払い意図を作成"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"端末リーダーでのcard_presentの支払いを処理するためのPaymentIntentを作成します。フロントエンドは、返されたclient_secretを使用してSDK経由で支払いを収集します。SDK専用です。クラウドプロバイダーはinitiate-"
+"cloud-paymentを使用してください。通貨が省略された場合、端末で設定された通貨がデフォルトになります。"
+
+msgid "Capture/verify terminal payment"
+msgstr "端末支払いを確定/確認"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr ""
+"端末リーダー上でPaymentIntentが正常に処理されたことを確認し、プロバイダーからカードの詳細（ブランド、最後の4桁）を返します。SDKのみです。"
+
+msgid "Cancel terminal payment"
+msgstr "端末支払いをキャンセル"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"端末リーダー上の保留中のPaymentIntentをキャンセルします（例: 顧客がキャンセル）。SDKのみです。クラウドプロバイダーはcancel-"
+"cloud-paymentを使用してください。"
+
+msgid "Initiate cloud payment on reader"
+msgstr "リーダー上でクラウド支払いを開始"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"提供元のクラウドAPIを通じてカードリーダーに支払いリクエストを送信します。クラウドモードの端末提供元専用（Adyen、Square、SumUp、Zettle）。クラウド専用です。提供元がSDKモードを使用している場合、400が返されます。通貨が省略された場合、端末で設定された通貨がデフォルトになります。"
+
+msgid "Check cloud payment status"
+msgstr "クラウド支払いのステータスを確認"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"クラウドで開始された支払いのステータスをポーリングします。現在のステータス（保留、成功、失敗、キャンセル）を返します。ステータスが'succeeded'の場合、応答にはcard_brand、last4、およびプロバイダのpayment_idが含まれます。ステータスが'canceled'の場合、cancel_reasonが含まれます。フロントエンドはステータスが'pending'でなくなるまで、2秒ごとにポーリングする必要があります。"
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr "プロバイダ固有のトランザクションID。initiate-cloud-paymentによって返されます。"
+
+msgid "Cancel cloud payment"
+msgstr "クラウド支払いをキャンセル"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr "リーダー上の保留中のクラウド発行支払いをキャンセルします。クラウド専用です。プロバイダによって挙動が異なります。"
+
+msgid "Begin WebAuthn registration"
+msgstr "WebAuthn 登録を開始"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr "生体認証登録用の登録オプションを生成します。チャレンジおよび資格証明の作成オプションを返します。"
+
+msgid "Registration options"
+msgstr "登録オプション"
+
+msgid "Complete WebAuthn registration"
+msgstr "WebAuthn 登録を完了"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr "生体認証によるロック解除用の資格情報を確認し、保存します。"
+
+msgid "Credential registered"
+msgstr "資格情報が登録されました"
+
+msgid "Verification failed"
+msgstr "認証に失敗しました"
+
+msgid "Begin WebAuthn authentication"
+msgstr "WebAuthn 認証を開始"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"生体認証によるアンロックの認証チャレンジを生成します。ロックされたユーザーおよびすべてのマネージャーのallowCredentialsを返します。failed_attempts"
+" >= 3の場合、マネージャーの資格情報のみが含まれます。"
+
+msgid "Authentication options"
+msgstr "認証オプション"
+
+msgid "No credentials registered"
+msgstr "登録された資格情報はありません"
+
+msgid "Complete WebAuthn authentication"
+msgstr "WebAuthn認証を完了"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "生体認証を確認し、端末を解除します。"
+
+msgid "Authentication successful"
+msgstr "認証に成功しました"

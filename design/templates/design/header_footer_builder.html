@@ -1,0 +1,289 @@
+{% load static i18n core_extras %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% if builder_type == 'header' %}
+            {% trans "Header Builder" %} - {{ header.name }}
+        {% else %}
+            {% trans "Footer Builder" %} - {{ footer.name }}
+        {% endif %}
+    </title>
+
+    <!-- Favicon -->
+    {% favicon_meta %}
+
+    <!-- CSS Layer Declaration (MUST load first - controls cascade priority) -->
+    <link rel="stylesheet" href="{% static 'design/css/hf-layers.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- Core Admin Theme Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+
+    <!-- Admin Base Styles (contains shared components) -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Header/Footer Builder Admin Styles (reads admin theme variables) -->
+    <link rel="stylesheet" href="{% static 'design/css/header-footer-builder.css' %}">
+
+    <!-- Branding Builder Styles (reused for property panel styling) -->
+    <link rel="stylesheet" href="{% static 'design/css/branding_builder.css' %}">
+
+    <!-- Utility Editor Styles -->
+    <link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+    <link rel="stylesheet" href="{% static 'utilities/color_picker/current/color_picker.css' %}">
+    <link rel="stylesheet" href="{% static 'utilities/typography_editor/current/typography_editor.css' %}">
+
+    <!-- Media Library Styles -->
+    <link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+    <link rel="stylesheet" href="{% static 'media_library/css/upload-queue.css' %}">
+
+    <!-- Canvas Isolation Styles (prevents theme bleed-through) -->
+    <link rel="stylesheet" href="{% static 'design/css/hf-canvas-isolation.css' %}">
+
+    <!-- Widget Styles are loaded via JavaScript after theme CSS to ensure proper variable resolution -->
+
+    <!-- Theme and brand CSS will be loaded and scoped via JavaScript -->
+</head>
+<body data-theme="{{ admin_theme|default:'light' }}">
+
+    <div class="hf-builder-container">
+        <!-- Left Sidebar - Widget Library -->
+        <div class="hf-sidebar-left">
+            <div class="hf-sidebar-header">
+                <h2><i class="fas fa-puzzle-piece"></i> {% trans "Widget Library" %}</h2>
+                <div class="hf-search-box">
+                    <input type="text" id="widget-search" placeholder="{% trans 'Search widgets...' %}">
+                </div>
+            </div>
+            <div class="hf-sidebar-content" id="widget-library">
+                <!-- Widget categories will be loaded here via JavaScript -->
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+
+        <!-- Center Canvas - Live Preview -->
+        <div class="hf-canvas-center">
+            <!-- Toolbar - Two Rows -->
+            <div class="hf-toolbar-wrapper">
+                <!-- Row 1: Navigation & Status -->
+                <div class="hf-toolbar hf-toolbar-row-1">
+                    <div class="hf-toolbar-left">
+                        <button class="toolbar-btn" id="back-btn" data-url="{% url 'design:dashboard' %}">
+                            <i class="fas fa-arrow-left"></i>
+                            {% trans "Back" %}
+                        </button>
+
+                        <select id="template-selector" class="property-select" style="width: 200px;">
+                            {% if builder_type == 'header' %}
+                                {% for h in all_headers %}
+                                    <option value="{{ h.id }}" {% if h.id == header.id %}selected{% endif %}>{{ h.name }}</option>
+                                {% endfor %}
+                            {% else %}
+                                {% for f in all_footers %}
+                                    <option value="{{ f.id }}" {% if f.id == footer.id %}selected{% endif %}>{{ f.name }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div class="hf-toolbar-center">
+                        <div class="device-toggle-group">
+                            <button class="device-toggle" data-device="mobile" title="{% trans 'Mobile View' %}">
+                                <i class="fas fa-mobile-alt"></i>
+                            </button>
+                            <button class="device-toggle" data-device="tablet" title="{% trans 'Tablet View' %}">
+                                <i class="fas fa-tablet-alt"></i>
+                            </button>
+                            <button class="device-toggle active" data-device="desktop" title="{% trans 'Desktop View' %}">
+                                <i class="fas fa-desktop"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="hf-toolbar-right">
+                        <!-- Status Indicator -->
+                        <div class="hfb-status-indicator" id="status-indicator">
+                            <span class="hfb-status-badge hfb-status-published" id="status-badge">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="status-text">{% trans "Live" %}</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Actions -->
+                <div class="hf-toolbar hf-toolbar-row-2">
+                    <div class="hf-toolbar-left">
+                        <button class="toolbar-btn preset-gallery-btn" id="preset-btn">
+                            <i class="fas fa-th-large"></i>
+                            {% trans "Presets" %}
+                        </button>
+                    </div>
+
+                    <div class="hf-toolbar-right">
+                        <button class="toolbar-btn btn-secondary" id="discard-btn" disabled title="{% trans 'Discard changes and revert to published state' %}">
+                            <i class="fas fa-undo-alt"></i>
+                            {% trans "Discard" %}
+                        </button>
+                        <button class="toolbar-btn btn-primary" id="save-draft-btn">
+                            <i class="fas fa-save"></i>
+                            {% trans "Save Draft" %}
+                        </button>
+                        <button class="toolbar-btn btn-success" id="publish-btn">
+                            <i class="fas fa-globe"></i>
+                            {% trans "Publish" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div class="hf-canvas-viewport">
+                <div class="canvas-frame desktop-preview" id="canvas-frame">
+                    <div class="hf-content-preview" id="preview-content">
+                        <!-- Header/Footer preview will be rendered here -->
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Properties Panel -->
+        <div class="hf-sidebar-right">
+            <div class="hf-sidebar-header">
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" data-tab="zone-config">
+                        <i class="fas fa-layer-group"></i>
+                        {% trans "Zones" %}
+                    </button>
+                    <button class="admin-tab-btn" data-tab="widget-props">
+                        <i class="fas fa-sliders-h"></i>
+                        {% trans "Widget" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Zone Configuration Tab -->
+            <div class="admin-tab-content active" id="zone-config-tab">
+                <div class="zone-config-content" id="zone-config-content">
+                    <div class="hf-properties-empty">
+                        <i class="fas fa-layer-group"></i>
+                        <p>{% trans "Click a zone in the preview to configure it" %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget Properties Tab -->
+            <div class="admin-tab-content" id="widget-props-tab">
+                <div class="hf-properties-content" id="properties-panel">
+                    <div class="hf-properties-empty">
+                        <i class="fas fa-hand-pointer"></i>
+                        <p>{% trans "Select a widget to edit its properties" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preset Gallery Modal -->
+    <div class="preset-gallery-modal hidden" id="preset-modal">
+        <div class="preset-gallery-content">
+            <div class="preset-gallery-header">
+                <h2>
+                    <i class="fas fa-th-large"></i>
+                    {% if builder_type == 'header' %}
+                        {% trans "Header Presets" %}
+                    {% else %}
+                        {% trans "Footer Presets" %}
+                    {% endif %}
+                </h2>
+                <button class="preset-close-btn" id="preset-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="preset-gallery-body" id="preset-gallery-body">
+                <div class="preset-grid" id="preset-grid">
+                    <!-- Presets will be loaded here via JavaScript -->
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Configuration -->
+    <script type="application/json" id="hf-builder-config">
+    {
+        "builderType": "{{ builder_type }}",
+        "templateId": {% if builder_type == 'header' %}{{ header.id }}{% else %}{{ footer.id }}{% endif %},
+        "apiUrl": "{{ api_url }}",
+        "widgetLibraryUrl": "{{ widget_library_url }}",
+        "presetGalleryUrl": "{{ preset_gallery_url }}",
+        "schemaUrl": "{% url 'hf_api:widget_schemas' %}",
+        "csrfToken": "{{ csrf_token }}",
+        "announcementsUrl": "{% url 'admin:announcements_announcement_changelist' %}",
+        "themeCssUrl": {% if theme_css_url %}"{{ theme_css_url }}"{% else %}null{% endif %},
+        "brandCssUrl": {% if brand_css_url %}"{{ brand_css_url }}"{% else %}null{% endif %},
+        "cssFiles": {
+            "base": "{% static 'css/base.css' %}",
+            "presetZones": "{% static 'design/css/header-preset-zones.css' %}",
+            "widgets": [
+                "{% static 'design/css/widgets/logo.css' %}",
+                "{% static 'design/css/widgets/menu.css' %}",
+                "{% static 'design/css/widgets/search.css' %}",
+                "{% static 'design/css/widgets/cart.css' %}",
+                "{% static 'design/css/widgets/account.css' %}",
+                "{% static 'design/css/widgets/language.css' %}",
+                "{% static 'design/css/widgets/currency.css' %}",
+                "{% static 'design/css/widgets/social.css' %}",
+                "{% static 'design/css/widgets/newsletter.css' %}",
+                "{% static 'design/css/widgets/contact.css' %}",
+                "{% static 'design/css/widgets/text.css' %}",
+                "{% static 'design/css/widgets/links.css' %}",
+                "{% static 'design/css/widgets/payment.css' %}",
+                "{% static 'design/css/widgets/trust_badges.css' %}",
+                "{% static 'design/css/widgets/announcement.css' %}",
+                "{% static 'design/css/widgets/custom.css' %}",
+                "{% static 'design/css/widgets/site_variable.css' %}"
+            ]
+        },
+        "translations": {
+            "save": "{% trans 'Save' %}",
+            "saving": "{% trans 'Saving...' %}",
+            "saved": "{% trans 'Saved!' %}",
+            "error": "{% trans 'Error' %}",
+            "deleteConfirm": "{% trans 'Are you sure you want to delete this widget?' %}",
+            "selectWidget": "{% trans 'Select a widget to edit' %}",
+            "widgetAdded": "{% trans 'Widget added' %}",
+            "widgetRemoved": "{% trans 'Widget removed' %}",
+            "widgetUpdated": "{% trans 'Widget updated' %}",
+            "loadingPresets": "{% trans 'Loading presets...' %}",
+            "noPresets": "{% trans 'No presets available' %}",
+            "clonePreset": "{% trans 'Use This Preset' %}"
+        },
+        "currentTheme": "{{ admin_theme|default:'light' }}",
+        "forceLightMode": {% if design_settings.force_light_mode %}true{% else %}false{% endif %}
+    }
+    </script>
+
+    <!-- SortableJS for drag and drop (local copy to avoid CDN tracking prevention) -->
+    <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+
+    <!-- Media Library -->
+    <script src="{% static 'media_library/js/media-library.js' %}"></script>
+    <script src="{% static 'media_library/js/upload-queue.js' %}"></script>
+
+    <!-- Utility Editors for Color and Typography Fields -->
+    <script src="{% static 'utilities/color_picker/current/color_picker.js' %}"></script>
+    <script src="{% static 'utilities/typography_editor/current/typography_editor.js' %}"></script>
+
+    <!-- Header/Footer Builder JavaScript -->
+    <script src="{% static 'design/js/hf-css-loader.js' %}"></script>
+    <script src="{% static 'design/js/header-footer-builder.js' %}"></script>
+</body>
+</html>

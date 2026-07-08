@@ -1,0 +1,90 @@
+{% load i18n static merchant_trans %}
+<div class="widget-currency {{ widget.css_classes }}"
+     data-widget-id="{{ widget.id }}"
+     data-currency-url="{% url 'set_currency' %}"
+     data-display-style="{{ config.display_style|default:'symbol_code' }}"
+     data-show-current-only="{{ config.show_current_only|yesno:'true,false' }}"
+     data-dropdown-position="{{ config.dropdown_position|default:'bottom' }}"
+     data-button-style="{{ config.button_style|default:'outline' }}">
+
+    {% if config.show_current_only %}
+        {# Compact mode: Show current currency as button #}
+        <button type="button" class="currency-button currency-button-{{ config.button_style|default:'outline' }}" aria-label="{% mtrans 'Select Currency' %}" aria-haspopup="true" aria-expanded="false">
+            <span class="currency-current">
+                {% if config.display_style == 'flag_code' or config.display_style == 'flag_name' %}
+                    <span class="currency-flag">{{ current_currency.flag }}</span>
+                {% endif %}
+                {% if config.display_style == 'symbol_code' or config.display_style == 'symbol_only' %}
+                    <span class="currency-symbol">{{ current_currency.symbol }}</span>
+                {% endif %}
+                {% if config.display_style == 'symbol_code' or config.display_style == 'flag_code' or config.display_style == 'code_only' %}
+                    <span class="currency-code">{{ current_currency.code }}</span>
+                {% endif %}
+                {% if config.display_style == 'flag_name' or config.display_style == 'name_only' %}
+                    <span class="currency-name">{{ current_currency.name }}</span>
+                {% endif %}
+            </span>
+            <svg class="currency-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+
+        <div class="currency-dropdown currency-dropdown-{{ config.dropdown_position|default:'bottom' }}" hidden>
+            <div class="currency-dropdown-inner">
+                {% for currency in available_currencies %}
+                <button type="button"
+                        class="currency-option {% if currency.code == current_currency.code %}currency-option-active{% endif %}"
+                        data-currency="{{ currency.code }}"
+                        data-symbol="{{ currency.symbol }}"
+                        data-name="{{ currency.name }}"
+                        data-flag="{{ currency.flag }}">
+                    {% if config.display_style == 'flag_code' or config.display_style == 'flag_name' %}
+                        <span class="currency-flag">{{ currency.flag }}</span>
+                    {% endif %}
+                    {% if config.display_style == 'symbol_code' or config.display_style == 'symbol_only' %}
+                        <span class="currency-symbol">{{ currency.symbol }}</span>
+                    {% endif %}
+                    {% if config.display_style == 'symbol_code' or config.display_style == 'flag_code' or config.display_style == 'code_only' %}
+                        <span class="currency-code">{{ currency.code }}</span>
+                    {% endif %}
+                    {% if config.display_style == 'flag_name' or config.display_style == 'name_only' %}
+                        <span class="currency-name">{{ currency.name }}</span>
+                    {% endif %}
+                    {% if currency.code == current_currency.code %}
+                        <svg class="currency-check" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="M3 8L6.5 11.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    {% endif %}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        {# Full mode: Show all currencies as dropdown select #}
+        <div class="currency-select-wrapper">
+            <select class="currency-select" aria-label="{% mtrans 'Select Currency' %}">
+                {% for currency in available_currencies %}
+                <option value="{{ currency.code }}"
+                        data-symbol="{{ currency.symbol }}"
+                        data-name="{{ currency.name }}"
+                        data-flag="{{ currency.flag }}"
+                        {% if currency.code == current_currency.code %}selected{% endif %}>
+                    {% if config.display_style == 'flag_code' or config.display_style == 'flag_name' %}{{ currency.flag }} {% endif %}{% if config.display_style == 'symbol_code' or config.display_style == 'symbol_only' %}{{ currency.symbol }} {% endif %}{% if config.display_style == 'symbol_code' or config.display_style == 'flag_code' or config.display_style == 'code_only' %}{{ currency.code }}{% endif %}{% if config.display_style == 'flag_name' or config.display_style == 'name_only' %}{{ currency.name }}{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+            <svg class="currency-select-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    {% endif %}
+
+    {# Loading indicator #}
+    <div class="currency-loading" hidden>
+        <svg class="currency-spinner" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="30 10"/>
+        </svg>
+    </div>
+</div>
+
+<script src="{% static 'design/js/widgets/currency.js' %}"></script>

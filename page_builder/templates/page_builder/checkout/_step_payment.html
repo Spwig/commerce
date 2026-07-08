@@ -1,0 +1,75 @@
+{% load i18n merchant_trans %}
+{# Payment selection + billing address - shared across checkout templates #}
+
+<div class="payment-providers" id="payment-providers-list">
+    <div class="checkout-empty-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>{% mtrans 'Loading payment methods...' %}</p>
+    </div>
+</div>
+
+<!-- Billing Address -->
+<div class="billing-toggle">
+    <input type="checkbox" id="billing-same-as-shipping" checked>
+    <label for="billing-same-as-shipping">{% mtrans 'Billing address same as shipping' %}</label>
+</div>
+
+<div id="billing-address-form" hidden>
+    <!-- Billing address autocomplete search -->
+    <div class="checkout-form-group">
+        <label for="billing-address-search">{% mtrans 'Search Address' %}</label>
+        <input type="text" id="billing-address-search" class="checkout-input"
+               placeholder="{% mtrans 'Start typing your address...' %}"
+               autocomplete="off">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-name">{% mtrans 'Full Name' %} <span class="required">*</span></label>
+        <input type="text" id="billing-name" class="checkout-input" required>
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-company">{% mtrans 'Company' %}</label>
+        <input type="text" id="billing-company" class="checkout-input">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-address1">{% mtrans 'Address Line 1' %} <span class="required">*</span></label>
+        <input type="text" id="billing-address1" class="checkout-input" required>
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-address2">{% mtrans 'Address Line 2' %}</label>
+        <input type="text" id="billing-address2" class="checkout-input">
+    </div>
+
+    <div class="checkout-form-row">
+        <div class="checkout-form-group">
+            <label for="billing-city">{% mtrans 'City' %} <span class="required">*</span></label>
+            <input type="text" id="billing-city" class="checkout-input" required>
+        </div>
+        <div class="checkout-form-group">
+            <label for="billing-state">{% mtrans 'State / Province' %} <span class="required">*</span></label>
+            <input type="text" id="billing-state" class="checkout-input" required>
+        </div>
+    </div>
+
+    <div class="checkout-form-row">
+        <div class="checkout-form-group">
+            <label for="billing-postal-code">{% mtrans 'Postal Code' %} <span class="required">*</span></label>
+            <input type="text" id="billing-postal-code" class="checkout-input" required>
+        </div>
+        <div class="checkout-form-group">
+            <label for="billing-country">{% mtrans 'Country' %} <span class="required">*</span></label>
+            <input type="text" id="billing-country" class="checkout-input" required>
+        </div>
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="billing-phone">{% mtrans 'Phone' %}</label>
+        <input type="tel" id="billing-phone" class="checkout-input">
+    </div>
+</div>
+
+<!-- Embedded payment container (for SDK-based providers) -->
+<div id="embedded-payment-container"></div>

@@ -1,0 +1,1049 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static order_filters shipping_filters %}
+
+{% block title %}{% if original %}{% trans "Order" %} #{{ original.order_number }}{% else %}{% trans "Add Order" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+<link rel="stylesheet" href="{% static 'orders/css/order-detail.css' %}">
+<link rel="stylesheet" href="{% static 'orders/css/order-edit.css' %}">
+<link rel="stylesheet" href="{% static 'orders/admin/css/partials_address_selection_modal.css' %}">
+<link rel="stylesheet" href="{% static 'custom_fields/css/custom_fields_admin.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'orders/js/order-edit.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+{% if original %}
+<div id="content-main" class="custom-order-detail">
+<div class="order-details-container">
+    <a href="{% url 'admin:orders_order_changelist' %}" class="back-to-list">
+        <i class="fas fa-arrow-left"></i>
+        {% trans "Back to Orders" %}
+    </a>
+
+    <!-- Order Header -->
+    <div class="order-header">
+        <div class="order-header-top">
+            <div class="order-number">
+                <i class="fas fa-receipt"></i>
+                {% trans "Order" %} #{{ original.order_number }}
+            </div>
+            <span class="order-status-badge {{ original.status }}">
+                {{ original.get_status_display }}
+            </span>
+            <span class="order-status-badge payment-{{ original.payment_status }}">
+                <i class="fas fa-credit-card"></i> {{ original.get_payment_status_display }}
+            </span>
+        </div>
+
+        <div class="order-meta-grid">
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Order Date" %}</span>
+                <span class="meta-value">{{ original.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Customer" %}</span>
+                <span class="meta-value">
+                    {% if original.user %}
+                        <a href="{% url 'admin:auth_user_change' original.user.pk %}" class="text-primary no-decoration">
+                            {% if original.user.get_full_name %}
+                                {{ original.user.get_full_name }}
+                            {% else %}
+                                {{ original.user.username }}
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        {{ original.email }}
+                    {% endif %}
+                </span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Items" %}</span>
+                <span class="meta-value">{{ original.total_item_quantity }} {% if original.total_item_quantity == 1 %}{% trans "item" %}{% else %}{% trans "items" %}{% endif %}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Total Amount" %}</span>
+                <span class="meta-value text-primary order-total-value">
+                    {{ original.total_amount.currency }} {{ original.total_amount.amount }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            {% if not is_admin_read_only %}
+            {% if original.status == 'pending' %}
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="mark_as_processing">
+                    <button type="submit" class="action-btn primary">
+                        <i class="fas fa-cog"></i>
+                        {% trans "Mark as Processing" %}
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if original.status == 'processing' %}
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="mark_as_shipped">
+                    <button type="submit" class="action-btn success">
+                        <i class="fas fa-shipping-fast"></i>
+                        {% trans "Mark as Shipped" %}
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if original.status == 'shipped' %}
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="mark_as_delivered">
+                    <button type="submit" class="action-btn success">
+                        <i class="fas fa-check-circle"></i>
+                        {% trans "Mark as Delivered" %}
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if original.status not in 'cancelled,refunded' %}
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="mark_as_cancelled">
+                    <button type="submit" class="action-btn danger" data-confirm="{% trans 'Are you sure you want to cancel this order?' %}">
+                        <i class="fas fa-times-circle"></i>
+                        {% trans "Cancel Order" %}
+                    </button>
+                </form>
+            {% endif %}
+
+            <a href="{% url 'admin:orders_order_change' original.pk %}" class="action-btn primary">
+                <i class="fas fa-edit"></i>
+                {% trans "Edit Order" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Affiliate Attribution Section -->
+    <div class="affiliate-attribution">
+        <div class="affiliate-attribution-header">
+            <i class="fas fa-handshake"></i>
+            <h3>{% trans "Affiliate Attribution" %}</h3>
+        </div>
+
+        {% if original.affiliate_commissions.exists %}
+            <!-- Show current attribution -->
+            {% with commission=original.affiliate_commissions.first %}
+            <div class="current-attribution">
+                <div class="current-attribution-info">
+                    <i class="fas fa-user-check"></i>
+                    <div class="current-attribution-details">
+                        <div class="current-attribution-name">
+                            {% if commission.affiliate.user %}
+                                {% if commission.affiliate.user.get_full_name %}
+                                    {{ commission.affiliate.user.get_full_name }}
+                                {% else %}
+                                    {{ commission.affiliate.user.username }}
+                                {% endif %}
+                            {% else %}
+                                {{ commission.affiliate.affiliate_code }}
+                            {% endif %}
+                        </div>
+                        <div class="current-attribution-code">
+                            Code: {{ commission.affiliate.affiliate_code }} |
+                            Amount: ${{ commission.amount|floatformat:2 }} |
+                            Status: {{ commission.get_status_display }}
+                        </div>
+                    </div>
+                </div>
+                {% if not is_admin_read_only %}
+                <form method="post" action="{% url 'admin:orders_order_change' original.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="remove_affiliate">
+                    <button type="submit" class="remove-attribution-btn" data-confirm="{% trans 'Are you sure you want to remove this affiliate attribution?' %}">
+                        <i class="fas fa-times"></i> {% trans "Remove" %}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endwith %}
+        {% else %}
+            <!-- Show attribution form -->
+            {% load affiliate_tags %}
+            {% get_active_affiliates as affiliates %}
+
+            {% if affiliates %}
+            {% if not is_admin_read_only %}
+            <form method="post" action="{% url 'admin:orders_order_change' original.pk %}" class="affiliate-select-container">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="assign_affiliate">
+
+                <div class="affiliate-select-field">
+                    <label for="affiliate_id">{% trans "Select Affiliate" %}</label>
+                    <select name="affiliate_id" id="affiliate_id" required>
+                        <option value="">{% trans "Choose an affiliate..." %}</option>
+                        {% for affiliate in affiliates %}
+                        <option value="{{ affiliate.id }}">
+                            {% if affiliate.user %}
+                                {% if affiliate.user.get_full_name %}
+                                    {{ affiliate.user.get_full_name }}
+                                {% else %}
+                                    {{ affiliate.user.username }}
+                                {% endif %}
+                                ({{ affiliate.affiliate_code }}) - {{ affiliate.user.email }}
+                            {% else %}
+                                {{ affiliate.affiliate_code }}
+                            {% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="affiliate-attribution-btn">
+                    <i class="fas fa-link"></i>
+                    {% trans "Assign Affiliate" %}
+                </button>
+            </form>
+            {% endif %}
+            {% else %}
+            <div class="no-affiliates-message">
+                <i class="fas fa-info-circle"></i>
+                {% trans "No active affiliates available. Create affiliates in the Affiliate section to attribute orders." %}
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="order-content">
+        <!-- Left Column -->
+        <div class="left-column">
+            <!-- Order Items -->
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fas fa-box"></i>
+                    <h2>{% trans "Order Items" %}</h2>
+                </div>
+
+                {% include "admin/orders/order/partials/items_section.html" with order=original %}
+            </div>
+
+            <!-- Order Totals & Discounts -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-calculator"></i>
+                    <h2>{% trans "Totals & Discounts" %}</h2>
+                </div>
+
+                {% include "admin/orders/order/partials/discounts_section.html" with order=original %}
+
+                <div class="mt-20">
+                    {% include "admin/orders/order/partials/totals_section.html" with order=original %}
+                </div>
+            </div>
+
+            <!-- Order Status -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h2>{% trans "Order Status" %}</h2>
+                </div>
+
+                <div class="p-7">
+                    <div class="d-flex align-center gap-7 flex-wrap">
+                        <div>
+                            <span class="field-label mb-8">{% trans "Current Status" %}</span>
+                            <span class="order-status-badge {{ original.status }}">
+                                {{ original.get_status_display }}
+                            </span>
+                        </div>
+
+                        {% if not is_admin_read_only %}
+                        <form method="post" class="flex-1 d-flex align-end gap-3">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="change_status">
+                            <div class="flex-1 order-status-select-wrapper">
+                                <label for="new_status" class="field-label mb-8">{% trans "Change To" %}</label>
+                                <select name="new_status" id="new_status" class="order-form-input">
+                                    <option value="">{% trans "-- Select Status --" %}</option>
+                                    <option value="pending" {% if original.status == 'pending' %}disabled{% endif %}>{% trans "Pending" %}</option>
+                                    <option value="processing" {% if original.status == 'processing' %}disabled{% endif %}>{% trans "Processing" %}</option>
+                                    <option value="shipped" {% if original.status == 'shipped' %}disabled{% endif %}>{% trans "Shipped" %}</option>
+                                    <option value="delivered" {% if original.status == 'delivered' %}disabled{% endif %}>{% trans "Delivered" %}</option>
+                                    <option value="cancelled" {% if original.status == 'cancelled' %}disabled{% endif %}>{% trans "Cancelled" %}</option>
+                                    <option value="refunded" {% if original.status == 'refunded' %}disabled{% endif %}>{% trans "Refunded" %}</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="action-btn primary whitespace-nowrap">
+                                <i class="fas fa-sync-alt"></i>
+                                {% trans "Update Status" %}
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                    <p class="order-help-text mt-12">
+                        <i class="fas fa-info-circle mr-4"></i>
+                        {% trans "Changing the order status will be recorded in the activity log." %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-credit-card"></i>
+                    <h2>{% trans "Payment Information" %}</h2>
+                </div>
+
+                <div class="payment-info-grid">
+                    <div class="payment-info-item">
+                        <span class="payment-label">{% trans "Payment Status" %}</span>
+                        <span class="payment-value order-status-badge payment-{{ original.payment_status }}">
+                            {{ original.get_payment_status_display }}
+                        </span>
+                    </div>
+                    <div class="payment-info-item">
+                        <span class="payment-label">{% trans "Amount Paid" %}</span>
+                        <span class="payment-value text-success">
+                            {{ original.amount_paid.currency }} {{ original.amount_paid.amount }}
+                        </span>
+                    </div>
+                    <div class="payment-info-item">
+                        <span class="payment-label">{% trans "Amount Refunded" %}</span>
+                        <span class="payment-value{% if original.amount_refunded.amount > 0 %} text-error{% endif %}">
+                            {{ original.amount_refunded.currency }} {{ original.amount_refunded.amount }}
+                        </span>
+                    </div>
+                    {% if original.paid_at %}
+                    <div class="payment-info-item">
+                        <span class="payment-label">{% trans "Paid At" %}</span>
+                        <span class="payment-value">
+                            {{ original.paid_at|date:"M d, Y H:i" }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if original.payment_provider %}
+                    <div class="payment-info-item">
+                        <span class="payment-label">{% trans "Payment Provider" %}</span>
+                        <span class="payment-value">
+                            {{ original.payment_provider.name }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if original.payment_method_type %}
+                    <div class="payment-info-item">
+                        <span class="payment-label">{% trans "Payment Method" %}</span>
+                        <span class="payment-value">
+                            {{ original.payment_method_type }}{% if original.payment_method_last4 %} •••• {{ original.payment_method_last4 }}{% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Payment Quick Actions -->
+                <div class="payment-actions payment-actions-section{% if is_admin_read_only %} d-none{% endif %}">
+                    {% if original.payment_status == 'unpaid' or original.payment_status == 'pending' %}
+                    <!-- Mark as Paid Form with Payment Method Recording -->
+                    <div class="mark-paid-section">
+                        <button type="button" class="action-btn success" id="show-payment-form-btn" data-action="toggle-payment-form">
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Mark as Paid" %}
+                        </button>
+
+                        <form method="post" id="mark-paid-form" class="mark-paid-form d-none">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="mark_as_paid">
+
+                            <h4 class="form-heading">
+                                <i class="fas fa-money-bill-wave icon-primary"></i>
+                                {% trans "Record Payment Details" %}
+                            </h4>
+
+                            <div class="payment-method-grid">
+                                <div>
+                                    <label for="payment_method" class="field-label">
+                                        {% trans "Payment Method" %}
+                                    </label>
+                                    <select name="payment_method" id="payment_method" class="order-form-input">
+                                        <option value="">{% trans "-- Select Method --" %}</option>
+                                        <option value="cash">{% trans "Cash" %}</option>
+                                        <option value="bank_transfer">{% trans "Bank Transfer" %}</option>
+                                        <option value="credit_card">{% trans "Credit Card" %}</option>
+                                        <option value="debit_card">{% trans "Debit Card" %}</option>
+                                        <option value="paypal">{% trans "PayPal" %}</option>
+                                        <option value="check">{% trans "Check/Cheque" %}</option>
+                                        <option value="crypto">{% trans "Cryptocurrency" %}</option>
+                                        <option value="other">{% trans "Other" %}</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="payment_reference" class="field-label">
+                                        {% trans "Reference/Transaction ID" %}
+                                    </label>
+                                    <input type="text" name="payment_reference" id="payment_reference"
+                                           placeholder="{% trans 'e.g., Check #1234, TXN-ABC123' %}"
+                                           class="order-form-input">
+                                </div>
+                            </div>
+
+                            <p class="form-help-text">
+                                <i class="fas fa-info-circle mr-4"></i>
+                                {% trans "Optional: Record how payment was received for your records." %}
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="action-btn success">
+                                    <i class="fas fa-check"></i>
+                                    {% trans "Confirm Payment" %}
+                                </button>
+                                <button type="button" class="action-btn" data-action="toggle-payment-form">
+                                    {% trans "Cancel" %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+
+                    <div class="payment-status-actions{% if original.payment_status == 'unpaid' or original.payment_status == 'pending' %} payment-status-actions-spaced{% endif %}">
+                        {% if original.payment_status == 'paid' %}
+                        <form method="post" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="mark_as_unpaid">
+                            <button type="submit" class="action-btn warning" data-confirm="{% trans 'Are you sure you want to mark this order as unpaid?' %}">
+                                <i class="fas fa-undo"></i>
+                                {% trans "Mark as Unpaid" %}
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if original.payment_status == 'unpaid' %}
+                        <form method="post" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="mark_payment_pending">
+                            <button type="submit" class="action-btn">
+                                <i class="fas fa-clock"></i>
+                                {% trans "Mark Payment Pending" %}
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Shipping & Billing Addresses -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h2>{% trans "Addresses" %}</h2>
+                </div>
+
+                {% include "admin/orders/order/partials/addresses_section.html" with order=original %}
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- Customer Information -->
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fas fa-user"></i>
+                    <h2>{% trans "Customer Information" %}</h2>
+                </div>
+
+                {% include "admin/orders/order/partials/customer_section.html" with order=original %}
+            </div>
+
+            <!-- Notes -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-sticky-note"></i>
+                    <h2>{% trans "Notes" %}</h2>
+                </div>
+
+                <!-- Legacy Static Notes (from order creation) -->
+                {% if original.notes or original.special_instructions %}
+                <div class="mb-7 pb-7 border-b">
+                    {% if original.notes %}
+                    <div class="notes-section">
+                        <h3>{% trans "Internal Notes" %} <small class="text-muted">({% trans "from order" %})</small></h3>
+                        <p>{{ original.notes }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if original.special_instructions %}
+                    <div class="notes-section mt-12">
+                        <h3>{% trans "Customer Instructions" %} <small class="text-muted">({% trans "from checkout" %})</small></h3>
+                        <p>{{ original.special_instructions }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Dynamic Order Notes -->
+                {% if original.order_notes.exists %}
+                <div class="notes-list">
+                    {% for note in original.order_notes.all %}
+                    <div class="note-item {% if note.is_customer_note %}customer-note{% endif %}">
+                        <div class="note-header">
+                            <div class="note-author">
+                                <i class="fas {% if note.is_customer_note %}fa-user{% else %}fa-lock{% endif %}"></i>
+                                {% if note.author %}
+                                    {% if note.author.get_full_name %}
+                                        {{ note.author.get_full_name }}
+                                    {% else %}
+                                        {{ note.author.username }}
+                                    {% endif %}
+                                {% else %}
+                                    {% trans "System" %}
+                                {% endif %}
+                                {% if note.is_customer_note %}
+                                <span class="note-badge">
+                                    <i class="fas fa-eye"></i> {% trans "Customer Visible" %}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="note-date">{{ note.created_at|date:"M d, Y H:i" }}</div>
+                        </div>
+                        <div class="note-content">{{ note.note }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {% if not original.notes and not original.special_instructions %}
+                    <div class="no-notes-message">
+                        <i class="fas fa-clipboard"></i>
+                        {% trans "No notes yet. Add a note below." %}
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Add Note Form -->
+                {% if not is_admin_read_only %}
+                <form method="post" action="{% url 'admin:orders_order_change' original.pk %}" class="add-note-form mt-16">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_note">
+
+                    <textarea
+                        name="note_content"
+                        class="note-textarea"
+                        placeholder="{% trans 'Add a new note to this order...' %}"
+                        required
+                    ></textarea>
+
+                    <div class="note-form-footer">
+                        <label class="note-checkbox-label">
+                            <input type="checkbox" name="is_customer_note" value="1">
+                            <span>
+                                <i class="fas fa-eye"></i>
+                                {% trans "Visible to customer" %}
+                            </span>
+                        </label>
+
+                        <button type="submit" class="add-note-btn">
+                            <i class="fas fa-plus"></i>
+                            {% trans "Add Note" %}
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Shipping & Fulfillment Section -->
+            <div class="shipping-section mt-8">
+                <div class="shipping-section-header">
+                    <div class="shipping-section-title">
+                        <i class="fas fa-shipping-fast"></i>
+                        <h2>{% trans "Shipping & Fulfillment" %}</h2>
+                        {% if shipments %}
+                        <span class="shipment-count-badge">{{ shipments|length }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Existing Shipments -->
+                {% if shipments %}
+                <div class="shipments-list">
+                    {% for shipment in shipments %}
+                    <div class="shipment-item">
+                        <div class="shipment-item-header">
+                            <div class="shipment-provider">
+                                {% if shipment.is_manual %}
+                                    <i class="fas fa-warehouse"></i>
+                                    {{ shipment.carrier_preset.name }}
+                                {% elif shipment.is_api %}
+                                    <i class="fas fa-plug"></i>
+                                    {{ shipment.provider_account.display_name|default:shipment.provider_account.component.name }}
+                                {% else %}
+                                    <i class="fas fa-question-circle"></i>
+                                    {% trans "Unknown Provider" %}
+                                {% endif %}
+                            </div>
+                            <span class="shipment-status-badge {{ shipment.status }}">
+                                {{ shipment.get_status_display|truncatewords:2 }}
+                            </span>
+                        </div>
+
+                        <div class="shipment-item-body">
+                            {% if shipment.tracking_id %}
+                            <div class="shipment-detail-row">
+                                <span class="shipment-detail-label">{% trans "Tracking Number" %}</span>
+                                <div class="shipment-tracking">
+                                    <span class="shipment-tracking-number">{{ shipment.tracking_id }}</span>
+                                    {% with tracking_url=shipment.get_tracking_url %}
+                                    {% if tracking_url %}
+                                    <a href="{{ tracking_url }}" target="_blank" rel="noopener" class="shipment-tracking-link">
+                                        {% trans "Track" %}
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                    {% endif %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="shipment-detail-row">
+                                <span class="shipment-detail-label">{% trans "Destination" %}</span>
+                                <span class="shipment-detail-value">{{ shipment.dest_country|country_with_code }}</span>
+                            </div>
+
+                            {% if shipment.shipping_cost %}
+                            <div class="shipment-detail-row">
+                                <span class="shipment-detail-label">{% trans "Shipping Cost" %}</span>
+                                <span class="shipment-detail-value shipment-cost">{{ shipment.shipping_cost }}</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="shipment-detail-row">
+                                <span class="shipment-detail-label">{% trans "Created" %}</span>
+                                <span class="shipment-detail-value">{{ shipment.created_at|date:"M d, Y H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-shipments-message">
+                    <div>
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <p>{% trans "No shipments created yet for this order" %}</p>
+                </div>
+                {% endif %}
+
+                <!-- Quick Tracking Entry Form -->
+                <div class="quick-tracking-form{% if is_admin_read_only %} d-none{% endif %}">
+                    <div class="quick-tracking-form-header">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>{% trans "Quick Add Tracking Number" %}</span>
+                    </div>
+
+                    <form method="post" action="{% url 'admin:orders_order_add_tracking' original.pk %}">
+                        {% csrf_token %}
+                        <div class="tracking-form-grid">
+                            <div class="tracking-form-field">
+                                <label for="carrier">{% trans "Carrier" %}</label>
+                                <select name="carrier" id="carrier" required>
+                                    <option value="">{% trans "Select carrier..." %}</option>
+                                    {% for carrier in available_carriers %}
+                                    <option value="{{ carrier.id }}">{{ carrier.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="tracking-form-field">
+                                <label for="tracking_number">{% trans "Tracking Number" %}</label>
+                                <input type="text" name="tracking_number" id="tracking_number"
+                                       placeholder="{% trans 'Enter tracking number...' %}" required>
+                            </div>
+
+                            <button type="submit" class="add-tracking-btn">
+                                <i class="fas fa-plus"></i>
+                                {% trans "Add" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Shipping Documents Section (Phase 6) -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-file-pdf"></i>
+                    <h2>{% trans "Shipping Documents" %}</h2>
+                </div>
+
+                {% with shipment=shipments.0 %}
+                {% if shipment %}
+                    <div class="documents-grid">
+                        <!-- Packing Slip -->
+                        <div class="document-item order-info-box">
+                            <div class="d-flex align-center gap-5 mb-5">
+                                <i class="fas fa-box text-primary icon-medium"></i>
+                                <div class="flex-1">
+                                    <h3 class="m-0 text-medium font-weight-semibold">{% trans "Packing Slip" %}</h3>
+                                    <p class="order-help-text">{% trans "Item list and shipping details" %}</p>
+                                </div>
+                            </div>
+                            {% if shipment.packing_slip_url %}
+                                <div class="d-flex gap-3">
+                                    <a href="{{ shipment.packing_slip_url }}" download="packing_slip_{{ original.order_number }}.pdf"
+                                       class="action-btn order-tab-btn">
+                                        <i class="fas fa-download"></i>
+                                        {% trans "Download" %}
+                                    </a>
+                                    <a href="{% url 'admin:shipping_shipment_change' shipment.pk %}"
+                                       class="action-btn primary order-tab-btn">
+                                        <i class="fas fa-eye"></i>
+                                        {% trans "Preview" %}
+                                    </a>
+                                </div>
+                            {% else %}
+                                <a href="{% url 'admin:shipping_shipment_change' shipment.pk %}"
+                                   class="action-btn order-tab-btn d-block">
+                                    <i class="fas fa-plus"></i>
+                                    {% trans "Generate Packing Slip" %}
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Commercial Invoice -->
+                        <div class="document-item order-info-box">
+                            <div class="d-flex align-center gap-5 mb-5">
+                                <i class="fas fa-file-invoice-dollar text-primary icon-medium"></i>
+                                <div class="flex-1">
+                                    <h3 class="m-0 text-medium font-weight-semibold">{% trans "Commercial Invoice" %}</h3>
+                                    <p class="order-help-text">{% trans "International customs declaration" %}</p>
+                                </div>
+                            </div>
+                            {% if shipment.commercial_invoice_url %}
+                                <div class="d-flex gap-3">
+                                    <a href="{{ shipment.commercial_invoice_url }}" download="commercial_invoice_{{ original.order_number }}.pdf"
+                                       class="action-btn order-tab-btn">
+                                        <i class="fas fa-download"></i>
+                                        {% trans "Download" %}
+                                    </a>
+                                    <a href="{% url 'admin:shipping_shipment_change' shipment.pk %}"
+                                       class="action-btn primary order-tab-btn">
+                                        <i class="fas fa-eye"></i>
+                                        {% trans "Preview" %}
+                                    </a>
+                                </div>
+                            {% else %}
+                                <a href="{% url 'admin:shipping_shipment_change' shipment.pk %}"
+                                   class="action-btn order-tab-btn d-block">
+                                    <i class="fas fa-plus"></i>
+                                    {% trans "Generate Commercial Invoice" %}
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Customs Form -->
+                        <div class="document-item order-info-box">
+                            <div class="d-flex align-center gap-5 mb-5">
+                                <i class="fas fa-passport text-primary icon-medium"></i>
+                                <div class="flex-1">
+                                    <h3 class="m-0 text-medium font-weight-semibold">{% trans "Customs Form" %}</h3>
+                                    <p class="order-help-text">{% trans "CN22/CN23 declaration form" %}</p>
+                                </div>
+                            </div>
+                            {% if shipment.customs_form_url %}
+                                <div class="d-flex gap-3">
+                                    <a href="{{ shipment.customs_form_url }}" download="customs_form_{{ original.order_number }}.pdf"
+                                       class="action-btn order-tab-btn">
+                                        <i class="fas fa-download"></i>
+                                        {% trans "Download" %}
+                                    </a>
+                                    <a href="{% url 'admin:shipping_shipment_change' shipment.pk %}"
+                                       class="action-btn primary order-tab-btn">
+                                        <i class="fas fa-eye"></i>
+                                        {% trans "Preview" %}
+                                    </a>
+                                </div>
+                            {% else %}
+                                <a href="{% url 'admin:shipping_shipment_change' shipment.pk %}"
+                                   class="action-btn order-tab-btn d-block">
+                                    <i class="fas fa-plus"></i>
+                                    {% trans "Generate Customs Form" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="empty-state-container">
+                        <i class="fas fa-info-circle empty-state-icon"></i>
+                        <p class="m-0 text-medium">
+                            {% trans "No shipment available. Create a shipment to generate shipping documents." %}
+                        </p>
+                        <a href="{% url 'admin:shipping_shipment_add' %}?order={{ original.pk }}"
+                           class="action-btn primary action-btn-sm d-inline-block mt-16">
+                            <i class="fas fa-plus"></i>
+                            {% trans "Create Shipment" %}
+                        </a>
+                    </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Order Timeline -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-clock"></i>
+                    <h2>{% trans "Order Timeline" %}</h2>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item completed">
+                        <div class="timeline-date">{{ original.created_at|date:"M d, Y H:i" }}</div>
+                        <div class="timeline-event">{% trans "Order Placed" %}</div>
+                        <div class="timeline-description">{% trans "Order received and confirmed" %}</div>
+                    </div>
+
+                    {% if original.status != 'pending' %}
+                    <div class="timeline-item completed">
+                        <div class="timeline-date">{{ original.updated_at|date:"M d, Y H:i" }}</div>
+                        <div class="timeline-event">{% trans "Processing" %}</div>
+                        <div class="timeline-description">{% trans "Order is being prepared" %}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if original.status in 'shipped,delivered' %}
+                    <div class="timeline-item completed">
+                        <div class="timeline-date">{{ original.updated_at|date:"M d, Y H:i" }}</div>
+                        <div class="timeline-event">{% trans "Shipped" %}</div>
+                        <div class="timeline-description">
+                            {% if original.tracking_number %}
+                                {% trans "Tracking:" %} {{ original.tracking_number }}
+                            {% else %}
+                                {% trans "Order dispatched for delivery" %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if original.status == 'delivered' %}
+                    <div class="timeline-item completed">
+                        <div class="timeline-date">{{ original.updated_at|date:"M d, Y H:i" }}</div>
+                        <div class="timeline-event">{% trans "Delivered" %}</div>
+                        <div class="timeline-description">{% trans "Order successfully delivered" %}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if original.status == 'cancelled' %}
+                    <div class="timeline-item">
+                        <div class="timeline-date">{{ original.updated_at|date:"M d, Y H:i" }}</div>
+                        <div class="timeline-event text-error">{% trans "Cancelled" %}</div>
+                        <div class="timeline-description">{% trans "Order was cancelled" %}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if original.status == 'refunded' %}
+                    <div class="timeline-item">
+                        <div class="timeline-date">{{ original.updated_at|date:"M d, Y H:i" }}</div>
+                        <div class="timeline-event text-error">{% trans "Refunded" %}</div>
+                        <div class="timeline-description">{% trans "Payment refunded to customer" %}</div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Order Notes (includes payment changes, manual notes, etc.) -->
+                    {% if order_notes %}
+                    <div class="activity-section-divider">
+                        <h4 class="section-heading">
+                            <i class="fas fa-sticky-note icon-primary"></i>
+                            {% trans "Activity Log" %}
+                        </h4>
+                        {% for note in order_notes %}
+                        <div class="timeline-item completed activity-note{% if 'Payment status' in note.note %} activity-note-payment{% endif %}">
+                            <div class="timeline-date">{{ note.created_at|date:"M d, Y H:i" }}</div>
+                            <div class="timeline-event timeline-event-text">
+                                {% if note.author %}
+                                    <i class="fas fa-user mr-4 text-muted"></i>
+                                    {{ note.author.get_full_name|default:note.author.email }}
+                                {% else %}
+                                    <i class="fas fa-robot mr-4 text-muted"></i>
+                                    {% trans "System" %}
+                                {% endif %}
+                            </div>
+                            <div class="timeline-description">{{ note.note }}</div>
+                            {% if note.is_customer_note %}
+                            <span class="order-note-badge">
+                                {% trans "Visible to Customer" %}
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tracking Information -->
+            {% if original.tracking_number %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-truck"></i>
+                    <h2>{% trans "Tracking" %}</h2>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">{% trans "Tracking #" %}</span>
+                    <span class="info-value font-mono font-weight-semibold">
+                        {{ original.tracking_number }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Affiliate Commission (if applicable) -->
+            {% if original.commissions.exists %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-handshake"></i>
+                    <h2>{% trans "Affiliate Commission" %}</h2>
+                </div>
+
+                {% for commission in original.commissions.all %}
+                <div class="commission-info">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div class="commission-details">
+                        <div class="commission-amount">${{ commission.amount|floatformat:2 }}</div>
+                        <div class="commission-affiliate">
+                            {% trans "Referred by" %}
+                            <a href="{% url 'admin:affiliate_affiliate_change' commission.affiliate.pk %}"
+                               class="link-inherit-underline">
+                                {% if commission.affiliate.user %}
+                                    {% if commission.affiliate.user.get_full_name %}
+                                        {{ commission.affiliate.user.get_full_name }}
+                                    {% else %}
+                                        {{ commission.affiliate.user.username }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ commission.affiliate.affiliate_code }}
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="commission-affiliate mt-4">
+                            {% trans "Status:" %} {{ commission.get_status_display }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if has_custom_fields and custom_field_groups %}
+            <!-- Custom Fields -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-sliders-h"></i>
+                    <h2>{% trans "Custom Fields" %}</h2>
+                </div>
+                {% for group_data in custom_field_groups %}
+                <div class="mb-6">
+                    <h3 class="custom-field-group-heading">{{ group_data.group.name }}</h3>
+                    {% for field_data in group_data.fields %}
+                    <div class="info-row">
+                        <span class="info-label">{{ field_data.definition.name }}</span>
+                        <span class="info-value">
+                            {% if field_data.value is not None and field_data.value != "" %}
+                                {% if field_data.definition.field_type == 'boolean' %}
+                                    {% if field_data.value %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}
+                                {% elif field_data.definition.field_type == 'url' %}
+                                    <a href="{{ field_data.value }}" target="_blank">{{ field_data.value }}</a>
+                                {% elif field_data.definition.field_type == 'email' %}
+                                    <a href="mailto:{{ field_data.value }}">{{ field_data.value }}</a>
+                                {% elif field_data.definition.field_type == 'color' %}
+                                    <span class="color-swatch" style="background: {{ field_data.value }};"></span>
+                                    {{ field_data.value }}
+                                {% else %}
+                                    {{ field_data.value }}
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Keep the original form hidden for form processing -->
+<div class="d-none">
+    {{ block.super }}
+</div>
+</div>
+{% else %}
+<!-- Add New Order Interface -->
+<div class="order-details-container">
+    <a href="{% url 'admin:orders_order_changelist' %}" class="back-to-list">
+        <i class="fas fa-arrow-left"></i>
+        {% trans "Back to Orders" %}
+    </a>
+
+    <!-- Header for New Order -->
+    <div class="order-header mb-8">
+        <div class="order-header-top">
+            <div class="order-number">
+                <i class="fas fa-plus-circle"></i>
+                {% trans "Create New Order" %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Django Admin Form -->
+    <div class="order-card-section">
+        {{ block.super }}
+    </div>
+</div>
+{% endif %}
+
+<!-- Include Previous Addresses Modal (needed for both existing and new orders) -->
+{% include "admin/orders/order/partials/address_selection_modal.html" %}
+
+<!-- Product Search Modal (shown when adding items to order) -->
+{% if original %}
+<div id="product-search-modal" class="modal d-none">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>{% trans "Add Product to Order" %}</h3>
+                <button type="button" class="close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="product-search-form">
+                    <div class="form-group">
+                        <input type="text" id="product-search-input" class="form-control" placeholder="{% trans 'Search products by name or SKU...' %}" autocomplete="off">
+                    </div>
+                </div>
+
+                <div id="product-search-results" class="product-search-results">
+                    <div class="search-placeholder">
+                        <i class="fas fa-search"></i>
+                        <p>{% trans "Start typing to search for products" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<script src="{% static 'orders/admin/js/order-change-form.js' %}" defer></script>
+{% endblock %}

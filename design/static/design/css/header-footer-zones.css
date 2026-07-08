@@ -1,0 +1,623 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Header/Footer Zones CSS - Frontend Styles
+ *
+ * Defines the layout structure for dynamic header/footer zones.
+ * Uses CSS variables from the active theme for colors and spacing.
+ */
+
+/* ==========================================================================
+   Site Header Base
+   ========================================================================== */
+.site-header {
+  background-color: var(--theme-header-background, var(--theme-color-surface));
+  border-bottom: var(--theme-border-width-1, 1px) solid var(--theme-header-border-color, var(--theme-color-border));
+  color: var(--theme-header-text-color, var(--theme-color-text));
+  position: relative;
+  z-index: var(--theme-z-sticky, 1020);
+}
+
+.site-header[data-sticky="true"] {
+  position: sticky;
+  top: 0;
+}
+
+/* ==========================================================================
+   Header Zones
+   ========================================================================== */
+.header-zone {
+  width: 100%;
+}
+
+/* Top Bar Zone */
+.header-zone--top-bar {
+  background-color: var(--theme-header-zones-top-bar-background, var(--theme-header-background, var(--theme-color-surface)));
+  color: var(--theme-header-zones-top-bar-text-color, var(--theme-header-text-color, var(--theme-color-text)));
+  border-bottom: 1px solid var(--theme-header-zones-top-bar-border-color, var(--theme-header-border-color, var(--theme-color-border)));
+  font-size: var(--theme-header-zones-top-bar-font-size, var(--theme-font-size-sm, 0.875rem));
+  padding: var(--theme-header-zones-top-bar-padding-y, var(--theme-space-2, 0.5rem)) 0;
+  min-height: var(--theme-header-zones-top-bar-height, 36px);
+}
+
+/* Main Header Zone */
+.header-zone--main {
+  background-color: var(--theme-header-zones-main-header-background, var(--theme-header-background, var(--theme-color-surface)));
+  color: var(--theme-header-zones-main-header-text-color, var(--theme-header-text-color, var(--theme-color-text)));
+  border-bottom: 1px solid var(--theme-header-zones-main-header-border-color, var(--theme-header-border-color, var(--theme-color-border)));
+  padding: var(--theme-header-zones-main-header-padding-y, var(--theme-header-padding-y, var(--theme-space-4, 1rem))) 0;
+  min-height: var(--theme-header-zones-main-header-height, 70px);
+}
+
+/* Bottom Bar Zone (for mega menus, etc.) */
+.header-zone--bottom-bar {
+  background-color: var(--theme-header-zones-bottom-bar-background, var(--theme-header-background, var(--theme-color-surface)));
+  color: var(--theme-header-zones-bottom-bar-text-color, var(--theme-header-text-color, var(--theme-color-text)));
+  border-top: 1px solid var(--theme-header-zones-bottom-bar-border-color, var(--theme-header-border-color, var(--theme-color-border)));
+  padding: var(--theme-header-zones-bottom-bar-padding-y, var(--theme-space-3, 0.75rem)) 0;
+  min-height: var(--theme-header-zones-bottom-bar-height, 50px);
+}
+
+/* Zone Inner Container */
+.header-zone__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--theme-space-4, 1rem);
+  min-height: var(--theme-header-zone-min-height, 40px);
+}
+
+/* Top bar inner - tighter spacing */
+.header-zone--top-bar .header-zone__inner {
+  min-height: var(--theme-header-zones-top-bar-height, 36px);
+}
+
+/* ==========================================================================
+   Zone Sections (Left, Center, Right, Full)
+   ========================================================================== */
+.header-zone__section {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-3, 0.75rem);
+}
+
+/* Base alignment */
+.header-zone__section--left {
+  justify-content: flex-start;
+}
+
+.header-zone__section--center {
+  justify-content: center;
+}
+
+.header-zone__section--right {
+  justify-content: flex-end;
+}
+
+.header-zone__section--full {
+  justify-content: center;
+  width: 100%;
+}
+
+/* Two-section layout: Left + Right = 50% / 50% */
+.header-zone__inner > .header-zone__section--left:first-child:nth-last-child(2),
+.header-zone__inner > .header-zone__section--right:last-child:nth-child(2) {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+/* Three-section layout: Left + Center + Right = 25% / 50% / 25% */
+.header-zone__inner > .header-zone__section--left:first-child:nth-last-child(3) {
+  flex: 0 0 25%;
+  max-width: 25%;
+}
+
+.header-zone__inner > .header-zone__section--center:nth-child(2):nth-last-child(2) {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+.header-zone__inner > .header-zone__section--right:last-child:nth-child(3) {
+  flex: 0 0 25%;
+  max-width: 25%;
+}
+
+/* Single section takes full width */
+.header-zone__inner > .header-zone__section:only-child {
+  flex: 1;
+  max-width: none;
+}
+
+/* ==========================================================================
+   Widget Wrapper
+   ========================================================================== */
+.widget-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ==========================================================================
+   Site Footer Base
+   ========================================================================== */
+.site-footer {
+  background-color: var(--theme-footer-background, var(--theme-color-surface-variant));
+  border-top: var(--theme-border-width-1, 1px) solid var(--theme-footer-border-color, var(--theme-color-border));
+  color: var(--theme-footer-text-color, var(--theme-color-text-secondary));
+}
+
+/* ==========================================================================
+   Footer Main Content Area
+   ========================================================================== */
+.footer-main {
+  padding: var(--theme-footer-padding-y, var(--theme-space-8, 2rem)) 0;
+}
+
+/* ==========================================================================
+   Footer Columns Layout
+   ========================================================================== */
+.footer-columns {
+  display: grid;
+  gap: var(--theme-space-8, 2rem);
+}
+
+.footer-columns--2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.footer-columns--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.footer-columns--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.footer-columns--5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.footer-columns--6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+@media (max-width: 767px) {
+  .footer-columns--2,
+  .footer-columns--3,
+  .footer-columns--4,
+  .footer-columns--5,
+  .footer-columns--6 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .footer-columns--4,
+  .footer-columns--5,
+  .footer-columns--6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--theme-space-4, 1rem);
+}
+
+/* ==========================================================================
+   Footer Sections Layout (Stacked)
+   ========================================================================== */
+.footer-section {
+  padding: var(--theme-space-6, 1.5rem) 0;
+}
+
+.footer-section--top {
+  background-color: var(--theme-footer-zones-top-background, transparent);
+  color: var(--theme-footer-zones-top-text-color, var(--theme-footer-text-color));
+  border-bottom: 1px solid var(--theme-footer-zones-top-border-color, var(--theme-footer-border-color, var(--theme-color-border)));
+}
+
+.footer-section--middle {
+  background-color: var(--theme-footer-zones-main-background, transparent);
+  color: var(--theme-footer-zones-main-text-color, var(--theme-footer-text-color));
+}
+
+.footer-section--bottom {
+  background-color: var(--theme-footer-zones-bottom-background, rgba(0, 0, 0, 0.2));
+  color: var(--theme-footer-zones-bottom-text-color, var(--theme-footer-text-color));
+  border-top: 1px solid var(--theme-footer-zones-bottom-border-color, var(--theme-footer-border-color, var(--theme-color-border)));
+}
+
+/* ==========================================================================
+   Footer Bottom Bar (Copyright, etc.)
+   ========================================================================== */
+.footer-bottom {
+  background-color: var(--theme-footer-zones-bottom-background, rgba(0, 0, 0, 0.2));
+  color: var(--theme-footer-zones-bottom-text-color, var(--theme-footer-text-color, var(--theme-color-text-inverse)));
+  padding: var(--theme-footer-zones-bottom-padding-y, var(--theme-space-4, 1rem)) 0;
+  font-size: var(--theme-footer-zones-bottom-font-size, var(--theme-font-size-sm, 0.875rem));
+}
+
+.footer-bottom__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--theme-space-4, 1rem);
+}
+
+.footer-bottom__section {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-3, 0.75rem);
+}
+
+.footer-bottom__section--left {
+  justify-content: flex-start;
+}
+
+.footer-bottom__section--center {
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+}
+
+.footer-bottom__section--right {
+  justify-content: flex-end;
+}
+
+@media (max-width: 767px) {
+  .footer-bottom__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-bottom__section {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   Footer Zones (Generic)
+   ========================================================================== */
+.footer-zone {
+  width: 100%;
+  margin-bottom: var(--theme-space-6, 1.5rem);
+}
+
+.footer-zone:last-child {
+  margin-bottom: 0;
+}
+
+/* Top Footer Zone - Usually widgets/links grid */
+.footer-zone--top {
+  background-color: var(--theme-footer-zones-top-background, var(--theme-footer-background, transparent));
+  color: var(--theme-footer-zones-top-text-color, var(--theme-footer-text-color, var(--theme-color-text-inverse)));
+  padding: var(--theme-footer-zones-top-padding-y, var(--theme-space-12, 3rem)) 0;
+  border-bottom: 1px solid var(--theme-footer-zones-top-border-color, var(--theme-footer-border-color, var(--theme-color-border)));
+}
+
+/* Middle Footer Zone */
+.footer-zone--middle {
+  background-color: var(--theme-footer-zones-main-background, var(--theme-footer-background, transparent));
+  color: var(--theme-footer-zones-main-text-color, var(--theme-footer-text-color, var(--theme-color-text-inverse)));
+  padding: var(--theme-footer-zones-main-padding-y, var(--theme-space-8, 2rem)) 0;
+}
+
+/* Bottom Footer Zone - Usually copyright */
+.footer-zone--bottom {
+  background-color: var(--theme-footer-zones-bottom-background, rgba(0, 0, 0, 0.2));
+  color: var(--theme-footer-zones-bottom-text-color, var(--theme-footer-text-color, var(--theme-color-text-inverse)));
+  padding: var(--theme-footer-zones-bottom-padding-y, var(--theme-space-6, 1.5rem)) 0;
+  border-top: 1px solid var(--theme-footer-zones-bottom-border-color, var(--theme-footer-border-color, var(--theme-color-border)));
+  font-size: var(--theme-footer-zones-bottom-font-size, var(--theme-font-size-sm, 0.875rem));
+}
+
+/* Footer Zone Inner Container */
+.footer-zone__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--theme-space-4, 1rem);
+}
+
+/* Footer sections */
+.footer-zone__section {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-3, 0.75rem);
+}
+
+.footer-zone__section--left {
+  justify-content: flex-start;
+}
+
+.footer-zone__section--center {
+  justify-content: center;
+  flex: 1;
+}
+
+.footer-zone__section--right {
+  justify-content: flex-end;
+}
+
+.footer-zone__section--full {
+  width: 100%;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 767px) {
+  .site-header {
+    overflow-x: hidden;
+  }
+
+  .header-zone__inner {
+    flex-wrap: wrap;
+    gap: var(--theme-space-2, 0.5rem);
+  }
+
+  .header-zone__section {
+    min-width: 0;
+  }
+
+  .header-zone__section--center {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-zone--top-bar {
+    display: none;
+  }
+
+  .header-zone--top-bar.show-on-mobile {
+    display: block;
+  }
+
+  .footer-zone__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-zone__section {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   Visibility Classes
+   ========================================================================== */
+.header-zone.hide-on-mobile,
+.footer-zone.hide-on-mobile {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .header-zone.hide-on-mobile,
+  .footer-zone.hide-on-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .header-zone.hide-on-tablet,
+  .footer-zone.hide-on-tablet {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header-zone.hide-on-desktop,
+  .footer-zone.hide-on-desktop {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Mobile Menu Toggle Button
+   ========================================================================== */
+.header-mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--theme-header-text-color, var(--theme-color-text));
+  font-size: var(--theme-font-size-xl, 1.25rem);
+}
+
+.header-mobile-toggle:hover {
+  color: var(--theme-color-primary);
+}
+
+/* Hide mobile toggle on desktop */
+@media (min-width: 768px) {
+  .header-mobile-toggle {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Mobile Menu Panel
+   ========================================================================== */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--theme-color-surface, #fff);
+  z-index: var(--theme-z-modal, 1000);
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu[aria-hidden="false"],
+.mobile-menu.is-open {
+  display: block;
+  transform: translateX(0);
+}
+
+/* Always hide mobile menu on desktop */
+@media (min-width: 768px) {
+  .mobile-menu {
+    display: none !important;
+  }
+}
+
+/* Mobile Menu Header */
+.mobile-menu__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--theme-space-4, 1rem);
+  border-bottom: 1px solid var(--theme-color-border);
+}
+
+.mobile-menu__title {
+  font-size: var(--theme-font-size-lg, 1.125rem);
+  font-weight: var(--theme-font-weight-semibold, 600);
+}
+
+.mobile-menu__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: var(--theme-font-size-xl, 1.25rem);
+  color: var(--theme-color-text);
+}
+
+.mobile-menu__close:hover {
+  color: var(--theme-color-primary);
+}
+
+/* Mobile Menu Content */
+.mobile-menu__content {
+  padding: var(--theme-space-4, 1rem);
+}
+
+/* Mobile Menu Search */
+.mobile-menu__search {
+  display: flex;
+  gap: var(--theme-search-mobile-gap, var(--theme-space-2, 0.5rem));
+  margin-bottom: var(--theme-search-mobile-margin-bottom, var(--theme-space-4, 1rem));
+  position: relative; /* For autocomplete dropdown */
+}
+
+.mobile-menu__search-input {
+  flex: 1;
+  padding: var(--theme-search-mobile-input-padding, var(--theme-space-3, 0.75rem));
+  background: var(--theme-search-mobile-input-bg, var(--theme-color-surface, #fff));
+  border: 1px solid var(--theme-search-mobile-input-border, var(--theme-color-border));
+  border-radius: var(--theme-search-mobile-input-radius, var(--theme-radius-md, 0.375rem));
+  color: var(--theme-search-mobile-input-color, var(--theme-color-text));
+  font-size: var(--theme-font-size-base, 1rem);
+  transition: border-color var(--theme-transition-normal, 0.2s);
+}
+
+.mobile-menu__search-input::placeholder {
+  color: var(--theme-search-mobile-input-placeholder-color, var(--theme-color-text-muted));
+}
+
+.mobile-menu__search-input:focus {
+  outline: none;
+  border-color: var(--theme-search-mobile-input-focus-border, var(--theme-color-primary));
+}
+
+.mobile-menu__search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--theme-search-mobile-btn-size, 44px);
+  height: var(--theme-search-mobile-btn-size, 44px);
+  background: var(--theme-search-mobile-btn-bg, var(--theme-color-primary));
+  color: var(--theme-search-mobile-btn-color, var(--theme-color-text-inverse, #fff));
+  border: none;
+  border-radius: var(--theme-search-mobile-btn-radius, var(--theme-radius-md, 0.375rem));
+  cursor: pointer;
+  transition: background var(--theme-transition-normal, 0.2s);
+}
+
+.mobile-menu__search-btn:hover {
+  background: var(--theme-search-mobile-btn-hover-bg, var(--theme-color-primary-hover));
+}
+
+/* Mobile Menu Search Autocomplete Dropdown */
+.mobile-menu__search .search-autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  background: var(--theme-search-dropdown-bg, var(--theme-color-surface, #fff));
+  border: 1px solid var(--theme-search-dropdown-border, var(--theme-color-border));
+  border-radius: var(--theme-search-dropdown-radius, var(--theme-radius-lg, 0.5rem));
+  box-shadow: var(--theme-search-dropdown-shadow, var(--theme-shadow-xl));
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: var(--theme-space-1, 0.25rem);
+}
+
+/* Mobile Menu Navigation */
+.mobile-menu__nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-menu__link {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-3, 0.75rem);
+  padding: var(--theme-space-3, 0.75rem) 0;
+  color: var(--theme-color-text);
+  text-decoration: none;
+  font-size: var(--theme-font-size-base, 1rem);
+  border-bottom: 1px solid var(--theme-color-border-light, var(--theme-color-border));
+}
+
+.mobile-menu__link:hover {
+  color: var(--theme-color-primary);
+}
+
+.mobile-menu__link i {
+  width: 24px;
+  text-align: center;
+  color: var(--theme-color-text-secondary);
+}
+
+.mobile-menu__divider {
+  height: 1px;
+  background: var(--theme-color-border);
+  margin: var(--theme-space-3, 0.75rem) 0;
+}
+
+/* ==========================================================================
+   Device Visibility
+   Widgets can be hidden per device via data attributes set by the template
+   ========================================================================== */
+@media (max-width: 767px) {
+  .widget-wrapper[data-hide-mobile="true"] { display: none !important; }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .widget-wrapper[data-hide-tablet="true"] { display: none !important; }
+}
+@media (min-width: 1024px) {
+  .widget-wrapper[data-hide-desktop="true"] { display: none !important; }
+}

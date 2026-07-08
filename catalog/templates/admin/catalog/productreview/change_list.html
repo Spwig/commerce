@@ -1,0 +1,137 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Product Reviews" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-star-half-alt"></i>
+                {% trans "Product Reviews" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage and moderate customer product reviews" %}</p>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by product, user, or title...' %}"
+                    value="">
+            </div>
+
+            <!-- Rating -->
+            <div class="filter-field">
+                <label for="filter-rating">
+                    <i class="fas fa-star"></i> {% trans "Rating" %}
+                </label>
+                <select id="filter-rating">
+                    <option value="">{% trans "All Ratings" %}</option>
+                    {% for rating in rating_choices %}
+                    <option value="{{ rating }}">{{ rating }} {% trans "Star" %}{{ rating|pluralize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Approval Status -->
+            <div class="filter-field">
+                <label for="filter-approved">
+                    <i class="fas fa-check-circle"></i> {% trans "Approval" %}
+                </label>
+                <select id="filter-approved">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Approved" %}</option>
+                    <option value="false">{% trans "Pending" %}</option>
+                </select>
+            </div>
+
+            <!-- Verified Purchase -->
+            <div class="filter-field">
+                <label for="filter-verified">
+                    <i class="fas fa-shield-alt"></i> {% trans "Verified" %}
+                </label>
+                <select id="filter-verified">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Verified Purchase" %}</option>
+                    <option value="false">{% trans "Not Verified" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Reviews" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-star-half-alt"></i>
+            <span id="review-count">{{ cl.result_count }}</span> {% trans "review" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="review-results">
+        {% include "admin/catalog/productreview/partials/review_cards.html" with reviews=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <div id="list-filter-config"
+         data-filter-url="{% url 'catalog_admin:filter_reviews' %}"
+         data-results-container="review-results"
+         data-results-count="review-count"
+         style="display:none;"></div>
+</div>
+{% endblock %}

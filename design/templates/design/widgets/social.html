@@ -1,0 +1,20 @@
+{% load i18n widget_tags %}
+{# Social Widget - Displays social media links #}
+{# Supports: 'links' list [{platform, url, icon?, label?}] and legacy per-platform URL fields #}
+
+{% get_social_links config as social_links %}
+<div class="widget-social {{ widget.css_classes }}">
+    {% if config.title %}
+    <h3 class="social-title">{{ config.title }}</h3>
+    {% endif %}
+    <ul class="social-links">
+        {% for link in social_links %}
+        <li>
+            <a href="{{ link.url|safe_url }}" target="_blank" rel="noopener noreferrer" title="{{ link.label }}">
+                <i class="{{ link.icon }}"></i>
+                {% if config.show_text %}<span>{{ link.label }}</span>{% endif %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

@@ -1,0 +1,205 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Footer Management" %} | {{ site_title|default:_('Spwig Admin') }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/unified_header_footer.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' 'design' %}">{% trans 'Design' %}</a>
+    &rsaquo; {% trans 'Footer Management' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="unified-hf-container">
+    <!-- Header -->
+    <div class="unified-hf-header">
+        <div class="header-title">
+            <h1><i class="fas fa-window-restore"></i> {% trans "Footer Management" %}</h1>
+            <p class="header-subtitle">
+                {% trans "Manage footer templates for your storefront" %}
+            </p>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'admin:design_footertemplate_add' %}" class="hf-btn primary">
+                <i class="fas fa-plus"></i> {% trans "Add Footer" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Default Footer Banner -->
+    {% if default_footer %}
+    <div class="default-hf-banner">
+        <div class="banner-icon">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="banner-info">
+            <h3>{% trans "Default Footer" %}: {{ default_footer.name }}</h3>
+            <p>{% trans "This footer is used as the default across your site" %}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filter and Search Bar -->
+    <div class="hf-toolbar">
+        <div class="filter-tabs">
+            <a href="?filter=all{% if search_query %}&q={{ search_query }}{% endif %}"
+               class="filter-tab {% if filter_type == 'all' %}active{% endif %}">
+                <i class="fas fa-th"></i> {% trans "All" %} ({{ all_count }})
+            </a>
+            <a href="?filter=active{% if search_query %}&q={{ search_query }}{% endif %}"
+               class="filter-tab {% if filter_type == 'active' %}active{% endif %}">
+                <i class="fas fa-check-circle"></i> {% trans "Active" %} ({{ active_count }})
+            </a>
+            <a href="?filter=inactive{% if search_query %}&q={{ search_query }}{% endif %}"
+               class="filter-tab {% if filter_type == 'inactive' %}active{% endif %}">
+                <i class="fas fa-times-circle"></i> {% trans "Inactive" %} ({{ inactive_count }})
+            </a>
+        </div>
+
+        <div class="search-bar">
+            <form method="get" action="">
+                {% if filter_type != 'all' %}<input type="hidden" name="filter" value="{{ filter_type }}">{% endif %}
+                <input type="text"
+                       name="q"
+                       value="{{ search_query }}"
+                       placeholder="{% trans 'Search footers...' %}"
+                       class="search-input">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footers List -->
+    {% if footers %}
+        <div class="hf-list">
+            {% for footer in footers %}
+                <div class="hf-row {% if footer.is_default %}default{% endif %} {% if not footer.is_active %}inactive{% endif %}">
+                    <!-- Left: Info -->
+                    <div class="hf-info">
+                        <div class="hf-header-row">
+                            <h3 class="hf-name">{{ footer.name }}</h3>
+
+                            {% if footer.is_default %}
+                                <span class="hf-badge default-badge">
+                                    <i class="fas fa-star"></i> {% trans "Default" %}
+                                </span>
+                            {% endif %}
+
+                            {% if footer.is_active %}
+                                <span class="hf-badge active-badge">
+                                    <i class="fas fa-check"></i> {% trans "Active" %}
+                                </span>
+                            {% else %}
+                                <span class="hf-badge inactive-badge">
+                                    <i class="fas fa-times"></i> {% trans "Inactive" %}
+                                </span>
+                            {% endif %}
+
+                            <span class="hf-badge layout-badge">
+                                <i class="fas fa-columns"></i> {{ footer.layout_type_display }}
+                            </span>
+
+                            {% if footer.column_count %}
+                                <span class="hf-badge column-badge">
+                                    <i class="fas fa-th-large"></i> {{ footer.column_count }} {% trans "columns" %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        {% if footer.description %}
+                        <p class="hf-description">
+                            {{ footer.description }}
+                        </p>
+                        {% endif %}
+
+                        <div class="hf-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-puzzle-piece"></i>
+                                <strong>{% trans "Widgets:" %}</strong> {{ footer.widget_count }}
+                            </span>
+
+                            {% if footer.has_bottom_bar %}
+                            <span class="meta-item">
+                                <i class="fas fa-bars"></i>
+                                <strong>{% trans "Bottom Bar:" %}</strong> {% trans "Yes" %}
+                            </span>
+                            {% endif %}
+
+                            <span class="meta-item">
+                                <i class="fas fa-code"></i>
+                                <strong>{% trans "Slug:" %}</strong> {{ footer.slug }}
+                            </span>
+
+                            <span class="meta-item">
+                                <i class="fas fa-user"></i>
+                                <strong>{% trans "Created by:" %}</strong> {{ footer.created_by }}
+                            </span>
+
+                            {% if footer.background_color %}
+                            <span class="meta-item">
+                                <i class="fas fa-palette"></i>
+                                <strong>{% trans "Colors:" %}</strong>
+                                <span class="color-preview" style="background: {{ footer.background_color }}; color: {{ footer.text_color }};">BG/Text</span>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Right: Actions -->
+                    <div class="hf-actions">
+                        <a href="{% url 'design:footer_builder' footer.id %}"
+                           class="hf-btn primary">
+                            <i class="fas fa-paint-brush"></i> {% trans "Open Builder" %}
+                        </a>
+                        <a href="{% url 'admin:design_footertemplate_change' footer.id %}"
+                           class="hf-btn secondary">
+                            <i class="fas fa-cog"></i> {% trans "Settings" %}
+                        </a>
+                        <a href="{% url 'design:preview_footer' footer.id %}"
+                           target="_blank"
+                           class="hf-btn secondary">
+                            <i class="fas fa-eye"></i> {% trans "Preview" %}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="hf-empty-state">
+            <i class="fas fa-inbox"></i>
+            <h2>{% trans "No Footers Found" %}</h2>
+            <p>
+                {% if search_query %}
+                    {% trans "No footers match your search query." %}
+                {% else %}
+                    {% trans "No footers available. Create your first footer to get started." %}
+                {% endif %}
+            </p>
+            {% if not search_query %}
+            <a href="{% url 'admin:design_footertemplate_add' %}" class="hf-btn primary">
+                <i class="fas fa-plus"></i> {% trans "Create Footer" %}
+            </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,208 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Spwig-to-Spwig Sync" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'migration/js/sync-rollback.js' %}" defer></script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'migration/admin/css/migration_dashboard.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'migration/css/sync-wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="migration-dashboard sync-dashboard">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-sync-alt"></i>
+                {% trans "Spwig-to-Spwig Sync" %}
+            </h1>
+            <p class="subtitle">{% trans "Sync settings between instances or perform full system migrations" %}</p>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card total">
+            <div class="icon"><i class="fas fa-database"></i></div>
+            <div class="value">{{ stats.total }}</div>
+            <div class="label">{% trans "Total Jobs" %}</div>
+        </div>
+        <div class="dashboard-stat-card completed">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ stats.completed }}</div>
+            <div class="label">{% trans "Completed" %}</div>
+        </div>
+        <div class="dashboard-stat-card running">
+            <div class="icon"><i class="fas fa-spinner fa-pulse"></i></div>
+            <div class="value">{{ stats.running }}</div>
+            <div class="label">{% trans "In Progress" %}</div>
+        </div>
+        <div class="dashboard-stat-card failed">
+            <div class="icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="value">{{ stats.failed }}</div>
+            <div class="label">{% trans "Failed" %}</div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="migration-actions">
+        {% for tool in management_tools %}
+        <a href="{{ tool.url }}" class="migration-btn {% if forloop.first %}migration-btn-primary{% else %}migration-btn-secondary{% endif %}">
+            <i class="{{ tool.icon }}"></i>
+            {{ tool.title }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Job Cards -->
+    {% if sync_jobs %}
+    <div class="migrations-grid">
+        {% for job in sync_jobs %}
+        <div class="migration-card">
+            <!-- Type Icon -->
+            <div class="migration-platform">
+                <div class="platform-icon-large sync-icon">
+                    {% if job.job_type == 'settings_sync' %}
+                        <i class="fas fa-sync-alt"></i>
+                    {% else %}
+                        <i class="fas fa-truck-moving"></i>
+                    {% endif %}
+                </div>
+                <div class="platform-name">{{ job.get_job_type_display }}</div>
+            </div>
+
+            <!-- Job Details -->
+            <div class="migration-details">
+                <div class="migration-header-row">
+                    <span class="migration-id">{{ job.id|slice:":8" }}</span>
+                    <span class="migration-status {{ job.status }}">
+                        {% if job.status == 'pending' %}
+                            <i class="fas fa-clock"></i>
+                        {% elif job.status == 'running' %}
+                            <i class="fas fa-spinner fa-spin"></i>
+                        {% elif job.status == 'completed' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif job.status == 'failed' %}
+                            <i class="fas fa-times-circle"></i>
+                        {% elif job.status == 'rolling_back' %}
+                            <i class="fas fa-undo fa-spin"></i>
+                        {% elif job.status == 'rolled_back' %}
+                            <i class="fas fa-undo"></i>
+                        {% elif job.status == 'awaiting_confirmation' %}
+                            <i class="fas fa-question-circle"></i>
+                        {% endif %}
+                        {{ job.get_status_display }}
+                    </span>
+                    <span class="direction-badge direction-{{ job.direction }}">
+                        {% if job.direction == 'pull' %}
+                            <i class="fas fa-arrow-down"></i>
+                        {% else %}
+                            <i class="fas fa-arrow-up"></i>
+                        {% endif %}
+                        {{ job.get_direction_display }}
+                    </span>
+                </div>
+
+                {% if job.status == 'running' or job.status == 'completed' %}
+                <div class="migration-progress">
+                    <div class="migration-progress-bar {% if job.progress_percent == 100 %}completed{% endif %}"
+                         data-initial-width="{{ job.progress_percent }}"></div>
+                </div>
+                {% endif %}
+
+                <div class="migration-meta">
+                    <div class="migration-meta-item">
+                        <i class="fas fa-plug"></i>
+                        {{ job.connection.name }}
+                    </div>
+                    <div class="migration-meta-item">
+                        <i class="fas fa-calendar"></i>
+                        {{ job.created_at|date:"M d, Y g:i A" }}
+                    </div>
+                    {% if job.created_by %}
+                    <div class="migration-meta-item">
+                        <i class="fas fa-user"></i>
+                        {{ job.created_by.username }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if job.items_total > 0 %}
+                <div class="migration-stats-row">
+                    <div class="migration-stat-item">
+                        <div class="migration-stat-value">{{ job.items_total }}</div>
+                        <div class="migration-stat-label">{% trans "Total" %}</div>
+                    </div>
+                    <div class="migration-stat-item">
+                        <div class="migration-stat-value success">{{ job.items_synced }}</div>
+                        <div class="migration-stat-label">{% trans "Synced" %}</div>
+                    </div>
+                    <div class="migration-stat-item">
+                        <div class="migration-stat-value warning">{{ job.items_skipped }}</div>
+                        <div class="migration-stat-label">{% trans "Skipped" %}</div>
+                    </div>
+                    <div class="migration-stat-item">
+                        <div class="migration-stat-value error">{{ job.items_failed }}</div>
+                        <div class="migration-stat-label">{% trans "Failed" %}</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="migration-actions-col">
+                {% if job.status == 'running' %}
+                <a href="{% if job.job_type == 'settings_sync' %}{% url 'admin:sync_wizard_step4' job.pk %}{% else %}{% url 'admin:fullmig_wizard_step4' job.pk %}{% endif %}"
+                   class="action-btn resume">
+                    <i class="fas fa-eye"></i> {% trans "View Progress" %}
+                </a>
+                {% endif %}
+
+                {% if job.status == 'awaiting_confirmation' %}
+                <a href="{% url 'admin:sync_wizard_step3' job.pk %}" class="action-btn resume">
+                    <i class="fas fa-play"></i> {% trans "Review & Confirm" %}
+                </a>
+                {% endif %}
+
+                {% if job.status == 'completed' and job.job_type == 'full_migration' %}
+                <a href="{% url 'admin:fullmig_wizard_step5' job.pk %}" class="action-btn view">
+                    <i class="fas fa-eye"></i> {% trans "View Results" %}
+                </a>
+                {% endif %}
+
+                {% if job.is_rollbackable %}
+                <button type="button" class="action-btn rollback js-rollback-btn"
+                        data-rollback-url="{% url 'admin:sync_api_rollback' job.pk %}"
+                        data-csrf-token="{{ csrf_token }}"
+                        data-confirm-msg="{% trans 'Rollback this sync? This will restore the previous state.' as t %}{{ t|escapejs }}">
+                    <i class="fas fa-undo"></i> {% trans "Rollback" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-sync-alt"></i>
+        <h3>{% trans "No Sync Jobs Yet" %}</h3>
+        <p>{% trans "Start a settings sync or full migration to see job history here." %}</p>
+        <a href="{% url 'admin:sync_wizard_step1' %}" class="migration-btn migration-btn-primary">
+            <i class="fas fa-plus"></i>
+            {% trans "Start Settings Sync" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extrascript %}
+{{ block.super }}
+{% endblock %}

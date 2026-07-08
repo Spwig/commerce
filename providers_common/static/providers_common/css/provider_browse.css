@@ -1,0 +1,812 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Shared Provider Browse Page Styles
+ * Page infrastructure for all provider browse pages.
+ * Card styles come from admin-base.css (.provider-card system).
+ * Modal styles come from provider_modal.css.
+ */
+
+/* ============================================================================
+   Container & Layout
+   ============================================================================ */
+
+.provider-browse-container {
+    padding: 20px;
+    max-width: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* ============================================================================
+   Header
+   ============================================================================ */
+
+.provider-browse-header {
+    margin-bottom: 30px;
+}
+
+.provider-browse-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+    margin: 0 0 10px 0;
+}
+
+.provider-browse-description {
+    font-size: 15px;
+    color: var(--body-quiet-color);
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+}
+
+/* ============================================================================
+   Notice Boxes
+   ============================================================================ */
+
+.provider-browse-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.provider-browse-notice i {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.notice-warning {
+    background: var(--message-warning-bg);
+    border: 1px solid var(--warning-color);
+    color: var(--body-fg);
+}
+
+.notice-warning i {
+    color: var(--warning-color);
+}
+
+.notice-content strong {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.notice-content p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ============================================================================
+   Browse-specific Status Badge Variants
+   Base .status-badge is in admin-base.css
+   ============================================================================ */
+
+.status-badge.status-installed {
+    background: var(--success-color);
+    color: var(--primary-fg);
+}
+
+.status-badge.status-available {
+    background: var(--info-color);
+    color: var(--info-fg);
+}
+
+/* ============================================================================
+   Browse-specific Button Variants
+   Used inside .provider-footer for install/update/configure actions
+   ============================================================================ */
+
+.provider-footer .button,
+.provider-footer-actions .button {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-install {
+    background: var(--success-color);
+    color: var(--primary-fg);
+}
+
+.btn-install:hover {
+    background: var(--success-color);
+    filter: brightness(0.9);
+}
+
+.btn-install:disabled {
+    background: var(--body-quiet-color);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-update {
+    background: #ffc107;
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.btn-update:hover {
+    background: #ffb300;
+}
+
+.btn-update:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   Provider Card Link Styles (browse-specific)
+   ============================================================================ */
+
+.provider-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--link-fg);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.provider-card-link:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+
+.provider-card-link i {
+    font-size: 11px;
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.provider-browse-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--body-quiet-color);
+}
+
+.empty-icon {
+    font-size: 64px;
+    color: var(--body-quiet-color);
+    margin-bottom: 20px;
+}
+
+.provider-browse-empty h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+    margin: 0 0 10px 0;
+}
+
+.provider-browse-empty p {
+    font-size: 15px;
+    margin: 0;
+    color: var(--body-quiet-color);
+}
+
+/* ============================================================================
+   Loading Overlay
+   ============================================================================ */
+
+.provider-install-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+html[data-theme="dark"] .provider-install-overlay {
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.loading-content {
+    background: var(--body-bg);
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 300px;
+    border: 1px solid var(--border-color);
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--hairline-color);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: provider-spin 0.8s linear infinite;
+    margin: 0 auto 20px auto;
+}
+
+@keyframes provider-spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-message {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0;
+}
+
+/* ============================================================================
+   Notification Container
+   ============================================================================ */
+
+#provider-notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+}
+
+.provider-notification {
+    background: var(--body-bg);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    padding: 15px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: provider-slideIn 0.3s ease;
+}
+
+html[data-theme="dark"] .provider-notification {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes provider-slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.provider-notification.success {
+    border-left-color: var(--success-color);
+}
+
+.provider-notification.error {
+    border-left-color: var(--error-color);
+}
+
+.provider-notification i {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.provider-notification.success i {
+    color: var(--success-color);
+}
+
+.provider-notification.error i {
+    color: var(--error-color);
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-content strong {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+}
+
+.notification-content p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--body-quiet-color);
+}
+
+/* ============================================================================
+   Information Card (Collapsible)
+   ============================================================================ */
+
+.provider-browse-container .provider-info-card {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color, #e1e4e8);
+    border-radius: 6px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.provider-browse-container .provider-info-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color, #e1e4e8);
+    background: var(--darkened-bg);
+}
+
+.provider-browse-container .provider-info-card .card-header h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.provider-browse-container .provider-info-card .card-header h2 i {
+    color: var(--link-fg, #447e9b);
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.provider-browse-container .provider-info-card .collapse-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: var(--body-quiet-color);
+    transition: color 0.2s;
+}
+
+.provider-browse-container .provider-info-card .collapse-toggle:hover {
+    color: var(--body-fg);
+}
+
+.provider-browse-container .provider-info-card .card-body {
+    padding: 15px 20px;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    max-height: 500px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+.provider-browse-container .provider-info-card .card-body.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.provider-browse-container .provider-info-card .card-intro {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--body-fg);
+    margin-bottom: 15px;
+    grid-column: 1 / -1;
+}
+
+.provider-browse-container .provider-info-card .card-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.provider-browse-container .provider-info-card .features-section,
+.provider-browse-container .provider-info-card .getting-started-section {
+    margin-bottom: 0;
+}
+
+.provider-browse-container .provider-info-card h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--body-fg);
+}
+
+.provider-browse-container .provider-info-card h3 i {
+    margin-right: 5px;
+    color: var(--link-fg, #447e9b);
+    font-size: 12px;
+}
+
+.provider-browse-container .provider-info-card .features-list,
+.provider-browse-container .provider-info-card .steps-list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.provider-browse-container .provider-info-card .features-list li,
+.provider-browse-container .provider-info-card .steps-list li {
+    padding: 3px 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--body-fg);
+}
+
+.provider-browse-container .provider-info-card .features-list li i {
+    color: #28a745;
+    margin-right: 6px;
+    font-size: 11px;
+}
+
+.provider-browse-container .provider-info-card .steps-list {
+    padding-left: 18px;
+    list-style: decimal;
+}
+
+.provider-browse-container .provider-info-card .stats-section {
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color, #e1e4e8);
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    grid-column: 1 / -1;
+}
+
+.provider-browse-container .provider-info-card .stats-section i {
+    margin-right: 5px;
+    color: var(--link-fg, #447e9b);
+    font-size: 11px;
+}
+
+/* ============================================================================
+   Country Filtering
+   ============================================================================ */
+
+.provider-browse-container .filter-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color, #e1e4e8);
+    border-radius: 6px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.provider-browse-container .filter-form {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.provider-browse-container .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.provider-browse-container .filter-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--body-fg);
+    margin: 0;
+}
+
+.provider-browse-container .filter-group label i {
+    color: var(--link-fg, #447e9b);
+    margin-right: 5px;
+}
+
+.provider-browse-container .country-filter-select {
+    padding: 6px 30px 6px 12px;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 4px;
+    font-size: 14px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.provider-browse-container .country-filter-select:focus {
+    outline: none;
+    border-color: var(--link-fg, #447e9b);
+    box-shadow: 0 0 0 3px rgba(68, 126, 155, 0.1);
+}
+
+.provider-browse-container .active-filter-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--primary, #417690);
+    color: white;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.provider-browse-container .active-filter-badge .filter-label {
+    font-weight: 500;
+}
+
+.provider-browse-container .active-filter-badge .filter-value {
+    font-weight: 600;
+}
+
+.provider-browse-container .active-filter-badge .clear-filter {
+    color: white;
+    text-decoration: none;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: background 0.2s;
+}
+
+.provider-browse-container .active-filter-badge .clear-filter:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================================
+   Update Detection
+   ============================================================================ */
+
+.provider-card.has-update {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.1);
+}
+
+.update-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ffc107;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.version-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+.version-info .current-version {
+    color: var(--body-quiet-color);
+}
+
+.version-info .latest-version {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.version-info i.fa-arrow-right {
+    color: var(--body-quiet-color);
+}
+
+.update-message {
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    animation: slideDown 0.3s ease-out;
+}
+
+.update-message-success {
+    background: var(--message-success-bg, #d4edda);
+    color: var(--success-fg, #155724);
+    border: 1px solid var(--message-success-border, #c3e6cb);
+}
+
+.update-message-error {
+    background: var(--message-error-bg, #f8d7da);
+    color: var(--error-fg, #721c24);
+    border: 1px solid var(--message-error-border, #f5c6cb);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   Provider Footer Layout — Actions + Links (Modal Integration)
+   Extends admin-base.css .provider-footer with column layout for browse pages
+   ============================================================================ */
+
+.provider-browse-container .provider-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.provider-footer-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.provider-footer-actions .button {
+    flex: 1;
+    justify-content: center;
+}
+
+.provider-footer-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* View Details Button */
+.provider-details-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--link-fg, #2196F3);
+    background: transparent;
+    border: 1px solid var(--border-color, #e0e0e0);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.provider-details-link:hover {
+    background: var(--darkened-bg, #f5f5f5);
+    border-color: var(--link-fg, #2196F3);
+}
+
+.provider-details-link i {
+    font-size: 12px;
+}
+
+/* Learn More Link */
+.provider-learn-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body-quiet-color, #666);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.provider-learn-more:hover {
+    background: var(--darkened-bg, #f5f5f5);
+    color: var(--body-fg, #1a1a1a);
+}
+
+.provider-learn-more i {
+    font-size: 11px;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 968px) {
+    .provider-browse-container .provider-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .provider-browse-container .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .provider-browse-container .filter-form {
+        width: 100%;
+    }
+
+    .provider-browse-container .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .provider-browse-container .country-filter-select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .provider-browse-container {
+        padding: 15px;
+    }
+
+    .provider-browse-header h1 {
+        font-size: 24px;
+    }
+
+    .provider-browse-container .provider-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    #provider-notification-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .provider-browse-container .provider-info-card .card-header {
+        padding: 10px 12px;
+    }
+
+    .provider-browse-container .provider-info-card .card-header h2 {
+        font-size: 13px;
+    }
+
+    .provider-browse-container .provider-info-card .card-body {
+        padding: 12px;
+    }
+
+    .provider-browse-container .provider-info-card .card-content {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .provider-browse-container .provider-info-card .card-intro {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .provider-browse-container .filter-section {
+        padding: 12px 15px;
+    }
+
+    .provider-footer-actions,
+    .provider-footer-links {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .provider-footer-actions .button {
+        flex: 1;
+    }
+}

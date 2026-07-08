@@ -1,0 +1,122 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/file-manager.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+    
+    <div class="path-breadcrumb">
+        <strong>Current Path:</strong> {{ current_path }}
+        {% if parent_path %}
+        <a href="?path={{ parent_path|urlencode }}" class="parent-dir-link">📁 Parent Directory</a>
+        {% endif %}
+    </div>
+    
+    <div class="file-actions">
+        <button data-action="show-upload-modal">📤 Upload File</button>
+        <button data-action="refresh-file-list">🔄 Refresh</button>
+        <button data-action="create-folder">📁 New Folder</button>
+    </div>
+    
+    <div id="messages-container"></div>
+    
+    {% if files %}
+    <table class="files-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Modified</th>
+                <th>Permissions</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr>
+                <td>
+                    <span class="file-icon">
+                        {% if file.is_dir %}📁{% else %}📄{% endif %}
+                    </span>
+                    {% if file.is_dir %}
+                        <a href="?path={{ file.path|urlencode }}" class="file-name directory">{{ file.name }}</a>
+                    {% else %}
+                        <span class="file-name">{{ file.name }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not file.is_dir %}
+                        {{ file.size_display|default:"—" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>{{ file.modified|date:"M j, Y H:i" }}</td>
+                <td>{{ file.permissions }}</td>
+                <td class="file-actions-cell">
+                    {% if not file.is_dir %}
+                        <button data-action="delete-file" data-path="{{ file.path|escapejs }}" data-name="{{ file.name|escapejs }}">🗑️ Delete</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="message">
+        <p>No files found in this directory.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Upload Modal -->
+<div id="uploadModal" class="admin-modal-overlay">
+    <div class="admin-modal admin-modal--sm">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title">Upload File</h2>
+            <button type="button" class="admin-modal-close" data-action="close-upload-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <form id="uploadForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="path" value="{{ current_path }}">
+
+                <div class="upload-area" id="uploadArea">
+                    <p>Drag and drop files here or <strong>click to browse</strong></p>
+                    <input type="file" id="fileInput" name="file" class="mgmt-hidden">
+                </div>
+
+                <div id="selectedFile" class="mgmt-hidden">
+                    <p><strong>Selected file:</strong> <span id="fileName"></span></p>
+                </div>
+
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="upload-actions">
+                    <button type="button" data-action="upload-file" id="uploadBtn">Upload</button>
+                    <button type="button" data-action="close-upload-modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<div id="file-manager-config" class="mgmt-hidden"
+     data-current-path="{{ current_path|escapejs }}"
+     data-upload-url="{% url 'admin:management_upload_file' %}"
+     data-delete-url="{% url 'admin:management_delete_file' %}"></div>
+<script src="{% static 'management/js/file-manager.js' %}"></script>
+</div>
+{% endblock %}

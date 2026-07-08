@@ -1,0 +1,672 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Wizard Base CSS
+ * Common styles for all multi-step wizards across the platform
+ * Theme-aware styles using CSS variables - no hardcoded colors
+ *
+ * Used by: shipping, email_system, exchange_rates, translations, geoip, accounts, migration
+ */
+
+/* ==========================================================================
+   Wizard Container
+   ========================================================================== */
+
+.wizard-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* ==========================================================================
+   Wizard Header
+   ========================================================================== */
+
+.wizard-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.wizard-header h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 10px;
+}
+
+.wizard-subtitle {
+    font-size: 16px;
+    color: var(--body-quiet-color);
+}
+
+/* ==========================================================================
+   Step Indicator
+   ========================================================================== */
+
+.wizard-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+    padding: 0 20px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--hairline-color);
+    color: var(--body-quiet-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background: var(--primary);
+    color: var(--primary-fg);
+}
+
+.step.completed .step-number {
+    background: var(--message-success-bg);
+    color: var(--success-fg);
+    border: 2px solid var(--message-success-border);
+}
+
+.step-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body-quiet-color);
+    text-align: center;
+}
+
+.step.active .step-label {
+    color: var(--body-fg);
+    font-weight: 600;
+}
+
+.step-connector {
+    width: 80px;
+    height: 2px;
+    background: var(--hairline-color);
+    margin: 0 10px;
+    transition: background 0.3s ease;
+}
+
+.step-connector.active {
+    background: var(--primary);
+}
+
+/* ==========================================================================
+   Wizard Content
+   ========================================================================== */
+
+.wizard-content {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 30px;
+}
+
+.wizard-step-content {
+    min-height: 400px;
+}
+
+.step-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 10px;
+}
+
+.step-description {
+    font-size: 15px;
+    color: var(--body-quiet-color);
+    margin-bottom: 30px;
+}
+
+/* ==========================================================================
+   Form Styles (Common Elements)
+   ========================================================================== */
+
+.credentials-form,
+.configure-form {
+    margin-top: 30px;
+}
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-section-title i {
+    color: var(--primary);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.required {
+    color: var(--error-fg);
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--body-fg);
+    background: var(--body-bg);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.help-text {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin-top: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.help-text i {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   Info Boxes and Alerts
+   ========================================================================== */
+
+.info-box {
+    background: var(--message-info-bg);
+    border: 1px solid var(--message-info-border);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+}
+
+.info-box i {
+    color: var(--link-fg);
+    font-size: 20px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.info-box strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--body-fg);
+}
+
+.info-box p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+.info-box a {
+    color: var(--link-fg);
+    font-weight: 600;
+}
+
+.alert {
+    padding: 14px 18px;
+    border-radius: 5px;
+    margin-top: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.5;
+}
+
+.alert i {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.alert-warning {
+    background: var(--message-warning-bg);
+    border: 1px solid var(--message-warning-border);
+    color: var(--body-fg);
+}
+
+.alert-warning i {
+    color: var(--link-fg);
+}
+
+.alert-error {
+    background: var(--message-error-bg);
+    border: 1px solid var(--message-error-border);
+    color: var(--body-fg);
+}
+
+.alert-error i {
+    color: var(--error-fg);
+}
+
+.alert-info {
+    background: var(--message-info-bg);
+    border: 1px solid var(--message-info-border);
+    color: var(--body-fg);
+}
+
+.alert-info i {
+    color: var(--link-fg);
+}
+
+.alert-success {
+    background: var(--message-success-bg);
+    border: 1px solid var(--message-success-border);
+    color: var(--body-fg);
+}
+
+.alert-success i {
+    color: var(--success-fg);
+}
+
+.alert strong {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.security-notice {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin-top: 20px;
+}
+
+.security-notice i {
+    color: var(--success-fg);
+    font-size: 16px;
+}
+
+.help-box,
+.checklist-box {
+    background: var(--darkened-bg);
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.help-box i {
+    font-size: 24px;
+    color: var(--link-fg);
+    float: left;
+    margin-right: 15px;
+    margin-top: 3px;
+}
+
+.help-box strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--body-loud-color);
+}
+
+.help-box p {
+    margin: 8px 0;
+    color: var(--body-fg);
+}
+
+.help-box ul {
+    margin: 10px 0;
+    padding-left: 45px;
+}
+
+.help-box ul li {
+    margin: 8px 0;
+}
+
+.help-box a {
+    color: var(--link-fg);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.help-box a:hover {
+    text-decoration: underline;
+}
+
+.checklist-box strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: var(--body-loud-color);
+}
+
+.checklist {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.checklist li {
+    padding: 10px 0;
+    color: var(--body-fg);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.checklist li i {
+    color: var(--body-quiet-color);
+    font-size: 18px;
+}
+
+/* ==========================================================================
+   Navigation Buttons
+   ========================================================================== */
+
+.wizard-navigation {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--primary-fg);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--surface-bg);
+    color: var(--button-fg);
+}
+
+.btn-secondary:hover {
+    background: var(--close-button-hover-bg);
+    color: var(--button-fg)
+}
+
+.btn-success {
+    background: var(--success-fg);
+    color: var(--primary-fg);
+}
+
+.btn-success:hover {
+    opacity: 0.9;
+}
+
+.btn-large {
+    padding: 16px 40px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.btn-external {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-external:hover {
+    transform: translateY(-2px);
+}
+
+.btn-external i {
+    font-size: 14px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--link-fg);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline-color);
+}
+
+.wizard-actions .btn:only-child {
+    margin-left: auto;
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--body-quiet-color);
+}
+
+.empty-state i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.empty-state .btn {
+    margin-top: 20px;
+}
+
+/* ==========================================================================
+   Progress Indicator (Alternative Style)
+   ========================================================================== */
+
+.wizard-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.progress-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.progress-step::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--hairline-color);
+    z-index: 0;
+}
+
+.progress-step:last-child::before {
+    display: none;
+}
+
+.progress-step.completed::before {
+    background: var(--primary);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .wizard-container {
+        margin: 20px auto;
+    }
+
+    .wizard-content {
+        padding: 24px;
+    }
+
+    .wizard-header h1 {
+        font-size: 24px;
+    }
+
+    .wizard-subtitle {
+        font-size: 14px;
+    }
+
+    .wizard-steps {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .step-connector {
+        display: none;
+    }
+
+    .nav-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .help-box i {
+        float: none;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .help-box ul {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wizard-header h1 {
+        font-size: 20px;
+    }
+
+    .wizard-subtitle {
+        font-size: 13px;
+    }
+
+    .step-title {
+        font-size: 20px;
+    }
+
+    .step-description {
+        font-size: 14px;
+    }
+
+    .form-control {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}

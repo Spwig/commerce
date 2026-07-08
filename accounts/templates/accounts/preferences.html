@@ -1,0 +1,428 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Communication Preferences" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/css/preferences.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% trans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% trans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% trans 'My Account' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% trans 'Communication Preferences' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% trans "Communication Preferences" %}</h1>
+        <p class="page-header__subtitle">{% trans "Control which emails and messages you receive from us" %}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-md {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% elif message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200{% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" id="preferences-form">
+                {% csrf_token %}
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button type="button" class="btn-subscribe-all" data-action="subscribe-all">
+                        {% trans "Enable All Marketing" %}
+                    </button>
+                    <button type="button" class="btn-unsubscribe-all"
+                            data-action="confirm-unsubscribe-all"
+                            data-confirm-msg="{% trans 'Are you sure you want to unsubscribe from all marketing communications? You will still receive essential emails like order confirmations.' %}">
+                        {% trans "Disable All Marketing" %}
+                    </button>
+                </div>
+
+                <!-- Smart Suggestions -->
+                {% if smart_suggestions and smart_suggestions.show_suggestions %}
+                <div class="preference-card smart-suggestions-card">
+                    <h2>
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        {% trans "Smart Suggestions" %}
+                    </h2>
+                    <p class="card-description">
+                        {% trans "Based on your engagement with us, here are our personalized recommendations to help you get the most value." %}
+                    </p>
+
+                    <!-- Frequency Recommendation -->
+                    {% if smart_suggestions.frequency %}
+                    <div class="suggestion-item">
+                        <div>
+                            <div class="suggestion-item__title">
+                                {% trans "Recommended Communication Frequency" %}:
+                                <span class="suggestion-item__highlight">
+                                    {% if smart_suggestions.frequency.frequency == 'immediate' %}
+                                        {% trans "Immediate" %}
+                                    {% elif smart_suggestions.frequency.frequency == 'weekly' %}
+                                        {% trans "Weekly Digest" %}
+                                    {% else %}
+                                        {% trans "Monthly Digest" %}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="suggestion-item__description">
+                                {{ smart_suggestions.frequency.reasoning }}
+                            </div>
+                            <div class="suggestion-item__score">
+                                {% trans "Engagement Score" %}: {{ smart_suggestions.frequency.engagement_score|floatformat:0 }}/100
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- App Recommendations -->
+                    {% if smart_suggestions.apps %}
+                    <div class="suggestion-apps">
+                        <div class="suggestion-apps__title">
+                            {% trans "Recommended Programs" %}
+                        </div>
+
+                        {% if smart_suggestions.apps.blog %}
+                        <div class="suggestion-app">
+                            <div class="suggestion-app__header">
+                                {% if smart_suggestions.apps.blog.recommended %}
+                                    <span class="suggestion-app__icon--yes">&#10003;</span>
+                                {% else %}
+                                    <span class="suggestion-app__icon--no">&#9675;</span>
+                                {% endif %}
+                                <span class="suggestion-app__name">{% trans "Blog Updates" %}</span>
+                            </div>
+                            <div class="suggestion-app__reason">
+                                {{ smart_suggestions.apps.blog.reason }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if smart_suggestions.apps.loyalty %}
+                        <div class="suggestion-app">
+                            <div class="suggestion-app__header">
+                                {% if smart_suggestions.apps.loyalty.recommended %}
+                                    <span class="suggestion-app__icon--yes">&#10003;</span>
+                                {% else %}
+                                    <span class="suggestion-app__icon--no">&#9675;</span>
+                                {% endif %}
+                                <span class="suggestion-app__name">{% trans "Loyalty Program" %}</span>
+                            </div>
+                            <div class="suggestion-app__reason">
+                                {{ smart_suggestions.apps.loyalty.reason }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if smart_suggestions.apps.referrals %}
+                        <div class="suggestion-app">
+                            <div class="suggestion-app__header">
+                                {% if smart_suggestions.apps.referrals.recommended %}
+                                    <span class="suggestion-app__icon--yes">&#10003;</span>
+                                {% else %}
+                                    <span class="suggestion-app__icon--no">&#9675;</span>
+                                {% endif %}
+                                <span class="suggestion-app__name">{% trans "Referral Program" %}</span>
+                            </div>
+                            <div class="suggestion-app__reason">
+                                {{ smart_suggestions.apps.referrals.reason }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if smart_suggestions.apps.affiliate %}
+                        <div class="suggestion-app">
+                            <div class="suggestion-app__header">
+                                {% if smart_suggestions.apps.affiliate.recommended %}
+                                    <span class="suggestion-app__icon--yes">&#10003;</span>
+                                {% else %}
+                                    <span class="suggestion-app__icon--no">&#9675;</span>
+                                {% endif %}
+                                <span class="suggestion-app__name">{% trans "Affiliate Program" %}</span>
+                            </div>
+                            <div class="suggestion-app__reason">
+                                {{ smart_suggestions.apps.affiliate.reason }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="suggestion-tip">
+                            {% trans "These are suggestions based on your purchase history and engagement. You're free to enable or disable any program according to your preferences." %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Transactional Emails Card (Read-only) -->
+                <div class="preference-card">
+                    <h2>
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {% trans "Essential Emails" %}
+                    </h2>
+                    <p class="card-description">{% trans "These emails are required for your account and orders. They cannot be disabled." %}</p>
+
+                    <div class="preference-item locked">
+                        <div class="preference-label">
+                            <input type="checkbox" checked disabled>
+                            <span>{% trans "Order confirmations" %}</span>
+                        </div>
+                        <span class="locked-badge">{% trans "Required" %}</span>
+                    </div>
+
+                    <div class="preference-item locked">
+                        <div class="preference-label">
+                            <input type="checkbox" checked disabled>
+                            <span>{% trans "Shipping updates" %}</span>
+                        </div>
+                        <span class="locked-badge">{% trans "Required" %}</span>
+                    </div>
+
+                    <div class="preference-item locked">
+                        <div class="preference-label">
+                            <input type="checkbox" checked disabled>
+                            <span>{% trans "Payment confirmations" %}</span>
+                        </div>
+                        <span class="locked-badge">{% trans "Required" %}</span>
+                    </div>
+
+                    <div class="preference-item locked">
+                        <div class="preference-label">
+                            <input type="checkbox" checked disabled>
+                            <span>{% trans "Account security alerts" %}</span>
+                        </div>
+                        <span class="locked-badge">{% trans "Required" %}</span>
+                    </div>
+                </div>
+
+                <!-- Marketing Emails Card -->
+                <div class="preference-card">
+                    <h2>
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        {% trans "Marketing Communications" %}
+                        {% if prefs.email_verified %}
+                            <span class="verified-badge">{% trans "Verified" %}</span>
+                        {% else %}
+                            <span class="unverified-badge">{% trans "Unverified" %}</span>
+                        {% endif %}
+                    </h2>
+                    <p class="card-description">
+                        {% trans "Promotions, newsletters, and product recommendations." %}
+                        {% if not prefs.email_verified %}
+                            <a href="#" data-action="send-verification-email"
+                               data-success-msg="{% trans 'Verification email sent! Please check your inbox.' %}"
+                               data-error-msg="{% trans 'Error sending verification email. Please try again.' %}"
+                               class="text-blue-600 underline">
+                                {% trans "Send verification email" %}
+                            </a>
+                        {% endif %}
+                    </p>
+
+                    <div class="preference-item">
+                        <div class="preference-label">
+                            <input type="checkbox" name="email_marketing" id="email_marketing" {% if prefs.email_marketing %}checked{% endif %}>
+                            <label for="email_marketing">{% trans "Newsletters and promotions" %}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Card -->
+                <div class="preference-card">
+                    <h2>
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                        {% trans "Blog Updates" %}
+                    </h2>
+                    <p class="card-description">{% trans "Get notified when we publish new blog posts." %}</p>
+
+                    <div class="preference-item">
+                        <div class="preference-label">
+                            <input type="checkbox" name="blog_enabled" id="blog_enabled" {% if blog_prefs.enabled %}checked{% endif %}>
+                            <label for="blog_enabled">{% trans "Enable blog notifications" %}</label>
+                        </div>
+                        <select name="blog_frequency" class="frequency-select" {% if not blog_prefs.enabled %}disabled{% endif %}>
+                            <option value="immediate" {% if blog_prefs.frequency == 'immediate' %}selected{% endif %}>{% trans "Immediately" %}</option>
+                            <option value="weekly" {% if blog_prefs.frequency == 'weekly' %}selected{% endif %}>{% trans "Weekly Digest" %}</option>
+                            <option value="monthly" {% if blog_prefs.frequency == 'monthly' %}selected{% endif %}>{% trans "Monthly Digest" %}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loyalty Card -->
+                <div class="preference-card">
+                    <h2>
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {% trans "Loyalty Program" %}
+                    </h2>
+                    <p class="card-description">{% trans "Points updates, tier changes, and exclusive rewards." %}</p>
+
+                    <div class="preference-item">
+                        <div class="preference-label">
+                            <input type="checkbox" name="loyalty_enabled" id="loyalty_enabled" {% if loyalty_prefs.enabled %}checked{% endif %}>
+                            <label for="loyalty_enabled">{% trans "Enable loyalty notifications" %}</label>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="loyalty_points_earned" {% if loyalty_prefs.points_earned %}checked{% endif %} {% if not loyalty_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Points earned" %}</span>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="loyalty_tier_changes" {% if loyalty_prefs.tier_changes %}checked{% endif %} {% if not loyalty_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Tier upgrades" %}</span>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="loyalty_rewards_available" {% if loyalty_prefs.rewards_available %}checked{% endif %} {% if not loyalty_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Rewards available" %}</span>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="loyalty_points_expiring" {% if loyalty_prefs.points_expiring %}checked{% endif %} {% if not loyalty_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Points expiring soon" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referrals Card -->
+                <div class="preference-card">
+                    <h2>
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        {% trans "Referral Program" %}
+                    </h2>
+                    <p class="card-description">{% trans "Updates when you refer friends and earn rewards." %}</p>
+
+                    <div class="preference-item">
+                        <div class="preference-label">
+                            <input type="checkbox" name="referrals_enabled" id="referrals_enabled" {% if referrals_prefs.enabled %}checked{% endif %}>
+                            <label for="referrals_enabled">{% trans "Enable referral notifications" %}</label>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="referrals_reward_issued" {% if referrals_prefs.reward_issued %}checked{% endif %} {% if not referrals_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Reward issued" %}</span>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="referrals_referral_converted" {% if referrals_prefs.referral_converted %}checked{% endif %} {% if not referrals_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Referral completed" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Affiliate Card -->
+                <div class="preference-card">
+                    <h2>
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        {% trans "Affiliate Program" %}
+                    </h2>
+                    <p class="card-description">{% trans "Commission updates and payout notifications." %}</p>
+
+                    <div class="preference-item">
+                        <div class="preference-label">
+                            <input type="checkbox" name="affiliate_enabled" id="affiliate_enabled" {% if affiliate_prefs.enabled %}checked{% endif %}>
+                            <label for="affiliate_enabled">{% trans "Enable affiliate notifications" %}</label>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="affiliate_commission_earned" {% if affiliate_prefs.commission_earned %}checked{% endif %} {% if not affiliate_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Commission earned" %}</span>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="affiliate_payout_processed" {% if affiliate_prefs.payout_processed %}checked{% endif %} {% if not affiliate_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Payout processed" %}</span>
+                        </div>
+                    </div>
+
+                    <div class="preference-item preference-item--sub">
+                        <div class="preference-label">
+                            <input type="checkbox" name="affiliate_monthly_report" {% if affiliate_prefs.monthly_report %}checked{% endif %} {% if not affiliate_prefs.enabled %}disabled{% endif %}>
+                            <span>{% trans "Monthly performance report" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="text-center mt-6">
+                    <button type="submit" class="save-button">
+                        {% trans "Save Preferences" %}
+                    </button>
+                </div>
+            </form>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <h3>{% trans "About Your Communication Preferences" %}</h3>
+                <p>
+                    {% trans "Essential emails (order confirmations, shipping updates, account security) cannot be disabled as they're required for your account. You can unsubscribe from marketing communications at any time using the unsubscribe link in emails or by updating your preferences here." %}
+                </p>
+            </div>
+
+            <!-- Preference History Link -->
+            <div class="text-center mt-6 preference-history-link">
+                <a href="{% url 'accounts:preference_history' %}">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    {% trans "View Preference History" %}
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'accounts/js/preferences.js' %}" defer></script>
+{% endblock %}
+{% endblock %}

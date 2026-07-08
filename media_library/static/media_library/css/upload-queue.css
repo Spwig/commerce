@@ -1,0 +1,397 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Upload Queue Manager Styles */
+
+/* Position the upload queue popup */
+.upload-queue-container {
+    bottom: 20px;
+    right: 20px;
+    width: 400px;
+    max-height: 500px;
+    /* z-index inherited from .utility-popup (10000) */
+}
+
+.upload-queue-container.hidden {
+    display: none;
+}
+
+.upload-queue-container.minimized {
+    height: auto;
+}
+
+.upload-queue-container.minimized .upload-queue-items,
+.upload-queue-container.minimized .upload-queue-summary {
+    display: none;
+}
+
+/* Queue Items Container - extends utility-body */
+.upload-queue-items {
+    max-height: 350px;
+    padding: 0; /* Override utility-body padding for queue items */
+}
+
+.upload-queue-items:empty::after {
+    content: "No files in queue";
+    display: block;
+    padding: 40px;
+    text-align: center;
+    color: var(--body-quiet-color, #666);
+    font-style: italic;
+}
+
+/* Queue Item */
+.queue-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--hairline-color, #e8e8e8);
+    transition: background-color 0.2s;
+}
+
+.queue-item:hover {
+    background: var(--darkened-bg, #f8f9fa);
+}
+
+.queue-item-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.queue-item-icon {
+    font-size: 24px;
+    margin-right: 12px;
+}
+
+.queue-item-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.queue-item-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body-fg, #333);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.queue-item-size {
+    font-size: 11px;
+    color: var(--body-quiet-color, #666);
+    margin-top: 2px;
+}
+
+/* Progress Bar */
+.queue-item-progress {
+    flex: 0 0 120px;
+    margin: 0 12px;
+}
+
+.progress-bar {
+    height: 6px;
+    background: var(--border-color, #dee2e6);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary, #417690);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 11px;
+    color: var(--body-quiet-color, #666);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Queue Item Actions */
+.queue-item-actions {
+    flex: 0 0 auto;
+}
+
+.queue-item-cancel {
+    background: none;
+    border: none;
+    color: var(--delete-button-bg, #ba2121);
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.queue-item-cancel:hover {
+    opacity: 1;
+}
+
+/* Status States */
+.queue-item-completed .progress-fill {
+    background: var(--success-fg);
+}
+
+.queue-item-completed .progress-text {
+    color: var(--success-fg);
+}
+
+.queue-item-error .progress-fill,
+.queue-item-failed .progress-fill {
+    background: var(--error-fg);
+}
+
+.queue-item-error .progress-text,
+.queue-item-failed .progress-text {
+    color: var(--error-fg);
+}
+
+.queue-item-cancelled .progress-fill {
+    background: var(--body-quiet-color);
+}
+
+.queue-item-cancelled .progress-text {
+    color: var(--body-quiet-color);
+}
+
+.queue-item-processing .progress-fill {
+    background: linear-gradient(
+        90deg,
+        var(--primary, #417690) 0%,
+        var(--link-hover-color, #205067) 50%,
+        var(--primary, #417690) 100%
+    );
+    background-size: 200% 100%;
+    animation: processing-animation 1.5s linear infinite;
+}
+
+@keyframes processing-animation {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: 100% 0%;
+    }
+}
+
+/* Queue Summary - extends utility-footer */
+.upload-queue-summary {
+    /* Additional styles specific to upload queue if needed */
+}
+
+.queue-count {
+    font-size: 12px;
+    color: var(--body-quiet-color, #666);
+    font-weight: 500;
+}
+
+.queue-clear-completed {
+    background: none;
+    border: 1px solid var(--border-color, #dee2e6);
+    color: var(--body-quiet-color, #666);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.queue-clear-completed:hover {
+    background: var(--body-bg, #fff);
+    border-color: var(--primary, #417690);
+    color: var(--primary, #417690);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .upload-queue-container {
+        width: 320px;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    /* Auto-minimize on tablet to save space */
+    .upload-queue-container:not(.expanded) {
+        height: auto;
+        max-height: none;
+    }
+
+    .upload-queue-container:not(.expanded) .upload-queue-items {
+        display: none;
+    }
+
+    .upload-queue-container:not(.expanded) .upload-queue-summary {
+        display: flex;
+    }
+
+    /* Smaller header and text */
+    .upload-queue-container .utility-header {
+        padding: 10px 12px;
+    }
+
+    .upload-queue-container .utility-title {
+        font-size: 14px;
+    }
+
+    .queue-item {
+        padding: 10px 12px;
+    }
+
+    .queue-item-name {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 640px) {
+    /* Override utility-popup full-screen behavior for upload queue */
+    .upload-queue-container.utility-popup {
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+        height: auto !important;
+        max-height: 50vh !important; /* Limit to 50% of viewport height */
+        right: 10px !important;
+        left: 10px !important;
+        bottom: 10px !important;
+        top: auto !important;
+    }
+
+    /* Hide items when minimized */
+    .upload-queue-container.minimized .upload-queue-items,
+    .upload-queue-container.minimized .upload-queue-summary {
+        display: none;
+    }
+
+    /* Show items only when explicitly expanded by user */
+    .upload-queue-container.user-expanded .upload-queue-items {
+        display: block;
+    }
+
+    .upload-queue-container.user-expanded .upload-queue-summary {
+        display: flex;
+    }
+
+    /* Make header more compact */
+    .upload-queue-container .utility-header {
+        padding: 8px 12px;
+    }
+
+    .upload-queue-container .utility-title {
+        font-size: 13px;
+    }
+
+    /* Limit queue items height on mobile */
+    .upload-queue-items {
+        max-height: calc(50vh - 120px); /* Account for header and footer */
+    }
+
+    /* Compact queue items when expanded */
+    .queue-item {
+        padding: 8px 12px;
+        flex-wrap: wrap;
+    }
+
+    .queue-item-info {
+        flex: 1 1 100%;
+        margin-bottom: 8px;
+    }
+
+    .queue-item-icon {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+
+    .queue-item-name {
+        font-size: 12px;
+    }
+
+    .queue-item-size {
+        font-size: 10px;
+    }
+
+    /* Progress bar full width on mobile */
+    .queue-item-progress {
+        flex: 1 1 100%;
+        margin: 0 0 8px 0;
+        order: 3;
+    }
+
+    .queue-item-actions {
+        order: 2;
+    }
+
+    /* Smaller footer */
+    .upload-queue-summary {
+        padding: 8px 12px;
+    }
+
+    .queue-count {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Override utility-popup full-screen behavior for upload queue on small screens */
+    .upload-queue-container.utility-popup {
+        width: calc(100vw - 10px) !important;
+        max-width: calc(100vw - 10px) !important;
+        height: auto !important;
+        max-height: 45vh !important; /* Slightly smaller on very small screens */
+        bottom: 5px !important;
+        right: 5px !important;
+        left: 5px !important;
+        top: auto !important;
+    }
+
+    /* Even more compact */
+    .upload-queue-container .utility-header {
+        padding: 6px 10px;
+    }
+
+    .upload-queue-container .utility-title {
+        font-size: 12px;
+    }
+
+    /* Adjust queue items height for smaller screens */
+    .upload-queue-items {
+        max-height: calc(45vh - 100px); /* Account for compact header/footer */
+    }
+
+    .queue-item {
+        padding: 6px 10px;
+    }
+
+    .upload-queue-summary {
+        padding: 6px 10px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .upload-queue-container {
+        background: var(--darkened-bg);
+        border-color: var(--border-color);
+    }
+
+    .upload-queue-header {
+        background: var(--primary);
+    }
+
+    .queue-item:hover {
+        background: var(--selected-bg);
+    }
+
+    .progress-bar {
+        background: var(--border-color);
+    }
+
+    .queue-clear-completed:hover {
+        background: var(--selected-bg);
+    }
+}

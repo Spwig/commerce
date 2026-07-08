@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - {{ order_number }} | {{ store_name }}</title>
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-card">
+            <!-- Store Header -->
+            <div class="receipt-header">
+                {% if store_logo_url %}
+                <img src="{{ store_logo_url }}" alt="{{ store_name }}" class="store-logo">
+                {% endif %}
+                <h1 class="store-name">{{ store_name }}</h1>
+                {% if store_address %}
+                <p class="store-info">{{ store_address }}</p>
+                {% endif %}
+                {% if store_phone %}
+                <p class="store-info">{{ store_phone }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Receipt Title -->
+            <div class="receipt-title">RECEIPT</div>
+
+            <!-- Order Details -->
+            <div class="receipt-section">
+                <div class="order-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Order Number</span>
+                        <span class="meta-value">#{{ order_number }}</span>
+                    </div>
+                    <div class="meta-item right">
+                        <span class="meta-label">Date & Time</span>
+                        <span class="meta-value">{{ order_date }}</span>
+                    </div>
+                    {% if cashier_name %}
+                    <div class="meta-item">
+                        <span class="meta-label">Served by</span>
+                        <span class="meta-value">{{ cashier_name }}</span>
+                    </div>
+                    {% endif %}
+                    {% if terminal_name %}
+                    <div class="meta-item right">
+                        <span class="meta-label">Terminal</span>
+                        <span class="meta-value">{{ terminal_name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="receipt-section">
+                <div class="items-header">
+                    <span>Item</span>
+                    <span style="text-align: center;">Qty</span>
+                    <span style="text-align: right;">Price</span>
+                </div>
+                {% for item in items %}
+                <div class="item-row">
+                    <div>
+                        <div class="item-name">{{ item.name }}</div>
+                        {% if item.sku %}
+                        <div class="item-sku">SKU: {{ item.sku }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="item-qty">{{ item.quantity }}</div>
+                    <div class="item-price">{{ item.line_total }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Totals -->
+            <div class="receipt-section totals-section">
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <span>{{ subtotal }}</span>
+                </div>
+                {% if discount_amount %}
+                <div class="total-row discount">
+                    <span>Discount</span>
+                    <span>-{{ discount_amount }}</span>
+                </div>
+                {% endif %}
+                {% if tax_amount %}
+                <div class="total-row">
+                    <span>Tax</span>
+                    <span>{{ tax_amount }}</span>
+                </div>
+                {% endif %}
+                <div class="total-row grand-total">
+                    <span>TOTAL</span>
+                    <span>{{ total }}</span>
+                </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="receipt-section payment-section">
+                <div class="payment-title">Payment</div>
+                {% for payment in payments %}
+                <div class="payment-item">
+                    <div class="payment-method">
+                        <span>{{ payment.method }}</span>
+                        {% if payment.card_last4 %}
+                        <span class="card-badge">****{{ payment.card_last4 }}</span>
+                        {% endif %}
+                    </div>
+                    <span>{{ payment.amount }}</span>
+                </div>
+                {% endfor %}
+                {% if change_given %}
+                <div class="payment-item" style="color: var(--color-muted); margin-top: 8px;">
+                    <span>Change</span>
+                    <span>{{ change_given }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Thank You -->
+            <div class="thank-you">
+                <p class="thank-you-text">Thank you for your purchase!</p>
+            </div>
+
+            <!-- Spwig Branding -->
+            <div class="branding">
+                <a href="https://spwig.com" target="_blank" rel="noopener">
+                    <img src="/static/email_system/img/spwig-favicon.png" alt="Spwig">
+                    Powered by Spwig
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

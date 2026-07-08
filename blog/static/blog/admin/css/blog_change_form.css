@@ -1,0 +1,919 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Blog Post Change Form - Custom Styles
+ * Leverages admin-base.css for tabs, buttons, cards, etc.
+ * Only includes styles unique to blog post editing.
+ *
+ */
+
+/* ============================================
+   BLOG CONTENT CONTAINER
+   ============================================ */
+
+.blog-content {
+    padding: 20px;
+}
+
+#content-main {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* ============================================
+   DASHBOARD HEADER
+   ============================================ */
+
+.blog-dashboard-header {
+    background: var(--primary);
+    color: var(--header-color, #fff);
+    padding: 2rem;
+    margin: -20px -20px 20px -20px;
+    border-radius: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.blog-dashboard-header h1 {
+    color: var(--header-color, #fff) !important;
+    font-size: 1.75rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.blog-dashboard-header h1 i {
+    font-size: 1.5rem;
+}
+
+.blog-dashboard-header .post-meta {
+    color: var(--header-color, #fff);
+    opacity: 0.9;
+    font-size: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.post-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ============================================
+   POST STATUS BADGES
+   ============================================ */
+
+.post-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.post-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--header-color, #fff);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.post-badge.published {
+    background: var(--success-bg);
+    color: var(--success-fg);
+    border-color: var(--success-fg);
+}
+
+.post-badge.draft {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+    border-color: var(--border-color);
+}
+
+.post-badge.scheduled {
+    background: var(--primary-bg);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.post-badge.archived {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+    border-color: var(--warning-fg);
+}
+
+.post-badge.featured {
+    background: #fff3cd;
+    color: #856404;
+    border-color: #ffc107;
+}
+
+.post-badge.pinned {
+    background: #e3f2fd;
+    color: #1976d2;
+    border-color: #1976d2;
+}
+
+.post-badge.page-builder {
+    background: var(--primary-bg);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* ============================================
+   STATS GRID
+   ============================================ */
+
+.blog-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.blog-dashboard-header .dashboard-stat-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.blog-dashboard-header .dashboard-stat-card .icon,
+.blog-dashboard-header .dashboard-stat-card .value,
+.blog-dashboard-header .dashboard-stat-card .label {
+    color: var(--header-color, #fff) !important;
+}
+
+/* ============================================
+   FORM CONTAINER WITH SIDEBAR
+   ============================================ */
+
+.blog-form-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    align-items: start;
+    margin-top: 20px;
+}
+
+.blog-main-form {
+    min-width: 0;
+}
+
+.blog-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+/* ============================================
+   SIDEBAR CARDS
+   ============================================ */
+
+.sidebar-card {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.sidebar-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-card-content {
+    text-align: center;
+    padding: 10px 20px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    background: var(--body-bg);
+    border-radius: 6px;
+}
+
+.sidebar-card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-card-value-medium {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-card-label {
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+}
+
+/* ============================================
+   QUICK ACTION BUTTONS
+   ============================================ */
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: -webkit-fill-available;
+    padding: 10px 15px;
+    background: var(--default-button-bg);
+    color: var(--body-fg);
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.quick-action-btn:link,
+.quick-action-btn:visited {
+    background: var(--default-button-bg);
+    color: var(--body-fg);
+}
+
+.quick-action-btn:hover {
+    background: var(--default-button-hover-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.quick-action-btn.secondary {
+    background: var(--accent-bg);
+    color: var(--body-fg);
+    border: var(--border-color) 1px solid;
+}
+
+.quick-action-btn.secondary:visited {
+    background: var(--accent-bg);
+    color: var(--body-fg);
+}
+
+.quick-action-btn.secondary:hover {
+    background: var(--border-color);
+}
+
+.quick-action-btn.primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.quick-action-btn.primary:visited {
+    background: var(--primary);
+    color: white;
+}
+
+.quick-action-btn.primary:hover {
+    background: var(--link-hover-color);
+    color: white;
+}
+
+.quick-action-btn.danger {
+    background: var(--error-bg);
+    color: var(--error-fg);
+    border: 1px solid var(--error-fg);
+}
+
+.quick-action-btn.danger:hover {
+    background: var(--error-fg);
+    color: white;
+}
+
+/* ============================================
+   POST STATUS DISPLAY (SIDEBAR)
+   ============================================ */
+
+.post-status-display {
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    background: var(--body-bg);
+}
+
+.post-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.post-status-indicator.published {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.post-status-indicator.draft {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+.post-status-indicator.scheduled {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.post-status-indicator.archived {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+.post-status-date {
+    font-size: 0.85rem;
+    color: var(--body-quiet-color);
+    margin-top: 0.5rem;
+}
+
+/* ============================================
+   AUTO-SHARE STATUS DISPLAY
+   ============================================ */
+
+.auto-share-status {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.share-status-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--body-bg);
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.share-status-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 14px;
+}
+
+.share-status-icon.facebook {
+    background: #1877f2;
+    color: white;
+}
+
+.share-status-icon.instagram {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: white;
+}
+
+.share-status-icon.linkedin {
+    background: #0077b5;
+    color: white;
+}
+
+.share-status-info {
+    flex: 1;
+}
+
+.share-status-platform {
+    font-weight: 500;
+    color: var(--body-fg);
+}
+
+.share-status-state {
+    font-size: 0.75rem;
+    color: var(--body-quiet-color);
+}
+
+.share-status-state.posted {
+    color: var(--success-fg);
+}
+
+.share-status-state.pending {
+    color: var(--warning-fg);
+}
+
+.share-status-state.failed {
+    color: var(--error-fg);
+}
+
+.share-status-state.disabled {
+    color: var(--body-quiet-color);
+    font-style: italic;
+}
+
+.share-status-action {
+    font-size: 12px;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.share-status-action:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   FORM TABS
+   ============================================ */
+
+.blog-tabs-container {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.blog-tabs-nav {
+    display: flex;
+    background: var(--darkened-bg);
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+/* Override admin-base.css vertical tab layout with blog's horizontal style */
+.blog-tabs-container .blog-tab-btn.admin-tab-btn {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-width: auto !important;
+    padding: 14px 20px !important;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    color: var(--body-quiet-color) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+}
+
+.blog-tabs-container .blog-tab-btn.admin-tab-btn:hover {
+    background: var(--body-bg) !important;
+    color: var(--body-fg) !important;
+}
+
+.blog-tabs-container .blog-tab-btn.admin-tab-btn.active {
+    background: var(--body-bg) !important;
+    color: var(--primary) !important;
+    border-bottom-color: var(--primary) !important;
+}
+
+.blog-tabs-container .blog-tab-btn.admin-tab-btn i {
+    font-size: 1rem !important;
+    margin-bottom: 0 !important;
+}
+
+.blog-tabs-container .blog-tab-btn.admin-tab-btn span {
+    text-align: left !important;
+    line-height: normal !important;
+}
+
+/* Error badge positioning for horizontal tabs */
+.blog-tabs-container .blog-tab-btn.admin-tab-btn .error-badge {
+    top: 2px !important;
+    right: 2px !important;
+}
+
+.blog-tabs-container .blog-tab-btn.admin-tab-btn.has-errors {
+    border-bottom-color: var(--error-fg) !important;
+    color: var(--error-fg) !important;
+}
+
+/* Tab content panels */
+.blog-tabs-container .blog-tab-content {
+    padding: 20px;
+}
+
+/* ============================================
+   FORM SECTIONS WITHIN TABS
+   ============================================ */
+
+.form-section {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--darkened-bg);
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.form-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-section-info {
+    padding: 20px;
+}
+
+.form-section-info p {
+    color: var(--body-quiet-color);
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   PAGE BUILDER INFO BOX
+   ============================================ */
+
+.page-builder-info {
+    background: var(--accent-bg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary);
+    padding: 15px 20px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 20px;
+}
+
+.page-builder-info h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-builder-info p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+}
+
+.page-builder-info .btn-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.page-builder-info .btn-link:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   EMPTY STATE MESSAGES
+   ============================================ */
+
+.empty-state-message {
+    padding: 20px;
+    text-align: center;
+    color: var(--body-quiet-color);
+}
+
+/* ============================================
+   MODULE FOOTER ACTIONS
+   ============================================ */
+
+.module-footer {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 15px;
+}
+
+/* ============================================
+   MOBILE SIDEBAR TOGGLE
+   ============================================ */
+
+.blog-sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 998;
+    width: 44px;
+    height: 44px;
+    background: var(--body-bg);
+    opacity: 0.85;
+    color: var(--body-fg);
+    border: 1px solid var(--border-color);
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.blog-sidebar-toggle:hover {
+    opacity: 1;
+    transform: translateY(-50%) translateX(-2px);
+    box-shadow: -4px 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.blog-sidebar-toggle i {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.blog-sidebar-toggle:hover i {
+    transform: translateX(-2px);
+}
+
+/* ============================================
+   SIDEBAR CLOSE BUTTON
+   ============================================ */
+
+.blog-sidebar-close {
+    display: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+    width: 36px;
+    height: 36px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--body-fg);
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.blog-sidebar-close:hover {
+    background: var(--error-fg);
+    color: white;
+    transform: rotate(90deg);
+}
+
+/* ============================================
+   SIDEBAR BACKDROP
+   ============================================ */
+
+.blog-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.blog-sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .blog-form-container {
+        grid-template-columns: 1fr;
+    }
+
+    /* Show toggle button on mobile */
+    .blog-sidebar-toggle {
+        display: flex;
+    }
+
+    /* Show close button on mobile */
+    .blog-sidebar-close {
+        display: flex;
+    }
+
+    /* Show backdrop on mobile */
+    .blog-sidebar-backdrop {
+        display: block;
+    }
+
+    /* Transform sidebar into slide-out panel */
+    .blog-sidebar {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 85%;
+        max-width: 400px;
+        height: calc(100vh - 70px);
+        overflow-y: auto;
+        background: var(--body-bg);
+        z-index: 1000;
+        transition: right 0.3s ease;
+        padding: 60px 24px 40px 20px;
+        box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+        margin-top: 70px;
+        box-sizing: border-box;
+    }
+
+    .blog-sidebar.open {
+        right: 0;
+    }
+
+    .blog-main-form {
+        order: 1;
+    }
+
+    .blog-dashboard-header {
+        padding: 1.5rem 1rem;
+    }
+
+    .blog-stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .blog-dashboard-header {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .blog-dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .post-meta {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+
+    .blog-content {
+        padding: 0;
+    }
+
+    .main-content .module {
+        width: unset;
+        margin: unset !important;
+    }
+
+    .main-content .aligned {
+        width: unset;
+    }
+
+    /* Adjust sidebar for smaller screens */
+    .blog-sidebar {
+        max-width: 100%;
+        padding-right: 20px;
+    }
+
+    /* Adjust toggle button for smaller screens */
+    .blog-sidebar-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .blog-sidebar-toggle i {
+        font-size: 16px;
+    }
+
+    /* Tab adjustments */
+    .blog-tab-btn {
+        padding: 12px 15px;
+        font-size: 0.85rem;
+    }
+
+    .blog-tab-btn i {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Full-width sidebar on very small screens */
+    .blog-sidebar {
+        max-width: 100%;
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    /* Slightly smaller toggle button on very small screens */
+    .blog-sidebar-toggle {
+        width: 36px;
+        height: 36px;
+    }
+
+    .blog-sidebar-toggle i {
+        font-size: 14px;
+    }
+
+    /* Compact tabs */
+    .blog-tab-btn {
+        padding: 10px 12px;
+    }
+
+    .blog-tab-btn span {
+        display: none;
+    }
+
+    .blog-tab-btn i {
+        font-size: 1.1rem;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--body-quiet-color);
+}
+
+.hide-for-page-builder,
+.blog-hidden {
+    display: none;
+}
+
+.blog-module--spaced {
+    margin-top: 20px;
+}
+
+.blog-submit-row {
+    margin-top: 20px;
+    padding: 15px 20px;
+}
+
+.blog-status-updated {
+    margin-top: 10px;
+}
+
+.blog-empty-state-text {
+    color: var(--body-quiet-color);
+    font-size: 0.875rem;
+    margin-bottom: 12px;
+}
+
+/* CKEditor blog editor min-height */
+.ck.ck-editor__main > .ck-editor__editable {
+    min-height: 300px;
+}
+
+/* ============================================
+   CKEDITOR MEDIA LIBRARY BROWSE BUTTON
+   ============================================ */
+
+.ck-media-browse-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    margin: 8px 0;
+    background: var(--primary);
+    color: var(--primary-fg, #fff);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.ck-media-browse-btn:hover {
+    opacity: 0.85;
+}
+
+.ck-media-browse-btn i {
+    font-size: 14px;
+}

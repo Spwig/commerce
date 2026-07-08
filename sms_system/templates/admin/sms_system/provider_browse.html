@@ -1,0 +1,426 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Browse SMS Providers" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'providers_common/css/provider_browse.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/provider_modal.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/version-history.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/logo-contrast.js' %}" defer></script>
+<script src="{% static 'providers_common/js/manifest-i18n.js' %}" defer></script>
+<script src="{% static 'providers_common/js/provider_modal.js' %}" defer></script>
+<script src="{% static 'providers_common/js/provider_confirm.js' %}" defer></script>
+<script src="{% static 'providers_common/js/version-history.js' %}" defer></script>
+<script src="{% static 'sms_system/js/sms_provider_browse.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:sms_system_smsprovideraccount_changelist' %}">{% trans 'SMS Accounts' %}</a>
+    &rsaquo; {% trans 'Browse Providers' %}
+</div>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="provider-browse-container">
+    <!-- Header -->
+    <div class="provider-browse-header">
+        <h1>{% trans "Browse SMS Providers" %}</h1>
+        <p class="provider-browse-description">
+            {% trans "Choose an SMS provider to integrate with your store. Send transactional SMS and WhatsApp messages to your customers." %}
+        </p>
+
+        {% if not has_update_server %}
+        <div class="provider-browse-notice notice-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="notice-content">
+                <strong>{% trans "Update Server Unavailable" %}</strong>
+                <p>{% trans "Could not connect to the update server. Showing locally installed providers only." %}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Information Card -->
+    <div class="provider-info-card" id="providerInfoCard">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-info-circle"></i>
+                {% trans "SMS Provider Marketplace" %}
+            </h2>
+            <button type="button"
+                    class="collapse-toggle"
+                    aria-expanded="true"
+                    aria-controls="cardBody">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="card-body" id="cardBody">
+            <p class="card-intro">
+                {% trans "Here you can discover and configure SMS providers to send transactional messages, including order confirmations, shipping updates, and delivery notifications." %}
+            </p>
+
+            <div class="card-content">
+                <div class="features-section">
+                    <h3>
+                        <i class="fas fa-sparkles"></i>
+                        {% trans "Capabilities:" %}
+                    </h3>
+                    <ul class="features-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Send SMS order confirmations and shipping notifications" %}
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "WhatsApp Business messaging support" %}
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Delivery status tracking and webhooks" %}
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "POS digital receipts via SMS" %}
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="getting-started-section">
+                    <h3>
+                        <i class="fas fa-rocket"></i>
+                        {% trans "Getting Started:" %}
+                    </h3>
+                    <ol class="steps-list">
+                        <li>{% trans "Browse providers below and select your SMS service" %}</li>
+                        <li>{% trans "Click 'Install' to add the provider to your store" %}</li>
+                        <li>{% trans "Follow the setup wizard to configure API credentials" %}</li>
+                        <li>{% trans "Test the connection and start sending messages" %}</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <i class="fas fa-chart-bar"></i>
+                {% blocktrans count counter=installed_providers|length %}
+                    {{ counter }} provider installed
+                {% plural %}
+                    {{ counter }} providers installed
+                {% endblocktrans %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Capability Filters -->
+    {% if sms_count or whatsapp_count or mms_count %}
+    <div class="filter-section">
+        <form method="get" class="filter-form">
+            <div class="filter-group">
+                <label>
+                    <input type="checkbox" name="sms" value="1" {% if has_sms %}checked{% endif %}>
+                    <i class="fas fa-comment-sms"></i> {% trans "SMS" %}
+                    <span class="filter-count">({{ sms_count }})</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="whatsapp" value="1" {% if has_whatsapp %}checked{% endif %}>
+                    <i class="fab fa-whatsapp"></i> {% trans "WhatsApp" %}
+                    <span class="filter-count">({{ whatsapp_count }})</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="mms" value="1" {% if has_mms %}checked{% endif %}>
+                    <i class="fas fa-image"></i> {% trans "MMS" %}
+                    <span class="filter-count">({{ mms_count }})</span>
+                </label>
+                <button type="submit" class="button">{% trans "Filter" %}</button>
+                {% if has_sms or has_whatsapp or has_mms %}
+                <a href="{% url 'sms_system:provider_browse' %}" class="filter-clear">{% trans "Clear" %}</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Installed Providers -->
+    {% if installed_providers %}
+    <div class="provider-section">
+        <h2 class="section-title">
+            <i class="fas fa-check-circle"></i>
+            {% trans "Installed Providers" %}
+        </h2>
+        <div class="provider-grid">
+            {% for provider in installed_providers %}
+            <div class="provider-card configured {% if provider.update_available %}has-update{% endif %}"
+                 data-provider-slug="{{ provider.slug }}"
+                 data-provider-key="{{ provider.key }}">
+
+                {% if provider.update_available %}
+                <div class="update-badge">
+                    <i class="fas fa-arrow-circle-up"></i>
+                    {% trans "Update Available" %}
+                </div>
+                {% endif %}
+
+                <!-- Card Header -->
+                <div class="provider-header">
+                    <div class="provider-icon provider-logo">
+                        {% if provider.logo_url %}
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.logo_url }}"
+                                 alt="{{ provider.name }}"
+                                 loading="lazy"
+                                 crossorigin="anonymous">
+                        </div>
+                        {% else %}
+                        <i class="fas fa-sms"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="provider-title">
+                        <h3>{{ provider.name }}</h3>
+                        <div class="provider-status-info">
+                            <span class="status-badge status-installed">
+                                <i class="fas fa-check-circle"></i> {% trans "Installed" %}
+                            </span>
+                            {% if provider.update_available %}
+                            <span class="version-info">
+                                <span class="current-version">v{{ provider.current_version }}</span>
+                                <i class="fas fa-arrow-right"></i>
+                                <span class="latest-version">v{{ provider.latest_version }}</span>
+                            </span>
+                            {% elif provider.version %}
+                            <span class="version-info">
+                                <span class="current-version">v{{ provider.version }}</span>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="provider-body">
+                    {% if provider.description %}
+                    <p class="provider-description">{{ provider.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    <!-- Capabilities -->
+                    {% if provider.capabilities %}
+                    <div class="feature-badges">
+                        {% if provider.capabilities.sms %}
+                        <span class="feature-badge sms">
+                            <i class="fas fa-comment-sms"></i> SMS
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.mms %}
+                        <span class="feature-badge mms">
+                            <i class="fas fa-image"></i> MMS
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.whatsapp %}
+                        <span class="feature-badge whatsapp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.delivery_reports %}
+                        <span class="feature-badge delivery-reports">
+                            <i class="fas fa-clipboard-check"></i> {% trans "Delivery Reports" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Setup Info -->
+                    {% if provider.setup %}
+                    <div class="provider-card-meta">
+                        {% if provider.setup.estimated_setup_time %}
+                        <span class="meta-item">
+                            <i class="fas fa-clock"></i> {{ provider.setup.estimated_setup_time }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Card Footer -->
+                <div class="provider-footer">
+                    <div class="provider-footer-actions">
+                        {% if provider.update_available %}
+                        <button class="button btn-update"
+                                data-slug="{{ provider.slug }}"
+                                data-name="{{ provider.name }}"
+                                data-version="{{ provider.latest_version }}">
+                            <i class="fas fa-sync-alt"></i> {% trans "Update" %}
+                        </button>
+                        {% else %}
+                        <a href="{% url 'sms_system:wizard_step1' %}?provider={{ provider.key }}"
+                           class="button btn-primary">
+                            <i class="fas fa-cog"></i> {% trans "Configure" %}
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="provider-footer-links">
+                        <button type="button"
+                                class="provider-details-link"
+                                data-provider-slug="{{ provider.slug }}">
+                            <i class="fas fa-info-circle"></i> {% trans "View Details" %}
+                        </button>
+
+                        {% if provider.homepage_url or provider.documentation_url %}
+                        <a href="{% if provider.documentation_url %}{{ provider.documentation_url }}{% else %}{{ provider.homepage_url }}{% endif %}"
+                           class="provider-learn-more"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            {% trans "Learn More" %} <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Available Providers -->
+    {% if available_providers %}
+    <div class="provider-section">
+        <h2 class="section-title">
+            <i class="fas fa-download"></i>
+            {% trans "Available from Marketplace" %}
+        </h2>
+        <div class="provider-grid">
+            {% for provider in available_providers %}
+            <div class="provider-card"
+                 data-provider-slug="{{ provider.slug }}">
+
+                <!-- Card Header -->
+                <div class="provider-header">
+                    <div class="provider-icon provider-logo">
+                        {% if provider.thumbnail_url %}
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.thumbnail_url }}"
+                                 alt="{{ provider.name }}"
+                                 loading="lazy"
+                                 crossorigin="anonymous">
+                        </div>
+                        {% else %}
+                        <i class="fas fa-sms"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="provider-title">
+                        <h3>{{ provider.name }}</h3>
+                        <div class="provider-status-info">
+                            <span class="status-badge status-available">
+                                <i class="fas fa-download"></i> {% trans "Available" %}
+                            </span>
+                            {% if provider.version %}
+                            <span class="version-info">
+                                <span class="available-version">v{{ provider.version }}</span>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="provider-body">
+                    {% if provider.description %}
+                    <p class="provider-description">{{ provider.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    <!-- Capabilities -->
+                    {% if provider.capabilities %}
+                    <div class="feature-badges">
+                        {% if provider.capabilities.sms %}
+                        <span class="feature-badge sms">
+                            <i class="fas fa-comment-sms"></i> SMS
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.mms %}
+                        <span class="feature-badge mms">
+                            <i class="fas fa-image"></i> MMS
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.whatsapp %}
+                        <span class="feature-badge whatsapp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Card Footer -->
+                <div class="provider-footer">
+                    <div class="provider-footer-actions">
+                        <button class="button btn-install"
+                                data-provider-slug="{{ provider.slug }}"
+                                data-provider-name="{{ provider.name }}">
+                            <i class="fas fa-download"></i> {% trans "Install" %}
+                        </button>
+                    </div>
+
+                    <div class="provider-footer-links">
+                        <button type="button"
+                                class="provider-details-link"
+                                data-provider-slug="{{ provider.slug }}">
+                            <i class="fas fa-info-circle"></i> {% trans "View Details" %}
+                        </button>
+
+                        {% if provider.homepage_url or provider.documentation_url %}
+                        <a href="{% if provider.documentation_url %}{{ provider.documentation_url }}{% else %}{{ provider.homepage_url }}{% endif %}"
+                           class="provider-learn-more"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            {% trans "Learn More" %} <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Empty State -->
+    {% if not installed_providers and not available_providers %}
+    <div class="provider-browse-empty">
+        <div class="empty-icon">
+            <i class="fas fa-inbox"></i>
+        </div>
+        <h2>{% trans "No Providers Available" %}</h2>
+        <p>{% trans "No SMS providers are currently available. Please check your update server connection or contact support." %}</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Loading Overlay -->
+<div id="provider-install-loading" class="provider-install-overlay d-none">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p class="loading-message">{% trans "Installing provider..." %}</p>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="provider-notification-container" class="notification-container"></div>
+
+<!-- Provider Detail Modal -->
+{% include "providers_common/modals/provider_detail_modal.html" %}
+{% include "providers_common/includes/modal_i18n.html" %}
+{% include "providers_common/includes/version_history_i18n.html" %}
+
+<!-- Provider Data for JavaScript -->
+{{ providers_json|json_script:"provider-data" }}
+{% endblock %}

@@ -1,0 +1,138 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ====================================================================
+   Payment Provider Admin - Individual Provider Account Styles
+   Theme-aware styles using CSS variables - no hardcoded colors
+   ==================================================================== */
+
+.provider-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.provider-form-container .form-row {
+    margin-bottom: 20px;
+}
+
+.provider-form-container .help {
+    display: block;
+    margin-top: 5px;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+.provider-form-container .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.provider-form-container .errorlist li {
+    background: var(--message-error-bg);
+    color: var(--body-fg);
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    border: 1px solid var(--message-error-border);
+}
+
+/* Connection Status Display */
+.connection-status-display {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.connection-status-display.connected {
+    background: var(--message-success-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--message-success-border);
+}
+
+.connection-status-display.error {
+    background: var(--message-error-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--message-error-border);
+}
+
+.connection-status-display.unknown {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+    border: 1px solid var(--border-color);
+}
+
+.connection-status-display i {
+    font-size: 24px;
+}
+
+/* Submit Row */
+.submit-row {
+    padding: 15px;
+    background: var(--darkened-bg);
+    border-top: 1px solid var(--hairline-color);
+    display: flex;
+    gap: 10px;
+}
+
+.submit-row input[type="submit"] {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    background: var(--primary);
+    color: var(--primary-fg);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-row input[type="submit"]:hover {
+    background: var(--primary-hover);
+}
+
+/* ====================================================================
+   List-view badge styles (for format_html in admin.py)
+   ==================================================================== */
+.pp-list-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 11px;
+    color: #fff;
+}
+
+.pp-list-badge-connected { background-color: var(--message-success-bg, #28A745); color: #fff; }
+.pp-list-badge-error { background-color: var(--message-error-bg, #DC3545); color: #fff; }
+.pp-list-badge-unknown { background-color: var(--body-quiet-color, #6C757D); color: #fff; }
+.pp-list-badge-active { background-color: var(--message-success-bg, #28A745); color: #fff; }
+.pp-list-badge-inactive { background-color: var(--body-quiet-color, #6C757D); color: #fff; }
+.pp-list-badge-default { background-color: #FFC107; color: #212529; }
+.pp-list-badge-hosted { background-color: #17A2B8; color: #fff; }
+.pp-list-badge-integrated { background-color: #6F42C1; color: #fff; }
+.pp-list-badge-test { background-color: #FFC107; color: #fff; }
+.pp-list-badge-live { background-color: var(--message-success-bg, #28A745); color: #fff; }
+
+/* ====================================================================
+   Utility classes
+   ==================================================================== */
+.pp-hidden {
+    display: none !important;
+}
+
+/* ====================================================================
+   JSON display pre block (for admin readonly fields)
+   ==================================================================== */
+.pp-json-display {
+    background: var(--darkened-bg, #f8f9fa);
+    padding: 10px;
+    border-radius: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: monospace;
+    font-size: 12px;
+}

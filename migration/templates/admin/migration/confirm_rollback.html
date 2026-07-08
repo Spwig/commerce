@@ -1,0 +1,85 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Confirm Rollback" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'migration/admin/css/confirm_rollback.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="rollback-container">
+    <h1>{% trans "Confirm Rollback" %}</h1>
+
+    <div class="rollback-warning">
+    <h2>
+        <span class="rollback-warning-icon"><i class="fas fa-exclamation-triangle"></i></span>
+        {% trans "Warning: This action cannot be undone!" %}
+    </h2>
+    <p>
+        {% trans "You are about to rollback the migration job:" %} <strong>{{ job }}</strong>
+    </p>
+
+    <h3>{% trans "This will:" %}</h3>
+    <ul class="consequences-list">
+        <li>{% trans "Delete all products imported from this migration" %}</li>
+        <li>{% trans "Delete all categories imported from this migration" %}</li>
+        <li>{% trans "Delete all customers imported from this migration" %}</li>
+        <li>{% trans "Delete all orders imported from this migration" %}</li>
+        <li>{% trans "Delete all reviews imported from this migration" %}</li>
+        <li>{% trans "Delete all coupons imported from this migration" %}</li>
+        <li>{% trans "Delete all associated media assets" %}</li>
+        <li>{% trans "Mark the migration job as 'rolled_back'" %}</li>
+    </ul>
+
+    <p class="permanent-warning">
+        {% trans "This operation is PERMANENT and cannot be reversed!" %}
+    </p>
+</div>
+
+<div class="rollback-stats">
+    <h3>{% trans "Items to be Deleted" %}</h3>
+    <div class="rollback-stats-grid">
+        <div class="rollback-stat-item">
+            <span class="rollback-stat-value">{{ job.categories_imported }}</span>
+            <span class="rollback-stat-label">{% trans "Categories" %}</span>
+        </div>
+        <div class="rollback-stat-item">
+            <span class="rollback-stat-value">{{ job.products_imported }}</span>
+            <span class="rollback-stat-label">{% trans "Products" %}</span>
+        </div>
+        <div class="rollback-stat-item">
+            <span class="rollback-stat-value">{{ job.customers_imported }}</span>
+            <span class="rollback-stat-label">{% trans "Customers" %}</span>
+        </div>
+        <div class="rollback-stat-item">
+            <span class="rollback-stat-value">{{ job.orders_imported }}</span>
+            <span class="rollback-stat-label">{% trans "Orders" %}</span>
+        </div>
+        <div class="rollback-stat-item">
+            <span class="rollback-stat-value">{{ job.reviews_imported }}</span>
+            <span class="rollback-stat-label">{% trans "Reviews" %}</span>
+        </div>
+        <div class="rollback-stat-item">
+            <span class="rollback-stat-value">{{ job.coupons_imported }}</span>
+            <span class="rollback-stat-label">{% trans "Coupons" %}</span>
+        </div>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="rollback-actions">
+        <button type="submit" class="rollback-btn rollback-btn-danger">
+            <i class="fas fa-trash"></i> {% trans "Yes, Rollback Migration" %}
+        </button>
+        <a href="{% url 'admin:migration_migrationjob_changelist' %}" class="rollback-btn rollback-btn-secondary">
+            {% trans "Cancel" %}
+        </a>
+    </div>
+</form>
+
+</div>
+{% endblock %}

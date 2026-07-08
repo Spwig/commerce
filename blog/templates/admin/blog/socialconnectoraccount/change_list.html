@@ -1,0 +1,160 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Social Accounts" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'blog/admin/css/social_accounts_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-plug"></i>
+                {% trans "Social Accounts" %}
+            </h1>
+            <p class="subtitle">{% trans "Connect and manage social media accounts for auto-sharing blog posts" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'blog_admin:provider_browse' %}" class="button secondary change-list-action-button">
+                <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+            </a>
+            <a href="{% url 'blog_admin:wizard_step1' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Connect Account" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filter Tabs -->
+    <div class="admin-tabs">
+        <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if not request.GET.status__exact and not request.GET.status__in %}active{% endif %}"
+           data-filter="all">
+            <i class="fas fa-th"></i>
+            <span class="label">{% trans "All" %}<br>({{ all_count }})</span>
+        </a>
+        <a href="?status__in=connected,active{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.status__in == 'connected,active' %}active{% endif %}"
+           data-filter="connected">
+            <i class="fas fa-check-circle"></i>
+            <span class="label">{% trans "Connected" %}<br>({{ connected_count }})</span>
+        </a>
+        <a href="?status__exact=token_expired{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.status__exact == 'token_expired' %}active{% endif %}"
+           data-filter="token_expired">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span class="label">{% trans "Token Expired" %}<br>({{ expired_count }})</span>
+        </a>
+        <a href="?status__exact=error{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.status__exact == 'error' %}active{% endif %}"
+           data-filter="error">
+            <i class="fas fa-times-circle"></i>
+            <span class="label">{% trans "Error" %}<br>({{ error_count }})</span>
+        </a>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="social-toolbar">
+        <div class="toolbar-left">
+            <!-- Provider Filter -->
+            <select id="provider-filter" class="provider-filter" data-action="filter-by-provider">
+                <option value="">{% trans "All Platforms" %}</option>
+                {% for provider in providers %}
+                <option value="{{ provider }}" {% if request.GET.provider_key__exact == provider %}selected{% endif %}>
+                    {{ provider|title }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <form method="get" action="" class="search-form">
+                    {% for key, value in request.GET.items %}
+                        {% if key != 'q' %}
+                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endif %}
+                    {% endfor %}
+                    <input type="text"
+                           name="q"
+                           value="{{ request.GET.q }}"
+                           placeholder="{% trans 'Search accounts...' %}"
+                           class="search-input"
+                           id="account-search">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accounts Container -->
+    {% if cl.result_list %}
+        <div id="accounts-container" class="list-row-cards">
+            {% for account in cl.result_list %}
+                {% include "admin/blog/socialconnectoraccount/partials/account_card.html" with account=account %}
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if cl.result_count > 0 and cl.result_count > cl.list_per_page %}
+        <div class="pagination-container">
+            <p class="paginator">
+                <span class="small quiet">{{ cl.result_count }} {% trans "accounts" %}</span>
+                {% if cl.show_all_url %}
+                    | <a href="{{ cl.show_all_url }}">{% trans 'Show all' %}</a>
+                {% endif %}
+            </p>
+            {% if cl.multi_page %}
+                <p class="paginator">
+                    {% if cl.page_num > 0 %}
+                        <a href="?p={{ cl.page_num|add:'-1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Previous" %}</a>
+                    {% endif %}
+                    <span class="this-page">{% trans "Page" %} {{ cl.page_num|add:'1' }} {% trans "of" %} {{ cl.paginator.num_pages }}</span>
+                    {% if cl.page_num < cl.paginator.num_pages|add:'-1' %}
+                        <a href="?p={{ cl.page_num|add:'1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Next" %}</a>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="accounts-empty-state">
+            <i class="fas fa-plug"></i>
+            <h2>{% trans "No Social Accounts Connected" %}</h2>
+            <p>
+                {% if request.GET.q or request.GET.status %}
+                    {% trans "No accounts match your search or filter criteria." %}
+                {% else %}
+                    {% trans "Connect your social media accounts to automatically share blog posts!" %}
+                {% endif %}
+            </p>
+            <a href="{% url 'blog_admin:provider_browse' %}" class="button default">
+                <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+            </a>
+            <a href="{% url 'blog_admin:wizard_step1' %}" class="button primary">
+                <i class="fas fa-plus"></i> {% trans "Connect Your First Account" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'blog/admin/js/social_connector_list.js' %}" defer></script>
+{% endblock %}

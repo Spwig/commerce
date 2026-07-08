@@ -1,0 +1,41 @@
+{% load i18n merchant_trans %}
+{# Floating Add-to-Cart Bar - shown when main add-to-cart scrolls out of view #}
+{# Context: product, template_options #}
+
+<div class="floating-cart-bar floating-cart-bar--{{ template_options.floating_position|default:'bottom' }}"
+     id="floating-cart-bar"
+     aria-hidden="true"
+     style="display: none;">
+    <div class="container">
+        <div class="floating-cart-bar__inner">
+            <div class="floating-cart-bar__product">
+                {% if product.primary_image_listing_url %}
+                <img src="{{ product.primary_image_listing_url }}"
+                     alt="{{ product.name }}"
+                     class="floating-cart-bar__image"
+                     loading="lazy">
+                {% endif %}
+                <div class="floating-cart-bar__details">
+                    <span class="floating-cart-bar__name">{{ product.name }}</span>
+                    <span class="floating-cart-bar__price" id="floating-price">
+                        {% if product.is_on_sale %}
+                        <span class="price price--sale">{{ product.formatted_price }}</span>
+                        <span class="price price--compare">{{ product.formatted_compare_price }}</span>
+                        {% else %}
+                        <span class="price">{{ product.formatted_price }}</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="floating-cart-bar__actions">
+                <button type="button"
+                        class="btn btn--primary btn--add-to-cart floating-cart-bar__btn"
+                        id="floating-add-to-cart"
+                        data-product-id="{{ product.id }}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>{% mtrans 'Add to Cart' %}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

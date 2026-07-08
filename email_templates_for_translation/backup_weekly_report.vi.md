@@ -1,0 +1,111 @@
+---
+template_type: backup_weekly_report
+category: Backups
+---
+
+# Email Template: backup_weekly_report
+
+## Subject
+Tóm tắt Sao lưu Hàng tuần - {{ shop_name }}
+
+## HTML Content
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="22px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}">
+          Tóm tắt Sao lưu Hàng tuần
+        </mj-text>
+
+        <mj-text font-size="14px" color="{{ theme.color.text_secondary|default:'#6b7280' }}">
+          {{ week_start }} - {{ week_end }}
+        </mj-text>
+
+        <mj-spacer height="30px" />
+
+        <mj-section background-color="{{ theme.color.surface|default:'#f9fafb' }}" border-radius="8px" padding="20px">
+          <mj-column>
+            <mj-text font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}">
+              Backup Statistics:
+            </mj-text>
+            <mj-text color="{{ theme.color.text|default:'#4b5563' }}">
+              <strong>Tổng số Sao lưu:</strong> {{ total_backups }}<br/>
+              <strong>Thành công:</strong> <span style="color: #059669;">{{ successful_backups }}</span><br/>
+              <strong>Thất bại:</strong> <span style="color: #dc2626;">{{ failed_backups }}</span><br/>
+              <strong>Kích thước trung bình:</strong> {{ average_size }}<br/>
+              <strong>Tổng không gian lưu trữ đã sử dụng:</strong> {{ total_storage }}
+            </mj-text>
+          </mj-column>
+        </mj-section>
+
+        <mj-spacer height="20px" />
+
+        {% if failed_backups > 0 %}
+        <mj-section background-color="#fee2e2" border-radius="8px" padding="15px">
+          <mj-column>
+            <mj-text font-weight="bold" color="#991b1b">
+              ⚠️ Issues Detected:
+            </mj-text>
+            <mj-text color="#7f1d1d">
+              {{ failed_backups }} backup(s) failed this week. Please review and take corrective action.
+            </mj-text>
+          </mj-column>
+        </mj-section>
+        <mj-spacer height="20px" />
+        {% endif %}
+
+        <mj-text font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}">
+          Latest Backups:
+        </mj-text>
+
+        {% for backup in recent_backups %}
+        <mj-section background-color="{{ theme.color.surface|default:'#f9fafb' }}" border-radius="4px" padding="12px" margin-bottom="8px">
+          <mj-column>
+            <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}">
+              <strong>{{ backup.date }}</strong> - {{ backup.type }}
+            </mj-text>
+            <mj-text font-size="13px" color="{{ theme.color.text_secondary|default:'#6b7280' }}">
+              Size: {{ backup.size }} | Duration: {{ backup.duration }} |
+              {% if backup.status == 'success' %}
+              <span style="color: #059669;">✓ Success</span>
+              {% else %}
+              <span style="color: #dc2626;">✗ Failed</span>
+              {% endif %}
+            </mj-text>
+          </mj-column>
+        </mj-section>
+        {% endfor %}
+
+        <mj-spacer height="30px" />
+
+        <mj-button href="{{ admin_backup_url }}" background-color="{{ theme.color.primary|default:'#2563eb' }}" color="#ffffff" font-size="16px" border-radius="6px" padding="12px 30px">
+          View All Backups
+        </mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+
+## Text Content
+TÓM TẮT SAO LƯU HÀNG TUẦN
+{{ week_start }} - {{ week_end }}
+
+THỐNG KÊ SAO LƯU:
+- Tổng số Sao lưu: {{ total_backups }}
+- Thành công: {{ successful_backups }}
+- Thất bại: {{ failed_backups }}
+- Kích thước trung bình: {{ average_size }}
+- Tổng không gian lưu trữ đã sử dụng: {{ total_storage }}
+
+{% if failed_backups > 0 %}
+⚠️ CÓ VẤN ĐỀ:
+{{ failed_backups }} backup(s) failed this week. Please review and take corrective action.
+{% endif %}
+
+SAO LƯU MỚI NHẤT:
+{% for backup in recent_backups %}
+- {{ backup.date }} - {{ backup.type }}
+  Size: {{ backup.size }} | Duration: {{ backup.duration }} | Status: {{ backup.status }}
+{% endfor %}
+
+View all backups: {{ admin_backup_url }}

@@ -1,0 +1,183 @@
+{% extends "themes/base.html" %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% mtrans "Rewards Catalog" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'loyalty/css/customer.css' %}">
+<link rel="stylesheet" href="{% static 'loyalty/css/customer/rewards_catalog.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-dashboard">
+    <div class="container">
+        {# Breadcrumb #}
+        <nav class="breadcrumb">
+            <a href="{% url 'loyalty:customer_dashboard' %}">{% mtrans "Loyalty Dashboard" %}</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>{% mtrans "Rewards Catalog" %}</span>
+        </nav>
+
+        {# Header with Points Balance #}
+        <div class="rewards-catalog-header">
+            <div>
+                <h1>{% mtrans "Rewards Catalog" %}</h1>
+                <p>{% mtrans "Redeem your points for exclusive rewards" %}</p>
+            </div>
+
+            <div class="rewards-balance-badge">
+                <div class="rewards-balance-label">{% mtrans "Your Balance" %}</div>
+                <div class="rewards-balance-value">
+                    <i class="fas fa-star"></i> {{ member.balance.available_points|default:0 }} {% mtrans "points" %}
+                </div>
+            </div>
+        </div>
+
+        {# Filter Section #}
+        <div class="dashboard-section">
+            <form method="get" class="filter-controls">
+                <div class="filter-group">
+                    <label for="type-filter">
+                        {% mtrans "Reward Type" %}
+                    </label>
+                    <select id="type-filter" name="type">
+                        {% for type in reward_types %}
+                        <option value="{{ type.value }}" {% if type.value == selected_type %}selected{% endif %}>
+                            {{ type.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sort-filter">
+                        {% mtrans "Sort By" %}
+                    </label>
+                    <select id="sort-filter" name="sort">
+                        <option value="points" {% if sort_by == 'points' %}selected{% endif %}>{% mtrans "Points (Low to High)" %}</option>
+                        <option value="featured" {% if sort_by == 'featured' %}selected{% endif %}>{% mtrans "Featured First" %}</option>
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>{% mtrans "Name (A-Z)" %}</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="filter-btn-apply">
+                        {% mtrans "Apply Filters" %}
+                    </button>
+                </div>
+
+                {% if selected_type or sort_by != 'points' %}
+                <div class="filter-actions">
+                    <a href="{% url 'loyalty:customer_rewards' %}" class="filter-btn-clear">
+                        {% mtrans "Clear" %}
+                    </a>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+
+        {# Rewards Grid #}
+        {% if page_obj %}
+        <div class="rewards-catalog-grid">
+            {% for reward in page_obj %}
+            <div class="reward-catalog-card">
+                {% if reward.image %}
+                <div class="reward-catalog-image">
+                    <img src="{{ reward.image.url }}" alt="{{ reward.name }}">
+                </div>
+                {% else %}
+                <div class="reward-catalog-image reward-catalog-image-placeholder">
+                    <i class="fas {% if reward.reward_type == 'discount' %}fa-percent{% elif reward.reward_type == 'product' %}fa-gift{% elif reward.reward_type == 'shipping' %}fa-truck{% else %}fa-star{% endif %}"></i>
+                </div>
+                {% endif %}
+
+                <div class="reward-catalog-body">
+                    <span class="reward-type-badge">
+                        {{ reward.get_reward_type_display }}
+                    </span>
+
+                    <h3 class="reward-catalog-title">{{ reward.name }}</h3>
+
+                    <p class="reward-catalog-description">
+                        {{ reward.description|truncatewords:20 }}
+                    </p>
+
+                    {% if reward.is_featured %}
+                    <div class="reward-featured-badge">
+                        <i class="fas fa-star"></i>
+                        <span>{% mtrans "FEATURED" %}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if reward.quantity_remaining %}
+                    <div class="reward-quantity-remaining">
+                        <i class="fas fa-box"></i>
+                        {% blocktrans count counter=reward.quantity_remaining %}
+                            {{ counter }} remaining
+                        {% plural %}
+                            {{ counter }} remaining
+                        {% endblocktrans %}
+                    </div>
+                    {% endif %}
+
+                    <div class="reward-catalog-footer">
+                        <div class="reward-points-cost">
+                            <i class="fas fa-star"></i>
+                            <span>{{ reward.points_cost }}</span>
+                        </div>
+
+                        {% if reward.can_redeem %}
+                        <a href="{% url 'loyalty:customer_redeem' reward.id %}" class="reward-redeem-btn">
+                            {% mtrans "Redeem" %}
+                        </a>
+                        {% else %}
+                        <div class="reward-unavailable-btn" title="{{ reward.cannot_redeem_reason }}">
+                            {% mtrans "Unavailable" %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Pagination #}
+        {% if page_obj.has_other_pages %}
+        <div class="rewards-pagination">
+            {% if page_obj.has_previous %}
+            <a href="?{% if selected_type %}type={{ selected_type }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                <i class="fas fa-chevron-left"></i> {% mtrans "Previous" %}
+            </a>
+            {% endif %}
+
+            <span class="rewards-pagination-info">
+                {% mtrans "Page" %} {{ page_obj.number }} {% mtrans "of" %} {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?{% if selected_type %}type={{ selected_type }}&{% endif %}{% if sort_by %}sort={{ sort_by }}&{% endif %}page={{ page_obj.next_page_number }}">
+                {% mtrans "Next" %} <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        {# Empty State #}
+        <div class="dashboard-section">
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <h3>{% mtrans "No Rewards Available" %}</h3>
+                <p>{% mtrans "Check back soon for new rewards to redeem with your points!" %}</p>
+                <a href="{% url 'loyalty:customer_dashboard' %}" class="rewards-empty-action">
+                    {% mtrans "Back to Dashboard" %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

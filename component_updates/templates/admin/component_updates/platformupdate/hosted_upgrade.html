@@ -1,0 +1,206 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Platform Updates" %} | {{ site_settings.site_name }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'component_updates/admin/css/hosted-upgrade.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="hosted-upgrade">
+
+    <!-- Managed Notice -->
+    <div class="managed-notice">
+        <i class="fas fa-cloud"></i>
+        <div>
+            <strong>{% trans "Managed Platform Updates" %}</strong>
+            <p>{% trans "Your store updates are managed by Spwig. Choose when to apply available updates." %}</p>
+        </div>
+    </div>
+
+    <!-- Current Version Card -->
+    <div class="hosted-card current-version-card">
+        <div class="hosted-card-label">{% trans "Current Version" %}</div>
+        <div class="hosted-card-version">v{{ current_version }}</div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="hosted-card">
+        <div class="hosted-loading">
+            <span class="spinner"></span>
+            {% trans "Checking for updates..." %}
+        </div>
+    </div>
+
+    <!-- Up to Date (hidden by default, shown by JS) -->
+    <div id="up-to-date-card" class="hosted-card up-to-date-card" style="display:none;">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong>{% trans "You're up to date" %}</strong>
+            <p>{% trans "Your store is running the latest version of Spwig." %}</p>
+        </div>
+    </div>
+
+    <!-- Update Available (hidden by default, shown by JS) -->
+    <div id="update-available-card" class="update-available-card" style="display:none;">
+        <div class="update-header">
+            <i class="fas fa-arrow-circle-up"></i>
+            <h3>{% trans "Update Available" %}</h3>
+        </div>
+        <div class="update-version-change">
+            <span class="version-from" id="version-from">v{{ current_version }}</span>
+            <span class="version-arrow">&rarr;</span>
+            <span class="version-to" id="version-to"></span>
+        </div>
+
+        <!-- Badges -->
+        <div id="update-badges" class="update-badges">
+            <span id="badge-security" class="update-badge badge-security" style="display:none;">
+                <i class="fas fa-shield-alt"></i> {% trans "Security Update" %}
+            </span>
+            <span id="badge-migration" class="update-badge badge-migration" style="display:none;">
+                <i class="fas fa-database"></i> {% trans "Includes Migrations" %}
+            </span>
+        </div>
+
+        <!-- Changelog -->
+        <div id="changelog-section" class="changelog-section" style="display:none;">
+            <h4>{% trans "What's New" %}</h4>
+            <div id="changelog-content" class="changelog-content"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="update-actions">
+            <button type="button" id="btn-upgrade-now" class="btn-upgrade-now">
+                <i class="fas fa-bolt"></i>
+                {% trans "Upgrade Now" %}
+            </button>
+            <button type="button" id="btn-schedule" class="btn-schedule">
+                <i class="fas fa-calendar-alt"></i>
+                {% trans "Schedule Upgrade" %}
+            </button>
+            <div class="snooze-wrapper">
+                <button type="button" id="btn-snooze" class="btn-snooze">
+                    <i class="fas fa-clock"></i>
+                    {% trans "Remind Me Later" %}
+                </button>
+                <div id="snooze-menu" class="snooze-menu" style="display:none;">
+                    <button type="button" data-snooze="24">{% trans "In 1 day" %}</button>
+                    <button type="button" data-snooze="72">{% trans "In 3 days" %}</button>
+                    <button type="button" data-snooze="168">{% trans "In 1 week" %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Picker (hidden by default) -->
+    <div id="schedule-picker" class="hosted-card schedule-picker" style="display:none;">
+        <h4>{% trans "Schedule Upgrade" %}</h4>
+        <p>{% trans "Choose when you'd like the upgrade to be applied. Your store will be briefly unavailable during the upgrade." %}</p>
+        <div class="schedule-input-row">
+            <input type="datetime-local" id="schedule-datetime" class="schedule-datetime-input">
+            <button type="button" id="btn-confirm-schedule" class="btn-upgrade-now">
+                {% trans "Confirm Schedule" %}
+            </button>
+            <button type="button" id="btn-cancel-schedule" class="btn-snooze">
+                {% trans "Cancel" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Scheduled Card (hidden by default, shown by JS) -->
+    <div id="scheduled-card" class="hosted-card scheduled-card" style="display:none;">
+        <div class="scheduled-header">
+            <i class="fas fa-calendar-check"></i>
+            <div>
+                <strong>{% trans "Upgrade Scheduled" %}</strong>
+                <p>{% trans "Your store will be upgraded to" %} <span id="scheduled-version"></span> {% trans "on" %} <span id="scheduled-datetime-display"></span></p>
+            </div>
+        </div>
+        <button type="button" id="btn-cancel-upgrade" class="btn-snooze">
+            <i class="fas fa-times"></i> {% trans "Cancel Upgrade" %}
+        </button>
+    </div>
+
+    <!-- Progress Card (hidden by default, shown by JS) -->
+    <div id="progress-card" class="hosted-card progress-card" style="display:none;">
+        <div class="progress-header">
+            <i class="fas fa-cog fa-spin"></i>
+            <div>
+                <strong>{% trans "Upgrading Your Store" %}</strong>
+                <p id="progress-step">{% trans "Starting..." %}</p>
+            </div>
+        </div>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+        <div class="progress-percent-label"><span id="progress-percent">0</span>%</div>
+        <div class="progress-notice">
+            <i class="fas fa-info-circle"></i>
+            {% trans "Your store may briefly restart during this process. Please do not close this page." %}
+        </div>
+    </div>
+
+    <!-- Completed Card (hidden by default) -->
+    <div id="completed-card" class="hosted-card completed-card" style="display:none;">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong>{% trans "Upgrade Complete" %}</strong>
+            <p id="completed-message"></p>
+        </div>
+    </div>
+
+    <!-- Error Card (hidden by default) -->
+    <div id="error-card" class="hosted-card error-card" style="display:none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong id="error-heading">{% trans "Something Went Wrong" %}</strong>
+            <p id="error-message"></p>
+            <p id="error-support">{% trans "Please contact Spwig support for assistance." %}</p>
+            <button type="button" id="btn-retry" class="btn-retry" style="display:none;">
+                <i class="fas fa-redo"></i> {% trans "Try Again" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Snoozed Notice (hidden by default) -->
+    <div id="snoozed-card" class="hosted-card snoozed-card" style="display:none;">
+        <i class="fas fa-bell-slash"></i>
+        <div>
+            <strong>{% trans "Update Reminder Snoozed" %}</strong>
+            <p>{% trans "We'll remind you about this update on" %} <span id="snoozed-until-display"></span></p>
+        </div>
+        <button type="button" id="btn-view-update" class="btn-retry">
+            <i class="fas fa-eye"></i> {% trans "View Update" %}
+        </button>
+    </div>
+
+</div>
+
+<!-- Config Data Island (for JS) -->
+<div id="hosted-upgrade-config" style="display:none;"
+     data-check-url="{% url 'admin:component_updates_hosted_upgrade_check' %}"
+     data-schedule-url="{% url 'admin:component_updates_hosted_upgrade_schedule' %}"
+     data-status-url="{% url 'admin:component_updates_hosted_upgrade_status' %}"
+     data-snooze-url="{% url 'admin:component_updates_hosted_upgrade_snooze' %}"
+     data-cancel-url="{% url 'admin:component_updates_hosted_upgrade_cancel' %}"
+     data-direct-progress-url="{{ direct_progress_url }}"
+     data-current-version="{{ current_version }}"
+     data-msg-confirm-upgrade="{% trans 'This will upgrade your store now. Your store may be briefly unavailable. Continue?' %}"
+     data-msg-upgrade-started="{% trans 'Upgrade started' %}"
+     data-msg-upgrade-scheduled="{% trans 'Upgrade scheduled successfully' %}"
+     data-msg-upgrade-cancelled="{% trans 'Scheduled upgrade cancelled' %}"
+     data-msg-snoozed="{% trans 'Reminder snoozed' %}"
+     data-msg-error="{% trans 'Something went wrong. Please try again.' %}"
+     data-msg-restarting="{% trans 'Your store is restarting...' %}"
+     data-msg-upgrade-failed="{% trans 'Upgrade Failed' %}"
+     data-msg-connection-error="{% trans 'Connection Error' %}"
+     data-msg-completed="{% trans 'Successfully upgraded to' %}"
+     data-msg-starting="{% trans 'Starting...' %}"
+></div>
+
+<script src="{% static 'component_updates/admin/js/hosted-upgrade.js' %}"></script>
+{% endblock %}

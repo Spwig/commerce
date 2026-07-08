@@ -1,0 +1,84 @@
+{% load static i18n %}
+{# Modal Popup Element Template for Visual Builder - shows content inline for editing #}
+<div class="pb-modal-builder"
+     id="modal-builder-{{ element.id }}"
+     data-element-id="{{ element.id }}"
+     data-element-type="modal_popup"
+     style="--modal-bg: {{ element.content.content_background|default:'#ffffff' }};
+            --modal-radius: {{ element.content.border_radius|default:'12px' }};
+            --modal-padding: {{ element.content.content_padding|default:'24px' }};">
+
+    {# Modal Header - Shows trigger info and modal name #}
+    <div class="pb-modal-builder__header">
+        <div class="pb-modal-builder__info">
+            <i class="fas fa-window-restore"></i>
+            <span class="pb-modal-builder__name">{{ element.content.name|default:"Modal Popup" }}</span>
+        </div>
+        <div class="pb-modal-builder__badges">
+            {# Size Badge #}
+            <span class="pb-modal-builder__badge pb-modal-builder__badge--size">
+                <i class="fas fa-expand-alt"></i>
+                {{ element.content.size|default:"medium"|title }}
+            </span>
+            {# Trigger Badge #}
+            <span class="pb-modal-builder__badge pb-modal-builder__badge--trigger">
+                <i class="fas fa-bolt"></i>
+                {% if element.content.trigger_type == 'button_click' %}
+                {% trans "Click" %}
+                {% elif element.content.trigger_type == 'time_delay' %}
+                {{ element.content.trigger_delay|default:5 }}s
+                {% elif element.content.trigger_type == 'exit_intent' %}
+                {% trans "Exit" %}
+                {% elif element.content.trigger_type == 'scroll_percent' %}
+                {{ element.content.trigger_scroll_percent|default:50 }}%
+                {% elif element.content.trigger_type == 'page_load' %}
+                {% trans "Load" %}
+                {% else %}
+                {% trans "Delay" %}
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    {# Modal Content Area - Renders child elements #}
+    <div class="pb-modal-builder__content">
+        <div class="pb-modal-builder__inner">
+            {# Render existing child elements #}
+            {% for child in element.child_elements.all %}
+            <div class="container-child-wrapper" data-element-id="{{ child.id }}">
+                {% include 'page_builder/partials/visual_builder_element.html' with element=child %}
+            </div>
+            {% endfor %}
+
+            {# Drop zone for adding new elements #}
+            <div class="container-drop-zone" data-container-id="{{ element.id }}" style="
+                min-height: {% if element.child_elements.exists %}50{% else %}80{% endif %}px;
+                border: 2px dashed {% if element.child_elements.exists %}#e2e8f0{% else %}#a5b4fc{% endif %};
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: {% if element.child_elements.exists %}#94a3b8{% else %}#6366f1{% endif %};
+                font-size: {% if element.child_elements.exists %}12{% else %}14{% endif %}px;
+                background: {% if element.child_elements.exists %}rgba(241, 245, 249, 0.5){% else %}rgba(99, 102, 241, 0.05){% endif %};
+                {% if element.child_elements.exists %}margin-top: 10px; opacity: 0.7; transition: all 0.3s ease;{% endif %}
+                width: 100%;
+            ">
+                <div style="text-align: center;">
+                    <i class="fas fa-plus{% if not element.child_elements.exists %}-circle{% endif %}" style="font-size: {% if element.child_elements.exists %}14{% else %}20{% endif %}px; margin-bottom: {% if element.child_elements.exists %}4{% else %}8{% endif %}px; display: block;"></i>
+                    {% if element.child_elements.exists %}{% trans "Add element" %}{% else %}{% trans "Drop elements here to build your modal" %}{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Optional: Show close button preview #}
+    {% if element.content.show_close_button|default:True %}
+    <div class="pb-modal-builder__close-preview
+                pb-modal-builder__close-preview--{{ element.content.close_button_position|default:'inside_right' }}">
+        <i class="fas fa-times"></i>
+    </div>
+    {% endif %}
+</div>
+
+{# Styles loaded via config.json css_files — modal-popup.css #}

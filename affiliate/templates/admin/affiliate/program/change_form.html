@@ -1,0 +1,344 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_urls %}
+
+{% block title %}{% if original %}{% trans "Edit Program" %}{% else %}{% trans "Add Program" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'affiliate/css/program_change_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="program-change-form"{% if original %} data-program-id="{{ original.pk }}"{% endif %}>
+
+{% if original %}
+    {# Dashboard Header for Existing Programs #}
+    <div class="dashboard-header">
+        <div class="dashboard-header-top">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-briefcase"></i>
+                    {{ original.name }}
+                </h1>
+                <div class="program-meta">
+                    <div class="program-meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="program-meta-item">
+                        <i class="fas fa-cookie"></i>
+                        <span>{% trans "Cookie" %}: {{ original.cookie_lifetime_days }} {% trans "days" %}</span>
+                    </div>
+                    <div class="program-meta-item">
+                        {% if original.commission_type == 'percentage' %}
+                        <i class="fas fa-percentage"></i>
+                        <span>{% trans "Commission" %}: {{ original.commission_value }}%</span>
+                        {% else %}
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>{% trans "Commission" %}: ${{ original.commission_value }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="program-meta-item">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>{% trans "Min Payout" %}: ${{ original.minimum_payout }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                {# Status Badge #}
+                {% if original.status == 'active' %}
+                <span class="status-badge success">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+                {% elif original.status == 'paused' %}
+                <span class="status-badge warning">
+                    <i class="fas fa-pause-circle"></i> {% trans "Paused" %}
+                </span>
+                {% else %}
+                <span class="status-badge secondary">
+                    <i class="fas fa-archive"></i> {% trans "Archived" %}
+                </span>
+                {% endif %}
+
+                {# Quick Actions #}
+                <div class="quick-actions">
+                    {% if original.status != 'active' %}
+                    <button type="button" class="button success" data-action="status-change"
+                        data-url="{% url 'affiliate:activate_program' program_id=original.pk %}"
+                        data-confirm="{% trans 'Are you sure you want to activate this program?' %}"
+                            title="{% trans 'Activate this program' %}">
+                        <i class="fas fa-play"></i> {% trans "Activate" %}
+                    </button>
+                    {% endif %}
+                    {% if original.status == 'active' %}
+                    <button type="button" class="button warning" data-action="status-change"
+                        data-url="{% url 'affiliate:pause_program' program_id=original.pk %}"
+                        data-confirm="{% trans 'Are you sure you want to pause this program?' %}"
+                            title="{% trans 'Pause this program' %}">
+                        <i class="fas fa-pause"></i> {% trans "Pause" %}
+                    </button>
+                    {% endif %}
+                    {% if original.status != 'archived' %}
+                    <button type="button" class="button secondary" data-action="status-change"
+                        data-url="{% url 'affiliate:archive_program' program_id=original.pk %}"
+                        data-confirm="{% trans 'Are you sure you want to archive this program?' %}"
+                            title="{% trans 'Archive this program' %}">
+                        <i class="fas fa-archive"></i> {% trans "Archive" %}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+        {# Stats Grid #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value">{{ affiliates_count }}</div>
+            <div class="label">{% trans "Active Affiliates" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-user-clock"></i></div>
+            <div class="value">{{ pending_count }}</div>
+            <div class="label">{% trans "Pending Applications" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-mouse-pointer"></i></div>
+            <div class="value">{{ total_clicks|default:0 }}</div>
+            <div class="label">{% trans "Total Clicks" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="value">{{ conversions|default:0 }}</div>
+            <div class="label">{% trans "Conversions" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="value">${{ total_commissions|floatformat:2 }}</div>
+            <div class="label">{% trans "Total Commissions" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-hourglass-half"></i></div>
+            <div class="value">${{ approved_commissions|floatformat:2 }}</div>
+            <div class="label">{% trans "Owed to Affiliates" %}</div>
+        </div>
+    </div>
+{% endif %}
+
+{# Main Form #}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+{% csrf_token %}
+
+    {% if original %}
+    {# Two Column Layout for Existing Programs #}
+    <div class="dashboard-2col-grid">
+        {# Left Column - Edit Form #}
+        <div class="program-edit-section">
+            {# Tabs Navigation #}
+            <div class="admin-tabs">
+                <button type="button" class="admin-tab-btn active" data-tab="basic">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="label">{% trans "Basic Info" %}</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-tab="commission">
+                    <i class="fas fa-percentage"></i>
+                    <span class="label">{% trans "Commission Settings" %}</span>
+                </button>
+                <button type="button" class="admin-tab-btn" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span class="label">{% trans "Settings" %}</span>
+                </button>
+            </div>
+
+            {# Basic Info Tab #}
+            <div class="admin-tab-content active" id="tab-basic">
+                <div class="form-section">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="id_name">{% trans "Program Name" %}</label>
+                            {{ adminform.form.name }}
+                            {% if adminform.form.name.errors %}
+                            <span class="field-error">{{ adminform.form.name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="id_slug">{% trans "Slug" %}</label>
+                            {{ adminform.form.slug }}
+                            {% if adminform.form.slug.errors %}
+                            <span class="field-error">{{ adminform.form.slug.errors.0 }}</span>
+                            {% endif %}
+                            <p class="help">{% trans "URL-friendly identifier for the program" %}</p>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="id_merchant">{% trans "Merchant" %}</label>
+                            {{ adminform.form.merchant }}
+                            {% if adminform.form.merchant.errors %}
+                            <span class="field-error">{{ adminform.form.merchant.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field full-width">
+                            <label for="id_description">{% trans "Description" %}</label>
+                            {{ adminform.form.description }}
+                            {% if adminform.form.description.errors %}
+                            <span class="field-error">{{ adminform.form.description.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="id_status">{% trans "Status" %}</label>
+                            {{ adminform.form.status }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Commission Settings Tab #}
+            <div class="admin-tab-content" id="tab-commission">
+                <div class="form-section">
+                    <div class="form-row two-col">
+                        <div class="form-field">
+                            <label for="id_commission_type">{% trans "Commission Type" %}</label>
+                            {{ adminform.form.commission_type }}
+                            <p class="help">{% trans "How commissions are calculated" %}</p>
+                        </div>
+                        <div class="form-field">
+                            <label for="id_commission_value">{% trans "Commission Value" %}</label>
+                            {{ adminform.form.commission_value }}
+                            <p class="help">{% trans "Percentage or fixed amount per sale" %}</p>
+                        </div>
+                    </div>
+                    <div class="form-row two-col">
+                        <div class="form-field">
+                            <label for="id_cookie_lifetime_days">{% trans "Cookie Lifetime" %}</label>
+                            {{ adminform.form.cookie_lifetime_days }}
+                            <p class="help">{% trans "Days to track referrals after click" %}</p>
+                        </div>
+                        <div class="form-field">
+                            <label for="id_minimum_payout">{% trans "Minimum Payout" %}</label>
+                            {{ adminform.form.minimum_payout }}
+                            <p class="help">{% trans "Minimum amount before payout" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Settings Tab #}
+            <div class="admin-tab-content" id="tab-settings">
+                <div class="form-section">
+                    <div class="form-row">
+                        <div class="form-field checkbox-field">
+                            {{ adminform.form.auto_approve_affiliates }}
+                            <label for="id_auto_approve_affiliates">{% trans "Auto-approve new affiliates" %}</label>
+                            <p class="help">{% trans "Automatically approve affiliate applications to this program" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Submit Buttons #}
+            <div class="form-actions">
+                <button type="submit" name="_save" class="button primary">
+                    <i class="fas fa-save"></i> {% trans "Save Changes" %}
+                </button>
+                <button type="submit" name="_continue" class="button default">
+                    <i class="fas fa-check"></i> {% trans "Save and Continue" %}
+                </button>
+                <a href="{% url 'admin:affiliate_program_changelist' %}" class="button secondary">
+                    <i class="fas fa-arrow-left"></i> {% trans "Back to List" %}
+                </a>
+            </div>
+        </div>
+
+        {# Right Column - Members List #}
+        <div class="program-members-section">
+            <div class="section-header">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-users"></i>
+                    {% trans "Program Members" %}
+                </h2>
+                <a href="{% url 'admin:affiliate_affiliateprogrammembership_add' %}?program={{ original.pk }}"
+                   class="button small primary">
+                    <i class="fas fa-plus"></i> {% trans "Add Member" %}
+                </a>
+            </div>
+
+            {# Member Filters #}
+            <div class="member-filters">
+                <div class="filter-row">
+                    <div class="admin-search-input">
+                        <input type="text" id="member-search" placeholder="{% trans 'Search members...' %}">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select id="member-status-filter">
+                        <option value="">{% trans "All Statuses" %}</option>
+                        <option value="approved">{% trans "Approved" %}</option>
+                        <option value="pending">{% trans "Pending" %}</option>
+                        <option value="rejected">{% trans "Rejected" %}</option>
+                    </select>
+                </div>
+            </div>
+
+            {# Members List #}
+            <div id="members-container">
+                {% include "admin/affiliate/program/partials/program_member_cards.html" with members=members %}
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    {# Add Form - Simple Layout #}
+    <div class="program-add-form">
+        {% if adminform %}
+        {% for fieldset in adminform %}
+            <fieldset class="module aligned {{ fieldset.classes }}">
+                {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+                {% if fieldset.description %}
+                    <div class="description">{{ fieldset.description|safe }}</div>
+                {% endif %}
+                {% for line in fieldset %}
+                    <div class="form-row{% if line.errors %} errors{% endif %}{% if not line.has_visible_fields %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
+                        {% for field in line %}
+                            <div{% if line.fields|length != 1 %} class="fieldBox{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}"{% elif field.is_checkbox %} class="checkbox-row"{% endif %}>
+                                {% if line.fields|length != 1 and not field.is_readonly %}{{ field.errors }}{% endif %}
+                                {% if field.is_checkbox %}
+                                    {{ field.field }}{{ field.label_tag }}
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {% if field.is_readonly %}
+                                        <div class="readonly">{{ field.contents }}</div>
+                                    {% else %}
+                                        {{ field.field }}
+                                    {% endif %}
+                                {% endif %}
+                                {% if field.field.help_text %}
+                                    <p class="help">{{ field.field.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
+        {% endif %}
+
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+            <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </div>
+    {% endif %}
+</form>
+
+</div>
+
+<script src="{% static 'affiliate/js/affiliate-admin.js' %}" defer></script>
+<script src="{% static 'affiliate/js/affiliate-program-admin.js' %}" defer></script>
+{% endblock %}

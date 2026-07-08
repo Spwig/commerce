@@ -1,0 +1,110 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for package in packages %}
+    <div class="list-row-card{% if not package.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ package.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <div class="package-icon-wrapper {% if package.is_active %}active{% else %}inactive{% endif %}">
+                <i class="fas fa-box"></i>
+            </div>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:shipping_shippingpackage_change' package.pk %}">
+                    {{ package.name }}
+                </a>
+                {% if package.priority > 0 %}
+                <span class="priority-indicator" title="{% trans 'Priority' %}: {{ package.priority }}">
+                    <i class="fas fa-arrow-up"></i> {{ package.priority }}
+                </span>
+                {% endif %}
+            </h3>
+
+            {% if package.description %}
+            <p class="list-row-card-subtitle">
+                {{ package.description|truncatewords:15 }}
+            </p>
+            {% endif %}
+
+            <div class="list-row-card-badges">
+                {% if package.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if package.cost and package.cost.amount > 0 %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-tag"></i> {{ package.cost }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Dimensions" %}</span>
+                    <span class="list-row-card-stat-value package-dimensions">
+                        {{ package.length }} × {{ package.width }} × {{ package.height }} cm
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Volume" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% with volume=package.get_volume_liters %}
+                            {% if volume %}{{ volume|floatformat:2 }} L{% else %}-{% endif %}
+                        {% endwith %}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Max Weight" %}</span>
+                    <span class="list-row-card-stat-value">{{ package.max_weight }} kg</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Tare Weight" %}</span>
+                    <span class="list-row-card-stat-value">{{ package.tare_weight }} kg</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ package.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:shipping_shippingpackage_change' package.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit package' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:shipping_shippingpackage_delete' package.pk %}"
+               class="list-row-card-action delete"
+               title="{% trans 'Delete package' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-box-open"></i>
+        </div>
+        <h2>{% trans "No packages found" %}</h2>
+        <p>{% trans "Define your first shipping package to get started with shipping calculations." %}</p>
+        <a href="{% url 'admin:shipping_shippingpackage_add' %}" class="button default">
+            <i class="fas fa-plus"></i> {% trans "Add First Package" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

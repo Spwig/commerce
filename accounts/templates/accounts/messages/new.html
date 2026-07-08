@@ -1,0 +1,126 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans "New Message" %} — {% mtrans "My Account" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/css/messages.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% mtrans 'My Account' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:message_list' %}" class="breadcrumb__link">{% mtrans 'My Messages' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'New Message' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% mtrans "New Message" %}</h1>
+        <p class="page-header__subtitle">{% mtrans "Send us a message and we'll get back to you" %}</p>
+    </div>
+</section>
+
+<!-- New Message Form -->
+<section class="section">
+    <div class="container">
+        <div class="message-new-layout">
+            <div class="account-card message-new-card">
+                {% if form.errors %}
+                <div class="form-errors">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {% mtrans "Please correct the errors below." %}
+                </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.subject.id_for_label }}">
+                            {% mtrans "Subject" %} <span class="form-required">*</span>
+                        </label>
+                        {{ form.subject }}
+                        {% if form.subject.errors %}
+                            <p class="form-error">{{ form.subject.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.message_type.id_for_label }}">
+                            {% mtrans "Message Type" %}
+                        </label>
+                        {{ form.message_type }}
+                        {% if form.message_type.errors %}
+                            <p class="form-error">{{ form.message_type.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    {% if form.order.field.queryset.exists %}
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.order.id_for_label }}">
+                            {% mtrans "Related Order" %}
+                            <span class="form-label-hint">({% mtrans "optional" %})</span>
+                        </label>
+                        {{ form.order }}
+                        {% if form.order.errors %}
+                            <p class="form-error">{{ form.order.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.message.id_for_label }}">
+                            {% mtrans "Message" %} <span class="form-required">*</span>
+                        </label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <p class="form-error">{{ form.message.errors.0 }}</p>
+                        {% endif %}
+                        <p class="form-help">
+                            <span class="char-count">0</span> / 5,000
+                        </p>
+                    </div>
+
+                    <div class="message-form-actions">
+                        <a href="{% url 'accounts:message_list' %}" class="btn btn--outline">
+                            {% mtrans "Cancel" %}
+                        </a>
+                        <button type="submit" class="btn btn--primary">
+                            <i class="fas fa-paper-plane"></i> {% mtrans "Send Message" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Info sidebar -->
+            <div class="message-new-sidebar">
+                <div class="account-card">
+                    <h3 class="message-sidebar-section-title">
+                        <i class="fas fa-user-circle"></i> {% mtrans "Submitting as" %}
+                    </h3>
+                    <p class="message-sender-info-name">{{ request.user.get_full_name|default:request.user.email }}</p>
+                    <p class="message-sender-info-email">{{ request.user.email }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'accounts/js/messages.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "themes/base.html" %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% mtrans "Redeem Reward" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'loyalty/css/customer.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-dashboard">
+    <div class="container redemption-container">
+        {# Breadcrumb #}
+        <nav class="breadcrumb redemption-breadcrumb">
+            <a href="{% url 'loyalty:customer_dashboard' %}">{% mtrans "Loyalty Dashboard" %}</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="{% url 'loyalty:customer_rewards' %}">{% mtrans "Rewards" %}</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>{% mtrans "Redeem" %}</span>
+        </nav>
+
+        {# Reward Details Card #}
+        <div class="dashboard-section redemption-section">
+            <div class="reward-details-grid">
+                {% if reward.image %}
+                <div class="reward-image-container">
+                    <img src="{{ reward.image.url }}" alt="{{ reward.name }}" class="reward-image">
+                </div>
+                {% endif %}
+
+                <div>
+                    <span class="reward-type-badge">
+                        {{ reward.get_reward_type_display }}
+                    </span>
+
+                    <h1 class="reward-title">
+                        {{ reward.name }}
+                    </h1>
+
+                    <p class="reward-description">
+                        {{ reward.description }}
+                    </p>
+
+                    {# Reward Details Grid #}
+                    <div class="reward-info-grid">
+                        <div class="reward-info-card">
+                            <div class="reward-info-label">{% mtrans "Points Cost" %}</div>
+                            <div class="reward-info-value">
+                                <i class="fas fa-star"></i> {{ reward.points_cost }}
+                            </div>
+                        </div>
+
+                        {% if reward.quantity_remaining %}
+                        <div class="reward-info-card">
+                            <div class="reward-info-label">{% mtrans "Remaining" %}</div>
+                            <div class="reward-info-value text">
+                                {{ reward.quantity_remaining }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if reward.required_tier %}
+                        <div class="reward-info-card">
+                            <div class="reward-info-label">{% mtrans "Required Tier" %}</div>
+                            <div class="reward-info-value text">
+                                {{ reward.required_tier.name }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Your Balance Card #}
+        <div class="reward-balance-card">
+            <div class="reward-balance-header">
+                <div>
+                    <div class="reward-balance-label">{% mtrans "Your Available Points" %}</div>
+                    <div class="reward-balance-value">
+                        {{ member.balance.available_points|default:0 }}
+                    </div>
+                </div>
+
+                <div class="reward-balance-section">
+                    <div class="reward-balance-label">{% mtrans "After Redemption" %}</div>
+                    <div class="reward-balance-value">
+                        {{ member.balance.available_points|add:"-"|add:reward.points_cost }}
+                    </div>
+                </div>
+            </div>
+
+            {% if can_redeem %}
+            <div class="reward-status-box success">
+                <i class="fas fa-check-circle reward-status-icon"></i>
+                <span>{% mtrans "You have enough points to redeem this reward!" %}</span>
+            </div>
+            {% else %}
+            <div class="reward-status-box error">
+                <i class="fas fa-exclamation-circle reward-status-icon"></i>
+                <span>{{ cannot_redeem_reason }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {# Terms and Conditions #}
+        {% if reward.terms %}
+        <div class="dashboard-section redemption-section">
+            <h2 class="reward-terms-title">
+                {% mtrans "Terms and Conditions" %}
+            </h2>
+            <div class="reward-terms-content">
+                {{ reward.terms|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        {# Action Buttons #}
+        <div class="reward-actions">
+            <a
+                href="{% url 'loyalty:customer_rewards' %}"
+                class="reward-btn-back"
+            >
+                <i class="fas fa-arrow-left"></i> {% mtrans "Back to Rewards" %}
+            </a>
+
+            {% if can_redeem %}
+            <form method="post" class="reward-form-inline"
+                  data-confirm-msg="{% mtrans 'Are you sure you want to redeem this reward?' %}">
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    class="reward-btn-confirm"
+                >
+                    <i class="fas fa-check-circle"></i> {% mtrans "Confirm Redemption" %}
+                </button>
+            </form>
+            {% else %}
+            <button
+                disabled
+                class="reward-btn-disabled"
+            >
+                <i class="fas fa-times-circle"></i> {% mtrans "Cannot Redeem" %}
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

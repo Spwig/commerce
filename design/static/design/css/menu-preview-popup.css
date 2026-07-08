@@ -1,0 +1,452 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Menu Preview Popup Styles
+ * Standalone styles for the full-page preview popup window
+ * Following rules.md: NO inline CSS
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --popup-bg: #1a1a2e;
+  --popup-toolbar-bg: #16213e;
+  --popup-border: #2d3a4f;
+  --popup-text: #e8e8e8;
+  --popup-text-muted: #8892a0;
+  --popup-primary: #6366f1;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: var(--popup-bg);
+  color: var(--popup-text);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Toolbar */
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--popup-toolbar-bg);
+  border-bottom: 1px solid var(--popup-border);
+  gap: 16px;
+  z-index: 100;
+}
+
+.preview-toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--popup-text);
+}
+
+/* Zoom Control */
+.zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--popup-text-muted);
+}
+
+.zoom-control input[type="range"] {
+  width: 80px;
+  height: 4px;
+  background: var(--popup-border);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.zoom-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--popup-primary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.zoom-control input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--popup-primary);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.zoom-value {
+  min-width: 36px;
+  font-weight: 500;
+}
+
+/* Device Buttons - Joined button group style */
+.device-buttons {
+  display: flex;
+  gap: 0;
+}
+
+.device-buttons button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--popup-border);
+  border-radius: 0;
+  font-size: 14px;
+  color: var(--popup-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -1px;
+}
+
+.device-buttons button:first-child {
+  border-radius: 6px 0 0 6px;
+  margin-left: 0;
+}
+
+.device-buttons button:last-child:not(.orientation-toggle) {
+  border-radius: 0 6px 6px 0;
+}
+
+.device-buttons button:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--popup-primary);
+  color: var(--popup-primary);
+  z-index: 1;
+}
+
+.device-buttons button.active {
+  background: var(--popup-primary);
+  color: white;
+  border-color: var(--popup-primary);
+  z-index: 2;
+}
+
+.orientation-toggle {
+  display: none;
+  margin-left: 8px;
+  border-radius: 6px !important;
+}
+
+.orientation-toggle.visible {
+  display: flex;
+}
+
+.close-preview {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--popup-border);
+  border-radius: 4px;
+  color: var(--popup-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-preview:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+/* Frame Wrapper */
+#frame-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+}
+
+/* Device Frame */
+.device-frame {
+  position: absolute;
+  transition: all 0.3s ease;
+  transform-origin: center center;
+}
+
+.preview-content {
+  /* Use theme CSS variables with fallbacks - allows theme to control background */
+  background: var(--color-background, var(--background, var(--body-bg, white)));
+  color: var(--color-text, var(--text, var(--body-color, inherit)));
+  font-family: var(--font-sans, var(--font-family-body, inherit));
+  overflow: auto;
+  transition: all 0.3s ease;
+}
+
+/* Desktop Frame */
+.device-frame.desktop .preview-content {
+  border: 16px solid #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.device-frame.desktop .glass-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.15) 0%,
+    rgba(255,255,255,0.08) 20%,
+    transparent 40%);
+  border-radius: 8px;
+  z-index: 5;
+}
+
+.device-frame.desktop .monitor-stand {
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 45px;
+  background: linear-gradient(to bottom, #1a1a1a 0%, #2a2a2a 100%);
+  clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%);
+}
+
+.device-frame.desktop .monitor-base {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 10px;
+  background: #1a1a1a;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+/* Tablet Frame */
+.device-frame.tablet .preview-content {
+  border: 20px solid #1a1a1a;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.device-frame.tablet .volume-buttons {
+  position: absolute;
+  top: 50%;
+  left: -3px;
+  transform: translateY(-50%);
+}
+
+.device-frame.tablet .volume-up,
+.device-frame.tablet .volume-down {
+  width: 3px;
+  height: 30px;
+  background: linear-gradient(to right, #2a2a2a, #3a3a3a);
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+
+.device-frame.tablet .power-button {
+  position: absolute;
+  top: 10%;
+  right: -3px;
+  width: 3px;
+  height: 40px;
+  background: linear-gradient(to left, #2a2a2a, #3a3a3a);
+  border-radius: 2px;
+}
+
+/* Mobile Frame */
+.device-frame.mobile .preview-content {
+  border: 10px solid #1a1a1a;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.device-frame.mobile .notch {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 26px;
+  background: #1a1a1a;
+  border-radius: 0 0 15px 15px;
+  z-index: 10;
+}
+
+/* Glass sheen for tablet and mobile */
+.device-frame.tablet .glass-sheen,
+.device-frame.mobile .glass-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.device-frame.tablet .glass-sheen {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.12) 0%,
+    rgba(255,255,255,0.06) 25%,
+    transparent 50%);
+  border-radius: 20px;
+}
+
+.device-frame.mobile .glass-sheen {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.18) 0%,
+    rgba(255,255,255,0.10) 30%,
+    transparent 50%);
+  border-radius: 28px;
+}
+
+.device-frame.mobile .volume-buttons {
+  position: absolute;
+  left: -3px;
+  top: 100px;
+}
+
+.device-frame.mobile .volume-up,
+.device-frame.mobile .volume-down {
+  width: 3px;
+  height: 30px;
+  background: linear-gradient(to right, #2a2a2a, #3a3a3a);
+  border-radius: 2px 0 0 2px;
+  margin-bottom: 8px;
+}
+
+.device-frame.mobile .mute-switch {
+  position: absolute;
+  left: -3px;
+  top: 90px;
+  width: 3px;
+  height: 25px;
+  background: linear-gradient(to right, #2a2a2a, #3a3a3a);
+  border-radius: 2px 0 0 2px;
+}
+
+.device-frame.mobile .power-button {
+  position: absolute;
+  right: -3px;
+  top: 100px;
+  width: 3px;
+  height: 50px;
+  background: linear-gradient(to left, #2a2a2a, #3a3a3a);
+  border-radius: 0 2px 2px 0;
+}
+
+/* Hide device-specific elements */
+.device-frame:not(.desktop) .monitor-stand,
+.device-frame:not(.desktop) .monitor-base {
+  display: none;
+}
+
+.device-frame:not(.tablet):not(.mobile) .volume-buttons {
+  display: none;
+}
+
+.device-frame:not(.mobile) .notch,
+.device-frame:not(.mobile) .mute-switch {
+  display: none;
+}
+
+.device-frame.desktop .power-button {
+  display: none;
+}
+
+/* Device Label */
+.device-label {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--popup-text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Desktop label needs more space for monitor stand */
+.device-frame.desktop .device-label {
+  bottom: -70px;
+}
+
+/* Landscape adjustments */
+.device-frame.tablet.landscape .volume-buttons,
+.device-frame.mobile.landscape .volume-buttons {
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+}
+
+.device-frame.tablet.landscape .power-button,
+.device-frame.mobile.landscape .power-button {
+  top: auto;
+  bottom: -3px;
+  right: 10%;
+  width: 40px;
+  height: 3px;
+}
+
+.device-frame.mobile.landscape .notch {
+  top: 50%;
+  left: 2px;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.device-frame.mobile.landscape .mute-switch {
+  top: -3px;
+  left: 70px;
+  width: 25px;
+  height: 3px;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 20;
+}
+
+.loading-indicator.active {
+  display: block;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--popup-border);
+  border-top-color: var(--popup-primary);
+  border-radius: 50%;
+  animation: popup-spin 0.8s linear infinite;
+}
+
+@keyframes popup-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

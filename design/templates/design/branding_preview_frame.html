@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+{% load i18n static core_extras %}
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans 'Branding Preview' %}</title>
+
+    <!-- Favicon -->
+    {% favicon_meta %}
+
+    <!-- Reset and base styles -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Default CSS variables as fallback - using standardized --theme- naming */
+        :root {
+            /* Colors */
+            --theme-color-primary: #3B82F6;
+            --theme-color-secondary: #8B5CF6;
+            --theme-color-accent: #EC4899;
+            --theme-color-success: #10b981;
+            --theme-color-warning: #f59e0b;
+            --theme-color-error: #ef4444;
+            --theme-color-text: #1F2937;
+            --theme-color-text-light: #6B7280;
+            --theme-color-text-muted: #9CA3AF;
+            --theme-color-text-inverse: #FFFFFF;
+            --theme-color-background: #FFFFFF;
+            --theme-color-background-secondary: #F9FAFB;
+            --theme-color-background-tertiary: #f7f9fc;
+            --theme-color-surface: #FFFFFF;
+            --theme-color-border: #E5E7EB;
+
+            /* Typography */
+            --theme-font-sans: Inter, system-ui, sans-serif;
+            --theme-font-size-base: 16px;
+            --theme-font-size-sm: 0.875rem;
+            --theme-font-size-lg: 1.125rem;
+            --theme-font-size-xl: 1.25rem;
+            --theme-font-size-2xl: 1.5rem;
+            --theme-font-size-3xl: 1.875rem;
+            --theme-font-size-4xl: 2.25rem;
+            --theme-font-weight-medium: 500;
+            --theme-font-weight-bold: 700;
+            --theme-line-height-base: 1.5;
+            --theme-line-height-tight: 1.25;
+
+            /* Borders */
+            --theme-radius-sm: 0.125rem;
+            --theme-radius-base: 0.25rem;
+            --theme-radius-lg: 0.5rem;
+
+            /* Spacing */
+            --theme-space-1: 0.25rem;
+            --theme-space-2: 0.5rem;
+            --theme-space-3: 0.75rem;
+            --theme-space-4: 1rem;
+            --theme-space-6: 1.5rem;
+            --theme-space-8: 2rem;
+            --theme-space-12: 3rem;
+
+            /* Shadows */
+            --theme-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --theme-shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Apply branding CSS variables (overrides defaults) */
+        {{ css_content|safe }}
+
+        /* Base styles using CSS variables */
+        body {
+            font-family: var(--theme-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+            font-size: var(--theme-font-size-base, 16px);
+            line-height: var(--theme-line-height-base, 1.5);
+            color: var(--theme-color-text, #1f2937);
+            background: var(--theme-color-background, #ffffff);
+            padding: var(--theme-space-6, 1.5rem);
+        }
+
+        .preview-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Section spacing */
+        .preview-section {
+            margin-bottom: var(--theme-space-12, 3rem);
+            padding-bottom: var(--theme-space-8, 2rem);
+            border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
+        }
+
+        .preview-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: var(--theme-font-size-sm, 0.875rem);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--theme-color-text-light, #6b7280);
+            margin-bottom: var(--theme-space-4, 1rem);
+        }
+
+        /* Typography samples */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--theme-font-sans, var(--theme-font-sans, sans-serif));
+            font-weight: var(--theme-font-weight-bold, 700);
+            margin-bottom: var(--theme-space-3, 0.75rem);
+            color: var(--theme-color-text, #1f2937);
+        }
+
+        h1 {
+            font-size: var(--theme-font-size-4xl, 2.25rem);
+            line-height: var(--theme-line-height-tight, 1.25);
+        }
+
+        h2 {
+            font-size: var(--theme-font-size-3xl, 1.875rem);
+            line-height: var(--theme-line-height-tight, 1.25);
+        }
+
+        h3 {
+            font-size: var(--theme-font-size-2xl, 1.5rem);
+            line-height: var(--theme-line-height-tight, 1.25);
+        }
+
+        h4 {
+            font-size: var(--theme-font-size-xl, 1.25rem);
+        }
+
+        h5 {
+            font-size: var(--theme-font-size-lg, 1.125rem);
+        }
+
+        h6 {
+            font-size: var(--theme-font-size-base, 1rem);
+        }
+
+        p {
+            margin-bottom: var(--theme-space-4, 1rem);
+            color: var(--theme-color-text, #1f2937);
+        }
+
+        .lead {
+            font-size: var(--theme-font-size-lg, 1.125rem);
+            color: var(--theme-color-text-light, #6b7280);
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: var(--theme-space-3, 0.75rem);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--theme-space-2, 0.5rem) var(--theme-space-4, 1rem);
+            border-radius: var(--theme-radius-base, 0.25rem);
+            font-size: var(--theme-font-size-base, 1rem);
+            font-weight: var(--theme-font-weight-medium, 500);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--theme-color-primary, #3b82f6);
+            color: white;
+            border-color: var(--theme-color-primary, #3b82f6);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: var(--theme-color-secondary, #8b5cf6);
+            color: white;
+            border-color: var(--theme-color-secondary, #8b5cf6);
+        }
+
+        .btn-accent {
+            background: var(--theme-color-accent, #ec4899);
+            color: white;
+            border-color: var(--theme-color-accent, #ec4899);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--theme-color-primary, #3b82f6);
+            border-color: var(--theme-color-primary, #3b82f6);
+        }
+
+        .btn-sm {
+            padding: var(--theme-space-1, 0.25rem) var(--theme-space-2, 0.5rem);
+            font-size: var(--theme-font-size-sm, 0.875rem);
+        }
+
+        .btn-lg {
+            padding: var(--theme-space-3, 0.75rem) var(--theme-space-6, 1.5rem);
+            font-size: var(--theme-font-size-lg, 1.125rem);
+        }
+
+        /* Color swatches */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--theme-space-4, 1rem);
+        }
+
+        .color-swatch {
+            text-align: center;
+        }
+
+        .color-box {
+            width: 100%;
+            height: 80px;
+            border-radius: var(--theme-radius-lg, 0.5rem);
+            margin-bottom: var(--theme-space-2, 0.5rem);
+            box-shadow: var(--theme-shadow-sm, 0 1px 2px rgba(0,0,0,0.05));
+        }
+
+        .color-label {
+            font-size: var(--theme-font-size-sm, 0.875rem);
+            color: var(--theme-color-text-light, #6b7280);
+        }
+
+        .color-value {
+            font-family: monospace;
+            font-size: var(--theme-font-size-xs, 0.75rem);
+            color: var(--theme-color-text, #1f2937);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--theme-color-background, white);
+            border: 1px solid var(--theme-color-border, #e5e7eb);
+            border-radius: var(--theme-radius-lg, 0.5rem);
+            padding: var(--theme-space-6, 1.5rem);
+            box-shadow: var(--theme-shadow-md, 0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .card-title {
+            font-size: var(--theme-font-size-xl, 1.25rem);
+            font-weight: var(--theme-font-weight-bold, 700);
+            margin-bottom: var(--theme-space-2, 0.5rem);
+        }
+
+        .card-text {
+            color: var(--theme-color-text-light, #6b7280);
+            margin-bottom: var(--theme-space-4, 1rem);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--theme-space-4, 1rem);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--theme-font-size-sm, 0.875rem);
+            font-weight: var(--theme-font-weight-medium, 500);
+            margin-bottom: var(--theme-space-1, 0.25rem);
+            color: var(--theme-color-text, #1f2937);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem);
+            border: 1px solid var(--theme-color-border, #e5e7eb);
+            border-radius: var(--theme-radius-base, 0.25rem);
+            font-size: var(--theme-font-size-base, 1rem);
+            background: var(--theme-color-background, white);
+            color: var(--theme-color-text, #1f2937);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--theme-color-primary, #3b82f6);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+            border-radius: var(--theme-radius-base, 0.25rem);
+            margin-bottom: var(--theme-space-4, 1rem);
+            border: 1px solid;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--theme-color-success, #10b981);
+            color: var(--theme-color-success, #10b981);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--theme-color-warning, #f59e0b);
+            color: var(--theme-color-warning, #f59e0b);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--theme-color-error, #ef4444);
+            color: var(--theme-color-error, #ef4444);
+        }
+
+        /* Grid layout */
+        .grid {
+            display: grid;
+            gap: var(--theme-space-4, 1rem);
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="preview-container">
+
+        <!-- Typography Section -->
+        <div class="preview-section">
+            <h5 class="section-title">{% trans 'Typography' %}</h5>
+            <h1>{% trans 'Heading Level 1' %}</h1>
+            <h2>{% trans 'Heading Level 2' %}</h2>
+            <h3>{% trans 'Heading Level 3' %}</h3>
+            <h4>{% trans 'Heading Level 4' %}</h4>
+            <h5>{% trans 'Heading Level 5' %}</h5>
+            <h6>{% trans 'Heading Level 6' %}</h6>
+            <p class="lead">{% trans 'This is a lead paragraph with larger text for emphasis.' %}</p>
+            <p>{% trans 'This is regular body text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' %}</p>
+        </div>
+
+        <!-- Colors Section -->
+        <div class="preview-section">
+            <h5 class="section-title">{% trans 'Color Palette' %}</h5>
+            <div class="color-grid">
+                <div class="color-swatch">
+                    <div class="color-box" style="background: var(--theme-color-primary, #3b82f6);"></div>
+                    <div class="color-label">{% trans 'Primary' %}</div>
+                    <div class="color-value">--theme-color-primary</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box" style="background: var(--theme-color-secondary, #8b5cf6);"></div>
+                    <div class="color-label">{% trans 'Secondary' %}</div>
+                    <div class="color-value">--theme-color-secondary</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box" style="background: var(--theme-color-accent, #ec4899);"></div>
+                    <div class="color-label">{% trans 'Accent' %}</div>
+                    <div class="color-value">--theme-color-accent</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box" style="background: var(--theme-color-success, #10b981);"></div>
+                    <div class="color-label">{% trans 'Success' %}</div>
+                    <div class="color-value">--theme-color-success</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box" style="background: var(--theme-color-warning, #f59e0b);"></div>
+                    <div class="color-label">{% trans 'Warning' %}</div>
+                    <div class="color-value">--theme-color-warning</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box" style="background: var(--theme-color-error, #ef4444);"></div>
+                    <div class="color-label">{% trans 'Error' %}</div>
+                    <div class="color-value">--theme-color-error</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="preview-section">
+            <h5 class="section-title">{% trans 'Buttons' %}</h5>
+            <div class="button-group">
+                <button class="btn btn-primary">{% trans 'Primary' %}</button>
+                <button class="btn btn-secondary">{% trans 'Secondary' %}</button>
+                <button class="btn btn-accent">{% trans 'Accent' %}</button>
+                <button class="btn btn-outline">{% trans 'Outline' %}</button>
+            </div>
+            <br>
+            <div class="button-group">
+                <button class="btn btn-primary btn-sm">{% trans 'Small' %}</button>
+                <button class="btn btn-primary">{% trans 'Default' %}</button>
+                <button class="btn btn-primary btn-lg">{% trans 'Large' %}</button>
+            </div>
+        </div>
+
+        <!-- Cards Section -->
+        <div class="preview-section">
+            <h5 class="section-title">{% trans 'Cards' %}</h5>
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3 class="card-title">{% trans 'Card Title' %}</h3>
+                    <p class="card-text">{% trans 'This is a sample card with some text content to demonstrate the card styling.' %}</p>
+                    <button class="btn btn-primary">{% trans 'Action' %}</button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">{% trans 'Another Card' %}</h3>
+                    <p class="card-text">{% trans 'Cards use border radius, shadow, and spacing tokens from your branding.' %}</p>
+                    <button class="btn btn-secondary">{% trans 'Learn More' %}</button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">{% trans 'Third Card' %}</h3>
+                    <p class="card-text">{% trans 'The layout adjusts based on your spacing and typography settings.' %}</p>
+                    <button class="btn btn-accent">{% trans 'Get Started' %}</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forms Section -->
+        <div class="preview-section">
+            <h5 class="section-title">{% trans 'Forms' %}</h5>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">{% trans 'Email Address' %}</label>
+                    <input type="email" class="form-input" placeholder="{% trans 'your@email.com' %}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">{% trans 'Password' %}</label>
+                    <input type="password" class="form-input" placeholder="••••••••">
+                </div>
+            </div>
+            <button class="btn btn-primary">{% trans 'Submit' %}</button>
+        </div>
+
+        <!-- Alerts Section -->
+        <div class="preview-section">
+            <h5 class="section-title">{% trans 'Alerts' %}</h5>
+            <div class="alert alert-success">
+                <strong>{% trans 'Success!' %}</strong> {% trans 'Your changes have been saved.' %}
+            </div>
+            <div class="alert alert-warning">
+                <strong>{% trans 'Warning!' %}</strong> {% trans 'Please review your input.' %}
+            </div>
+            <div class="alert alert-error">
+                <strong>{% trans 'Error!' %}</strong> {% trans 'Something went wrong.' %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Listen for CSS updates from parent -->
+    <script src="{% static 'design/js/branding-preview-frame.js' %}"></script>
+
+</body>
+</html>

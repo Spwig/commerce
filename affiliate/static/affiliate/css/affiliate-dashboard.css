@@ -1,0 +1,616 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Affiliate Merchant Dashboard - Affiliate-Specific Styles
+ *
+ * Uses dashboard components from admin-base.css
+ * This file contains only affiliate-specific styles
+ */
+
+/* ==================== Stats Card Meta ==================== */
+.dashboard-stat-card .stat-meta,
+.dashboard-stat-card .stat-change {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--body-quiet-color);
+    margin-top: 0.5rem;
+}
+
+.dashboard-stat-card .stat-change i {
+    font-size: 0.65rem;
+}
+
+.text-warning {
+    color: #ffc107;
+}
+
+/* ==================== Alerts Section ==================== */
+.alerts-section {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.alert-info {
+    background: rgba(23, 162, 184, 0.1);
+    border-color: #17a2b8;
+    color: var(--body-fg);
+}
+
+.alert-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: #ffc107;
+    color: var(--body-fg);
+}
+
+.alert i:first-child {
+    font-size: 1.5rem;
+    color: inherit;
+}
+
+.alert span {
+    flex: 1;
+    font-weight: 500;
+}
+
+.alert-action {
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.alert-action:hover {
+    text-decoration: underline;
+}
+
+/* ==================== Revenue Chart Section ==================== */
+.revenue-chart-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.revenue-chart-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.revenue-chart-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0;
+}
+
+.revenue-chart-section h2 i {
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+}
+
+.legend-item i {
+    font-size: 0.75rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* ==================== Top Affiliates Section ==================== */
+.top-affiliates-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.top-affiliates-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.top-affiliates-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0;
+}
+
+.top-affiliates-section h2 i {
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+.section-count {
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+    font-weight: 500;
+}
+
+.affiliates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.affiliate-card {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.affiliate-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+}
+
+.affiliate-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.affiliate-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.affiliate-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    font-size: 1.25rem;
+}
+
+.rank-number {
+    font-weight: 700;
+    color: var(--body-quiet-color);
+    font-size: 1.125rem;
+}
+
+.affiliate-details {
+    flex: 1;
+}
+
+.affiliate-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 0.25rem 0;
+    line-height: 1.3;
+}
+
+.affiliate-code {
+    font-size: 0.8125rem;
+    color: var(--body-quiet-color);
+    margin: 0;
+    font-family: 'Courier New', monospace;
+}
+
+.view-link {
+    color: var(--link-fg);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.view-link:hover {
+    color: var(--link-hover-color);
+}
+
+.affiliate-card-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--body-bg);
+    border-radius: 6px;
+}
+
+.stat-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.875rem;
+}
+
+.revenue-icon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.orders-icon {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+}
+
+.commissions-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.payouts-icon {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.125rem;
+}
+
+.stat-value {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.stat-value.revenue,
+.stat-value.payouts {
+    color: #28a745;
+    font-family: 'Courier New', monospace;
+}
+
+/* ==================== Dashboard Grid Layout ==================== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.dashboard-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--body-fg);
+}
+
+/* ==================== Applications List ==================== */
+.applications-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.application-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.application-item:last-child {
+    border-bottom: none;
+}
+
+.application-info {
+    flex: 1;
+}
+
+.application-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: var(--body-fg);
+}
+
+.application-meta,
+.application-company {
+    margin: 0 0 0.25rem 0;
+    font-size: 0.875rem;
+    color: var(--body-quiet-color);
+}
+
+.separator {
+    margin: 0 0.5rem;
+}
+
+.application-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ==================== Data Tables ==================== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+    color: var(--body-quiet-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.data-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--body-fg);
+}
+
+.data-table td a {
+    color: var(--link-fg);
+}
+
+.data-table td a:hover {
+    color: var(--link-hover-color);
+}
+
+.data-table .amount {
+    font-weight: 600;
+    color: #28a745;
+}
+
+.commissions-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* ==================== Affiliate Orders Section ==================== */
+.affiliate-orders-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.affiliate-orders-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.affiliate-orders-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0;
+}
+
+.affiliate-orders-section h2 i {
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+.orders-list {
+    overflow-x: auto;
+}
+
+/* ==================== Empty States ==================== */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--body-quiet-color);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 0.5rem 0;
+}
+
+.empty-state p {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: var(--body-quiet-color);
+}
+
+.empty-state small {
+    font-size: 0.875rem;
+}
+
+/* ==================== Badges ==================== */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 4px;
+}
+
+.badge-pending {
+    background: rgba(255, 193, 7, 0.2);
+    color: #856404;
+}
+
+.badge-approved {
+    background: rgba(40, 167, 69, 0.2);
+    color: #155724;
+}
+
+.badge-rejected {
+    background: rgba(220, 53, 69, 0.2);
+    color: #721c24;
+}
+
+.badge-paid {
+    background: rgba(40, 167, 69, 0.2);
+    color: #155724;
+}
+
+/* ==================== Buttons ==================== */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8125rem;
+}
+
+.btn-outline {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--body-fg);
+}
+
+.btn-outline:hover {
+    background: var(--darkened-bg);
+    text-decoration: none;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background: #218838;
+    border-color: #1e7e34;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 1200px) {
+    .affiliates-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .affiliates-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+    }
+
+    .data-table {
+        font-size: 0.8125rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem;
+    }
+
+    .revenue-chart-section,
+    .affiliate-orders-section,
+    .top-affiliates-section {
+        padding: 1rem;
+    }
+
+    .affiliates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .affiliate-card-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}

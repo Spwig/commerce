@@ -1,0 +1,116 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/** Frontend Base Styles - Resets, Accessibility, Toasts */
+
+/* ============================================================
+   Basic Reset (prevents layout shift)
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+}
+
+/* Prevent layout shift for images */
+img, video, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ============================================================
+   Accessibility
+   ============================================================ */
+
+/* Skip Link for Accessibility */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--theme-space-4);
+    padding: var(--theme-space-2) var(--theme-space-4);
+    background-color: var(--theme-color-primary);
+    color: var(--theme-color-text-inverse);
+    border-radius: var(--theme-radius-md);
+    text-decoration: none;
+    font-weight: var(--theme-font-weight-medium);
+    z-index: var(--theme-z-tooltip);
+    transition: top var(--theme-transition-duration-fast) var(--theme-transition-easing-default);
+}
+
+.skip-link:focus {
+    top: var(--theme-space-4);
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: var(--theme-space-2);
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* Utility: hidden */
+.hidden {
+    display: none;
+}
+
+/* ============================================================
+   Toast Notifications
+   ============================================================ */
+.toast {
+    position: fixed;
+    top: var(--theme-space-4);
+    right: var(--theme-space-4);
+    padding: var(--theme-space-4);
+    border-radius: var(--theme-radius-lg);
+    box-shadow: var(--theme-shadow-lg);
+    z-index: var(--theme-z-tooltip);
+    color: var(--theme-color-text-inverse);
+    font-weight: var(--theme-font-weight-medium);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity var(--theme-transition-duration-base) var(--theme-transition-easing-default),
+                transform var(--theme-transition-duration-base) var(--theme-transition-easing-default);
+}
+
+.toast--visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast--success {
+    background-color: var(--theme-color-success);
+}
+
+.toast--error {
+    background-color: var(--theme-color-error);
+}
+
+.toast--warning {
+    background-color: var(--theme-color-warning);
+    color: var(--theme-color-text);
+}
+
+.toast--info {
+    background-color: var(--theme-color-info);
+}

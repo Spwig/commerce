@@ -1,0 +1,173 @@
+# =============================================================================
+# Docker Ignore - Spwig Shop
+# =============================================================================
+# Excludes unnecessary files from Docker build to reduce image size
+# Expected reduction: ~6.5GB -> ~500MB
+
+# -----------------------------------------------------------------------------
+# Python / Virtual Environments
+# -----------------------------------------------------------------------------
+shop_venv/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+.eggs/
+*.egg-info/
+*.egg
+
+# -----------------------------------------------------------------------------
+# Media & User Generated Content
+# -----------------------------------------------------------------------------
+media/
+# staticfiles/ is included in build context — pre-baked by build-and-push.sh
+# to eliminate the 3-5 minute runtime collectstatic step
+
+# -----------------------------------------------------------------------------
+# Development & IDE
+# -----------------------------------------------------------------------------
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# -----------------------------------------------------------------------------
+# Documentation & Planning
+# -----------------------------------------------------------------------------
+*.md
+!README.md
+!email_templates_for_translation/*.md
+!help_content/**/*.md
+docs/
+docs_site/
+
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# -----------------------------------------------------------------------------
+# Local Configuration
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.local
+local_settings.py
+license_acceptance.json
+
+# -----------------------------------------------------------------------------
+# Build Artifacts
+# -----------------------------------------------------------------------------
+backup/
+.backup/
+*.log
+logs/
+*.bak
+*.backup_*
+celerybeat-schedule
+schema.yml
+
+# -----------------------------------------------------------------------------
+# Components
+# Component source lives in separate spwig-components project.
+# Pre-built packages are in preinstalled/ (included in image).
+# components_data/ is a runtime volume populated by the upgrade server.
+# -----------------------------------------------------------------------------
+components/
+components_data/
+
+# -----------------------------------------------------------------------------
+# Translator (separate container)
+# -----------------------------------------------------------------------------
+translator/
+translator_backup*/
+
+# -----------------------------------------------------------------------------
+# Deployment Scripts (not needed in app container)
+# -----------------------------------------------------------------------------
+deploy/
+!deploy/code_protection/
+
+# -----------------------------------------------------------------------------
+# Node / Frontend Build
+# -----------------------------------------------------------------------------
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# -----------------------------------------------------------------------------
+# Database
+# -----------------------------------------------------------------------------
+*.sqlite3
+db.sqlite3
+
+# -----------------------------------------------------------------------------
+# Temporary Files
+# -----------------------------------------------------------------------------
+tmp/
+temp/
+*.tmp
+
+# -----------------------------------------------------------------------------
+# Development Tools & Archive
+# -----------------------------------------------------------------------------
+tools/
+.archive/
+sdks/
+bin/
+
+# -----------------------------------------------------------------------------
+# Sensitive / Config directories
+# -----------------------------------------------------------------------------
+.claude/
+.keys/
+.playwright-mcp/
+.mcp.json
+drop_test_db.py
+
+# -----------------------------------------------------------------------------
+# Screenshots (dev/testing artifacts — ~35MB of .png in project root)
+# -----------------------------------------------------------------------------
+*.png
+# Preserve static asset PNGs used by the app
+!*/static/**/*.png
+
+# 3D model test files
+.3dmodels/
+
+# -----------------------------------------------------------------------------
+# Separate containers / infrastructure (not needed in shop image)
+# -----------------------------------------------------------------------------
+upgrader/
+nginx/
+nginx.conf
+themes/
+!preinstalled/themes/
+
+# -----------------------------------------------------------------------------
+# Build & config files (not needed at runtime)
+# NOTE: Do NOT exclude requirements.txt or docker-entrypoint.sh — they are
+# explicitly COPY'd in the Dockerfiles and must remain in the build context.
+# -----------------------------------------------------------------------------
+docker-compose*.yml
+.dockerignore
+Makefile
+
+# -----------------------------------------------------------------------------
+# Dev/test config (not needed at runtime)
+# NOTE: requirements-dev.txt is needed for test runner Docker build
+# -----------------------------------------------------------------------------
+pytest.ini
+conftest.py
+# requirements-dev.txt  # Commented out - needed for Dockerfile.test

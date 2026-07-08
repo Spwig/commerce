@@ -1,0 +1,190 @@
+{
+  "element_type": "voucher_code_display",
+  "name": "Voucher Code Display",
+  "version": "1.0.1",
+  "category": "marketing",
+  "icon": "fas fa-ticket-alt",
+  "description": "Display promotional voucher codes",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/voucher-code-display.css"],
+  "scripts": [
+    "/static/page_builder/js/elements/voucher-code-display.js"
+  ],
+  "tabs": {
+    "content": {
+      "label": "Content",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "source_group": {
+          "type": "property_group",
+          "label": "Voucher Source",
+          "columns": 1,
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "default": "dynamic",
+              "options": [
+                {"value": "dynamic", "label": "Live from store"},
+                {"value": "static", "label": "Manual content"}
+              ]
+            },
+            "voucher_ids": {
+              "type": "string",
+              "label": "Voucher IDs (comma separated)",
+              "default": "",
+              "show_if": {"data_source": "dynamic"}
+            }
+          }
+        },
+        "static_vouchers_group": {
+          "type": "property_group",
+          "label": "Static Vouchers",
+          "columns": 1,
+          "show_if": {"data_source": "static"},
+          "properties": {
+            "vouchers": {
+              "type": "array",
+              "label": "Vouchers",
+              "full_width": true,
+              "item_type": "object",
+              "default": [
+                {"code": "SAVE20", "discount": "20% OFF", "description": "On orders over $50", "expires": ""}
+              ],
+              "item_properties": {
+                "code": {"type": "string", "label": "Voucher Code"},
+                "discount": {"type": "string", "label": "Discount Amount"},
+                "description": {"type": "string", "label": "Description", "translatable": true},
+                "min_order": {"type": "string", "label": "Minimum Order"},
+                "expires": {"type": "string", "label": "Expiry Date (ISO)"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-eye",
+      "order": 2,
+      "properties": {
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Show/Hide Elements",
+          "properties": {
+            "show_expiry": {
+              "type": "boolean",
+              "label": "Show Expiry Date",
+              "default": true
+            },
+            "show_conditions": {
+              "type": "boolean",
+              "label": "Show Conditions",
+              "default": true
+            },
+            "show_usage_limit": {
+              "type": "boolean",
+              "label": "Show Usage Limit",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "label": "Appearance",
+      "icon": "fas fa-palette",
+      "order": 3,
+      "properties": {
+        "style_group": {
+          "type": "property_group",
+          "label": "Style",
+          "properties": {
+            "style": {
+              "type": "select",
+              "label": "Card Style",
+              "default": "ticket",
+              "options": [
+                {"value": "ticket", "label": "Ticket"},
+                {"value": "card", "label": "Card"},
+                {"value": "minimal", "label": "Minimal"},
+                {"value": "dashed", "label": "Dashed Border"}
+              ]
+            },
+            "layout": {
+              "type": "select",
+              "label": "Layout",
+              "default": "grid",
+              "options": [
+                {"value": "grid", "label": "Grid"},
+                {"value": "list", "label": "List"},
+                {"value": "carousel", "label": "Carousel"}
+              ]
+            }
+          }
+        },
+        "colors_group": {
+          "type": "property_group",
+          "label": "Colors",
+          "columns": 1,
+          "properties": {
+            "primary_color": {
+              "type": "color",
+              "label": "Accent Color",
+              "default": "#10b981"
+            }
+          }
+        }
+      }
+    },
+    "header": {
+      "label": "Header",
+      "icon": "fas fa-heading",
+      "order": 4,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Available Coupons",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "string",
+              "label": "Section Subtitle",
+              "default": "Click to copy code",
+              "translatable": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "data_source": {"type": "select", "label": "Data Source", "default": "dynamic"},
+    "voucher_ids": {"type": "string", "label": "Voucher IDs (comma separated)", "default": ""},
+    "vouchers": {"type": "array", "label": "Vouchers", "item_type": "object"},
+    "show_expiry": {"type": "boolean", "label": "Show Expiry Date", "default": true},
+    "show_conditions": {"type": "boolean", "label": "Show Conditions", "default": true},
+    "show_usage_limit": {"type": "boolean", "label": "Show Usage Limit", "default": false},
+    "style": {"type": "select", "label": "Card Style", "default": "ticket"},
+    "layout": {"type": "select", "label": "Layout", "default": "grid"},
+    "primary_color": {"type": "color", "label": "Accent Color", "default": "#10b981"},
+    "title": {"type": "string", "label": "Section Title", "default": "Available Coupons", "translatable": true},
+    "subtitle": {"type": "string", "label": "Section Subtitle", "default": "Click to copy code", "translatable": true}
+  },
+  "translations": {
+    "en": {"name": "Voucher Code Display", "description": "Display promotional voucher codes"},
+    "es": {"name": "Mostrar Códigos de Cupón", "description": "Mostrar códigos de cupón promocionales"},
+    "fr": {"name": "Affichage des Codes Promo", "description": "Afficher les codes promotionnels"},
+    "de": {"name": "Gutscheincode-Anzeige", "description": "Aktionsgutscheincodes anzeigen"},
+    "pt": {"name": "Exibição de Cupons", "description": "Exibir códigos de cupom promocionais"},
+    "zh-hans": {"name": "优惠码展示", "description": "展示促销优惠码"},
+    "ja": {"name": "クーポンコード表示", "description": "プロモーションクーポンコードを表示"}
+  }
+}

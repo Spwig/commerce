@@ -1,0 +1,115 @@
+{% extends "admin/blog/social_connectors/wizard/base.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'blog/admin/css/social_connector_browse.css' %}">
+{% endblock %}
+
+{% block wizard_content %}
+{% csrf_token %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Test Connection" %}</h2>
+    <p class="step-description">
+        {% blocktrans with provider=component.name %}
+        Test the connection to {{ provider }} to verify your credentials are correct.
+        {% endblocktrans %}
+    </p>
+
+    <div class="test-connection-area">
+        <!-- Test Status Display -->
+        <div id="test-status" class="test-status blog-hidden">
+            <div class="test-status-icon">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div class="test-status-message">
+                <strong id="test-status-title">{% trans "Testing connection..." %}</strong>
+                <p id="test-status-text">{% trans "Please wait while we verify your credentials." %}</p>
+            </div>
+        </div>
+
+        <!-- Test Button -->
+        <div id="test-button-container" class="test-button-container">
+            <button type="button" id="test-connection-btn" class="btn btn-large btn-primary">
+                <i class="fas fa-plug"></i> {% trans "Test Connection" %}
+            </button>
+            <p class="test-button-help">
+                {% trans "Click to test the connection with your entered credentials." %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Test Results -->
+    <div id="test-results" class="test-results blog-hidden">
+        <div class="test-result-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3 id="test-result-title">{% trans "Connection Successful!" %}</h3>
+        <p id="test-result-message"></p>
+
+        <div class="test-details blog-hidden" id="test-details">
+            <h4>{% trans "Account Details" %}</h4>
+            <table class="test-details-table">
+                <tbody id="test-details-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Capabilities Preview (shown after successful test) -->
+    <div id="capabilities-preview" class="capabilities-preview blog-hidden">
+        <h3><i class="fas fa-check-double"></i> {% trans "Capabilities" %}</h3>
+        <p class="preview-description">{% trans "This account supports the following features:" %}</p>
+        <div class="capabilities-grid" id="capabilities-grid"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'blog_admin:wizard_step3' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="button" id="save-btn" class="btn btn-primary btn-success blog-hidden">
+        <i class="fas fa-save"></i> {% trans "Save & Finish" %}
+    </button>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="application/json" id="wizard-step4-data">
+{
+    "urls": {
+        "wizardStep4": "{% url 'blog:wizard_step4' %}",
+        "accountChangelist": "{% url 'admin:blog_socialconnectoraccount_changelist' %}"
+    },
+    "translations": {
+        "connectionSuccessful": "{% trans 'Connection Successful!' %}",
+        "credentialsVerified": "{% trans 'Your credentials were verified successfully.' %}",
+        "connectionFailed": "{% trans 'Connection Failed' %}",
+        "couldNotConnect": "{% trans 'Could not connect to the social platform.' %}",
+        "error": "{% trans 'Error' %}",
+        "unexpectedError": "{% trans 'An unexpected error occurred.' %}",
+        "saving": "{% trans 'Saving...' %}",
+        "failedToSave": "{% trans 'Failed to save social connector account.' %}",
+        "anErrorOccurred": "{% trans 'An error occurred while saving.' %}",
+        "saveAndFinish": "{% trans 'Save & Finish' %}",
+        "capabilities": {
+            "textPosts": "{% trans 'Text Posts' %}",
+            "imagePosts": "{% trans 'Image Posts' %}",
+            "videoPosts": "{% trans 'Video Posts' %}",
+            "linkPreviews": "{% trans 'Link Previews' %}",
+            "scheduling": "{% trans 'Scheduling' %}",
+            "hashtags": "{% trans 'Hashtags' %}",
+            "mentions": "{% trans 'Mentions' %}",
+            "carouselPosts": "{% trans 'Carousel Posts' %}",
+            "stories": "{% trans 'Stories' %}",
+            "tokenRefresh": "{% trans 'Auto Token Refresh' %}"
+        }
+    }
+}
+</script>
+<script src="{% static 'blog/admin/js/wizard_step4_test.js' %}" defer></script>
+{% endblock %}
+
+{% block wizard_js %}{% endblock %}

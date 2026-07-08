@@ -1,0 +1,289 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/campaign_cards.css' %}">
+
+<div class="list-row-cards">
+    {% for campaign in campaigns %}
+    <div class="list-row-card campaign-card {% if not campaign.is_active %}card-inactive{% endif %}">
+        <!-- Campaign Type Icon -->
+        <div class="list-row-card-icon campaign {{ campaign.campaign_type|slugify }}">
+            {% if campaign.campaign_type == 'trigger_based' %}
+                <i class="fas fa-bolt"></i>
+            {% elif campaign.campaign_type == 'scheduled' %}
+                <i class="fas fa-calendar-alt"></i>
+            {% elif campaign.campaign_type == 'manual' %}
+                <i class="fas fa-hand-pointer"></i>
+            {% elif campaign.campaign_type == 'behavioral' %}
+                <i class="fas fa-brain"></i>
+            {% else %}
+                <i class="fas fa-bullhorn"></i>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:loyalty_loyaltycampaign_change' campaign.id %}"
+                   title="{% trans 'Edit campaign' %}">
+                    {{ campaign.name }}
+                </a>
+            </h3>
+
+            <!-- Description -->
+            <p class="list-row-card-subtitle">
+                {% if campaign.description %}
+                    {{ campaign.description|truncatewords:15 }}
+                {% else %}
+                    <em class="quiet-text">{% trans "No description provided" %}</em>
+                {% endif %}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if campaign.status == 'active' %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'Campaign is running' %}">
+                        <i class="fas fa-play-circle"></i> {% trans "Active" %}
+                    </span>
+                {% elif campaign.status == 'paused' %}
+                    <span class="list-row-card-badge warning"
+                          title="{% trans 'Campaign is paused' %}">
+                        <i class="fas fa-pause-circle"></i> {% trans "Paused" %}
+                    </span>
+                {% elif campaign.status == 'ended' %}
+                    <span class="list-row-card-badge error"
+                          title="{% trans 'Campaign has ended' %}">
+                        <i class="fas fa-stop-circle"></i> {% trans "Ended" %}
+                    </span>
+                {% elif campaign.status == 'draft' %}
+                    <span class="list-row-card-badge campaign-status-draft"
+                          title="{% trans 'Campaign is in draft mode' %}">
+                        <i class="fas fa-pencil-alt"></i> {% trans "Draft" %}
+                    </span>
+                {% elif campaign.status == 'archived' %}
+                    <span class="list-row-card-badge campaign-status-archived"
+                          title="{% trans 'Campaign is archived' %}">
+                        <i class="fas fa-archive"></i> {% trans "Archived" %}
+                    </span>
+                {% endif %}
+
+                <!-- Campaign Type Badge -->
+                <span class="list-row-card-badge primary"
+                      title="{% trans 'Campaign type' %}">
+                    {% if campaign.campaign_type == 'trigger_based' %}
+                        <i class="fas fa-bolt"></i> {% trans "Trigger" %}
+                    {% elif campaign.campaign_type == 'scheduled' %}
+                        <i class="fas fa-calendar-alt"></i> {% trans "Scheduled" %}
+                    {% elif campaign.campaign_type == 'manual' %}
+                        <i class="fas fa-hand-pointer"></i> {% trans "Manual" %}
+                    {% elif campaign.campaign_type == 'behavioral' %}
+                        <i class="fas fa-brain"></i> {% trans "Behavioral" %}
+                    {% endif %}
+                </span>
+
+                <!-- Trigger Event Badge (for trigger-based campaigns) -->
+                {% if campaign.trigger_event %}
+                    <span class="list-row-card-badge info"
+                          title="{% trans 'Trigger event' %}">
+                        <i class="fas fa-flag"></i> {{ campaign.get_trigger_event_display|default:campaign.trigger_event }}
+                    </span>
+                {% endif %}
+
+                <!-- Journey Badge -->
+                {% if campaign.is_journey %}
+                    <span class="list-row-card-badge"
+                          title="{% trans 'Multi-step journey campaign' %}">
+                        <i class="fas fa-route"></i> {% trans "Journey" %}
+                    </span>
+                {% endif %}
+
+                <!-- A/B Test Badge -->
+                {% if campaign.is_ab_test %}
+                    <span class="list-row-card-badge"
+                          title="{% trans 'A/B testing enabled' %}">
+                        <i class="fas fa-vials"></i> {% trans "A/B Test" %}
+                    </span>
+                {% endif %}
+
+                <!-- Targeted Segment Badge -->
+                {% if campaign.target_segment %}
+                    <span class="list-row-card-badge"
+                          title="{% trans 'Targeting specific segment' %}">
+                        <i class="fas fa-users"></i> {{ campaign.target_segment.name|truncatechars:15 }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <!-- Total Triggered -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Triggered" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <i class="fas fa-play"></i> {{ campaign.total_triggered|default:0 }}
+                    </span>
+                </div>
+
+                <!-- Completion Rate -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Completion Rate" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if campaign.total_triggered > 0 %}
+                            {% widthratio campaign.total_completed campaign.total_triggered 100 as completion_rate %}
+                            <span class="{% if completion_rate >= 80 %}completion-rate-high{% elif completion_rate >= 50 %}completion-rate-medium{% else %}completion-rate-low{% endif %}">
+                                {{ completion_rate }}%
+                            </span>
+                        {% else %}
+                            <span class="quiet-text">—</span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <!-- Total Completed -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Completed" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <i class="fas fa-check"></i> {{ campaign.total_completed|default:0 }}
+                    </span>
+                </div>
+
+                <!-- Total Failed -->
+                {% if campaign.total_failed > 0 %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Failed" %}</span>
+                    <span class="list-row-card-stat-value completion-rate-low">
+                        <i class="fas fa-times"></i> {{ campaign.total_failed }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Meta Information -->
+            <div class="list-row-card-meta">
+                <!-- Date Range -->
+                {% if campaign.start_date or campaign.end_date %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Campaign date range' %}">
+                    <i class="fas fa-calendar-week"></i>
+                    <span>
+                        {% if campaign.start_date and campaign.end_date %}
+                            {{ campaign.start_date|date:"M d" }} - {{ campaign.end_date|date:"M d, Y" }}
+                        {% elif campaign.start_date %}
+                            {% trans "From" %} {{ campaign.start_date|date:"M d, Y" }}
+                        {% elif campaign.end_date %}
+                            {% trans "Until" %} {{ campaign.end_date|date:"M d, Y" }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- Last Triggered -->
+                {% if campaign.last_triggered_at %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Last triggered' %}">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ campaign.last_triggered_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+
+                <!-- Cooldown -->
+                {% if campaign.cooldown_days > 0 %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Cooldown between triggers' %}">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>{{ campaign.cooldown_days }} {% trans "day cooldown" %}</span>
+                </div>
+                {% endif %}
+
+                <!-- Max Triggers -->
+                {% if campaign.max_triggers_per_member %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Maximum triggers per member' %}">
+                    <i class="fas fa-user-clock"></i>
+                    <span>{% trans "Max" %} {{ campaign.max_triggers_per_member }}x {% trans "per member" %}</span>
+                </div>
+                {% endif %}
+
+                <!-- Created -->
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Date created' %}">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{{ campaign.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltycampaign_change' campaign.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit campaign' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% if campaign.status == 'active' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="toggle-campaign-status"
+                    data-pk="{{ campaign.pk }}"
+                    data-activate="false"
+                    title="{% trans 'Pause campaign' %}">
+                <i class="fas fa-pause"></i>
+            </button>
+            {% elif campaign.status == 'draft' or campaign.status == 'paused' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="toggle-campaign-status"
+                    data-pk="{{ campaign.pk }}"
+                    data-activate="true"
+                    title="{% trans 'Activate campaign' %}">
+                <i class="fas fa-play"></i>
+            </button>
+            {% endif %}
+
+            {% if campaign.total_triggered > 0 %}
+            <a href="{% url 'admin:loyalty_loyaltycampaignexecution_changelist' %}?campaign__id__exact={{ campaign.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View executions' %}">
+                <i class="fas fa-list-alt"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <!-- Empty State - Encourage First Campaign Creation -->
+    <div class="campaign-empty-state">
+        <div class="campaign-empty-state-icon">
+            <i class="fas fa-rocket"></i>
+        </div>
+        <h2 class="campaign-empty-state-title">{% trans "Launch Your First Campaign" %}</h2>
+        <p class="campaign-empty-state-subtitle">
+            {% trans "Automate your loyalty program with targeted campaigns that engage members and drive repeat purchases." %}
+        </p>
+        <ul class="campaign-empty-state-benefits">
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Award bonus points on birthdays and anniversaries" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Welcome new members with automatic point bonuses" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Win back inactive customers with special offers" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Celebrate milestones like first purchase or tier promotion" %}
+            </li>
+        </ul>
+        <a href="{% url 'loyalty:campaign_wizard' %}" class="campaign-empty-state-cta">
+            <i class="fas fa-magic"></i>
+            {% trans "Create Your First Campaign" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+

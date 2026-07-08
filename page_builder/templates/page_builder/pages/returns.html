@@ -1,0 +1,188 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'Returns Policy' %} - {% mtrans 'Shop' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/pages/returns.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'Returns Policy' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% mtrans 'Returns & Refunds' %}</h1>
+        <p class="page-header__subtitle">{% mtrans 'We want you to be completely satisfied with your purchase' %}</p>
+    </div>
+</section>
+
+<!-- Returns Content -->
+<section class="section">
+    <div class="container">
+        <!-- Key Points Summary -->
+        <div class="returns-summary">
+            <div class="returns-summary__item">
+                <div class="returns-summary__icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3 class="returns-summary__title">{% mtrans '30 Day Returns' %}</h3>
+                <p class="returns-summary__text">{% mtrans 'Return within 30 days of purchase' %}</p>
+            </div>
+            <div class="returns-summary__item">
+                <div class="returns-summary__icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3 class="returns-summary__title">{% mtrans 'Original Packaging' %}</h3>
+                <p class="returns-summary__text">{% mtrans 'Items must be unused with tags attached' %}</p>
+            </div>
+            <div class="returns-summary__item">
+                <div class="returns-summary__icon">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <h3 class="returns-summary__title">{% mtrans 'Free Returns' %}</h3>
+                <p class="returns-summary__text">{% mtrans 'We cover return shipping costs' %}</p>
+            </div>
+            <div class="returns-summary__item">
+                <div class="returns-summary__icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="returns-summary__title">{% mtrans 'Fast Refunds' %}</h3>
+                <p class="returns-summary__text">{% mtrans 'Refunds processed in 5-7 business days' %}</p>
+            </div>
+        </div>
+
+        <!-- Detailed Policy -->
+        <div class="returns-content">
+            <section class="returns-section">
+                <h2 class="returns-section__title">
+                    <i class="fas fa-check-circle"></i>
+                    {% mtrans 'Eligible for Return' %}
+                </h2>
+                <p>{% mtrans 'To be eligible for a return, your item must be:' %}</p>
+                <ul>
+                    <li>{% mtrans 'Returned within 30 days of the delivery date' %}</li>
+                    <li>{% mtrans 'Unused and in the same condition that you received it' %}</li>
+                    <li>{% mtrans 'In the original packaging with all tags attached' %}</li>
+                    <li>{% mtrans 'Accompanied by the receipt or proof of purchase' %}</li>
+                </ul>
+            </section>
+
+            <section class="returns-section">
+                <h2 class="returns-section__title">
+                    <i class="fas fa-times-circle"></i>
+                    {% mtrans 'Non-Returnable Items' %}
+                </h2>
+                <p>{% mtrans 'The following items cannot be returned:' %}</p>
+                <ul>
+                    <li>{% mtrans 'Gift cards and digital products' %}</li>
+                    <li>{% mtrans 'Personalized or custom-made items' %}</li>
+                    <li>{% mtrans 'Intimate or sanitary goods' %}</li>
+                    <li>{% mtrans 'Hazardous materials or flammable liquids' %}</li>
+                    <li>{% mtrans 'Items marked as "Final Sale" or "Non-Returnable"' %}</li>
+                </ul>
+            </section>
+
+            <section class="returns-section">
+                <h2 class="returns-section__title">
+                    <i class="fas fa-list-ol"></i>
+                    {% mtrans 'How to Return an Item' %}
+                </h2>
+                <div class="returns-steps">
+                    <div class="returns-step">
+                        <span class="returns-step__number">1</span>
+                        <div class="returns-step__content">
+                            <h3>{% mtrans 'Start Your Return' %}</h3>
+                            <p>{% mtrans 'Log into your account and go to "Order History". Select the order containing the item you wish to return and click "Request Return".' %}</p>
+                        </div>
+                    </div>
+                    <div class="returns-step">
+                        <span class="returns-step__number">2</span>
+                        <div class="returns-step__content">
+                            <h3>{% mtrans 'Select Return Reason' %}</h3>
+                            <p>{% mtrans 'Choose the reason for your return from the dropdown menu. This helps us improve our products and services.' %}</p>
+                        </div>
+                    </div>
+                    <div class="returns-step">
+                        <span class="returns-step__number">3</span>
+                        <div class="returns-step__content">
+                            <h3>{% mtrans 'Print Shipping Label' %}</h3>
+                            <p>{% mtrans "Once approved, you'll receive a prepaid shipping label via email. Print it and attach it to your package." %}</p>
+                        </div>
+                    </div>
+                    <div class="returns-step">
+                        <span class="returns-step__number">4</span>
+                        <div class="returns-step__content">
+                            <h3>{% mtrans 'Ship Your Return' %}</h3>
+                            <p>{% mtrans 'Drop off your package at any authorized shipping location. Keep your receipt for tracking purposes.' %}</p>
+                        </div>
+                    </div>
+                    <div class="returns-step">
+                        <span class="returns-step__number">5</span>
+                        <div class="returns-step__content">
+                            <h3>{% mtrans 'Receive Your Refund' %}</h3>
+                            <p>{% mtrans "Once we receive and inspect your return, we'll process your refund to the original payment method." %}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="returns-section">
+                <h2 class="returns-section__title">
+                    <i class="fas fa-exchange-alt"></i>
+                    {% mtrans 'Exchanges' %}
+                </h2>
+                <p>{% mtrans 'If you need a different size, color, or product, we recommend returning the original item for a refund and placing a new order. This ensures the fastest processing time and guarantees availability of your desired item.' %}</p>
+            </section>
+
+            <section class="returns-section">
+                <h2 class="returns-section__title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% mtrans 'Damaged or Defective Items' %}
+                </h2>
+                <p>{% mtrans 'If you received a damaged or defective item, please contact us immediately. We will arrange for a replacement or full refund at no additional cost to you.' %}</p>
+                <p>{% mtrans 'Please include photos of the damage when contacting customer support to expedite the process.' %}</p>
+            </section>
+
+            <section class="returns-section">
+                <h2 class="returns-section__title">
+                    <i class="fas fa-credit-card"></i>
+                    {% mtrans 'Refund Processing' %}
+                </h2>
+                <p>{% mtrans 'Refunds are processed within 5-7 business days after we receive your return. The refund will be credited to your original payment method:' %}</p>
+                <ul>
+                    <li>{% mtrans 'Credit/Debit Cards: 3-5 business days for the refund to appear on your statement' %}</li>
+                    <li>{% mtrans 'PayPal: 1-2 business days' %}</li>
+                    <li>{% mtrans 'Store Credit: Immediately available in your account' %}</li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- Help CTA -->
+        <div class="returns-help">
+            <h2 class="returns-help__title">{% mtrans 'Need Help?' %}</h2>
+            <p class="returns-help__text">{% mtrans 'Our customer service team is available to assist you with returns and refunds.' %}</p>
+            <div class="returns-help__actions">
+                <a href="/page/contact/" class="btn btn--primary">
+                    <i class="fas fa-envelope"></i>
+                    {% mtrans 'Contact Support' %}
+                </a>
+                <a href="/page/faq/" class="btn btn--outline">
+                    <i class="fas fa-question-circle"></i>
+                    {% mtrans 'View FAQ' %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

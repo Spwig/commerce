@@ -1,0 +1,25 @@
+{% comment %}
+Dynamic sidebar elements for the visual builder.
+This template is rendered by the render_sidebar_elements template tag.
+{% endcomment %}
+
+{% for category in categories %}
+<div class="component-group">
+    <h4>{{ category.display_name }}</h4>
+    {% for element in category.elements %}
+    <div class="component-item" draggable="true" data-type="element" data-element-type="{{ element.type }}" title="{{ element.description }}">
+        <div class="component-icon">
+            <i class="fas {{ element.icon }}"></i>
+        </div>
+        <div class="component-info">
+            <strong>{{ element.name }}</strong>
+            <small>{{ element.description|truncatewords:4 }}</small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% empty %}
+<div class="component-group">
+    <p class="text-muted">No elements available</p>
+</div>
+{% endfor %}

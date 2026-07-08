@@ -1,0 +1,170 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for template in templates %}
+    <div class="list-row-card{% if not template.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ template.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-code text-primary icon-size-32"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_licensekeytemplate_change' template.pk %}">
+                    {{ template.name }}
+                </a>
+            </h3>
+
+            {% if template.description %}
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-info-circle"></i> {{ template.description|truncatewords:15 }}
+            </p>
+            {% endif %}
+
+            <div class="list-row-card-badges">
+                {% if template.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% with products_count=template.products.count %}
+                    {% if products_count > 0 %}
+                        <span class="list-row-card-badge list-row-card-badge-info">
+                            <i class="fas fa-box"></i> {{ products_count }} {% trans "product" %}{{ products_count|pluralize }}
+                        </span>
+                    {% else %}
+                        <span class="list-row-card-badge list-row-card-badge-warning">
+                            <i class="fas fa-exclamation-triangle"></i> {% trans "No products using this template" %}
+                        </span>
+                    {% endif %}
+                {% endwith %}
+
+                {% if template.min_length or template.max_length %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-ruler"></i>
+                        {% if template.min_length and template.max_length %}
+                            {{ template.min_length }}-{{ template.max_length }} {% trans "chars" %}
+                        {% elif template.min_length %}
+                            {% trans "Min" %}: {{ template.min_length }}
+                        {% else %}
+                            {% trans "Max" %}: {{ template.max_length }}
+                        {% endif %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Pattern Display -->
+            <div class="list-row-card-description pattern-display-box">
+                <div class="pattern-display-label">
+                    {% trans "Pattern" %}:
+                </div>
+                <code class="pattern-display-code">{{ template.pattern }}</code>
+            </div>
+
+            <!-- Sample Keys -->
+            <div class="sample-keys-box">
+                <div class="sample-keys-label">
+                    {% trans "Sample Keys" %}:
+                </div>
+                {% for i in "123" %}
+                <div class="sample-key-item">
+                    {% if template.pk %}
+                        <code>{{ template.generate_sample_key|default:"Error generating sample" }}</code>
+                    {% else %}
+                        <code class="text-muted">{% trans "Save to generate samples" %}</code>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Products" %}</span>
+                    <span class="list-row-card-stat-value" style="color: {% if template.products.count > 0 %}var(--success-fg){% else %}var(--body-quiet-color){% endif %};">
+                        {{ template.products.count }}
+                    </span>
+                </div>
+                {% if template.prefix %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Prefix" %}</span>
+                    <span class="list-row-card-stat-value"><code>{{ template.prefix }}</code></span>
+                </div>
+                {% endif %}
+                {% if template.suffix %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Suffix" %}</span>
+                    <span class="list-row-card-stat-value"><code>{{ template.suffix }}</code></span>
+                </div>
+                {% endif %}
+                {% if template.separator %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Separator" %}</span>
+                    <span class="list-row-card-stat-value"><code>{{ template.separator }}</code></span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if template.created_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{% trans "Created by" %}: {{ template.created_by.get_full_name|default:template.created_by.email }}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Created" %}: {{ template.created_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if template.updated_at != template.created_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>{% trans "Updated" %}: {{ template.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_licensekeytemplate_change' template.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit template' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if template.products.count > 0 %}
+            <a href="{% url 'admin:catalog_product_changelist' %}?license_template__id__exact={{ template.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View products using this template' %}">
+                <i class="fas fa-box-open"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:catalog_licensekeytemplate_delete' template.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete template' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-file-code"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No license key templates found." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Create your first template to define license key formats." %}
+        </p>
+        <a href="{% url 'admin:catalog_licensekeytemplate_add' %}" class="button mt-20">
+            <i class="fas fa-plus"></i> {% trans "Add Template" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

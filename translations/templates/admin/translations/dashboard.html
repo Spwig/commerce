@@ -1,0 +1,449 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Translation Dashboard" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'translations/admin/css/translations.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'translations/admin/js/theme-detector.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% if not is_shared_fleet %}
+<!-- Download Progress Modal -->
+<div class="admin-modal-overlay" id="downloadModalOverlay">
+    <div class="admin-modal admin-modal--md">
+        <div class="admin-modal-header">
+            <h3 class="admin-modal-title">📥 <span id="modal-progress-status">{% trans "Downloading Model" %}</span></h3>
+            <button class="admin-modal-close" data-action="close-download-modal" title="{% trans 'Close' %}">&times;</button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="progress-bar-container">
+                <div id="modal-progress-bar" class="progress-bar-fill">
+                    <span id="modal-progress-percentage">0%</span>
+                </div>
+            </div>
+            <div class="progress-info">
+                <span id="modal-download-size">0 MB / 0 MB</span>
+                <span id="modal-download-speed">0 MB/s</span>
+                <span id="modal-download-eta">{% trans "ETA:" %} --</span>
+            </div>
+            <div id="modal-progress-message" class="progress-message"></div>
+        </div>
+        <div class="admin-modal-footer" style="justify-content: center;">
+            <small>
+                {% trans "Download will continue in the background if you close this window." %}
+            </small>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Main Dashboard Content -->
+    <!-- Dashboard Header -->
+     <div id="content-main">
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-language"></i>
+            {% trans "Translation Service Dashboard" %}
+        </h1>
+        <p class="subtitle">
+            {% trans "Manage AI-powered translation services and monitor translation jobs" %}
+        </p>
+
+        
+    
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-plug"></i></div>
+            <div class="value">{{ stats.active_providers }}</div>
+            <div class="label">{% trans "Active Providers" %}</div>
+        </div>
+        <a href="{% url 'translations:translation_jobs' %}" class="dashboard-stat-card clickable" title="{% trans 'View pending jobs' %}">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ stats.pending_jobs }}</div>
+            <div class="label">{% trans "Pending Jobs" %}</div>
+        </a>
+        <a href="{% url 'translations:translation_jobs' %}" class="dashboard-stat-card clickable" title="{% trans 'View completed jobs' %}">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ stats.completed_jobs }}</div>
+            <div class="label">{% trans "Completed Jobs" %}</div>
+        </a>
+        <a href="{% url 'translations:translation_jobs' %}" class="dashboard-stat-card clickable" title="{% trans 'View failed jobs' %}">
+            <div class="icon"><i class="fas fa-times-circle"></i></div>
+            <div class="value">{{ stats.failed_jobs }}</div>
+            <div class="label">{% trans "Failed Jobs" %}</div>
+        </a>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-lock"></i></div>
+            <div class="value">{{ stats.locked_translations }}</div>
+            <div class="label">{% trans "Locked Translations" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-download"></i></div>
+            <div class="value">{{ stats.installed_models }}</div>
+            <div class="label">{% trans "Installed Models" %}</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+    <div class="dashboard-content">
+
+    <!-- Translation Coverage -->
+    {% if coverage.has_languages %}
+    <div class="coverage-hero-section">
+        <div class="coverage-hero-header">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-chart-pie"></i>
+                {% trans "Translation Coverage" %}
+            </h2>
+            <button type="button" class="coverage-refresh-btn" data-action="refresh-coverage" title="{% trans 'Refresh' %}">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+
+        <div class="coverage-hero-body">
+            <div class="coverage-ring-wrapper">
+                <svg class="coverage-ring" viewBox="0 0 120 120">
+                    <circle class="coverage-ring__bg" cx="60" cy="60" r="52" />
+                    <circle class="coverage-ring__fill" cx="60" cy="60" r="52"
+                            stroke-dasharray="326.73"
+                            data-percentage="{{ coverage.overall_percentage|default:0 }}" />
+                </svg>
+                <div class="coverage-ring__label">
+                    <span class="coverage-ring__pct">{{ coverage.overall_percentage|floatformat:0 }}%</span>
+                </div>
+            </div>
+            <div class="coverage-lang-bars">
+                {% for lang in coverage.languages %}
+                <div class="coverage-lang-row">
+                    <span class="coverage-lang-row__flag">{{ lang.flag }}</span>
+                    <span class="coverage-lang-row__name">{{ lang.name }}</span>
+                    <div class="coverage-lang-row__bar">
+                        <div class="coverage-lang-row__fill" data-width="{{ lang.percentage }}"></div>
+                    </div>
+                    <span class="coverage-lang-row__pct">{{ lang.percentage|floatformat:0 }}%</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="coverage-hero-actions">
+            <a href="{% url 'translations:coverage_detail' %}" class="button">
+                <i class="fas fa-list"></i> {% trans "View Details" %}
+            </a>
+            <button type="button" class="button default" data-action="translate-all">
+                <i class="fas fa-language"></i> {% trans "Translate All Missing" %}
+            </button>
+        </div>
+    </div>
+    {% else %}
+    <div class="coverage-hero-section coverage-hero-section--empty">
+        <h2 class="dashboard-section-title">
+            <i class="fas fa-chart-pie"></i>
+            {% trans "Translation Coverage" %}
+        </h2>
+        <p class="coverage-empty-msg">
+            {% trans "Activate languages in" %}
+            <a href="{% url 'translations:language_management' %}">{% trans "Language Management" %}</a>
+            {% trans "to see translation coverage." %}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Translate All Modal -->
+    <div class="admin-modal-overlay" id="translate-all-modal">
+        <div class="admin-modal admin-modal--md">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title"><i class="fas fa-language"></i> {% trans "Translate All Missing Content" %}</h3>
+                <button type="button" class="admin-modal-close" data-action="close-translate-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal-body" id="translate-all-body">
+                <div class="translate-all-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>{% trans "Calculating what needs to be translated..." %}</p>
+                </div>
+            </div>
+            <div class="admin-modal-footer" id="translate-all-footer" hidden>
+                <button type="button" class="button" data-action="close-translate-modal">
+                    {% trans "Cancel" %}
+                </button>
+                <button type="button" class="button default" id="translate-all-confirm" data-action="confirm-translate-all">
+                    <i class="fas fa-play"></i> {% trans "Start Translation" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-actions-section">
+        <h2 class="dashboard-section-title">
+            <i class="fas fa-bolt"></i>
+            {% trans "Quick Actions" %}
+        </h2>
+        <div class="dashboard-actions-grid">
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>{% trans "Languages" %}</h3>
+                <p class="description">{% trans "Manage available translation languages" %}</p>
+                <a href="{% url 'translations:language_management' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                </a>
+            </div>
+
+            {% if is_shared_fleet %}
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h3>{% trans "Managed Service" %}</h3>
+                <p class="description">{% trans "AI translation is included with your plan and managed by Spwig." %}</p>
+            </div>
+            {% else %}
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <h3>{% trans "Local Service" %}</h3>
+                <p class="description">{% trans "Configure local AI translation service" %}</p>
+                <a href="{% url 'translations:local_service' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-plug"></i>
+                </div>
+                <h3>{% trans "Providers" %}</h3>
+                <p class="description">{% trans "Configure external translation providers" %}</p>
+                <a href="{% url 'translations:external_providers' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Configure" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h3>{% trans "Jobs" %}</h3>
+                <p class="description">{% trans "View and manage translation jobs" %}</p>
+                <a href="{% url 'translations:translation_jobs' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                </a>
+            </div>
+
+            {% if not is_shared_fleet %}
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3>{% trans "Performance" %}</h3>
+                <p class="description">{% trans "Run translation performance benchmark" %}</p>
+                <button
+                    id="run-benchmark"
+                    class="button"
+                    data-action="run-benchmark"
+                    data-confirm-msg="{% trans 'Run performance test? This may take a minute.' %}"
+                    data-running-text="{% trans 'Running...' %}">
+                    <i class="fas fa-arrow-right"></i> {% trans "Test" %}
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- System Status (hidden for shared fleet — translator is managed by Spwig) -->
+    {% if not is_shared_fleet %}
+    <div class="system-status {{ system_check.status }}">
+        {% if system_check.meets_requirements %}
+            <h2>✅ {% trans "Congratulations! Your server supports the minimum requirements to run our AI translation module!" %}</h2>
+            <p>
+                <strong>{% trans "System Resources:" %}</strong>
+                {% trans "CPU" %}: {{ system_check.cpu_cores }} {% trans "cores" %} |
+                {% trans "RAM" %}: {{ system_check.ram_gb|floatformat:1 }}GB |
+                {% trans "Free Disk" %}: {{ system_check.disk_free_gb|floatformat:1 }}GB
+            </p>
+            {% if system_check.recommendations %}
+                <p><strong>{% trans "Recommendations:" %}</strong></p>
+                <ul>
+                    {% for rec in system_check.recommendations %}
+                        <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% else %}
+            <h2>⚠️ {% trans "Your system doesn't meet the requirements" %}</h2>
+            <p>
+                {% blocktrans %}
+                Minimum: 4 vCPU/8GB RAM/3GB free disk.
+                Detected: {{ system_check.cpu_cores }} vCPU/{{ system_check.ram_gb|floatformat:1 }}GB RAM/{{ system_check.disk_free_gb|floatformat:1 }}GB free.
+                You may enable AI translation, but performance may be slow and could impact shoppers during bulk translations.
+                Consider scheduling jobs off-peak or use an external provider.
+                {% endblocktrans %}
+            </p>
+            {% if system_check.warnings %}
+                <ul>
+                    {% for warning in system_check.warnings %}
+                        <li>{{ warning }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <h2>{% trans "Service Control" %}</h2>
+        <div class="status-flex">
+            <div>
+                <label for="service-toggle">{% trans "Enable Translation Services" %}</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="service-toggle" {% if translator_enabled %}checked{% endif %}>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div>
+                <strong>{% trans "Status:" %}</strong>
+                <span id="service-status">
+                    {% if service_info %}
+                        <span class="status-online">● {% trans "Online" %}</span>
+                    {% else %}
+                        <span class="status-offline">● {% trans "Offline" %}</span>
+                    {% endif %}
+                </span>
+            </div>
+            {% if service_info %}
+            <div>
+                <strong>{% trans "Model:" %}</strong> {{ service_info.model_name|default:"—" }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Test -->
+    <div class="module">
+        <h2>{% trans "Quick Translation Test" %}</h2>
+        <form id="quick-test-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <label for="test-text" class="required">{% trans "Text to translate:" %}</label>
+                <textarea id="test-text" name="text" rows="3" class="vLargeTextField" placeholder="{% trans 'Enter text to translate...' %}">{% trans "Hello, welcome to our store!" %}</textarea>
+            </div>
+            <div class="form-row">
+                <div class="language-select-grid">
+                    <div>
+                        <label for="source-lang" class="required">{% trans "From:" %}</label>
+                        <select id="source-lang" name="source_lang" class="form-control">
+                            <option value="en">{% trans "English" %}</option>
+                            <option value="es">{% trans "Spanish" %}</option>
+                            <option value="fr">{% trans "French" %}</option>
+                            <option value="de">{% trans "German" %}</option>
+                            <option value="pt">{% trans "Portuguese" %}</option>
+                            <option value="zh">{% trans "Chinese" %}</option>
+                            <option value="ja">{% trans "Japanese" %}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="target-lang" class="required">{% trans "To:" %}</label>
+                        <select id="target-lang" name="target_lang" class="form-control">
+                            <option value="es">{% trans "Spanish" %}</option>
+                            <option value="en">{% trans "English" %}</option>
+                            <option value="fr">{% trans "French" %}</option>
+                            <option value="de">{% trans "German" %}</option>
+                            <option value="pt">{% trans "Portuguese" %}</option>
+                            <option value="zh">{% trans "Chinese" %}</option>
+                            <option value="ja">{% trans "Japanese" %}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="submit-row">
+                <button type="submit" class="default" id="translate-btn">
+                    <i id="translate-btn-icon" class="fas fa-language"></i>
+                    <span id="translate-btn-text" data-label="{% trans 'Translate' %}" data-translating="{% trans 'Translating...' %}">{% trans "Translate" %}</span>
+                </button>
+            </div>
+        </form>
+        <div id="translation-result" class="hidden">
+            <h3>{% trans "Translation Result" %}</h3>
+            <div id="translated-text"></div>
+            <div class="translation-stats">
+                <span>📊 <strong>{% trans "Latency:" %}</strong> <span id="translation-latency">-</span>ms</span>
+                <span>⚡ <strong>{% trans "Speed:" %}</strong> <span id="translation-speed">-</span> {% trans "chars/s" %}</span>
+                <span>🔤 <strong>{% trans "Characters:" %}</strong> <span id="translation-chars">-</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Jobs -->
+    <div class="recent-jobs">
+        <div class="recent-jobs-header">
+            <h2>{% trans "Recent Translation Jobs" %}</h2>
+            <a href="{% url 'translations:translation_jobs' %}" class="button">
+                <i class="fas fa-external-link-alt"></i> {% trans "View All Jobs" %}
+            </a>
+        </div>
+        {% if recent_jobs %}
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>{% trans "ID" %}</th>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Languages" %}</th>
+                    <th>{% trans "Progress" %}</th>
+                    <th>{% trans "Created" %}</th>
+                    <th>{% trans "User" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in recent_jobs %}
+                <tr>
+                    <td>#{{ job.id }}</td>
+                    <td>{{ job.get_job_type_display }}</td>
+                    <td><span class="job-status {{ job.status }}">{{ job.get_status_display }}</span></td>
+                    <td>{{ job.source_language }} → {{ job.target_languages|join:", " }}</td>
+                    <td>
+                        <div class="job-progress-container">
+                            <div class="job-progress-bar" data-width="{{ job.progress }}">
+                                {{ job.progress }}%
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ job.created_at|timesince }} {% trans "ago" %}</td>
+                    <td>{{ job.created_by|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>{% trans "No translation jobs yet." %}</p>
+        {% endif %}
+    </div>
+</div>
+    </div> <!-- /dashboard-content -->
+    <div id="translations-config"
+         data-download-status-url="{% url 'translations_api:download_status' %}"
+         data-download-start-url="{% url 'translations_api:start_download' %}"
+         data-quick-translate-url="{% url 'translations_api:quick_translate' %}"
+         data-toggle-service-url="{% url 'translations_api:toggle_service' %}"
+         data-benchmark-url="{% url 'translations_api:run_benchmark' %}"
+         data-jobs-url="{% url 'translations:translation_jobs' %}"
+         hidden></div>
+    <script src="{% static 'translations/admin/js/dashboard.js' %}" defer></script>
+{% endblock %}

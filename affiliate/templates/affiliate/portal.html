@@ -1,0 +1,272 @@
+{% extends "affiliate/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Affiliate Program" context "portal" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'affiliate/css/portal.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="affiliate-portal-landing">
+    {# Hero Section #}
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1><i class="fas fa-users"></i> {{ hero_title }}</h1>
+            <p class="hero-subtitle">{{ hero_subtitle }}</p>
+
+            {% if is_affiliate %}
+                <div class="hero-actions">
+                    <a href="{% url 'affiliate:dashboard' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-chart-line"></i> {% trans "Go to Dashboard" context "action" %}
+                    </a>
+                </div>
+            {% else %}
+                <div class="hero-actions">
+                    {% if can_register %}
+                        <button class="btn btn-primary btn-lg" data-action="show-registration-modal">
+                            <i class="fas fa-user-plus"></i> {% trans "Become an Affiliate" context "action" %}
+                        </button>
+                    {% endif %}
+                    {# Affiliate Login is always shown for non-affiliates (guests AND
+                       logged-in non-affiliate users) so returning affiliates can
+                       reach their dashboard without having to spot the small Login
+                       link in the corner of the nav. #}
+                    <a href="{% url 'account_login' %}?next={% url 'affiliate:dashboard' %}"
+                       class="btn {% if can_register %}btn-outline{% else %}btn-primary{% endif %} btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> {% trans "Affiliate Login" context "action" %}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">{{ active_programs }}</div>
+                <div class="stat-label">{% trans "Active Programs" context "stats" %}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ total_affiliates|default:"0" }}</div>
+                <div class="stat-label">{% trans "Affiliates" context "stats" %}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">30%</div>
+                <div class="stat-label">{% trans "Avg. Commission" context "stats" %}</div>
+            </div>
+        </div>
+    </section>
+
+    {# Features Section #}
+    <section class="features-section">
+        <h2>{{ features_title }}</h2>
+
+        <div class="features-grid">
+            {% for feature in features %}
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="{{ feature.icon }}"></i>
+                </div>
+                <h3>{{ feature.title }}</h3>
+                <p>{{ feature.description }}</p>
+            </div>
+            {% empty %}
+            {# Fallback default features if none configured #}
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3>{% trans "High Commissions" context "features" %}</h3>
+                <p>{% trans "Earn generous commissions on every sale you refer." context "features" %}</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>{% trans "Cookie Duration" context "features" %}</h3>
+                <p>{% trans "Extended cookie lifetime ensures you get credit for sales." context "features" %}</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>{% trans "Real-time Tracking" context "features" %}</h3>
+                <p>{% trans "Track clicks, conversions, and earnings in real-time." context "features" %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# How It Works Section #}
+    <section class="how-it-works-section">
+        <h2>{{ how_it_works_title }}</h2>
+
+        <div class="steps-container">
+            {% for step in steps %}
+            {% if not forloop.first %}
+            <div class="step-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+            {% endif %}
+            <div class="step-item">
+                <div class="step-number">{{ forloop.counter }}</div>
+                <div class="step-content">
+                    <h3>{{ step.title }}</h3>
+                    <p>{{ step.description }}</p>
+                </div>
+            </div>
+            {% empty %}
+            {# Fallback default steps if none configured #}
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>{% trans "Sign Up" context "steps" %}</h3>
+                    <p>{% trans "Create your free affiliate account." context "steps" %}</p>
+                </div>
+            </div>
+            <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>{% trans "Get Your Links" context "steps" %}</h3>
+                    <p>{% trans "Generate unique tracking links." context "steps" %}</p>
+                </div>
+            </div>
+            <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>{% trans "Promote" context "steps" %}</h3>
+                    <p>{% trans "Share your links anywhere." context "steps" %}</p>
+                </div>
+            </div>
+            <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>{% trans "Earn Money" context "steps" %}</h3>
+                    <p>{% trans "Get paid for every sale!" context "steps" %}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# CTA Section #}
+    <section class="cta-section">
+        <h2>{{ cta_title }}</h2>
+        <p>{{ cta_description }}</p>
+
+        {% if is_affiliate %}
+            <a href="{% url 'affiliate:dashboard' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-chart-line"></i> {% trans "Go to Dashboard" context "action" %}
+            </a>
+        {% else %}
+            {% if can_register %}
+                <button class="btn btn-primary btn-lg" data-action="show-registration-modal">
+                    <i class="fas fa-user-plus"></i> {% trans "Become an Affiliate" context "action" %}
+                </button>
+            {% endif %}
+            <a href="{% url 'account_login' %}?next={% url 'affiliate:dashboard' %}"
+               class="btn {% if can_register %}btn-outline{% else %}btn-primary{% endif %} btn-lg">
+                <i class="fas fa-sign-in-alt"></i> {% trans "Affiliate Login" context "action" %}
+            </a>
+        {% endif %}
+    </section>
+</div>
+
+{# Registration Modal #}
+{% if can_register %}
+<div id="registrationModal" class="affiliate-modal hidden">
+    <div class="affiliate-modal-overlay" data-action="hide-registration-modal"></div>
+    <div class="affiliate-modal-content">
+        <div class="affiliate-modal-header">
+            <h3><i class="fas fa-user-plus"></i> {% trans "Become an Affiliate" context "modal" %}</h3>
+            <button type="button" class="affiliate-modal-close" data-action="hide-registration-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="affiliate-modal-body">
+            {# Auth toggle - shown only for guests when guest registration is allowed #}
+            {% if not user.is_authenticated and settings.allow_guest_registration %}
+            <div class="affiliate-auth-toggle">
+                <button type="button" class="auth-tab active" data-mode="register" data-action="switch-auth-mode">
+                    <i class="fas fa-user-plus"></i> {% trans "Create Account" context "modal" %}
+                </button>
+                <button type="button" class="auth-tab" data-mode="login" data-action="switch-auth-mode">
+                    <i class="fas fa-sign-in-alt"></i> {% trans "I Have an Account" context "modal" %}
+                </button>
+            </div>
+            <div id="loginPrompt" class="affiliate-login-prompt hidden">
+                <p>{% trans "Already have an account? Sign in to continue your application." context "modal" %}</p>
+                <a href="{% url 'account_login' %}?next={{ request.path }}" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> {% trans "Sign In" context "action" %}
+                </a>
+            </div>
+            {% endif %}
+
+            <form id="affiliateRegistrationForm" data-dashboard-url="{% url 'affiliate:dashboard' %}" {% if not user.is_authenticated and settings.allow_guest_registration %}data-guest-mode="true"{% endif %}>
+                <div id="registrationError" class="affiliate-alert affiliate-alert-danger hidden"></div>
+                <div id="registrationSuccess" class="affiliate-alert affiliate-alert-success hidden"></div>
+
+                {# Include form fields (default or form_builder) #}
+                {% include "affiliate/partials/default_registration_fields.html" %}
+
+                {# Terms & Conditions checkbox #}
+                <div class="affiliate-form-group affiliate-terms-group">
+                    <label class="affiliate-checkbox-label">
+                        <input type="checkbox" id="terms_accepted" name="terms_accepted" required>
+                        <span>
+                            {% if settings.terms_url %}
+                            {% blocktrans with url=settings.terms_url %}I agree to the <a href="{{ url }}" target="_blank">Affiliate Terms & Conditions</a>{% endblocktrans %}
+                            {% else %}
+                            {% trans "I agree to the Affiliate Terms & Conditions" context "form" %}
+                            {% endif %}
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                </div>
+
+                {% if settings.require_approval %}
+                <div class="affiliate-info-box">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Your application will be reviewed by our team. You will receive an email once approved." context "form" %}
+                </div>
+                {% endif %}
+
+                <div class="affiliate-modal-actions">
+                    <button type="button" class="btn btn-secondary" data-action="hide-registration-modal">
+                        {% trans "Cancel" context "action" %}
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> {% trans "Submit Application" context "action" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{# i18n strings for affiliate-portal.js #}
+{% if can_register %}
+<script type="application/json" id="affiliate-portal-i18n">
+{
+  "submitting": "{% trans 'Submitting...' context 'action' %}",
+  "submitApplication": "{% trans 'Submit Application' context 'action' %}",
+  "fillEmailPassword": "{% trans 'Please fill in your email and password to create an account.' context 'error' %}",
+  "acceptTerms": "{% trans 'You must accept the terms and conditions to continue.' context 'error' %}",
+  "applicationSubmitted": "{% trans 'Your affiliate application has been submitted successfully!' context 'success' %}",
+  "redirecting": "{% trans 'Redirecting to your dashboard...' context 'success' %}",
+  "generalError": "{% trans 'An error occurred. Please try again.' context 'error' %}",
+  "confirmApply": "{% trans 'Would you like to apply to join' context 'confirm' %}",
+  "applicationSuccess": "{% trans 'Application submitted successfully! You will be notified once it is reviewed.' context 'success' %}",
+  "applicationError": "{% trans 'Unable to submit application. Please try again later.' context 'error' %}",
+  "createLinkSoon": "{% trans 'Create link functionality coming soon!' %}",
+  "linkStatsSoon": "{% trans 'Link statistics coming soon!' %}",
+  "editLinkSoon": "{% trans 'Edit link functionality coming soon!' %}",
+  "payoutSoon": "{% trans 'Payout request functionality coming soon!' %}"
+}
+</script>
+{% endif %}
+{% endblock %}

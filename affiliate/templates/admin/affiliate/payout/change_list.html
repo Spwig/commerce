@@ -1,0 +1,195 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static humanize %}
+
+{% block title %}{% trans "Payouts" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate-dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate-admin.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {# Page Header #}
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-credit-card"></i>
+                {% trans "Affiliate Payouts" %}
+            </h1>
+            <p class="subtitle">{% trans "Process affiliate payments and track payout history" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'affiliate:merchant_dashboard' %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Dashboard" %}
+            </a>
+            <a href="{% url 'admin:affiliate_payout_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Create Payout" %}
+            </a>
+        </div>
+    </div>
+
+    {# Stats #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ pending_count|default:"0" }}</div>
+            <div class="label">{% trans "Pending" %}</div>
+            <small class="stat-meta">${{ pending_amount|default:"0"|floatformat:2 }}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-sync"></i></div>
+            <div class="value">{{ processing_count|default:"0" }}</div>
+            <div class="label">{% trans "Processing" %}</div>
+            <small class="stat-meta">{% trans "in progress" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ completed_count|default:"0" }}</div>
+            <div class="label">{% trans "Completed" %}</div>
+            <small class="stat-meta">${{ completed_amount|default:"0"|floatformat:2 }}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-times-circle"></i></div>
+            <div class="value">{{ failed_count|default:"0" }}</div>
+            <div class="label">{% trans "Failed/Cancelled" %}</div>
+            <small class="stat-meta">{% trans "requires attention" %}</small>
+        </div>
+    </div>
+
+    {# Filters Panel #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            {# Search #}
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Affiliate code, name, reference...' %}"
+                    value="{{ request.GET.search|default:'' }}">
+            </div>
+
+            {# Status Filter #}
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                    <option value="processing">{% trans "Processing" %}</option>
+                    <option value="completed">{% trans "Completed" %}</option>
+                    <option value="failed">{% trans "Failed" %}</option>
+                    <option value="cancelled">{% trans "Cancelled" %}</option>
+                </select>
+            </div>
+
+            {# Method Filter #}
+            <div class="filter-field">
+                <label for="filter-payment-method">
+                    <i class="fas fa-money-check"></i> {% trans "Payment Method" %}
+                </label>
+                <select id="filter-payment-method">
+                    <option value="">{% trans "All Methods" %}</option>
+                    {% for method in method_choices %}
+                    <option value="{{ method }}">{{ method|capfirst }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {# Provider Filter #}
+            <div class="filter-field">
+                <label for="filter-provider">
+                    <i class="fas fa-building"></i> {% trans "Provider" %}
+                </label>
+                <select id="filter-provider">
+                    <option value="">{% trans "All Providers" %}</option>
+                    {% for provider in provider_accounts %}
+                    <option value="{{ provider.id }}">{{ provider.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Results Info #}
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-credit-card"></i>
+            <span id="payout-count">{{ cl.result_count|default:payouts|length }}</span>
+            {% trans "payout" %}{{ cl.result_count|default:payouts|length|pluralize }}
+        </span>
+    </div>
+
+    {# Actions bar for bulk operations #}
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-payout" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {# Payout Cards Results #}
+    <div id="payout-results">
+        {% include "admin/affiliate/payout/partials/payout_cards.html" with payouts=payouts %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    {# Pagination #}
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 payout{% plural %}{{ counter }} payouts{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'payouts' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="affiliate-list-config"
+         data-filter-path="/admin/affiliate/payouts/filter/"
+         data-results-container="payout-results"
+         data-results-count="payout-count"
+         style="display:none;"></div>
+    <script src="{% static 'affiliate/js/affiliate-admin.js' %}" defer></script>
+</div>
+{% endblock %}

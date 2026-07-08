@@ -1,0 +1,216 @@
+{% extends "admin/payment_providers/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <div class="provider-header">
+        <div class="provider-logo-small">
+            <img src="{{ provider.component.icon|default:provider.component.thumbnail_url }}"
+                 alt="{{ provider.component.name }}"
+                 data-img-fallback-src="{% static 'core/admin/img/default-provider.svg' %}">
+        </div>
+        <div class="provider-info">
+            <h2 class="step-title">{% trans "Configure Provider" %}</h2>
+            <p class="step-description">{% trans "Finalize your" %} {{ provider.component.name }} {% trans "settings" %}</p>
+        </div>
+    </div>
+
+    <form method="post" id="configure-form" class="configure-form">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{% trans "Please correct the errors below:" %}</strong>
+                {{ form.errors }}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-toggle-on"></i> {% trans "Activation" %}
+            </h3>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox"
+                           name="is_active"
+                           id="id_is_active"
+                           {% if form.is_active.value or form.is_active.value == None %}checked{% endif %}>
+                    <span>{% trans "Enable this payment provider for checkout" %}</span>
+                </label>
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "When enabled, customers will be able to use this payment method during checkout." %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox"
+                           name="is_default"
+                           id="id_is_default"
+                           {% if form.is_default.value %}checked{% endif %}>
+                    <span>{% trans "Set as default payment provider" %}</span>
+                </label>
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "The default provider will be pre-selected during checkout. You can only have one default provider." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-sort"></i> {% trans "Display Order" %}
+            </h3>
+
+            <div class="form-group">
+                <label for="id_sort_order">
+                    {% trans "Sort Order" %}
+                </label>
+                <input type="number"
+                       name="sort_order"
+                       id="id_sort_order"
+                       class="form-control"
+                       min="0"
+                       value="{{ form.sort_order.value|default:0 }}">
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "Lower numbers appear first in the checkout payment method list. Use this to control the order of payment options." %}
+                </p>
+            </div>
+        </div>
+
+        {% if settings_schema %}
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-sliders-h"></i> {% trans "Advanced Settings" %}
+            </h3>
+
+            {% for setting_name, setting_config in settings_schema.items %}
+            <div class="form-group">
+                <label for="id_setting_{{ setting_name }}">
+                    {{ setting_config.label }}
+                    {% if setting_config.required %}<span class="required">*</span>{% endif %}
+                </label>
+
+                {% if setting_config.type == 'boolean' %}
+                    <label class="checkbox-label">
+                        <input type="checkbox"
+                               name="setting_{{ setting_name }}"
+                               id="id_setting_{{ setting_name }}"
+                               {% if setting_config.default %}checked{% endif %}>
+                        <span>{{ setting_config.label }}</span>
+                    </label>
+                {% elif setting_config.type == 'select' %}
+                    <select name="setting_{{ setting_name }}"
+                            id="id_setting_{{ setting_name }}"
+                            class="form-control"
+                            {% if setting_config.required %}required{% endif %}>
+                        {% for choice in setting_config.options %}
+                        <option value="{{ choice.value }}"
+                                {% if choice.value == setting_config.default %}selected{% endif %}>
+                            {{ choice.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                {% elif setting_config.type == 'multiselect' %}
+                    <select name="setting_{{ setting_name }}"
+                            id="id_setting_{{ setting_name }}"
+                            class="vSelectField"
+                            multiple
+                            {% if setting_config.required %}required{% endif %}>
+                        {% for choice in setting_config.options %}
+                        <option value="{{ choice.value }}"
+                                {% if setting_config.saved_value %}
+                                    {% if choice.value in setting_config.saved_value %}selected{% endif %}
+                                {% elif setting_config.default %}
+                                    {% if choice.value in setting_config.default %}selected{% endif %}
+                                {% endif %}>
+                            {{ choice.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                {% elif setting_config.type == 'number' %}
+                    <input type="number"
+                           name="setting_{{ setting_name }}"
+                           id="id_setting_{{ setting_name }}"
+                           class="form-control"
+                           value="{{ setting_config.default|default:'' }}"
+                           {% if setting_config.min %}min="{{ setting_config.min }}"{% endif %}
+                           {% if setting_config.max %}max="{{ setting_config.max }}"{% endif %}
+                           {% if setting_config.required %}required{% endif %}>
+                {% else %}
+                    <input type="text"
+                           name="setting_{{ setting_name }}"
+                           id="id_setting_{{ setting_name }}"
+                           class="form-control"
+                           value="{{ setting_config.default|default:'' }}"
+                           {% if setting_config.required %}required{% endif %}>
+                {% endif %}
+
+                {% if setting_config.help_text %}
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i> {{ setting_config.help_text }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-link"></i> {% trans "Webhook Configuration" %}
+            </h3>
+
+            <div class="webhook-info">
+                <p>{% trans "To receive real-time payment notifications, configure the following webhook URL in your" %} {{ provider.component.name }} {% trans "dashboard:" %}</p>
+
+                <div class="webhook-url-box">
+                    <code id="webhook-url">{{ webhook_url }}</code>
+                    <button type="button" class="btn-copy" data-clipboard-target="#webhook-url">
+                        <i class="fas fa-copy"></i> {% trans "Copy" %}
+                    </button>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>{% trans "Important" %}</strong>
+                        <p>{% trans "Webhooks allow your store to receive instant notifications when payments are completed, refunded, or encounter issues. Configure this in your payment provider's dashboard to ensure smooth operation." %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'payment_providers:wizard_step4' %}?component_id={{ component_id }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="configure-form" class="btn btn-success">
+        <i class="fas fa-check"></i> {% trans "Complete Setup" %}
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_scripts %}
+<script type="application/json" id="wizard-step5-config">
+{
+    "i18n": {
+        "copied": "{% trans 'Copied!' %}",
+        "copyFailed": "{% trans 'Failed to copy to clipboard. Please copy manually.' %}",
+        "defaultConfirm": "{% trans 'Setting this as the default will remove the default status from any other payment provider. Continue?' %}",
+        "cannotSetDefault": "{% trans 'Cannot set as default while inactive. Please enable the provider first.' %}"
+    }
+}
+</script>
+<script src="{% static 'payment_providers/js/wizard-step5.js' %}"></script>
+{% endblock wizard_scripts %}

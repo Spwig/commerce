@@ -1,0 +1,452 @@
+{
+  "element_type": "image",
+  "name": "Image",
+  "description": "Responsive image element with media library integration and advanced styling controls",
+  "version": "2.1.0",
+  "category": "media",
+  "icon": "fa-image",
+  "author": "Spwig",
+  "element_builder_primitive": true,
+  "tags": ["image", "media", "photo", "picture"],
+  "supports_translation": true,
+  "translation_domain": "image_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/image.css"],
+  "disable_base_properties": [
+    "text_color",
+    "border",
+    "rounded",
+    "box_shadow",
+    "opacity",
+    "spacing"
+  ],
+  "tabs": {
+    "basic": {
+      "label": "Image",
+      "icon": "fas fa-image",
+      "order": 1,
+      "properties": {
+        "source_group": {
+          "type": "property_group",
+          "label": "Image Source",
+          "columns": 1,
+          "properties": {
+            "src": {
+              "type": "media_library",
+              "label": "Select Image",
+              "required": true,
+              "accept": "image/*",
+              "help_text": "Click to browse or upload images from Media Library"
+            },
+            "image_size": {
+              "type": "select",
+              "label": "Size Preset",
+              "options": [
+                {"value": "original", "label": "Original"},
+                {"value": "large", "label": "Large"},
+                {"value": "medium", "label": "Medium"},
+                {"value": "small", "label": "Small"}
+              ],
+              "default": "original",
+              "help_text": "Use optimized thumbnail sizes for better performance"
+            }
+          }
+        },
+        "accessibility_group": {
+          "type": "property_group",
+          "label": "Accessibility & SEO",
+          "columns": 1,
+          "properties": {
+            "alt": {
+              "type": "string",
+              "label": "Alt Text",
+              "default": "",
+              "translatable": true,
+              "required": true,
+              "help_text": "Descriptive text for accessibility and SEO"
+            },
+            "title": {
+              "type": "string",
+              "label": "Image Title",
+              "translatable": true,
+              "help_text": "Tooltip text shown on hover"
+            }
+          }
+        },
+        "caption_group": {
+          "type": "property_group",
+          "label": "Caption",
+          "columns": 1,
+          "properties": {
+            "show_caption": {
+              "type": "checkbox",
+              "label": "Show Caption",
+              "default": false,
+              "help_text": "Display caption below the image"
+            },
+            "caption": {
+              "type": "textarea",
+              "label": "Caption Text",
+              "translatable": true,
+              "rows": 2,
+              "help_text": "Image caption displayed below the image",
+              "full_width": true,
+              "show_when": {"property": "show_caption", "value": true}
+            }
+          }
+        },
+        "size_cropping_group": {
+          "type": "property_group",
+          "label": "Size & Cropping",
+          "properties": {
+            "width": {
+              "type": "select",
+              "label": "Width",
+              "options": [
+                {"value": "auto", "label": "Auto"},
+                {"value": "full", "label": "Full Width"},
+                {"value": "1/2", "label": "Half Width"},
+                {"value": "1/3", "label": "One Third"},
+                {"value": "2/3", "label": "Two Thirds"},
+                {"value": "1/4", "label": "Quarter Width"},
+                {"value": "3/4", "label": "Three Quarters"}
+              ],
+              "default": "full"
+            },
+            "height": {
+              "type": "select",
+              "label": "Height",
+              "options": [
+                {"value": "auto", "label": "Auto"},
+                {"value": "32", "label": "Small (8rem)"},
+                {"value": "48", "label": "Medium (12rem)"},
+                {"value": "64", "label": "Large (16rem)"},
+                {"value": "80", "label": "Extra Large (20rem)"},
+                {"value": "96", "label": "2X Large (24rem)"},
+                {"value": "full", "label": "Full Height"}
+              ],
+              "default": "auto"
+            },
+            "aspect_ratio": {
+              "type": "aspect_ratio_selector",
+              "label": "Aspect Ratio",
+              "default": "",
+              "full_width": true,
+              "help_text": "Constrain the image to a specific aspect ratio"
+            },
+            "object_fit": {
+              "type": "select",
+              "label": "Fit Mode",
+              "options": [
+                {"value": "cover", "label": "Cover"},
+                {"value": "contain", "label": "Contain"},
+                {"value": "fill", "label": "Fill"},
+                {"value": "none", "label": "None"},
+                {"value": "scale-down", "label": "Scale Down"}
+              ],
+              "default": "cover"
+            },
+            "focal_point": {
+              "type": "focal_point",
+              "label": "Focal Point",
+              "utility": "focal_point_editor",
+              "help_text": "Set where the image should focus when cropped",
+              "default": {"x": 0.5, "y": 0.5}
+            },
+            "max_width": {
+              "type": "select",
+              "label": "Max Width",
+              "options": [
+                {"value": "", "label": "None"},
+                {"value": "xs", "label": "Extra Small (20rem)"},
+                {"value": "sm", "label": "Small (24rem)"},
+                {"value": "md", "label": "Medium (28rem)"},
+                {"value": "lg", "label": "Large (32rem)"},
+                {"value": "xl", "label": "Extra Large (36rem)"},
+                {"value": "2xl", "label": "2X Large (42rem)"}
+              ],
+              "default": ""
+            },
+            "custom_width": {
+              "type": "string",
+              "label": "Custom Width",
+              "placeholder": "e.g., 300px, 50%, 20rem",
+              "help_text": "Override width with custom value"
+            }
+          }
+        }
+      }
+    },
+    "style": {
+      "label": "Style",
+      "icon": "fas fa-palette",
+      "order": 2,
+      "properties": {
+        "alignment_group": {
+          "type": "property_group",
+          "label": "Alignment",
+          "columns": 1,
+          "properties": {
+            "align": {
+              "type": "select",
+              "label": "Alignment",
+              "options": [
+                {"value": "left", "label": "Left"},
+                {"value": "center", "label": "Center"},
+                {"value": "right", "label": "Right"}
+              ],
+              "default": "center"
+            }
+          }
+        },
+        "border_group": {
+          "type": "property_group",
+          "label": "Border & Radius",
+          "columns": 1,
+          "properties": {
+            "border": {
+              "type": "border_advanced",
+              "label": "Border",
+              "help_text": "Configure border width, style, color and radius",
+              "utility": "border_editor",
+              "default": ""
+            }
+          }
+        },
+        "shadow_group": {
+          "type": "property_group",
+          "label": "Shadow",
+          "columns": 1,
+          "properties": {
+            "shadow": {
+              "type": "shadow",
+              "label": "Box Shadow",
+              "help_text": "Add shadow effect to the image",
+              "utility": "shadow_editor",
+              "shadow_type": "box",
+              "default": ""
+            }
+          }
+        },
+        "overlay_group": {
+          "type": "property_group",
+          "label": "Overlay",
+          "properties": {
+            "overlay_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "utility": "color_picker",
+              "help_text": "Color overlay on the image"
+            },
+            "overlay_opacity": {
+              "type": "range",
+              "label": "Opacity",
+              "min": 0,
+              "max": 1,
+              "step": 0.05,
+              "default": 0.25,
+              "help_text": "Overlay transparency (0 = invisible, 1 = solid)"
+            }
+          }
+        },
+        "filters_group": {
+          "type": "property_group",
+          "label": "Image Filters",
+          "properties": {
+            "filter_preset": {
+              "type": "select",
+              "label": "Filter Preset",
+              "options": [
+                {"value": "none", "label": "None"},
+                {"value": "grayscale", "label": "Grayscale"},
+                {"value": "sepia", "label": "Sepia"},
+                {"value": "vintage", "label": "Vintage"},
+                {"value": "high-contrast", "label": "High Contrast"},
+                {"value": "soft", "label": "Soft"},
+                {"value": "dramatic", "label": "Dramatic"},
+                {"value": "custom", "label": "Custom"}
+              ],
+              "default": "none",
+              "help_text": "Quick filter presets, or 'Custom' for manual control"
+            },
+            "filter_grayscale": {
+              "type": "range",
+              "label": "Grayscale",
+              "min": 0,
+              "max": 100,
+              "step": 5,
+              "default": 0,
+              "show_when": {"property": "filter_preset", "value": "custom"}
+            },
+            "filter_brightness": {
+              "type": "range",
+              "label": "Brightness",
+              "min": 0,
+              "max": 200,
+              "step": 5,
+              "default": 100,
+              "show_when": {"property": "filter_preset", "value": "custom"}
+            },
+            "filter_contrast": {
+              "type": "range",
+              "label": "Contrast",
+              "min": 0,
+              "max": 200,
+              "step": 5,
+              "default": 100,
+              "show_when": {"property": "filter_preset", "value": "custom"}
+            },
+            "filter_saturate": {
+              "type": "range",
+              "label": "Saturation",
+              "min": 0,
+              "max": 200,
+              "step": 5,
+              "default": 100,
+              "show_when": {"property": "filter_preset", "value": "custom"}
+            },
+            "filter_blur": {
+              "type": "range",
+              "label": "Blur",
+              "min": 0,
+              "max": 20,
+              "step": 1,
+              "default": 0,
+              "help_text": "Blur amount in pixels",
+              "show_when": {"property": "filter_preset", "value": "custom"}
+            }
+          }
+        },
+        "effects_group": {
+          "type": "property_group",
+          "label": "Effects",
+          "properties": {
+            "opacity": {
+              "type": "range",
+              "label": "Opacity",
+              "min": 0,
+              "max": 1,
+              "step": 0.1,
+              "default": 1
+            }
+          }
+        }
+      }
+    },
+    "link": {
+      "label": "Link",
+      "icon": "fas fa-link",
+      "order": 3,
+      "properties": {
+        "link_group": {
+          "type": "property_group",
+          "label": "Link Settings",
+          "columns": 1,
+          "properties": {
+            "link_url": {
+              "type": "link_selector",
+              "label": "Link URL",
+              "help_text": "Make image clickable"
+            },
+            "link_target": {
+              "type": "select",
+              "label": "Target",
+              "options": [
+                {"value": "_self", "label": "Same Window"},
+                {"value": "_blank", "label": "New Window"}
+              ],
+              "default": "_self"
+            },
+            "link_title": {
+              "type": "string",
+              "label": "Link Title",
+              "translatable": true,
+              "help_text": "Link tooltip text"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "src": {
+      "type": "media_library",
+      "label": "Image Source",
+      "required": true,
+      "accept": "image/*"
+    },
+    "alt": {
+      "type": "string",
+      "label": "Alt Text",
+      "default": "",
+      "translatable": true,
+      "required": true,
+      "help_text": "Descriptive text for accessibility"
+    },
+    "width": {
+      "type": "select",
+      "label": "Width",
+      "options": [
+        {"value": "auto", "label": "Auto"},
+        {"value": "full", "label": "Full Width"},
+        {"value": "1/2", "label": "Half Width"},
+        {"value": "1/3", "label": "One Third"},
+        {"value": "2/3", "label": "Two Thirds"}
+      ],
+      "default": "full"
+    },
+    "align": {
+      "type": "select",
+      "label": "Alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "center"
+    }
+  },
+  "translations": {
+    "en": {
+      "name": "Image",
+      "description": "Responsive image element with media library integration and advanced styling controls"
+    },
+    "es": {
+      "name": "Imagen",
+      "description": "Elemento de imagen responsivo con integracion de biblioteca de medios y controles de estilo avanzados"
+    },
+    "fr": {
+      "name": "Image",
+      "description": "Element d'image responsive avec integration de la mediatheque et controles de style avances"
+    },
+    "de": {
+      "name": "Bild",
+      "description": "Responsives Bildelement mit Medienbibliothek-Integration und erweiterten Stiloptionen"
+    },
+    "pt": {
+      "name": "Imagem",
+      "description": "Elemento de imagem responsivo com integracao de biblioteca de midia e controles de estilo avancados"
+    },
+    "zh-hans": {
+      "name": "Image",
+      "description": "Responsive image element with media library integration and advanced styling controls"
+    },
+    "ja": {
+      "name": "Image",
+      "description": "Responsive image element with media library integration and advanced styling controls"
+    }
+  },
+  "defaults": {
+    "src": "/static/images/placeholder_image.webp",
+    "alt": "Placeholder Image",
+    "image_width": "100",
+    "image_width_unit": "%",
+    "image_height": "auto",
+    "object_fit": "cover",
+    "lazy": true,
+    "border_radius": 8,
+    "caption": "",
+    "caption_align": "center"
+  }
+}

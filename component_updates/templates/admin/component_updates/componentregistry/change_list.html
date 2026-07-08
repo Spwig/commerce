@@ -1,0 +1,321 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Component Updates" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'component_updates/admin/css/component_registry_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-puzzle-piece"></i>
+                {% trans "Component Updates" %}
+            </h1>
+            <p class="subtitle">
+                {% trans "Manage installed components and check for updates" %}
+                {% if updates_available > 0 %}
+                    <span class="list-row-card-badge list-row-card-badge-warning cu-ml-8">
+                        <i class="fas fa-exclamation-circle"></i> {{ updates_available }} {% trans "update" %}{{ updates_available|pluralize }} {% trans "available" %}
+                    </span>
+                {% endif %}
+            </p>
+        </div>
+        <div class="change-list-header-actions">
+            <button type="button" class="button change-list-action-button" data-action="check-all-updates">
+                <i class="fas fa-sync-alt"></i> {% trans "Check All for Updates" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- System Update Banner -->
+    {% if system_version %}
+    <div class="system-update-banner{% if system_version.update_available %} has-update{% endif %}">
+        <div class="system-update-icon {% if system_version.update_available %}available{% else %}current{% endif %}">
+            <i class="fas {% if system_version.update_available %}fa-arrow-circle-up{% else %}fa-check-circle{% endif %}"></i>
+        </div>
+        <div class="system-update-content">
+            {% if system_version.update_available %}
+                <h3 class="system-update-title">
+                    {% trans "Platform Update Available" %}
+                    <span class="version-badge current">{{ system_version.current }}</span>
+                    <i class="fas fa-arrow-right cu-arrow-icon"></i>
+                    <span class="version-badge new">{{ system_version.available }}</span>
+                </h3>
+                <p class="system-update-description">
+                    {% trans "A new version of Spwig is available. Update to get the latest features and security fixes." %}
+                </p>
+            {% else %}
+                <h3 class="system-update-title">
+                    {% trans "Spwig Platform" %}
+                    <span class="version-badge current">{{ system_version.current }}</span>
+                </h3>
+                <p class="system-update-description">
+                    {% trans "Your platform is up to date. No system updates available." %}
+                </p>
+            {% endif %}
+        </div>
+        <div class="system-update-actions">
+            {% if system_version.update_available %}
+                <a href="{% url 'admin:management_upgrade' %}" class="button primary">
+                    <i class="fas fa-download"></i> {% trans "View Update" %}
+                </a>
+            {% endif %}
+            <a href="{% url 'admin:management_system_dashboard' %}" class="button">
+                <i class="fas fa-cog"></i> {% trans "System Dashboard" %}
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Maintenance Status Banner -->
+    {% if maintenance_status %}
+        {% if not maintenance_status.active and not maintenance_status.in_grace_period %}
+        <div class="system-update-banner" style="border-left: 4px solid var(--error-fg, #e74c3c); background: var(--error-bg, #fdf0ef);">
+            <div class="system-update-icon" style="color: var(--error-fg, #e74c3c);">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="system-update-content">
+                <h3 class="system-update-title" style="color: var(--error-fg, #e74c3c);">
+                    {% trans "Maintenance Expired" %}
+                </h3>
+                <p class="system-update-description">
+                    {% trans "Your maintenance has expired. Only security updates are available. Renew your maintenance to receive feature updates, access Spwig-hosted services, and get support." %}
+                </p>
+            </div>
+            <div class="system-update-actions">
+                <a href="https://spwig.com/en/purchase?renew={{ license_info.license_key }}" class="button primary" target="_blank" rel="noopener">
+                    <i class="fas fa-sync-alt"></i> {% trans "Renew Maintenance" %}
+                </a>
+            </div>
+        </div>
+        {% elif maintenance_status.in_grace_period %}
+        <div class="system-update-banner" style="border-left: 4px solid var(--warning-fg, #f39c12); background: var(--warning-bg, #fef9e7);">
+            <div class="system-update-icon" style="color: var(--warning-fg, #f39c12);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="system-update-content">
+                <h3 class="system-update-title" style="color: var(--warning-fg, #f39c12);">
+                    {% trans "Maintenance Grace Period" %}
+                </h3>
+                <p class="system-update-description">
+                    {% blocktrans with days=maintenance_status.grace_days_remaining %}Your maintenance has expired. You have {{ days }} days remaining in the grace period before Spwig-hosted services are disabled. Renew now to avoid service interruption.{% endblocktrans %}
+                </p>
+            </div>
+            <div class="system-update-actions">
+                <a href="https://spwig.com/en/purchase?renew={{ license_info.license_key }}" class="button primary" target="_blank" rel="noopener">
+                    <i class="fas fa-sync-alt"></i> {% trans "Renew Maintenance" %}
+                </a>
+            </div>
+        </div>
+        {% elif maintenance_status.active and maintenance_status.days_remaining is not None and maintenance_status.days_remaining <= 30 %}
+        <div class="system-update-banner" style="border-left: 4px solid var(--warning-fg, #f39c12); background: var(--warning-bg, #fef9e7);">
+            <div class="system-update-icon" style="color: var(--warning-fg, #f39c12);">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="system-update-content">
+                <h3 class="system-update-title" style="color: var(--warning-fg, #f39c12);">
+                    {% trans "Maintenance Expiring Soon" %}
+                </h3>
+                <p class="system-update-description">
+                    {% blocktrans with days=maintenance_status.days_remaining %}Your maintenance expires in {{ days }} days. Renew to continue receiving feature updates and Spwig-hosted services.{% endblocktrans %}
+                </p>
+            </div>
+            <div class="system-update-actions">
+                <a href="https://spwig.com/en/purchase?renew={{ license_info.license_key }}" class="button" target="_blank" rel="noopener">
+                    <i class="fas fa-sync-alt"></i> {% trans "Renew Maintenance" %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Stats Overview -->
+    <div class="component-stats-overview">
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon total">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+            <div class="stat-card-content">
+                <div class="stat-card-value" id="stat-total">{{ total_components }}</div>
+                <div class="stat-card-label">{% trans "Total Components" %}</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon updates">
+                <i class="fas fa-cloud-download-alt"></i>
+            </div>
+            <div class="stat-card-content">
+                <div class="stat-card-value" id="stat-updates">{{ updates_available }}</div>
+                <div class="stat-card-label">{% trans "Updates Available" %}</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon uptodate">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-card-content">
+                <div class="stat-card-value" id="stat-uptodate">{{ up_to_date }}</div>
+                <div class="stat-card-label">{% trans "Up to Date" %}</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-card-icon locked">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="stat-card-content">
+                <div class="stat-card-value" id="stat-locked">{{ locked_count }}</div>
+                <div class="stat-card-label">{% trans "Locked" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or description...' %}"
+                    value="">
+            </div>
+
+            <!-- Component Type -->
+            <div class="filter-field">
+                <label for="filter-type">
+                    <i class="fas fa-layer-group"></i> {% trans "Component Type" %}
+                </label>
+                <select id="filter-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for type_value, type_label in component_types %}
+                    <option value="{{ type_value }}">{{ type_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Update Status -->
+            <div class="filter-field">
+                <label for="filter-update-status">
+                    <i class="fas fa-cloud-download-alt"></i> {% trans "Update Status" %}
+                </label>
+                <select id="filter-update-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="available">{% trans "Updates Available" %}</option>
+                    <option value="uptodate">{% trans "Up to Date" %}</option>
+                </select>
+            </div>
+
+            <!-- Locked Status -->
+            <div class="filter-field">
+                <label for="filter-locked">
+                    <i class="fas fa-lock"></i> {% trans "Locked Status" %}
+                </label>
+                <select id="filter-locked">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="locked">{% trans "Locked" %}</option>
+                    <option value="unlocked">{% trans "Unlocked" %}</option>
+                </select>
+            </div>
+
+            <!-- Auto Update -->
+            <div class="filter-field">
+                <label for="filter-auto-update">
+                    <i class="fas fa-robot"></i> {% trans "Auto Update" %}
+                </label>
+                <select id="filter-auto-update">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="enabled">{% trans "Enabled" %}</option>
+                    <option value="disabled">{% trans "Disabled" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-components" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Installed Components" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-puzzle-piece"></i>
+            <span id="component-count">{{ cl.result_count }}</span> {% trans "component" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="component-results">
+        {% include "admin/component_updates/partials/component_cards.html" with components=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 component{% plural %}{{ counter }} components{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'components' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+<script type="application/json" id="component-registry-i18n">{"checking": "{% trans 'Checking...' %}", "failedToCheck": "{% trans 'Failed to check for updates.' %}", "errorChecking": "{% trans 'Error checking for updates. Please try again.' %}"}</script>
+<div id="component-registry-config"
+     data-filter-url="{% url 'admin:component_updates_componentregistry_filter' %}"
+     data-results-container="component-results"
+     data-results-count="component-count"
+     class="cu-hidden"></div>
+<script src="{% static 'component_updates/admin/js/component-registry-list.js' %}"></script>
+</div>
+{% endblock %}

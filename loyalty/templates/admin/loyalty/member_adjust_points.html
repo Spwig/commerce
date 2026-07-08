@@ -1,0 +1,93 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Spwig Admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/member_adjust_points.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="adjust-points-container">
+    <h1>
+        <i class="fas fa-edit"></i>
+        {% trans "Adjust Points" %}
+    </h1>
+
+    <!-- Member Info Card -->
+    <div class="member-info-card">
+        <h3>
+            <i class="fas fa-user"></i>
+            {{ member.customer.get_full_name|default:member.customer.username }}
+        </h3>
+
+        <div class="member-info-grid">
+            <div class="info-item">
+                <span class="info-label">{% trans "Available" %}</span>
+                <span class="info-value">{{ balance.available_points }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">{% trans "Pending" %}</span>
+                <span class="info-value info-value-warning">{{ balance.pending_points }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">{% trans "Reserved" %}</span>
+                <span class="info-value info-value-muted">{{ balance.reserved_points }}</span>
+            </div>
+        </div>
+
+        <div class="member-id-footer">
+            <strong>{% trans "Member ID:" %}</strong> <code>{{ member.member_id }}</code>
+        </div>
+    </div>
+
+    <!-- Adjustment Form -->
+    <form method="post" class="adjust-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <label for="id_points" class="required">
+                {% trans "Points Adjustment" %}
+            </label>
+            <input
+                type="number"
+                name="points"
+                id="id_points"
+                required
+                placeholder="{% trans 'Enter points (positive to add, negative to subtract)' %}"
+                autofocus
+            >
+            <span class="help-text">
+                {% trans "Enter a positive number to add points or a negative number to subtract points." %}
+            </span>
+        </div>
+
+        <div class="form-row">
+            <label for="id_reason" class="required">
+                {% trans "Reason for Adjustment" %}
+            </label>
+            <textarea
+                name="reason"
+                id="id_reason"
+                required
+                placeholder="{% trans 'Explain why you are adjusting points...' %}"
+            ></textarea>
+            <span class="help-text">
+                {% trans "This will be recorded in the transaction history for audit purposes." %}
+            </span>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                {% trans "Adjust Points" %}
+            </button>
+            <a href="{% url 'admin:loyalty_loyaltymember_change' member.id %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

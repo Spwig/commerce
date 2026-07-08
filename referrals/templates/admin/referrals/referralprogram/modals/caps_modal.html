@@ -1,0 +1,73 @@
+{% load i18n %}
+
+<!-- Caps & Limits Modal -->
+<div class="admin-modal-overlay" id="caps-modal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title"><i class="fas fa-chart-bar"></i> {% trans "Configure Caps & Limits" %}</h2>
+            <button type="button" class="admin-modal-close" data-modal="caps-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="admin-modal-section">
+                <h3>{% trans "Per-Referrer Limits" %}</h3>
+
+                <div class="form-row">
+                    <label for="caps-max-referrals-month">{% trans "Maximum Referrals per Month" %}</label>
+                    <input type="number" id="caps-max-referrals-month" min="0" placeholder="10">
+                    <p class="help">{% trans "0 = unlimited" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="caps-max-referrals-lifetime">{% trans "Maximum Lifetime Referrals" %}</label>
+                    <input type="number" id="caps-max-referrals-lifetime" min="0" placeholder="100">
+                    <p class="help">{% trans "0 = unlimited" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="caps-max-reward-month">{% trans "Maximum Reward Value per Month" %}</label>
+                    <input type="number" id="caps-max-reward-month" step="0.01" min="0" placeholder="500.00">
+                    <p class="help">{% trans "Total reward cap per referrer per month (0 = unlimited)" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="caps-max-reward-lifetime">{% trans "Maximum Lifetime Reward Value" %}</label>
+                    <input type="number" id="caps-max-reward-lifetime" step="0.01" min="0" placeholder="5000.00">
+                    <p class="help">{% trans "Total lifetime reward cap per referrer (0 = unlimited)" %}</p>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Per-Referee Limits" %}</h3>
+
+                <div class="form-row">
+                    <label for="caps-max-uses-per-referee">{% trans "Max Referral Uses per Customer" %}</label>
+                    <input type="number" id="caps-max-uses-per-referee" min="0" placeholder="1">
+                    <p class="help">{% trans "How many times one customer can be referred (usually 1)" %}</p>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Program-Wide Limits" %}</h3>
+
+                <div class="form-row">
+                    <label for="caps-max-budget-month">{% trans "Monthly Program Budget" %}</label>
+                    <input type="number" id="caps-max-budget-month" step="0.01" min="0" placeholder="10000.00">
+                    <p class="help">{% trans "Total program spending cap per month (0 = unlimited)" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="caps-pause-when-exceeded">
+                        <input type="checkbox" id="caps-pause-when-exceeded">
+                        {% trans "Auto-pause program when budget exceeded" %}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="referral-modal-btn-secondary" data-modal="caps-modal">{% trans "Cancel" %}</button>
+            <button type="button" class="referral-modal-btn-primary" id="save-caps-config">{% trans "Save Configuration" %}</button>
+        </div>
+    </div>
+</div>

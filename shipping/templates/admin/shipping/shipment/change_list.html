@@ -1,0 +1,161 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Shipments" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'shipping/css/admin-shipping.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div>
+        <div class="dashboard-header">
+            <h1>
+                <i class="fas fa-shipping-fast"></i>
+                {% trans "Shipment Management" %}
+            </h1>
+            <p class="subtitle">{% trans "Track and manage shipments across all carriers and delivery statuses" %}</p>
+        </div>
+    </div>
+    <!-- Dashboard Stats -->
+    <div class="dashboard-stats-wrapper">
+        <!-- Statistics Cards -->
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="value">{{ total_shipments|default:0 }}</div>
+                <div class="label">{% trans "Total Shipments" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="value">{{ created_count|default:0 }}</div>
+                <div class="label">{% trans "Created" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="value">{{ in_transit_count|default:0 }}</div>
+                <div class="label">{% trans "In Transit" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="value">{{ delivered_count|default:0 }}</div>
+                <div class="label">{% trans "Delivered" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="value">{{ exceptions_count|default:0 }}</div>
+                <div class="label">{% trans "Exceptions" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="value">{{ cancelled_count|default:0 }}</div>
+                <div class="label">{% trans "Cancelled" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+    <div class="dashboard-content">
+
+        <!-- Quick Actions -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h3>{% trans "Create Shipment" %}</h3>
+                    <p class="description">{% trans "Create a new shipment for an order" %}</p>
+                    <a href="{% url 'admin:shipping_shipment_add' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Create" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3>{% trans "Manage Providers" %}</h3>
+                    <p class="description">{% trans "Configure shipping provider integrations" %}</p>
+                    <a href="{% url 'admin:shipping_provideraccount_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <h3>{% trans "Manage Carriers" %}</h3>
+                    <p class="description">{% trans "Set up carrier presets and shipping methods" %}</p>
+                    <a href="{% url 'admin:shipping_carrierpreset_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Configure" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>{% trans "Shipping Zones" %}</h3>
+                    <p class="description">{% trans "Define shipping zones and coverage areas" %}</p>
+                    <a href="{% url 'admin:shipping_shippingzone_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage Zones" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h3>{% trans "Shipping Promotions" %}</h3>
+                    <p class="description">{% trans "Configure shipping promotions and pricing logic" %}</p>
+                    <a href="{% url 'admin:shipping_shippingpromotion_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Edit Promotions" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <h3>{% trans "Returns & RMA" %}</h3>
+                    <p class="description">{% trans "Manage product returns and RMA requests" %}</p>
+                    <a href="{% url 'admin:orders_returnrequest_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage Returns" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Standard Admin Change List -->
+{{ block.super }}
+
+    </div> <!-- /dashboard-content -->
+</div>
+{% endblock %}

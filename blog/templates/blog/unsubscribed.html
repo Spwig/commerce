@@ -1,0 +1,35 @@
+{% extends "blog/blog_base.html" %}
+{% load i18n merchant_trans %}
+
+{% block blog_title %}{% mtrans "Unsubscribed" %}{% endblock %}
+
+{% block blog_breadcrumb %}
+<nav class="blog-breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <ol class="blog-breadcrumb__list">
+        <li class="blog-breadcrumb__item">
+            <a href="/" class="blog-breadcrumb__link">{% mtrans "Home" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item">
+            <a href="{% url 'blog:list' %}" class="blog-breadcrumb__link">{% mtrans "Blog" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item blog-breadcrumb__item--active">{% mtrans "Unsubscribed" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block blog_sidebar_wrapper %}{% endblock %}
+
+{% block blog_content %}
+<div class="blog-message-card">
+    <div class="blog-message-card__icon blog-message-card__icon--info">
+        <i class="fas fa-envelope-open"></i>
+    </div>
+    <h1 class="blog-message-card__title">{% mtrans "You've been unsubscribed" %}</h1>
+    <p class="blog-message-card__text">
+        {% blocktrans with email=subscriber.email %}{{ email }} has been removed from our mailing list. You will no longer receive blog notifications.{% endblocktrans %}
+    </p>
+    <a href="{% url 'blog:list' %}" class="blog-message-card__btn">
+        <i class="fas fa-arrow-left"></i> {% mtrans "Back to Blog" %}
+    </a>
+</div>
+{% endblock %}

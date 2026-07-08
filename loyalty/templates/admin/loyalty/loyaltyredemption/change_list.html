@@ -1,0 +1,134 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Redemptions" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltyredemption_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'loyalty/admin/js/redemption_list.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if cl.formset and cl.formset.errors %}
+        <p class="errornote">
+            {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+        {{ cl.formset.management_form }}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-gift"></i>
+                {% trans "Redemptions" %}
+            </h1>
+            <p class="subtitle">{% trans "Track reward redemptions" %}</p>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filters-panel"
+         class="filters-panel"
+         data-filter-endpoint="{% url 'loyalty:filter_redemptions' %}"
+         data-error-message="{% trans 'An error occurred while filtering. Please try again.' %}">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filter Redemptions" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+                <span class="filters-toggle-text">{% trans "Toggle Filters" %}</span>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <div class="admin-search-input">
+                    <input type="text"
+                           id="filter-search"
+                           placeholder="{% trans 'Code, member name, or reward...' %}"
+                           autocomplete="off">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                    <option value="fulfilled">{% trans "Fulfilled" %}</option>
+                    <option value="cancelled">{% trans "Cancelled" %}</option>
+                    <option value="expired">{% trans "Expired" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-expiry">
+                    <i class="fas fa-clock"></i> {% trans "Expiry Status" %}
+                </label>
+                <select id="filter-expiry">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active (Not Expired)" %}</option>
+                    <option value="expired">{% trans "Expired" %}</option>
+                    <option value="expiring-soon">{% trans "Expiring Soon (7 days)" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-date-from">
+                    <i class="fas fa-calendar"></i> {% trans "Date From" %}
+                </label>
+                <input type="date" id="filter-date-from">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-date-to">
+                    <i class="fas fa-calendar"></i> {% trans "Date To" %}
+                </label>
+                <input type="date" id="filter-date-to">
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button button-secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="filter-results-summary">
+        <span id="results-count">{{ cl.result_count }}</span>
+        {% blocktranslate count counter=cl.result_count %}redemption found{% plural %}redemptions found{% endblocktranslate %}
+    </div>
+
+    <!-- Card-Based Results Container -->
+    <div id="results-container">
+        {% include "admin/loyalty/partials/redemption_cards.html" with redemptions=cl.result_list %}
+    </div>
+
+    {% block pagination %}{% pagination cl %}{% endblock %}
+</div>
+
+<div id="list-filter-config"
+     data-filter-url="{% url 'loyalty:filter_redemptions' %}"
+     data-results-container="results-container"
+     data-results-count="results-count"
+     class="hidden"></div>
+{% endblock %}

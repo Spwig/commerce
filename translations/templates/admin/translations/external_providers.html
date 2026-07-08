@@ -1,0 +1,122 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "External Providers" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'translations/admin/css/translations.css' %}">
+<link rel="stylesheet" href="{% static 'translations/admin/css/providers.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="dashboard-header">
+        <h1>
+            <span class="fas fa-globe"></span>
+            {% trans "External Translation Providers" %}</h1>
+        <a href="{% url 'translations:browse_providers' %}" class="button">
+            <i class="fas fa-plus-circle"></i> {% trans "Browse & Install Providers" %}
+        </a>
+    </div>
+
+    <!-- Info Box -->
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>{% trans "Configure External Translation Services" %}</strong>
+            <p>{% trans "Set up and manage external translation APIs to expand language support beyond local models. Each provider offers different features, pricing, and language coverage." %}</p>
+        </div>
+    </div>
+
+    <!-- Provider Cards Grid -->
+    <div class="provider-grid">
+        {% for card in provider_cards %}
+        <div class="provider-card {% if card.is_configured %}configured{% endif %}"
+             data-provider="{{ card.slug }}">
+            <div class="provider-header">
+                <div class="provider-icon">
+                    <i class="{{ card.icon }}"></i>
+                </div>
+                <div class="provider-title">
+                    <h3>{{ card.name }}</h3>
+                    {% if card.is_configured %}
+                    <span class="status-badge configured">
+                        <i class="fas fa-check-circle"></i> {% trans "Configured" %}
+                    </span>
+                    {% else %}
+                    <span class="status-badge not-configured">
+                        <i class="fas fa-exclamation-circle"></i> {% trans "Not Configured" %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="provider-body">
+                <p class="provider-description">{{ card.description }}</p>
+
+                {% if card.features %}
+                <ul class="provider-features">
+                    {% for feature in card.features %}
+                    <li><i class="{{ feature.icon }}"></i> {{ feature.text }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if card.is_configured %}
+                <div class="provider-stats">
+                    <div class="stat">
+                        <span class="stat-label">{% trans "Translations" %}</span>
+                        <span class="stat-value">{{ card.total_translations|default:"0" }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">{% trans "Last Used" %}</span>
+                        <span class="stat-value">
+                            {% if card.last_used_at %}
+                                {{ card.last_used_at|timesince }} {% trans "ago" %}
+                            {% else %}
+                                {% trans "Never" %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="provider-footer">
+                {% if card.is_configured %}
+                    {% if card.is_active %}
+                    <button class="button" data-action="toggle-provider" data-account-id="{{ card.account.id }}">
+                        <i class="fas fa-toggle-on"></i> {% trans "Disable" %}
+                    </button>
+                    {% else %}
+                    <button class="button default" data-action="toggle-provider" data-account-id="{{ card.account.id }}">
+                        <i class="fas fa-toggle-off"></i> {% trans "Enable" %}
+                    </button>
+                    {% endif %}
+                    <a href="{% url 'translations:provider_wizard' card.slug %}" class="button">
+                        <i class="fas fa-edit"></i> {% trans "Edit" %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'translations:provider_wizard' card.slug %}" class="button default">
+                        <i class="fas fa-magic"></i> {% trans "Setup Wizard" %}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="info-box info-box--spaced">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>{% trans "No Translation Providers Installed" %}</strong>
+                <p>{% trans "Use the Browse & Install button above to discover and install translation providers from the marketplace." %}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div id="translations-config"
+     data-toggle-provider-url-template="{% url 'translations_api:toggle_provider' '00000000-0000-0000-0000-000000000000' %}"
+     hidden></div>
+<script src="{% static 'translations/admin/js/providers.js' %}"></script>
+{% endblock %}

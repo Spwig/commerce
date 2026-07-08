@@ -1,0 +1,203 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Create Backup" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/system_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'management/css/create-full-backup.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; {% trans 'Create Backup' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="backup-container">
+        <div class="backup-header">
+            <h1>
+                <i class="fas fa-save"></i>
+                {% trans "Create Backup" %}
+            </h1>
+            <p>{% trans "Create a backup of your system data" %}</p>
+        </div>
+
+        <!-- Disk Space Info -->
+        <div class="disk-info">
+            <div class="disk-info-item">
+                <div class="value">{{ disk_free|filesizeformat|default:"N/A" }}</div>
+                <div class="label">{% trans "Free Space" %}</div>
+            </div>
+            <div class="disk-info-item">
+                <div class="value">{{ disk_used|filesizeformat|default:"N/A" }}</div>
+                <div class="label">{% trans "Used Space" %}</div>
+            </div>
+            <div class="disk-info-item">
+                <div class="value">{{ estimated_backup_size|filesizeformat|default:"N/A" }}</div>
+                <div class="label">{% trans "Est. Backup Size" %}</div>
+            </div>
+        </div>
+
+        <form method="post" id="backup-form" class="backup-form">
+            {% csrf_token %}
+
+            <!-- Backup Type Selection -->
+            <div class="form-section">
+                <h3>
+                    <i class="fas fa-layer-group"></i>
+                    {% trans "Backup Type" %}
+                </h3>
+                <div class="backup-type-cards">
+                    <label class="backup-type-card selected">
+                        <input type="radio" name="backup_type" value="full" checked>
+                        <span class="check-mark"><i class="fas fa-check"></i></span>
+                        <div class="card-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="card-title">{% trans "Full System" %}</div>
+                        <div class="card-desc">{% trans "Database, media files, and configuration" %}</div>
+                    </label>
+                    <label class="backup-type-card">
+                        <input type="radio" name="backup_type" value="db">
+                        <span class="check-mark"><i class="fas fa-check"></i></span>
+                        <div class="card-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="card-title">{% trans "Database Only" %}</div>
+                        <div class="card-desc">{% trans "PostgreSQL database dump" %}</div>
+                    </label>
+                    <label class="backup-type-card">
+                        <input type="radio" name="backup_type" value="media">
+                        <span class="check-mark"><i class="fas fa-check"></i></span>
+                        <div class="card-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <div class="card-title">{% trans "Media Only" %}</div>
+                        <div class="card-desc">{% trans "Product images and uploads" %}</div>
+                    </label>
+                    <label class="backup-type-card">
+                        <input type="radio" name="backup_type" value="config">
+                        <span class="check-mark"><i class="fas fa-check"></i></span>
+                        <div class="card-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="card-title">{% trans "Config Only" %}</div>
+                        <div class="card-desc">{% trans "Settings and environment" %}</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Backup Options -->
+            <div class="form-section">
+                <h3>
+                    <i class="fas fa-sliders-h"></i>
+                    {% trans "Options" %}
+                </h3>
+                <div class="form-group">
+                    <label for="backup_name">{% trans "Backup Name" %} ({% trans "optional" %})</label>
+                    <input type="text" name="name" id="backup_name"
+                           placeholder="{% trans 'e.g., Before major update' %}">
+                    <span class="help-text">{% trans "A descriptive name to help identify this backup" %}</span>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="encrypt" id="encrypt">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div>
+                        <div class="toggle-label">{% trans "Encrypt Backup" %}</div>
+                        <div class="toggle-desc">{% trans "Encrypt the backup file for additional security" %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remote Storage -->
+            {% if destinations %}
+            <div class="form-section">
+                <h3>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    {% trans "Remote Storage" %}
+                </h3>
+                <p class="help-text" style="margin-bottom: 12px;">
+                    {% trans "Also upload this backup to one or more remote destinations." %}
+                </p>
+                {% for dest in destinations %}
+                <div class="toggle-group">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="destinations" value="{{ dest.pk }}">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div>
+                        <div class="toggle-label">{{ dest.name }}</div>
+                        <div class="toggle-desc">{{ dest.get_provider_type_display }}{% if dest.is_default %} &middot; {% trans "Default" %}{% endif %}</div>
+                    </div>
+                </div>
+                {% endfor %}
+                <p class="help-text" style="margin-top: 8px;">
+                    <a href="{% url 'admin:management_storage_destinations' %}">
+                        <i class="fas fa-plus"></i> {% trans "Manage destinations" %}
+                    </a>
+                </p>
+            </div>
+            {% else %}
+            <div class="form-section">
+                <h3>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    {% trans "Remote Storage" %}
+                </h3>
+                <p class="help-text">
+                    {% trans "No remote storage destinations configured." %}
+                    <a href="{% url 'admin:management_storage_wizard_step1' %}">{% trans "Add one now" %}</a>
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'admin:management_system_dashboard' %}" class="button default">
+                    <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                </a>
+                <button type="submit" id="backup-btn" class="button primary">
+                    <i class="fas fa-save"></i> {% trans "Start Backup" %}
+                </button>
+            </div>
+        </form>
+
+        <!-- Progress Section (hidden initially) -->
+        <div class="backup-progress" id="backup-progress">
+            <h3>
+                <i class="fas fa-spinner fa-spin"></i>
+                {% trans "Backup in Progress" %}
+            </h3>
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="progress-info">
+                    <span class="progress-percent" id="progress-percent">0%</span>
+                    <span class="progress-step" id="progress-step">{% trans "Initializing..." %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="backup-config" class="mgmt-hidden"
+     data-backup-url="{% url 'admin:management_create_full_backup' %}"
+     data-progress-url="{% url 'admin:management_backup_progress' 0 %}"
+     data-dashboard-url="{% url 'admin:management_system_dashboard' %}"
+     data-msg-starting="{% trans 'Starting...' %}"
+     data-msg-start-backup="{% trans 'Start Backup' %}"
+     data-msg-failed-start="{% trans 'Failed to start backup' %}"
+     data-msg-completed="{% trans 'Backup completed successfully!' %}"
+     data-msg-failed="{% trans 'Backup failed' %}"
+     data-msg-unknown="{% trans 'Unknown error' %}"></div>
+<script src="{% static 'management/js/backup.js' %}"></script>
+{% endblock %}

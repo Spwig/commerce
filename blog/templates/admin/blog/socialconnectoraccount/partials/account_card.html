@@ -1,0 +1,160 @@
+{% load i18n static humanize %}
+
+<div class="list-row-card{% if account.status != 'connected' and account.status != 'active' %} warning{% endif %}" data-account-id="{{ account.id }}">
+    <!-- Platform Icon -->
+    <div class="list-row-card-icon social-platform-icon {{ account.provider_key }}">
+        {% if account.provider_key == 'facebook' or account.provider_key == 'facebook_page' %}
+            <i class="fab fa-facebook-f"></i>
+        {% elif account.provider_key == 'instagram' %}
+            <i class="fab fa-instagram"></i>
+        {% elif account.provider_key == 'linkedin' or account.provider_key == 'linkedin_company' %}
+            <i class="fab fa-linkedin-in"></i>
+        {% elif account.provider_key == 'twitter' or account.provider_key == 'x' %}
+            <i class="fab fa-x-twitter"></i>
+        {% elif account.provider_key == 'pinterest' %}
+            <i class="fab fa-pinterest-p"></i>
+        {% elif account.provider_key == 'tiktok' %}
+            <i class="fab fa-tiktok"></i>
+        {% elif account.provider_key == 'youtube' %}
+            <i class="fab fa-youtube"></i>
+        {% else %}
+            <i class="fas fa-share-alt"></i>
+        {% endif %}
+    </div>
+
+    <!-- Content -->
+    <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+            <a href="{% url 'admin:blog_socialconnectoraccount_change' account.pk %}">{{ account.name }}</a>
+        </h3>
+
+        <p class="list-row-card-subtitle">
+            {% if account.platform_account_name %}
+                <i class="fas fa-at"></i> {{ account.platform_account_name }}
+            {% endif %}
+            {% if account.platform_account_url %}
+                <a href="{{ account.platform_account_url }}" target="_blank" class="platform-link">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            {% endif %}
+        </p>
+
+        <!-- Badges -->
+        <div class="list-row-card-badges">
+            <!-- Status Badge -->
+            {% if account.status == 'connected' or account.status == 'active' %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Connected" %}
+                </span>
+            {% elif account.status == 'token_expired' %}
+                <span class="list-row-card-badge list-row-card-badge-warning">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans "Token Expired" %}
+                </span>
+            {% elif account.status == 'disconnected' %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-unlink"></i> {% trans "Disconnected" %}
+                </span>
+            {% elif account.status == 'error' %}
+                <span class="list-row-card-badge list-row-card-badge-error">
+                    <i class="fas fa-times-circle"></i> {% trans "Error" %}
+                </span>
+            {% endif %}
+
+            <!-- Auto-share Badge -->
+            {% if account.auto_share_enabled %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-magic"></i> {% trans "Auto-Share" %}
+                </span>
+            {% endif %}
+
+            <!-- Default Badge -->
+            {% if account.is_default_for_provider %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-star"></i> {% trans "Default" %}
+                </span>
+            {% endif %}
+
+            <!-- Platform Badge -->
+            <span class="list-row-card-badge">
+                {{ account.provider_key|title }}
+            </span>
+        </div>
+
+        <!-- Stats -->
+        <div class="list-row-card-stats">
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Posts Shared" %}</span>
+                <span class="list-row-card-stat-value">{{ account.post_count|default:0 }}</span>
+            </div>
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Last Post" %}</span>
+                <span class="list-row-card-stat-value">
+                    {% if account.last_successful_post_at %}
+                        {{ account.last_successful_post_at|naturaltime }}
+                    {% else %}
+                        {% trans "Never" %}
+                    {% endif %}
+                </span>
+            </div>
+            {% if account.access_token_expires_at %}
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Token Expires" %}</span>
+                <span class="list-row-card-stat-value {% if account.token_expires_soon %}token-warning{% endif %}">
+                    {{ account.access_token_expires_at|naturaltime }}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Error Message (if any) -->
+        {% if account.last_error and account.status == 'error' %}
+        <div class="account-error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{ account.last_error|truncatewords:15 }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Meta -->
+        <div class="list-row-card-meta">
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-calendar-plus"></i>
+                <span>{% trans "Connected" %}: {{ account.created_at|date:"M d, Y" }}</span>
+            </div>
+            {% if account.connected_by %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-user"></i>
+                <span>{{ account.connected_by.get_full_name|default:account.connected_by.username }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="list-row-card-actions">
+        <a href="{% url 'admin:blog_socialconnectoraccount_change' account.pk %}"
+           class="list-row-card-action"
+           title="{% trans 'Edit account' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        {% if account.platform_account_url %}
+        <a href="{{ account.platform_account_url }}"
+           class="list-row-card-action"
+           title="{% trans 'View on platform' %}"
+           target="_blank">
+            <i class="fas fa-external-link-alt"></i>
+        </a>
+        {% endif %}
+        {% if account.status == 'token_expired' %}
+        <a href="{% url 'admin:blog_socialconnectoraccount_change' account.pk %}?action=refresh"
+           class="list-row-card-action"
+           title="{% trans 'Refresh token' %}">
+            <i class="fas fa-sync-alt"></i>
+        </a>
+        {% endif %}
+        <a href="{% url 'admin:blog_socialconnectoraccount_delete' account.pk %}"
+           class="list-row-card-action"
+           title="{% trans 'Delete account' %}">
+            <i class="fas fa-trash"></i>
+        </a>
+    </div>
+</div>

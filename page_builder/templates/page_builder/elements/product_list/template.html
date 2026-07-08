@@ -1,0 +1,129 @@
+{% load i18n element_tags merchant_trans %}
+{% mtrans "View All" as default_view_all %}
+<!-- Product List Element -->
+<section class="product-list product-list--{{ element.content.card_style|default:'default' }} product-list--divider-{{ element.content.divider_style|default:'line' }}"
+         {% hover_animation_attrs element %}
+         style="{% base_styles element %}">
+
+    {% if element.content.title %}
+    <div class="product-list__header">
+        <div class="product-list__header-text">
+            <h2 class="product-list__title">{{ element.content.title }}</h2>
+            {% if element.content.subtitle %}
+            <p class="product-list__subtitle">{{ element.content.subtitle }}</p>
+            {% endif %}
+        </div>
+        {% if element.content.show_view_all %}
+        <a href="{{ element.content.view_all_url|default:'/products/' }}" class="product-list__view-all">
+            {{ element.content.view_all_text|default:default_view_all }}
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="product-list__container">
+        {% with products=element_context.products|default:element.content.products %}
+        {% for product in products %}
+        <article class="product-list__item product-list__item--image-{{ element.content.image_position|default:'left' }}{% if element.content.image_position == 'alternating' %} product-list__item--image-{% cycle 'left' 'right' %}{% endif %}"
+                 style="--image-size: {% if element.content.image_size == 'small' %}100px{% elif element.content.image_size == 'large' %}200px{% else %}150px{% endif %};">
+
+            {% if element.content.show_image|default:True %}
+            <a href="{{ product.url|default:product.get_absolute_url }}" class="product-list__image-link">
+                <div class="product-list__image-wrapper">
+                    {% if product.image or product.primary_image %}
+                    <img src="{% if product.image %}{{ product.image }}{% elif product.primary_image.file %}{{ product.primary_image.file.url }}{% endif %}"
+                         alt="{{ product.name|default:product.title }}"
+                         class="product-list__image"
+                         loading="lazy">
+                    {% else %}
+                    <div class="product-list__image-placeholder">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    {% endif %}
+
+                    {% if product.on_sale or product.sale_price %}
+                    <span class="product-list__badge product-list__badge--sale">{% mtrans "Sale" %}</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% endif %}
+
+            <div class="product-list__content">
+                <h3 class="product-list__product-name">
+                    <a href="{{ product.url|default:product.get_absolute_url }}">{{ product.name|default:product.title }}</a>
+                </h3>
+
+                {% if element.content.show_rating|default:True %}
+                <div class="product-list__rating">
+                    {% with rating=product.rating|default:product.average_rating|default:0 %}
+                    <div class="product-list__stars">
+                        {% for i in "12345" %}
+                        <i class="{% if forloop.counter <= rating %}fas{% elif forloop.counter|add:"-0.5" <= rating %}fas fa-star-half-alt{% else %}far{% endif %} fa-star"></i>
+                        {% endfor %}
+                    </div>
+                    {% if product.review_count %}
+                    <span class="product-list__review-count">({{ product.review_count }})</span>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                {% endif %}
+
+                {% if element.content.show_description|default:True and product.description %}
+                <p class="product-list__description">{{ product.description|truncatechars:150 }}</p>
+                {% endif %}
+
+                <div class="product-list__price-row">
+                    <div class="product-list__price">
+                        {% if product.sale_price or product.original_price %}
+                        <span class="product-list__price-original">{{ product.original_price }}</span>
+                        <span class="product-list__price-current product-list__price-current--sale">{{ product.sale_price|default:product.price }}</span>
+                        {% else %}
+                        <span class="product-list__price-current">{{ product.price|default:product.display_price }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if element.content.show_stock_status|default:True %}
+                    <div class="product-list__stock {% if product.in_stock or product.stock_quantity > 0 %}product-list__stock--in{% else %}product-list__stock--out{% endif %}">
+                        {% if product.in_stock or product.stock_quantity > 0 %}
+                        <i class="fas fa-check-circle"></i> {% mtrans "In Stock" %}
+                        {% else %}
+                        <i class="fas fa-times-circle"></i> {% mtrans "Out of Stock" %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="product-list__actions">
+                    {% if element.content.show_add_to_cart|default:True %}
+                    <button class="product-list__btn product-list__btn--cart"
+                            data-product-id="{{ product.id }}"
+                            {% if not product.in_stock and product.stock_quantity <= 0 %}disabled{% endif %}>
+                        <i class="fas fa-shopping-cart"></i>
+                        {% mtrans "Add to Cart" %}
+                    </button>
+                    {% endif %}
+
+                    {% if element.content.show_wishlist %}
+                    <button class="product-list__btn product-list__btn--icon" data-action="wishlist" data-product-id="{{ product.id }}">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    {% endif %}
+
+                    {% if element.content.show_compare %}
+                    <button class="product-list__btn product-list__btn--icon" data-action="compare" data-product-id="{{ product.id }}">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="product-list__empty">
+            <i class="fas fa-box-open"></i>
+            <p>{% mtrans "No products to display" %}</p>
+        </div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+</section>

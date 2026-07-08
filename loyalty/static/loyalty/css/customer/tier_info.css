@@ -1,0 +1,244 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty Frontend - Tier Info
+ *
+ * Description: Frontend styles for tier_info.html
+ * Template: loyalty/templates/loyalty/customer/tier_info.html
+ * Extracted: 2026-02-20
+ *
+ * Dependencies:
+ * - Theme CSS variables (loaded via page_builder/base.html or admin base)
+ * - loyalty/css/customer.css (base loyalty styles)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ * - Dynamic tier colors via --tier-color CSS custom property (set by JS from data-tier-color)
+ */
+
+/* Page header */
+.tier-info-header {
+    margin-bottom: var(--theme-spacing-8, 2rem);
+    text-align: center;
+}
+
+.tier-info-header h1 {
+    font-size: 2.5rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    margin-bottom: var(--theme-spacing-4, 1rem);
+    color: var(--theme-text, #1F2937);
+}
+
+.tier-info-header p {
+    font-size: 1.125rem;
+    color: var(--theme-text-muted, #9CA3AF);
+    margin: 0;
+}
+
+/* Current tier highlight banner */
+.tier-current-highlight {
+    background: linear-gradient(135deg, var(--tier-color, var(--theme-primary, #2563EB)), var(--theme-secondary, #8B5CF6));
+    color: var(--theme-text-inverse, #FFFFFF);
+    border-radius: var(--theme-radius-lg, 0.5rem);
+    padding: var(--theme-spacing-8, 2rem);
+    margin-bottom: var(--theme-spacing-8, 2rem);
+    text-align: center;
+}
+
+.tier-current-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: var(--theme-spacing-2, 0.5rem);
+}
+
+.tier-current-icon {
+    font-size: 3rem;
+    margin-bottom: var(--theme-spacing-4, 1rem);
+}
+
+.tier-current-name {
+    font-size: 2rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    margin-bottom: var(--theme-spacing-2, 0.5rem);
+}
+
+.tier-current-description {
+    font-size: 1rem;
+    opacity: 0.95;
+}
+
+/* Tier grid */
+.tier-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--theme-spacing-6, 1.5rem);
+}
+
+/* Individual tier card */
+.tier-card {
+    position: relative;
+}
+
+.tier-card-active {
+    border: 3px solid var(--tier-color, var(--theme-primary, #2563EB));
+}
+
+/* "Current" badge on active tier card */
+.tier-current-badge {
+    position: absolute;
+    top: -12px;
+    right: var(--theme-spacing-4, 1rem);
+    background: var(--tier-color, var(--theme-primary, #2563EB));
+    color: var(--theme-text-inverse, #FFFFFF);
+    padding: 0.25rem var(--theme-spacing-3, 0.75rem);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    font-size: 0.75rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    text-transform: uppercase;
+}
+
+/* Tier card header (icon + name + criteria) */
+.tier-card-header {
+    text-align: center;
+    margin-bottom: var(--theme-spacing-6, 1.5rem);
+}
+
+.tier-icon-circle {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--theme-spacing-4, 1rem);
+    background: var(--tier-color, var(--theme-primary, #2563EB));
+    color: var(--theme-text-inverse, #FFFFFF);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.tier-card-name {
+    font-size: 1.5rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    margin-bottom: var(--theme-spacing-2, 0.5rem);
+    color: var(--theme-text, #1F2937);
+}
+
+.tier-card-criteria {
+    font-size: 0.875rem;
+    color: var(--theme-text-muted, #9CA3AF);
+    margin-bottom: var(--theme-spacing-4, 1rem);
+}
+
+.tier-card-description {
+    font-size: 0.875rem;
+    color: var(--theme-text, #1F2937);
+    line-height: 1.5;
+}
+
+/* Achieved badge */
+.tier-achieved-section {
+    margin-bottom: var(--theme-spacing-6, 1.5rem);
+    text-align: center;
+}
+
+.tier-achieved-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-spacing-2, 0.5rem);
+    padding: var(--theme-spacing-2, 0.5rem) var(--theme-spacing-4, 1rem);
+    background: var(--theme-success, #10B981);
+    color: var(--theme-text-inverse, #FFFFFF);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    font-size: 0.875rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+}
+
+/* Progress section */
+.tier-progress-section {
+    margin-bottom: var(--theme-spacing-6, 1.5rem);
+}
+
+.tier-progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--theme-spacing-2, 0.5rem);
+    font-size: 0.875rem;
+    color: var(--theme-text-muted, #9CA3AF);
+}
+
+/* Benefits section */
+.tier-benefits-section {
+    margin-top: var(--theme-spacing-6, 1.5rem);
+    padding-top: var(--theme-spacing-6, 1.5rem);
+    border-top: 1px solid var(--theme-border, #E5E7EB);
+}
+
+.tier-benefits-title {
+    font-size: 0.875rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    color: var(--theme-text, #1F2937);
+    margin-bottom: var(--theme-spacing-4, 1rem);
+    text-transform: uppercase;
+}
+
+.tier-benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--theme-spacing-3, 0.75rem);
+}
+
+.tier-benefits-item {
+    display: flex;
+    align-items: start;
+    gap: var(--theme-spacing-2, 0.5rem);
+    font-size: 0.875rem;
+    color: var(--theme-text, #1F2937);
+}
+
+.tier-benefit-check {
+    color: var(--tier-color, var(--theme-primary, #2563EB));
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+}
+
+/* Multiplier badge */
+.tier-multiplier-badge {
+    margin-top: var(--theme-spacing-6, 1.5rem);
+    background: var(--tier-color, var(--theme-primary, #2563EB));
+    color: var(--theme-text-inverse, #FFFFFF);
+    padding: var(--theme-spacing-4, 1rem);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    text-align: center;
+}
+
+.tier-multiplier-value {
+    font-size: 1.5rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    margin-bottom: 0.25rem;
+}
+
+.tier-multiplier-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+/* CTA section */
+.tier-cta-section {
+    margin-top: var(--theme-spacing-12, 3rem);
+    text-align: center;
+}
+
+.tier-cta-btn {
+    display: inline-block;
+    padding: var(--theme-spacing-3, 0.75rem) var(--theme-spacing-8, 2rem);
+    background: var(--theme-primary, #2563EB);
+    color: var(--theme-text-inverse, #FFFFFF);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    text-decoration: none;
+    font-weight: var(--theme-font-weight-bold, 700);
+    font-size: 1rem;
+}

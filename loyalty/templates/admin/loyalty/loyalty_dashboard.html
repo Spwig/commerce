@@ -1,0 +1,460 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Loyalty Dashboard" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/css/loyalty-dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header with Stats -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-award"></i>
+            {% trans "Loyalty Program Dashboard" %}
+        </h1>
+        <p class="subtitle">
+            {% blocktrans with start=start_date|date:"M d, Y" end=end_date|date:"M d, Y" %}
+            Overview and analytics for the last 30 days ({{ start }} - {{ end }})
+            {% endblocktrans %}
+        </p>
+
+    </div>
+    <!-- KPI Statistics Cards -->
+    <div class="dashboard-stats-grid">
+        <!-- Total Members -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value">{{ total_members|default:0 }}</div>
+            <div class="label">{% trans "Total Members" %}</div>
+        </div>
+
+        <!-- Active Members -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-user-check"></i></div>
+            <div class="value">{{ active_members|default:0 }}</div>
+            <div class="label">{% trans "Active Members (30d)" %}</div>
+        </div>
+
+        <!-- Points Outstanding -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-coins"></i></div>
+            <div class="value">{{ points_outstanding|floatformat:0|default:0 }}</div>
+            <div class="label">{% trans "Points Outstanding" %}</div>
+        </div>
+
+        <!-- Redemption Rate -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <div class="value">{{ redemption_rate|floatformat:1 }}%</div>
+            <div class="label">{% trans "Redemption Rate" %}</div>
+        </div>
+
+        <!-- Points Earned (Period) -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-arrow-up"></i></div>
+            <div class="value">{{ points_earned_period|floatformat:0|default:0 }}</div>
+            <div class="label">{% trans "Points Earned (30d)" %}</div>
+        </div>
+
+        <!-- Points Redeemed (Period) -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-arrow-down"></i></div>
+            <div class="value">{{ points_redeemed_period|floatformat:0|default:0 }}</div>
+            <div class="label">{% trans "Points Redeemed (30d)" %}</div>
+        </div>
+
+        <!-- Average Points per Member -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-balance-scale"></i></div>
+            <div class="value">{{ avg_points_per_member|floatformat:0|default:0 }}</div>
+            <div class="label">{% trans "Avg Points/Member" %}</div>
+        </div>
+
+        <!-- Active Rules -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-cogs"></i></div>
+            <div class="value">{{ active_rules_count|default:0 }}</div>
+            <div class="label">{% trans "Active Rules" %}</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+    <div class="dashboard-content">
+
+        <!-- Quick Actions -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>{% trans "Members" %}</h3>
+                    <p class="description">{% trans "View and manage members" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltymember_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>{% trans "Tiers" %}</h3>
+                    <p class="description">{% trans "Manage membership tiers" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltytier_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3>{% trans "Rewards" %}</h3>
+                    <p class="description">{% trans "Manage rewards catalog" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltyreward_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3>{% trans "Redemptions" %}</h3>
+                    <p class="description">{% trans "View redemption history" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltyredemption_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-ruler"></i>
+                    </div>
+                    <h3>{% trans "Rules" %}</h3>
+                    <p class="description">{% trans "Configure earning rules" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltyrule_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3>{% trans "Badges" %}</h3>
+                    <p class="description">{% trans "Manage achievement badges" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltybadge_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>{% trans "Campaigns" %}</h3>
+                    <p class="description">{% trans "Manage loyalty campaigns" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltycampaign_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h3>{% trans "Segments" %}</h3>
+                    <p class="description">{% trans "Manage member segments" %}</p>
+                    <a href="{% url 'admin:loyalty_loyaltysegment_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="charts-grid">
+
+                <!-- Enrollment Trend Chart -->
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-user-plus"></i>
+                        {% trans "Member Enrollment Trend" %}
+                    </h3>
+                    <canvas id="enrollmentChart"></canvas>
+                </div>
+
+                <!-- Points Trend Chart -->
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-chart-area"></i>
+                        {% trans "Points Earned vs Redeemed" %}
+                    </h3>
+                    <canvas id="pointsTrendChart"></canvas>
+                </div>
+
+                <!-- Tier Distribution Chart -->
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-trophy"></i>
+                        {% trans "Tier Distribution" %}
+                    </h3>
+                    <canvas id="tierDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Grid -->
+        <div class="tables-grid">
+            <!-- Top Earners Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-medal"></i>
+                    {% trans "Top Point Earners (Last 30 Days)" %}
+                </h2>
+                {% if top_earners %}
+                <div class="table-responsive">
+                    <table class="loyalty-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Rank" %}</th>
+                                <th>{% trans "Member" %}</th>
+                                <th>{% trans "Tier" %}</th>
+                                <th>{% trans "Points Earned" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for earner in top_earners %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-trophy trophy-gold"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-trophy trophy-silver"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-trophy trophy-bronze"></i> #{{ forloop.counter }}
+                                    {% else %}
+                                        #{{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin:loyalty_loyaltymember_change' earner.id %}" class="member-link">
+                                        {{ earner.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="tier-badge">{{ earner.tier }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ earner.points|floatformat:0 }}</strong> {% trans "pts" %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No point earners in the selected period." %}</p>
+                {% endif %}
+
+                <!-- View All Members Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:loyalty_loyaltymember_changelist' %}" class="btn">
+                        <i class="fas fa-users"></i> {% trans "View All Members" %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Transactions Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-history"></i>
+                    {% trans "Recent Transactions" %}
+                </h2>
+                {% if recent_transactions %}
+                <div class="table-responsive">
+                    <table class="loyalty-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Date" %}</th>
+                                <th>{% trans "Member" %}</th>
+                                <th>{% trans "Type" %}</th>
+                                <th>{% trans "Points" %}</th>
+                                <th>{% trans "Description" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for txn in recent_transactions %}
+                            <tr>
+                                <td>{{ txn.created_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'admin:loyalty_loyaltymember_change' txn.member.id %}" class="member-link">
+                                        {{ txn.member.customer.get_full_name|default:txn.member.customer.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="txn-type txn-{{ txn.transaction_type }}">
+                                        {{ txn.get_transaction_type_display }}
+                                    </span>
+                                </td>
+                                <td class="{% if txn.points > 0 %}points-positive{% else %}points-negative{% endif %}">
+                                    {% if txn.points > 0 %}+{% endif %}{{ txn.points|floatformat:0 }}
+                                </td>
+                                <td>{{ txn.description|truncatewords:10 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No recent transactions." %}</p>
+                {% endif %}
+
+                <!-- View All Transactions Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:loyalty_loyaltytransaction_changelist' %}" class="btn">
+                        <i class="fas fa-list"></i> {% trans "View All Transactions" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Tables Grid -->
+        <div class="tables-grid">
+            <!-- Top Redeemed Rewards Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-trophy"></i>
+                    {% trans "Top 5 Most Redeemed Rewards" %}
+                </h2>
+                {% if top_redeemed_rewards %}
+                <div class="table-responsive">
+                    <table class="loyalty-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Rank" %}</th>
+                                <th>{% trans "Reward" %}</th>
+                                <th>{% trans "Redemptions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reward in top_redeemed_rewards %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-trophy trophy-gold"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-trophy trophy-silver"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-trophy trophy-bronze"></i> #{{ forloop.counter }}
+                                    {% else %}
+                                        #{{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ reward.reward__name }}</td>
+                                <td>
+                                    <strong>{{ reward.redemption_count }}</strong> {% trans "redemptions" %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No redemptions yet." %}</p>
+                {% endif %}
+
+                <!-- View All Rewards Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:loyalty_loyaltyreward_changelist' %}" class="btn">
+                        <i class="fas fa-gift"></i> {% trans "View All Rewards" %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Most Recent Members Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-user-plus"></i>
+                    {% trans "Top 5 Most Recent Members" %}
+                </h2>
+                {% if recent_members %}
+                <div class="table-responsive">
+                    <table class="loyalty-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Member" %}</th>
+                                <th>{% trans "Tier" %}</th>
+                                <th>{% trans "Enrolled Date" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in recent_members %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'admin:loyalty_loyaltymember_change' member.id %}" class="member-link">
+                                        {{ member.customer.get_full_name|default:member.customer.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if member.current_tier %}
+                                        <span class="tier-badge">{{ member.current_tier.name }}</span>
+                                    {% else %}
+                                        <span class="tier-badge tier-badge-none">{% trans "No Tier" %}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ member.enrolled_at|date:"M d, Y H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No members yet." %}</p>
+                {% endif %}
+
+                <!-- View All Recent Members Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:loyalty_loyaltymember_changelist' %}" class="btn">
+                        <i class="fas fa-users"></i> {% trans "View All Members" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="application/json" id="loyalty-dashboard-data">
+{
+    "enrollmentData": {{ enrollment_data_json|safe }},
+    "pointsTrendData": {{ points_trend_json|safe }},
+    "tierDistributionData": {{ tier_distribution_json|safe }},
+    "translations": {
+        "newMembers": "{% trans 'New Members' %}",
+        "earned": "{% trans 'Earned' %}",
+        "redeemed": "{% trans 'Redeemed' %}",
+        "members": "{% trans 'Members' %}"
+    }
+}
+</script>
+<script src="{% static 'loyalty/admin/js/loyalty_dashboard.js' %}"></script>
+{% endblock %}

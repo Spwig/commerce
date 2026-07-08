@@ -1,0 +1,159 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "GeoIP Providers" %} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'geoip/admin/css/providers.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Change List Header -->
+<div class="change-list-header">
+    <div>
+        <p class="subtitle">{% trans "GeoIP" %}</p>
+        <h1><i class="fas fa-globe"></i> {% trans "Providers" %}</h1>
+        <div class="change-list-stats-subtitle">
+            {{ total_providers }} {% trans "providers" %}
+            <span class="stat-separator">|</span>
+            {{ active_providers }} {% trans "active" %}
+            <span class="stat-separator">|</span>
+            {{ total_lookups|default:0 }} {% trans "total lookups" %}
+        </div>
+    </div>
+    <div class="change-list-header-actions">
+        {% if has_add_permission %}
+        <a href="{% url 'admin:geoip_geoipprovider_add' %}" class="change-list-action-button button default">
+            <i class="fas fa-plus"></i> {% trans "Add Provider" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Provider Cards -->
+<div class="list-row-cards" id="results-container">
+    {% for provider in providers %}
+    <div class="list-row-card{% if not provider.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ provider.pk }}">
+        </div>
+        <div class="list-row-card-icon">
+            {% if provider.provider_type == 'spwig' %}
+                <i class="fas fa-shield-alt geoip-provider-icon-spwig"></i>
+            {% elif provider.provider_type == 'maxmind' %}
+                <i class="fas fa-database geoip-provider-icon-maxmind"></i>
+            {% elif provider.provider_type == 'dbip' %}
+                <i class="fas fa-map-marked-alt geoip-provider-icon-dbip"></i>
+            {% elif provider.provider_type == 'ip2location' %}
+                <i class="fas fa-map-pin geoip-provider-icon-ip2location"></i>
+            {% elif provider.provider_type == 'edge_header' %}
+                <i class="fas fa-cloud geoip-provider-icon-edge_header"></i>
+            {% elif provider.provider_type == 'browser_hint' %}
+                <i class="fas fa-window-maximize geoip-provider-icon-browser_hint"></i>
+            {% else %}
+                <i class="fas fa-cog geoip-provider-icon-custom"></i>
+            {% endif %}
+        </div>
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:geoip_geoipprovider_change' provider.pk %}">{{ provider.name }}</a>
+            </h3>
+            <p class="list-row-card-subtitle">{{ provider.get_provider_type_display }}</p>
+            <div class="list-row-card-meta">
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-sort-numeric-down"></i>
+                    {% trans "Priority" %}: {{ provider.priority }}
+                </span>
+                {% if provider.last_update %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-sync"></i>
+                    {{ provider.last_update|date:"M d, Y" }}
+                </span>
+                {% endif %}
+                {% if provider.database_version %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-code-branch"></i>
+                    v{{ provider.database_version }}
+                </span>
+                {% endif %}
+            </div>
+            <div class="list-row-card-badges">
+                {% if provider.is_active %}
+                <span class="list-row-card-badge success">{% trans "Active" %}</span>
+                {% else %}
+                <span class="list-row-card-badge">{% trans "Inactive" %}</span>
+                {% endif %}
+                <span class="list-row-card-badge geoip-provider-badge">
+                    {{ provider.get_provider_type_display }}
+                </span>
+            </div>
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Lookups" %}</span>
+                    <span class="list-row-card-stat-value">{{ provider.total_lookups|default:0 }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Accuracy" %}</span>
+                    <span class="list-row-card-stat-value {% if provider.accuracy_rate >= 95 %}geoip-accuracy-high{% elif provider.accuracy_rate >= 80 %}geoip-accuracy-medium{% else %}geoip-accuracy-low{% endif %}">
+                        {{ provider.accuracy_rate|floatformat:1 }}%
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Avg Response" %}</span>
+                    <span class="list-row-card-stat-value">{{ provider.average_response_ms|floatformat:0 }}ms</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Success Rate" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if provider.total_lookups > 0 %}
+                            {% widthratio provider.successful_lookups provider.total_lookups 100 %}%
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:geoip_geoipprovider_change' provider.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <button type="button"
+                    class="list-row-card-action"
+                    title="{% trans 'Test Provider' %}"
+                    data-action="test-provider" data-provider-id="{{ provider.pk }}"
+                    data-provider-type="{{ provider.provider_type }}">
+                <i class="fas fa-play"></i>
+            </button>
+            <button type="button"
+                    class="list-row-card-action"
+                    title="{% trans 'Update Database' %}"
+                    data-action="update-database" data-provider-id="{{ provider.pk }}"
+                    data-provider-type="{{ provider.provider_type }}">
+                <i class="fas fa-download"></i>
+            </button>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card">
+        <div class="list-row-card-content geoip-empty-state">
+            <i class="fas fa-globe geoip-empty-state-icon"></i>
+            <h3 class="list-row-card-title geoip-empty-state-title">{% trans "No providers configured" %}</h3>
+            <p class="list-row-card-subtitle">{% trans "Add a GeoIP provider to enable location detection" %}</p>
+            {% if has_add_permission %}
+            <a href="{% url 'admin:geoip_geoipprovider_add' %}" class="button default geoip-empty-state-action">
+                <i class="fas fa-plus"></i> {% trans "Add Provider" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+    <script id="geoip-provider-config" type="application/json">{"testUrl": "{% url 'geoip_admin:test_provider' 'PLACEHOLDER' %}", "updateUrl": "{% url 'geoip_admin:update_database' 0 %}"}</script>
+    <script src="{% static 'geoip/admin/js/geoip-admin.js' %}"></script>
+{% endblock %}

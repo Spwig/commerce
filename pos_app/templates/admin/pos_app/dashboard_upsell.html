@@ -1,0 +1,102 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Point of Sale" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'pos_app/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="pos-upsell">
+        <!-- Hero Section -->
+        <div class="pos-upsell-hero">
+            <div class="pos-upsell-icon">
+                <i class="fas fa-cash-register"></i>
+            </div>
+            <h1>{% trans "Spwig Point of Sale" %}</h1>
+            <p class="pos-upsell-tagline">
+                {% trans "Turn any device into a powerful retail checkout — seamlessly connected to your online store." %}
+            </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="pos-upsell-features">
+            <div class="pos-upsell-feature">
+                <div class="pos-upsell-feature-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3>{% trans "Unified Inventory" %}</h3>
+                <p>{% trans "Shared stock between your online store and physical locations. Every sale updates in real time." %}</p>
+            </div>
+            <div class="pos-upsell-feature">
+                <div class="pos-upsell-feature-icon">
+                    <i class="fas fa-tablet-alt"></i>
+                </div>
+                <h3>{% trans "Works on Any Device" %}</h3>
+                <p>{% trans "iPad, Android tablet, touchscreen PC, or any browser — no special hardware required." %}</p>
+            </div>
+            <div class="pos-upsell-feature">
+                <div class="pos-upsell-feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>{% trans "Unlimited Terminals" %}</h3>
+                <p>{% trans "One flat price covers all your terminals and staff. Scale without per-device fees." %}</p>
+            </div>
+            <div class="pos-upsell-feature">
+                <div class="pos-upsell-feature-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <h3>{% trans "Gift Cards & Vouchers" %}</h3>
+                <p>{% trans "Accept and sell gift cards at the register. Apply discount vouchers with a quick scan." %}</p>
+            </div>
+            <div class="pos-upsell-feature">
+                <div class="pos-upsell-feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>{% trans "Shift Reports" %}</h3>
+                <p>{% trans "End-of-day cash reconciliation, sales summaries, and staff performance — built in." %}</p>
+            </div>
+            <div class="pos-upsell-feature">
+                <div class="pos-upsell-feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>{% trans "Multi-Language" %}</h3>
+                <p>{% trans "POS interface available in 10 languages." %}</p>
+            </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="pos-upsell-pricing">
+            <div class="pos-upsell-price-card">
+                <div class="pos-upsell-price">
+                    <span class="pos-upsell-currency">&euro;</span>
+                    <span class="pos-upsell-amount">499</span>
+                    <span class="pos-upsell-period">/{% trans "year" %}</span>
+                </div>
+                <ul class="pos-upsell-includes">
+                    <li><i class="fas fa-check"></i> {% trans "Unlimited terminals" %}</li>
+                    <li><i class="fas fa-check"></i> {% trans "Unlimited staff accounts" %}</li>
+                    <li><i class="fas fa-check"></i> {% trans "All future updates included" %}</li>
+                    <li><i class="fas fa-check"></i> {% trans "Customer-facing display" %}</li>
+                    <li><i class="fas fa-check"></i> {% trans "Offline mode" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="pos-upsell-cta">
+            <p>{% trans "To activate POS, add your license key in" %}
+                <a href="{% url 'admin:core_sitesettings_changelist' %}">{% trans "Store Settings" %}</a>.
+            </p>
+            <p class="pos-upsell-help">
+                {% trans "Don't have a license? Visit" %}
+                <a href="https://spwig.com" target="_blank" rel="noopener">spwig.com</a>
+                {% trans "to purchase one." %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

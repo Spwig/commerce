@@ -1,0 +1,53 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Testimonials Element -->
+<section class="testimonials section{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+{% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+{% hover_animation_attrs element %}
+style="{% base_styles element %}">
+    <div class="container">
+        {% if element.content.title %}
+        <div class="section-header">
+            <h2 class="section-header__title">{{ element.content.title }}</h2>
+        </div>
+        {% endif %}
+
+        <div class="testimonials__grid" style="{% if element.content.columns %}--testimonial-cols: {{ element.content.columns }};{% endif %}">
+            {% for testimonial in element.content.testimonials %}
+            <div class="testimonial-card">
+                {% if testimonial.rating %}
+                <div class="testimonial-card__rating">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= testimonial.rating %}
+                            <i class="fas fa-star rating__star rating__star--filled"></i>
+                        {% else %}
+                            <i class="far fa-star rating__star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <blockquote class="testimonial-card__quote">
+                    "{{ testimonial.content }}"
+                </blockquote>
+
+                <div class="testimonial-card__author">
+                    {% if testimonial.avatar %}
+                    <img src="{{ testimonial.avatar }}" alt="{{ testimonial.name }}" class="testimonial-card__avatar">
+                    {% endif %}
+                    <div>
+                        <p class="testimonial-card__name">{{ testimonial.name }}</p>
+                        {% if testimonial.title %}
+                        <p class="testimonial-card__title">{{ testimonial.title }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-quote-left empty-state__icon"></i>
+                <p class="empty-state__text">{% mtrans "Add testimonials to showcase customer feedback" %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,140 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for event in events %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ event.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if event.event_type == 'click' %}
+                <i class="fas fa-mouse-pointer text-primary"></i>
+            {% elif event.event_type == 'signup' %}
+                <i class="fas fa-user-plus text-info"></i>
+            {% elif event.event_type == 'conversion' %}
+                <i class="fas fa-shopping-cart text-success"></i>
+            {% elif event.event_type == 'reward_issued' %}
+                <i class="fas fa-gift text-warning"></i>
+            {% else %}
+                <i class="fas fa-calendar-check text-muted"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:referrals_referralevent_change' event.pk %}">
+                    {{ event.get_event_type_display }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if event.customer %}
+                    <i class="fas fa-user"></i> {{ event.customer.get_full_name|default:event.customer.email }}
+                {% else %}
+                    <i class="fas fa-user-slash"></i> {% trans "Anonymous" %}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if event.event_type == 'click' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-mouse-pointer"></i> {% trans "Click" %}
+                    </span>
+                {% elif event.event_type == 'signup' %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-user-plus"></i> {% trans "Signup" %}
+                    </span>
+                {% elif event.event_type == 'conversion' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-shopping-cart"></i> {% trans "Conversion" %}
+                    </span>
+                {% elif event.event_type == 'reward_issued' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-gift"></i> {% trans "Reward Issued" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                {% if event.referrer_identity %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Referrer" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <a href="{% url 'admin:referrals_referralidentity_change' event.referrer_identity.id %}"
+                           class="link-color">
+                            {{ event.referrer_identity.customer.get_full_name|default:event.referrer_identity.customer.email }}
+                        </a>
+                    </span>
+                </div>
+                {% endif %}
+                {% if event.order %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Order" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <a href="{% url 'admin:orders_order_change' event.order.id %}"
+                           class="link-color">
+                            #{{ event.order.order_number }}
+                        </a>
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{{ event.created_at|date:"M d, Y H:i:s" }}</span>
+                </div>
+                {% if event.ip_address %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-network-wired"></i>
+                    <code class="text-size-11">{{ event.ip_address }}</code>
+                </div>
+                {% endif %}
+                {% if event.user_agent %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-desktop"></i>
+                    <span class="text-size-11 text-muted">
+                        {{ event.user_agent|truncatechars:50 }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if event.metadata %}
+            <div class="list-row-card-meta mt-8">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-info-circle"></i>
+                    <code class="text-size-10 text-muted">
+                        {{ event.metadata|truncatechars:100 }}
+                    </code>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:referrals_referralevent_change' event.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View event details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            {% if event.customer %}
+            <a href="{% url 'admin:auth_user_change' event.customer.id %}"
+               class="list-row-card-action"
+               title="{% trans 'View customer' %}">
+                <i class="fas fa-user"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No events found matching your criteria." %}</p>
+    </div>
+    {% endfor %}
+</div>

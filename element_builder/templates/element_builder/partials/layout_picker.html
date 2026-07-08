@@ -1,0 +1,43 @@
+{# Layout picker shown when container is first added #}
+<div class="eb-layout-picker" data-container-id="{{ element.id }}">
+    <div class="layout-picker-header">
+        <i class="fas fa-th-large"></i>
+        <h4>Choose a Layout</h4>
+        <p>Select a preset or skip for an empty container</p>
+    </div>
+
+    <div class="layout-options">
+        <div class="layout-option" data-layout="full-width">
+            <div class="layout-preview"><div class="preview-col" style="flex: 1;"></div></div>
+            <span>Full Width</span>
+        </div>
+        <div class="layout-option" data-layout="2-equal">
+            <div class="layout-preview"><div class="preview-col"></div><div class="preview-col"></div></div>
+            <span>2 Equal</span>
+        </div>
+        <div class="layout-option" data-layout="2-col-33-66">
+            <div class="layout-preview"><div class="preview-col" style="flex: 1;"></div><div class="preview-col" style="flex: 2;"></div></div>
+            <span>1/3 + 2/3</span>
+        </div>
+        <div class="layout-option" data-layout="2-col-66-33">
+            <div class="layout-preview"><div class="preview-col" style="flex: 2;"></div><div class="preview-col" style="flex: 1;"></div></div>
+            <span>2/3 + 1/3</span>
+        </div>
+        <div class="layout-option" data-layout="3-equal">
+            <div class="layout-preview"><div class="preview-col"></div><div class="preview-col"></div><div class="preview-col"></div></div>
+            <span>3 Equal</span>
+        </div>
+        <div class="layout-option" data-layout="3-col-25-50-25">
+            <div class="layout-preview"><div class="preview-col" style="flex: 1;"></div><div class="preview-col" style="flex: 2;"></div><div class="preview-col" style="flex: 1;"></div></div>
+            <span>1/4 + 1/2 + 1/4</span>
+        </div>
+        <div class="layout-option" data-layout="4-equal">
+            <div class="layout-preview"><div class="preview-col"></div><div class="preview-col"></div><div class="preview-col"></div><div class="preview-col"></div></div>
+            <span>4 Equal</span>
+        </div>
+    </div>
+
+    <button class="skip-layout-btn" data-action="skip-layout">
+        <i class="fas fa-forward"></i> Skip - Empty Container
+    </button>
+</div>

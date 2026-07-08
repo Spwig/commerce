@@ -1,0 +1,113 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Referrals Change List Shared Styles
+ * Shared styles for all referrals admin change list views
+ * (identities, attributions, events, rewards)
+ */
+
+/* Change list header */
+.change-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.change-list-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.change-list-header .subtitle {
+    margin: 4px 0 0;
+    color: var(--body-quiet-color, #666);
+    font-size: 0.875rem;
+}
+
+/* i18n config data island - hidden by default */
+.referrals-changelist-config {
+    display: none;
+}
+
+/* Admin badge utilities (CSP-compliant replacement for inline format_html styles) */
+.referral-badge {
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #fff;
+    display: inline-block;
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.referral-badge-sm {
+    padding: 2px 8px;
+}
+
+.referral-badge-success {
+    background: var(--success-color, #28a745);
+}
+
+.referral-badge-warning {
+    background: var(--warning-color, #ffc107);
+}
+
+.referral-badge-danger {
+    background: var(--danger-color, #dc3545);
+}
+
+.referral-badge-info {
+    background: var(--info-color, #17a2b8);
+}
+
+.referral-badge-primary {
+    background: var(--primary, #007bff);
+}
+
+.referral-badge-secondary {
+    background: #6c757d;
+}
+
+.referral-badge-orange {
+    background: #ff6b6b;
+}
+
+.referral-badge-purple {
+    background: #6f42c1;
+}
+
+/* Referral link input (CSP-compliant, replaces onclick="this.select()") */
+.referral-link-input {
+    width: 100%;
+    font-family: monospace;
+    user-select: all;
+    -webkit-user-select: all;
+    cursor: text;
+}
+
+/* QR code preview */
+.referral-qr-code {
+    width: 200px;
+    height: 200px;
+}
+
+/* Expiry status text */
+.referral-text-muted {
+    color: #6c757d;
+}
+
+.referral-text-danger {
+    color: var(--danger-color, #dc3545);
+    font-weight: bold;
+}
+
+.referral-text-warning {
+    color: #ff6b6b;
+    font-weight: bold;
+}

@@ -1,0 +1,104 @@
+{% extends "admin/seo_generator/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Select an SEO Provider" %}</h2>
+    <p class="step-description">{% trans "Choose the SEO generation provider you want to connect to your store." %}</p>
+
+    {% if providers %}
+    <form method="post" id="provider-select-form">
+        {% csrf_token %}
+
+        <div class="providers-grid">
+            {% for provider in providers %}
+            <label class="provider-card" for="provider-{{ provider.component.id }}">
+                <input type="radio"
+                       name="component_id"
+                       value="{{ provider.component.id }}"
+                       id="provider-{{ provider.component.id }}"
+                       required>
+
+                <div class="provider-card-content">
+                    {% if provider.component.thumbnail_url %}
+                    <div class="provider-logo">
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.component.thumbnail_url }}" alt="{{ provider.component.name }}" crossorigin="anonymous">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="provider-logo provider-logo-placeholder">
+                        <i class="fas fa-search-plus"></i>
+                    </div>
+                    {% endif %}
+
+                    <h3 class="provider-name">{{ provider.component.name }}</h3>
+
+                    {% if provider.component.description %}
+                    <p class="provider-description">{{ provider.component.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    {% if provider.capabilities %}
+                    <div class="provider-capabilities">
+                        {% if provider.capabilities.meta_title %}
+                        <span class="capability-badge">
+                            <i class="fas fa-heading"></i> {% trans "Meta Titles" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.meta_description %}
+                        <span class="capability-badge">
+                            <i class="fas fa-align-left"></i> {% trans "Descriptions" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.keywords %}
+                        <span class="capability-badge">
+                            <i class="fas fa-tags"></i> {% trans "Keywords" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.multi_language %}
+                        <span class="capability-badge">
+                            <i class="fas fa-globe"></i> {% trans "Multi-Language" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.bulk_generation %}
+                        <span class="capability-badge">
+                            <i class="fas fa-layer-group"></i> {% trans "Bulk Generation" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="provider-check">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>{% trans "No Providers Available" %}</h3>
+        <p>{% trans "No SEO provider components are currently installed." %}</p>
+        <p>{% trans "Please browse and install SEO provider components from the marketplace." %}</p>
+        <a href="{% url 'seo_generator:provider_browse' %}" class="btn btn-primary">
+            <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+{% if providers %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:seo_generator_seoprovideraccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="provider-select-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

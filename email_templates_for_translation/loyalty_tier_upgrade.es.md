@@ -1,0 +1,111 @@
+---
+template_type: loyalty_tier_upgrade
+category: Loyalty Program
+---
+
+# Email Template: loyalty_tier_upgrade
+
+## Subject
+¡Felicidades! Has sido actualizado a {{ new_tier }}
+
+## HTML Content
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-text font-family="Arial, sans-serif" line-height="1.6" />
+      <mj-all font-family="Arial, sans-serif" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="{{ theme.color.background_secondaryondary|default:'#f9fafb' }}">
+    <!-- Header -->
+    <mj-section background-color="{{ theme.color.warning|default:'#f59e0b' }}" padding="40px 20px">
+      <mj-column>
+        <mj-text font-size="48px" align="center">
+          🎉
+        </mj-text>
+        <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}" align="center">
+          ¡Actualización de nivel!
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Tier Display -->
+    <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="40px 20px">
+      <mj-column>
+        <mj-text font-size="16px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center">
+          {{ old_tier }} → {{ new_tier }}
+        </mj-text>
+        <mj-text font-size="28px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-top="10px">
+          {{ new_tier }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Content -->
+    <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="20px">
+      <mj-column>
+        <mj-text font-size="16px" color="{{ theme.color.text|default:'#1f2937' }}">
+          Hola {{ customer_name }},
+        </mj-text>
+        <mj-text font-size="16px" color="{{ theme.color.text|default:'#1f2937' }}">
+          ¡Felicidades! Tu lealtad ha dado resultados. Has sido actualizado a {{ new_tier }}!
+        </mj-text>
+
+        <!-- Bonus Points (if any) -->
+        {% if bonus_points %}
+        <mj-text font-size="16px" color="{{ theme.color.text|default:'#1f2937' }}" padding-top="20px">
+          <strong>🎁 Bonus de actualización: {{ bonus_points }} puntos!</strong>
+        </mj-text>
+        {% endif %}
+      </mj-column>
+    </mj-section>
+
+    <!-- Benefits -->
+    <mj-section background-color="{{ theme.color.background_secondaryondary|default:'#f9fafb' }}" padding="30px 20px">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}">
+          Tus nuevas ventajas:
+        </mj-text>
+        <mj-text font-size="14px" color="{{ theme.color.text|default:'#1f2937' }}">
+          {{ tier_benefits }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA -->
+    <mj-section background-color="{{ theme.color.background|default:'#ffffff' }}" padding="30px 20px">
+      <mj-column>
+        <mj-button background-color="{{ theme.color.primary|default:'#2563eb' }}" color="{{ theme.color.background|default:'#ffffff' }}" href="{{ account_url }}">
+          Ver mis recompensas
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- Footer -->
+    <mj-section background-color="{{ theme.color.background_secondaryondary|default:'#f9fafb' }}" padding="20px">
+      <mj-column>
+        <mj-text font-size="12px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center">
+          {{ shop_name }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+
+## Text Content
+¡Felicidades! Has sido actualizado a {{ new_tier }}
+
+Hola {{ customer_name }},
+
+¡Felicidades! Tu lealtad ha dado resultados. Has sido actualizado a {{ new_tier }}!
+
+{{ old_tier }} → {{ new_tier }}
+
+{% if bonus_points %}Bonus de actualización: {{ bonus_points }} puntos!{% endif %}
+
+Tus nuevas ventajas:
+{{ tier_benefits }}
+
+Ver tus recompensas: {{ account_url }}
+
+{{ shop_name }}

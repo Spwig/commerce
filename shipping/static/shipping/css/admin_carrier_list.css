@@ -1,0 +1,900 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Carrier List Admin Styles
+ * Modern card-based layout for carrier presets
+ * Scoped to carrier admin container
+ */
+
+/* ============================================================================
+   Container & Layout
+   ============================================================================ */
+
+/* Higher specificity to override admin-sidebar.css and Django defaults */
+#content-main .carrier-admin-container,
+.main-content .carrier-admin-container,
+.carrier-admin-container {
+    padding: 20px;
+    max-width: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Ensure parent containers don't constrain width */
+.change-list {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+#changelist {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+body.change-list #content {
+    max-width: none !important;
+}
+
+body.change-list #content-main {
+    max-width: none !important;
+}
+
+/* ============================================================================
+   Header
+   ============================================================================ */
+
+.carrier-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--hairline-color, #e0e0e0);
+}
+
+.carrier-admin-header .header-title h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.carrier-admin-header .header-title h1 i {
+    color: var(--primary, #417690);
+}
+
+.carrier-admin-header .header-subtitle {
+    font-size: 14px;
+    color: var(--body-quiet-color, #666);
+    margin: 0;
+}
+
+.carrier-admin-header .header-actions .button {
+    background: var(--primary, #417690);
+    color: var(--body-bg, white);
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.carrier-admin-header .header-actions .button:hover {
+    background: var(--link-hover-color, #2e5368);
+}
+
+/* ============================================================================
+   Toolbar
+   ============================================================================ */
+
+.carrier-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Bulk Actions */
+.bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bulk-action-dropdown,
+.filter-dropdown {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    background: var(--body-bg, white);
+    color: var(--body-fg, #333);
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.bulk-action-dropdown:hover,
+.filter-dropdown:hover {
+    border-color: var(--primary, #417690);
+}
+
+.bulk-action-dropdown:focus,
+.filter-dropdown:focus {
+    outline: none;
+    border-color: var(--primary, #417690);
+    box-shadow: 0 0 0 3px var(--selected-bg, rgba(65, 118, 144, 0.1));
+}
+
+.bulk-actions .button {
+    padding: 8px 16px;
+    background: var(--primary, #417690);
+    color: var(--body-bg, white);
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.bulk-actions .button:hover:not(:disabled) {
+    background: var(--link-hover-color, #2e5368);
+}
+
+.bulk-actions .button:disabled {
+    background: var(--body-quiet-color, #999);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.selected-count {
+    font-size: 14px;
+    color: var(--body-quiet-color, #666);
+    padding: 4px 8px;
+    background: var(--darkened-bg, #f5f5f5);
+    border-radius: 4px;
+}
+
+.selected-count #selected-number {
+    font-weight: 600;
+    color: var(--primary, #417690);
+}
+
+/* Filters */
+.filter-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Clear Filters Button */
+.clear-filters-btn {
+    padding: 8px 14px !important;
+    background: var(--body-bg, white) !important;
+    border: 1px solid var(--border-color, #ddd) !important;
+    color: var(--body-quiet-color, #666) !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.clear-filters-btn:hover {
+    background: var(--darkened-bg, #f5f5f5) !important;
+    border-color: var(--body-quiet-color, #999) !important;
+    color: var(--error-color, #dc3545) !important;
+}
+
+.clear-filters-btn i {
+    font-size: 14px;
+}
+
+/* Search Box */
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    color: var(--body-quiet-color, #999);
+    pointer-events: none;
+}
+
+.search-box input {
+    padding: 8px 12px 8px 36px;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    background: var(--body-bg, white);
+    color: var(--body-fg, #333);
+    font-size: 14px;
+    width: 250px;
+    transition: all 0.2s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary, #417690);
+    box-shadow: 0 0 0 3px var(--selected-bg, rgba(65, 118, 144, 0.1));
+    width: 300px;
+}
+
+/* ============================================================================
+   Select All Bar
+   ============================================================================ */
+
+.select-all-bar {
+    padding: 12px 16px;
+    background: var(--darkened-bg, #f9f9f9);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.select-all-bar label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--body-fg, #333);
+    cursor: pointer;
+    margin: 0;
+}
+
+.select-all-bar input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* ============================================================================
+   Carriers Grid
+   ============================================================================ */
+
+.carriers-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+/* ============================================================================
+   Carrier Card - Horizontal Layout
+   ============================================================================ */
+
+.carrier-card {
+    position: relative;
+    background: var(--body-bg, white);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 8px;
+    padding: 16px 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    min-height: 80px;
+}
+
+.carrier-card:hover {
+    border-color: var(--primary, #417690);
+    box-shadow: 0 2px 8px var(--selected-bg, rgba(0, 0, 0, 0.08));
+}
+
+/* Checkbox */
+.carrier-checkbox {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.carrier-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Logo */
+.carrier-logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 50px;
+    background: var(--darkened-bg, #f9f9f9);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.carrier-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.carrier-logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--body-quiet-color, #ccc);
+    font-size: 24px;
+}
+
+.default-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--warning-color, #ffc107);
+    color: var(--body-bg, #fff);
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Carrier Info */
+.carrier-info {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.carrier-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    min-width: 200px;
+    flex-shrink: 0;
+}
+
+.carrier-name a {
+    color: var(--body-fg, #333);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.carrier-name a:hover {
+    color: var(--primary, #417690);
+}
+
+.carrier-slug {
+    font-size: 11px;
+    color: var(--body-quiet-color, #666);
+    display: none; /* Hide slug in horizontal layout to save space */
+}
+
+.slug-label {
+    font-weight: 500;
+}
+
+.slug-value {
+    font-family: monospace;
+    background: var(--darkened-bg, #f5f5f5);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* Country Meta */
+.carrier-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--body-quiet-color, #666);
+}
+
+.country-meta {
+    background: var(--darkened-bg, #f9f9f9);
+    padding: 6px 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.country-flag {
+    width: 20px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.country-code {
+    font-weight: 600;
+    color: var(--body-fg, #333);
+}
+
+.country-name {
+    color: var(--body-quiet-color, #666);
+}
+
+/* Tracking URL Status */
+.tracking-url-status {
+    flex-shrink: 0;
+}
+
+.url-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.url-badge.url-system {
+    background: var(--selected-bg, #e8e8e8);
+    color: var(--body-quiet-color, #666);
+}
+
+.url-badge.url-override {
+    background: var(--info-color, #17A2B8);
+    color: var(--body-bg, white);
+}
+
+/* Badges */
+.carrier-badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.badge-status.badge-active {
+    background: var(--success-color, #28A745);
+    color: var(--body-bg, white);
+}
+
+.badge-status.badge-inactive {
+    background: var(--body-quiet-color, #6C757D);
+    color: var(--body-bg, white);
+}
+
+.badge-type.badge-system {
+    background: var(--info-color, #17A2B8);
+    color: var(--body-bg, white);
+}
+
+.badge-type.badge-custom {
+    background: var(--primary, #417690);
+    color: var(--body-bg, white);
+}
+
+/* ============================================================================
+   Action Buttons
+   ============================================================================ */
+
+.carrier-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    background: var(--body-bg, white);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    color: var(--body-quiet-color, #666);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    min-width: 40px;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.action-btn.edit-btn:hover {
+    background: var(--primary, #417690);
+    border-color: var(--primary, #417690);
+    color: var(--body-bg, white);
+}
+
+.action-btn.carrier-toggle-btn:hover {
+    background: var(--success-color, #28A745);
+    border-color: var(--success-color, #28A745);
+    color: var(--body-bg, white);
+}
+
+.action-btn.carrier-toggle-btn.inactive:hover {
+    background: var(--body-quiet-color, #6C757D);
+    border-color: var(--body-quiet-color, #6C757D);
+}
+
+.action-btn.default-btn:hover {
+    background: var(--warning-color, #ffc107);
+    border-color: var(--warning-color, #ffc107);
+    color: var(--body-bg, white);
+}
+
+.action-btn.default-btn.is-default {
+    background: var(--warning-color, #ffc107);
+    border-color: var(--warning-color, #ffc107);
+    color: var(--body-bg, white);
+}
+
+.action-btn.delete-btn:hover {
+    background: var(--error-fg, #DC3545);
+    border-color: var(--error-fg, #DC3545);
+    color: var(--body-bg, white);
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--body-quiet-color, #999);
+}
+
+.empty-state i {
+    font-size: 64px;
+    color: var(--border-color, #ccc);
+    margin-bottom: 16px;
+}
+
+.empty-state h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg, #666);
+    margin: 0 0 8px 0;
+}
+
+.empty-state p {
+    font-size: 14px;
+    margin: 0 0 24px 0;
+}
+
+.empty-state .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: var(--primary, #417690);
+    color: var(--body-bg, white);
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.empty-state .button:hover {
+    background: var(--link-hover-color, #2e5368);
+}
+
+/* ============================================================================
+   Loading Overlay
+   ============================================================================ */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    background: var(--body-bg, white);
+    padding: 24px 32px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.loading-spinner i {
+    font-size: 32px;
+    color: var(--primary, #417690);
+    margin-bottom: 12px;
+}
+
+.loading-spinner p {
+    margin: 0;
+    color: var(--body-fg, #333);
+    font-size: 14px;
+}
+
+/* ============================================================================
+   Notifications
+   ============================================================================ */
+
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification {
+    background: var(--body-bg, white);
+    border-left: 4px solid var(--primary, #417690);
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 300px;
+    animation: slideInRight 0.3s ease;
+}
+
+.notification.success {
+    border-left-color: var(--success-color, #28A745);
+}
+
+.notification.error {
+    border-left-color: var(--error-fg, #DC3545);
+}
+
+.notification.warning {
+    border-left-color: var(--warning-color, #ffc107);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================================================
+   Hidden by Default (JS-toggled elements)
+   ============================================================================ */
+
+.carrier-list-hidden {
+    display: none;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+    .carrier-info {
+        gap: 12px;
+    }
+
+    .carrier-name {
+        min-width: 150px;
+    }
+
+    .country-name {
+        display: none; /* Hide full country name, keep flag + code */
+    }
+}
+
+@media (max-width: 968px) {
+    .carrier-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filter-group {
+        flex-wrap: wrap;
+    }
+
+    /* Better responsive handling for carrier cards */
+    .carrier-card {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+    }
+
+    .carrier-info {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    /* Force carrier actions to new row to prevent overlap */
+    .carrier-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+        order: 10; /* Move to end */
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--hairline-color, #e0e0e0);
+    }
+
+    /* Stack badges and meta vertically on medium screens */
+    .carrier-badges,
+    .carrier-meta {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 640px) {
+    .carrier-admin-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-box input {
+        width: 100%;
+    }
+
+    .search-box input:focus {
+        width: 100%;
+    }
+
+    /* Compact mobile card layout - 3 row design */
+    .carrier-card {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        padding: 10px 12px;
+        gap: 8px;
+        min-height: auto;
+    }
+
+    /* Row 1: Checkbox + Logo + Name + Country (horizontal) */
+    .carrier-checkbox {
+        flex-shrink: 0;
+        align-self: flex-start;
+        margin-top: 8px;
+    }
+
+    .carrier-logo {
+        width: 50px;
+        height: 35px;
+        flex-shrink: 0;
+    }
+
+    .carrier-info {
+        flex-direction: row;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .carrier-name {
+        font-size: 14px;
+        font-weight: 600;
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Country meta stays on first row, compact */
+    .carrier-meta {
+        flex-shrink: 0;
+        gap: 4px;
+        margin-left: 0;
+    }
+
+    .country-meta {
+        padding: 4px 6px;
+        font-size: 12px;
+    }
+
+    .country-flag {
+        width: 16px;
+        height: 12px;
+    }
+
+    .country-code {
+        font-size: 11px;
+    }
+
+    .country-name {
+        display: none;
+    }
+
+    /* Row 2: Badges - centered, full width */
+    .carrier-badges {
+        width: 100%;
+        justify-content: center;
+        gap: 6px;
+        order: 5;
+        margin: 0;
+    }
+
+    .badge {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .tracking-url-status {
+        display: none; /* Hide on mobile to save space */
+    }
+
+    /* Row 3: Action buttons - centered, full width */
+    .carrier-actions {
+        width: 100%;
+        justify-content: center;
+        gap: 6px;
+        order: 10;
+        margin: 4px 0 0 0;
+        padding-top: 8px;
+        border-top: 1px solid var(--hairline-color, #e0e0e0);
+    }
+
+    .action-btn {
+        padding: 7px 12px;
+        font-size: 13px;
+        flex: 1;
+        max-width: 80px;
+    }
+}

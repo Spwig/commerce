@@ -1,0 +1,101 @@
+{% load i18n element_tags merchant_trans %}
+{% mtrans "Days" as default_label_days %}
+{% mtrans "Hours" as default_label_hours %}
+{% mtrans "Minutes" as default_label_minutes %}
+{% mtrans "Seconds" as default_label_seconds %}
+{% mtrans "This offer has ended" as default_expired_message %}
+<!-- Countdown Timer Element -->
+<section class="countdown-timer countdown-timer--{{ element.content.style|default:'flip' }} countdown-timer--{{ element.content.size|default:'md' }}"
+         data-countdown-timer
+         data-countdown-mode="{{ element.content.mode|default:'date' }}"
+         data-target-date="{{ element.content.target_date|default:'' }}"
+         data-duration-hours="{{ element.content.duration_hours|default:'24' }}"
+         data-daily-end-time="{{ element.content.daily_end_time|default:'23:59' }}"
+         data-timezone="{{ element.content.timezone|default:'local' }}"
+         data-on-expire="{{ element.content.on_expire|default:'message' }}"
+         data-redirect-url="{{ element.content.redirect_url|default:'' }}"
+         data-redirect-delay="{{ element.content.redirect_delay|default:'3' }}"
+         {% hover_animation_attrs element %}
+         style="text-align: {{ element.content.alignment|default:'center' }};
+                {% base_styles element %}">
+
+    {% if element.content.title %}
+    <div class="countdown-timer__header">
+        <h3 class="countdown-timer__title">{{ element.content.title }}</h3>
+        {% if element.content.subtitle %}
+        <p class="countdown-timer__subtitle">{{ element.content.subtitle }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="countdown-timer__display"
+         style="justify-content: {{ element.content.alignment|default:'center' }};
+                {% if element.content.number_color %}--countdown-number-color: {{ element.content.number_color }};{% endif %}
+                {% if element.content.label_color %}--countdown-label-color: {{ element.content.label_color }};{% endif %}
+                {% if element.content.card_background %}--countdown-card-bg: {{ element.content.card_background }};{% endif %}
+                {% if element.content.separator_color %}--countdown-separator-color: {{ element.content.separator_color }};{% endif %}">
+
+        {% if element.content.show_days|default:True %}
+        <div class="countdown-timer__unit" data-unit="days">
+            <div class="countdown-timer__value">
+                <span class="countdown-timer__number" data-value="0">00</span>
+            </div>
+            {% if element.content.show_labels|default:True %}
+            <span class="countdown-timer__label">{{ element.content.label_days|default:default_label_days }}</span>
+            {% endif %}
+        </div>
+        {% if element.content.separator|default:'colon' == 'colon' and element.content.show_hours|default:True %}
+        <span class="countdown-timer__separator">:</span>
+        {% elif element.content.separator == 'dot' and element.content.show_hours|default:True %}
+        <span class="countdown-timer__separator">.</span>
+        {% endif %}
+        {% endif %}
+
+        {% if element.content.show_hours|default:True %}
+        <div class="countdown-timer__unit" data-unit="hours">
+            <div class="countdown-timer__value">
+                <span class="countdown-timer__number" data-value="0">00</span>
+            </div>
+            {% if element.content.show_labels|default:True %}
+            <span class="countdown-timer__label">{{ element.content.label_hours|default:default_label_hours }}</span>
+            {% endif %}
+        </div>
+        {% if element.content.separator|default:'colon' == 'colon' and element.content.show_minutes|default:True %}
+        <span class="countdown-timer__separator">:</span>
+        {% elif element.content.separator == 'dot' and element.content.show_minutes|default:True %}
+        <span class="countdown-timer__separator">.</span>
+        {% endif %}
+        {% endif %}
+
+        {% if element.content.show_minutes|default:True %}
+        <div class="countdown-timer__unit" data-unit="minutes">
+            <div class="countdown-timer__value">
+                <span class="countdown-timer__number" data-value="0">00</span>
+            </div>
+            {% if element.content.show_labels|default:True %}
+            <span class="countdown-timer__label">{{ element.content.label_minutes|default:default_label_minutes }}</span>
+            {% endif %}
+        </div>
+        {% if element.content.separator|default:'colon' == 'colon' and element.content.show_seconds|default:True %}
+        <span class="countdown-timer__separator">:</span>
+        {% elif element.content.separator == 'dot' and element.content.show_seconds|default:True %}
+        <span class="countdown-timer__separator">.</span>
+        {% endif %}
+        {% endif %}
+
+        {% if element.content.show_seconds|default:True %}
+        <div class="countdown-timer__unit" data-unit="seconds">
+            <div class="countdown-timer__value">
+                <span class="countdown-timer__number" data-value="0">00</span>
+            </div>
+            {% if element.content.show_labels|default:True %}
+            <span class="countdown-timer__label">{{ element.content.label_seconds|default:default_label_seconds }}</span>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="countdown-timer__expired" style="display: none;">
+        <p class="countdown-timer__expired-message">{{ element.content.expired_message|default:default_expired_message }}</p>
+    </div>
+</section>

@@ -1,0 +1,469 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Header Preset Zones CSS
+ *
+ * Provides styling for header zones based on preset type (layout_type).
+ * Uses theme tokens from tokens.json with proper fallback chains.
+ *
+ * Presets: classic, boutique, minimal, mega, promotional, split
+ * Zones: top-bar, main-header, bottom-bar, mega-menu-bar
+ *
+ * Usage: Add .header-preset-{preset} class to <header> element
+ * Overrides: Inline styles from zone_overrides will override these base styles
+ */
+
+/* ============================================
+   BASE ZONE STYLES
+   All presets inherit from these base styles
+   ============================================ */
+
+.header-zone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-zone__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: var(--theme-container-max-width, 1280px);
+  margin: 0 auto;
+  padding-left: var(--theme-container-padding, 1rem);
+  padding-right: var(--theme-container-padding, 1rem);
+}
+
+/* Top Bar Zone - Base */
+.header-zone--top-bar {
+  background: var(--theme-header-zones-top-bar-background, var(--theme-header-background, var(--theme-color-surface)));
+  color: var(--theme-header-zones-top-bar-text-color, var(--theme-header-text-color, var(--theme-color-text-muted)));
+  border-bottom: 1px solid var(--theme-header-zones-top-bar-border-color, var(--theme-header-border-color, var(--theme-color-border)));
+  min-height: var(--theme-header-zones-top-bar-height, 36px);
+  padding-top: var(--theme-header-zones-top-bar-padding-y, var(--theme-space-2, 0.5rem));
+  padding-bottom: var(--theme-header-zones-top-bar-padding-y, var(--theme-space-2, 0.5rem));
+  font-size: var(--theme-header-zones-top-bar-font-size, var(--theme-font-size-sm, 0.875rem));
+}
+
+/* Main Header Zone - Base */
+.header-zone--main {
+  background: var(--theme-header-zones-main-header-background, var(--theme-header-background, var(--theme-color-surface)));
+  color: var(--theme-header-zones-main-header-text-color, var(--theme-header-text-color, var(--theme-color-text)));
+  border-bottom: 1px solid var(--theme-header-zones-main-header-border-color, var(--theme-header-border-color, var(--theme-color-border)));
+  min-height: var(--theme-header-zones-main-header-height, 70px);
+  padding-top: var(--theme-header-zones-main-header-padding-y, var(--theme-header-padding-y, var(--theme-space-4, 1rem)));
+  padding-bottom: var(--theme-header-zones-main-header-padding-y, var(--theme-header-padding-y, var(--theme-space-4, 1rem)));
+  font-size: var(--theme-header-zones-main-header-font-size, var(--theme-font-size-base, 1rem));
+}
+
+/* Bottom Bar Zone - Base */
+.header-zone--bottom-bar {
+  background: var(--theme-header-zones-bottom-bar-background, var(--theme-color-background-secondary, var(--theme-color-surface)));
+  color: var(--theme-header-zones-bottom-bar-text-color, var(--theme-header-text-color, var(--theme-color-text)));
+  border-bottom: 1px solid var(--theme-header-zones-bottom-bar-border-color, var(--theme-header-border-color, var(--theme-color-border)));
+  min-height: var(--theme-header-zones-bottom-bar-height, 50px);
+  padding-top: var(--theme-header-zones-bottom-bar-padding-y, var(--theme-space-3, 0.75rem));
+  padding-bottom: var(--theme-header-zones-bottom-bar-padding-y, var(--theme-space-3, 0.75rem));
+  font-size: var(--theme-header-zones-bottom-bar-font-size, var(--theme-font-size-sm, 0.875rem));
+}
+
+/* Mega Menu Bar Zone - Base */
+.header-zone--mega-menu-bar {
+  background: var(--theme-header-zones-mega-menu-bar-background, var(--theme-color-background-secondary, var(--theme-color-surface)));
+  color: var(--theme-header-zones-mega-menu-bar-text-color, var(--theme-header-text-color, var(--theme-color-text)));
+  border-bottom: 1px solid var(--theme-header-zones-mega-menu-bar-border-color, var(--theme-header-border-color, var(--theme-color-border)));
+  min-height: var(--theme-header-zones-mega-menu-bar-height, 60px);
+  padding-top: var(--theme-header-zones-mega-menu-bar-padding-y, var(--theme-space-4, 1rem));
+  padding-bottom: var(--theme-header-zones-mega-menu-bar-padding-y, var(--theme-space-4, 1rem));
+  font-size: var(--theme-header-zones-mega-menu-bar-font-size, var(--theme-font-size-sm, 0.875rem));
+}
+
+
+/* ============================================
+   PRESET: CLASSIC (Classic E-commerce)
+   Traditional online store layout
+   ============================================ */
+
+.header-preset-classic .header-zone--top-bar {
+  background: var(--theme-header-zones-top-bar-background-classic, var(--theme-header-zones-top-bar-background));
+  color: var(--theme-header-zones-top-bar-text-color-classic, var(--theme-header-zones-top-bar-text-color));
+  border-color: var(--theme-header-zones-top-bar-border-color-classic, var(--theme-header-zones-top-bar-border-color));
+  min-height: var(--theme-header-zones-top-bar-height-classic, var(--theme-header-zones-top-bar-height));
+  padding-top: var(--theme-header-zones-top-bar-padding-y-classic, var(--theme-header-zones-top-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-top-bar-padding-y-classic, var(--theme-header-zones-top-bar-padding-y));
+  font-size: var(--theme-header-zones-top-bar-font-size-classic, var(--theme-header-zones-top-bar-font-size));
+}
+
+.header-preset-classic .header-zone--main {
+  background: var(--theme-header-zones-main-header-background-classic, var(--theme-header-zones-main-header-background));
+  color: var(--theme-header-zones-main-header-text-color-classic, var(--theme-header-zones-main-header-text-color));
+  border-color: var(--theme-header-zones-main-header-border-color-classic, var(--theme-header-zones-main-header-border-color));
+  min-height: var(--theme-header-zones-main-header-height-classic, var(--theme-header-zones-main-header-height));
+  padding-top: var(--theme-header-zones-main-header-padding-y-classic, var(--theme-header-zones-main-header-padding-y));
+  padding-bottom: var(--theme-header-zones-main-header-padding-y-classic, var(--theme-header-zones-main-header-padding-y));
+  font-size: var(--theme-header-zones-main-header-font-size-classic, var(--theme-header-zones-main-header-font-size));
+}
+
+
+/* ============================================
+   PRESET: BOUTIQUE (Centered Boutique)
+   Elegant centered layout for boutiques
+   ============================================ */
+
+.header-preset-boutique .header-zone--top-bar {
+  background: var(--theme-header-zones-top-bar-background-boutique, var(--theme-header-zones-top-bar-background));
+  color: var(--theme-header-zones-top-bar-text-color-boutique, var(--theme-header-zones-top-bar-text-color));
+  border-color: var(--theme-header-zones-top-bar-border-color-boutique, var(--theme-header-zones-top-bar-border-color));
+  min-height: var(--theme-header-zones-top-bar-height-boutique, var(--theme-header-zones-top-bar-height));
+  padding-top: var(--theme-header-zones-top-bar-padding-y-boutique, var(--theme-header-zones-top-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-top-bar-padding-y-boutique, var(--theme-header-zones-top-bar-padding-y));
+  font-size: var(--theme-header-zones-top-bar-font-size-boutique, var(--theme-header-zones-top-bar-font-size));
+}
+
+.header-preset-boutique .header-zone--main {
+  background: var(--theme-header-zones-main-header-background-boutique, var(--theme-header-zones-main-header-background));
+  color: var(--theme-header-zones-main-header-text-color-boutique, var(--theme-header-zones-main-header-text-color));
+  border-color: var(--theme-header-zones-main-header-border-color-boutique, var(--theme-header-zones-main-header-border-color));
+  min-height: var(--theme-header-zones-main-header-height-boutique, var(--theme-header-zones-main-header-height));
+  padding-top: var(--theme-header-zones-main-header-padding-y-boutique, var(--theme-header-zones-main-header-padding-y));
+  padding-bottom: var(--theme-header-zones-main-header-padding-y-boutique, var(--theme-header-zones-main-header-padding-y));
+  font-size: var(--theme-header-zones-main-header-font-size-boutique, var(--theme-header-zones-main-header-font-size));
+}
+
+.header-preset-boutique .header-zone--bottom-bar {
+  background: var(--theme-header-zones-bottom-bar-background-boutique, var(--theme-header-zones-bottom-bar-background));
+  color: var(--theme-header-zones-bottom-bar-text-color-boutique, var(--theme-header-zones-bottom-bar-text-color));
+  border-color: var(--theme-header-zones-bottom-bar-border-color-boutique, var(--theme-header-zones-bottom-bar-border-color));
+  min-height: var(--theme-header-zones-bottom-bar-height-boutique, var(--theme-header-zones-bottom-bar-height));
+  padding-top: var(--theme-header-zones-bottom-bar-padding-y-boutique, var(--theme-header-zones-bottom-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-bottom-bar-padding-y-boutique, var(--theme-header-zones-bottom-bar-padding-y));
+  font-size: var(--theme-header-zones-bottom-bar-font-size-boutique, var(--theme-header-zones-bottom-bar-font-size));
+}
+
+
+/* ============================================
+   PRESET: MINIMAL (Minimal Startup)
+   Clean, simple layout
+   ============================================ */
+
+.header-preset-minimal .header-zone--main {
+  background: var(--theme-header-zones-main-header-background-minimal, var(--theme-header-zones-main-header-background));
+  color: var(--theme-header-zones-main-header-text-color-minimal, var(--theme-header-zones-main-header-text-color));
+  border-color: var(--theme-header-zones-main-header-border-color-minimal, var(--theme-header-zones-main-header-border-color));
+  min-height: var(--theme-header-zones-main-header-height-minimal, var(--theme-header-zones-main-header-height));
+  padding-top: var(--theme-header-zones-main-header-padding-y-minimal, var(--theme-header-zones-main-header-padding-y));
+  padding-bottom: var(--theme-header-zones-main-header-padding-y-minimal, var(--theme-header-zones-main-header-padding-y));
+  font-size: var(--theme-header-zones-main-header-font-size-minimal, var(--theme-header-zones-main-header-font-size));
+}
+
+
+/* ============================================
+   PRESET: MEGA (Mega Menu Store)
+   Full-featured layout with mega menu bar
+   ============================================ */
+
+.header-preset-mega .header-zone--top-bar {
+  background: var(--theme-header-zones-top-bar-background-mega, var(--theme-header-zones-top-bar-background));
+  color: var(--theme-header-zones-top-bar-text-color-mega, var(--theme-header-zones-top-bar-text-color));
+  border-color: var(--theme-header-zones-top-bar-border-color-mega, var(--theme-header-zones-top-bar-border-color));
+  min-height: var(--theme-header-zones-top-bar-height-mega, var(--theme-header-zones-top-bar-height));
+  padding-top: var(--theme-header-zones-top-bar-padding-y-mega, var(--theme-header-zones-top-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-top-bar-padding-y-mega, var(--theme-header-zones-top-bar-padding-y));
+  font-size: var(--theme-header-zones-top-bar-font-size-mega, var(--theme-header-zones-top-bar-font-size));
+}
+
+.header-preset-mega .header-zone--main {
+  background: var(--theme-header-zones-main-header-background-mega, var(--theme-header-zones-main-header-background));
+  color: var(--theme-header-zones-main-header-text-color-mega, var(--theme-header-zones-main-header-text-color));
+  border-color: var(--theme-header-zones-main-header-border-color-mega, var(--theme-header-zones-main-header-border-color));
+  min-height: var(--theme-header-zones-main-header-height-mega, var(--theme-header-zones-main-header-height));
+  padding-top: var(--theme-header-zones-main-header-padding-y-mega, var(--theme-header-zones-main-header-padding-y));
+  padding-bottom: var(--theme-header-zones-main-header-padding-y-mega, var(--theme-header-zones-main-header-padding-y));
+  font-size: var(--theme-header-zones-main-header-font-size-mega, var(--theme-header-zones-main-header-font-size));
+}
+
+.header-preset-mega .header-zone--mega-menu-bar {
+  background: var(--theme-header-zones-mega-menu-bar-background-mega, var(--theme-header-zones-mega-menu-bar-background));
+  color: var(--theme-header-zones-mega-menu-bar-text-color-mega, var(--theme-header-zones-mega-menu-bar-text-color));
+  border-color: var(--theme-header-zones-mega-menu-bar-border-color-mega, var(--theme-header-zones-mega-menu-bar-border-color));
+  min-height: var(--theme-header-zones-mega-menu-bar-height-mega, var(--theme-header-zones-mega-menu-bar-height));
+  padding-top: var(--theme-header-zones-mega-menu-bar-padding-y-mega, var(--theme-header-zones-mega-menu-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-mega-menu-bar-padding-y-mega, var(--theme-header-zones-mega-menu-bar-padding-y));
+  font-size: var(--theme-header-zones-mega-menu-bar-font-size-mega, var(--theme-header-zones-mega-menu-bar-font-size));
+}
+
+
+/* ============================================
+   PRESET: PROMOTIONAL (Promotional Marketing)
+   Marketing-focused layout with prominent top bar
+   ============================================ */
+
+.header-preset-promotional .header-zone--top-bar {
+  background: var(--theme-header-zones-top-bar-background-promotional, var(--theme-header-zones-top-bar-background));
+  color: var(--theme-header-zones-top-bar-text-color-promotional, var(--theme-header-zones-top-bar-text-color));
+  border-color: var(--theme-header-zones-top-bar-border-color-promotional, var(--theme-header-zones-top-bar-border-color));
+  min-height: var(--theme-header-zones-top-bar-height-promotional, var(--theme-header-zones-top-bar-height));
+  padding-top: var(--theme-header-zones-top-bar-padding-y-promotional, var(--theme-header-zones-top-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-top-bar-padding-y-promotional, var(--theme-header-zones-top-bar-padding-y));
+  font-size: var(--theme-header-zones-top-bar-font-size-promotional, var(--theme-header-zones-top-bar-font-size));
+}
+
+.header-preset-promotional .header-zone--main {
+  background: var(--theme-header-zones-main-header-background-promotional, var(--theme-header-zones-main-header-background));
+  color: var(--theme-header-zones-main-header-text-color-promotional, var(--theme-header-zones-main-header-text-color));
+  border-color: var(--theme-header-zones-main-header-border-color-promotional, var(--theme-header-zones-main-header-border-color));
+  min-height: var(--theme-header-zones-main-header-height-promotional, var(--theme-header-zones-main-header-height));
+  padding-top: var(--theme-header-zones-main-header-padding-y-promotional, var(--theme-header-zones-main-header-padding-y));
+  padding-bottom: var(--theme-header-zones-main-header-padding-y-promotional, var(--theme-header-zones-main-header-padding-y));
+  font-size: var(--theme-header-zones-main-header-font-size-promotional, var(--theme-header-zones-main-header-font-size));
+}
+
+.header-preset-promotional .header-zone--bottom-bar {
+  background: var(--theme-header-zones-bottom-bar-background-promotional, var(--theme-header-zones-bottom-bar-background));
+  color: var(--theme-header-zones-bottom-bar-text-color-promotional, var(--theme-header-zones-bottom-bar-text-color));
+  border-color: var(--theme-header-zones-bottom-bar-border-color-promotional, var(--theme-header-zones-bottom-bar-border-color));
+  min-height: var(--theme-header-zones-bottom-bar-height-promotional, var(--theme-header-zones-bottom-bar-height));
+  padding-top: var(--theme-header-zones-bottom-bar-padding-y-promotional, var(--theme-header-zones-bottom-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-bottom-bar-padding-y-promotional, var(--theme-header-zones-bottom-bar-padding-y));
+  font-size: var(--theme-header-zones-bottom-bar-font-size-promotional, var(--theme-header-zones-bottom-bar-font-size));
+}
+
+
+/* ============================================
+   PRESET: SPLIT (Split Navigation)
+   Navigation split on both sides
+   ============================================ */
+
+.header-preset-split .header-zone--top-bar {
+  background: var(--theme-header-zones-top-bar-background-split, var(--theme-header-zones-top-bar-background));
+  color: var(--theme-header-zones-top-bar-text-color-split, var(--theme-header-zones-top-bar-text-color));
+  border-color: var(--theme-header-zones-top-bar-border-color-split, var(--theme-header-zones-top-bar-border-color));
+  min-height: var(--theme-header-zones-top-bar-height-split, var(--theme-header-zones-top-bar-height));
+  padding-top: var(--theme-header-zones-top-bar-padding-y-split, var(--theme-header-zones-top-bar-padding-y));
+  padding-bottom: var(--theme-header-zones-top-bar-padding-y-split, var(--theme-header-zones-top-bar-padding-y));
+  font-size: var(--theme-header-zones-top-bar-font-size-split, var(--theme-header-zones-top-bar-font-size));
+}
+
+.header-preset-split .header-zone--main {
+  background: var(--theme-header-zones-main-header-background-split, var(--theme-header-zones-main-header-background));
+  color: var(--theme-header-zones-main-header-text-color-split, var(--theme-header-zones-main-header-text-color));
+  border-color: var(--theme-header-zones-main-header-border-color-split, var(--theme-header-zones-main-header-border-color));
+  min-height: var(--theme-header-zones-main-header-height-split, var(--theme-header-zones-main-header-height));
+  padding-top: var(--theme-header-zones-main-header-padding-y-split, var(--theme-header-zones-main-header-padding-y));
+  padding-bottom: var(--theme-header-zones-main-header-padding-y-split, var(--theme-header-zones-main-header-padding-y));
+  font-size: var(--theme-header-zones-main-header-font-size-split, var(--theme-header-zones-main-header-font-size));
+}
+
+
+/* ============================================
+   PRESET STRUCTURAL RULES
+   Layout-specific structural differences
+   ============================================ */
+
+/* --- Boutique: Centered elegance --- */
+.header-preset-boutique .header-zone--main {
+  text-align: center;
+}
+
+.header-preset-boutique .header-zone--main .header-zone__section--center {
+  flex-direction: column;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.header-preset-boutique .header-zone--bottom-bar .header-zone__section--full {
+  justify-content: center;
+}
+
+.header-preset-boutique .header-zone--bottom-bar .widget-menu .menu-list {
+  justify-content: center;
+  gap: var(--theme-space-6, 1.5rem);
+}
+
+.header-preset-boutique .header-zone--bottom-bar .widget-menu .menu-link {
+  letter-spacing: var(--theme-letter-spacing-wide, 0.05em);
+  text-transform: uppercase;
+  font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+/* --- Minimal: Compact single-row --- */
+.header-preset-minimal .header-zone--main {
+  min-height: var(--theme-header-zones-main-header-height-minimal, 56px);
+}
+
+.header-preset-minimal .header-zone--main .header-zone__inner {
+  gap: var(--theme-space-6, 1.5rem);
+}
+
+/* --- Mega: Category navigation bar --- */
+.header-preset-mega .header-zone--mega-menu-bar {
+  border-top: 1px solid var(--theme-header-zones-mega-menu-bar-border-color, var(--theme-color-border));
+}
+
+.header-preset-mega .header-zone--mega-menu-bar .header-zone__section--full {
+  justify-content: flex-start;
+}
+
+.header-preset-mega .header-zone--mega-menu-bar .widget-menu .menu-list {
+  gap: 0;
+}
+
+.header-preset-mega .header-zone--mega-menu-bar .widget-menu .menu-link {
+  padding: var(--theme-space-3, 0.75rem) var(--theme-space-4, 1rem);
+  font-weight: var(--theme-font-weight-medium, 500);
+  border-radius: 0;
+}
+
+/* --- Promotional: Eye-catching nav bar --- */
+.header-preset-promotional .header-zone--bottom-bar {
+  text-align: center;
+}
+
+.header-preset-promotional .header-zone--bottom-bar .header-zone__section--full {
+  justify-content: center;
+}
+
+.header-preset-promotional .header-zone--bottom-bar .widget-menu .menu-list {
+  justify-content: center;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.header-preset-promotional .header-zone--bottom-bar .widget-menu .menu-link {
+  font-weight: var(--theme-font-weight-medium, 500);
+}
+
+/* --- Split: Differentiated two-row layout --- */
+.header-preset-split .header-zone--top-bar {
+  border-bottom-width: 2px;
+}
+
+.header-preset-split .header-zone--main {
+  border-bottom: none;
+}
+
+.header-preset-split .header-zone--main .header-zone__section--left {
+  flex: 1;
+}
+
+
+/* ============================================
+   STICKY HEADER STYLES
+   Applied when header is sticky
+   ============================================ */
+
+.site-header[data-sticky="true"] {
+  position: sticky;
+  top: 0;
+  z-index: var(--theme-z-index-sticky, 1020);
+}
+
+.site-header[data-sticky="true"].is-scrolled .header-zone--main {
+  box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+
+/* ============================================
+   FULL WIDTH ZONES
+   For zones that should span full viewport
+   ============================================ */
+
+.header-zone[data-full-width="true"] {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.header-zone[data-full-width="true"] .header-zone__inner {
+  max-width: none;
+  padding-left: var(--theme-space-4, 1rem);
+  padding-right: var(--theme-space-4, 1rem);
+}
+
+
+/* ============================================
+   ZONE SECTIONS (left, center, right, full)
+   ============================================ */
+
+.header-zone__section {
+  display: flex;
+  align-items: center;
+  gap: var(--theme-space-4, 1rem);
+}
+
+.header-zone__section--left {
+  justify-content: flex-start;
+}
+
+.header-zone__section--center {
+  justify-content: center;
+  flex: 1;
+}
+
+.header-zone__section--right {
+  justify-content: flex-end;
+}
+
+.header-zone__section--full {
+  justify-content: center;
+  flex: 1;
+}
+
+
+/* ============================================
+   RESPONSIVE VISIBILITY
+   ============================================ */
+
+/* Hide on mobile by default (can be overridden) */
+@media (max-width: 767px) {
+  .header-zone--top-bar {
+    display: none;
+  }
+
+  .header-zone--bottom-bar {
+    display: none;
+  }
+
+  .header-zone--mega-menu-bar {
+    display: none;
+  }
+}
+
+/* Show zones that should be visible on mobile */
+.header-zone[data-visible-mobile="true"] {
+  display: flex !important;
+}
+
+@media (max-width: 767px) {
+  .header-zone[data-visible-mobile="false"] {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .header-zone[data-visible-tablet="false"] {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header-zone[data-visible-desktop="false"] {
+    display: none !important;
+  }
+}
+
+
+/* ============================================
+   GLASS EFFECT
+   Applied via data attribute
+   ============================================ */
+
+.header-zone[data-glass-effect="true"] {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background-color: var(--theme-header-glass-bg, rgba(255, 255, 255, 0.8)) !important;
+}
+
+.header-zone[data-glass-effect="true"][data-dark-mode="true"] {
+  background-color: var(--theme-header-glass-bg-dark, rgba(0, 0, 0, 0.8)) !important;
+}

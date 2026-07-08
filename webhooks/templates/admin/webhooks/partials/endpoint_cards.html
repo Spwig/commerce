@@ -1,0 +1,166 @@
+{% load i18n %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards" id="results-container">
+    {% for endpoint in endpoints %}
+    <div class="list-row-card{% if endpoint.is_disabled_by_failures %} disabled{% endif %}" data-endpoint-id="{{ endpoint.id }}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ endpoint.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if endpoint.is_disabled_by_failures %}
+                <i class="fas fa-exclamation-circle text-error icon-size-32"></i>
+            {% elif endpoint.consecutive_failures > 0 %}
+                <i class="fas fa-exclamation-triangle text-warning icon-size-32"></i>
+            {% elif endpoint.is_active %}
+                <i class="fas fa-broadcast-tower text-success icon-size-32"></i>
+            {% else %}
+                <i class="fas fa-broadcast-tower text-muted icon-size-32"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:webhooks_webhookendpoint_change' endpoint.pk %}">
+                    {{ endpoint.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-link"></i>
+                <span class="endpoint-url" title="{{ endpoint.url }}">
+                    {% if endpoint.url|length > 60 %}
+                        {{ endpoint.url|slice:":60" }}...
+                    {% else %}
+                        {{ endpoint.url }}
+                    {% endif %}
+                </span>
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if endpoint.is_disabled_by_failures %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-ban"></i> {% trans "Disabled" %}
+                    </span>
+                {% elif endpoint.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-pause-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if endpoint.consecutive_failures > 0 and not endpoint.is_disabled_by_failures %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-exclamation-triangle"></i> {{ endpoint.consecutive_failures }} {% trans "failures" %}
+                    </span>
+                {% endif %}
+
+                {% if endpoint.events %}
+                    {% if '*' in endpoint.events %}
+                        <span class="list-row-card-badge list-row-card-badge-primary">
+                            <i class="fas fa-asterisk"></i> {% trans "All Events" %}
+                        </span>
+                    {% else %}
+                        <span class="list-row-card-badge list-row-card-badge-info">
+                            <i class="fas fa-bell"></i> {{ endpoint.events|length }} {% trans "event" %}{{ endpoint.events|length|pluralize:"s" }}
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Health" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if endpoint.is_disabled_by_failures %}
+                            <span class="text-error"><i class="fas fa-times-circle"></i> {% trans "Unhealthy" %}</span>
+                        {% elif endpoint.consecutive_failures > 0 %}
+                            <span class="text-warning"><i class="fas fa-exclamation-triangle"></i> {% trans "Degraded" %}</span>
+                        {% else %}
+                            <span class="text-success"><i class="fas fa-check-circle"></i> {% trans "Healthy" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Retries" %}</span>
+                    <span class="list-row-card-stat-value">{{ endpoint.max_retries }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Timeout" %}</span>
+                    <span class="list-row-card-stat-value">{{ endpoint.timeout_seconds }}s</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Last Triggered" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if endpoint.last_triggered_at %}
+                            {{ endpoint.last_triggered_at|timesince }} {% trans "ago" %}
+                        {% else %}
+                            <span class="text-muted">{% trans "Never" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ endpoint.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if endpoint.description %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{{ endpoint.description|truncatewords:10 }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:webhooks_webhookendpoint_change' endpoint.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit endpoint' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <button type="button"
+                    class="list-row-card-action test-endpoint-btn"
+                    data-endpoint-id="{{ endpoint.id }}"
+                    title="{% trans 'Test endpoint' %}">
+                <i class="fas fa-flask"></i>
+            </button>
+            <a href="{% url 'admin:webhooks_webhookdelivery_changelist' %}?endpoint__id__exact={{ endpoint.id }}"
+               class="list-row-card-action"
+               title="{% trans 'View deliveries' %}">
+                <i class="fas fa-history"></i>
+            </a>
+            {% if endpoint.is_disabled_by_failures %}
+            <button type="button"
+                    class="list-row-card-action reset-endpoint-btn"
+                    data-endpoint-id="{{ endpoint.id }}"
+                    title="{% trans 'Reset failures' %}">
+                <i class="fas fa-redo"></i>
+            </button>
+            {% endif %}
+            <a href="{% url 'admin:webhooks_webhookendpoint_delete' endpoint.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete endpoint' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-broadcast-tower"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No webhook endpoints found." %}</p>
+        <p class="card-empty-state-subtitle">
+            <a href="{% url 'webhooks:endpoint_wizard' %}">{% trans "Create your first endpoint" %}</a>
+            {% trans "to start receiving webhook notifications." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

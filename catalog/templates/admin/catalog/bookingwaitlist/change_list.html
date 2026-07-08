@@ -1,0 +1,40 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Booking Waitlist" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/changelist-utilities.css' %}">
+{% endblock %}
+
+{% block object-tools %}
+<div class="change-list-header">
+    <div>
+        <h1>
+            <i class="fas fa-clock"></i>
+            {% trans "Booking Waitlist" %}
+        </h1>
+        <p class="subtitle">{% trans "Manage customers waiting for available booking slots" %}</p>
+    </div>
+    <div class="change-list-header-actions">
+        {% if stats %}
+        <div class="change-list-stats">
+            <span class="stat-item stat-item--warning" title="{% trans 'Waiting' %}">
+                <i class="fas fa-hourglass-half"></i> {{ stats.waiting }}
+            </span>
+            <span class="stat-item stat-item--info" title="{% trans 'Notified' %}">
+                <i class="fas fa-bell"></i> {{ stats.notified }}
+            </span>
+            <span class="stat-item stat-item--success" title="{% trans 'Converted' %}">
+                <i class="fas fa-check-circle"></i> {{ stats.booked }}
+            </span>
+        </div>
+        {% endif %}
+        <a href="{% url 'admin:catalog_bookingwaitlist_add' %}" class="button change-list-action-button">
+            <i class="fas fa-plus"></i> {% trans "Add Entry" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

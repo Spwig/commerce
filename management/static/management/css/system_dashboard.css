@@ -1,0 +1,416 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* System Dashboard Specific Styles */
+/* Only contains styles unique to this dashboard - leverages admin-base.css dashboard classes */
+
+/* Header Actions Bar */
+.dashboard-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-header-actions .button {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: inherit;
+}
+
+.dashboard-header-actions .button:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.dashboard-header-actions .button.default {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--primary);
+}
+
+.dashboard-header-actions .button.default:hover {
+    background: #fff;
+}
+
+.auto-refresh-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.auto-refresh-label:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.auto-refresh-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #fff;
+    cursor: pointer;
+}
+
+.auto-refresh-label span {
+    font-weight: 500;
+}
+
+.last-updated {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin-left: auto;
+}
+
+/* Resource Card Icons */
+.card-icon-cpu {
+    background: rgba(255, 107, 107, 0.15);
+    color: var(--error-fg);
+}
+
+.card-icon-memory {
+    background: rgba(0, 188, 212, 0.15);
+    color: var(--info-color);
+}
+
+.card-icon-disk {
+    background: rgba(136, 204, 255, 0.15);
+    color: var(--link-fg);
+}
+
+.card-icon-network {
+    background: rgba(255, 152, 0, 0.15);
+    color: var(--warning-color);
+}
+
+.card-icon-app {
+    background: rgba(170, 136, 255, 0.15);
+    color: var(--primary);
+}
+
+/* Status Indicators - removed, rely on admin-base.css */
+
+/* Chart Cards */
+.chart-card {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.chart-card h3 {
+    margin: 0 0 1rem 0;
+    color: var(--body-fg);
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-card h3 i {
+    color: var(--primary);
+    opacity: 0.8;
+}
+
+.chart-card canvas {
+    width: 100% !important;
+    height: 200px !important;
+}
+
+/* Table Container */
+.table-container {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-container .result-list {
+    margin: 0;
+    border: none;
+}
+
+/* ============================================
+   Deployment & Service Health Styles
+   ============================================ */
+
+/* Service Health Card Icons */
+.card-icon-success {
+    background: rgba(40, 167, 69, 0.15);
+    color: var(--success-fg);
+}
+
+.card-icon-danger {
+    background: rgba(220, 53, 69, 0.15);
+    color: var(--error-fg);
+}
+
+.card-icon-warning {
+    background: rgba(255, 152, 0, 0.15);
+    color: var(--warning-color);
+}
+
+.card-icon-muted {
+    background: rgba(108, 117, 125, 0.15);
+    color: var(--quiet-fg);
+}
+
+.card-icon-version {
+    background: rgba(102, 126, 234, 0.15);
+    color: var(--primary);
+}
+
+/* Update Badge */
+.update-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--warning-bg);
+    color: var(--warning-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.update-badge i {
+    font-size: 0.9rem;
+}
+
+/* No Data Placeholder */
+.no-data {
+    color: var(--quiet-fg);
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+/* Quick Actions Grid */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 1.25rem 1rem;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--body-fg);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.quick-action-btn:hover {
+    background: var(--darkened-bg);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.quick-action-btn i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.quick-action-btn.highlight {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark, #5a67d8));
+    border-color: transparent;
+    color: #fff;
+}
+
+.quick-action-btn.highlight i {
+    color: #fff;
+}
+
+.quick-action-btn.highlight:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Operations Progress Section */
+.operations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.operation-card {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+}
+
+.operation-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.operation-header i {
+    font-size: 1.25rem;
+    color: var(--primary);
+}
+
+.operation-title {
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.operation-type {
+    margin-left: auto;
+    font-size: 0.85rem;
+    color: var(--quiet-fg);
+    background: var(--darkened-bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: var(--darkened-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-dark, #5a67d8));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.operation-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.progress-percent {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.current-step {
+    color: var(--quiet-fg);
+}
+
+/* Diagnostics Modal - structural styles from admin-base.css (.admin-modal-*) */
+
+.diagnostics-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.diagnostics-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem;
+    border-radius: 8px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+}
+
+.diagnostics-item.healthy {
+    border-color: var(--success-fg);
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.diagnostics-item.unhealthy {
+    border-color: var(--error-fg);
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.diagnostics-item.warning {
+    border-color: var(--warning-color);
+    background: rgba(255, 152, 0, 0.05);
+}
+
+.diagnostics-item i {
+    font-size: 1.25rem;
+    color: var(--quiet-fg);
+}
+
+.diagnostics-item.healthy i {
+    color: var(--success-fg);
+}
+
+.diagnostics-item.unhealthy i {
+    color: var(--error-fg);
+}
+
+.diagnostics-item.warning i {
+    color: var(--warning-color);
+}
+
+.diagnostics-item .check-name {
+    font-weight: 600;
+    flex: 1;
+}
+
+.diagnostics-item .check-status {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.diagnostics-item.healthy .check-status {
+    color: var(--success-fg);
+}
+
+.diagnostics-item.unhealthy .check-status {
+    color: var(--error-fg);
+}
+
+.diagnostics-item.warning .check-status {
+    color: var(--warning-color);
+}
+
+.diagnostics-item .check-detail {
+    font-size: 0.85rem;
+    color: var(--quiet-fg);
+}
+
+.diagnostics-item .check-error {
+    font-size: 0.85rem;
+    color: var(--error-fg);
+}
+
+/* Maintenance Toggle Button */
+.maintenance-toggle {
+    margin-top: 10px;
+}
+
+.maintenance-toggle .button.warning {
+    background: var(--warning-bg);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-color);
+}
+
+.maintenance-toggle .button.warning:hover {
+    background: var(--warning-color);
+    color: #fff;
+}
+
+/* Small Button Style */
+.button.small {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+}

@@ -1,0 +1,202 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Local Translation Service" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'translations/admin/css/translations.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- Loading Indicator -->
+    <div id="content-main">
+        <div id="loading-overlay">
+            <div>
+                <div class="language-characters" id="language-display">
+                    <span class="char-display char-japanese">翻</span>
+                    <span class="char-display char-chinese">譯</span>
+                    <span class="char-display char-arabic">ترجمة</span>
+                    <span class="char-display char-korean">번역</span>
+                    <span class="char-display char-hindi">अनुवाद</span>
+                    <span class="char-display char-thai">แปล</span>
+                    <span class="char-display char-hebrew">תרגום</span>
+                    <span class="char-display char-cyrillic">перевод</span>
+                </div>
+                <h3>{% trans "Loading Translation Service" %}</h3>
+                <p id="loading-message">
+                    <span id="loading-lang-text">Hello • 你好 • مرحبا • 안녕하세요 • नमस्ते • สวัสดี • שלום • Привет</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Django Messages -->
+        {% if messages %}
+        <ul class="messagelist">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="local-service-container" id="service-container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1><i class="fas fa-language"></i> {% trans "Local Translation Service" %}</h1>
+                <p class="subtitle">{% trans "AI-powered translation engine running directly on your server for complete data privacy and control." %}</p>
+            </div>
+
+            <!-- Service Status -->
+            <div class="service-status {% if not service_available %}offline{% elif not model_loaded %}degraded{% else %}online{% endif %}">
+                    {% if service_available %}
+                        {% if model_loaded %}
+                            <h3><i class="fas fa-check-circle"></i> {% trans "Translation Service Ready" %}</h3>
+                            <p>{% trans "Your AI translation service is running and ready to translate content." %}</p>
+                            {% if current_model_display %}
+                            <p class="current-model"><strong>{% trans "Active Model:" %}</strong> {{ current_model_display }}</p>
+                            {% endif %}
+                            {% if hardware_message %}
+                            <p class="hardware-status">
+                                <strong>{% trans "Hardware:" %}</strong>
+                                {% if "GPU active" in hardware_message %}
+                                    <i class="fas fa-microchip"></i> {{ hardware_message }}
+                                {% elif "AVX2" in hardware_message %}
+                                    <i class="fas fa-tachometer-alt good"></i> {{ hardware_message }}
+                                {% elif "AVX" in hardware_message %}
+                                    <i class="fas fa-tachometer-alt moderate"></i> {{ hardware_message }}
+                                {% elif "lacks vector" in hardware_message %}
+                                    <i class="fas fa-exclamation-triangle"></i> {{ hardware_message }}
+                                {% else %}
+                                    <i class="fas fa-info-circle"></i> {{ hardware_message }}
+                                {% endif %}
+                            </p>
+                            {% endif %}
+                        {% elif any_model_downloaded %}
+                            <h3><i class="fas fa-hourglass-half"></i> {% trans "Service Starting Up" %}</h3>
+                            <p>{% trans "Translation models are installed but need to be activated. Click 'Load Model' below to start translating." %}</p>
+                        {% else %}
+                            <h3><i class="fas fa-download"></i> {% trans "Setup Required" %}</h3>
+                            <p>{% trans "Install a translation model below to start using the AI translation service." %}</p>
+                        {% endif %}
+                    {% else %}
+                        <h3><i class="fas fa-plug"></i> {% trans "Service Offline" %}</h3>
+                        <p>{% trans "The translation service is not running. Please check your Docker container status." %}</p>
+                    {% endif %}
+            </div>
+
+            {% csrf_token %}
+
+        <!-- Translation Engine -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">{% trans "Translation Engine" %}</h2>
+            </div>
+
+            <p class="admin-card-content">
+                {% trans "Choose a translation model and quality level. Each model offers different benefits in speed, quality, and language coverage." %}
+            </p>
+
+            <!-- Model Selection Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" data-action="switch-model-tab" data-model="m2m100_418m">
+                    <i class="fas fa-language"></i>
+                    M2M100 Standard
+                </button>
+                <button class="admin-tab-btn" data-action="switch-model-tab" data-model="m2m100_1.2b">
+                    <i class="fas fa-star"></i>
+                    M2M100 Premium
+                </button>
+                <button class="admin-tab-btn" data-action="switch-model-tab" data-model="nllb_200">
+                    <i class="fas fa-globe"></i>
+                    NLLB 200+
+                </button>
+            </div>
+
+            <!-- Quality Options for Each Model -->
+            <div class="admin-tab-content active" id="m2m100_418m-settings">
+                <h3>M2M100 Standard</h3>
+                <p class="admin-card-content">{% trans "Fast and efficient. Perfect for most business needs. Translates between 100 major languages with good accuracy." %}</p>
+                <div class="quality-grid">
+                    <!-- Will be populated via AJAX -->
+                </div>
+            </div>
+            <div class="admin-tab-content" id="m2m100_1.2b-settings">
+                <h3>M2M100 Premium</h3>
+                <p class="admin-card-content">{% trans "Premium translation quality. Best for professional content requiring maximum accuracy. Uses more memory but delivers superior results. 100 languages." %}</p>
+                <div class="quality-grid">
+                    <!-- Will be populated via AJAX -->
+                </div>
+            </div>
+            <div class="admin-tab-content" id="nllb_200-settings">
+                <h3>NLLB 200+</h3>
+                <p class="admin-card-content">{% trans "Maximum language coverage. Supports over 200 languages including many rare and regional languages. Ideal for global reach." %}</p>
+                <div class="license-warning">
+                    <h4>
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Non-Commercial License Notice" %}
+                    </h4>
+                    <p>
+                        {% trans "NLLB-200 is released under the CC-BY-NC-4.0 license which prohibits commercial use. By downloading and using this model, you confirm that:" %}
+                    </p>
+                    <ul>
+                        <li>{% trans "You are using this model for non-commercial purposes only" %}</li>
+                        <li>{% trans "You understand that commercial use requires alternative solutions (M2M100 or external APIs)" %}</li>
+                        <li>{% trans "You will comply with all terms of the CC-BY-NC-4.0 license" %}</li>
+                    </ul>
+                    <p>
+                        <strong>{% trans "For commercial deployments, please use M2M100 models or external translation providers instead." %}</strong>
+                    </p>
+                </div>
+                <div class="quality-grid">
+                    <!-- Will be populated via AJAX -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Disk Usage (moved to bottom) -->
+        <div class="disk-usage">
+            <h3><i class="fas fa-hdd"></i> {% trans "Storage Usage" %}</h3>
+            <div>
+                <strong>{% trans "Models:" %}</strong> {{ disk_usage_gb|floatformat:1 }} GB
+                | <strong>{% trans "Free Space:" %}</strong> {{ disk_free_gb|floatformat:1 }} GB
+                | <strong>{% trans "Total:" %}</strong> {{ disk_total_gb|floatformat:1 }} GB
+            </div>
+            <div class="disk-bar">
+                {% if disk_total_gb > 0 %}
+                    {% widthratio disk_usage_gb disk_total_gb 100 as models_percent %}
+                    {% widthratio system_used_gb disk_total_gb 100 as other_percent %}
+                    {# Ensure minimum 1% width for models if they exist, but keep 0% if no models #}
+                    {% if disk_usage_gb > 0 and models_percent == "0" %}
+                        {% with models_display_percent="1" %}
+                            <div class="disk-segment disk-other" data-width="{{ other_percent|default:0 }}" title="{% trans 'Other files' %}: {{ system_used_gb|floatformat:1 }}GB"></div>
+                            <div class="disk-segment disk-models" data-width="{{ models_display_percent }}" title="{% trans 'Translation models' %}: {{ disk_usage_gb|floatformat:1 }}GB"></div>
+                            <div class="disk-segment disk-free" title="{% trans 'Free space' %}: {{ disk_free_gb|floatformat:1 }}GB"></div>
+                        {% endwith %}
+                    {% else %}
+                        <div class="disk-segment disk-other" data-width="{{ other_percent|default:0 }}" title="{% trans 'Other files' %}: {{ system_used_gb|floatformat:1 }}GB"></div>
+                        <div class="disk-segment disk-models" data-width="{{ models_percent }}" title="{% trans 'Translation models' %}: {{ disk_usage_gb|floatformat:1 }}GB"></div>
+                        <div class="disk-segment disk-free" title="{% trans 'Free space' %}: {{ disk_free_gb|floatformat:1 }}GB"></div>
+                    {% endif %}
+                {% else %}
+                    <div class="disk-segment disk-free disk-free--full"></div>
+                {% endif %}
+            </div>
+            <small>
+                {% if disk_free_gb < 3 %}
+                    <span class="status-warning"><i class="fas fa-exclamation-triangle"></i> {% trans "Low disk space! Consider removing unused models." %}</span>
+                {% else %}
+                    <span class="status-check"><i class="fas fa-check-circle"></i> {% trans "Sufficient disk space available." %}</span>
+                {% endif %}
+            </small>
+        </div>
+    </div>
+    </div>
+
+<div id="translations-config"
+     data-service-data-url='{% url "translations_api:local_service_data" %}'
+     data-quantization-set-url='{% url "translations_api:quantization_set" %}'
+     data-start-download-url='{% url "translations_api:start_download" %}'
+     data-download-status-url='{% url "translations_api:download_status" %}'
+     hidden></div>
+<script src="{% static 'translations/admin/js/local-service.js' %}" defer></script>
+{% endblock %}

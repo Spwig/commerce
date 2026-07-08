@@ -1,0 +1,198 @@
+{% load i18n static humanize %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for asset in assets %}
+    <div class="list-row-card{% if not asset.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ asset.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if asset.file_type %}
+                {% if 'pdf' in asset.file_type %}
+                    <i class="fas fa-file-pdf text-error icon-large"></i>
+                {% elif 'zip' in asset.file_type or 'compressed' in asset.file_type %}
+                    <i class="fas fa-file-archive text-warning icon-large"></i>
+                {% elif 'image' in asset.file_type %}
+                    <i class="fas fa-file-image text-success icon-large"></i>
+                {% elif 'video' in asset.file_type %}
+                    <i class="fas fa-file-video icon-info icon-large"></i>
+                {% elif 'audio' in asset.file_type %}
+                    <i class="fas fa-file-audio text-primary icon-large"></i>
+                {% else %}
+                    <i class="fas fa-file text-primary icon-large"></i>
+                {% endif %}
+            {% else %}
+                <i class="fas fa-file-download text-primary icon-large"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_digitalasset_change' asset.pk %}">
+                    {{ asset.filename }}
+                </a>
+            </h3>
+
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-box"></i> {{ asset.product.name }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if asset.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if asset.requires_license %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-key"></i> {% trans "Requires License" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-tag"></i> v{{ asset.version }}
+                </span>
+
+                {% if asset.download_limit %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-download"></i> {{ asset.download_limit }} {% trans "downloads max" %}
+                    </span>
+                {% endif %}
+
+                {% if asset.expiration_days %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-clock"></i> {% trans "Expires in" %} {{ asset.expiration_days }} {% trans "days" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- File Info -->
+            <div class="list-row-card-description info-box">
+                <div class="grid-auto-fit">
+                    <div>
+                        <div class="info-label">
+                            {% trans "File Size" %}:
+                        </div>
+                        <div class="info-value">
+                            {{ asset.file_size|filesizeformat }}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-label">
+                            {% trans "Type" %}:
+                        </div>
+                        <div class="info-value font-monospace">
+                            {{ asset.file_type|default:"Unknown" }}
+                        </div>
+                    </div>
+                    {% if asset.file_hash %}
+                    <div class="grid-full-width">
+                        <div class="info-label">
+                            {% trans "SHA-256" %}:
+                        </div>
+                        <div class="info-value-mono">
+                            {{ asset.file_hash }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if asset.changelog %}
+            <div class="info-box">
+                <div class="info-label">
+                    {% trans "Changelog" %}:
+                </div>
+                <div class="text-medium">
+                    {{ asset.changelog|truncatewords:30 }}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Version" %}</span>
+                    <span class="list-row-card-stat-value">{{ asset.version }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Size" %}</span>
+                    <span class="list-row-card-stat-value">{{ asset.file_size|filesizeformat }}</span>
+                </div>
+                {% if asset.download_limit %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Download Limit" %}</span>
+                    <span class="list-row-card-stat-value">{{ asset.download_limit }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if asset.created_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{% trans "Uploaded by" %}: {{ asset.created_by.get_full_name|default:asset.created_by.email }}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Uploaded" %}: {{ asset.created_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if asset.updated_at != asset.created_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>{% trans "Updated" %}: {{ asset.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_digitalasset_change' asset.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit asset' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:catalog_product_change' asset.product.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View product' %}">
+                <i class="fas fa-box"></i>
+            </a>
+            {% if asset.requires_license %}
+            <a href="{% url 'admin:catalog_licensekey_changelist' %}?digital_asset__id__exact={{ asset.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View license keys' %}">
+                <i class="fas fa-key"></i>
+            </a>
+            {% endif %}
+            {% if asset.file %}
+            <a href="{{ asset.file.url }}"
+               class="list-row-card-action"
+               title="{% trans 'Download file' %}"
+               target="_blank">
+                <i class="fas fa-download"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-file-download"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No digital assets found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Upload digital files for your downloadable products." %}
+        </p>
+        <a href="{% url 'admin:catalog_digitalasset_add' %}" class="button mt-small">
+            <i class="fas fa-plus"></i> {% trans "Upload Asset" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

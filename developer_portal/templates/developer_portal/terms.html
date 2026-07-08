@@ -1,0 +1,122 @@
+{% extends "developer_portal/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Developer Terms of Service" %}{% endblock %}
+
+{% block content %}
+<div class="dev-page dev-terms-page">
+    <div class="dev-page-header">
+        <h1>{% trans "Developer Terms of Service" %}</h1>
+        <p>{% trans "Last updated: February 2026" %}</p>
+    </div>
+
+    <div class="dev-terms-content">
+        <section class="dev-terms-section">
+            <h2>1. {% trans "Acceptance of Terms" %}</h2>
+            <p>{% blocktrans %}By registering as a developer on the Spwig Developer Portal, you agree to be bound by these Developer Terms of Service ("Terms"). If you do not agree to these Terms, you may not participate in the Spwig Developer Program.{% endblocktrans %}</p>
+            <p>{% blocktrans %}Spwig reserves the right to update these Terms at any time. Continued participation in the Developer Program after changes constitutes acceptance of the revised Terms.{% endblocktrans %}</p>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>2. {% trans "Developer Account" %}</h2>
+            <p>{% blocktrans %}To participate in the Developer Program, you must submit an application through the Developer Portal. Spwig reserves the right to approve or reject any application at its sole discretion.{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "You must provide accurate and complete information in your application." %}</li>
+                <li>{% trans "You are responsible for maintaining the security of your developer account and API key." %}</li>
+                <li>{% trans "You must promptly notify Spwig of any unauthorized use of your account." %}</li>
+                <li>{% trans "You may not transfer or assign your developer account to another party." %}</li>
+            </ul>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>3. {% trans "Component Submissions" %}</h2>
+            <p>{% blocktrans %}All components submitted to the Spwig marketplace are subject to automated validation and manual review by the Spwig team.{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Components must comply with the Spwig component packaging specification." %}</li>
+                <li>{% trans "Components must not contain malicious code, backdoors, or security vulnerabilities." %}</li>
+                <li>{% trans "Components must not infringe upon third-party intellectual property rights." %}</li>
+                <li>{% trans "Components must be compatible with the current supported versions of the Spwig platform." %}</li>
+                <li>{% trans "Spwig reserves the right to reject, remove, or suspend any component at any time." %}</li>
+            </ul>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>4. {% trans "Intellectual Property" %}</h2>
+            <p>{% blocktrans %}You retain all intellectual property rights to the components you create and submit. By submitting a component to the Spwig marketplace, you grant Spwig a non-exclusive, worldwide license to:{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Distribute the component to Spwig merchants through the marketplace and upgrade server." %}</li>
+                <li>{% trans "Display component metadata, screenshots, and descriptions for marketing purposes." %}</li>
+                <li>{% trans "Perform automated validation and security scanning of your component packages." %}</li>
+            </ul>
+            <p>{% blocktrans %}You represent and warrant that you have the legal right to submit any component and grant these licenses.{% endblocktrans %}</p>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>5. {% trans "Revenue Sharing" %}</h2>
+            <p>{% blocktrans %}For paid components, Spwig operates a 70/30 revenue share model:{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Developers receive 70% of the net revenue from each sale." %}</li>
+                <li>{% trans "Spwig retains 30% to cover platform, infrastructure, and distribution costs." %}</li>
+                <li>{% trans "Payouts are processed according to the payout schedule configured in your developer profile." %}</li>
+                <li>{% trans "All pricing is set in EUR. Currency conversion for merchants is handled by the platform." %}</li>
+            </ul>
+            <p>{% blocktrans %}Free components may be submitted at no cost. You may change a component's pricing model between free and paid versions.{% endblocktrans %}</p>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>6. {% trans "Quality Standards" %}</h2>
+            <p>{% blocktrans %}All components must meet the Spwig quality standards:{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Follow the Spwig component packaging and manifest specification." %}</li>
+                <li>{% trans "Include clear documentation and a changelog for each version." %}</li>
+                <li>{% trans "Respond to review feedback and revision requests in a timely manner." %}</li>
+                <li>{% trans "Maintain backwards compatibility or clearly document breaking changes." %}</li>
+                <li>{% trans "Provide user-facing text that supports internationalization (i18n)." %}</li>
+            </ul>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>7. {% trans "Prohibited Conduct" %}</h2>
+            <p>{% blocktrans %}Developers must not:{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Submit components that contain malware, spyware, or any malicious functionality." %}</li>
+                <li>{% trans "Attempt to circumvent the validation or review process." %}</li>
+                <li>{% trans "Collect merchant or customer data beyond what is necessary for the component's stated functionality." %}</li>
+                <li>{% trans "Include undisclosed external network calls or data transmission." %}</li>
+                <li>{% trans "Misrepresent the functionality, compatibility, or origin of a component." %}</li>
+                <li>{% trans "Engage in any activity that could harm the Spwig platform or its merchants." %}</li>
+            </ul>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>8. {% trans "Account Suspension and Termination" %}</h2>
+            <p>{% blocktrans %}Spwig may suspend or terminate your developer account if you violate these Terms, fail to meet quality standards, or engage in prohibited conduct. Upon termination:{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Your published components may be removed from the marketplace." %}</li>
+                <li>{% trans "Outstanding payouts will be processed according to the standard payout schedule." %}</li>
+                <li>{% trans "Your API key will be revoked immediately." %}</li>
+            </ul>
+            <p>{% blocktrans %}You may voluntarily close your developer account at any time by contacting Spwig support.{% endblocktrans %}</p>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>9. {% trans "Limitation of Liability" %}</h2>
+            <p>{% blocktrans %}Spwig provides the Developer Portal and marketplace on an "as is" basis. Spwig shall not be liable for any indirect, incidental, special, or consequential damages arising from your participation in the Developer Program.{% endblocktrans %}</p>
+            <p>{% blocktrans %}Spwig's total liability shall not exceed the amounts paid to you through the Developer Program in the twelve months preceding the claim.{% endblocktrans %}</p>
+        </section>
+
+        <section class="dev-terms-section">
+            <h2>10. {% trans "Contact" %}</h2>
+            <p>{% blocktrans %}For questions about these Terms or the Developer Program, please contact us at <a href="mailto:developers@spwig.com">developers@spwig.com</a> or visit our <a href="https://community.spwig.com" target="_blank" rel="noopener">community forum</a>.{% endblocktrans %}</p>
+        </section>
+    </div>
+
+    {% if show_register_cta %}
+    <div class="dev-terms-cta">
+        <a href="{% url 'developer_portal:register' %}" class="dev-btn dev-btn-primary">
+            <i class="fas fa-paper-plane"></i> {% trans "Apply as Developer" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

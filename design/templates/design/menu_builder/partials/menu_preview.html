@@ -1,0 +1,37 @@
+{% load i18n %}
+{# Menu Preview Template for Visual Builder #}
+{# Uses identical HTML structure as the frontend widget for accurate preview #}
+{# Context: menu, menu_items, display_type, device #}
+
+{# Device class wrapper enables CSS cascade: .device-mobile .menu-preview .widget-menu #}
+<div class="device-{{ device }}">
+<div class="menu-preview menu-preview-{{ display_type }}"
+     data-display-type="{{ display_type }}"
+     data-device="{{ device }}">
+    {% if menu_items %}
+        {# Mobile hamburger toggle for horizontal menus on mobile #}
+        {% if device == 'mobile' and display_type == 'horizontal' %}
+        <div class="mobile-menu-header">
+            <button class="hamburger-toggle" data-action="toggle-hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+            {% if menu.name %}
+            <span class="mobile-menu-title">{{ menu.name }}</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# Use SAME widget structure as frontend - ensures preview matches actual rendering #}
+        <nav class="widget-menu" data-menu-id="{{ menu.id }}">
+            {% include "design/partials/menu_items.html" with menu=menu menu_items=menu_items display_type=display_type preview_mode=True %}
+        </nav>
+    {% else %}
+        <div class="menu-preview-empty">
+            <i class="fas fa-bars"></i>
+            <p>{% trans "No menu items yet" %}</p>
+            <span>{% trans "Add items from the library panel" %}</span>
+        </div>
+    {% endif %}
+</div>
+</div>
+{# Styles loaded from widgets/menu.css via JavaScript scoping for accurate preview #}

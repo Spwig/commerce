@@ -1,0 +1,260 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Region Visibility — card-based toggle UI */
+
+.region-visibility__hidden-table {
+    display: none;
+}
+
+.region-visibility h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: var(--body-fg, #333);
+}
+
+.region-visibility h2 i {
+    color: var(--primary, #417690);
+    font-size: 1.1rem;
+}
+
+.region-visibility__info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    color: #1e40af;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.region-visibility__info i {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Card container */
+.region-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.region-cards:empty::after {
+    content: 'No region rules configured.';
+    display: block;
+    padding: 16px;
+    text-align: center;
+    color: var(--body-quiet-color, #999);
+    font-size: 0.8125rem;
+    font-style: italic;
+}
+
+/* Individual region card */
+.region-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: var(--darkened-bg, #f8f9fa);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.region-card:hover {
+    border-color: var(--primary, #417690);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.region-card--deleted {
+    display: none !important;
+}
+
+/* Region select */
+.region-card__select {
+    flex: 1;
+    min-width: 0;
+}
+
+.region-card__select select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+}
+
+/* Toggle switch */
+.region-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.region-toggle input[type="checkbox"] {
+    display: none;
+}
+
+.region-toggle__track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: #9ca3af;
+    border-radius: 12px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.region-toggle__thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Checked = Visible (green) */
+.region-toggle input:checked + .region-toggle__track {
+    background: #10b981;
+}
+
+.region-toggle input:checked + .region-toggle__track .region-toggle__thumb {
+    transform: translateX(20px);
+}
+
+.region-toggle__label-visible,
+.region-toggle__label-hidden {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    min-width: 50px;
+}
+
+.region-toggle__label-visible {
+    color: #059669;
+    display: none;
+}
+
+.region-toggle__label-hidden {
+    color: #6b7280;
+    display: inline;
+}
+
+.region-toggle input:checked ~ .region-toggle__label-visible {
+    display: inline;
+}
+
+.region-toggle input:checked ~ .region-toggle__label-hidden {
+    display: none;
+}
+
+/* Delete button */
+.region-card__delete {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--body-quiet-color, #999);
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s;
+}
+
+.region-card__delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Add row button override */
+.region-visibility .add-row {
+    border-top: none;
+    padding: 0;
+    margin: 0;
+}
+
+.region-visibility .add-row a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px dashed var(--border-color, #ccc);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--primary, #417690);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.region-visibility .add-row a:hover {
+    background: var(--darkened-bg, #f0f4f8);
+    border-color: var(--primary, #417690);
+}
+
+/* Dark mode */
+[data-theme="dark"] .region-visibility__info {
+    background: #1e293b;
+    border-color: #334155;
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .region-card {
+    background: #1e1e1e;
+    border-color: #3a3a3a;
+}
+
+[data-theme="dark"] .region-card:hover {
+    border-color: #5a9fd4;
+}
+
+[data-theme="dark"] .region-card__select select {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .region-toggle__label-visible {
+    color: #34d399;
+}
+
+[data-theme="dark"] .region-toggle__label-hidden {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .region-card__delete:hover {
+    background: #3b1c1c;
+    color: #f87171;
+}
+
+[data-theme="dark"] .region-visibility .add-row a {
+    border-color: #3a3a3a;
+    color: #5a9fd4;
+}
+
+[data-theme="dark"] .region-visibility .add-row a:hover {
+    background: #2a2a2a;
+    border-color: #5a9fd4;
+}

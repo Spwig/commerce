@@ -1,0 +1,48 @@
+{# Referral Stats Block Component #}
+{# Usage: {% include 'email_system/mjml_components/referral_stats_block.mjml' with total_referrals=total_referrals total_rewards=total_rewards %} #}
+{# Theme tokens: Uses theme.color.background_secondary, theme.color.text, theme.color.text_muted, theme.color.primary, theme.color.success, theme.color.warning, theme.color.surface #}
+
+<!-- Stats Grid -->
+<mj-section background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}" padding="30px 20px">
+  <mj-column>
+    <mj-text font-size="18px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}" align="center" padding-bottom="20px">
+      Your Referral Stats
+    </mj-text>
+  </mj-column>
+</mj-section>
+
+<mj-section background-color="{{ theme.color.background_secondary|default:'#f9fafb' }}" padding="10px 20px 30px 20px">
+  <mj-group>
+    <!-- Total Referrals -->
+    <mj-column width="33.33%" background-color="{{ theme.color.surface|default:'#ffffff' }}" border-radius="{{ theme.radius.md|default:'0.5rem' }}" padding="20px 10px">
+      <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.primary|default:'#2563eb' }}" align="center" line-height="1">
+        {{ total_referrals|default:0 }}
+      </mj-text>
+      <mj-text font-size="13px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="8px" text-transform="uppercase" letter-spacing="0.5px">
+        Successful<br/>Referrals
+      </mj-text>
+    </mj-column>
+
+    <!-- Total Rewards Earned -->
+    <mj-column width="33.33%" background-color="{{ theme.color.surface|default:'#ffffff' }}" border-radius="{{ theme.radius.md|default:'0.5rem' }}" padding="20px 10px">
+      <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.success|default:'#10b981' }}" align="center" line-height="1">
+        {{ total_rewards|default:0 }}
+      </mj-text>
+      <mj-text font-size="13px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="8px" text-transform="uppercase" letter-spacing="0.5px">
+        Total<br/>Rewards
+      </mj-text>
+    </mj-column>
+
+    <!-- Conversion Rate -->
+    {% if conversion_rate %}
+    <mj-column width="33.33%" background-color="{{ theme.color.surface|default:'#ffffff' }}" border-radius="{{ theme.radius.md|default:'0.5rem' }}" padding="20px 10px">
+      <mj-text font-size="32px" font-weight="bold" color="{{ theme.color.warning|default:'#f59e0b' }}" align="center" line-height="1">
+        {{ conversion_rate }}%
+      </mj-text>
+      <mj-text font-size="13px" color="{{ theme.color.text_muted|default:'#6b7280' }}" align="center" padding-top="8px" text-transform="uppercase" letter-spacing="0.5px">
+        Conversion<br/>Rate
+      </mj-text>
+    </mj-column>
+    {% endif %}
+  </mj-group>
+</mj-section>

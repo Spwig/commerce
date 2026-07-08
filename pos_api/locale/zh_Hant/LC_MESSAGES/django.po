@@ -1,0 +1,1259 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "POS API"
+msgstr "POS API"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "要訪問此端點，需要有效的 POS 授權證。"
+
+msgid "POS access requires a staff account."
+msgstr "POS 訪問需要員工帳號。"
+
+msgid "You are not assigned to this terminal."
+msgstr "您未被指派到這個終端機。"
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "您沒有權限：%(label)s。"
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "捆包變體選擇：{bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "可選排除的 BundleItem ID 清單"
+
+msgid "Search by email, phone, or name"
+msgstr "按電子郵件、電話或姓名搜索"
+
+msgid "ID of the product to adjust stock for."
+msgstr "要調整庫存的產品 ID。"
+
+msgid "ID of the variant (required for variable products)."
+msgstr "變體的 ID（變體產品需要）。"
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"調整類型：\"receive\" 增加庫存（例如新貨物），\"damage\" 減少庫存（例如損壞物品），\"recount\" 設置絕對的 "
+"on_hand 數量，\"return\" 將庫存加回去（例如客戶退貨）。"
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"針對 receive/return：要增加的單位數。針對 damage：要移除的單位數。針對 recount：新的絕對 on_hand 數量。"
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "此調整所需的說明（審計軌跡）。"
+
+msgid "Optional UUID for offline deduplication."
+msgstr "用於離線去重的可選UUID。"
+
+msgid "Signed quantity delta."
+msgstr "已簽署的數量變化。"
+
+msgid "Last four digits of card number (digits only)"
+msgstr "信用卡號碼的最後四位（僅限數字）"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr "應收取的金額。如果不提供，則收取剩餘餘額的全部。"
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr "來自終端提供商的付款 ID（例如 Stripe PaymentIntent ID）"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr "提供商特定的讀卡器 ID（例如 Adyen POIID、Square device_id）"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "供應商特定交易 ID 用於狀態輪詢"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr "初始狀態 -- 通常對於異步供應商為 \"pending\"，對於同步供應商 (Adyen) 為 \"succeeded\""
+
+msgid "Current payment status"
+msgstr "當前付款狀態"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "供應商付款ID（付款成功時）"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "取消原因（取消時）"
+
+msgid "POS staff login"
+msgstr "POS 員工登入"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr "為 POS 授權員工。返回存取和刷新令牌。使用與管理員 API 相同的令牌系統（MobileTokenAuthentication）。"
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "登入成功，返回令牌和終端配置"
+
+msgid "Invalid credentials"
+msgstr "憑證無效"
+
+msgid "User is not a staff member"
+msgstr "該使用者不是工作人員"
+
+msgid "Refresh POS access token"
+msgstr "重新整理 POS 存取權杖"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "以刷新令牌換取新的訪問令牌。"
+
+msgid "New access token"
+msgstr "新的存取權杖"
+
+msgid "Invalid or expired refresh token"
+msgstr "無效或已過期的重新整理權杖"
+
+msgid "POS logout"
+msgstr "POS 登出"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "使目前的訪問令牌和刷新令牌失效。"
+
+msgid "Logged out successfully"
+msgstr "成功登出"
+
+msgid "Get current POS cart"
+msgstr "取得當前POS購物車"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr "返回已驗證收銀員的當前購物車。如果不存在購物車，則創建一個新的購物車。需要員工驗證和有效的 POS 授權。"
+
+msgid "Add item to POS cart"
+msgstr "將商品加入POS購物車"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"將產品加入收銀員的購物車。支援透過產品 ID 或條碼添加。當提供條碼而未指定 product_id 時，系統會自動解析產品。需要員工驗證和有效的 POS"
+" 授權。"
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "無效的產品、變體或庫存不足"
+
+msgid "Update cart item quantity"
+msgstr "更新購物車商品數量"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr "更新購物車項目數量。將數量設為 0 可移除該項目。需要員工驗證和有效的 POS 授權。"
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "數量無效或庫存不足"
+
+msgid "Cart item not found"
+msgstr "找不到購物車商品"
+
+msgid "Remove item from cart"
+msgstr "從購物車中移除項目"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr "從購物車中移除特定商品。需要工作人員驗證和有效的POS許可證。"
+
+msgid "Apply voucher to cart"
+msgstr "將優惠券套用至購物車"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr "將優惠券/折扣碼套用至購物車。一次只能啟用一張優惠券。需要員工驗證和有效的POS許可證。"
+
+msgid "Invalid or expired voucher code"
+msgstr "無效或已過期的優惠券代碼"
+
+msgid "Remove voucher from cart"
+msgstr "從購物車中移除優惠券"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr "從購物車中移除已套用的優惠券。需要工作人員驗證和有效的POS許可證。"
+
+msgid "No voucher applied"
+msgstr "未套用優惠券"
+
+msgid "Apply gift card to cart"
+msgstr "將禮品卡套用至購物車"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr "將禮品卡碼套用至購物車，以支付總額的一部分或全部。需要員工驗證和有效的POS許可證。"
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "無效禮品卡或餘額不足"
+
+msgid "Clear all items from cart"
+msgstr "清除購物車所有商品"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr "從購物車中移除所有商品、優惠券和禮品卡。需要員工驗證和有效的POS許可證。"
+
+msgid "Apply manual discount to cart item"
+msgstr "將手動折扣套用至購物車項目"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"對購物車中的特定商品應用員工手動折扣。如果折扣超過員工限制，將返回 requires_approval=true。需要員工驗證和有效的POS許可證。"
+
+msgid "Discount applied or requires approval"
+msgstr "已套用折扣或需審批"
+
+msgid "Invalid discount or not authorized"
+msgstr "無效折扣或未經授權"
+
+msgid "Remove manual discount from cart item"
+msgstr "從購物車項目中移除手動折扣"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr "從特定購物車項目中移除員工手動折扣。需要員工驗證和有效的POS許可證。"
+
+msgid "Discount removed"
+msgstr "已移除折扣"
+
+msgid "Apply manual discount to cart"
+msgstr "將手動折扣套用至購物車"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"將員工手動折扣套用至整個購物車。如果折扣超出員工限制，將返回requires_approval=true。需要員工驗證和有效的POS許可證。"
+
+msgid "Remove manual discount from cart"
+msgstr "從購物車移除手動折扣"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr "從購物車中移除員工手動折扣。需要員工驗證和有效的POS許可證。"
+
+msgid "Verify manager PIN"
+msgstr "驗證經理PIN"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr "驗證管理員的PIN是否有效，該管理員可以批准折扣。如果有效，將返回管理員的姓名。需要員工驗證和有效的POS許可證。"
+
+msgid "PIN verification result"
+msgstr "PIN驗證結果"
+
+msgid "Approve discount with manager PIN"
+msgstr "使用經理PIN批准折扣"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr "在管理員批准的情況下應用超過員工限制的折扣。需要有效的管理員PIN才能繼續。需要員工驗證和有效的POS許可證。"
+
+msgid "Discount approved and applied"
+msgstr "折扣已批准並套用"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "無效的PIN或折扣參數"
+
+msgid "Park current cart"
+msgstr "停放當前購物車"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr "保存當前購物車狀態，以便稍後恢復。當顧客需要離開，而另一位顧客需要被服務時會使用此功能。需要員工驗證和有效的POS許可證。"
+
+msgid "Cart parked successfully"
+msgstr "購物車停放成功"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "購物車為空或無法停放"
+
+msgid "List parked carts"
+msgstr "列出停放的購物車"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr "獲取當前終端的所有停放購物車。需要員工驗證和有效的POS許可證。"
+
+msgid "List of parked carts"
+msgstr "停放購物車清單"
+
+msgid "Restore parked cart"
+msgstr "恢復停放的購物車"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr "恢復停放的購物車，並取代當前購物車的內容。恢復前會先清除當前購物車。需要員工驗證和有效的POS許可證。"
+
+msgid "Cart restored successfully"
+msgstr "購物車已成功恢復"
+
+msgid "Current cart is not empty"
+msgstr "目前購物車不為空"
+
+msgid "Parked cart not found"
+msgstr "停放的購物車不存在"
+
+msgid "Delete parked cart"
+msgstr "刪除停放的購物車"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr "永久刪除停放的購物車。此操作無法撤銷。需要員工驗證和有效的POS許可證。"
+
+msgid "Parked cart deleted"
+msgstr "已刪除停放的購物車"
+
+msgid "List POS products"
+msgstr "列出POS產品"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr "返回可供門店銷售的產品，按銷售渠道過濾。當識別到終端時，會包含倉庫特定的庫存水平。帶有圖片的產品會優先顯示，並按每個倉庫的熱門程度排序。"
+
+msgid "Search by name, SKU, or barcode"
+msgstr "按名稱、SKU 或條碼搜索"
+
+msgid "Filter by category ID"
+msgstr "按分類ID篩選"
+
+msgid "Warehouse for stock levels"
+msgstr "用於庫存水準的倉庫"
+
+msgid "Page number (default: 1)"
+msgstr "頁碼（預設：1）"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "每頁項目數（預設：50，最大：200）"
+
+msgid "Get product detail"
+msgstr "取得產品詳情"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr "返回完整的產品詳情，包括變體和倉庫庫存。"
+
+msgid "Barcode lookup"
+msgstr "條碼查詢"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr "透過條碼查找產品或變體。快速的索引查找，適用於掃描。"
+
+msgid "No product found with this barcode"
+msgstr "未找到此條碼的產品"
+
+msgid "List categories"
+msgstr "列出分類"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "返回用於 POS 產品導航的分類樹。"
+
+msgid "Process cash payment"
+msgstr "處理現金支付"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"使用現金完成 POS 交易。驗證提供的金額是否足以支付訂單總額並計算找零。創建一個 channel='pos' 的 Order 和一個 "
+"POSPayment 記錄。需要終端機上有開啟的班次。需要員工驗證和有效的 POS 授權。"
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "購物車為空或現金支付不足"
+
+msgid "Process card payment"
+msgstr "處理信用卡支付"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"使用卡支付完成 POS 交易。假設卡片處理由外部卡終端機處理。此端點會記錄卡的參考編號和最後四位數字。需要終端機上有開啟的班次。需要員工驗證和有效的 "
+"POS 授權。"
+
+msgid "Empty cart"
+msgstr "清空購物車"
+
+msgid "Check gift card balance"
+msgstr "查看禮品卡餘額"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr "檢查禮品卡餘額以進行 POS 結帳。若禮品卡有效，則返回當前餘額；若無效，則返回錯誤訊息。需要員工認證。"
+
+msgid "Gift card balance info"
+msgstr "禮品卡餘額資訊"
+
+msgid "Invalid gift card or missing code"
+msgstr "無效禮品卡或缺少代碼"
+
+msgid "Process gift card payment"
+msgstr "處理禮品卡付款"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"使用禮品卡完成 POS 交易。驗證禮品卡是否有足夠餘額。如果禮品卡餘額少於訂單總額，請改用分段付款端點。需要終端機上有開啟的班次。需要員工認證和有效的 "
+"POS 授權證。"
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "購物車為空、無效禮品卡或餘額不足"
+
+msgid "Process split tender payment"
+msgstr "處理分段付款"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"使用多種付款方式完成 POS "
+"交易（分拆付款）。所有付款總額必須涵蓋訂單總額。若總額超過訂單金額，找零將根據最後一筆現金付款計算。需要終端機上有一個開啟的班次。需要員工驗證和有效的 "
+"POS 授權證。"
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "購物車為空、付款無效或總金額不足"
+
+msgid "Process terminal card payment"
+msgstr "處理終端卡付款"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"使用整合式卡片終端機付款完成 POS 交易。前端必須已經透過終端機 SDK 收取付款並取得 provider_payment_id（例如 Stripe "
+"PaymentIntent）。此端點會在建立訂單前驗證付款是否成功。需要終端機上有一個開啟的班次。需要員工驗證和有效的 POS 授權證。"
+
+msgid "Empty cart or payment verification failed"
+msgstr "購物車為空或付款驗證失敗"
+
+msgid "Search customers"
+msgstr "搜尋客戶"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr "透過電子郵件、電話、名字或姓氏搜尋客戶。最多返回 20 個匹配結果。最少需要 2 個字元。需要員工驗證和有效的 POS 授權。"
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "搜尋條件（郵箱、電話或姓名）。最少 2 個字元。"
+
+msgid "Search query too short"
+msgstr "搜尋內容太短"
+
+msgid "Create walk-in customer"
+msgstr "建立臨時客戶"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"為臨時走進來的客戶建立新客戶。如果已經存在具有給定電子郵件的客戶，則返回現有客戶，而不是建立重複客戶。對於真正匿名的臨時客戶，電子郵件是可選的。需要員工驗證和有效的"
+" POS 授權。"
+
+msgid "Existing customer found with this email"
+msgstr "已找到使用此電子郵件的現有客戶"
+
+msgid "Get customer details"
+msgstr "取得客戶資料"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr "取得客戶詳細資料，包括聯繫資訊和最近的訂單歷史。需要員工驗證和有效的POS許可證。"
+
+msgid "List stock levels for warehouse"
+msgstr "列出倉庫庫存水準"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr "返回終端倉庫的分頁庫存水準。支援按產品名稱或SKU搜尋，並過濾庫存不足或無庫存的項目。需要員工驗證和有效的POS許可證。"
+
+msgid "Search by product name or SKU"
+msgstr "按產品名稱或SKU搜索"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "僅返回低於或等於低庫存閾值的項目"
+
+msgid "Only return items with zero available stock"
+msgstr "僅返回庫存為零的項目"
+
+msgid "Warehouse not determined"
+msgstr "未指定倉庫"
+
+msgid "Get product stock detail"
+msgstr "取得產品庫存詳情"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr "返回終端倉庫中特定產品的庫存水準，包括變體層面的細分。需要員工驗證和有效的POS許可證。"
+
+msgid "Check stock across all locations"
+msgstr "檢查所有位置的庫存"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"返回產品在所有倉庫位置的庫存水準。可用於檢查缺貨商品是否在其他位置有庫存。當前終端的倉庫會標記為 "
+"is_current=true。需要員工驗證和有效的POS許可證。"
+
+msgid "Adjust stock levels"
+msgstr "調整庫存數量"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"調整終端倉庫中產品的庫存。支援四種調整類型：'receive'（從貨運中增加庫存）、'damage'（移除損壞/遺失的庫存）、'recount'（根據實際盤點設定絕對的"
+" on_hand）、'return'（從客戶退貨中增加庫存）。會建立不可變的 StockMovement 審計記錄。需要員工驗證、有效的 POS 授權和"
+" pos_stock_adjustment 權限。"
+
+msgid "Stock adjusted successfully"
+msgstr "庫存調整成功"
+
+msgid "Validation error or warehouse not determined"
+msgstr "驗證錯誤或倉庫未確定"
+
+msgid "Permission denied or POS license required"
+msgstr "權限被拒絕或需要POS許可證"
+
+msgid "Product or stock item not found"
+msgstr "產品或庫存項目未找到"
+
+msgid "List stock movement history"
+msgstr "列出庫存異動記錄"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"返回終端倉庫的分頁庫存變動記錄。可用於審計最近的庫存更改（調整、損壞、重新盤點、退貨）。支援按產品和變動類型過濾。需要員工驗證和有效的POS許可證。"
+
+msgid "Filter movements by product ID"
+msgstr "按產品 ID 篩選異動"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr "以逗號分隔要包含的庫存異動類型（例如：'damage,recount'）"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "每頁項目數（預設：20，最大：100）"
+
+msgid "Get customer loyalty info"
+msgstr "取得客戶忠誠度資訊"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"獲取客戶的忠誠度會員狀態、等級和積分餘額。如果客戶沒有有效的忠誠度會員資格，則返回 `is_member: "
+"false`。需要員工驗證和有效的POS許可證。"
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"忠誠度會員資訊。`is_member` 表示客戶是否有活躍的會員資格。當為 true 時，包含 `tier_name`、`tier_color` 和 "
+"`available_points`。"
+
+msgid "Preview loyalty points for cart"
+msgstr "預覽購物車忠誠度點數"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr "計算客戶在給定購物車總額下可獲得的忠誠度積分。如果客戶沒有活躍的忠誠度會員資格，則返回 0。需要員工驗證和有效的 POS 授權。"
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr "購物車總額作為小數字串（例如 '49.99'）。預設為 '0'。"
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr "積分預覽。`points_preview` 是客戶根據給定的購物車總額可賺取的積分數。"
+
+msgid "List POS orders"
+msgstr "列出POS訂單"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"根據日期範圍、來源、客戶、收銀員和搜尋條件進行高階過濾來返回訂單。支援查看退貨場景的網頁訂單。預設：僅顯示此終端今天的訂單。搜尋模式：當提供 "
+"'search' 時，會跳過日期/來源/收銀員過濾條件，以訂單號、客戶名稱、電子郵件或電話來查找任何訂單。需要員工驗證和有效的 POS 授權。"
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr "範圍過濾的起始日期（ISO 格式，預設：今天）。當提供搜尋時會忽略。"
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr "範圍過濾的結束日期（ISO 格式，預設：今天）。當提供搜尋時會忽略。"
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr "訂單來源過濾器：this_terminal（預設）、all_pos、all（包含網頁）。當提供搜尋時會忽略此過濾器。"
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr "依客戶用戶 ID 篩選。當提供搜尋時會忽略。"
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr "依收銀員員工 ID 篩選。當提供搜尋時會忽略。"
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr "透過訂單編號、客戶姓名、電子郵件或電話搜尋所有訂單。跳過日期/來源過濾器。"
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "依訂單狀態篩選（兩種模式均適用）"
+
+msgid "Get order details"
+msgstr "取得訂單詳情"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr "返回完整的訂單詳情，包括商品和付款明細。支援POS和網頁訂單（用於退貨場景）。需要員工驗證和有效的POS許可證。"
+
+msgid "Get receipt data for printing"
+msgstr "取得用於列印的收據資料"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"返回 POS 訂單的收據格式資料，包含商店資訊、商品、付款和頁尾文字。專為 ESC/POS 熱感應印表機設計。需要員工驗證和有效的 POS 授權許可。"
+
+msgid "Process order refund"
+msgstr "處理訂單退款"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"處理 POS "
+"訂單的全額或部分退款。對於部分退款，請指定要退款的商品和數量。會建立退款記錄並更新訂單和班次總額。需要終端機上有開啟的班次。需要員工驗證和有效的 POS"
+" 授權許可。"
+
+msgid "Refund processed successfully"
+msgstr "退款處理成功"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "無效的退款請求或訂單已退款"
+
+msgid "Void a POS order"
+msgstr "作廢POS訂單"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"取消當前班次的POS訂單。只有在當前開放班次中下達的訂單才能取消。這會產生完整的退款並撤銷所有付款和庫存更改。需要終端機上有開放的班次。需要員工驗證和有效的POS許可證。"
+
+msgid "Order voided successfully"
+msgstr "訂單作廢成功"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "無法取消訂單（非當前班次產生的訂單）"
+
+msgid "List POS cashiers"
+msgstr "列出POS收銀員"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr "返回已處理POS訂單的員工清單。用於填充收銀員過濾下拉選單。需要員工驗證和有效的POS許可證。"
+
+msgid "List of cashiers"
+msgstr "收銀員清單"
+
+msgid "Send digital receipt"
+msgstr "發送數位收據"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr "透過電子郵件、簡訊或WhatsApp向客戶發送數位收據。收據會透過Celery任務異步發送。需要員工驗證和有效的POS許可證。"
+
+msgid "Receipt queued for sending"
+msgstr "收據已排隊發送"
+
+msgid "Get receipt sending status"
+msgstr "取得收據發送狀態"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr "檢查某筆訂單已發送哪些數位收據。會返回電子郵件和簡訊/WhatsApp發送的時間戳記。"
+
+msgid "Receipt status"
+msgstr "收據狀態"
+
+msgid "Get current shift summary"
+msgstr "取得當前班次摘要"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"返回終端機上當前收銀員的當前班次摘要，包括總額、交易數量和支付方式細分。如果沒有開啟班次，則返回 null。需要員工驗證和有效的 POS 授權。"
+
+msgid "Open a new shift"
+msgstr "開啟新班次"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr "在終端機上開始新的班次。每次只能在每個終端機上開啟一個班次。記錄開班時的現金金額。需要員工驗證和有效的 POS 授權。"
+
+msgid "Invalid opening cash amount"
+msgstr "開班次現金金額無效"
+
+msgid "A shift is already open on this terminal"
+msgstr "此終端機上已有開啟的班次"
+
+msgid "Close current shift"
+msgstr "結束當前班次"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr "關閉目前開啟的班次。記錄結班時的現金金額，並計算預期與實際現金的差額。需要員工驗證和有效的POS許可證。"
+
+msgid "Record cash movement"
+msgstr "記錄現金流動"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"在班次期間記錄現金收入或支出的動作。範例：增加浮動現金、移除以進行存款、零用現金。需要終端機上開啟的班次。需要員工驗證和有效的POS許可證。"
+
+msgid "Cash movement recorded"
+msgstr "現金流動已記錄"
+
+msgid "Invalid movement data"
+msgstr "無效的流動資料"
+
+msgid "Get daily sales report"
+msgstr "取得每日銷售報告"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr "返回終端的聚合每日銷售報告，包括總額、交易數量、平均交易金額和支付方式細分。需要員工驗證和有效的POS許可證。"
+
+msgid "Report date (ISO format, default: today)"
+msgstr "報告日期（ISO 格式，預設：今天）"
+
+msgid "Get top selling products"
+msgstr "取得銷量最高的產品"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr "返回指定日期終端的熱銷產品，按銷售數量排序。需要員工驗證和有效的POS許可證。"
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "要返回的產品數量（預設：10，最多：50）"
+
+msgid "Sync products since timestamp"
+msgstr "自時間戳記同步產品"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"自指定時間戳記以來已建立或更新的產品。用於將產品逐步同步到POS終端的本地資料庫。會傳回用於下一次同步請求的sync_token。需要員工驗證和有效的POS許可證。"
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr "用來取得自該時間戳之後變更的 ISO 時間戳。若要完整同步，請省略此欄位。"
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "每頁項目數（預設：100，最大：200）"
+
+msgid "Sync customers since timestamp"
+msgstr "自時間戳記同步顧客"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr "自指定時間戳記以來已建立或下過訂單的客戶。用於離線客戶查詢。需要員工驗證和有效的POS許可證。"
+
+msgid "Customer sync data"
+msgstr "顧客同步資料"
+
+msgid "Upload offline transactions"
+msgstr "上傳離線交易"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"批次上傳在終端機離線期間處理的交易。每個交易會創建一個包含商品和付款的訂單。使用 local_id 來確保 idempotency —— "
+"會檢測並跳過重複上傳。需要員工驗證和有效的 POS 授權。"
+
+msgid "Upload results with success/failure per transaction"
+msgstr "上傳每個交易的成功/失敗結果"
+
+msgid "Get sync status"
+msgstr "取得同步狀態"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr "返回目前伺服器時間和資料庫數量，用於同步規劃。需要員工驗證和有效的 POS 授權。"
+
+msgid "Get sync version info"
+msgstr "取得同步版本資訊"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr "返回 API 版本和數據結構版本，用於客戶端兼容性檢查。當結構版本增加時，客戶端應清除並重新同步。"
+
+msgid "Version information"
+msgstr "版本資訊"
+
+msgid "Upload offline stock adjustments"
+msgstr "上傳離線庫存調整"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"批量上傳在終端離線時排隊的庫存調整。每個調整使用 idempotency 金鑰以防止重複。需要員工驗證、有效的 POS 授權許可證和庫存調整權限。"
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "上傳每個調整的成功/失敗結果"
+
+msgid "POS license or permission required"
+msgstr "需要 POS 授權或權限"
+
+msgid "Sync orders for offline cache"
+msgstr "為離線緩存同步訂單"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"在POS終端機上進行離線緩存的訂單。POS訂單優先於網頁訂單，直到終端機的同步限制。支援透過 'since' "
+"參數進行增量同步。需要員工驗證和有效的POS許可證。"
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr "用於增量同步的ISO時間戳。省略以執行完整同步。"
+
+msgid "Register POS terminal"
+msgstr "註冊 POS 端點"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr "使用配對碼將新設備註冊為POS終端機。配對碼在創建終端機時於管理面板中生成。"
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "終端機註冊成功，返回終端機配置"
+
+msgid "Invalid or expired pairing code"
+msgstr "無效或過期的配對碼"
+
+msgid "Get terminal configuration"
+msgstr "取得終端機設定"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr "返回當前終端機的配置，包括硬體設置。"
+
+msgid "Terminal heartbeat"
+msgstr "終端機心跳"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr "報告終端機為在線狀態。應每 60 秒呼叫一次。"
+
+msgid "Heartbeat recorded"
+msgstr "心跳已記錄"
+
+msgid "Get receipt template"
+msgstr "取得收據範本"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr "返回終端倉庫的收據模板。如果倉庫沒有特定模板，則回退到預設模板（未指定倉庫）。如果完全沒有模板，則返回合理的預設值。"
+
+msgid "Receipt template data"
+msgstr "收據範本資料"
+
+msgid "Get promo slides"
+msgstr "取得促銷幻燈片"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr "返回終端倉庫的促銷幻燈片。幻燈片會在客戶面對的顯示器閒置期間顯示。"
+
+msgid "List of promo slides with image URLs"
+msgstr "促銷幻燈片列表，包含圖片 URL"
+
+msgid "Generate display pairing code"
+msgstr "生成顯示配對碼"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr "為客戶顯示驗證生成一個短暫有效的6位配對碼。該碼5分鐘後過期，且只能使用一次。生成新碼將使此終端機上所有未使用的現有碼失效。"
+
+msgid "Pairing code generated"
+msgstr "已生成配對碼"
+
+msgid "List managers for unlock override"
+msgstr "列出用於解除鎖定的管理員"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr "返回管理員列表（id 和姓名），用於管理員覆蓋解鎖流程。"
+
+msgid "List of managers"
+msgstr "管理員列表"
+
+msgid "Verify unlock PIN"
+msgstr "驗證解除鎖定的PIN碼"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr "驗證出納員或經理的PIN碼以解鎖終端機。在3次失敗嘗試後，僅接受經理PIN碼。所有嘗試都會被記錄以供審計。"
+
+msgid "PIN verified successfully"
+msgstr "PIN碼驗證成功"
+
+msgid "Invalid PIN"
+msgstr "無效的PIN碼"
+
+msgid "Log terminal lock event"
+msgstr "記錄終端鎖定事件"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr "當終端被鎖定時（手動或通過自動鎖定超時）進行記錄。此端點僅用於審計日誌，不會改變終端狀態。"
+
+msgid "Event logged successfully"
+msgstr "事件已成功記錄"
+
+msgid "Invalid event type"
+msgstr "無效的事件類型"
+
+msgid "Verify unlock card"
+msgstr "驗證解鎖卡片"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr "驗證員工 ID 卡刷卡以解鎖終端。卡片資料會進行雜湊處理，並與儲存的卡片雜湊進行比對。在 3 次 PIN 確認失敗後，僅接受管理員卡片。"
+
+msgid "Card verified successfully"
+msgstr "卡片已成功驗證"
+
+msgid "Card not recognized"
+msgstr "卡片無法識別"
+
+msgid "Register staff unlock card"
+msgstr "註冊員工解鎖卡片"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr "為當前用戶的快速終端機解鎖註冊刷卡。"
+
+msgid "Card registered successfully"
+msgstr "卡片註冊成功"
+
+msgid "Card already registered to another user"
+msgstr "此卡已註冊至其他用戶"
+
+msgid "Remove staff unlock card"
+msgstr "移除員工解鎖卡片"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "移除當前用戶註冊的解鎖卡片。"
+
+msgid "Card removed successfully"
+msgstr "卡片移除成功"
+
+msgid "Set cashier PIN"
+msgstr "設定收銀員PIN碼"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"設定或更新目前用戶的收銀員 PIN 碼，用於終端機鎖定/解鎖。PIN 碼必須為 4 到 6 位數字。PIN 和 pin_confirm 必須一致。"
+
+msgid "PIN set successfully"
+msgstr "PIN 設置成功"
+
+msgid "Get terminal provider config"
+msgstr "取得終端機供應商設定"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"返回目前終端機的終端機供應商配置，包括整合模式（sdk、cloud 或 manual）和連接的讀卡器詳細資訊。用於 POS "
+"前端啟動時判斷是否可用整合式讀卡器，以及使用哪種付款流程。"
+
+msgid "Create connection token"
+msgstr "建立連線憑證"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"為 SDK 模式終端機供應商創建一個短暫有效的連接令牌（例如 Stripe Terminal JS SDK）。前端在初始化 SDK "
+"時呼叫此端點，以與讀卡器建立直接連接。僅限 SDK 使用。雲端供應商不使用連接令牌。如果供應商不支援 SDK 令牌，則返回 400。"
+
+msgid "List card readers"
+msgstr "列出卡片讀卡器"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr "從終端機提供商列出可用的卡片讀取器。適用於 SDK 模式和雲端模式的提供商。每個讀取器物件包含：id、標籤、類型、序列號和狀態。"
+
+msgid "Create payment intent for terminal"
+msgstr "為終端機建立付款意圖"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"為終端機讀取器上的 card_present 收集創建 PaymentIntent。前端使用返回的 client_secret 透過 SDK "
+"收集付款。僅限 SDK。雲端提供商應使用 initiate-cloud-payment。如果省略貨幣，預設為終端機設定的貨幣。"
+
+msgid "Capture/verify terminal payment"
+msgstr "捕獲/驗證終端機付款"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr "驗證付款意圖已在終端機讀卡器上成功處理，並從提供商返回卡片詳情（品牌、後四位數字）。僅限 SDK 使用。"
+
+msgid "Cancel terminal payment"
+msgstr "取消終端機付款"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr "在終端機讀卡器上取消待處理的付款意圖（例如客戶取消）。僅限 SDK 使用。雲端提供商應使用 cancel-cloud-payment。"
+
+msgid "Initiate cloud payment on reader"
+msgstr "在讀卡機上啟動雲端付款"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"透過供應商的雲端 API "
+"向卡片讀取器發送付款請求。僅適用於雲端模式的終端機供應商（Adyen、Square、SumUp、Zettle）。僅限雲端。如果供應商使用 SDK "
+"模式，則會返回 400。如果未指定貨幣，則預設為終端機設定的貨幣。"
+
+msgid "Check cloud payment status"
+msgstr "檢查雲端付款狀態"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"輪詢雲端啟動付款的狀態。返回目前狀態：pending（待處理）、succeeded（成功）、failed（失敗）或 canceled（已取消）。當狀態為"
+" 'succeeded' 時，回應包含 card_brand、last4 和供應商 payment_id。當狀態為 'canceled' 時，包含 "
+"cancel_reason。前端應每隔 2 秒輪詢，直到狀態不再是 'pending'。"
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr "由啟動雲端付款返回的特定供應商交易 ID"
+
+msgid "Cancel cloud payment"
+msgstr "取消雲端付款"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr "在讀卡器上取消待處理的雲端啟動付款。僅限雲端。行為因供應商而異。"
+
+msgid "Begin WebAuthn registration"
+msgstr "開始 WebAuthn 註冊"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr "產生生物特徵註冊選項。返回挑戰和憑證創建選項。"
+
+msgid "Registration options"
+msgstr "註冊選項"
+
+msgid "Complete WebAuthn registration"
+msgstr "完成 WebAuthn 註冊"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr "驗證認證並儲存生物特徵解鎖憑證。"
+
+msgid "Credential registered"
+msgstr "憑證已註冊"
+
+msgid "Verification failed"
+msgstr "驗證失敗"
+
+msgid "Begin WebAuthn authentication"
+msgstr "開始 WebAuthn 驗證"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"產生生物特徵解鎖的驗證挑戰。返回被鎖定用戶和所有管理員的 allowCredentials。如果 failed_attempts >= "
+"3，則僅包含管理員憑證。"
+
+msgid "Authentication options"
+msgstr "驗證選項"
+
+msgid "No credentials registered"
+msgstr "未註冊憑證"
+
+msgid "Complete WebAuthn authentication"
+msgstr "完成 WebAuthn 認證"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "驗證生物特徵斷言並解鎖終端。"
+
+msgid "Authentication successful"
+msgstr "認證成功"

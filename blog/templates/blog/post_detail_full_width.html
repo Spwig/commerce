@@ -1,0 +1,234 @@
+{% extends "blog/blog_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block blog_layout_class %} blog-layout--full-width{% endblock %}
+
+{% block blog_title %}{{ post.meta_title|default:post.title }}{% endblock %}
+
+{% block blog_meta %}
+<!-- SEO Meta -->
+<meta name="description" content="{{ post.meta_description|default:post.excerpt|truncatewords:30 }}">
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+<!-- Open Graph -->
+<meta property="og:title" content="{{ post.meta_title|default:post.title }}">
+<meta property="og:description" content="{{ post.meta_description|default:post.excerpt|truncatewords:30 }}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% if post.get_og_image_url %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.get_og_image_url }}">
+{% endif %}
+{% if post.published_at %}
+    <meta property="article:published_time" content="{{ post.published_at|date:'c' }}">
+{% endif %}
+{% if post.category %}
+    <meta property="article:section" content="{{ post.category.name }}">
+{% endif %}
+{% for tag in post.tags.all %}
+    <meta property="article:tag" content="{{ tag.name }}">
+{% endfor %}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ post.meta_title|default:post.title }}">
+<meta name="twitter:description" content="{{ post.meta_description|default:post.excerpt|truncatewords:30 }}">
+{% if post.get_og_image_url %}
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.get_og_image_url }}">
+{% endif %}
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ post.title|escapejs }}",
+    "description": "{{ post.excerpt|truncatewords:30|escapejs }}",
+    "url": "{{ request.build_absolute_uri }}",
+    {% if post.get_og_image_url %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ post.get_og_image_url }}",{% endif %}
+    "datePublished": "{{ post.published_at|date:'c' }}",
+    "dateModified": "{{ post.updated_at|date:'c' }}",
+    {% if post.created_by %}"author": {
+        "@type": "Person",
+        "name": "{{ post.created_by.get_full_name|default:post.created_by.username|escapejs }}"
+    },{% endif %}
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ site_settings.site_name|default:'Shop'|escapejs }}"
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.build_absolute_uri }}"
+    }
+}
+</script>
+{% endblock %}
+
+{% block blog_css %}
+<link rel="stylesheet" href="{% static 'blog/css/post_detail.css' %}">
+<link rel="stylesheet" href="{% static 'blog/css/post_detail_full_width.css' %}">
+{% endblock %}
+
+{% block blog_breadcrumb %}{% endblock %}
+
+{% block blog_content %}
+<article class="blog-article">
+    <!-- Full-width Hero -->
+    {% if post.featured_image %}
+    <div class="blog-fw-hero">
+        <img class="blog-fw-hero__image"
+             src="{{ post.featured_image.get_display_url }}"
+             alt="{{ post.title }}">
+        <div class="blog-fw-hero__overlay">
+            {% if post.category %}
+                <a href="{% url 'blog:category' slug=post.category.slug %}" class="blog-fw-hero__category">{{ post.category.name }}</a>
+            {% endif %}
+            <h1 class="blog-fw-hero__title">{{ post.title }}</h1>
+            <div class="blog-fw-hero__meta">
+                {% if template_options.show_author and post.created_by %}
+                    <span><i class="far fa-user"></i> {{ post.created_by.get_full_name|default:post.created_by.username }}</span>
+                {% endif %}
+                {% if post.published_at %}
+                    <span><i class="far fa-calendar-alt"></i> {{ post.published_at|date:"F j, Y" }}</span>
+                {% endif %}
+                {% if blog_settings.show_reading_time and post.reading_time_minutes %}
+                    <span><i class="far fa-clock"></i> {{ post.reading_time_minutes }} {% mtrans "min read" %}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <header class="blog-fw-header">
+        {% if post.category %}
+            <a href="{% url 'blog:category' slug=post.category.slug %}" class="blog-article__category">{{ post.category.name }}</a>
+        {% endif %}
+        <h1 class="blog-article__title">{{ post.title }}</h1>
+        <div class="blog-article__meta">
+            {% if template_options.show_author and post.created_by %}
+                <span><i class="far fa-user"></i> {{ post.created_by.get_full_name|default:post.created_by.username }}</span>
+            {% endif %}
+            {% if post.published_at %}
+                <span><i class="far fa-calendar-alt"></i> {{ post.published_at|date:"F j, Y" }}</span>
+            {% endif %}
+            {% if blog_settings.show_reading_time and post.reading_time_minutes %}
+                <span><i class="far fa-clock"></i> {{ post.reading_time_minutes }} {% mtrans "min read" %}</span>
+            {% endif %}
+        </div>
+    </header>
+    {% endif %}
+
+    <!-- Breadcrumb (below hero) -->
+    <nav class="blog-breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}" style="max-width: 800px; margin: 0 auto; padding: 1.5rem 2rem 0;">
+        <ol class="blog-breadcrumb__list">
+            <li class="blog-breadcrumb__item">
+                <a href="/" class="blog-breadcrumb__link">{% mtrans "Home" %}</a>
+            </li>
+            <li class="blog-breadcrumb__item">
+                <a href="{% url 'blog:list' %}" class="blog-breadcrumb__link">{% mtrans "Blog" %}</a>
+            </li>
+            <li class="blog-breadcrumb__item blog-breadcrumb__item--active">{{ post.title|truncatewords:8 }}</li>
+        </ol>
+    </nav>
+
+    <!-- Article Body -->
+    <div class="blog-fw-body">
+        <div class="blog-article__body">
+            {{ post.simple_content|safe }}
+        </div>
+
+        <!-- Tags -->
+        {% if post.tags.all %}
+        <div class="blog-article__tags">
+            {% for tag in post.tags.all %}
+                <a href="{% url 'blog:tag' slug=tag.slug %}" class="blog-article__tag">
+                    <i class="fas fa-tag blog-article__tag-icon"></i>{{ tag.name }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if template_options.show_share_buttons %}
+        <!-- Social Sharing -->
+        <div class="blog-article__share">
+            <div class="blog-article__share-title">{% mtrans "Share this article" %}</div>
+            <div class="blog-article__share-links">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}"
+                   target="_blank" rel="noopener noreferrer" class="blog-article__share-btn" aria-label="Share on Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ post.title|urlencode }}"
+                   target="_blank" rel="noopener noreferrer" class="blog-article__share-btn" aria-label="Share on X">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}"
+                   target="_blank" rel="noopener noreferrer" class="blog-article__share-btn" aria-label="Share on LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="mailto:?subject={{ post.title|urlencode }}&body={{ request.build_absolute_uri|urlencode }}"
+                   class="blog-article__share-btn" aria-label="Share via email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</article>
+
+{% if template_options.show_related_posts and related_posts %}
+<section class="blog-related blog-related--full-width">
+    <h2 class="blog-related__title">{% mtrans "Related Articles" %}</h2>
+    <div class="blog-related__grid">
+        {% for related in related_posts %}
+        <article class="blog-card">
+            <a href="{{ related.get_absolute_url }}" class="blog-card__image-link">
+                <div class="blog-card__image-wrapper">
+                    {% if related.featured_image %}
+                        <img class="blog-card__image"
+                             src="{{ related.featured_image.thumbnail_medium }}"
+                             alt="{{ related.title }}"
+                             loading="lazy">
+                    {% else %}
+                        <div class="blog-card__image-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </a>
+            <div class="blog-card__body">
+                {% if related.category %}
+                    <a href="{% url 'blog:category' slug=related.category.slug %}" class="blog-card__category">{{ related.category.name }}</a>
+                {% endif %}
+                <h3 class="blog-card__title">
+                    <a href="{{ related.get_absolute_url }}">{{ related.title }}</a>
+                </h3>
+                <div class="blog-card__meta">
+                    {% if related.published_at %}
+                        <span><i class="far fa-calendar"></i> {{ related.published_at|date:"M d, Y" }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if template_options.show_subscribe_cta and blog_settings.enable_subscriptions %}
+<div class="blog-subscribe-cta blog-subscribe-cta--full-width">
+    <h3 class="blog-subscribe-cta__title">{% mtrans "Enjoyed this article?" %}</h3>
+    <p class="blog-subscribe-cta__text">{% mtrans "Subscribe to get notified when we publish new content." %}</p>
+    <form class="blog-subscribe-cta__form" id="detail-subscribe-form"
+          data-subscribe-url="{% url 'blog:subscribe' %}"
+          data-message-el="detail-subscribe-msg">
+        <input type="email" name="email" class="blog-subscribe-cta__input"
+               placeholder="{% mtrans 'Your email address' %}" required>
+        <button type="submit" class="blog-subscribe-cta__btn">{% mtrans "Subscribe" %}</button>
+    </form>
+    <div id="detail-subscribe-msg" class="blog-sidebar__subscribe-msg blog-subscribe-cta__msg"></div>
+</div>
+{% endif %}
+{% endblock %}
+
+{# No sidebar for full-width template #}
+{% block blog_sidebar_wrapper %}{% endblock %}
+
+{% block blog_scripts %}{% endblock %}

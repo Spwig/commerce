@@ -1,0 +1,140 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Shipping Packages" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'shipping/css/admin_package_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-box"></i>
+                {% trans "Shipping Packages" %}
+            </h1>
+            <p class="subtitle">{% trans "Define the boxes, envelopes, and packaging you use for shipping orders" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:shipping_shippingpackage_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Package" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or description...' %}"
+                    value="{{ request.GET.q|default:'' }}">
+            </div>
+
+            <!-- Status Filter -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active" {% if request.GET.is_active == '1' %}selected{% endif %}>{% trans "Active" %} ({{ active_count }})</option>
+                    <option value="inactive" {% if request.GET.is_active == '0' %}selected{% endif %}>{% trans "Inactive" %} ({{ inactive_count }})</option>
+                </select>
+            </div>
+
+            <!-- Sort By -->
+            <div class="filter-field">
+                <label for="filter-sort">
+                    <i class="fas fa-sort"></i> {% trans "Sort By" %}
+                </label>
+                <select id="filter-sort">
+                    <option value="priority" {% if request.GET.sort == 'priority' or not request.GET.sort %}selected{% endif %}>{% trans "Priority (High to Low)" %}</option>
+                    <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>{% trans "Name (A-Z)" %}</option>
+                    <option value="volume" {% if request.GET.sort == 'volume' %}selected{% endif %}>{% trans "Volume (Small to Large)" %}</option>
+                    <option value="max_weight" {% if request.GET.sort == 'max_weight' %}selected{% endif %}>{% trans "Max Weight" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+                <button type="button" class="button default" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-box"></i>
+            <span id="package-count">{{ cl.result_count }}</span> {% trans "package" %}{{ cl.result_count|pluralize:"s" }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="package-results">
+        {% include "admin/shipping/shippingpackage/package_cards.html" with packages=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 package{% plural %}{{ counter }} packages{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'packages' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'shipping_admin:filter_shipping_packages' %}"
+         data-results-container="package-results"
+         data-results-count="package-count"
+         class="package-list-hidden"></div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}

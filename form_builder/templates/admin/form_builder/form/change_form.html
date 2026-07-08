@@ -1,0 +1,31 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+{% if add %}{% trans "Add Form" %}{% else %}{% trans "Edit Form" %}: {{ original.name }}{% endif %} | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'form_builder/css/admin_form_builder.css' %}">
+<link rel="stylesheet" href="{% static 'form_builder/admin/css/form_form.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if not add and original %}
+<div class="form-header-actions">
+    <a href="{% url 'form_builder:visual_builder' original.pk %}" class="visual-builder-btn">
+        <i class="fas fa-paint-brush"></i> {% trans "Edit Form Design" %}
+    </a>
+    <span class="form-header-hint">
+        {% trans "Use the visual builder to add and arrange form fields" %}
+    </span>
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'form_builder/js/admin_form_builder.js' %}"></script>
+{% endblock %}

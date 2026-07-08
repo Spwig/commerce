@@ -1,0 +1,103 @@
+{% load i18n static %}
+
+{% if bookings %}
+<div class="list-row-cards">
+    {% for booking in bookings %}
+    <div class="list-row-card">
+        <div class="list-row-card-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_booking_change' booking.pk %}">
+                    #{{ booking.pk }} &mdash; {{ booking.product.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if booking.customer_name %}
+                    {{ booking.customer_name }}
+                    {% if booking.customer_email %}({{ booking.customer_email }}){% endif %}
+                {% elif booking.customer_email %}
+                    {{ booking.customer_email }}
+                {% else %}
+                    -
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if booking.status == 'pending_confirmation' %}
+                <span class="list-row-card-badge list-row-card-badge-warning">
+                    <i class="fas fa-clock"></i> {% trans "Pending" %}
+                </span>
+                {% elif booking.status == 'confirmed' %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Confirmed" %}
+                </span>
+                {% elif booking.status == 'completed' %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-check-double"></i> {% trans "Completed" %}
+                </span>
+                {% elif booking.status == 'cancelled' %}
+                <span class="list-row-card-badge list-row-card-badge-error">
+                    <i class="fas fa-times-circle"></i> {% trans "Cancelled" %}
+                </span>
+                {% elif booking.status == 'no_show' %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-user-slash"></i> {% trans "No Show" %}
+                </span>
+                {% endif %}
+
+                {% if booking.is_recurring %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-redo"></i> {% trans "Recurring" %}
+                </span>
+                {% endif %}
+
+                {% if booking.resource %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-cube"></i> {{ booking.resource.name }}
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    {{ booking.start_datetime|date:"M d, Y" }}
+                </span>
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    {{ booking.start_datetime|date:"H:i" }} - {{ booking.end_datetime|date:"H:i" }}
+                </span>
+                {% if booking.total_cost %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    {{ booking.total_cost }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_booking_change' booking.pk %}"
+               class="list-row-card-action" title="{% trans 'View' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="list-row-cards">
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon opacity-50">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No bookings found." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+</div>
+{% endif %}

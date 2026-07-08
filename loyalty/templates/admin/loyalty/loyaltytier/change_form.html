@@ -1,0 +1,82 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Tier" %}: {{ original }}{% else %}{% trans "Add Tier" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'utilities/color_picker/current/color_picker.js' %}" defer></script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'utilities/color_picker/current/color_picker.css' %}">
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltytier_form.css' %}">
+{% endblock %}
+
+{% block field_sets %}
+<!-- Floating Preview Card -->
+<div class="tier-preview-float">
+    <div class="tier-preview-card" id="tier-preview-card">
+        <div class="tier-preview-header">
+            <div class="tier-preview-header-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <h3 class="tier-preview-header-title">{% trans "Live Preview" %}</h3>
+        </div>
+
+        <div class="tier-preview-content">
+            <div class="tier-badge-preview" id="preview-badge">
+                <i class="fas fa-layer-group tier-badge-icon" id="preview-icon"></i>
+                <span id="preview-name">{% if original %}{{ original.name }}{% else %}{% trans "New Tier" %}{% endif %}</span>
+            </div>
+
+            <div class="tier-details-grid">
+                <div class="tier-detail-item">
+                    <div class="tier-detail-label">{% trans "Rank" %}</div>
+                    <div class="tier-detail-value" id="preview-rank">
+                        {% if original %}{{ original.rank }}{% else %}1{% endif %}
+                    </div>
+                </div>
+
+                <div class="tier-detail-item">
+                    <div class="tier-detail-label">{% trans "Points Multiplier" %}</div>
+                    <div class="tier-detail-value" id="preview-multiplier">
+                        {% if original %}{{ original.points_multiplier }}{% else %}1.00{% endif %}x
+                    </div>
+                </div>
+
+                <div class="tier-detail-item">
+                    <div class="tier-detail-label">{% trans "Min Points" %}</div>
+                    <div class="tier-detail-value" id="preview-points">
+                        {% if original %}{{ original.min_points_earned }}{% else %}0{% endif %}
+                    </div>
+                </div>
+
+                <div class="tier-detail-item">
+                    <div class="tier-detail-label">{% trans "Min Spend" %}</div>
+                    <div class="tier-detail-value" id="preview-spend">
+                        ${% if original %}{{ original.min_spend }}{% else %}0.00{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Original Django Admin Fieldsets -->
+{{ block.super }}
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script type="application/json" id="loyaltytier-form-data">
+{
+    "translations": {
+        "newTier": "{% trans 'New Tier' %}"
+    }
+}
+</script>
+<script src="{% static 'loyalty/admin/js/loyaltytier_change_form.js' %}"></script>
+{% endblock %}

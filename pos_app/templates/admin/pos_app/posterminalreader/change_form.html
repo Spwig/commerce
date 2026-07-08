@@ -1,0 +1,430 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Card Reader" %}{% else %}{% trans "Add Card Reader" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'pos_app/admin/css/posterminalreader_form.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if original %}
+    {# Editing existing card reader #}
+    <div id="content-main">
+        <div class="reader-admin-header">
+            <div class="header-title">
+                <h1>
+                    <i class="fas fa-credit-card"></i>
+                    {% trans "Card Reader" %}: {{ original.reader_label|default:original.provider_reader_id }}
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-building"></i>
+                        {{ original.provider.name }}
+                    </span>
+                    {% if original.terminal %}
+                    <span class="meta-item">
+                        <i class="fas fa-desktop"></i>
+                        {{ original.terminal.name }}
+                    </span>
+                    {% endif %}
+                    <span class="meta-item status-{{ original.status }}">
+                        <i class="fas fa-circle"></i>
+                        {{ original.get_status_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {# Tab Navigation #}
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="basic">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Basic Info" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="provider">
+                <i class="fas fa-server"></i>
+                {% trans "Provider Details" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="status">
+                <i class="fas fa-signal"></i>
+                {% trans "Status" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="splash">
+                <i class="fas fa-image"></i>
+                {% trans "Splash Screen" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="timestamps">
+                <i class="fas fa-clock"></i>
+                {% trans "Timestamps" %}
+            </button>
+        </div>
+
+        {# Form Start #}
+        <form method="post" id="posterminalreader_form" novalidate>
+            {% csrf_token %}
+
+            {# Include hidden fields #}
+            {% for hidden in adminform.form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {# Error Display #}
+            {% if adminform.form.errors %}
+                <div class="form-errors-banner">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>{% trans "Please correct the errors below" %}</h3>
+                        {{ adminform.form.errors }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="tab-content">
+                {# Tab 1: Basic Info #}
+                <div class="tab-panel active" data-panel="basic">
+                    <div class="card">
+                        <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                        <p class="card-description">{% trans "Configure the basic settings for this card reader" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.provider.label_tag }}
+                            {{ adminform.form.provider }}
+                            {% if adminform.form.provider.help_text %}<p class="help">{{ adminform.form.provider.help_text }}</p>{% endif %}
+                            {% if adminform.form.provider.errors %}<p class="error">{{ adminform.form.provider.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.terminal.label_tag }}
+                            {{ adminform.form.terminal }}
+                            {% if adminform.form.terminal.help_text %}<p class="help">{{ adminform.form.terminal.help_text }}</p>{% endif %}
+                            {% if adminform.form.terminal.errors %}<p class="error">{{ adminform.form.terminal.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.reader_label.label_tag }}
+                            {{ adminform.form.reader_label }}
+                            {% if adminform.form.reader_label.help_text %}<p class="help">{{ adminform.form.reader_label.help_text }}</p>{% endif %}
+                            {% if adminform.form.reader_label.errors %}<p class="error">{{ adminform.form.reader_label.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 2: Provider Details #}
+                <div class="tab-panel" data-panel="provider">
+                    <div class="card">
+                        <h2><i class="fas fa-server"></i> {% trans "Provider Details" %}</h2>
+                        <p class="card-description">{% trans "Technical details from the payment provider" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.provider_reader_id.label_tag }}
+                            {{ adminform.form.provider_reader_id }}
+                            {% if adminform.form.provider_reader_id.help_text %}<p class="help">{{ adminform.form.provider_reader_id.help_text }}</p>{% endif %}
+                            {% if adminform.form.provider_reader_id.errors %}<p class="error">{{ adminform.form.provider_reader_id.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.reader_type.label_tag }}
+                                    {{ adminform.form.reader_type }}
+                                    {% if adminform.form.reader_type.help_text %}<p class="help">{{ adminform.form.reader_type.help_text }}</p>{% endif %}
+                                    {% if adminform.form.reader_type.errors %}<p class="error">{{ adminform.form.reader_type.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.serial_number.label_tag }}
+                                    {{ adminform.form.serial_number }}
+                                    {% if adminform.form.serial_number.help_text %}<p class="help">{{ adminform.form.serial_number.help_text }}</p>{% endif %}
+                                    {% if adminform.form.serial_number.errors %}<p class="error">{{ adminform.form.serial_number.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.ip_address.label_tag }}
+                            {{ adminform.form.ip_address }}
+                            {% if adminform.form.ip_address.help_text %}<p class="help">{{ adminform.form.ip_address.help_text }}</p>{% endif %}
+                            {% if adminform.form.ip_address.errors %}<p class="error">{{ adminform.form.ip_address.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 3: Status #}
+                <div class="tab-panel" data-panel="status">
+                    <div class="card">
+                        <h2><i class="fas fa-signal"></i> {% trans "Reader Status" %}</h2>
+                        <p class="card-description">{% trans "Current connection and availability status" %}</p>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.status.label_tag }}
+                                    {{ adminform.form.status }}
+                                    {% if adminform.form.status.help_text %}<p class="help">{{ adminform.form.status.help_text }}</p>{% endif %}
+                                    {% if adminform.form.status.errors %}<p class="error">{{ adminform.form.status.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.last_seen_at.label_tag }}
+                                    {{ adminform.form.last_seen_at }}
+                                    {% if adminform.form.last_seen_at.help_text %}<p class="help">{{ adminform.form.last_seen_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.last_seen_at.errors %}<p class="error">{{ adminform.form.last_seen_at.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 4: Splash Screen #}
+                <div class="tab-panel" data-panel="splash">
+                    <div class="card">
+                        <h2><i class="fas fa-image"></i> {% trans "Splash Screen Configuration" %}</h2>
+                        <p class="card-description">{% trans "Custom splash screen for this reader. Leave blank to auto-generate from your site logo. Splash screens are uploaded to Stripe when the reader is registered." %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.splash_override_image.label_tag }}
+                            {{ adminform.form.splash_override_image }}
+                            {% if adminform.form.splash_override_image.help_text %}<p class="help">{{ adminform.form.splash_override_image.help_text }}</p>{% endif %}
+                            {% if adminform.form.splash_override_image.errors %}<p class="error">{{ adminform.form.splash_override_image.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.splash_generated_at.label_tag }}
+                                    {{ adminform.form.splash_generated_at }}
+                                    {% if adminform.form.splash_generated_at.help_text %}<p class="help">{{ adminform.form.splash_generated_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.splash_generated_at.errors %}<p class="error">{{ adminform.form.splash_generated_at.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.stripe_splash_file_id.label_tag }}
+                                    {{ adminform.form.stripe_splash_file_id }}
+                                    {% if adminform.form.stripe_splash_file_id.help_text %}<p class="help">{{ adminform.form.stripe_splash_file_id.help_text }}</p>{% endif %}
+                                    {% if adminform.form.stripe_splash_file_id.errors %}<p class="error">{{ adminform.form.stripe_splash_file_id.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.stripe_splash_config_id.label_tag }}
+                            {{ adminform.form.stripe_splash_config_id }}
+                            {% if adminform.form.stripe_splash_config_id.help_text %}<p class="help">{{ adminform.form.stripe_splash_config_id.help_text }}</p>{% endif %}
+                            {% if adminform.form.stripe_splash_config_id.errors %}<p class="error">{{ adminform.form.stripe_splash_config_id.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 5: Timestamps #}
+                <div class="tab-panel" data-panel="timestamps">
+                    <div class="card">
+                        <h2><i class="fas fa-clock"></i> {% trans "System Timestamps" %}</h2>
+                        <p class="card-description">{% trans "Automatically tracked system information" %}</p>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.id.label_tag }}
+                                    {{ adminform.form.id }}
+                                    {% if adminform.form.id.help_text %}<p class="help">{{ adminform.form.id.help_text }}</p>{% endif %}
+                                    {% if adminform.form.id.errors %}<p class="error">{{ adminform.form.id.errors }}</p>{% endif %}
+                                </div>
+
+                                <div class="form-row">
+                                    {{ adminform.form.created_at.label_tag }}
+                                    {{ adminform.form.created_at }}
+                                    {% if adminform.form.created_at.help_text %}<p class="help">{{ adminform.form.created_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.created_at.errors %}<p class="error">{{ adminform.form.created_at.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.updated_at.label_tag }}
+                                    {{ adminform.form.updated_at }}
+                                    {% if adminform.form.updated_at.help_text %}<p class="help">{{ adminform.form.updated_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.updated_at.errors %}<p class="error">{{ adminform.form.updated_at.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Submit Buttons #}
+            <div class="submit-row">
+                {% if adminform.model_admin.show_save_and_add_another %}
+                    <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+                {% endif %}
+                {% if adminform.model_admin.show_save_and_continue %}
+                    <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+                {% endif %}
+                <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+            </div>
+        </form>
+    </div>
+{% else %}
+    {# Creating new card reader #}
+    <div id="content-main">
+        <div class="reader-admin-header">
+            <div class="header-title">
+                <h1>
+                    <i class="fas fa-credit-card"></i>
+                    {% trans "Add Card Reader" %}
+                </h1>
+                <p class="subtitle">{% trans "Register a new payment terminal card reader" %}</p>
+            </div>
+        </div>
+
+        {# Tab Navigation #}
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="basic">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Basic Info" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="provider">
+                <i class="fas fa-server"></i>
+                {% trans "Provider Details" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="splash">
+                <i class="fas fa-image"></i>
+                {% trans "Splash Screen" %}
+            </button>
+        </div>
+
+        {# Form Start #}
+        <form method="post" id="posterminalreader_form" novalidate>
+            {% csrf_token %}
+
+            {# Include hidden fields #}
+            {% for hidden in adminform.form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {# Error Display #}
+            {% if adminform.form.errors %}
+                <div class="form-errors-banner">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>{% trans "Please correct the errors below" %}</h3>
+                        {{ adminform.form.errors }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="tab-content">
+                {# Tab 1: Basic Info #}
+                <div class="tab-panel active" data-panel="basic">
+                    <div class="card">
+                        <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                        <p class="card-description">{% trans "Configure the basic settings for this card reader" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.provider.label_tag }}
+                            {{ adminform.form.provider }}
+                            {% if adminform.form.provider.help_text %}<p class="help">{{ adminform.form.provider.help_text }}</p>{% endif %}
+                            {% if adminform.form.provider.errors %}<p class="error">{{ adminform.form.provider.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.terminal.label_tag }}
+                            {{ adminform.form.terminal }}
+                            {% if adminform.form.terminal.help_text %}<p class="help">{{ adminform.form.terminal.help_text }}</p>{% endif %}
+                            {% if adminform.form.terminal.errors %}<p class="error">{{ adminform.form.terminal.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.reader_label.label_tag }}
+                            {{ adminform.form.reader_label }}
+                            {% if adminform.form.reader_label.help_text %}<p class="help">{{ adminform.form.reader_label.help_text }}</p>{% endif %}
+                            {% if adminform.form.reader_label.errors %}<p class="error">{{ adminform.form.reader_label.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 2: Provider Details #}
+                <div class="tab-panel" data-panel="provider">
+                    <div class="card">
+                        <h2><i class="fas fa-server"></i> {% trans "Provider Details" %}</h2>
+                        <p class="card-description">{% trans "Technical details from the payment provider" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.provider_reader_id.label_tag }}
+                            {{ adminform.form.provider_reader_id }}
+                            {% if adminform.form.provider_reader_id.help_text %}<p class="help">{{ adminform.form.provider_reader_id.help_text }}</p>{% endif %}
+                            {% if adminform.form.provider_reader_id.errors %}<p class="error">{{ adminform.form.provider_reader_id.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.reader_type.label_tag }}
+                                    {{ adminform.form.reader_type }}
+                                    {% if adminform.form.reader_type.help_text %}<p class="help">{{ adminform.form.reader_type.help_text }}</p>{% endif %}
+                                    {% if adminform.form.reader_type.errors %}<p class="error">{{ adminform.form.reader_type.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.serial_number.label_tag }}
+                                    {{ adminform.form.serial_number }}
+                                    {% if adminform.form.serial_number.help_text %}<p class="help">{{ adminform.form.serial_number.help_text }}</p>{% endif %}
+                                    {% if adminform.form.serial_number.errors %}<p class="error">{{ adminform.form.serial_number.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.ip_address.label_tag }}
+                            {{ adminform.form.ip_address }}
+                            {% if adminform.form.ip_address.help_text %}<p class="help">{{ adminform.form.ip_address.help_text }}</p>{% endif %}
+                            {% if adminform.form.ip_address.errors %}<p class="error">{{ adminform.form.ip_address.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 3: Splash Screen #}
+                <div class="tab-panel" data-panel="splash">
+                    <div class="card">
+                        <h2><i class="fas fa-image"></i> {% trans "Splash Screen Configuration" %}</h2>
+                        <p class="card-description">{% trans "Custom splash screen for this reader. Leave blank to auto-generate from your site logo. Splash screens are uploaded to Stripe when the reader is registered." %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.splash_override_image.label_tag }}
+                            {{ adminform.form.splash_override_image }}
+                            {% if adminform.form.splash_override_image.help_text %}<p class="help">{{ adminform.form.splash_override_image.help_text }}</p>{% endif %}
+                            {% if adminform.form.splash_override_image.errors %}<p class="error">{{ adminform.form.splash_override_image.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Submit Buttons #}
+            <div class="submit-row">
+                {% if adminform.model_admin.show_save_and_add_another %}
+                    <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+                {% endif %}
+                {% if adminform.model_admin.show_save_and_continue %}
+                    <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+                {% endif %}
+                <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+            </div>
+        </form>
+    </div>
+{% endif %}
+
+<!-- Tab switching handled by global AdminTabs utility -->
+{% endblock %}

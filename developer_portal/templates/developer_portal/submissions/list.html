@@ -1,0 +1,107 @@
+{% extends "developer_portal/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "My Submissions" %}{% endblock %}
+
+{% block content %}
+<div class="dev-page">
+    <div class="dev-page-header">
+        <h1>{% trans "Component Submissions" %}</h1>
+        <a href="{% url 'developer_portal:submit' %}" class="dev-btn dev-btn-primary">
+            <i class="fas fa-plus"></i> {% trans "New Submission" %}
+        </a>
+    </div>
+
+    {% if submissions %}
+    <div class="dev-table-wrapper">
+        <table class="dev-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Component" %}</th>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Version" %}</th>
+                    <th>{% trans "Validation" %}</th>
+                    <th>{% trans "Review" %}</th>
+                    <th>{% trans "Published" %}</th>
+                    <th>{% trans "Pricing" %}</th>
+                    <th>{% trans "Submitted" %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in submissions %}
+                <tr>
+                    <td>
+                        <strong>{{ submission.component_name }}</strong>
+                        <br><small class="text-muted">{{ submission.component_slug }}</small>
+                    </td>
+                    <td>
+                        <span class="dev-badge dev-badge-type">
+                            <i class="fas {{ submission.type_icon }}"></i>
+                            {{ submission.type_display }}
+                        </span>
+                    </td>
+                    <td><code>{{ submission.version }}</code></td>
+                    <td>
+                        <span class="dev-badge dev-badge-{{ submission.validation_status }}">
+                            {{ submission.get_validation_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="dev-badge dev-badge-{{ submission.review_status }}">
+                            {{ submission.get_review_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if submission.is_published %}
+                            <i class="fas fa-check-circle dev-icon-success"></i>
+                        {% else %}
+                            <i class="fas fa-minus-circle dev-icon-muted"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if submission.is_free %}
+                            <span class="dev-badge dev-badge-free">{% trans "Free" %}</span>
+                        {% else %}
+                            {{ submission.currency }} {{ submission.price }}
+                        {% endif %}
+                    </td>
+                    <td>{{ submission.submitted_at|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'developer_portal:submission_detail' pk=submission.pk %}" class="dev-btn-sm">
+                            {% trans "View" %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="dev-pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="dev-btn-sm">&laquo; {% trans "Previous" %}</a>
+        {% endif %}
+        <span class="dev-pagination-info">
+            {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}
+                Page {{ current }} of {{ total }}
+            {% endblocktrans %}
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="dev-btn-sm">{% trans "Next" %} &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="dev-empty-state">
+        <i class="fas fa-box"></i>
+        <p>{% trans "No submissions yet. Start by uploading your first component!" %}</p>
+        <a href="{% url 'developer_portal:submit' %}" class="dev-btn dev-btn-primary">
+            <i class="fas fa-plus"></i> {% trans "Submit Your First Component" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

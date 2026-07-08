@@ -1,0 +1,64 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/query-runner.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:management_queryhistory_changelist' %}">{% trans 'Query History' %}</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="module">
+    <h1>{{ title }}</h1>
+    
+    <div class="query-container">
+        <h2>SQL Query</h2>
+        <textarea id="query-input" class="query-input" placeholder="Enter your SQL query here..."></textarea>
+        
+        <div class="query-actions">
+            <button data-action="execute-query" id="execute-btn">Execute Query</button>
+            <button data-action="clear-query" class="clear-btn">Clear</button>
+            <span class="loading" id="loading">Executing query...</span>
+        </div>
+        
+        <div class="query-meta" id="query-meta"></div>
+    </div>
+    
+    <div id="results-container"></div>
+    
+    {% if recent_queries %}
+    <div class="recent-queries">
+        <h2>Recent Queries</h2>
+        {% for query in recent_queries %}
+        <div class="recent-query" data-action="load-query" data-query="{{ query.query|escapejs }}">
+            {{ query.query|truncatechars:100 }}
+            <div class="query-meta-line">
+                {{ query.executed_at|date:"M j, Y H:i" }} - 
+                {% if query.success %}
+                    ✓ Success ({{ query.execution_time|floatformat:3 }}s)
+                {% else %}
+                    ✗ Failed
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div id="query-runner-config" class="mgmt-hidden"
+     data-execute-url="{% url 'admin:management_execute_query' %}"></div>
+<script src="{% static 'management/js/query-runner.js' %}"></script>
+</div>
+{% endblock %}

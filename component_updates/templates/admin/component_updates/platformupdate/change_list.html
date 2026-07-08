@@ -1,0 +1,302 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Platform Updates" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'component_updates/admin/css/platform_update_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="platform-dashboard">
+    <!-- Current Version Card -->
+    <div class="platform-card">
+        <div class="platform-card-header">
+            <div class="platform-card-title">
+                <span>{% trans "Platform Version" %}</span>
+            </div>
+            <button type="button" class="btn-check-updates" id="checkUpdatesBtn" data-action="check-for-updates">
+                <span class="spinner"></span>
+                <span class="icon">&#x1F504;</span>
+                {% trans "Check for Updates" %}
+            </button>
+        </div>
+        <div class="version-display">v{{ current_version }}</div>
+        <div class="version-meta">
+            {% if update_info.last_checked %}
+            {% trans "Last checked:" %} {{ update_info.last_checked|timesince }} {% trans "ago" %}
+            {% else %}
+            {% trans "Never checked for updates" %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Hotfix Status Card -->
+    <div class="platform-card hotfix-card">
+        <div class="platform-card-header">
+            <div class="platform-card-title">
+                <i class="fas fa-band-aid"></i>
+                <span>{% trans "Hotfix Status" %}</span>
+            </div>
+            <button type="button" class="btn-check-updates" id="checkHotfixBtn" data-action="check-hotfix">
+                <span class="spinner"></span>
+                <span class="icon"><i class="fas fa-sync-alt"></i></span>
+                {% trans "Check Hotfixes" %}
+            </button>
+        </div>
+
+        <div class="hotfix-current">
+            {% if hotfix_status.applied_hotfixes %}
+            <div class="hotfix-level">
+                <span class="hotfix-label">{% trans "Applied Hotfixes" %}:</span>
+                <span class="hotfix-value">{% for hf in hotfix_status.applied_hotfixes %}hf{{ hf }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+            </div>
+            {% else %}
+            <div class="hotfix-level">
+                <span class="hotfix-label">{% trans "Hotfix Level" %}:</span>
+                <span class="hotfix-value hotfix-none">{% trans "Base image (no hotfixes applied)" %}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if hotfix_status.hotfix_available and hotfix_status.missing_hotfixes %}
+        <div class="hotfix-available-banner" id="hotfixAvailableBanner">
+            <div class="hotfix-available-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>{{ hotfix_status.missing_hotfixes|length }} {% trans "Hotfix(es) Available" %}</span>
+            </div>
+            {% for hf in hotfix_status.missing_hotfixes %}
+            <div class="hotfix-item">
+                <div class="hotfix-item-header">
+                    <strong>hf{{ hf.hotfix_number }}</strong>
+                    {% if hf.security_update %}
+                    <span class="channel-badge channel-dev">{% trans "SECURITY" %}</span>
+                    {% endif %}
+                </div>
+                {% if hf.changelog %}
+                <div class="hotfix-changelog">
+                    {{ hf.changelog }}
+                </div>
+                {% endif %}
+                {% if hf.requires_migration %}
+                <div class="hotfix-migration-warning">
+                    <i class="fas fa-database"></i> {% trans "Requires database migration" %}
+                </div>
+                {% endif %}
+                {% if hf.affected_files %}
+                <div class="hotfix-meta">
+                    <span><i class="fas fa-file-code"></i> {{ hf.affected_files|length }} {% trans "files" %}</span>
+                    {% if hf.package_size_bytes %}
+                    <span><i class="fas fa-file-archive"></i> {{ hf.package_size_bytes|filesizeformat }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="hotfix-actions">
+                <button type="button" class="btn-update-now" data-action="apply-hotfix"
+                        data-version="{{ hotfix_status.current_version }}"
+                        data-hotfix-numbers="{{ missing_hotfix_numbers_json }}">
+                    <i class="fas fa-download"></i> {% trans "Apply All Hotfixes" %} ({{ hotfix_status.missing_hotfixes|length }})
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if hotfix_status.applied_hotfixes %}
+        <div class="hotfix-rollback-section">
+            <button type="button" class="btn-rollback" data-action="rollback-hotfix">
+                <i class="fas fa-undo"></i> {% trans "Rollback All Hotfixes" %}
+            </button>
+            <small class="hotfix-rollback-note">{% trans "Removes all hotfixes and restarts with base image code" %}</small>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Update In Progress -->
+    {% if current_update %}
+    <div class="update-running-message">
+        <strong>&#x1F504; {% trans "Update in progress" %}</strong><br>
+        {% trans "Updating to" %} v{{ current_update.to_version }} - {{ current_update.get_status_display }}
+        ({{ current_update.progress_percent }}%)
+    </div>
+    {% endif %}
+
+    <!-- Update Available Card (if update found) -->
+    <div id="updateAvailableCard" class="platform-update-hidden">
+        <div class="update-available-card">
+            <div class="update-available-header">
+                <div class="update-available-title">
+                    <span>&#x2B06;&#xFE0F;</span>
+                    {% trans "Update Available" %}
+                </div>
+                <span class="channel-badge channel-stable" id="updateChannel">{% trans "STABLE" %}</span>
+            </div>
+
+            <div class="update-version-change">
+                <span class="update-version" id="currentVersionDisplay">v{{ current_version }}</span>
+                <span class="update-arrow">&#x2192;</span>
+                <span class="update-version" id="newVersionDisplay">v?.?.?</span>
+            </div>
+
+            <div class="update-details">
+                <div class="update-detail-item">
+                    <div class="update-detail-label">{% trans "Package Size" %}</div>
+                    <div class="update-detail-value" id="packageSize">--</div>
+                </div>
+                <div class="update-detail-item">
+                    <div class="update-detail-label">{% trans "Est. Time" %}</div>
+                    <div class="update-detail-value" id="estimatedTime">~2-5 min</div>
+                </div>
+                <div class="update-detail-item">
+                    <div class="update-detail-label">{% trans "Channel" %}</div>
+                    <div class="update-detail-value" id="channelDisplay">{% trans "Stable" %}</div>
+                </div>
+            </div>
+
+            <div id="migrationWarning" class="update-warning platform-update-hidden">
+                <span>&#x26A0;&#xFE0F;</span>
+                <span>{% trans "Requires database migration" %} ({% trans "est." %} <span id="migrationTime">30</span> {% trans "seconds" %})</span>
+            </div>
+
+            <div id="securityBadge" class="update-warning security platform-update-hidden">
+                <span>&#x1F6E1;&#xFE0F;</span>
+                <span>{% trans "Security update - recommended to install immediately" %}</span>
+            </div>
+
+            <div class="changelog-preview" id="changelogPreview">
+                <h4>{% trans "What's New" %}</h4>
+                <ul id="changelogList">
+                    <li>{% trans "Loading changelog..." %}</li>
+                </ul>
+            </div>
+
+            <div class="update-actions">
+                <button type="button" class="btn-update-now" id="startUpdateBtn" data-action="start-update">
+                    <span class="btn-text"><span>&#x1F680;</span> {% trans "Update Now" %}</span>
+                    <span class="btn-loading-text"><span class="spinner"></span> {% trans "Starting..." %}</span>
+                </button>
+                <button type="button" class="btn-remind-later" data-action="hide-update-card">
+                    {% trans "Remind Me Later" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Updates Available Card -->
+    <div id="noUpdatesCard" class="platform-update-hidden">
+        <div class="platform-card no-updates-card">
+            <div class="no-updates-icon">&#x2705;</div>
+            <div class="no-updates-title">{% trans "You're up to date!" %}</div>
+            <div>{% trans "Your platform is running the latest version." %}</div>
+        </div>
+    </div>
+
+    <!-- Rollback Card (if available) -->
+    {% if rollback_info.available %}
+    <div class="rollback-card">
+        <div class="rollback-header">
+            <span>&#x21A9;&#xFE0F;</span>
+            {% trans "Rollback Available" %}
+        </div>
+        <div class="rollback-info">
+            {% trans "Current:" %} v{{ current_version }} ({% trans "installed" %} {{ rollback_info.installed_at|timesince }} {% trans "ago" %})<br>
+            {% trans "Previous:" %} v{{ rollback_info.previous_version }}
+        </div>
+        <div class="rollback-warning">
+            <strong>&#x26A0;&#xFE0F; {% trans "Warning:" %}</strong> {% trans "Rolling back will revert to previous application code and may cause brief service interruption (~30 seconds)." %}
+        </div>
+        <button type="button" class="btn-rollback" data-action="confirm-rollback">
+            <span>&#x23EA;</span>
+            {% trans "Rollback to" %} v{{ rollback_info.previous_version }}
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Progress Modal -->
+<div class="update-progress-overlay" id="progressOverlay">
+    <div class="update-progress-modal">
+        <div class="update-progress-header">
+            <div class="update-progress-title">
+                <span class="animate-pulse">&#x1F504;</span>
+                <span>{% trans "Updating to" %} <span id="progressVersion">v?.?.?</span></span>
+            </div>
+            <span class="do-not-close" id="doNotCloseLabel">{% trans "DO NOT CLOSE" %}</span>
+            <button type="button" class="btn-close-modal platform-update-hidden" id="closeProgressBtn" data-action="close-progress">{% trans "Close" %}</button>
+        </div>
+        <div class="update-progress-body">
+            <div class="progress-bar-container">
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <div class="progress-percent"><span id="progressPercent">0</span>%</div>
+            </div>
+
+            <div class="progress-steps" id="progressSteps">
+                <!-- Steps will be populated dynamically -->
+            </div>
+
+            <div class="progress-log">
+                <div class="progress-log-header">&#x1F4DD; {% trans "Log Output" %}</div>
+                <div class="progress-log-content" id="progressLog">
+                    <!-- Log lines will be populated dynamically -->
+                </div>
+            </div>
+
+            <div class="progress-estimate" id="progressEstimate">
+                {% trans "Estimated time remaining: calculating..." %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update History -->
+{{ block.super }}
+
+<script type="application/json" id="platform-update-i18n">{
+    "errorChecking": "{% trans 'Error checking for updates:' %}",
+    "noUpdateAvailable": "{% trans 'No update available' %}",
+    "errorStarting": "{% trans 'Error starting update:' %}",
+    "andMore": "{% trans '... and more' %}",
+    "noChangelog": "{% trans 'No changelog available' %}",
+    "starting": "{% trans 'Starting...' %}",
+    "updateNow": "{% trans 'Update Now' %}",
+    "updateCompleted": "{% trans 'Update completed successfully!' %}",
+    "updateFailed": "{% trans 'Update failed:' %}",
+    "unknownError": "{% trans 'Unknown error' %}",
+    "estTimeRemaining": "{% trans 'Estimated time remaining:' %}",
+    "seconds": "{% trans 'seconds' %}",
+    "confirmRollback": "{% trans 'Are you sure you want to rollback to the previous version?' %}",
+    "rollbackWarning": "{% trans 'This will revert to previous application code and may cause brief service interruption (~30 seconds). This cannot be undone.' %}",
+    "rollbackNotReady": "{% trans 'Rollback functionality will be implemented in Phase 3' %}",
+    "noHotfixAvailable": "{% trans 'No new hotfixes available for your platform version.' %}",
+    "hotfixConfirm": "{% trans 'Applying hotfixes will restart your store briefly (~30-60 seconds). Continue?' %}",
+    "hotfixApplying": "{% trans 'Applying Hotfixes' %}",
+    "hotfixRollingBack": "{% trans 'Rolling Back Hotfixes' %}",
+    "hotfixCompleted": "{% trans 'Hotfixes applied and verified successfully!' %}",
+    "hotfixFailed": "{% trans 'Hotfix apply failed:' %}",
+    "hotfixRolledBackAuto": "{% trans 'Verification failed — hotfixes were automatically rolled back.' %}",
+    "hotfixRestarting": "{% trans 'Restarting services... please wait' %}",
+    "confirmHotfixRollback": "{% trans 'Are you sure you want to rollback all hotfixes? This will restart your store briefly (~30-60 seconds).' %}",
+    "upgradeRestarting": "{% trans 'Upgrading platform... services restarting, please wait' %}"
+}</script>
+<div id="platform-update-config" class="platform-update-hidden"
+     data-check-url="{% url 'admin:component_updates_platformupdate_check' %}"
+     data-start-url="{% url 'admin:component_updates_platformupdate_start' %}"
+     data-status-url-template="{% url 'admin:component_updates_platformupdate_changelist' %}"
+     data-current-update-id="{{ current_update.id|default:''  }}"
+     data-current-update-version="{{ current_update.to_version|default:'' }}"
+     data-has-current-update="{% if current_update %}true{% else %}false{% endif %}"
+     data-update-available="{% if update_info.update_available %}true{% else %}false{% endif %}"
+     data-update-info-json="{{ update_info_json|escapejs }}"
+     data-check-hotfix-url="{% url 'admin:component_updates_platformupdate_check_hotfix' %}"
+     data-apply-hotfix-url="{% url 'admin:component_updates_platformupdate_apply_hotfix' %}"
+     data-rollback-hotfix-url="{% url 'admin:component_updates_platformupdate_rollback_hotfix' %}"
+     data-hotfix-status-url="{% url 'admin:component_updates_platformupdate_hotfix_status' %}"
+     data-hotfix-in-progress="{% if hotfix_in_progress %}true{% else %}false{% endif %}"
+     data-hotfix-target-version="{{ hotfix_target_version|default:'' }}"></div>
+<script src="{% static 'component_updates/admin/js/platform-update-list.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,281 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Builder Canvas Chrome CSS
+ *
+ * Styles for page builder UI elements that appear within the canvas:
+ * - Element wrappers and selection states
+ * - Control buttons (edit, delete, move, duplicate)
+ * - Drop zones for drag and drop
+ * - Element type labels
+ * - Nested element z-index hierarchy
+ *
+ * These styles use !important where necessary to ensure they override
+ * any theme or content styles, as builder UI must always be visible.
+ */
+
+@layer builder-ui {
+  /* =========================================
+     ELEMENT WRAPPERS
+     ========================================= */
+
+  .pb-content-preview .element-wrapper {
+    background: transparent !important;
+    border: 1px solid #e5e7eb !important;
+    position: relative !important;
+    margin: 10px 0 !important;
+    padding: 15px !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+    z-index: 1 !important;
+  }
+
+  /* Container child wrappers - reduced spacing */
+  .pb-content-preview .container-child-wrapper .element-wrapper {
+    margin: 0 !important;
+    padding: 8px !important;
+    line-height: normal !important;
+  }
+
+  .pb-content-preview .container-child-wrapper {
+    line-height: normal !important;
+  }
+
+  /* Hover state */
+  .pb-content-preview .element-wrapper:hover {
+    background: rgba(59, 130, 246, 0.03) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* Selected state - must override inline styles */
+  .pb-content-preview .element-wrapper.selected {
+    border-color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  }
+
+  /* =========================================
+     NESTED ELEMENT Z-INDEX HIERARCHY
+     Different colors for each nesting level
+     ========================================= */
+
+  .pb-content-preview .element-wrapper .element-wrapper {
+    z-index: 10 !important;
+  }
+
+  .pb-content-preview .element-wrapper .element-wrapper:hover {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.03) !important;
+  }
+
+  .pb-content-preview .element-wrapper .element-wrapper .element-wrapper {
+    z-index: 20 !important;
+  }
+
+  .pb-content-preview .element-wrapper .element-wrapper .element-wrapper:hover {
+    border-color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.03) !important;
+  }
+
+  .pb-content-preview .element-wrapper .element-wrapper .element-wrapper .element-wrapper {
+    z-index: 30 !important;
+  }
+
+  .pb-content-preview .element-wrapper .element-wrapper .element-wrapper .element-wrapper:hover {
+    border-color: #8b5cf6 !important;
+    background: rgba(139, 92, 246, 0.03) !important;
+  }
+
+  /* =========================================
+     ELEMENT CONTROLS
+     ========================================= */
+
+  .pb-content-preview .element-controls {
+    position: absolute !important;
+    top: -12px !important;
+    right: 8px !important;
+    display: flex !important;
+    gap: 4px !important;
+    background: #ffffff !important;
+    padding: 4px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s ease !important;
+    z-index: 100 !important;
+  }
+
+  .pb-content-preview .element-wrapper:hover > .element-controls {
+    opacity: 1 !important;
+  }
+
+  /* Control buttons */
+  .pb-content-preview .element-controls .control-btn {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    border: 1px solid #e5e7eb !important;
+    background: #ffffff !important;
+    color: #4b5563 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+  }
+
+  .pb-content-preview .element-controls .control-btn:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Button-specific hover colors */
+  .pb-content-preview .element-controls .edit-btn:hover {
+    background: #3b82f6 !important;
+    color: white !important;
+    border-color: #3b82f6 !important;
+  }
+
+  .pb-content-preview .element-controls .delete-btn:hover {
+    background: #ef4444 !important;
+    color: white !important;
+    border-color: #ef4444 !important;
+  }
+
+  .pb-content-preview .element-controls .move-btn:hover {
+    background: #10b981 !important;
+    color: white !important;
+    border-color: #10b981 !important;
+  }
+
+  .pb-content-preview .element-controls .duplicate-btn:hover {
+    background: #8b5cf6 !important;
+    color: white !important;
+    border-color: #8b5cf6 !important;
+  }
+
+  /* =========================================
+     ELEMENT CONTENT
+     ========================================= */
+
+  .pb-content-preview .element-content {
+    pointer-events: auto !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    position: relative !important;
+    z-index: 1 !important;
+    background: transparent !important;
+    color: inherit !important;
+  }
+
+  /* =========================================
+     DROP ZONES
+     Fixed colors for builder UI - not theme-dependent
+     ========================================= */
+
+  .pb-content-preview .element-drop-zone {
+    background: #f9fafb !important;
+    border: 2px dashed #d1d5db !important;
+    color: #6b7280 !important;
+    padding: 20px !important;
+    text-align: center !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .pb-content-preview .element-drop-zone:hover {
+    border-color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+  }
+
+  .pb-content-preview .element-drop-zone.drag-over {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+  }
+
+  /* Container drop zones */
+  .pb-content-preview .container-drop-zone {
+    position: relative !important;
+    z-index: 50 !important;
+    pointer-events: auto !important;
+  }
+
+  .pb-content-preview .container-drop-zone.drag-over {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+    border-style: solid !important;
+    z-index: 100 !important;
+  }
+
+  /* Modal builder drop zones */
+  .pb-content-preview .pb-modal-builder .container-drop-zone {
+    z-index: 100 !important;
+  }
+
+  /* =========================================
+     ELEMENT TYPE LABELS
+     ========================================= */
+
+  .pb-content-preview .element-type-label {
+    position: absolute !important;
+    top: -8px !important;
+    left: 12px !important;
+    background: #3b82f6 !important;
+    color: white !important;
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s ease !important;
+    z-index: 101 !important;
+  }
+
+  .pb-content-preview .element-wrapper:hover > .element-type-label {
+    opacity: 1 !important;
+  }
+
+  /* =========================================
+     FOCUS STYLES
+     ========================================= */
+
+  .pb-content-preview .element-wrapper:focus,
+  .pb-content-preview .element-controls:focus,
+  .pb-content-preview .control-btn:focus {
+    outline: 2px solid #3b82f6 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Generic focus style for canvas elements */
+  .pb-content-preview *:focus {
+    outline: 2px solid #2563eb !important;
+    outline-offset: 2px !important;
+  }
+
+  /* =========================================
+     PAGE BUILDER VARIABLES
+     Builder-specific variables for UI elements
+     ========================================= */
+
+  .pb-content-preview,
+  .pb-content-preview * {
+    --pb-bg-primary: #ffffff !important;
+    --pb-bg-secondary: #f9fafb !important;
+    --pb-bg-tertiary: #f3f4f6 !important;
+    --pb-text-primary: #111827 !important;
+    --pb-text-secondary: #6b7280 !important;
+    --pb-border-primary: #e5e7eb !important;
+    --pb-border-secondary: #d1d5db !important;
+    --pb-accent-primary: #3b82f6 !important;
+    --pb-success: #10b981 !important;
+    --pb-warning: #f59e0b !important;
+    --pb-error: #ef4444 !important;
+    --pb-shadow-sm: rgba(0, 0, 0, 0.05) !important;
+    --pb-shadow-md: rgba(0, 0, 0, 0.1) !important;
+    --pb-shadow-lg: rgba(0, 0, 0, 0.15) !important;
+  }
+}

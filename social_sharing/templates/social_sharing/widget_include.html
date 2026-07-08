@@ -1,0 +1,33 @@
+{% comment %}
+Social Share Widget Include Template
+
+Renders the social share buttons widget based on merchant settings.
+This template is used by the social_share_buttons template tag.
+Uses theme tokens via --theme-widget-social-share-* CSS variables.
+{% endcomment %}
+{% load i18n merchant_trans static %}
+{% if render %}
+<link rel="stylesheet" href="{% static 'social_sharing/css/social-share-widget.css' %}" media="all">
+<div class="social-share-auto {{ widget_css_classes }}">
+    <p class="social-share-widget-title{% if not show_title %} social-share-title-hidden{% endif %}">{% mtrans "Share" %}</p>
+    <div class="social-share-widget social-share-size-{{ button_size }} social-share-layout-{{ layout_direction }} social-share-style-{{ button_style }}"
+         data-share-url="{{ share_data.share_url }}"
+         data-share-title="{{ share_data.share_title }}"
+         data-content-type="{{ share_data.content_type }}"
+         data-object-id="{{ share_data.object_id }}"
+         data-track-shares="{{ widget_config.track_shares|yesno:'true,false' }}">
+
+        {% for platform in enabled_platforms %}
+        <button type="button"
+                class="social-share-btn"
+                data-platform="{{ platform.key }}"
+                title="{% mtrans platform.label %}"
+                aria-label="{% mtrans platform.label %}">
+            <span class="social-share-icon">{{ platform.icon_svg }}</span>
+            <span class="social-share-label">{{ platform.label }}</span>
+        </button>
+        {% endfor %}
+    </div>
+</div>
+<script src="{% static 'social_sharing/js/social-share-widget.js' %}" defer></script>
+{% endif %}

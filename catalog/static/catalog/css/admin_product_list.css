@@ -1,0 +1,231 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Utility classes */
+.product-list-hidden { display: none; }
+.recycle-bin-link { margin-right: 10px; }
+
+/* Advanced Filters Panel - Uses theme variables from dark.css/light.css */
+.filters-panel {
+    background: var(--secondary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--darkened-bg);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.filters-header i {
+    margin-right: 8px;
+    color: var(--primary);
+}
+
+.filters-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-clear-filters {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--secondary-text);
+    transition: all 0.2s ease;
+}
+
+.btn-clear-filters:hover {
+    background: var(--delete-button-bg);
+    border-color: var(--delete-button-bg);
+    color: white;
+}
+
+.filters-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--secondary-bg);
+}
+
+/* More Filters toggle button */
+.advanced-filters-toggle {
+    padding-top: 4px;
+}
+
+.btn-more-filters {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--secondary-text);
+    transition: all 0.2s ease;
+}
+
+.btn-more-filters:hover {
+    background: var(--selected-bg);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-more-filters .toggle-chevron {
+    transition: transform 0.3s ease;
+    font-size: 10px;
+}
+
+.btn-more-filters.expanded .toggle-chevron {
+    transform: rotate(180deg);
+}
+
+/* Active advanced filter count badge */
+.advanced-filter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* Advanced filters wrapper - collapsed by default */
+.advanced-filters-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease, padding-top 0.35s ease;
+    padding-top: 0;
+}
+
+.advanced-filters-wrapper.expanded {
+    max-height: 500px;
+    opacity: 1;
+    padding-top: 12px;
+}
+
+.filters-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-field-wide {
+    grid-column: span 1;
+}
+
+.filter-field label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--muted-fg);
+    letter-spacing: 0.5px;
+}
+
+.filter-input {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--blue-subtle);
+}
+
+.filter-input::placeholder {
+    color: var(--muted-fg);
+}
+
+/* Active filter indicator */
+.filter-input.has-value {
+    border-color: var(--primary);
+    background: var(--blue-subtle);
+}
+
+/* Filter results info */
+.filter-results-info {
+    padding: 12px 0;
+    font-size: 13px;
+    color: var(--secondary-text);
+}
+
+/* Empty state for filtered results */
+.products-empty-state.filtered-empty {
+    padding: 60px 20px;
+}
+
+/* Loading indicator during filtering */
+.filters-loading {
+    position: relative;
+}
+
+.filters-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--body-bg);
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .filters-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .filters-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .filters-row {
+        grid-template-columns: 1fr;
+    }
+    .filter-field-wide {
+        grid-column: span 1;
+    }
+}

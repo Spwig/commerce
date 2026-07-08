@@ -1,0 +1,223 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'affiliate/admin/css/program_cards.css' %}">
+
+<div class="list-row-cards">
+    {% for program in programs %}
+    <div class="list-row-card program-card {% if program.status == 'archived' %}inactive{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ program.pk }}" class="action-select">
+        </div>
+
+        <!-- Program Icon -->
+        <div class="list-row-card-icon program {{ program.status }}">
+            <i class="fas fa-handshake"></i>
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:affiliate_program_change' program.id %}"
+                   title="{% trans 'Edit program' %}">
+                    {{ program.name }}
+                </a>
+            </h3>
+
+            <!-- Description -->
+            <p class="list-row-card-subtitle">
+                {% if program.description %}
+                    {{ program.description|truncatewords:15 }}
+                {% else %}
+                    <em class="quiet-text">{% trans "No description provided" %}</em>
+                {% endif %}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if program.status == 'active' %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'Program is active' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% elif program.status == 'paused' %}
+                    <span class="list-row-card-badge warning"
+                          title="{% trans 'Program is paused' %}">
+                        <i class="fas fa-pause-circle"></i> {% trans "Paused" %}
+                    </span>
+                {% elif program.status == 'archived' %}
+                    <span class="list-row-card-badge program-status-archived"
+                          title="{% trans 'Program is archived' %}">
+                        <i class="fas fa-archive"></i> {% trans "Archived" %}
+                    </span>
+                {% endif %}
+
+                <!-- Commission Type Badge -->
+                {% if program.commission_type == 'percentage' %}
+                    <span class="list-row-card-badge primary"
+                          title="{% trans 'Commission type' %}">
+                        <i class="fas fa-percentage"></i> {{ program.commission_value }}%
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge info"
+                          title="{% trans 'Commission type' %}">
+                        <i class="fas fa-dollar-sign"></i> ${{ program.commission_value }}
+                    </span>
+                {% endif %}
+
+                <!-- Auto Approve Badge -->
+                {% if program.auto_approve_affiliates %}
+                    <span class="list-row-card-badge"
+                          title="{% trans 'Auto-approves new affiliates' %}">
+                        <i class="fas fa-user-check"></i> {% trans "Auto Approve" %}
+                    </span>
+                {% endif %}
+
+                <!-- Cookie Lifetime Badge -->
+                <span class="list-row-card-badge"
+                      title="{% trans 'Cookie tracking duration' %}">
+                    <i class="fas fa-cookie"></i> {{ program.cookie_lifetime_days }} {% trans "days" %}
+                </span>
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <!-- Affiliates Count -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Affiliates" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <i class="fas fa-users"></i> {{ program.affiliates_count|default:0 }}
+                    </span>
+                </div>
+
+                <!-- Active Affiliates -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Active" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ program.active_affiliates|default:0 }}
+                    </span>
+                </div>
+
+                <!-- Total Commissions -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Total Earned" %}</span>
+                    <span class="list-row-card-stat-value program-stat-revenue">
+                        ${{ program.total_earned|floatformat:2|default:"0.00" }}
+                    </span>
+                </div>
+
+                <!-- Minimum Payout -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Min Payout" %}</span>
+                    <span class="list-row-card-stat-value">
+                        ${{ program.minimum_payout|floatformat:2 }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Meta Information -->
+            <div class="list-row-card-meta">
+                <!-- Merchant -->
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Program merchant' %}">
+                    <i class="fas fa-store"></i>
+                    <span>{{ program.merchant.get_full_name|default:program.merchant.username }}</span>
+                </div>
+
+                <!-- Created -->
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Date created' %}">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{{ program.created_at|date:"M d, Y" }}</span>
+                </div>
+
+                <!-- Last Updated -->
+                {% if program.updated_at %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Last updated' %}">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ program.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:affiliate_program_change' program.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit program' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% if program.status == 'active' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="toggle-program-status"
+                    data-pk="{{ program.pk }}"
+                    data-activate="false"
+                    data-confirm="{% trans 'Are you sure you want to pause this program?' %}"
+                    title="{% trans 'Pause program' %}">
+                <i class="fas fa-pause"></i>
+            </button>
+            {% elif program.status == 'paused' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="toggle-program-status"
+                    data-pk="{{ program.pk }}"
+                    data-activate="true"
+                    data-confirm="{% trans 'Are you sure you want to activate this program?' %}"
+                    title="{% trans 'Activate program' %}">
+                <i class="fas fa-play"></i>
+            </button>
+            {% endif %}
+
+            {% if program.affiliates_count > 0 %}
+            <a href="{% url 'admin:affiliate_affiliate_changelist' %}?programs__id__exact={{ program.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View affiliates' %}">
+                <i class="fas fa-users"></i>
+            </a>
+            {% endif %}
+
+            <a href="{% url 'admin:affiliate_commission_changelist' %}?affiliate__programs__id__exact={{ program.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View commissions' %}">
+                <i class="fas fa-coins"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <!-- Empty State -->
+    <div class="program-empty-state">
+        <div class="program-empty-state-icon">
+            <i class="fas fa-handshake"></i>
+        </div>
+        <h2 class="program-empty-state-title">{% trans "Create Your First Affiliate Program" %}</h2>
+        <p class="program-empty-state-subtitle">
+            {% trans "Launch an affiliate program to expand your reach and grow sales through partner referrals." %}
+        </p>
+        <ul class="program-empty-state-benefits">
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Set flexible commission rates (percentage or fixed)" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Track affiliate referrals and conversions automatically" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Manage payouts and affiliate relationships easily" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Grow your business through word-of-mouth marketing" %}
+            </li>
+        </ul>
+        <a href="{% url 'affiliate:program_wizard' %}" class="program-empty-state-cta">
+            <i class="fas fa-magic"></i>
+            {% trans "Create Your First Program" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

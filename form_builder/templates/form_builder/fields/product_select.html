@@ -1,0 +1,38 @@
+{% load i18n merchant_trans %}
+{# Product Selector Field #}
+{% with config=field.product_config %}
+{% with max_selections=config.max_selections|default:1 %}
+{% with show_price=config.show_price|default:True %}
+
+<div class="product-select-wrapper"
+     data-field-name="{{ field.field_name }}"
+     data-max-selections="{{ max_selections }}"
+     data-show-price="{{ show_price|yesno:'true,false' }}"
+     {% if config.categories %}data-categories="{{ config.categories|join:',' }}"{% endif %}>
+
+    <input type="hidden"
+           id="field-{{ field.field_name }}"
+           name="{{ field.field_name }}"
+           {% if field.is_required %}required{% endif %}>
+
+    <div class="product-search">
+        <input type="text"
+               class="product-search-input form-input"
+               placeholder="{% mtrans 'Search products...' %}">
+        <i class="fas fa-search search-icon"></i>
+    </div>
+
+    <div class="selected-products"></div>
+
+    <div class="product-results fb-hidden">
+        <div class="product-results-list"></div>
+        <div class="product-results-loading fb-hidden">
+            <i class="fas fa-spinner fa-spin"></i> {% mtrans "Loading..." %}
+        </div>
+        <div class="product-results-empty fb-hidden">
+            {% mtrans "No products found" %}
+        </div>
+    </div>
+</div>
+
+{% endwith %}{% endwith %}{% endwith %}

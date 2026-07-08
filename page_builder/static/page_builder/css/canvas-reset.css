@@ -1,0 +1,104 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Canvas Reset CSS
+ *
+ * Minimal admin theme isolation for the page builder canvas.
+ * This file should contain ONLY isolation rules - no element styling.
+ *
+ * Content element styling comes from:
+ * - Theme CSS (via tokens.css)
+ * - Brand CSS (merchant customization)
+ * - Element-specific CSS (button.css, heading.css, etc.)
+ */
+
+@layer canvas-reset {
+  /* =========================================
+     CANVAS ISOLATION BOUNDARY
+     ========================================= */
+
+  .pb-content-preview {
+    /* Re-establish basic box model */
+    display: block;
+    box-sizing: border-box;
+
+    /* Background and color from storefront theme
+       --color-background is set by the scoped theme CSS (canvas-theme layer)
+       Fallback to white for safety */
+    background: var(--theme-color-background, #ffffff);
+    color: var(--theme-color-text, #111827);
+
+    /* Standard font stack - theme can override via --font-sans */
+    font-family: var(--theme-font-sans, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+
+    /* Ensure proper text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Block admin theme transitions on container only */
+    transition: none;
+  }
+
+  /* Reset all children - box model only, allow theme cascade */
+  .pb-content-preview *,
+  .pb-content-preview *::before,
+  .pb-content-preview *::after {
+    box-sizing: border-box;
+    /* Theme typography and colors cascade through from base.css/theme CSS */
+  }
+
+  /* Canvas container structure */
+  .canvas-container {
+    background: transparent;
+    padding: 40px;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .canvas-frame {
+    width: 100%;
+    max-width: 1200px;
+    background: var(--theme-color-background, #ffffff);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    min-height: 600px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* =========================================
+     DARK ADMIN THEME NEUTRALIZATION
+     ========================================= */
+
+  /* When admin is in dark mode, ensure canvas stays light */
+  html[data-theme="dark"] .pb-content-preview {
+    background: var(--theme-color-background, #ffffff);
+    color: var(--theme-color-text, #1f2937);
+  }
+
+  /* =========================================
+     ADMIN VARIABLE RESET
+     Reset admin-specific CSS variables to prevent inheritance
+     ========================================= */
+
+  .pb-content-preview {
+    /* Reset admin theme variables that might leak through */
+    --primary: initial;
+    --secondary: initial;
+    --button-bg: initial;
+    --button-text: initial;
+    --button-border: initial;
+    --link-fg: initial;
+    --body-bg: initial;
+    --body-fg: initial;
+    --input-bg: initial;
+    --input-fg: initial;
+    --input-border: initial;
+    --card-bg: initial;
+    --card-border: initial;
+  }
+}

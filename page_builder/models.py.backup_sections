@@ -1,0 +1,533 @@
+from django.db import models
+from django.contrib.auth import get_user_model
+from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
+from design.models import DesignMixin, ThemePreset
+import json
+import uuid
+
+User = get_user_model()
+
+
+class Page(DesignMixin):
+    """Core page model for different page types in the storefront"""
+    PAGE_TYPES = [
+        ('home', _('Home Page')),
+        ('category', _('Category Page')),
+        ('product', _('Product Page')),
+        ('cart', _('Shopping Cart')),
+        ('checkout', _('Checkout')),
+        ('about', _('About Page')),
+        ('contact', _('Contact Page')),
+        ('custom', _('Custom Page')),
+    ]
+    
+    STATUS_CHOICES = [
+        ('draft', _('Draft')),
+        ('published', _('Published')),
+        ('archived', _('Archived')),
+    ]
+    
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    page_type = models.CharField(max_length=20, choices=PAGE_TYPES, default='custom')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    
+    # SEO and metadata
+    meta_title = models.CharField(max_length=200, blank=True)
+    meta_description = models.TextField(max_length=320, blank=True)
+    meta_keywords = models.CharField(max_length=255, blank=True)
+    og_image = models.ImageField(upload_to='page_previews/', blank=True, null=True)
+    
+    # Page configuration
+    is_default_for_type = models.BooleanField(default=False, help_text=_('Use as default page for this type'))
+    requires_auth = models.BooleanField(default=False)
+    cache_timeout = models.PositiveIntegerField(default=300, help_text=_('Cache timeout in seconds'))
+    
+    # Relations
+    theme = models.ForeignKey(ThemePreset, on_delete=models.SET_NULL, null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-updated_at']
+        unique_together = ['page_type', 'is_default_for_type']
+        indexes = [
+            models.Index(fields=['page_type', 'status']),
+            models.Index(fields=['slug']),
+            models.Index(fields=['status', 'published_at']),
+        ]
+    
+    def __str__(self):
+        return f"{self.title} ({self.get_page_type_display()})"
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        
+        # Ensure only one default per page type
+        if self.is_default_for_type:
+            Page.objects.filter(
+                page_type=self.page_type, 
+                is_default_for_type=True
+            ).exclude(pk=self.pk).update(is_default_for_type=False)
+        
+        super().save(*args, **kwargs)
+    
+    def get_sections_ordered(self):
+        """Get page sections in display order"""
+        return self.sections.filter(is_active=True).order_by('order')
+    
+    def duplicate(self, new_title=None):
+        """Create a copy of this page with all its sections and elements"""
+        new_title = new_title or _('Copy of {}').format(self.title)
+        new_page = Page.objects.create(
+            title=new_title,
+            page_type='custom',
+            status='draft',
+            meta_title=self.meta_title,
+            meta_description=self.meta_description,
+            template_variant=self.template_variant,
+            css_classes=self.css_classes.copy(),
+            layout_config=self.layout_config.copy(),
+            style_overrides=self.style_overrides.copy(),
+            responsive_config=self.responsive_config.copy(),
+            theme=self.theme,
+            created_by=self.created_by
+        )
+        
+        # Copy all sections
+        for section in self.sections.all():
+            section.duplicate(new_page)
+        
+        return new_page
+
+
+class PageSection(DesignMixin):
+    """Generic layout sections within pages - simple containers for elements"""
+    
+    page = models.ForeignKey(Page, related_name='sections', on_delete=models.CASCADE)
+    name = models.CharField(max_length=200, default='Section')
+    
+    # Layout and ordering
+    order = models.PositiveIntegerField(default=0)
+    width = models.CharField(max_length=20, default='full', choices=[
+        ('full', _('Full Width')),
+        ('contained', _('Container Width')),
+        ('narrow', _('Narrow Width')),
+        ('wide', _('Wide Container')),
+    ])
+    
+    # Configuration
+    background_type = models.CharField(max_length=20, default='none', choices=[
+        ('none', _('No Background')),
+        ('color', _('Solid Color')),
+        ('gradient', _('Gradient')),
+        ('image', _('Background Image')),
+        ('video', _('Background Video')),
+    ])
+    background_config = models.JSONField(default=dict, blank=True)
+    
+    # Visibility and behavior
+    is_active = models.BooleanField(default=True)
+    show_on_mobile = models.BooleanField(default=True)
+    show_on_tablet = models.BooleanField(default=True)
+    show_on_desktop = models.BooleanField(default=True)
+    
+    # Animation and effects
+    animation_type = models.CharField(max_length=30, default='none', choices=[
+        ('none', _('No Animation')),
+        ('fade_in', _('Fade In')),
+        ('slide_up', _('Slide Up')),
+        ('slide_left', _('Slide Left')),
+        ('slide_right', _('Slide Right')),
+        ('zoom_in', _('Zoom In')),
+        ('bounce', _('Bounce')),
+    ])
+    animation_delay = models.PositiveIntegerField(default=0, help_text=_('Delay in milliseconds'))
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['page', 'order']
+        indexes = [
+            models.Index(fields=['page', 'order']),
+        ]
+    
+    def __str__(self):
+        return f"{self.name} - {self.page.title}"
+    
+    def get_elements_ordered(self):
+        """Get section elements in display order"""
+        return self.elements.filter(is_active=True).order_by('order')
+    
+    def get_default_container(self):
+        """Get or create the section's default full-width container"""
+        from .models import SectionElement
+
+        # Try to find existing section container
+        container = self.elements.filter(
+            parent_element__isnull=True,
+            element_type='container',
+            content__is_section_container=True
+        ).first()
+
+        if not container:
+            # Create default container if it doesn't exist
+            container = SectionElement.objects.create(
+                section=self,
+                element_type='container',
+                name=f'Section {self.name} Container',
+                order=0,
+                is_active=True,
+                content={
+                    'layout': 'flex',
+                    'direction': 'column',
+                    'width': '100',
+                    'width_unit': '%',
+                    'padding_top': '0',
+                    'padding_right': '0',
+                    'padding_bottom': '0',
+                    'padding_left': '0',
+                    'padding_unit': 'px',
+                    'background_type': 'transparent',
+                    'is_section_container': True,
+                    'align_items': 'stretch',
+                    'justify_content': 'flex-start',
+                    'gap': '20',
+                    'gap_unit': 'px'
+                }
+            )
+
+        return container
+
+    def get_root_elements(self):
+        """Get the section's default container (sections now always have a container)"""
+        return self.elements.filter(is_active=True, parent_element__isnull=True).order_by('order')
+    
+    def duplicate(self, new_page):
+        """Create a copy of this section for a new page"""
+        new_section = PageSection.objects.create(
+            page=new_page,
+            name=self.name,
+            order=self.order,
+            width=self.width,
+            background_type=self.background_type,
+            background_config=self.background_config.copy(),
+            is_active=self.is_active,
+            show_on_mobile=self.show_on_mobile,
+            show_on_tablet=self.show_on_tablet,
+            show_on_desktop=self.show_on_desktop,
+            animation_type=self.animation_type,
+            animation_delay=self.animation_delay,
+            template_variant=self.template_variant,
+            css_classes=self.css_classes.copy(),
+            layout_config=self.layout_config.copy(),
+            style_overrides=self.style_overrides.copy(),
+            responsive_config=self.responsive_config.copy(),
+        )
+        
+        # Copy all elements
+        for element in self.elements.all():
+            element.duplicate(new_section)
+        
+        return new_section
+
+
+class SectionElement(DesignMixin):
+    """Individual elements within sections (text, images, buttons, product cards)"""
+    ELEMENT_TYPES = [
+        # Basic Elements
+        ('container', _('Container')),
+        ('text', _('Text Block')),
+        ('heading', _('Heading')),
+        ('image', _('Image')),
+        ('video', _('Video')),
+        ('button', _('Button/Link')),
+        ('spacer', _('Spacer')),
+        ('divider', _('Divider')),
+        ('icon', _('Icon')),
+        ('map', _('Map')),
+        ('social_links', _('Social Media Links')),
+        ('countdown', _('Countdown Timer')),
+        ('custom_html', _('Custom HTML')),
+        
+        # Product Elements
+        ('product_card', _('Product Card')),
+        ('product_list', _('Product List')),
+        ('category_card', _('Category Card')),
+        
+        # Complex Elements (formerly sections)
+        ('hero', _('Hero Section')),
+        ('product_grid', _('Product Grid')),
+        ('product_carousel', _('Product Carousel')),
+        ('cta_banner', _('Call to Action Banner')),
+        ('testimonials', _('Testimonials')),
+        ('gallery', _('Image Gallery')),
+        ('contact_form', _('Contact Form')),
+        ('newsletter', _('Newsletter Signup')),
+        ('form', _('Generic Form')),
+    ]
+    
+    # Allow elements to belong to either a page directly OR a section (for backwards compatibility)
+    page = models.ForeignKey(Page, related_name='elements', on_delete=models.CASCADE, null=True, blank=True,
+                             help_text=_('Page this element belongs to (when not in a section)'))
+    section = models.ForeignKey(PageSection, related_name='elements', on_delete=models.CASCADE, null=True, blank=True,
+                                help_text=_('Section this element belongs to (legacy)'))
+    parent_element = models.ForeignKey('self', related_name='child_elements', on_delete=models.CASCADE, null=True, blank=True,
+                                       help_text=_('Parent container element for nested elements'))
+    element_type = models.CharField(max_length=30, choices=ELEMENT_TYPES, default='text')
+    name = models.CharField(max_length=200)
+    
+    # Content and configuration
+    content = models.JSONField(
+        default=dict, 
+        help_text=_('Element content and configuration data')
+    )
+    
+    # Layout
+    order = models.PositiveIntegerField(default=0)
+    column_span = models.PositiveIntegerField(default=12, help_text=_('Grid column span (1-12)'))
+    column_offset = models.PositiveIntegerField(default=0, help_text=_('Grid column offset'))
+    
+    # Alignment and spacing
+    text_align = models.CharField(max_length=10, default='left', choices=[
+        ('left', _('Left')),
+        ('center', _('Center')),
+        ('right', _('Right')),
+        ('justify', _('Justify')),
+    ])
+    vertical_align = models.CharField(max_length=10, default='top', choices=[
+        ('top', _('Top')),
+        ('middle', _('Middle')),
+        ('bottom', _('Bottom')),
+    ])
+    
+    # Visibility and behavior
+    is_active = models.BooleanField(default=True)
+    show_on_mobile = models.BooleanField(default=True)
+    show_on_tablet = models.BooleanField(default=True)
+    show_on_desktop = models.BooleanField(default=True)
+    
+    # Links and interactions
+    link_url = models.URLField(blank=True)
+    link_target = models.CharField(max_length=10, default='_self', choices=[
+        ('_self', _('Same Window')),
+        ('_blank', _('New Window')),
+    ])
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['page', 'section', 'order']
+        indexes = [
+            models.Index(fields=['page', 'order']),
+            models.Index(fields=['section', 'order']),
+            models.Index(fields=['element_type']),
+        ]
+
+    def __str__(self):
+        parent = self.section.name if self.section else (self.page.title if self.page else "No parent")
+        return f"{self.name} ({self.get_element_type_display()}) - {parent}"
+    
+    def duplicate(self, new_section):
+        """Create a copy of this element for a new section"""
+        return SectionElement.objects.create(
+            section=new_section,
+            element_type=self.element_type,
+            name=self.name,
+            content=self.content.copy(),
+            order=self.order,
+            column_span=self.column_span,
+            column_offset=self.column_offset,
+            text_align=self.text_align,
+            vertical_align=self.vertical_align,
+            is_active=self.is_active,
+            show_on_mobile=self.show_on_mobile,
+            show_on_tablet=self.show_on_tablet,
+            show_on_desktop=self.show_on_desktop,
+            link_url=self.link_url,
+            link_target=self.link_target,
+            template_variant=self.template_variant,
+            css_classes=self.css_classes.copy(),
+            layout_config=self.layout_config.copy(),
+            style_overrides=self.style_overrides.copy(),
+            responsive_config=self.responsive_config.copy(),
+        )
+
+
+class PageTemplate(models.Model):
+    """Saveable template configurations for entire pages"""
+    name = models.CharField(max_length=200, unique=True)
+    description = models.TextField(blank=True)
+    page_type = models.CharField(max_length=20, choices=Page.PAGE_TYPES, default='custom')
+    
+    # Template data
+    template_data = models.JSONField(
+        help_text=_('Complete page configuration including sections and elements')
+    )
+    
+    # Preview and metadata
+    preview_image = models.ImageField(upload_to='template_previews/', blank=True, null=True)
+    version = models.CharField(max_length=20, default='1.0.0')
+    category = models.CharField(max_length=50, default='general', choices=[
+        ('general', _('General')),
+        ('ecommerce', _('E-commerce')),
+        ('blog', _('Blog')),
+        ('portfolio', _('Portfolio')),
+        ('business', _('Business')),
+        ('landing', _('Landing Page')),
+    ])
+    
+    # Usage tracking
+    usage_count = models.PositiveIntegerField(default=0)
+    is_premium = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=True)
+    
+    # Author and dates
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-usage_count', '-created_at']
+        indexes = [
+            models.Index(fields=['page_type', 'category']),
+            models.Index(fields=['is_public', '-usage_count']),
+        ]
+    
+    def __str__(self):
+        return f"{self.name} (v{self.version})"
+    
+    def create_page_from_template(self, title, user=None):
+        """Create a new page instance from this template"""
+        data = self.template_data
+        
+        # Create the page
+        page = Page.objects.create(
+            title=title,
+            page_type=data.get('page_type', self.page_type),
+            status='draft',
+            meta_title=data.get('meta_title', ''),
+            meta_description=data.get('meta_description', ''),
+            template_variant=data.get('template_variant', 'default'),
+            css_classes=data.get('css_classes', {}),
+            layout_config=data.get('layout_config', {}),
+            style_overrides=data.get('style_overrides', {}),
+            responsive_config=data.get('responsive_config', {}),
+            created_by=user
+        )
+        
+        # Create sections and elements
+        for section_data in data.get('sections', []):
+            section = PageSection.objects.create(
+                page=page,
+                name=section_data.get('name', 'Section'),
+                order=section_data.get('order', 0),
+                width=section_data.get('width', 'full'),
+                background_type=section_data.get('background_type', 'none'),
+                background_config=section_data.get('background_config', {}),
+                template_variant=section_data.get('template_variant', 'default'),
+                css_classes=section_data.get('css_classes', {}),
+                layout_config=section_data.get('layout_config', {}),
+                style_overrides=section_data.get('style_overrides', {}),
+                responsive_config=section_data.get('responsive_config', {}),
+            )
+            
+            for element_data in section_data.get('elements', []):
+                SectionElement.objects.create(
+                    section=section,
+                    element_type=element_data.get('element_type', 'text'),
+                    name=element_data.get('name', 'Element'),
+                    content=element_data.get('content', {}),
+                    order=element_data.get('order', 0),
+                    column_span=element_data.get('column_span', 12),
+                    template_variant=element_data.get('template_variant', 'default'),
+                    css_classes=element_data.get('css_classes', {}),
+                    layout_config=element_data.get('layout_config', {}),
+                    style_overrides=element_data.get('style_overrides', {}),
+                    responsive_config=element_data.get('responsive_config', {}),
+                )
+        
+        # Update usage count
+        self.usage_count += 1
+        self.save(update_fields=['usage_count'])
+        
+        return page
+
+
+class SectionTemplate(models.Model):
+    """Reusable section templates (deprecated - use ElementTemplate instead)"""
+    name = models.CharField(max_length=200, unique=True)
+    description = models.TextField(blank=True)
+    # Note: This model is deprecated in favor of ElementTemplate for complex components
+    
+    # Template data
+    template_data = models.JSONField(
+        help_text=_('Section configuration including elements')
+    )
+    
+    # Preview and metadata
+    preview_image = models.ImageField(upload_to='section_previews/', blank=True, null=True)
+    category = models.CharField(max_length=50, default='general')
+    tags = models.CharField(max_length=255, blank=True, help_text=_('Comma-separated tags'))
+    
+    # Usage tracking
+    usage_count = models.PositiveIntegerField(default=0)
+    is_public = models.BooleanField(default=True)
+    
+    # Author and dates
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-usage_count', '-created_at']
+        indexes = [
+            models.Index(fields=['is_public', '-usage_count']),
+        ]
+    
+    def __str__(self):
+        return f"{self.name} (deprecated)"
+
+
+class ElementTemplate(models.Model):
+    """Pre-configured element templates"""
+    name = models.CharField(max_length=200, unique=True)
+    description = models.TextField(blank=True)
+    element_type = models.CharField(max_length=30, choices=SectionElement.ELEMENT_TYPES)
+    
+    # Template data
+    template_data = models.JSONField(
+        help_text=_('Element configuration and content')
+    )
+    
+    # Preview and metadata
+    preview_image = models.ImageField(upload_to='element_previews/', blank=True, null=True)
+    category = models.CharField(max_length=50, default='general')
+    tags = models.CharField(max_length=255, blank=True, help_text=_('Comma-separated tags'))
+    
+    # Usage tracking
+    usage_count = models.PositiveIntegerField(default=0)
+    is_public = models.BooleanField(default=True)
+    
+    # Author and dates
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-usage_count', '-created_at']
+        indexes = [
+            models.Index(fields=['element_type', 'category']),
+            models.Index(fields=['is_public', '-usage_count']),
+        ]
+    
+    def __str__(self):
+        return f"{self.name} ({self.get_element_type_display()})"

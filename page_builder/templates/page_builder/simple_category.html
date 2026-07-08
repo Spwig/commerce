@@ -1,0 +1,149 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}
+{% if category %}{{ category.name }} - {% endif %}{% mtrans 'Categories' %} - {{ site_settings.site_name|default:'Shop' }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/pages/simple-category.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                {% if category %}
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:category_list' %}" class="breadcrumb__link">{% mtrans 'Categories' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {{ category.name }}
+                </li>
+                {% else %}
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'Categories' %}
+                </li>
+                {% endif %}
+            </ol>
+        </nav>
+        <h1 class="page-header__title">
+            {% if category %}
+                {{ category.name }}
+            {% else %}
+                {% mtrans 'Product Categories' %}
+            {% endif %}
+        </h1>
+        <p class="page-header__subtitle">
+            {% if category and category.description %}
+                {{ category.description }}
+            {% else %}
+                {% mtrans 'Browse our collection of products' %}
+            {% endif %}
+        </p>
+    </div>
+</section>
+
+{% if not category %}
+<!-- Categories Grid (only show when browsing all categories) -->
+<section class="section">
+    <div class="container">
+        <div class="category-grid">
+            {% for cat in categories %}
+            <article class="category-card">
+                <a href="{% url 'page_builder:category_detail' category_slug=cat.slug %}" class="category-card__link">
+                    <div class="category-card__image-wrapper">
+                        {% with cat.get_image_thumbnail as img_url %}
+                        {% if img_url %}
+                            <img src="{{ img_url }}" alt="{{ cat.name }}" class="category-card__image" loading="lazy">
+                        {% else %}
+                            <div class="category-card__placeholder">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="category-card__content">
+                        <h3 class="category-card__title">{{ cat.name }}</h3>
+                        {% if cat.description %}
+                        <p class="category-card__description">{{ cat.description|truncatewords:10 }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+            </article>
+            {% empty %}
+            <div class="category-grid__empty">
+                <i class="fas fa-folder-open"></i>
+                <p>{% mtrans 'No categories available yet.' %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% else %}
+<!-- Subcategories (if any) -->
+{% if category.children.count > 0 %}
+<section class="section section--compact">
+    <div class="container">
+        <h2 class="section__title section__title--sm">{% mtrans 'Subcategories' %}</h2>
+        <div class="subcategory-list">
+            {% for subcat in category.children.all %}
+            <a href="{% url 'page_builder:category_detail' category_slug=subcat.slug %}" class="subcategory-chip">
+                {{ subcat.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Products Grid (when viewing a specific category) -->
+<section class="section">
+    <div class="container">
+        <div class="section__header">
+            <h2 class="section__title">{% mtrans 'Products' %}</h2>
+            <p class="section__subtitle">{{ products.count }} {% mtrans 'items' %}</p>
+        </div>
+
+        <div class="product-grid">
+            {% for product in products %}
+                {% include 'page_builder/partials/product_card.html' with product=product %}
+            {% empty %}
+            <div class="product-grid__empty">
+                <i class="fas fa-box-open"></i>
+                <p>{% mtrans 'No products in this category yet.' %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Help Section -->
+<section class="section section--alt">
+    <div class="container">
+        <div class="help-block">
+            <h2 class="help-block__title">{% mtrans "Can't Find What You're Looking For?" %}</h2>
+            <p class="help-block__text">
+                {% mtrans 'Use our search feature or contact our customer service team for personalized assistance.' %}
+            </p>
+            <div class="help-block__actions">
+                <a href="/search/" class="btn btn--primary">
+                    <i class="fas fa-search"></i>
+                    {% mtrans 'Search Products' %}
+                </a>
+                <a href="/page/contact/" class="btn btn--outline">
+                    <i class="fas fa-headset"></i>
+                    {% mtrans 'Contact Support' %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

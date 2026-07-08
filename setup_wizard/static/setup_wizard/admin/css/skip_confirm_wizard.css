@@ -1,0 +1,115 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Setup Wizard - Skip Confirmation Styles
+ *
+ * Description: Styles for the skip confirmation page
+ * Template: setup_wizard/templates/setup_wizard/skip_confirm.html
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/wizard-base.css (shared wizard styles)
+ * - core/static/core/admin/css/admin-base.css
+ */
+
+/* ==========================================================================
+   Skip Container
+   ========================================================================== */
+
+.setup-skip-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--body-bg, #fff);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color, rgba(0, 0, 0, 0.1));
+}
+
+.setup-skip-container h1 {
+    color: var(--body-fg, #333);
+    margin-bottom: 1.5rem;
+}
+
+/* ==========================================================================
+   Warning Box
+   ========================================================================== */
+
+.skip-warning {
+    background: var(--message-warning-bg, #fff3cd);
+    border: 1px solid var(--message-warning-border, #ffeaa7);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--body-fg, #856404);
+}
+
+.skip-warning h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--body-fg, #856404);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ==========================================================================
+   Consequences List
+   ========================================================================== */
+
+.skip-consequences {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.skip-consequences li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color, #eee);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--body-fg, #333);
+}
+
+.skip-consequences li i {
+    color: var(--link-fg, #ffc107);
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Button Group
+   ========================================================================== */
+
+.skip-button-group {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.skip-form-inline {
+    display: inline;
+}
+
+.skip-button-group .btn-danger {
+    background: var(--error-fg, #dc3545);
+    color: var(--primary-fg, #fff);
+    border: 1px solid var(--error-fg, #dc3545);
+}
+
+.skip-button-group .btn-danger:hover {
+    opacity: 0.9;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .setup-skip-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .skip-button-group .btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}

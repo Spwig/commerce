@@ -1,0 +1,32 @@
+{# Favicon meta tags - serve optimized sizes #}
+{% load static %}
+
+{% if favicon_asset %}
+    {# Custom favicon uploaded by merchant - serve optimized thumbnails #}
+    {% if is_svg %}
+        {# SVG can scale to any size - use original for all #}
+        <link rel="icon" type="image/svg+xml" href="{{ favicon_16_url }}">
+        <link rel="shortcut icon" type="image/svg+xml" href="{{ favicon_32_url }}">
+        <link rel="apple-touch-icon" href="{{ favicon_180_url }}">
+    {% elif is_ico %}
+        {# ICO files contain multiple sizes - use original #}
+        <link rel="icon" type="image/x-icon" href="{{ favicon_32_url }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ favicon_32_url }}">
+    {% else %}
+        {# Standard image (PNG, JPG, WebP) - use optimized thumbnails #}
+        <link rel="icon" type="image/x-icon" href="{{ favicon_32_url }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ favicon_32_url }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ favicon_180_url }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ favicon_32_url }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ favicon_16_url }}">
+        <meta name="msapplication-TileImage" content="{{ favicon_180_url }}">
+    {% endif %}
+{% else %}
+    {# No custom favicon - use default static files #}
+    <link rel="icon" type="image/x-icon" href="{% static 'core/images/default-favicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'core/images/default-favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'core/images/favicon-256x256.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'core/images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'core/images/favicon-16x16.png' %}">
+    <meta name="msapplication-TileImage" content="{% static 'core/images/favicon-256x256.png' %}">
+{% endif %}

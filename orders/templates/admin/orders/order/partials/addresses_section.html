@@ -1,0 +1,186 @@
+{% load i18n %}
+<div class="addresses-grid">
+    {# Shipping Address #}
+    <div class="address-block">
+        <div class="address-header">
+            <h4><i class="fas fa-shipping-fast"></i> {% trans "Shipping Address" %}</h4>
+            <button type="button" class="btn-edit-inline" data-action="edit-address" data-address-type="shipping" title="{% trans 'Edit shipping address' %}">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+
+        <div class="address-display" id="shipping-address-display">
+            <div class="address-content">
+                <strong>{{ order.shipping_name }}</strong><br>
+                {{ order.shipping_address1 }}<br>
+                {% if order.shipping_address2 %}
+                    {{ order.shipping_address2 }}<br>
+                {% endif %}
+                {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}<br>
+                {{ order.shipping_country }}
+                {% if order.shipping_phone %}
+                    <br><i class="fas fa-phone"></i> {{ order.shipping_phone }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="address-edit-form" id="shipping-address-form" class="d-none">
+            <form class="address-form" data-address-type="shipping" data-order-id="{{ order.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="address_type" value="shipping">
+
+                <div class="form-group">
+                    <label>{% trans "Full Name:" %}</label>
+                    <input type="text" name="name" class="form-control" value="{{ order.shipping_name }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Address Line 1:" %}</label>
+                    <input type="text" name="address1" class="form-control" value="{{ order.shipping_address1 }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Address Line 2:" %}</label>
+                    <input type="text" name="address2" class="form-control" value="{{ order.shipping_address2 }}">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>{% trans "City:" %}</label>
+                        <input type="text" name="city" class="form-control" value="{{ order.shipping_city }}" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>{% trans "State/Province:" %}</label>
+                        <input type="text" name="state" class="form-control" value="{{ order.shipping_state }}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>{% trans "Postal Code:" %}</label>
+                        <input type="text" name="postal_code" class="form-control" value="{{ order.shipping_postal_code }}" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>{% trans "Country:" %}</label>
+                        <input type="text" name="country" class="form-control" value="{{ order.shipping_country }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Phone Number:" %}</label>
+                    <input type="tel" name="phone" class="form-control" value="{{ order.shipping_phone }}" placeholder="{% trans '+1 (555) 123-4567' %}">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="save_to_customer" value="1">
+                        {% trans "Save to customer addresses" %}
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">{% trans "Update Address" %}</button>
+                    <button type="button" class="btn btn-secondary" data-action="cancel-address-edit">{% trans "Cancel" %}</button>
+                    <button type="button" class="btn btn-link" data-action="copy-from-billing">{% trans "Copy from billing" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {# Billing Address #}
+    <div class="address-block">
+        <div class="address-header">
+            <h4><i class="fas fa-file-invoice"></i> {% trans "Billing Address" %}</h4>
+            <button type="button" class="btn-edit-inline" data-action="edit-address" data-address-type="billing" title="{% trans 'Edit billing address' %}">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+
+        <div class="address-display" id="billing-address-display">
+            {% if order.billing_same_as_shipping %}
+                <div class="address-content">
+                    <em>{% trans "Same as shipping address" %}</em>
+                </div>
+            {% else %}
+                <div class="address-content">
+                    <strong>{{ order.billing_name }}</strong><br>
+                    {{ order.billing_address1 }}<br>
+                    {% if order.billing_address2 %}
+                        {{ order.billing_address2 }}<br>
+                    {% endif %}
+                    {{ order.billing_city }}, {{ order.billing_state }} {{ order.billing_postal_code }}<br>
+                    {{ order.billing_country }}
+                    {% if order.billing_phone %}
+                        <br><i class="fas fa-phone"></i> {{ order.billing_phone }}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="address-edit-form" id="billing-address-form" class="d-none">
+            <form class="address-form" data-address-type="billing" data-order-id="{{ order.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="address_type" value="billing">
+
+                <div class="form-group">
+                    <label>{% trans "Full Name:" %}</label>
+                    <input type="text" name="name" class="form-control" value="{{ order.billing_name }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Address Line 1:" %}</label>
+                    <input type="text" name="address1" class="form-control" value="{{ order.billing_address1 }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Address Line 2:" %}</label>
+                    <input type="text" name="address2" class="form-control" value="{{ order.billing_address2 }}">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>{% trans "City:" %}</label>
+                        <input type="text" name="city" class="form-control" value="{{ order.billing_city }}" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>{% trans "State/Province:" %}</label>
+                        <input type="text" name="state" class="form-control" value="{{ order.billing_state }}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>{% trans "Postal Code:" %}</label>
+                        <input type="text" name="postal_code" class="form-control" value="{{ order.billing_postal_code }}" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>{% trans "Country:" %}</label>
+                        <input type="text" name="country" class="form-control" value="{{ order.billing_country }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Phone Number:" %}</label>
+                    <input type="tel" name="phone" class="form-control" value="{{ order.billing_phone }}" placeholder="{% trans '+1 (555) 123-4567' %}">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="save_to_customer" value="1">
+                        {% trans "Save to customer addresses" %}
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">{% trans "Update Address" %}</button>
+                    <button type="button" class="btn btn-secondary" data-action="cancel-address-edit">{% trans "Cancel" %}</button>
+                    <button type="button" class="btn btn-link" data-action="copy-from-shipping">{% trans "Copy from shipping" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

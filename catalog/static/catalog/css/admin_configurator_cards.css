@@ -1,0 +1,637 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Configurator Cards CSS
+ * Styles for AJAX-based slot and preset card management in the Configuration tab.
+ * Uses the same admin theme CSS variables as admin_variant_cards.css.
+ */
+
+/* ===== Notification Toast ===== */
+
+.config-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+    box-shadow: 0 4px 12px var(--shadow-light, rgba(0,0,0,0.1));
+}
+
+.config-notification.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.config-notification.success {
+    background: var(--message-success-bg, #d4edda);
+    color: var(--success-color, #137333);
+    border: 1px solid var(--message-success-border, #c3e6cb);
+}
+
+.config-notification.error {
+    background: var(--message-error-bg, #f8d7da);
+    color: var(--error-color, #d93025);
+    border: 1px solid var(--message-error-border, #f5c6cb);
+}
+
+/* ===== Section Headers ===== */
+
+.config-slots-header,
+.config-presets-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.config-slots-header h2,
+.config-presets-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+    margin: 0;
+}
+
+.config-slots-header h2 i,
+.config-presets-header h2 i {
+    color: var(--body-quiet-color, #666);
+}
+
+.config-slot-count-badge,
+.config-preset-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--accent-primary, #3B82F6);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 6px;
+}
+
+/* ===== Card Lists ===== */
+
+.config-slot-list,
+.config-preset-list {
+    display: flex;
+    flex-direction: column;
+    background: var(--darkened-bg, #f8f9fa);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ===== Card Rows ===== */
+
+.config-slot-row,
+.config-preset-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: var(--body-bg, #fff);
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    transition: background 0.15s;
+}
+
+.config-slot-row:last-child,
+.config-preset-row:last-child {
+    border-bottom: none;
+}
+
+.config-slot-row:hover,
+.config-preset-row:hover {
+    background: var(--selected-bg, #e8f0fe);
+}
+
+/* Icon */
+.config-slot-row__icon,
+.config-preset-row__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--darkened-bg, #f0f0f0);
+    color: var(--body-quiet-color, #666);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* Info */
+.config-slot-row__info,
+.config-preset-row__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.config-slot-row__name,
+.config-preset-row__name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--body-fg, #333);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.config-slot-row__desc,
+.config-preset-row__desc {
+    font-size: 12px;
+    color: var(--body-quiet-color, #888);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Badges */
+.config-slot-row__badges,
+.config-preset-row__badges {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.config-slot-row__badge,
+.config-preset-row__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--darkened-bg, #f0f0f0);
+    color: var(--body-fg, #444);
+    white-space: nowrap;
+}
+
+.config-slot-row__badge--required {
+    background: var(--accent-primary, #3B82F6);
+    color: #fff;
+}
+
+.config-slot-row__badge--optional {
+    background: var(--darkened-bg, #f0f0f0);
+    color: var(--body-quiet-color, #888);
+}
+
+.config-preset-row__badge--featured {
+    background: var(--warning-color, #ea8600);
+    color: #fff;
+}
+
+/* Options/Selections Count */
+.config-slot-row__options-count,
+.config-preset-row__options-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--body-quiet-color, #666);
+    flex-shrink: 0;
+}
+
+.config-slot-row__count-pill,
+.config-preset-row__count-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--accent-primary, #3B82F6);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 6px;
+}
+
+/* Actions (hover reveal) */
+.config-slot-row__actions,
+.config-preset-row__actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.config-slot-row:hover .config-slot-row__actions,
+.config-preset-row:hover .config-preset-row__actions {
+    opacity: 1;
+}
+
+.config-slot-row__action,
+.config-preset-row__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--body-quiet-color, #666);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s, color 0.15s;
+    text-decoration: none;
+}
+
+.config-slot-row__action:hover,
+.config-preset-row__action:hover {
+    background: var(--darkened-bg, #f0f0f0);
+    color: var(--body-fg, #333);
+}
+
+.config-slot-row__action--danger:hover,
+.config-preset-row__action--danger:hover {
+    background: var(--delete-button-bg, #dc3545);
+    color: #fff;
+}
+
+/* ===== Empty States ===== */
+
+.config-slot-empty,
+.config-preset-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--body-quiet-color, #999);
+}
+
+.config-slot-empty i,
+.config-preset-empty i {
+    font-size: 32px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.config-slot-empty p,
+.config-preset-empty p {
+    margin: 0 0 16px;
+    font-size: 14px;
+}
+
+/* ===== Loading ===== */
+
+.config-list-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px;
+    color: var(--body-quiet-color, #666);
+    font-size: 14px;
+}
+
+.config-list-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px;
+    color: var(--error-color, #d93025);
+    font-size: 14px;
+}
+
+/* ===== Modal Overlay ===== */
+
+.config-slot-modal-overlay,
+.config-preset-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9990;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+/* ===== Modal ===== */
+
+.config-slot-modal,
+.config-preset-modal {
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--hairline-color, rgba(255,255,255,0.12));
+    border-radius: 12px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px var(--shadow-dark, rgba(0,0,0,0.3)),
+                0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.config-slot-modal-header,
+.config-preset-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.config-slot-modal-header h3,
+.config-preset-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+}
+
+.config-slot-modal-close,
+.config-preset-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--body-quiet-color, #999);
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.15s;
+}
+
+.config-slot-modal-close:hover,
+.config-preset-modal-close:hover {
+    background: var(--darkened-bg, #f0f0f0);
+    color: var(--body-fg, #333);
+}
+
+.config-slot-modal-body,
+.config-preset-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.config-slot-modal-footer,
+.config-preset-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.config-modal-save-btn {
+    background: var(--accent-primary, #3B82F6) !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+.config-modal-save-btn:hover {
+    filter: brightness(0.9);
+}
+
+/* ===== Modal Content ===== */
+
+.config-modal-section {
+    margin-bottom: 0;
+}
+
+.config-modal-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-quiet-color, #666);
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.config-modal-field {
+    margin-bottom: 12px;
+}
+
+.config-modal-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body-fg, #333);
+    margin-bottom: 4px;
+}
+
+.config-modal-field label .required {
+    color: var(--error-color, #d93025);
+}
+
+.config-modal-field input[type="text"],
+.config-modal-field input[type="number"],
+.config-modal-field textarea,
+.config-modal-field select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 6px;
+    font-size: 14px;
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+
+.config-modal-field input:focus,
+.config-modal-field textarea:focus,
+.config-modal-field select:focus {
+    outline: none;
+    border-color: var(--accent-primary, #3B82F6);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.config-modal-field textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.config-modal-field--checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.config-modal-field--checkbox input[type="checkbox"] {
+    width: auto;
+}
+
+.config-modal-help {
+    display: block;
+    font-size: 12px;
+    color: var(--body-quiet-color, #888);
+    margin-top: 2px;
+}
+
+.config-modal-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+/* ===== Preset Slot Selection ===== */
+
+.config-preset-slot-group {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.config-preset-slot-group:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.config-preset-slot-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+    margin-bottom: 8px;
+}
+
+.config-preset-slot-label i {
+    color: var(--body-quiet-color, #666);
+}
+
+.config-preset-options {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.config-preset-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--body-fg, #333);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.config-preset-option:hover {
+    background: var(--selected-bg, #e8f0fe);
+}
+
+.config-preset-option input {
+    width: auto;
+    flex-shrink: 0;
+}
+
+/* ===== Save First Message ===== */
+
+.config-save-first {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    text-align: center;
+    color: var(--body-quiet-color, #999);
+}
+
+.config-save-first i {
+    font-size: 40px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+}
+
+.config-save-first h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+}
+
+.config-save-first p {
+    margin: 0;
+    font-size: 14px;
+    max-width: 400px;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+    .config-slot-row,
+    .config-preset-row {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .config-slot-row__info,
+    .config-preset-row__info {
+        flex-basis: calc(100% - 52px);
+    }
+
+    .config-slot-row__badges,
+    .config-preset-row__badges {
+        order: 3;
+    }
+
+    .config-slot-row__options-count,
+    .config-preset-row__options-count {
+        order: 4;
+    }
+
+    .config-slot-row__actions,
+    .config-preset-row__actions {
+        order: 5;
+        opacity: 1; /* Always visible on mobile */
+    }
+
+    .config-slot-modal-overlay,
+    .config-preset-modal-overlay {
+        padding: 0;
+    }
+
+    .config-slot-modal,
+    .config-preset-modal {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .config-modal-row {
+        grid-template-columns: 1fr;
+    }
+}

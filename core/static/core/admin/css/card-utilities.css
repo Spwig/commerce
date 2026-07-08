@@ -1,0 +1,956 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Card Utilities - Common inline style replacements for card partials across all apps */
+
+/* Empty State Styles */
+.card-empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--body-quiet-color);
+}
+
+.card-empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.card-empty-state-title {
+    font-size: 16px;
+    margin: 0;
+}
+
+.card-empty-state-subtitle {
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+/* Text Color Utilities */
+.text-muted {
+    color: var(--body-quiet-color);
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.text-success {
+    color: var(--success-fg);
+}
+
+.text-warning {
+    color: var(--warning-fg);
+}
+
+.text-error {
+    color: var(--error-fg);
+}
+
+.text-link {
+    color: var(--link-fg);
+}
+
+/* Text Size Utilities */
+.text-small {
+    font-size: 11px;
+}
+
+.text-medium {
+    font-size: 14px;
+}
+
+.text-large {
+    font-size: 16px;
+}
+
+/* Text Decoration */
+.no-decoration {
+    text-decoration: none;
+}
+
+/* Display Utilities */
+.inline-flex {
+    display: inline-flex;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.gap-small {
+    gap: 6px;
+}
+
+/* Position Utilities */
+.relative {
+    position: relative;
+}
+
+/* Badge Utilities */
+.badge-muted {
+    background: var(--body-quiet-color);
+    color: var(--body-bg);
+}
+
+/* Color Swatch */
+.color-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+}
+
+/* Inline Code */
+.code-small {
+    font-size: 11px;
+}
+
+/* Combined Text Utilities */
+.text-muted-small {
+    color: var(--body-quiet-color);
+    font-size: 12px;
+}
+
+/* Spacing Utilities */
+.mt-small {
+    margin-top: 4px;
+}
+
+/* Image Utilities */
+.img-contain {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.img-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 6px;
+    background: var(--body-bg);
+}
+
+.img-slide {
+    width: 80px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Icon Color Utilities */
+.icon-info {
+    color: var(--info-color);
+}
+
+.icon-warning {
+    color: var(--warning-color);
+}
+
+.icon-success {
+    color: var(--success-color);
+}
+
+/* Icon Size Utilities */
+.icon-large {
+    font-size: 32px;
+}
+
+.icon-medium {
+    font-size: 24px;
+}
+
+/* Font Utilities */
+.font-weight-semibold {
+    font-weight: 600;
+}
+
+.font-monospace {
+    font-family: monospace;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.word-break-all {
+    word-break: break-all;
+}
+
+/* Grid Utilities */
+.grid-auto-fit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.grid-full-width {
+    grid-column: 1 / -1;
+}
+
+/* Info Box Components */
+.info-box {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+}
+
+.info-box-error {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+    border-left: 3px solid var(--error-fg);
+}
+
+.info-label {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.info-label-error {
+    font-size: 11px;
+    color: var(--error-fg);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.info-value {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.info-value-mono {
+    font-size: 11px;
+    font-family: monospace;
+    color: var(--body-quiet-color);
+    word-break: break-all;
+}
+
+.info-value-code {
+    font-size: 12px;
+    font-family: monospace;
+}
+
+/* Code/Pre utilities */
+.pre-wrap {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.code-inline {
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.code-arrow-small {
+    font-size: 12px;
+    margin: 0 4px;
+}
+
+.max-height-100 {
+    max-height: 100px;
+    overflow: auto;
+}
+
+/* Progress Bar Components */
+.progress-container {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.progress-header-label {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.progress-header-value {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.progress-bar-track {
+    background: var(--body-quiet-color);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.progress-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--body-quiet-color);
+}
+
+.icon-size-28 {
+    font-size: 28px;
+}
+
+/* Text Size Utilities */
+.text-size-10 {
+    font-size: 10px;
+}
+
+.text-size-11 {
+    font-size: 11px;
+}
+
+/* Link Color Utility */
+.link-color {
+    color: var(--link-color);
+}
+
+/* Spacing Utilities - Additional */
+.mt-8 {
+    margin-top: 8px;
+}
+
+.ml-10 {
+    margin-left: 10px;
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.ml-8 {
+    margin-left: 8px;
+}
+
+/* Icon Size Utilities - Additional */
+.icon-size-32 {
+    font-size: 32px;
+}
+
+/* Text Size Utilities - Additional */
+.text-size-16 {
+    font-size: 16px;
+}
+
+/* Font Weight Utilities */
+.font-weight-600 {
+    font-weight: 600;
+}
+
+/* Info Box Utilities */
+.info-box-value {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.info-box-label {
+    color: var(--body-quiet-color);
+}
+
+.info-box-code {
+    margin-left: 8px;
+    color: var(--body-fg);
+}
+
+/* Badge Color Variants */
+.badge-and-operator {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+}
+
+.badge-or-operator {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.badge-root-group {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8b5cf6;
+}
+
+/* Icon Color Variants */
+.icon-color-blue {
+    color: #3b82f6;
+}
+
+.icon-color-green {
+    color: #22c55e;
+}
+
+/* Rules Preview Box */
+.rules-preview-box {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+}
+
+.rules-preview-label {
+    color: var(--body-quiet-color);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rules-preview-items {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.rules-preview-item {
+    background: var(--selected-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--body-fg);
+}
+
+.rules-preview-more {
+    padding: 2px 8px;
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+/* ============================================
+   SPACING UTILITIES - Using CSS Variables
+   ============================================ */
+
+/* Padding utilities */
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+.p-7 { padding: var(--space-7); }
+.p-8 { padding: var(--space-8); }
+.p-9 { padding: var(--space-9); }
+.p-10 { padding: var(--space-10); }
+.p-11 { padding: var(--space-11); }
+.p-12 { padding: var(--space-12); }
+
+/* Margin utilities */
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-5 { margin: var(--space-5); }
+.m-6 { margin: var(--space-6); }
+.m-7 { margin: var(--space-7); }
+.m-8 { margin: var(--space-8); }
+.m-9 { margin: var(--space-9); }
+.m-10 { margin: var(--space-10); }
+.m-11 { margin: var(--space-11); }
+.m-12 { margin: var(--space-12); }
+
+/* Margin-top utilities */
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-5 { margin-top: var(--space-5); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-7 { margin-top: var(--space-7); }
+/* .mt-8 already exists above */
+/* .mt-16 already exists above - equivalent to --space-6 */
+
+/* Margin-bottom utilities */
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-5 { margin-bottom: var(--space-5); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-7 { margin-bottom: var(--space-7); }
+.mb-8 { margin-bottom: var(--space-8); }
+.mb-9 { margin-bottom: var(--space-9); }
+.mb-10 { margin-bottom: var(--space-10); }
+.mb-11 { margin-bottom: var(--space-11); }
+.mb-12 { margin-bottom: var(--space-12); }
+
+/* Margin-left utilities */
+.ml-1 { margin-left: var(--space-1); }
+.ml-2 { margin-left: var(--space-2); }
+.ml-3 { margin-left: var(--space-3); }
+.ml-4 { margin-left: var(--space-4); }
+.ml-5 { margin-left: var(--space-5); }
+.ml-6 { margin-left: var(--space-6); }
+.ml-7 { margin-left: var(--space-7); }
+/* .ml-8 already exists above */
+/* .ml-10 already exists above */
+
+/* Margin-right utilities */
+.mr-1 { margin-right: var(--space-1); }
+.mr-2 { margin-right: var(--space-2); }
+.mr-3 { margin-right: var(--space-3); }
+.mr-4 { margin-right: var(--space-4); }
+.mr-5 { margin-right: var(--space-5); }
+.mr-6 { margin-right: var(--space-6); }
+.mr-7 { margin-right: var(--space-7); }
+.mr-8 { margin-right: var(--space-8); }
+.mr-9 { margin-right: var(--space-9); }
+.mr-10 { margin-right: var(--space-10); }
+.mr-11 { margin-right: var(--space-11); }
+.mr-12 { margin-right: var(--space-12); }
+
+/* Gap utilities for flexbox/grid */
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-5 { gap: var(--space-5); }
+.gap-6 { gap: var(--space-6); }
+.gap-7 { gap: var(--space-7); }
+.gap-8 { gap: var(--space-8); }
+.gap-9 { gap: var(--space-9); }
+.gap-10 { gap: var(--space-10); }
+.gap-11 { gap: var(--space-11); }
+.gap-12 { gap: var(--space-12); }
+
+/* ============================================
+   BORDER-RADIUS UTILITIES
+   ============================================ */
+
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+
+/* ============================================
+   RESPONSIVE CARD PATTERNS
+   Consolidates patterns from 14+ card CSS files
+   ============================================ */
+
+/* Common card responsive behavior at tablet breakpoint */
+@media (max-width: 768px) {
+    .list-row-card-stats {
+        flex-direction: column;
+        gap: var(--space-5);
+    }
+
+    .list-row-card-meta {
+        margin-right: 0;
+        margin-top: var(--space-3);
+    }
+
+    .list-row-card-actions {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: var(--space-5);
+    }
+}
+
+/* ============================================
+   CARD STATE VARIANTS
+   ============================================ */
+
+.card-inactive {
+    opacity: 0.6;
+}
+
+.card-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* ============================================
+   ENHANCED EMPTY STATE VARIANTS
+   ============================================ */
+
+.empty-state-large {
+    text-align: center;
+    padding: var(--space-12) var(--space-10);
+    background: var(--darkened-bg);
+    border-radius: var(--radius-xl);
+    border: 2px dashed var(--border-color);
+}
+
+.empty-state-large-icon {
+    font-size: 64px;
+    color: var(--body-quiet-color);
+    margin-bottom: var(--space-8);
+}
+
+.empty-state-large-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 var(--space-5) 0;
+}
+
+.empty-state-large-subtitle {
+    font-size: 16px;
+    color: var(--body-quiet-color);
+    line-height: 1.5;
+    max-width: 500px;
+    margin: 0 auto var(--space-8);
+}
+
+.empty-state-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 14px 28px;
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.empty-state-cta:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+/* Additional Text Size Utilities */
+.text-size-13 {
+    font-size: 13px;
+}
+
+/* Additional Spacing Utilities */
+.mt-12 {
+    margin-top: 12px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-4-px {
+    margin-bottom: 4px;
+}
+
+.mb-6-px {
+    margin-bottom: 6px;
+}
+
+/* Category Thumbnail */
+.category-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Pattern & Sample Display Boxes */
+.pattern-display-box {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+    font-family: monospace;
+}
+
+.pattern-display-label {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.pattern-display-code {
+    font-size: 13px;
+    color: var(--primary);
+}
+
+.sample-keys-box {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--darkened-bg);
+    border-radius: 6px;
+}
+
+.sample-key-item {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--body-fg);
+    margin-bottom: 4px;
+}
+
+/* Additional Text Sizes (Batch 8) */
+.text-size-14 {
+    font-size: 14px;
+}
+
+.text-size-28 {
+    font-size: 28px;
+}
+
+/* Additional Icon Sizes (Batch 8) */
+.icon-size-28 {
+    font-size: 28px;
+}
+
+/* Opacity Utilities (Batch 8) */
+.opacity-50 {
+    opacity: 0.5;
+}
+
+/* Button with Icon Pattern (Batch 8) */
+.button-with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Synonym Badge (Batch 9) */
+.synonym-badge {
+    background: var(--darkened-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 4px;
+    font-size: 12px;
+    display: inline-block;
+}
+
+/* Horizontal Margin (Batch 10) */
+.mx-8 {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+/* Component Logo Images (Batch 11) */
+.component-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+}
+
+.component-logo-contain {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.component-logo-cover {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Left Margin (Batch 11, 13) */
+.ml-12 {
+    margin-left: 12px;
+}
+
+.ml-15 {
+    margin-left: 15px;
+}
+
+/* Top Margin (Batch 13) */
+.mt-8 {
+    margin-top: 8px;
+}
+
+/* Card Description (Batch 11) */
+.list-row-card-description {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+/* Action Button Variants (Batch 11) */
+.list-row-card-action-warning {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+/* Code Badge (Batch 15) */
+.code-badge {
+    background: var(--darkened-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Token Color Preview (Batch 15) */
+.token-color-preview {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+}
+
+/* Top Margin Extended (Batch 16) */
+.mt-12 {
+    margin-top: 12px;
+}
+
+/* Text Size (Batch 16) */
+.text-size-13 {
+    font-size: 13px;
+}
+
+/* Error Box Pattern (Batch 16) */
+.error-box {
+    width: 100%;
+    background: var(--error-bg);
+    border-left: 3px solid var(--error-fg);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.error-box-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.error-box-message {
+    font-size: 13px;
+    color: var(--body-fg);
+    word-break: break-word;
+}
+
+/* ============================================================================
+   Batch 17 Utilities - Admin Change Lists
+   ============================================================================ */
+
+/* Margin Utilities */
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* Text Utilities */
+.text-center {
+    text-align: center;
+}
+
+.text-size-12 {
+    font-size: 12px;
+}
+
+/* Button Utilities */
+.button-primary {
+    background: var(--primary);
+    color: white;
+}
+
+/* Display Utilities */
+.hidden {
+    display: none;
+}
+
+/* Tier Color Badge - uses --tier-color CSS custom property set by JS from data-tier-color */
+.tier-color-badge {
+    background: color-mix(in srgb, var(--tier-color, var(--primary)) 15%, transparent) !important;
+    color: var(--tier-color, var(--primary)) !important;
+    border-color: color-mix(in srgb, var(--tier-color, var(--primary)) 30%, transparent) !important;
+}
+
+/* ============================================================================
+   Batch 18 Utilities - Loading States & Icon Sizing
+   ============================================================================ */
+
+/* Loading State Pattern */
+.loading-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--body-quiet-color);
+}
+
+/* Icon Sizing */
+.icon-size-24 {
+    font-size: 24px;
+}
+
+/* Margin Utilities */
+.m-0 {
+    margin: 0;
+}
+
+/* Icon Color Utilities (for dashboard stats) */
+.icon-color-success {
+    color: var(--success-fg);
+}
+
+.icon-color-primary {
+    color: var(--primary);
+}
+
+.icon-color-warning {
+    color: var(--warning-fg);
+}
+
+.icon-color-error {
+    color: var(--error-fg);
+}
+
+/* ============================================================================
+   Batch 19 Utilities - Content Boxes
+   ============================================================================ */
+
+/* Content Box Pattern (for terms, descriptions, etc.) */
+.content-box {
+    background: var(--body-bg);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+/* ============================================================================
+   Display Utilities
+   ============================================================================ */
+
+.d-flex { display: flex; }
+.d-inline { display: inline; }
+.d-block { display: block; }
+.d-inline-block { display: inline-block; }
+
+/* ============================================================================
+   Flex Utilities
+   ============================================================================ */
+
+.flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1; }
+.align-end { align-items: flex-end; }
+
+/* ============================================================================
+   Border Utilities
+   ============================================================================ */
+
+.border-b { border-bottom: 1px solid var(--border-color); }
+
+/* ============================================================================
+   Whitespace Utilities
+   ============================================================================ */
+
+.whitespace-nowrap { white-space: nowrap; }
+
+/* ============================================================================
+   Padding Directional Utilities
+   ============================================================================ */
+
+.pb-7 { padding-bottom: var(--space-7); }

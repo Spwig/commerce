@@ -1,0 +1,128 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for transaction in transactions %}
+    <div class="list-row-card">
+        <div class="list-row-card-icon">
+            {% if transaction.transaction_type == 'issue' %}
+                <i class="fas fa-envelope text-primary"></i>
+            {% elif transaction.transaction_type == 'redemption' %}
+                <i class="fas fa-shopping-cart text-success"></i>
+            {% elif transaction.transaction_type == 'adjustment' %}
+                <i class="fas fa-sliders-h text-warning"></i>
+            {% elif transaction.transaction_type == 'refund' %}
+                <i class="fas fa-undo text-error"></i>
+            {% elif transaction.transaction_type == 'expiration' %}
+                <i class="fas fa-clock text-muted"></i>
+            {% else %}
+                <i class="fas fa-circle"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_giftcard_change' transaction.gift_card.pk %}">
+                    {{ transaction.gift_card.code }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if transaction.notes %}
+                    {{ transaction.notes|truncatewords:15 }}
+                {% else %}
+                    <span class="text-muted">{% trans "No notes" %}</span>
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Transaction Type Badge -->
+                {% if transaction.transaction_type == 'issue' %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-envelope"></i> {% trans "Issued" %}
+                    </span>
+                {% elif transaction.transaction_type == 'redemption' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-shopping-cart"></i> {% trans "Redeemed" %}
+                    </span>
+                {% elif transaction.transaction_type == 'adjustment' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-sliders-h"></i> {% trans "Adjustment" %}
+                    </span>
+                {% elif transaction.transaction_type == 'refund' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-undo"></i> {% trans "Refunded" %}
+                    </span>
+                {% elif transaction.transaction_type == 'expiration' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-clock"></i> {% trans "Expired" %}
+                    </span>
+                {% endif %}
+
+                <!-- Order Link Badge -->
+                {% if transaction.order %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-shopping-bag"></i> {{ transaction.order.order_number }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Amount" %}</span>
+                    <span class="list-row-card-stat-value" style="color: {% if transaction.amount.amount >= 0 %}var(--success-fg){% else %}var(--error-fg){% endif %};">
+                        {% if transaction.amount.amount >= 0 %}+{% endif %}{{ transaction.amount }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Balance After" %}</span>
+                    <span class="list-row-card-stat-value">{{ transaction.balance_after }}</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ transaction.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if transaction.created_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{{ transaction.created_by.get_full_name|default:transaction.created_by.username }}</span>
+                </div>
+                {% endif %}
+                {% if transaction.gift_card.recipient_email %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ transaction.gift_card.recipient_email }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_giftcard_change' transaction.gift_card.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View gift card' %}">
+                <i class="fas fa-gift"></i>
+            </a>
+            {% if transaction.order %}
+            <a href="{% url 'admin:orders_order_change' transaction.order.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View order' %}">
+                <i class="fas fa-shopping-bag"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No transactions found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

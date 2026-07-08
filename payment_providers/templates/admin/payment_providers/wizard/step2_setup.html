@@ -1,0 +1,84 @@
+{% extends "admin/payment_providers/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <div class="provider-header">
+        <div class="provider-logo-small">
+            <img src="{{ provider.component.icon|default:provider.component.thumbnail_url }}"
+                 alt="{{ provider.component.name }}"
+                 data-img-fallback-src="{% static 'core/admin/img/default-provider.svg' %}">
+        </div>
+        <div class="provider-info">
+            <h2 class="step-title">{{ provider.component.name }}</h2>
+            <p class="step-description">{% trans "Follow these instructions to set up your account" %}</p>
+        </div>
+    </div>
+
+    <div class="setup-instructions">
+        {% if setup_instructions %}
+            {{ setup_instructions|safe }}
+        {% else %}
+        <div class="instruction-header">
+            <i class="fas fa-info-circle"></i>
+            <h3>{% trans "Setup Information" %}</h3>
+        </div>
+
+        <div class="instruction-steps">
+            <div class="instruction-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>{% trans "Create an Account" %}</h4>
+                    <p>{% trans "If you don't already have an account with" %} {{ provider.component.name }}, {% trans "you'll need to create one." %}</p>
+                    {% if provider.signup_url %}
+                    <a href="{{ provider.signup_url }}" target="_blank" class="btn-external">
+                        <i class="fas fa-external-link-alt"></i>
+                        {% trans "Sign Up for" %} {{ provider.component.name }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>{% trans "Get Your API Credentials" %}</h4>
+                    <p>{% trans "Log in to your" %} {{ provider.component.name }} {% trans "dashboard and navigate to the API or Developer section to obtain your credentials." %}</p>
+                </div>
+            </div>
+
+            <div class="instruction-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>{% trans "Copy Your Credentials" %}</h4>
+                    <p>{% trans "Have your API credentials ready. You'll need them in the next step." %}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-shield-alt"></i>
+            <div>
+                <strong>{% trans "Security Note" %}</strong>
+                <p>{% trans "Your credentials will be encrypted using AES-256 encryption before being stored. They are never stored in plain text." %}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include "providers_common/includes/manifest_i18n.html" %}
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'payment_providers:wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </button>
+    </form>
+</div>
+{% endblock %}

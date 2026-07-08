@@ -1,0 +1,88 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Image Accordion Element -->
+<section class="image-accordion image-accordion--height-{{ element.content.height|default:'lg' }}{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+         data-image-accordion
+         data-content-fade="{{ element.content.content_fade|yesno:'true,false' }}"
+         data-content-slide="{{ element.content.content_slide|yesno:'true,false' }}"
+         data-mobile-layout="{{ element.content.mobile_layout|default:'stack' }}"
+         data-height="{{ element.content.height|default:'lg' }}"
+         {% if element.content.id %}id="{{ element.content.id }}"{% else %}id="image-accordion-{{ element.id }}"{% endif %}
+         {% hover_animation_attrs element %}
+         style="
+            --accordion-gap: {% if element.content.gap == '0' %}0{% elif element.content.gap == '2' %}0.5rem{% elif element.content.gap == '6' %}1.5rem{% else %}1rem{% endif %};
+            --accordion-transition-duration: {{ element.content.transition_duration|default:'300' }}ms;
+            --accordion-transition-timing: {{ element.content.transition_timing|default:'cubic-bezier(0.4, 0, 0.2, 1)' }};
+            --accordion-expand-ratio: {{ element.content.expand_ratio|default:'3' }};
+            --accordion-content-padding: {% if element.content.content_padding == '4' %}1rem{% elif element.content.content_padding == '8' %}2rem{% elif element.content.content_padding == '12' %}3rem{% else %}1.5rem{% endif %};
+            --accordion-title-size: var(--theme-font-size-{{ element.content.title_size|default:'2xl' }}, 1.5rem);
+            --accordion-title-color: {{ element.content.title_color|default:'#ffffff' }};
+            --accordion-subtitle-size: var(--theme-font-size-{{ element.content.subtitle_size|default:'base' }}, 1rem);
+            --accordion-subtitle-color: {{ element.content.subtitle_color|default:'rgba(255, 255, 255, 0.85)' }};
+            --accordion-mobile-height: {% if element.content.mobile_height == 'auto' %}auto{% else %}{{ element.content.mobile_height|default:'250' }}px{% endif %};
+            {% base_styles element %}
+         ">
+
+    <div class="image-accordion__container">
+        {% for frame in element.content.frames %}
+        <div class="image-accordion__frame{% if element.content.default_expanded == 'first' and forloop.first %} image-accordion__frame--expanded{% elif element.content.default_expanded == 'last' and forloop.last %} image-accordion__frame--expanded{% elif element.content.default_expanded == 'specific' and forloop.counter == element.content.expanded_frame_index|default:1|add:0 %} image-accordion__frame--expanded{% endif %}"
+             data-frame-index="{{ forloop.counter0 }}">
+
+            {# Background Image #}
+            <div class="image-accordion__image-wrapper">
+                {% if frame.image %}
+                <img src="{{ frame.image }}"
+                     alt="{{ frame.title|default:'' }}"
+                     class="image-accordion__image"
+                     style="object-position: {{ frame.image_position|default:'center' }};"
+                     loading="lazy">
+                {% else %}
+                <div class="image-accordion__placeholder">
+                    <i class="fas fa-image"></i>
+                </div>
+                {% endif %}
+            </div>
+
+            {# Overlay #}
+            <div class="image-accordion__overlay"
+                 style="background-color: {{ frame.overlay_color|default:'#000000' }}; opacity: {{ frame.overlay_opacity|default:0.4 }};"></div>
+
+            {# Content #}
+            {% if frame.show_content %}
+            {% with effective_style=frame.overlay_style_override|default:element.content.overlay_style|default:'bottom-left' %}
+            <div class="image-accordion__content image-accordion__content--style-{{ effective_style }}{% if effective_style == 'custom' %} image-accordion__content--align-v-{{ element.content.content_align_v|default:'bottom' }} image-accordion__content--align-h-{{ element.content.content_align_h|default:'left' }}{% endif %}">
+                {% if frame.title %}
+                <h3 class="image-accordion__title">{{ frame.title }}</h3>
+                {% endif %}
+
+                {% if frame.subtitle %}
+                <p class="image-accordion__subtitle">{{ frame.subtitle }}</p>
+                {% endif %}
+
+                {% if frame.button_text %}
+                <a href="{{ frame.button_url|default:'#' }}"
+                   class="btn {% if element.content.button_style == 'outline' %}btn--outline{% elif element.content.button_style == 'ghost' %}btn--ghost{% else %}btn--primary{% endif %} btn--{{ element.content.button_size|default:'md' }} image-accordion__button"
+                   {% if frame.link_target == '_blank' %}target="_blank" rel="noopener noreferrer"{% endif %}>
+                    {{ frame.button_text }}
+                </a>
+                {% endif %}
+            </div>
+            {% endwith %}
+            {% endif %}
+
+            {# Clickable Link Layer (if URL provided and no button) #}
+            {% if frame.link_url and not frame.button_text %}
+            <a href="{{ frame.link_url }}"
+               class="image-accordion__link-overlay"
+               {% if frame.link_target == '_blank' %}target="_blank" rel="noopener noreferrer"{% endif %}
+               aria-label="{{ frame.title|default:'View more' }}"></a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-layer-group empty-state__icon"></i>
+            <p class="empty-state__text">{% mtrans "Add frames to create your image accordion" %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+

@@ -1,0 +1,436 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Design Editor Setup" %} | {{ product.name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/upload-queue.css' %}">
+<link rel="stylesheet" href="{% static 'customizable_product/css/design-setup.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_changelist' %}">{% trans "Products" %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_change' product.pk %}">{{ product.name }}</a>
+    &rsaquo; {% trans "Design Editor Setup" %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="design-setup-container">
+    <!-- Notification container -->
+    <div id="design-setup-notifications" class="design-setup-notifications" aria-live="polite"></div>
+
+    <!-- Header -->
+    <div class="design-setup-header">
+        <div class="design-setup-header__info">
+            <h1><i class="fas fa-paint-brush"></i> {% trans "Design Editor Setup" %}</h1>
+            <span class="design-setup-header__product">{{ product.name }}</span>
+        </div>
+        <div class="design-setup-header__actions">
+            <label class="design-setup-toggle">
+                <input type="checkbox" id="editor-enabled" {% if design_config.is_enabled %}checked{% endif %}>
+                <span>{% trans "Editor Enabled" %}</span>
+            </label>
+            <a href="{% url 'admin:catalog_product_change' product.pk %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Product" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="design-setup-tabs">
+        <button type="button" class="design-setup-tab active" data-tab="surfaces">
+            <i class="fas fa-layer-group"></i> {% trans "Surfaces" %}
+        </button>
+        <button type="button" class="design-setup-tab" data-tab="templates">
+            <i class="fas fa-palette"></i> {% trans "Templates" %}
+        </button>
+        <button type="button" class="design-setup-tab" data-tab="clipart">
+            <i class="fas fa-icons"></i> {% trans "Clipart" %}
+        </button>
+        <button type="button" class="design-setup-tab" data-tab="fonts">
+            <i class="fas fa-font"></i> {% trans "Fonts" %}
+        </button>
+        <button type="button" class="design-setup-tab" data-tab="pricing">
+            <i class="fas fa-tag"></i> {% trans "Pricing" %}
+        </button>
+        <button type="button" class="design-setup-tab" data-tab="settings">
+            <i class="fas fa-cog"></i> {% trans "Settings" %}
+        </button>
+    </div>
+
+    <!-- Tab Content: Surfaces -->
+    <div class="design-setup-panel active" id="panel-surfaces">
+        <div class="design-setup-panel__header">
+            <h2>{% trans "Product Surfaces" %}</h2>
+            <p class="design-setup-panel__description">
+                {% trans "Define the designable areas of your product. Each surface represents a face or side where customers can place their designs." %}
+            </p>
+            <button type="button" class="button" id="btn-add-surface">
+                <i class="fas fa-plus"></i> {% trans "Add Surface" %}
+            </button>
+        </div>
+
+        <div id="surfaces-grid" class="design-setup-card-grid">
+            <!-- Surfaces rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Tab Content: Templates -->
+    <div class="design-setup-panel" id="panel-templates">
+        <div class="design-setup-panel__header">
+            <h2>{% trans "Design Templates" %}</h2>
+            <p class="design-setup-panel__description">
+                {% trans "Create pre-made designs that customers can start from and customize. Templates can have locked elements that customers cannot change." %}
+            </p>
+            <button type="button" class="button" id="btn-add-template">
+                <i class="fas fa-plus"></i> {% trans "Add Template" %}
+            </button>
+        </div>
+
+        <div id="templates-grid" class="design-setup-card-grid">
+            <!-- Templates rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Tab Content: Clipart -->
+    <div class="design-setup-panel" id="panel-clipart">
+        <div class="design-setup-panel__header">
+            <h2>{% trans "Clipart Library" %}</h2>
+            <p class="design-setup-panel__description">
+                {% trans "Manage clipart categories and assets that customers can use in their designs. Clipart can be global (all products) or product-specific." %}
+            </p>
+        </div>
+
+        <div class="design-setup-clipart-info">
+            <p>{% trans "Clipart categories and assets are managed from the admin panel:" %}</p>
+            <a href="{% url 'admin:customizable_product_clipartcategory_changelist' %}" class="button" target="_blank">
+                <i class="fas fa-folder"></i> {% trans "Manage Categories" %}
+            </a>
+            <a href="{% url 'admin:customizable_product_clipartasset_changelist' %}" class="button" target="_blank">
+                <i class="fas fa-image"></i> {% trans "Manage Assets" %}
+            </a>
+        </div>
+
+        <div id="clipart-summary" class="design-setup-clipart-summary">
+            <!-- Clipart category summary rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Tab Content: Fonts -->
+    <div class="design-setup-panel" id="panel-fonts">
+        <div class="design-setup-panel__header">
+            <h2>{% trans "Custom Fonts" %}</h2>
+            <p class="design-setup-panel__description">
+                {% trans "Upload custom fonts for customers to use when adding text to their designs. WOFF2 or TTF format recommended." %}
+            </p>
+        </div>
+
+        <div class="design-setup-fonts-info">
+            <a href="{% url 'admin:customizable_product_customfont_changelist' %}" class="button" target="_blank">
+                <i class="fas fa-font"></i> {% trans "Manage Fonts" %}
+            </a>
+        </div>
+
+        <div id="fonts-list" class="design-setup-fonts-list">
+            <!-- Fonts list rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Tab Content: Pricing -->
+    <div class="design-setup-panel" id="panel-pricing">
+        <div class="design-setup-panel__header">
+            <h2>{% trans "Design Pricing" %}</h2>
+            <p class="design-setup-panel__description">
+                {% trans "Set pricing rules for customizations. Fees are added on top of the product's base price." %}
+            </p>
+        </div>
+
+        <div class="design-setup-form">
+            <div class="design-setup-form__row">
+                <label for="pricing-base-fee">{% trans "Base Design Fee" %}</label>
+                <input type="number" id="pricing-base-fee" step="0.01" min="0"
+                    value="{{ design_config.base_design_fee.amount|default:'0' }}"
+                    class="design-setup-input">
+                <span class="design-setup-form__help">{% trans "Flat fee added when any customization is applied." %}</span>
+            </div>
+            <div class="design-setup-form__row">
+                <label for="pricing-surface-fee">{% trans "Per Surface Fee" %}</label>
+                <input type="number" id="pricing-surface-fee" step="0.01" min="0"
+                    value="{{ design_config.per_surface_fee.amount|default:'0' }}"
+                    class="design-setup-input">
+                <span class="design-setup-form__help">{% trans "Fee for each additional surface used beyond the first." %}</span>
+            </div>
+            <div class="design-setup-form__row">
+                <label for="pricing-upload-fee">{% trans "Per Upload Fee" %}</label>
+                <input type="number" id="pricing-upload-fee" step="0.01" min="0"
+                    value="{{ design_config.per_upload_fee.amount|default:'0' }}"
+                    class="design-setup-input">
+                <span class="design-setup-form__help">{% trans "Fee for each customer-uploaded image." %}</span>
+            </div>
+            <div class="design-setup-form__row">
+                <label for="pricing-text-fee">{% trans "Per Text Element Fee" %}</label>
+                <input type="number" id="pricing-text-fee" step="0.01" min="0"
+                    value="{{ design_config.per_text_fee.amount|default:'0' }}"
+                    class="design-setup-input">
+                <span class="design-setup-form__help">{% trans "Fee for each text element added to the design." %}</span>
+            </div>
+            <button type="button" class="button" id="btn-save-pricing">
+                <i class="fas fa-save"></i> {% trans "Save Pricing" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Settings -->
+    <div class="design-setup-panel" id="panel-settings">
+        <div class="design-setup-panel__header">
+            <h2>{% trans "Editor Settings" %}</h2>
+            <p class="design-setup-panel__description">
+                {% trans "Configure the design editor behavior and restrictions." %}
+            </p>
+        </div>
+
+        <div class="design-setup-form">
+            <div class="design-setup-form__row">
+                <label for="setting-editor-mode">{% trans "Editor Mode" %}</label>
+                <select id="setting-editor-mode" class="design-setup-select">
+                    <option value="canvas" {% if design_config.editor_mode == 'canvas' %}selected{% endif %}>{% trans "Canvas Editor (Visual)" %}</option>
+                    <option value="simple" {% if design_config.editor_mode == 'simple' %}selected{% endif %}>{% trans "Simple Form (Text Fields Only)" %}</option>
+                </select>
+            </div>
+
+            <h3>{% trans "Feature Toggles" %}</h3>
+            <div class="design-setup-form__row design-setup-form__row--checkbox">
+                <label>
+                    <input type="checkbox" id="setting-allow-text" {% if design_config.allow_text %}checked{% endif %}>
+                    {% trans "Allow Text Elements" %}
+                </label>
+            </div>
+            <div class="design-setup-form__row design-setup-form__row--checkbox">
+                <label>
+                    <input type="checkbox" id="setting-allow-upload" {% if design_config.allow_image_upload %}checked{% endif %}>
+                    {% trans "Allow Image Upload" %}
+                </label>
+            </div>
+            <div class="design-setup-form__row design-setup-form__row--checkbox">
+                <label>
+                    <input type="checkbox" id="setting-allow-clipart" {% if design_config.allow_clipart %}checked{% endif %}>
+                    {% trans "Allow Clipart" %}
+                </label>
+            </div>
+
+            <h3>{% trans "Upload Restrictions" %}</h3>
+            <div class="design-setup-form__row">
+                <label for="setting-max-uploads">{% trans "Max Uploads Per Surface" %}</label>
+                <input type="number" id="setting-max-uploads" min="1" max="20"
+                    value="{{ design_config.max_uploads_per_surface }}"
+                    class="design-setup-input design-setup-input--narrow">
+            </div>
+            <div class="design-setup-form__row">
+                <label for="setting-max-size">{% trans "Max Upload Size (MB)" %}</label>
+                <input type="number" id="setting-max-size" step="0.5" min="0.5" max="50"
+                    value="{{ design_config.max_upload_size_mb }}"
+                    class="design-setup-input design-setup-input--narrow">
+            </div>
+            <div class="design-setup-form__row">
+                <label for="setting-upload-types">{% trans "Allowed File Types" %}</label>
+                <input type="text" id="setting-upload-types"
+                    value="{{ design_config.allowed_upload_types|join:', ' }}"
+                    placeholder="jpg, png, svg"
+                    class="design-setup-input">
+                <span class="design-setup-form__help">{% trans "Comma-separated list of file extensions." %}</span>
+            </div>
+
+            <button type="button" class="button" id="btn-save-settings">
+                <i class="fas fa-save"></i> {% trans "Save Settings" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Surface Modal -->
+<div class="design-setup-modal" id="modal-surface" aria-hidden="true">
+    <div class="design-setup-modal__backdrop"></div>
+    <div class="design-setup-modal__content">
+        <div class="design-setup-modal__header">
+            <h3 id="modal-surface-title">{% trans "Add Surface" %}</h3>
+            <button type="button" class="design-setup-modal__close" aria-label="{% trans 'Close' %}">&times;</button>
+        </div>
+        <div class="design-setup-modal__body">
+            <input type="hidden" id="surface-edit-id" value="">
+
+            <div class="design-setup-form__row">
+                <label for="surface-name">{% trans "Surface Name" %} *</label>
+                <input type="text" id="surface-name" class="design-setup-input" placeholder="{% trans 'e.g. Front, Back, Left Sleeve' %}" required>
+            </div>
+            <div class="design-setup-form__row">
+                <label for="surface-slug">{% trans "Slug" %} *</label>
+                <input type="text" id="surface-slug" class="design-setup-input" placeholder="{% trans 'e.g. front, back, left-sleeve' %}" required>
+            </div>
+
+            <div class="design-setup-form__row">
+                <label>{% trans "Mockup Image" %}</label>
+                <div class="media-library-widget" id="surface-mockup-picker" data-field-name="surface-mockup-asset-id">
+                    <div class="media-preview" id="surface-mockup-preview">
+                        <div class="no-image-preview drop-zone">
+                            <i class="fas fa-image"></i>
+                            <span>{% trans "No image selected" %}</span>
+                        </div>
+                    </div>
+                    <div class="media-controls">
+                        <input type="hidden" name="surface-mockup-asset-id" id="surface-mockup-asset-id" value="" class="media-field-input">
+                        <button type="button" class="button button-small media-select-btn" id="btn-select-mockup">
+                            <i class="fas fa-image"></i> {% trans "Select Image" %}
+                        </button>
+                        <button type="button" class="button button-small media-clear-btn hidden" id="btn-remove-mockup">
+                            <i class="fas fa-times"></i> {% trans "Remove" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <h4>{% trans "Design Area Dimensions" %}</h4>
+            <div class="design-setup-form__row-group">
+                <div class="design-setup-form__row">
+                    <label for="surface-width">{% trans "Width" %}</label>
+                    <input type="number" id="surface-width" step="0.01" value="200" class="design-setup-input design-setup-input--narrow">
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-height">{% trans "Height" %}</label>
+                    <input type="number" id="surface-height" step="0.01" value="200" class="design-setup-input design-setup-input--narrow">
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-unit">{% trans "Unit" %}</label>
+                    <select id="surface-unit" class="design-setup-select design-setup-select--narrow">
+                        <option value="mm">mm</option>
+                        <option value="in">in</option>
+                        <option value="px">px</option>
+                    </select>
+                </div>
+            </div>
+
+            <h4>{% trans "Design Zone Position (% on Mockup)" %}</h4>
+            <div class="design-setup-form__row-group">
+                <div class="design-setup-form__row">
+                    <label for="surface-area-x">{% trans "X %" %}</label>
+                    <input type="number" id="surface-area-x" step="0.5" value="25" min="0" max="100" class="design-setup-input design-setup-input--narrow">
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-area-y">{% trans "Y %" %}</label>
+                    <input type="number" id="surface-area-y" step="0.5" value="15" min="0" max="100" class="design-setup-input design-setup-input--narrow">
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-area-w">{% trans "Width %" %}</label>
+                    <input type="number" id="surface-area-w" step="0.5" value="50" min="1" max="100" class="design-setup-input design-setup-input--narrow">
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-area-h">{% trans "Height %" %}</label>
+                    <input type="number" id="surface-area-h" step="0.5" value="70" min="1" max="100" class="design-setup-input design-setup-input--narrow">
+                </div>
+            </div>
+
+            <!-- Interactive zone preview -->
+            <div class="design-setup-zone-preview" id="zone-preview">
+                <div class="design-setup-zone-preview__mockup" id="zone-preview-mockup">
+                    <div class="design-setup-zone-preview__zone" id="zone-preview-zone">
+                        <div class="zone-resize-handle zone-resize-handle--nw" data-handle="nw"></div>
+                        <div class="zone-resize-handle zone-resize-handle--ne" data-handle="ne"></div>
+                        <div class="zone-resize-handle zone-resize-handle--sw" data-handle="sw"></div>
+                        <div class="zone-resize-handle zone-resize-handle--se" data-handle="se"></div>
+                    </div>
+                </div>
+                <p class="design-setup-zone-preview__hint">{% trans "Drag the zone to reposition. Drag corners to resize." %}</p>
+            </div>
+
+            <h4>{% trans "Print Settings" %}</h4>
+            <div class="design-setup-form__row-group">
+                <div class="design-setup-form__row">
+                    <label for="surface-min-dpi">{% trans "Min DPI" %}</label>
+                    <input type="number" id="surface-min-dpi" value="150" class="design-setup-input design-setup-input--narrow">
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-rec-dpi">{% trans "Recommended DPI" %}</label>
+                    <input type="number" id="surface-rec-dpi" value="300" class="design-setup-input design-setup-input--narrow">
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-bleed">{% trans "Bleed (mm)" %}</label>
+                    <input type="number" id="surface-bleed" step="0.5" value="0" class="design-setup-input design-setup-input--narrow">
+                </div>
+            </div>
+
+            <div class="design-setup-form__row-group">
+                <div class="design-setup-form__row">
+                    <label for="surface-max-colors">{% trans "Max Colors" %}</label>
+                    <input type="number" id="surface-max-colors" min="0" value="" placeholder="{% trans 'Unlimited' %}" class="design-setup-input design-setup-input--narrow">
+                    <span class="design-setup-form__help">{% trans "Leave empty for unlimited." %}</span>
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-bg-color">{% trans "Background Color" %}</label>
+                    <input type="color" id="surface-bg-color" value="#ffffff" class="design-setup-input design-setup-input--color">
+                </div>
+            </div>
+            <div class="design-setup-form__row">
+                <label for="surface-sort-order">{% trans "Sort Order" %}</label>
+                <input type="number" id="surface-sort-order" value="0" class="design-setup-input design-setup-input--narrow">
+            </div>
+
+            <h4>{% trans "Constraints" %}</h4>
+            <p class="design-setup-form__help">{% trans "Leave as 'Inherit' to use the global config setting from the Settings tab." %}</p>
+            <div class="design-setup-form__row-group">
+                <div class="design-setup-form__row">
+                    <label for="surface-allow-text">{% trans "Allow Text" %}</label>
+                    <select id="surface-allow-text" class="design-setup-input">
+                        <option value="">{% trans "Inherit from config" %}</option>
+                        <option value="true">{% trans "Yes" %}</option>
+                        <option value="false">{% trans "No" %}</option>
+                    </select>
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-allow-image">{% trans "Allow Image Upload" %}</label>
+                    <select id="surface-allow-image" class="design-setup-input">
+                        <option value="">{% trans "Inherit from config" %}</option>
+                        <option value="true">{% trans "Yes" %}</option>
+                        <option value="false">{% trans "No" %}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="design-setup-form__row-group">
+                <div class="design-setup-form__row">
+                    <label for="surface-allow-clipart">{% trans "Allow Clipart" %}</label>
+                    <select id="surface-allow-clipart" class="design-setup-input">
+                        <option value="">{% trans "Inherit from config" %}</option>
+                        <option value="true">{% trans "Yes" %}</option>
+                        <option value="false">{% trans "No" %}</option>
+                    </select>
+                </div>
+                <div class="design-setup-form__row">
+                    <label for="surface-max-elements">{% trans "Max Elements" %}</label>
+                    <input type="number" id="surface-max-elements" min="1" value="" placeholder="{% trans 'No limit' %}" class="design-setup-input design-setup-input--narrow">
+                </div>
+            </div>
+        </div>
+        <div class="design-setup-modal__footer">
+            <button type="button" class="button" id="btn-save-surface-modal">
+                <i class="fas fa-save"></i> {% trans "Save Surface" %}
+            </button>
+            <button type="button" class="button button-secondary" id="btn-cancel-surface-modal">
+                {% trans "Cancel" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Embedded data for JS -->
+<script type="application/json" id="design-setup-data">
+{{ setup_data_json|safe }}
+</script>
+
+<script src="{% static 'media_library/js/upload-queue.js' %}" defer></script>
+<script src="{% static 'media_library/js/media-library.js' %}" defer></script>
+<script src="{% static 'customizable_product/js/design-setup.js' %}" defer></script>
+{% endblock %}

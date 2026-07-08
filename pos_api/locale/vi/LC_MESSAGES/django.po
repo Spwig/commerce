@@ -1,0 +1,1487 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "POS API"
+msgstr "API Điểm bán hàng"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "Một giấy phép POS hợp lệ là cần thiết để truy cập điểm cuối này."
+
+msgid "POS access requires a staff account."
+msgstr "Truy cập POS yêu cầu tài khoản nhân viên."
+
+msgid "You are not assigned to this terminal."
+msgstr "Bạn không được giao cho thiết bị đầu cuối này."
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "Bạn không có quyền: %(label)s."
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "Lựa chọn biến thể gói hàng: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "Danh sách các ID BundleItem không bắt buộc để loại trừ"
+
+msgid "Search by email, phone, or name"
+msgstr "Tìm kiếm theo email, số điện thoại hoặc tên"
+
+msgid "ID of the product to adjust stock for."
+msgstr "ID của sản phẩm cần điều chỉnh số lượng tồn kho."
+
+msgid "ID of the variant (required for variable products)."
+msgstr "ID của biến thể (bắt buộc cho sản phẩm có biến thể)."
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"Loại điều chỉnh: \"receive\" thêm hàng tồn kho (ví dụ: lô hàng mới), "
+"\"damage\" loại bỏ hàng tồn kho (ví dụ: sản phẩm hỏng), \"recount\" thiết "
+"lập số lượng on_hand tuyệt đối, \"return\" thêm lại hàng tồn kho (ví dụ: trả"
+" hàng của khách hàng)."
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"Đối với receive/return: đơn vị để thêm. Đối với damage: đơn vị để loại bỏ. "
+"Đối với recount: số lượng on_hand tuyệt đối mới."
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "Lý do bắt buộc cho điều chỉnh này (truy xuất nguồn gốc)."
+
+msgid "Optional UUID for offline deduplication."
+msgstr "UUID tùy chọn cho việc loại bỏ trùng lặp ngoại tuyến."
+
+msgid "Signed quantity delta."
+msgstr "Sự thay đổi số lượng đã ký."
+
+msgid "Last four digits of card number (digits only)"
+msgstr "Bốn chữ số cuối của số thẻ (chỉ số)"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr "Số tiền cần thu. Nếu không cung cấp, sẽ thu toàn bộ số dư còn lại."
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr ""
+"ID thanh toán từ nhà cung cấp thiết bị đầu cuối (ví dụ: Stripe PaymentIntent"
+" ID)"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr "ID đọc cụ thể của nhà cung cấp (ví dụ: Adyen POIID, Square device_id)"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "ID giao dịch cụ thể của nhà cung cấp để kiểm tra trạng thái"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr ""
+"Trạng thái ban đầu -- thường là \"đang chờ\" cho các nhà cung cấp không đồng"
+" bộ, \"thành công\" cho các nhà cung cấp đồng bộ (Adyen)"
+
+msgid "Current payment status"
+msgstr "Trạng thái thanh toán hiện tại"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "ID thanh toán của nhà cung cấp (khi thành công)"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "Lý do hủy bỏ (khi đã hủy)"
+
+msgid "POS staff login"
+msgstr "Đăng nhập nhân viên POS"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr ""
+"Xác thực một thành viên nhân viên để truy cập POS. Trả về token truy cập và "
+"token làm mới. Sử dụng cùng hệ thống token như API Quản trị "
+"(MobileTokenAuthentication)."
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "Đăng nhập thành công, trả về token và cấu hình đầu cuối"
+
+msgid "Invalid credentials"
+msgstr "Thông tin xác thực không hợp lệ"
+
+msgid "User is not a staff member"
+msgstr "Người dùng không phải là nhân viên"
+
+msgid "Refresh POS access token"
+msgstr "Làm mới token truy cập POS"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "Đổi token làm mới lấy token truy cập mới."
+
+msgid "New access token"
+msgstr "Token truy cập mới"
+
+msgid "Invalid or expired refresh token"
+msgstr "Token làm mới không hợp lệ hoặc đã hết hạn"
+
+msgid "POS logout"
+msgstr "Đăng xuất POS"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "Hủy token truy cập và token làm mới hiện tại."
+
+msgid "Logged out successfully"
+msgstr "Đã đăng xuất thành công"
+
+msgid "Get current POS cart"
+msgstr "Lấy giỏ hàng POS hiện tại"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr ""
+"Trả lại giỏ hàng hiện tại của nhân viên thu ngân đã xác thực. Tạo giỏ hàng "
+"mới nếu không tồn tại. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Add item to POS cart"
+msgstr "Thêm mặt hàng vào giỏ hàng POS"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"Thêm sản phẩm vào giỏ hàng của nhân viên thu ngân. Hỗ trợ thêm bằng ID sản "
+"phẩm hoặc mã vạch. Khi cung cấp mã vạch mà không có product_id, nó sẽ tự "
+"động xác định sản phẩm. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "Sản phẩm, biến thể không hợp lệ hoặc tồn kho không đủ"
+
+msgid "Update cart item quantity"
+msgstr "Cập nhật số lượng mặt hàng trong giỏ hàng"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Cập nhật số lượng của mục trong giỏ hàng. Đặt số lượng thành 0 để xóa mục. "
+"Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "Số lượng không hợp lệ hoặc tồn kho không đủ"
+
+msgid "Cart item not found"
+msgstr "Không tìm thấy mặt hàng trong giỏ hàng"
+
+msgid "Remove item from cart"
+msgstr "Xóa mặt hàng khỏi giỏ hàng"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Xóa một mục cụ thể khỏi giỏ hàng. Yêu cầu xác thực nhân viên và giấy phép "
+"POS hợp lệ."
+
+msgid "Apply voucher to cart"
+msgstr "Áp dụng phiếu giảm giá vào giỏ hàng"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr ""
+"Áp dụng mã phiếu giảm giá/thẻ quà tặng vào giỏ hàng. Chỉ có một mã phiếu "
+"giảm giá có thể được kích hoạt tại một thời điểm. Yêu cầu xác thực nhân viên"
+" và giấy phép POS hợp lệ."
+
+msgid "Invalid or expired voucher code"
+msgstr "Mã phiếu giảm giá không hợp lệ hoặc đã hết hạn"
+
+msgid "Remove voucher from cart"
+msgstr "Loại bỏ phiếu giảm giá khỏi giỏ hàng"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Xóa phiếu giảm giá đã áp dụng khỏi giỏ hàng. Yêu cầu xác thực nhân viên và "
+"giấy phép POS hợp lệ."
+
+msgid "No voucher applied"
+msgstr "Không có phiếu giảm giá được áp dụng"
+
+msgid "Apply gift card to cart"
+msgstr "Áp dụng thẻ quà tặng vào giỏ hàng"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Áp dụng mã thẻ quà tặng vào giỏ hàng để bao phủ một phần hoặc toàn bộ tổng "
+"số tiền. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "Thẻ quà tặng không hợp lệ hoặc số dư không đủ"
+
+msgid "Clear all items from cart"
+msgstr "Xóa tất cả mục khỏi giỏ hàng"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Xóa tất cả các mục, phiếu giảm giá và thẻ quà tặng khỏi giỏ hàng. Yêu cầu "
+"xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Apply manual discount to cart item"
+msgstr "Áp dụng giảm giá thủ công cho mục trong giỏ hàng"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Áp dụng giảm giá thủ công của nhân viên cho một mục giỏ hàng cụ thể. Trả về "
+"requires_approval=true nếu giảm giá vượt quá giới hạn nhân viên. Yêu cầu xác"
+" thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Discount applied or requires approval"
+msgstr "Giảm giá đã được áp dụng hoặc cần phê duyệt"
+
+msgid "Invalid discount or not authorized"
+msgstr "Giảm giá không hợp lệ hoặc không được ủy quyền"
+
+msgid "Remove manual discount from cart item"
+msgstr "Loại bỏ giảm giá thủ công khỏi mục giỏ hàng"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Loại bỏ giảm giá thủ công của nhân viên khỏi một mục giỏ hàng cụ thể. Yêu "
+"cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Discount removed"
+msgstr "Giảm giá đã được loại bỏ"
+
+msgid "Apply manual discount to cart"
+msgstr "Áp dụng giảm giá thủ công vào giỏ hàng"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Áp dụng giảm giá thủ công của nhân viên cho toàn bộ giỏ hàng. Trả về "
+"requires_approval=true nếu giảm giá vượt quá giới hạn nhân viên. Yêu cầu xác"
+" thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Remove manual discount from cart"
+msgstr "Loại bỏ giảm giá thủ công khỏi giỏ hàng"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Loại bỏ giảm giá thủ công của nhân viên khỏi giỏ hàng. Yêu cầu xác thực nhân"
+" viên và giấy phép POS hợp lệ."
+
+msgid "Verify manager PIN"
+msgstr "Xác minh mã PIN quản lý"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Kiểm tra xem mã PIN có hợp lệ cho quản lý có thể phê duyệt giảm giá hay "
+"không. Trả về tên quản lý nếu hợp lệ. Yêu cầu xác thực nhân viên và giấy "
+"phép POS hợp lệ."
+
+msgid "PIN verification result"
+msgstr "Kết quả xác minh mã PIN"
+
+msgid "Approve discount with manager PIN"
+msgstr "Phê duyệt giảm giá bằng mã PIN quản lý"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Áp dụng một khoản giảm giá vượt quá giới hạn của nhân viên với sự phê duyệt "
+"của quản lý. Yêu cầu mã PIN của quản lý hợp lệ để tiếp tục. Yêu cầu xác thực"
+" nhân viên và giấy phép POS hợp lệ."
+
+msgid "Discount approved and applied"
+msgstr "Giảm giá đã được phê duyệt và áp dụng"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "Mã PIN không hợp lệ hoặc tham số giảm giá không hợp lệ"
+
+msgid "Park current cart"
+msgstr "Đậu giỏ hàng hiện tại"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Lưu trạng thái giỏ hàng hiện tại để phục hồi sau này. Được sử dụng khi khách"
+" hàng cần rời đi và cần phục vụ khách hàng khác. Yêu cầu xác thực nhân viên "
+"và giấy phép POS hợp lệ."
+
+msgid "Cart parked successfully"
+msgstr "Giỏ hàng đã đậu thành công"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "Giỏ hàng trống hoặc không thể đậu lại"
+
+msgid "List parked carts"
+msgstr "Liệt kê giỏ hàng đã đậu"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr ""
+"Lấy tất cả giỏ hàng đã đậu lại cho thiết bị hiện tại. Yêu cầu xác thực nhân "
+"viên và giấy phép POS hợp lệ."
+
+msgid "List of parked carts"
+msgstr "Danh sách giỏ hàng đã đậu"
+
+msgid "Restore parked cart"
+msgstr "Khôi phục giỏ hàng đã đậu"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr ""
+"Khôi phục giỏ hàng đang đỗ, thay thế nội dung giỏ hàng hiện tại. Giỏ hàng "
+"hiện tại sẽ bị xóa trước khi khôi phục. Yêu cầu xác thực nhân viên và giấy "
+"phép POS hợp lệ."
+
+msgid "Cart restored successfully"
+msgstr "Khôi phục giỏ hàng thành công"
+
+msgid "Current cart is not empty"
+msgstr "Giỏ hàng hiện tại không trống"
+
+msgid "Parked cart not found"
+msgstr "Không tìm thấy giỏ hàng tạm dừng"
+
+msgid "Delete parked cart"
+msgstr "Xóa giỏ hàng tạm dừng"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Xóa vĩnh viễn giỏ hàng đang đỗ. Hành động này không thể hoàn tác. Yêu cầu "
+"xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Parked cart deleted"
+msgstr "Giỏ hàng tạm dừng đã được xóa"
+
+msgid "List POS products"
+msgstr "Danh sách sản phẩm POS"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"Trả về các sản phẩm có thể bán tại cửa hàng, được lọc theo kênh bán hàng. "
+"Bao gồm mức tồn kho cụ thể cho từng kho khi thiết bị được xác định. Các sản "
+"phẩm có hình ảnh sẽ được hiển thị trước, sắp xếp theo độ phổ biến tại từng "
+"kho."
+
+msgid "Search by name, SKU, or barcode"
+msgstr "Tìm kiếm theo tên, SKU hoặc mã vạch"
+
+msgid "Filter by category ID"
+msgstr "Lọc theo ID danh mục"
+
+msgid "Warehouse for stock levels"
+msgstr "Kho hàng để kiểm tra mức tồn kho"
+
+msgid "Page number (default: 1)"
+msgstr "Số trang (mặc định: 1)"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "Số mục trên mỗi trang (mặc định: 50, tối đa: 200)"
+
+msgid "Get product detail"
+msgstr "Lấy chi tiết sản phẩm"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr ""
+"Trả về chi tiết sản phẩm đầy đủ bao gồm các biến thể và tồn kho kho hàng."
+
+msgid "Barcode lookup"
+msgstr "Tra cứu mã vạch"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr ""
+"Tra cứu sản phẩm hoặc biến thể theo mã vạch. Tra cứu nhanh, có chỉ mục cho "
+"việc quét mã vạch."
+
+msgid "No product found with this barcode"
+msgstr "Không tìm thấy sản phẩm nào với mã vạch này"
+
+msgid "List categories"
+msgstr "Danh sách danh mục"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "Trả về cây danh mục cho điều hướng sản phẩm POS."
+
+msgid "Process cash payment"
+msgstr "Xử lý thanh toán tiền mặt"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Hoàn tất giao dịch POS bằng thanh toán tiền mặt. Kiểm tra số tiền được đưa "
+"ra có đủ để thanh toán đơn hàng và tính tiền thừa. Tạo một đơn hàng với "
+"channel='pos' và một bản ghi POSPayment. Yêu cầu phải có ca làm việc đang mở"
+" trên máy POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "Giỏ hàng trống hoặc số tiền thanh toán không đủ"
+
+msgid "Process card payment"
+msgstr "Xử lý thanh toán bằng thẻ"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Hoàn tất giao dịch POS bằng thanh toán thẻ. Việc xử lý thẻ được giả định là "
+"do thiết bị thẻ bên ngoài thực hiện. Điểm cuối này ghi lại thông tin tham "
+"chiếu thẻ và bốn chữ số cuối cùng. Yêu cầu phải có ca làm việc đang mở trên "
+"máy POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Empty cart"
+msgstr "Xóa giỏ hàng"
+
+msgid "Check gift card balance"
+msgstr "Kiểm tra số dư thẻ quà tặng"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr ""
+"Kiểm tra số dư của thẻ quà tặng cho thanh toán POS. Trả về số dư hiện tại "
+"nếu thẻ hợp lệ, hoặc thông báo lỗi nếu thẻ không hợp lệ. Yêu cầu xác thực "
+"nhân viên."
+
+msgid "Gift card balance info"
+msgstr "Thông tin số dư thẻ quà tặng"
+
+msgid "Invalid gift card or missing code"
+msgstr "Thẻ quà tặng không hợp lệ hoặc thiếu mã"
+
+msgid "Process gift card payment"
+msgstr "Xử lý thanh toán bằng thẻ quà tặng"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Hoàn tất giao dịch POS bằng thẻ quà tặng. Kiểm tra thẻ quà tặng có đủ số dư."
+" Nếu số dư thẻ quà tặng nhỏ hơn tổng đơn hàng, hãy sử dụng điểm cuối chia sẻ"
+" thanh toán thay vào đó. Yêu cầu phải có ca làm việc đang mở trên máy POS. "
+"Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "Giỏ hàng trống, thẻ quà tặng không hợp lệ hoặc số dư không đủ"
+
+msgid "Process split tender payment"
+msgstr "Xử lý thanh toán chia nhỏ"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Hoàn tất giao dịch POS bằng nhiều phương thức thanh toán (tách thanh toán). "
+"Tổng số tiền thanh toán phải đủ để bao phủ tổng đơn hàng. Tiền thối sẽ được "
+"tính dựa trên khoản thanh toán tiền mặt cuối cùng nếu tổng số tiền thanh "
+"toán vượt quá tổng đơn hàng. Yêu cầu phải có ca làm việc đang mở trên máy "
+"POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr ""
+"Giỏ hàng trống, phương thức thanh toán không hợp lệ hoặc tổng số tiền không "
+"đủ"
+
+msgid "Process terminal card payment"
+msgstr "Xử lý thanh toán bằng thẻ tại máy POS"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Hoàn tất giao dịch POS với phương thức thanh toán qua đầu cuối thẻ được tích"
+" hợp. Giao diện phía trước phải đã thu được khoản thanh toán thông qua SDK "
+"của đầu cuối và đã nhận được provider_payment_id (ví dụ: Stripe "
+"PaymentIntent). Điểm cuối này xác minh việc thanh toán đã thành công trước "
+"khi tạo đơn hàng. Yêu cầu phải có ca làm việc đang mở trên máy POS. Yêu cầu "
+"xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Empty cart or payment verification failed"
+msgstr "Giỏ hàng trống hoặc xác minh thanh toán thất bại"
+
+msgid "Search customers"
+msgstr "Tìm kiếm khách hàng"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Tìm kiếm khách hàng theo email, số điện thoại, tên đầu hoặc tên cuối. Trả về"
+" tối đa 20 kết quả phù hợp. Yêu cầu tối thiểu 2 ký tự. Yêu cầu xác thực nhân"
+" viên và giấy phép POS hợp lệ."
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "Tìm kiếm theo (email, số điện thoại hoặc tên). Tối thiểu 2 ký tự."
+
+msgid "Search query too short"
+msgstr "Truy vấn tìm kiếm quá ngắn"
+
+msgid "Create walk-in customer"
+msgstr "Tạo khách hàng tự do"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"Tạo khách hàng mới cho giao dịch khách đến không hẹn trước. Nếu khách hàng "
+"với email đã cho trước tồn tại, trả về khách hàng hiện có thay vì tạo bản "
+"sao. Email là tùy chọn cho các khách hàng đến không hẹn trước thực sự ẩn "
+"danh. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Existing customer found with this email"
+msgstr "Đã tìm thấy khách hàng hiện có với email này"
+
+msgid "Get customer details"
+msgstr "Lấy thông tin khách hàng"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Truy xuất thông tin khách hàng bao gồm thông tin liên lạc và lịch sử đơn "
+"hàng gần đây. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "List stock levels for warehouse"
+msgstr "Liệt kê mức tồn kho theo kho"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Trả về mức tồn kho được phân trang cho kho của đầu cuối. Hỗ trợ tìm kiếm "
+"theo tên sản phẩm hoặc SKU và lọc theo mặt hàng tồn kho thấp hoặc hết hàng. "
+"Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Search by product name or SKU"
+msgstr "Tìm kiếm theo tên sản phẩm hoặc SKU"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "Chỉ trả lại các mặt hàng ở mức tồn kho thấp hoặc thấp hơn"
+
+msgid "Only return items with zero available stock"
+msgstr "Chỉ trả lại các mặt hàng có số lượng tồn kho bằng 0"
+
+msgid "Warehouse not determined"
+msgstr "Kho chưa được xác định"
+
+msgid "Get product stock detail"
+msgstr "Lấy thông tin tồn kho sản phẩm"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr ""
+"Trả về mức tồn kho cho một sản phẩm cụ thể trong kho của đầu cuối, bao gồm "
+"phân tích theo cấp độ biến thể. Yêu cầu xác thực nhân viên và giấy phép POS "
+"hợp lệ."
+
+msgid "Check stock across all locations"
+msgstr "Kiểm tra tồn kho tại tất cả vị trí"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Trả lại mức tồn kho của sản phẩm tại tất cả các vị trí kho. Hữu ích để kiểm "
+"tra xem mặt hàng hết hàng có sẵn tại vị trí khác không. Kho của thiết bị "
+"hiện tại được đánh dấu bằng is_current=true. Yêu cầu xác thực nhân viên và "
+"giấy phép POS hợp lệ."
+
+msgid "Adjust stock levels"
+msgstr "Điều chỉnh mức tồn kho"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"Điều chỉnh số lượng tồn kho cho một sản phẩm trong kho của máy POS. Hỗ trợ "
+"bốn loại điều chỉnh: 'receive' (thêm tồn kho từ lô hàng), 'damage' (loại bỏ "
+"tồn kho bị hư hỏng/mất mát), 'recount' (đặt giá trị on_hand tuyệt đối từ đếm"
+" thực tế), 'return' (thêm lại tồn kho từ việc hoàn trả của khách hàng). Tạo "
+"ra một bản ghi kiểm toán StockMovement không thể thay đổi. Yêu cầu xác thực "
+"nhân viên, giấy phép POS hợp lệ và quyền pos_stock_adjustment."
+
+msgid "Stock adjusted successfully"
+msgstr "Điều chỉnh tồn kho thành công"
+
+msgid "Validation error or warehouse not determined"
+msgstr "Lỗi xác thực hoặc kho hàng không xác định"
+
+msgid "Permission denied or POS license required"
+msgstr "Không có quyền hoặc cần giấy phép POS"
+
+msgid "Product or stock item not found"
+msgstr "Sản phẩm hoặc mặt hàng tồn kho không tìm thấy"
+
+msgid "List stock movement history"
+msgstr "Liệt kê lịch sử thay đổi tồn kho"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Trả lại các bản ghi thay đổi tồn kho được phân trang cho kho của thiết bị. "
+"Hữu ích để kiểm tra các thay đổi tồn kho gần đây (điều chỉnh, hư hỏng, kiểm "
+"đếm lại, hoàn trả). Hỗ trợ lọc theo sản phẩm và loại thay đổi. Yêu cầu xác "
+"thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Filter movements by product ID"
+msgstr "Lọc thay đổi theo ID sản phẩm"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr ""
+"Loại chuyển động cần bao gồm, cách nhau bằng dấu phẩy (ví dụ: "
+"'damage,recount')"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "Số mục mỗi trang (mặc định: 20, tối đa: 100)"
+
+msgid "Get customer loyalty info"
+msgstr "Lấy thông tin khách hàng thân thiết"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"Lấy trạng thái thành viên, cấp độ và số điểm thưởng của khách hàng. Trả về "
+"`is_member: false` nếu khách hàng không có thành viên trung thành đang hoạt "
+"động. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"Thông tin thành viên trung thành. `is_member` chỉ ra liệu khách hàng có đang"
+" sở hữu thành viên hoạt động hay không. Khi giá trị là true, sẽ bao gồm "
+"`tier_name`, `tier_color`, và `available_points`."
+
+msgid "Preview loyalty points for cart"
+msgstr "Xem trước điểm khách hàng thân thiết cho giỏ hàng"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Tính điểm trung thành mà khách hàng sẽ nhận được cho tổng giá trị giỏ hàng "
+"nhất định. Trả về 0 nếu khách hàng không có thành viên trung thành nào đang "
+"hoạt động. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr ""
+"Tổng giá giỏ hàng dưới dạng chuỗi thập phân (ví dụ: '49.99'). Mặc định là "
+"'0'."
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr ""
+"Xem trước điểm. `points_preview` là số điểm khách hàng sẽ nhận được cho tổng"
+" giá trị giỏ hàng nhất định."
+
+msgid "List POS orders"
+msgstr "Liệt kê đơn hàng POS"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Trả về các đơn hàng với bộ lọc nâng cao theo khoảng thời gian, nguồn gốc, "
+"khách hàng, nhân viên thu ngân và tìm kiếm. Hỗ trợ xem các đơn hàng web cho "
+"các trường hợp hoàn trả. Mặc định: chỉ các đơn hàng hôm nay từ máy này. Chế "
+"độ tìm kiếm: Khi cung cấp 'search', các bộ lọc ngày/gốc/chiếc sẽ bị bỏ qua "
+"để tìm bất kỳ đơn hàng nào theo số đơn, tên khách hàng, email hoặc số điện "
+"thoại. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr ""
+"Ngày bắt đầu cho bộ lọc khoảng (định dạng ISO, mặc định: hôm nay). Bỏ qua "
+"khi cung cấp tìm kiếm."
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr ""
+"Ngày kết thúc cho bộ lọc khoảng (định dạng ISO, mặc định: hôm nay). Bỏ qua "
+"khi cung cấp tìm kiếm."
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr ""
+"Bộ lọc nguồn đơn hàng: this_terminal (mặc định), all_pos, all (bao gồm web)."
+" Bỏ qua khi cung cấp tìm kiếm."
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr "Lọc theo ID người dùng khách hàng. Bỏ qua khi cung cấp tìm kiếm."
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr "Lọc theo ID nhân viên thu ngân. Bỏ qua khi cung cấp tìm kiếm."
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr ""
+"Tìm kiếm trên TẤT CẢ các đơn hàng theo số đơn hàng, tên khách hàng, email "
+"hoặc số điện thoại. Bỏ qua bộ lọc ngày/gốc."
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "Lọc theo trạng thái đơn hàng (áp dụng trong cả hai chế độ)"
+
+msgid "Get order details"
+msgstr "Lấy thông tin đơn hàng"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Trả lại chi tiết đơn hàng đầy đủ bao gồm các mặt hàng và phân tích thanh "
+"toán. Hỗ trợ cả đơn hàng POS và web (cho các tình huống hoàn trả). Yêu cầu "
+"xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Get receipt data for printing"
+msgstr "Lấy dữ liệu hóa đơn để in"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"Trả về dữ liệu định dạng hóa hóa đơn cho một đơn hàng POS bao gồm thông tin "
+"cửa hàng, mặt hàng, thanh toán và văn bản chân trang. Được thiết kế cho máy "
+"in nhiệt ESC/POS. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Process order refund"
+msgstr "Xử lý hoàn tiền đơn hàng"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Xử lý hoàn tiền đầy đủ hoặc một phần cho một đơn hàng POS. Đối với hoàn tiền"
+" một phần, hãy chỉ định các mặt hàng và số lượng cần hoàn tiền. Tạo bản ghi "
+"Hoàn tiền và cập nhật tổng đơn hàng và ca làm việc. Yêu cầu ca làm việc đang"
+" mở trên thiết bị đầu cuối. Yêu cầu xác thực nhân viên và giấy phép POS hợp "
+"lệ."
+
+msgid "Refund processed successfully"
+msgstr "Hoàn tiền đơn hàng thành công"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "Yêu cầu hoàn tiền không hợp lệ hoặc đơn hàng đã được hoàn tiền"
+
+msgid "Void a POS order"
+msgstr "Hủy đơn hàng POS"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Hủy đơn hàng POS từ ca làm việc hiện tại. Chỉ các đơn hàng được đặt trong ca"
+" làm việc hiện tại mới có thể bị hủy. Điều này tạo ra một hoàn tiền đầy đủ "
+"và đảo ngược tất cả các thay đổi thanh toán và tồn kho. Yêu cầu ca làm việc "
+"đang mở trên thiết bị đầu cuối. Yêu cầu xác thực nhân viên và giấy phép POS "
+"hợp lệ."
+
+msgid "Order voided successfully"
+msgstr "Hủy đơn hàng thành công"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "Không thể hủy đơn hàng (không phải từ ca làm việc hiện tại)"
+
+msgid "List POS cashiers"
+msgstr "Danh sách cashier POS"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Trả về danh sách nhân viên đã xử lý đơn hàng POS. Được sử dụng để điền vào "
+"danh sách thả xuống bộ lọc quầy thu ngân. Yêu cầu xác thực nhân viên và giấy"
+" phép POS hợp lệ."
+
+msgid "List of cashiers"
+msgstr "Danh sách cashier"
+
+msgid "Send digital receipt"
+msgstr "Gửi biên lai số"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Gửi hóa đơn điện tử cho khách hàng qua email, SMS hoặc WhatsApp. Hóa đơn "
+"được gửi bất đồng bộ thông qua tác vụ Celery. Yêu cầu xác thực nhân viên và "
+"giấy phép POS hợp lệ."
+
+msgid "Receipt queued for sending"
+msgstr "Biên lai đã được xếp hàng để gửi"
+
+msgid "Get receipt sending status"
+msgstr "Lấy trạng thái gửi biên lai"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr ""
+"Kiểm tra hóa đơn điện tử nào đã được gửi cho đơn hàng. Trả về thời gian gửi "
+"cho email và SMS/WhatsApp."
+
+msgid "Receipt status"
+msgstr "Trạng thái biên lai"
+
+msgid "Get current shift summary"
+msgstr "Lấy tổng kết ca làm việc hiện tại"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Trả về bản tóm tắt ca làm việc đang mở cho nhân viên thu ngân hiện tại trên "
+"thiết bị, bao gồm tổng số tiền, số lượng giao dịch và phân tích phương thức "
+"thanh toán. Trả về ca làm việc null nếu không có ca nào đang mở. Yêu cầu xác"
+" thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Open a new shift"
+msgstr "Mở ca làm việc mới"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Bắt đầu một ca làm việc mới trên thiết bị. Chỉ cho phép một ca làm việc mở "
+"trên mỗi thiết bị tại một thời điểm. Ghi lại số tiền mở ca. Yêu cầu xác thực"
+" nhân viên và giấy phép POS hợp lệ."
+
+msgid "Invalid opening cash amount"
+msgstr "Số tiền mở ca không hợp lệ"
+
+msgid "A shift is already open on this terminal"
+msgstr "Một ca làm việc đã được mở trên thiết bị này"
+
+msgid "Close current shift"
+msgstr "Đóng ca làm việc hiện tại"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Đóng ca làm việc đang mở. Ghi lại số tiền đóng ca và tính toán sự chênh lệch"
+" giữa số tiền dự kiến và thực tế. Yêu cầu xác thực nhân viên và giấy phép "
+"POS hợp lệ."
+
+msgid "Record cash movement"
+msgstr "Ghi lại chuyển động tiền mặt"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Ghi lại một chuyển động tiền mặt vào hoặc ra trong ca làm việc. Ví dụ: thêm "
+"tiền lẻ, lấy ra để gửi ngân hàng, chi phí nhỏ. Yêu cầu phải có ca làm việc "
+"đang mở trên máy. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Cash movement recorded"
+msgstr "Đã ghi lại chuyển động tiền mặt"
+
+msgid "Invalid movement data"
+msgstr "Dữ liệu chuyển động không hợp lệ"
+
+msgid "Get daily sales report"
+msgstr "Lấy báo cáo doanh thu hàng ngày"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Trả về báo cáo doanh thu hàng ngày tổng hợp cho máy bao gồm tổng số, số "
+"lượng giao dịch, giá trị trung bình của giao dịch và phân tích phương thức "
+"thanh toán. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Report date (ISO format, default: today)"
+msgstr "Ngày báo cáo (định dạng ISO, mặc định: hôm nay)"
+
+msgid "Get top selling products"
+msgstr "Lấy danh sách sản phẩm bán chạy"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr ""
+"Trả về danh sách sản phẩm bán chạy nhất cho máy vào một ngày cụ thể, được "
+"xếp hạng theo số lượng bán ra. Yêu cầu xác thực nhân viên và giấy phép POS "
+"hợp lệ."
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "Số lượng sản phẩm cần hoàn trả (mặc định: 10, tối đa: 50)"
+
+msgid "Sync products since timestamp"
+msgstr "Đồng bộ sản phẩm kể từ thời điểm"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Trả về các sản phẩm đã được tạo hoặc cập nhật kể từ thời điểm được chỉ định."
+" Được sử dụng để đồng bộ sản phẩm theo từng phần vào cơ sở dữ liệu cục bộ "
+"của thiết bị POS. Trả về sync_token cho yêu cầu đồng bộ lần sau. Yêu cầu xác"
+" thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr ""
+"Dấu thời gian ISO để lấy các thay đổi kể từ thời điểm đó. Bỏ qua để đồng bộ "
+"đầy đủ."
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "Số mục trên mỗi trang (mặc định: 100, tối đa: 200)"
+
+msgid "Sync customers since timestamp"
+msgstr "Đồng bộ khách hàng kể từ thời điểm"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Trả về các khách hàng đã được tạo hoặc đã đặt hàng kể từ thời điểm được chỉ "
+"định. Được sử dụng để tra cứu khách hàng ngoại tuyến. Yêu cầu xác thực nhân "
+"viên và giấy phép POS hợp lệ."
+
+msgid "Customer sync data"
+msgstr "Dữ liệu đồng bộ khách hàng"
+
+msgid "Upload offline transactions"
+msgstr "Tải lên giao dịch ngoại tuyến"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Tải lên theo lô các giao dịch đã được xử lý khi thiết bị ngoại tuyến. Mỗi "
+"giao dịch tạo ra một đơn hàng với các mặt hàng và thanh toán. Sử dụng "
+"local_id để đảm bảo tính idempotency - các tải lên trùng lặp được phát hiện "
+"và bỏ qua. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Upload results with success/failure per transaction"
+msgstr "Tải lên kết quả kèm theo thành công/thất bại cho mỗi giao dịch"
+
+msgid "Get sync status"
+msgstr "Lấy trạng thái đồng bộ"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Trả về thời gian máy chủ hiện tại và số lượng cơ sở dữ liệu để lập kế hoạch "
+"đồng bộ. Yêu cầu xác thực nhân viên và giấy phép POS hợp lệ."
+
+msgid "Get sync version info"
+msgstr "Lấy thông tin phiên bản đồng bộ"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr ""
+"Trả về phiên bản API và phiên bản lược đồ dữ liệu để kiểm tra tính tương "
+"thích của khách hàng. Khách hàng nên xóa và đồng bộ lại khi phiên bản lược "
+"đồ tăng lên."
+
+msgid "Version information"
+msgstr "Thông tin phiên bản"
+
+msgid "Upload offline stock adjustments"
+msgstr "Tải lên điều chỉnh tồn kho ngoại tuyến"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"Tải lên theo lô các điều chỉnh tồn kho đã được xếp hàng khi thiết bị ngoại "
+"vi đang ngoại tuyến. Mỗi điều chỉnh sử dụng một khóa idempotency để tránh "
+"trùng lặp. Yêu cầu xác thực nhân viên, giấy phép POS hợp lệ và quyền điều "
+"chỉnh tồn kho."
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "Tải lên kết quả kèm theo thành công/thất bại cho mỗi điều chỉnh"
+
+msgid "POS license or permission required"
+msgstr "Yêu cầu giấy phép hoặc quyền POS"
+
+msgid "Sync orders for offline cache"
+msgstr "Đồng bộ đơn hàng cho bộ đệm ngoại tuyến"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Trả về các đơn hàng để lưu trữ ngoại tuyến trên thiết bị POS. Các đơn hàng "
+"POS được ưu tiên hơn các đơn hàng web lên đến giới hạn đồng bộ của thiết bị."
+" Hỗ trợ đồng bộ chênh lệch thông qua tham số 'since'. Yêu cầu xác thực nhân "
+"viên và giấy phép POS hợp lệ."
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr "Thời gian ISO cho đồng bộ hóa delta. Bỏ qua để đồng bộ hóa đầy đủ."
+
+msgid "Register POS terminal"
+msgstr "Đăng ký đầu cuối POS"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr ""
+"Đăng ký thiết bị mới làm thiết bị POS bằng mã ghép nối. Mã ghép nối được tạo"
+" trong bảng điều khiển quản trị khi tạo thiết bị."
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr ""
+"Thiết bị đầu cuối đã được đăng ký thành công, trả về cấu hình thiết bị đầu "
+"cuối"
+
+msgid "Invalid or expired pairing code"
+msgstr "Mã ghép nối không hợp lệ hoặc đã hết hạn"
+
+msgid "Get terminal configuration"
+msgstr "Lấy cấu hình đầu cuối"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr ""
+"Trả về cấu hình hiện tại của thiết bị đầu cuối bao gồm cài đặt phần cứng."
+
+msgid "Terminal heartbeat"
+msgstr "Đánh dấu nhịp tim đầu cuối"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr "Báo rằng thiết bị đầu cuối đang online. Nên gọi mỗi 60 giây."
+
+msgid "Heartbeat recorded"
+msgstr "Đã ghi nhận nhịp tim"
+
+msgid "Get receipt template"
+msgstr "Lấy mẫu biên lai"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr ""
+"Trả về mẫu biên lai cho kho của thiết bị. Nếu kho không có mẫu cụ thể, sẽ "
+"quay về mẫu mặc định (không gán kho). Nếu không có mẫu nào tồn tại, sẽ trả "
+"về các giá trị mặc định hợp lý."
+
+msgid "Receipt template data"
+msgstr "Dữ liệu mẫu biên lai"
+
+msgid "Get promo slides"
+msgstr "Lấy slide khuyến mãi"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr ""
+"Trả lại các slide quảng cáo cho kho của thiết bị. Các slide được hiển thị "
+"trên màn hình hướng đến khách hàng trong thời gian rảnh."
+
+msgid "List of promo slides with image URLs"
+msgstr "Danh sách các slide quảng cáo kèm URL hình ảnh"
+
+msgid "Generate display pairing code"
+msgstr "Tạo mã ghép nối hiển thị"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr ""
+"Tạo một mã ghép nối 6 chữ số có thời hạn ngắn để xác thực màn hình khách "
+"hàng. Mã sẽ hết hạn sau 5 phút và chỉ có thể được sử dụng một lần. Việc tạo "
+"mã mới sẽ vô hiệu hóa các mã chưa sử dụng nào cho thiết bị này."
+
+msgid "Pairing code generated"
+msgstr "Mã ghép nối đã được tạo"
+
+msgid "List managers for unlock override"
+msgstr "Liệt kê quản lý để gỡ khóa thay thế"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr ""
+"Trả về danh sách quản lý (id và tên) cho quy trình gỡ khóa thay thế quản lý."
+
+msgid "List of managers"
+msgstr "Danh sách quản lý"
+
+msgid "Verify unlock PIN"
+msgstr "Xác minh mã PIN gỡ khóa"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr ""
+"Xác minh mã PIN của nhân viên hoặc quản lý để mở khóa thiết bị. Sau 3 lần "
+"thất bại, chỉ mã PIN của quản lý mới được chấp nhận. Tất cả các lần thử đều "
+"được ghi lại để kiểm toán."
+
+msgid "PIN verified successfully"
+msgstr "Mã PIN đã được xác minh thành công"
+
+msgid "Invalid PIN"
+msgstr "Mã PIN không hợp lệ"
+
+msgid "Log terminal lock event"
+msgstr "Ghi lại sự kiện khóa thiết bị"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr ""
+"Ghi lại khi thiết bị bị khóa (bằng tay hoặc qua thời gian chờ khóa tự động)."
+" Điểm cuối này chỉ dành cho ghi nhật ký kiểm toán và không thay đổi trạng "
+"thái thiết bị."
+
+msgid "Event logged successfully"
+msgstr "Sự kiện đã được ghi lại thành công"
+
+msgid "Invalid event type"
+msgstr "Loại sự kiện không hợp lệ"
+
+msgid "Verify unlock card"
+msgstr "Xác minh thẻ mở khóa"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr ""
+"Xác minh thẻ ID nhân viên để mở khóa thiết bị. Dữ liệu thẻ được mã hóa và so"
+" sánh với các mã hóa thẻ đã lưu. Sau 3 lần nhập PIN thất bại, chỉ thẻ quản "
+"lý mới được chấp nhận."
+
+msgid "Card verified successfully"
+msgstr "Thẻ đã được xác minh thành công"
+
+msgid "Card not recognized"
+msgstr "Thẻ không được nhận diện"
+
+msgid "Register staff unlock card"
+msgstr "Đăng ký thẻ mở khóa nhân viên"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr ""
+"Đăng ký một lần quẹt thẻ cho việc gỡ khóa nhanh của người dùng hiện tại."
+
+msgid "Card registered successfully"
+msgstr "Thẻ đã được đăng ký thành công"
+
+msgid "Card already registered to another user"
+msgstr "Thẻ đã được đăng ký cho người dùng khác"
+
+msgid "Remove staff unlock card"
+msgstr "Xóa thẻ mở khóa nhân viên"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "Xóa thẻ gỡ khóa đã đăng ký của người dùng hiện tại."
+
+msgid "Card removed successfully"
+msgstr "Thẻ đã được xóa thành công"
+
+msgid "Set cashier PIN"
+msgstr "Thiết lập mã PIN nhân viên thu ngân"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"Đặt hoặc cập nhật mã PIN của người dùng hiện tại để khóa/mở khóa thiết bị. "
+"PIN phải là 4-6 chữ số. Cả pin và pin_confirm phải khớp nhau."
+
+msgid "PIN set successfully"
+msgstr "Mã PIN đã được thiết lập thành công"
+
+msgid "Get terminal provider config"
+msgstr "Lấy cấu hình nhà cung cấp thiết bị"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"Trả lại cấu hình nhà cung cấp đầu cuối cho đầu cuối hiện tại, bao gồm chế độ"
+" tích hợp (sdk, cloud hoặc manual) và chi tiết thiết bị đọc thẻ đã kết nối. "
+"Được sử dụng bởi giao diện POS khi khởi động để xác định xem thiết bị đọc "
+"thẻ tích hợp có sẵn hay không và sử dụng luồng thanh toán nào."
+
+msgid "Create connection token"
+msgstr "Tạo token kết nối"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"Tạo một token kết nối ngắn hạn cho các nhà cung cấp thiết bị đầu cuối chế độ"
+" SDK (ví dụ: Stripe Terminal JS SDK). Frontend gọi endpoint này khi khởi tạo"
+" SDK để thiết lập kết nối trực tiếp với thiết bị đọc thẻ. Chỉ dành cho SDK. "
+"Các nhà cung cấp đám mây không sử dụng token kết nối. Trả về 400 nếu nhà "
+"cung cấp không hỗ trợ token SDK."
+
+msgid "List card readers"
+msgstr "Liệt kê thiết bị đọc thẻ"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"Liệt kê các thiết bị đọc thẻ có sẵn từ nhà cung cấp đầu cuối. Hoạt động cho "
+"cả nhà cung cấp ở chế độ SDK và chế độ cloud. Mỗi đối tượng thiết bị đọc thẻ"
+" chứa: id, nhãn, loại, số chuỗi, và trạng thái."
+
+msgid "Create payment intent for terminal"
+msgstr "Tạo ý định thanh toán cho thiết bị"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"Tạo một PaymentIntent để thu thập card_present trên thiết bị đọc thẻ đầu "
+"cuối. Giao diện phía trước sử dụng client_secret được trả về để thu thập "
+"thanh toán qua SDK. Chỉ dành cho SDK. Nhà cung cấp cloud nên sử dụng "
+"initiate-cloud-payment. Nếu không chỉ định tiền tệ, sẽ mặc định là tiền tệ "
+"đã cấu hình trên đầu cuối."
+
+msgid "Capture/verify terminal payment"
+msgstr "Xác nhận/thanh toán giao dịch thiết bị"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr ""
+"Xác minh rằng PaymentIntent đã được xử lý thành công trên thiết bị đọc thẻ "
+"và trả lại chi tiết thẻ (thương hiệu, 4 số cuối) từ nhà cung cấp. Chỉ dành "
+"cho SDK."
+
+msgid "Cancel terminal payment"
+msgstr "Hủy thanh toán thiết bị"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"Hủy PaymentIntent đang chờ xử lý trên thiết bị đọc thẻ (ví dụ: khách hàng đã"
+" hủy). Chỉ dành cho SDK. Nhà cung cấp đám mây nên sử dụng cancel-cloud-"
+"payment."
+
+msgid "Initiate cloud payment on reader"
+msgstr "Khởi động thanh toán đám mây trên thiết bị đọc thẻ"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"Gửi yêu cầu thanh toán đến thiết bị đọc thẻ thông qua API đám mây của nhà "
+"cung cấp. Chỉ dành cho nhà cung cấp thiết bị ở chế độ đám mây (Adyen, "
+"Square, SumUp, Zettle). Chỉ dành cho đám mây. Trả về 400 nếu nhà cung cấp sử"
+" dụng chế độ SDK. Nếu không chỉ định tiền tệ, sẽ mặc định là tiền tệ đã cấu "
+"hình trên thiết bị."
+
+msgid "Check cloud payment status"
+msgstr "Kiểm tra trạng thái thanh toán đám mây"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"Kiểm tra trạng thái thanh toán được khởi tạo từ đám mây. Trả về trạng thái "
+"hiện tại: pending, succeeded, failed, hoặc canceled. Khi trạng thái là "
+"'succeeded', phản hồi sẽ bao gồm card_brand, last4, và provider payment_id. "
+"Khi là 'canceled', bao gồm cancel_reason. Frontend nên kiểm tra mỗi 2 giây "
+"cho đến khi trạng thái không còn là 'pending'."
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr ""
+"ID giao dịch đặc thù của nhà cung cấp được trả về bởi initiate-cloud-payment"
+
+msgid "Cancel cloud payment"
+msgstr "Hủy thanh toán đám mây"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr ""
+"Hủy một khoản thanh toán do đám mây khởi phát đang chờ trên thiết bị đọc. "
+"Chỉ dành cho đám mây. Hành vi có thể thay đổi tùy theo nhà cung cấp."
+
+msgid "Begin WebAuthn registration"
+msgstr "Bắt đầu đăng ký WebAuthn"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr ""
+"Tạo các tùy chọn đăng ký cho đăng ký sinh trắc học. Trả về thách thức và tùy"
+" chọn tạo thông tin xác thực."
+
+msgid "Registration options"
+msgstr "Tùy chọn đăng ký"
+
+msgid "Complete WebAuthn registration"
+msgstr "Hoàn tất đăng ký WebAuthn"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr ""
+"Xác minh xác nhận và lưu trữ thông tin xác thực cho việc mở khóa sinh trắc "
+"học."
+
+msgid "Credential registered"
+msgstr "Thông tin xác thực đã được đăng ký"
+
+msgid "Verification failed"
+msgstr "Xác thực thất bại"
+
+msgid "Begin WebAuthn authentication"
+msgstr "Bắt đầu xác thực WebAuthn"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"Tạo thách thức xác thực cho mở khóa sinh trắc học. Trả về allowCredentials "
+"cho người dùng bị khóa và tất cả các quản lý. Nếu failed_attempts >= 3, chỉ "
+"thông tin xác thực của quản lý được bao gồm."
+
+msgid "Authentication options"
+msgstr "Tùy chọn xác thực"
+
+msgid "No credentials registered"
+msgstr "Không có thông tin xác thực nào được đăng ký"
+
+msgid "Complete WebAuthn authentication"
+msgstr "Hoàn tất xác thực WebAuthn"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "Xác minh xác nhận sinh trắc học và mở khóa thiết bị."
+
+msgid "Authentication successful"
+msgstr "Xác thực thành công"

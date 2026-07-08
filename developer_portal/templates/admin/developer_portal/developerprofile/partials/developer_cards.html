@@ -1,0 +1,71 @@
+{% load i18n static %}
+
+<div class="list-row-cards">
+    {% for item in items %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ item.pk }}" class="action-select">
+        </div>
+        <div class="list-row-card-icon">
+            <i class="fas fa-user-code"></i>
+        </div>
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:developer_portal_developerprofile_change' item.pk %}">{{ item.display_name }}</a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                @{{ item.developer_slug }} &middot; {{ item.user.email }}
+            </p>
+            <div class="list-row-card-badges">
+                {% if item.status == 'approved' %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Approved" %}
+                </span>
+                {% elif item.status == 'pending' %}
+                <span class="list-row-card-badge list-row-card-badge-warning">
+                    <i class="fas fa-clock"></i> {% trans "Pending" %}
+                </span>
+                {% elif item.status == 'rejected' %}
+                <span class="list-row-card-badge list-row-card-badge-error">
+                    <i class="fas fa-times-circle"></i> {% trans "Rejected" %}
+                </span>
+                {% elif item.status == 'suspended' %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-ban"></i> {% trans "Suspended" %}
+                </span>
+                {% endif %}
+                {% if item.upgrade_server_author_slug %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-link"></i> {% trans "Linked" %}
+                </span>
+                {% endif %}
+            </div>
+            <div class="list-row-card-meta">
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-upload"></i> {{ item.submissions.count }} {% trans "submissions" %}
+                </span>
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i> {% trans "Joined" %} {{ item.created_at|date:"M d, Y" }}
+                </span>
+                {% if item.website %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-globe"></i> {{ item.website|truncatechars:30 }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:developer_portal_developerprofile_change' item.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon opacity-50">
+            <i class="fas fa-user-shield"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No developer profiles yet." %}</p>
+    </div>
+    {% endfor %}
+</div>

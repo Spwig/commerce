@@ -1,0 +1,109 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+    <link rel="stylesheet" href="{% static 'catalog/admin/css/licenseprovider_step4_test.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="application/json" id="licenseprovider-step4-config">
+    {
+        "step4Url": "{% url 'catalog_admin:license_provider_wizard_step4' %}",
+        "strings": {
+            "testingConnection": "{% trans 'Testing connection...' %}",
+            "pleaseWait": "{% trans 'Please wait while we verify your credentials.' %}",
+            "connectionSuccessful": "{% trans 'Connection Successful!' %}",
+            "credentialsValid": "{% trans 'Your credentials are valid and the connection is working.' %}",
+            "connectionFailed": "{% trans 'Connection Failed' %}",
+            "checkCredentials": "{% trans 'Could not connect to the provider. Please check your credentials.' %}",
+            "error": "{% trans 'Error' %}",
+            "unexpectedError": "{% trans 'An unexpected error occurred.' %}",
+            "saving": "{% trans 'Saving...' %}",
+            "failedToSave": "{% trans 'Failed to save provider.' %}",
+            "completeSetup": "{% trans 'Complete Setup' %}"
+        }
+    }
+    </script>
+    <script src="{% static 'catalog/admin/js/licenseprovider_wizard_step4.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <h1>{% trans "Connect License Provider" %}</h1>
+        <p class="wizard-subtitle">{{ provider_name }}</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="wizard-steps">
+        <div class="step completed">
+            <div class="step-number">✓</div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step completed">
+            <div class="step-number">✓</div>
+            <div class="step-label">{% trans "Setup" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step completed">
+            <div class="step-number">✓</div>
+            <div class="step-label">{% trans "Credentials" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step active">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Test & Save" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <div class="wizard-step-content">
+            <h2 class="step-title">{% trans "Test Connection & Complete Setup" %}</h2>
+            <p class="step-description">
+                {% trans "Test your connection to" %} {{ provider_name }} {% trans "before saving. This ensures your credentials are valid." %}
+            </p>
+
+            <div class="test-connection-container">
+                <div id="test-result" class="test-result">
+                    <div id="test-icon" class="test-result-icon pending">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <div id="test-message" class="test-result-message">
+                        {% trans "Ready to Test" %}
+                    </div>
+                    <div id="test-details" class="test-result-details">
+                        {% trans "Click the button below to test your connection to the provider's API." %}
+                    </div>
+
+                    <div class="test-actions">
+                        <button type="button" id="test-connection-btn" class="button">
+                            <i class="fas fa-bolt"></i> {% trans "Test Connection" %}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong><i class="fas fa-info-circle"></i> {% trans "What happens next?" %}</strong><br>
+                    {% trans "After successfully testing the connection, you can complete the setup. The provider will be saved and you can start syncing licenses immediately." %}
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="wizard-actions">
+                <a href="{% url 'catalog_admin:license_provider_wizard_step3' %}" class="button">
+                    ← {% trans "Back" %}
+                </a>
+                <button type="button" id="save-provider-btn" class="button primary" disabled>
+                    <i class="fas fa-check"></i> {% trans "Complete Setup" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

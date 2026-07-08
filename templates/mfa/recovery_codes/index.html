@@ -1,0 +1,64 @@
+{% extends "mfa/recovery_codes/base.html" %}
+{% load i18n %}
+{% load allauth %}
+{% block body %}
+    {% element h1 %}
+        {% translate "Recovery Codes" %}
+    {% endelement %}
+
+    <div class="allauth-info-box">
+        <div class="allauth-info-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="allauth-info-content">
+            <h3>{% translate "What are recovery codes?" %}</h3>
+            <p>{% translate "Recovery codes are one-time use backup codes that allow you to access your account if you lose access to your authenticator app or device." %}</p>
+            <ul class="allauth-info-list">
+                <li><i class="fas fa-check"></i> {% translate "Each code can only be used once" %}</li>
+                <li><i class="fas fa-check"></i> {% translate "Store them securely in a safe place (password manager, secure note, or printed copy)" %}</li>
+                <li><i class="fas fa-check"></i> {% translate "Use them to log in when you don't have access to your authenticator" %}</li>
+                <li><i class="fas fa-check"></i> {% translate "Generate new codes if you run low or suspect they've been compromised" %}</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="allauth-status-badge allauth-status-success">
+        <i class="fas fa-check-circle"></i>
+        {% blocktranslate count unused_count=unused_codes|length %}{{ unused_count }} of {{ total_count }} recovery code available{% plural %}{{ unused_count }} of {{ total_count }} recovery codes available{% endblocktranslate %}
+    </div>
+
+    {% element field id="recovery_codes" type="textarea" disabled=True rows=unused_codes|length readonly=True %}
+        {% slot label %}
+            {% translate "Unused codes" %}
+        {% endslot %}
+        {% comment %} djlint:off {% endcomment %}
+    {% slot value %}{% for code in unused_codes %}{% if forloop.counter0 %}
+{% endif %}{{ code }}{% endfor %}{% endslot %}
+{% comment %} djlint:on {% endcomment %}
+{% endelement %}
+
+    <div class="allauth-button-group">
+        {% if unused_codes %}
+        {% url 'mfa_download_recovery_codes' as download_url %}
+        <a href="{{ download_url }}" class="button default">
+            <i class="fas fa-download"></i>
+            {% translate "Download codes" %}
+        </a>
+        {% endif %}
+        {% url 'mfa_generate_recovery_codes' as generate_url %}
+        <a href="{{ generate_url }}" class="button secondary">
+            <i class="fas fa-sync-alt"></i>
+            {% translate "Generate new codes" %}
+        </a>
+    </div>
+
+    {% if unused_count < 3 %}
+    <div class="allauth-warning-box">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% translate "Low on recovery codes!" %}</strong>
+            <p>{% translate "You have fewer than 3 recovery codes remaining. Consider generating new codes to ensure you always have backup access to your account." %}</p>
+        </div>
+    </div>
+    {% endif %}
+{% endblock body %}

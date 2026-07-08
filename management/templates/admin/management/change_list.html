@@ -1,0 +1,50 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Management Tools" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'management/css/management_tools.css' %}">
+{% endblock %}
+
+{# Replace object-tools with our header + management tool buttons #}
+{% block object-tools %}
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-tools"></i>
+            {% trans "Management Tools" %}
+        </h1>
+        <p class="subtitle">{% trans "System maintenance and administrative utilities" %}</p>
+    </div>
+
+    {% if management_tools %}
+    <!-- Management Tools Section -->
+    <div class="management-tools-section">
+        <h3 class="management-tools-title">
+            <i class="fas fa-tools"></i> {% trans "Management Tools" %}
+        </h3>
+        <div class="management-tools-buttons">
+            {% for tool in management_tools %}
+            <a href="{{ tool.url }}"
+               class="{{ tool.class|default:'button' }} management-tool-btn">
+                {% if tool.icon %}<i class="{{ tool.icon }}"></i>{% endif %} {{ tool.title }}
+            </a>
+            {% endfor %}
+        </div>
+        <div class="management-tools-descriptions">
+            {% for tool in management_tools %}
+            <div class="management-tool-desc">
+                <strong>{% if tool.icon %}<i class="{{ tool.icon }}"></i>{% endif %} {{ tool.title }}:</strong> {{ tool.description }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{# Hide Django's default search and filter sidebar #}
+{% block search %}{% endblock %}
+{% block filters %}{% endblock %}

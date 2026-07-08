@@ -1,0 +1,186 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Home Page Specific Styles */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--theme-space-6, 1.5rem);
+}
+
+.feature-card {
+    text-align: center;
+    padding: var(--theme-space-6, 1.5rem);
+    background: var(--theme-color-surface, #fff);
+    border-radius: var(--theme-radius-lg, 0.75rem);
+    box-shadow: var(--theme-shadow-base, 0 1px 3px rgba(0,0,0,0.1));
+}
+
+.feature-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: var(--theme-space-4, 1rem);
+    background: var(--theme-color-primary-light, #dbeafe);
+    border-radius: var(--theme-radius-full, 9999px);
+    color: var(--theme-color-primary, #2563eb);
+    font-size: 1.5rem;
+}
+
+.feature-card__title {
+    font-size: var(--theme-font-size-lg, 1.125rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin-bottom: var(--theme-space-2, 0.5rem);
+}
+
+.feature-card__description {
+    color: var(--theme-color-text-muted, #6b7280);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+/* Section styles */
+.section {
+    padding: var(--theme-space-16, 4rem) 0;
+}
+
+.section--alt {
+    background: var(--theme-color-background-secondary, #f9fafb);
+}
+
+.section--primary {
+    background: var(--theme-color-primary, #2563eb);
+    color: var(--theme-color-text-inverse, #fff);
+}
+
+.section__header {
+    text-align: center;
+    margin-bottom: var(--theme-space-10, 2.5rem);
+}
+
+.section__title {
+    font-size: var(--theme-font-size-3xl, 1.875rem);
+    font-weight: var(--theme-font-weight-bold, 700);
+    color: var(--theme-color-text, #1f2937);
+    margin-bottom: var(--theme-space-2, 0.5rem);
+}
+
+.section--primary .section__title {
+    color: var(--theme-color-text-inverse, #fff);
+}
+
+.section__subtitle {
+    color: var(--theme-color-text-muted, #6b7280);
+    font-size: var(--theme-font-size-lg, 1.125rem);
+    max-width: 42rem;
+    margin: 0 auto;
+}
+
+.section--primary .section__subtitle {
+    color: var(--theme-color-text-inverse, rgba(255, 255, 255, 0.9));
+}
+
+/* Product grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--theme-space-6, 1.5rem);
+}
+
+.product-grid__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--theme-space-10, 2.5rem);
+    color: var(--theme-color-text-muted, #6b7280);
+}
+
+/* Category grid */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--theme-space-6, 1.5rem);
+}
+
+.category-card {
+    display: block;
+    text-decoration: none;
+    background: var(--theme-color-surface, #fff);
+    border-radius: var(--theme-radius-lg, 0.75rem);
+    overflow: hidden;
+    box-shadow: var(--theme-shadow-base, 0 1px 3px rgba(0,0,0,0.1));
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--theme-shadow-lg, 0 4px 6px rgba(0,0,0,0.1));
+}
+
+.category-card__image-wrapper {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: var(--theme-color-background-secondary, #f9fafb);
+}
+
+.category-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category-card__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--theme-color-text-muted, #6b7280);
+}
+
+.category-card__content {
+    padding: var(--theme-space-4, 1rem);
+    text-align: center;
+}
+
+.category-card__title {
+    font-size: var(--theme-font-size-base, 1rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin: 0;
+}
+
+.category-card__count {
+    display: block;
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    margin-top: var(--theme-space-1, 0.25rem);
+}
+
+/* CTA styles */
+.cta {
+    text-align: center;
+}
+
+.cta__title {
+    font-size: var(--theme-font-size-3xl, 1.875rem);
+    font-weight: var(--theme-font-weight-bold, 700);
+    margin-bottom: var(--theme-space-2, 0.5rem);
+}
+
+.cta__subtitle {
+    font-size: var(--theme-font-size-lg, 1.125rem);
+    opacity: 0.9;
+    margin-bottom: var(--theme-space-6, 1.5rem);
+}
+
+/* Button secondary variant for CTA */
+.btn--secondary {
+    background: var(--theme-color-text-inverse, #fff);
+    color: var(--theme-color-primary, #2563eb);
+}
+
+.btn--secondary:hover {
+    background: var(--theme-color-background-secondary, #f9fafb);
+}

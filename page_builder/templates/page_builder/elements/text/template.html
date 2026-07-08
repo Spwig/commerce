@@ -1,0 +1,38 @@
+{% load i18n translation_tags element_tags merchant_trans %}
+<!-- Text Element with Translation Support -->
+{% get_translation_status element as trans_status %}
+{% if element.content.text %}
+<div class="pb-text{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+{% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+data-element-id="{{ element.id }}"
+data-rendered-lang="{{ trans_status.rendered_language }}"
+data-is-fallback="{{ trans_status.is_fallback|lower }}"
+{% if trans_status.is_fallback %}data-preferred-lang="{{ request.visitor_language }}"{% endif %}
+{% hover_animation_attrs element %}
+style="
+    color: var(--theme-color-text-light);
+    line-height: var(--theme-line-height-relaxed);
+    {% if element.content.text_color %}color: {{ element.content.text_color }};{% endif %}
+    {# Base properties (background, border, rounded, box_shadow, opacity, z_index, custom_styles) #}
+    {% base_styles element %}
+">
+    {% get_translated_field element 'text' as translated_text %}
+
+    {% if element.content.allow_html %}
+        {{ translated_text|safe }}
+    {% else %}
+        {{ translated_text|linebreaksbr }}
+    {% endif %}
+
+    {% if user.is_staff and trans_status.is_fallback %}
+        <span class="translation-fallback-indicator" title="{% mtrans 'Using fallback language:' %} {{ trans_status.rendered_language }}">
+            <i class="fas fa-language"></i>
+        </span>
+    {% endif %}
+</div>
+{% else %}
+<!-- Default text content when no text is provided -->
+<div class="pb-text pb-text--placeholder">
+    {% mtrans "Click to add text content..." %}
+</div>
+{% endif %}

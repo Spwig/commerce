@@ -1,0 +1,56 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "License Required" %} - Shop Platform</title>
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/license_required.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            <i class="fas fa-lock"></i>
+        </div>
+
+        <h1>{{ title }}</h1>
+
+        <p class="message">
+            {{ message }}
+        </p>
+
+        <div class="license-box">
+            <h2>
+                <i class="fas fa-info-circle"></i>
+                {% trans "Current License Status" %}
+                {% if license_info.trial_mode %}
+                <span class="trial-badge">TRIAL MODE</span>
+                {% endif %}
+            </h2>
+            <div class="license-info">
+                <div><strong>{% trans "Type:" %}</strong> {{ license_info.license_type|title }}</div>
+                <div><strong>{% trans "Platform:" %}</strong> v{{ license_info.platform_version }}</div>
+                <div><strong>{% trans "Status:" %}</strong>
+                    {% if license_info.is_valid %}
+                        <span class="license-status-valid">✓ {% trans "Valid" %}</span>
+                    {% else %}
+                        <span class="license-status-trial">⚠ {% trans "Trial Mode" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="https://updates.spwig.com/purchase" class="btn btn-primary">
+                <i class="fas fa-shopping-cart"></i>
+                {% trans "Purchase License" %}
+            </a>
+            <a href="{{ activate_url }}" class="btn btn-secondary">
+                <i class="fas fa-key"></i>
+                {% trans "Activate License" %}
+            </a>
+        </div>
+    </div>
+</body>
+</html>

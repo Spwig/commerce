@@ -1,0 +1,15 @@
+{% if logo_url %}
+<a href="{{ link_url }}" class="site-logo-link {{ css_class }}">
+    <img
+        src="{{ logo_url }}"
+        alt="{{ alt_text }}"
+        class="site-logo site-logo--{{ size }}{% if is_svg %} site-logo--svg{% endif %}"
+        loading="lazy"
+    >
+</a>
+{% elif site_settings %}
+{# Fallback to text-based logo when no image is set #}
+<a href="{{ link_url }}" class="site-logo-link site-logo-text {{ css_class }}">
+    {{ site_settings.site_name }}
+</a>
+{% endif %}

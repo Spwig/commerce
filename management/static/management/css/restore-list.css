@@ -1,0 +1,253 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+/* Restore List Styles */
+
+.restore-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.restore-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.restore-header h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--body-fg);
+}
+
+.restore-header h1 i {
+    color: var(--primary);
+}
+
+.backup-list {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.backup-list-header {
+    padding: 1rem 1.5rem;
+    background: var(--darkened-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.backup-list-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.backup-list-header h3 i {
+    color: var(--primary);
+}
+
+.backup-count {
+    font-size: 0.85rem;
+    color: var(--quiet-fg);
+    background: var(--body-bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+}
+
+.backup-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: background 0.2s;
+}
+
+.backup-item:last-child {
+    border-bottom: none;
+}
+
+.backup-item:hover {
+    background: var(--darkened-bg);
+}
+
+.backup-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.backup-icon.full {
+    background: rgba(102, 126, 234, 0.15);
+    color: var(--primary);
+}
+
+.backup-icon.db {
+    background: rgba(40, 167, 69, 0.15);
+    color: var(--success-fg);
+}
+
+.backup-icon.media {
+    background: rgba(255, 152, 0, 0.15);
+    color: var(--warning-color);
+}
+
+.backup-icon.config {
+    background: rgba(108, 117, 125, 0.15);
+    color: var(--quiet-fg);
+}
+
+.backup-icon i {
+    font-size: 1.25rem;
+}
+
+.backup-info {
+    flex: 1;
+}
+
+.backup-info .name {
+    font-weight: 600;
+    color: var(--body-fg);
+    margin-bottom: 0.25rem;
+}
+
+.backup-info .meta {
+    font-size: 0.85rem;
+    color: var(--quiet-fg);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+}
+
+.backup-info .meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.backup-info .meta i {
+    font-size: 0.75rem;
+}
+
+.backup-status {
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.backup-status.completed {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--success-fg);
+}
+
+.backup-status.failed {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--error-fg);
+}
+
+.backup-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.backup-actions .button {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.no-backups {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.no-backups i {
+    font-size: 3rem;
+    color: var(--quiet-fg);
+    margin-bottom: 1rem;
+}
+
+.no-backups h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--body-fg);
+}
+
+.no-backups p {
+    color: var(--quiet-fg);
+    margin: 0 0 1.5rem 0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.action-buttons .button {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+}
+
+/* Upload section */
+.upload-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.upload-section h3 {
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-section h3 i {
+    color: var(--primary);
+}
+
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: var(--primary);
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.upload-area.dragover {
+    border-color: var(--primary);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.upload-area i {
+    font-size: 2rem;
+    color: var(--quiet-fg);
+    margin-bottom: 0.75rem;
+}
+
+.upload-area p {
+    margin: 0;
+    color: var(--quiet-fg);
+}
+
+.upload-area .browse-link {
+    color: var(--primary);
+    font-weight: 500;
+}

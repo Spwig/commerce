@@ -1,0 +1,70 @@
+{
+  "element_type": "spacer",
+  "name": "Spacer",
+  "description": "Adds vertical spacing between elements",
+  "version": "1.1.0",
+  "category": "layout",
+  "icon": "fas fa-arrows-v",
+  "author": "Spwig",
+  "element_builder_primitive": true,
+  "tags": ["spacer", "spacing", "layout", "whitespace"],
+  "supports_translation": false,
+  "template_file": "template.html",
+  "inherit_base": true,
+  "disable_base_properties": [
+    "typography_group",
+    "colors_group",
+    "border_group",
+    "spacing_group"
+  ],
+  "css_files": ["page_builder/css/elements/spacer.css"],
+  "tabs": {
+    "basic": {
+      "label": "Basic",
+      "icon": "fas fa-sliders-h",
+      "order": 1,
+      "properties": {
+        "height_group": {
+          "type": "property_group",
+          "label": "Height",
+          "properties": {
+            "height": {
+              "type": "number",
+              "label": "Height",
+              "default": 40,
+              "min": 0,
+              "max": 500,
+              "required": true
+            },
+            "height_unit": {
+              "type": "select",
+              "label": "Unit",
+              "options": [
+                {"value": "px", "label": "Pixels (px)"},
+                {"value": "rem", "label": "REM"},
+                {"value": "em", "label": "EM"},
+                {"value": "vh", "label": "Viewport Height (vh)"}
+              ],
+              "default": "px"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "height": {"type": "number", "label": "Height", "default": 40, "min": 0, "max": 500, "required": true},
+    "height_unit": {"type": "select", "label": "Height Unit", "options": [{"value": "px", "label": "Pixels (px)"}, {"value": "rem", "label": "REM"}, {"value": "em", "label": "EM"}, {"value": "vh", "label": "Viewport Height (vh)"}], "default": "px"}
+  },
+  "translations": {
+    "en": {"name": "Spacer", "description": "Adds vertical spacing between elements"},
+    "es": {"name": "Espaciador", "description": "Agrega espacio vertical entre elementos"},
+    "fr": {"name": "Espaceur", "description": "Ajoute un espacement vertical entre les elements"},
+    "de": {"name": "Abstandshalter", "description": "Fugt vertikalen Abstand zwischen Elementen hinzu"},
+    "ar": {"name": "fsl", "description": "ydyf msafh emwdyh byn alensr"}
+  },
+  "defaults": {
+    "height": 40,
+    "height_unit": "px"
+  }
+}

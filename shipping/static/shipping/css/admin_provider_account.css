@@ -1,0 +1,185 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Provider Account Admin Styling
+ * Credential field masking and display
+ * Uses theme variables for dark/light theme support
+ * All classes prefixed with 'shipping-' per design rules
+ */
+
+/* Credentials fieldset styling */
+.shipping-credentials-fieldset {
+    margin-top: 20px;
+}
+
+.shipping-credentials-fieldset .shipping-description {
+    padding: 10px;
+    background-color: var(--blue-subtle, rgba(136, 204, 255, 0.08));
+    border-left: 3px solid var(--link-fg);
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+.shipping-credentials-fieldset h2 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    padding: 10px;
+    background-color: var(--darkened-bg);
+    border-left: 3px solid var(--link-fg);
+}
+
+/* Credential field wrapper */
+.shipping-field-credential {
+    position: relative;
+}
+
+.shipping-credentials-fieldset .form-row {
+    padding: 10px;
+    border-bottom: 1px solid var(--hairline-color);
+}
+
+.shipping-credentials-fieldset .form-row:last-child {
+    border-bottom: none;
+}
+
+.shipping-credentials-fieldset label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--body-fg);
+}
+
+.shipping-credentials-fieldset input,
+.shipping-credentials-fieldset select {
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Password field with toggle */
+.shipping-password-field-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.shipping-password-field-wrapper input {
+    padding-right: 45px;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    color: var(--body-fg);
+}
+
+.shipping-password-field-wrapper.shipping-masked input {
+    -webkit-text-security: disc;
+    text-security: disc;
+}
+
+/* Eye toggle button */
+.shipping-password-toggle {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--link-fg);
+    font-size: 16px;
+    padding: 5px;
+    transition: color 0.2s;
+    z-index: 10;
+}
+
+.shipping-password-toggle:hover {
+    color: var(--primary);
+}
+
+.shipping-password-toggle:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    color: var(--primary);
+    border-radius: 3px;
+}
+
+/* Credential help text styling */
+.shipping-credentials-fieldset .help {
+    display: block;
+    margin: 5px 0 0 0 !important; /* Override Django's .help class margin */
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+.shipping-credential-help {
+    display: block;
+    margin: 5px 0 0 0 !important; /* Override Django's .help class margin */
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+/* API Credentials section styling */
+.form-row.field-credential_ input[type="text"],
+.form-row.field-credential_ select {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+}
+
+/* Disabled select fields (read-only reference) */
+.shipping-credentials-fieldset select[disabled] {
+    background-color: var(--darkened-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--border-color);
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Highlight secret fields */
+.shipping-field-credential [data-secret="true"] {
+    background-color: var(--message-warning-bg, rgba(255, 152, 0, 0.1));
+    border-left: 3px solid var(--warning-color);
+}
+
+/* Connection health section */
+.shipping-connection-readonly {
+    padding: 10px;
+    background-color: var(--darkened-bg);
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.shipping-connection-status-connected {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.shipping-connection-status-error {
+    color: var(--error-color);
+    font-weight: bold;
+}
+
+.shipping-connection-status-unknown {
+    color: var(--body-quiet-color);
+    font-weight: bold;
+}
+
+/* Warning message for new provider creation */
+.shipping-provider-warning {
+    background-color: var(--message-warning-bg, rgba(255, 152, 0, 0.1));
+    border-color: var(--warning-color);
+    color: var(--body-fg);
+    padding: 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+
+.shipping-provider-warning strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.shipping-provider-warning a {
+    color: var(--link-fg);
+    font-weight: bold;
+    text-decoration: underline;
+}

@@ -1,0 +1,618 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{{ original.get_full_name|default:original.email }}{% else %}{% trans "Add Staff Member" %}{% endif %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/css/staff_management.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if original %}
+    <!-- Staff Detail Header -->
+    <div class="staff-detail-header">
+        <div class="staff-detail-avatar" style="background: {% if staff_user.is_superuser %}#7c3aed{% elif roles %}{% with role=roles.0 %}{% if role.color == 'primary' %}#7c3aed{% elif role.color == 'success' %}#22c55e{% elif role.color == 'warning' %}#f59e0b{% elif role.color == 'error' %}#ef4444{% elif role.color == 'info' %}#06b6d4{% else %}#6b7280{% endif %}{% endwith %}{% else %}#6b7280{% endif %};">
+            {{ staff_user.first_name|default:"?" |truncatechars:1 }}{{ staff_user.last_name|default:"" |truncatechars:1 }}
+        </div>
+        <div class="staff-detail-info">
+            <h1 class="staff-detail-name">
+                {% if staff_user.get_full_name %}{{ staff_user.get_full_name }}{% else %}{{ staff_user.email }}{% endif %}
+            </h1>
+            <p class="staff-detail-email">{{ staff_user.email }}</p>
+            <div class="staff-detail-badges">
+                {% if staff_user.is_superuser %}
+                    <span class="list-row-card-badge" style="background: #7c3aed; color: #fff; border-color: #7c3aed;">
+                        <i class="fas fa-crown"></i> {% trans "Owner" %}
+                    </span>
+                {% endif %}
+                {% for role in roles %}
+                    <span class="list-row-card-badge {% if role.color == 'primary' %}primary{% elif role.color == 'success' %}success{% elif role.color == 'warning' %}warning{% elif role.color == 'error' %}error{% endif %}">
+                        <i class="{{ role.icon }}"></i> {{ role.display_name }}
+                    </span>
+                {% endfor %}
+                {% if has_admin %}
+                    <span class="list-row-card-badge" style="background: var(--primary-bg); color: var(--primary); border-color: var(--primary);">
+                        <i class="fas fa-desktop"></i> {% trans "Admin" %}
+                    </span>
+                {% endif %}
+                {% if has_pos %}
+                    <span class="list-row-card-badge" style="background: var(--warning-bg); color: var(--warning-fg); border-color: var(--warning-fg);">
+                        <i class="fas fa-cash-register"></i> {% trans "POS" %}
+                    </span>
+                {% endif %}
+                {% if staff_user.is_active %}
+                    <span class="staff-status-badge active"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+                {% else %}
+                    <span class="staff-status-badge inactive"><i class="fas fa-times-circle"></i> {% trans "Inactive" %}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="staff-detail-meta">
+            <span><i class="fas fa-calendar-plus"></i> {% trans "Joined" %}: {{ staff_user.date_joined|date:"M d, Y" }}</span>
+            <span><i class="fas fa-clock"></i> {% trans "Last login" %}: {% if staff_user.last_login %}{{ staff_user.last_login|timesince }} {% trans "ago" %}{% else %}{% trans "Never" %}{% endif %}</span>
+            {% if mfa_enabled %}
+                <span style="color: var(--success-fg);"><i class="fas fa-shield-alt"></i> {% trans "2FA Enabled" %}</span>
+            {% else %}
+                <span style="color: var(--error-fg);"><i class="fas fa-exclamation-triangle"></i> {% trans "2FA Not Enabled" %}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="admin-tabs" style="margin-bottom: 0;">
+        <button class="admin-tab-btn active" data-tab="general" type="button">
+            <i class="fas fa-user"></i>
+            <span class="label">{% trans "General" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="roles" type="button">
+            <i class="fas fa-user-shield"></i>
+            <span class="label">{% trans "Roles & Access" %}</span>
+        </button>
+        {% if has_pos %}
+        <button class="admin-tab-btn" data-tab="pos" type="button">
+            <i class="fas fa-cash-register"></i>
+            <span class="label">{% trans "POS Settings" %}</span>
+        </button>
+        {% endif %}
+        <button class="admin-tab-btn" data-tab="security" type="button">
+            <i class="fas fa-lock"></i>
+            <span class="label">{% trans "Security" %}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="activity" type="button">
+            <i class="fas fa-history"></i>
+            <span class="label">{% trans "Activity" %}</span>
+        </button>
+    </div>
+
+    <!-- Tab 1: General -->
+    <div class="admin-tab-content active" data-tab="general">
+        <form id="staffmember_form" method="post" novalidate>
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {% if adminform.form.non_field_errors %}
+        <div class="staff-form-errors">
+            <i class="fas fa-exclamation-circle"></i>
+            <div>
+                {% for error in adminform.form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-id-card"></i> {% trans "Account Details" %}
+                </h3>
+            </div>
+            <div class="staff-general-grid">
+                <div class="staff-form-field staff-form-full{% if adminform.form.email.errors %} has-error{% endif %}">
+                    <label for="id_email">{% trans "Email Address" %}</label>
+                    {{ adminform.form.email }}
+                    {% if adminform.form.email.errors %}<span class="staff-field-error">{{ adminform.form.email.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="staff-form-field{% if adminform.form.first_name.errors %} has-error{% endif %}">
+                    <label for="id_first_name">{% trans "First Name" %}</label>
+                    {{ adminform.form.first_name }}
+                    {% if adminform.form.first_name.errors %}<span class="staff-field-error">{{ adminform.form.first_name.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="staff-form-field{% if adminform.form.last_name.errors %} has-error{% endif %}">
+                    <label for="id_last_name">{% trans "Last Name" %}</label>
+                    {{ adminform.form.last_name }}
+                    {% if adminform.form.last_name.errors %}<span class="staff-field-error">{{ adminform.form.last_name.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="staff-form-field staff-form-full{% if adminform.form.username.errors %} has-error{% endif %}">
+                    <label for="id_username">{% trans "Username" %}</label>
+                    {{ adminform.form.username }}
+                    {% if adminform.form.username.errors %}<span class="staff-field-error">{{ adminform.form.username.errors.0 }}</span>{% endif %}
+                    <span class="staff-field-help">{% trans "Used for login. Letters, digits and @/./+/-/_ only." %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status & Access" %}
+                </h3>
+            </div>
+            <div class="staff-status-toggles">
+                <div class="staff-form-toggle">
+                    <label class="staff-toggle-switch">
+                        {{ adminform.form.is_active }}
+                        <span class="staff-toggle-track"></span>
+                    </label>
+                    <div class="staff-toggle-info">
+                        <span class="staff-toggle-label">{% trans "Active" %}</span>
+                        <span class="staff-field-help">{% trans "Inactive staff members cannot log in." %}</span>
+                    </div>
+                </div>
+                <div class="staff-form-toggle">
+                    <label class="staff-toggle-switch">
+                        {{ adminform.form.is_staff }}
+                        <span class="staff-toggle-track"></span>
+                    </label>
+                    <div class="staff-toggle-info">
+                        <span class="staff-toggle-label">{% trans "Staff Status" %}</span>
+                        <span class="staff-field-help">{% trans "Required to access the admin panel." %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-key"></i> {% trans "Password" %}
+                </h3>
+            </div>
+            <div class="staff-password-info">
+                <p>{% trans "Passwords are managed separately for security." %}</p>
+                <a href="{% url 'admin:auth_user_password_change' staff_user.pk %}" class="staff-btn staff-btn-secondary staff-btn-sm">
+                    <i class="fas fa-key"></i> {% trans "Change Password" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="staff-form-actions">
+            <button type="submit" name="_save" class="staff-btn staff-btn-primary">
+                <i class="fas fa-save"></i> {% trans "Save" %}
+            </button>
+            <button type="submit" name="_continue" class="staff-btn staff-btn-secondary">
+                <i class="fas fa-check"></i> {% trans "Save and continue editing" %}
+            </button>
+        </div>
+        </form>
+    </div>
+
+    <!-- Tab 2: Roles & Access -->
+    <div class="admin-tab-content" data-tab="roles">
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-users-cog"></i> {% trans "Role Assignments" %}
+                </h3>
+                <a href="{% url 'admin:staff_roles_staffrole_changelist' %}" class="staff-btn staff-btn-secondary staff-btn-sm">
+                    <i class="fas fa-cog"></i> {% trans "Manage Roles" %}
+                </a>
+            </div>
+            {% if staff_user.is_superuser %}
+            <div style="padding: 12px 16px; background: var(--primary-bg); border-radius: 6px; margin-bottom: 16px; font-size: 13px; color: var(--primary);">
+                <i class="fas fa-info-circle"></i>
+                {% trans "This user is a superuser (Owner) and has full access to all features regardless of role assignments." %}
+            </div>
+            {% endif %}
+            <div class="role-toggle-grid">
+                {% for item in role_cards %}
+                <div class="role-toggle-card{% if item.assigned %} assigned{% endif %}">
+                    <div class="role-toggle-card-header">
+                        <div class="role-toggle-icon" style="background: {% if item.role.color == 'primary' %}var(--primary-bg){% elif item.role.color == 'success' %}var(--success-bg){% elif item.role.color == 'warning' %}var(--warning-bg){% elif item.role.color == 'error' %}var(--error-bg){% elif item.role.color == 'info' %}var(--primary-bg){% else %}var(--body-bg){% endif %}; color: {% if item.role.color == 'primary' %}var(--primary){% elif item.role.color == 'success' %}var(--success-fg){% elif item.role.color == 'warning' %}var(--warning-fg){% elif item.role.color == 'error' %}var(--error-fg){% elif item.role.color == 'info' %}var(--primary){% else %}var(--body-quiet-color){% endif %};">
+                            <i class="{{ item.role.icon }}"></i>
+                        </div>
+                        <span class="role-toggle-name">{{ item.role.display_name }}</span>
+                        <label class="role-toggle-switch">
+                            <input type="checkbox"
+                                {% if item.assigned %}checked{% endif %}
+                                data-url="{% url 'admin:staffmember_toggle_role' staff_user.pk %}"
+                                data-role-id="{{ item.role.pk }}"
+                                data-role-name="{{ item.role.display_name }}">
+                            <span class="role-toggle-slider"></span>
+                        </label>
+                    </div>
+                    {% if item.role.description %}
+                    <div class="role-toggle-desc">{{ item.role.description }}</div>
+                    {% endif %}
+                    <div class="role-toggle-meta">
+                        {% if item.role.can_access_admin %}
+                        <span class="role-toggle-meta-badge"><i class="fas fa-desktop"></i> {% trans "Admin" %}</span>
+                        {% endif %}
+                        {% if item.role.can_access_pos %}
+                        <span class="role-toggle-meta-badge"><i class="fas fa-cash-register"></i> {% trans "POS" %}</span>
+                        {% endif %}
+                        <span class="role-toggle-meta-badge"><i class="fas fa-users"></i> {{ item.role.member_count }} {% trans "members" %}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Effective Permissions -->
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-key"></i> {% trans "Effective Permissions" %}
+                </h3>
+            </div>
+            <p style="font-size: 12px; color: var(--body-quiet-color); margin-bottom: 12px;">
+                {% trans "Combined permissions across all assigned roles. Superusers have full access to everything." %}
+            </p>
+            <div class="permissions-grid" id="effective-permissions">
+                {% for perm in permissions_summary %}
+                <div class="permission-item">
+                    <div class="permission-item-icon">
+                        <i class="{{ perm.icon }}"></i>
+                    </div>
+                    <span class="permission-item-label">{{ perm.label }}</span>
+                    <span class="permission-badge {{ perm.level }}">{{ perm.level }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 3: POS Settings -->
+    {% if has_pos %}
+    <div class="admin-tab-content" data-tab="pos">
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-percentage"></i> {% trans "Discount Limits" %}
+                </h3>
+            </div>
+            <form id="pos-settings-form" data-url="{% url 'admin:staffmember_save_pos_settings' staff_user.pk %}">
+                <div class="pos-settings-grid">
+                    <div class="pos-setting-card">
+                        <h4>{% trans "Discount Permissions" %}</h4>
+                        <div class="pos-setting-row">
+                            <label for="pos-max-pct">{% trans "Max Discount %" %}</label>
+                            <input type="number" id="pos-max-pct" name="max_discount_percentage"
+                                value="{{ pos_staff.max_discount_percentage|default:'10.00' }}"
+                                min="0" max="100" step="0.01"
+                                style="width: 80px; text-align: right;">
+                        </div>
+                        <div class="pos-setting-row">
+                            <label for="pos-max-amt">{% trans "Max Discount Amount" %}</label>
+                            <input type="number" id="pos-max-amt" name="max_discount_amount"
+                                value="{{ pos_staff.max_discount_amount|default:'' }}"
+                                min="0" step="0.01" placeholder="{% trans 'No limit' %}"
+                                style="width: 100px; text-align: right;">
+                        </div>
+                        <div class="pos-setting-row">
+                            <label for="pos-item-disc">{% trans "Item Discounts" %}</label>
+                            <input type="checkbox" id="pos-item-disc" name="can_apply_item_discounts"
+                                {% if pos_staff.can_apply_item_discounts %}checked{% endif %}>
+                        </div>
+                        <div class="pos-setting-row">
+                            <label for="pos-cart-disc">{% trans "Cart Discounts" %}</label>
+                            <input type="checkbox" id="pos-cart-disc" name="can_apply_cart_discounts"
+                                {% if pos_staff.can_apply_cart_discounts %}checked{% endif %}>
+                        </div>
+                        <div class="pos-setting-row">
+                            <label for="pos-reason">{% trans "Requires Reason" %}</label>
+                            <input type="checkbox" id="pos-reason" name="requires_reason"
+                                {% if pos_staff.requires_reason %}checked{% endif %}>
+                        </div>
+                    </div>
+                    <div class="pos-setting-card">
+                        <h4>{% trans "Manager & PIN" %}</h4>
+                        <div class="pos-setting-row">
+                            <label for="pos-is-mgr">{% trans "Is Manager" %}</label>
+                            <input type="checkbox" id="pos-is-mgr" name="is_manager"
+                                {% if pos_staff.is_manager %}checked{% endif %}>
+                        </div>
+                        <div class="pos-setting-row">
+                            <label for="pos-mgr-pin">{% trans "Manager PIN" %}</label>
+                            <input type="password" id="pos-mgr-pin" name="manager_pin"
+                                value="{{ pos_staff.manager_pin|default:'' }}"
+                                maxlength="6" placeholder="{% trans '4-6 digits' %}"
+                                style="width: 100px;">
+                        </div>
+                        <div class="pos-setting-row">
+                            <label for="pos-cashier-pin">{% trans "Cashier PIN" %}</label>
+                            <input type="password" id="pos-cashier-pin" name="cashier_pin"
+                                value="{{ pos_staff.cashier_pin|default:'' }}"
+                                maxlength="6" placeholder="{% trans '4-6 digits' %}"
+                                style="width: 100px;">
+                        </div>
+                        <div class="pos-setting-row">
+                            <label>{% trans "Unlock Card" %}</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                {% if pos_staff.card_identifier %}
+                                    <span style="color: var(--success-fg);">{% trans "Registered" %}</span>
+                                    <button type="button" class="staff-btn staff-btn-danger staff-btn-sm"
+                                            id="pos-remove-card">
+                                        {% trans "Remove" %}
+                                    </button>
+                                {% else %}
+                                    <span style="color: var(--body-quiet-color);">{% trans "Not registered" %}</span>
+                                    <span style="font-size: 11px; color: var(--body-quiet-color);">
+                                        {% trans "Register at POS terminal" %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="pos-setting-row">
+                            <label>{% trans "Biometric Unlock" %}</label>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                {% if webauthn_credential_count %}
+                                    <span style="color: var(--success-fg);">
+                                        {{ webauthn_credential_count }} {% trans "device(s) registered" %}
+                                    </span>
+                                    <button type="button" class="staff-btn staff-btn-danger staff-btn-sm"
+                                            id="pos-remove-biometric">
+                                        {% trans "Remove All" %}
+                                    </button>
+                                {% else %}
+                                    <span style="color: var(--body-quiet-color);">{% trans "Not registered" %}</span>
+                                    <span style="font-size: 11px; color: var(--body-quiet-color);">
+                                        {% trans "Register at POS terminal" %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <button type="button" id="pos-settings-save" class="staff-btn staff-btn-primary">
+                        <i class="fas fa-save"></i> {% trans "Save POS Settings" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Assigned Terminals -->
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-desktop"></i> {% trans "Assigned Terminals" %}
+                </h3>
+            </div>
+            <table class="staff-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Terminal" %}</th>
+                        <th>{% trans "Warehouse" %}</th>
+                        <th>{% trans "Status" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for terminal in pos_terminals %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'admin:pos_app_posterminal_change' terminal.pk %}">
+                                {{ terminal.name }}
+                            </a>
+                        </td>
+                        <td>{{ terminal.warehouse.name|default:"—" }}</td>
+                        <td>
+                            {% if terminal.is_active %}
+                                <span style="color: var(--success-fg);">{% trans "Active" %}</span>
+                            {% else %}
+                                <span style="color: var(--error-fg);">{% trans "Inactive" %}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="empty-row">
+                        <td colspan="3">{% trans "No terminals assigned" %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recent Shifts -->
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-business-time"></i> {% trans "Recent Shifts" %}
+                </h3>
+                <span style="font-size: 12px; color: var(--body-quiet-color);">
+                    {% trans "30-day stats" %}: {{ pos_shifts_30d }} {% trans "shifts" %} &middot; {{ pos_orders_30d }} {% trans "orders" %}
+                </span>
+            </div>
+            <table class="staff-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Terminal" %}</th>
+                        <th>{% trans "Started" %}</th>
+                        <th>{% trans "Ended" %}</th>
+                        <th>{% trans "Sales" %}</th>
+                        <th>{% trans "Transactions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for shift in pos_recent_shifts %}
+                    <tr>
+                        <td>{{ shift.terminal.name }}</td>
+                        <td>{{ shift.started_at|date:"M d, H:i" }}</td>
+                        <td>{% if shift.ended_at %}{{ shift.ended_at|date:"M d, H:i" }}{% else %}<span style="color: var(--success-fg);">{% trans "Open" %}</span>{% endif %}</td>
+                        <td>{{ shift.total_sales|default:"—" }}</td>
+                        <td>{{ shift.total_transactions|default:"0" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr class="empty-row">
+                        <td colspan="5">{% trans "No recent shifts" %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tab 4: Security -->
+    <div class="admin-tab-content" data-tab="security">
+        <!-- 2FA Status -->
+        <div class="security-section">
+            <h3><i class="fas fa-shield-alt"></i> {% trans "Two-Factor Authentication" %}</h3>
+            {% if mfa_enabled %}
+            <div style="padding: 12px 16px; background: var(--success-bg); border-radius: 6px; font-size: 13px; color: var(--success-fg);">
+                <i class="fas fa-check-circle"></i> {% trans "2FA is enabled for this user." %}
+            </div>
+            {% else %}
+            <div style="padding: 12px 16px; background: var(--error-bg); border-radius: 6px; font-size: 13px; color: var(--error-fg);">
+                <i class="fas fa-exclamation-triangle"></i> {% trans "2FA is not enabled. The user can enable it from their profile." %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Trusted Devices -->
+        <div class="security-section">
+            <h3><i class="fas fa-laptop"></i> {% trans "Trusted Devices" %} ({{ trusted_devices|length }})</h3>
+            {% for device in trusted_devices %}
+            <div class="session-item">
+                <div class="session-item-icon">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <div class="session-item-info">
+                    <div class="session-item-name">{{ device.device_name|default:"Unknown Device" }}</div>
+                    <div class="session-item-meta">
+                        {% trans "Trusted since" %}: {{ device.created_at|date:"M d, Y H:i" }}
+                        {% if device.expires_at %} &middot; {% trans "Expires" %}: {{ device.expires_at|date:"M d, Y" }}{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: var(--body-quiet-color); font-size: 13px; text-align: center; padding: 20px;">
+                {% trans "No trusted devices." %}
+            </p>
+            {% endfor %}
+        </div>
+
+        <!-- Mobile Sessions -->
+        <div class="security-section">
+            <h3><i class="fas fa-mobile-alt"></i> {% trans "Mobile Sessions" %} ({{ mobile_sessions|length }})</h3>
+            {% for session in mobile_sessions %}
+            <div class="session-item">
+                <div class="session-item-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div class="session-item-info">
+                    <div class="session-item-name">{{ session.device_name|default:"Unknown Device" }}</div>
+                    <div class="session-item-meta">
+                        {% trans "Last used" %}: {{ session.last_used_at|timesince }} {% trans "ago" %}
+                    </div>
+                </div>
+                <button class="staff-btn staff-btn-danger staff-btn-sm revoke-session-btn"
+                        data-url="{% url 'admin:staffmember_revoke_session' staff_user.pk session.pk %}"
+                        type="button">
+                    <i class="fas fa-times"></i> {% trans "Revoke" %}
+                </button>
+            </div>
+            {% empty %}
+            <p style="color: var(--body-quiet-color); font-size: 13px; text-align: center; padding: 20px;">
+                {% trans "No active mobile sessions." %}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Tab 5: Activity -->
+    <div class="admin-tab-content" data-tab="activity">
+        <!-- Blog Posts -->
+        {% if blog_post_count > 0 %}
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-blog"></i> {% trans "Blog Posts" %} ({{ blog_post_count }})
+                </h3>
+            </div>
+            {% for post in recent_blog_posts %}
+            <div class="blog-post-item">
+                <div style="flex: 1;">
+                    <a href="{% url 'admin:blog_blogpost_change' post.pk %}" style="font-weight: 600; color: var(--body-fg); text-decoration: none;">
+                        {{ post.title }}
+                    </a>
+                    <div style="font-size: 11px; color: var(--body-quiet-color); margin-top: 2px;">
+                        {{ post.created_at|date:"M d, Y" }}
+                    </div>
+                </div>
+                <span class="blog-post-status {% if post.status == 'published' %}published{% else %}draft{% endif %}">
+                    {{ post.status }}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Account Timeline -->
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-history"></i> {% trans "Account Timeline" %}
+                </h3>
+            </div>
+            <div class="activity-timeline">
+                {% if staff_user.last_login %}
+                <div class="activity-item">
+                    <div class="activity-item-title">{% trans "Last Login" %}</div>
+                    <div class="activity-item-meta">{{ staff_user.last_login|date:"M d, Y H:i" }} ({{ staff_user.last_login|timesince }} {% trans "ago" %})</div>
+                </div>
+                {% endif %}
+                <div class="activity-item">
+                    <div class="activity-item-title">{% trans "Account Created" %}</div>
+                    <div class="activity-item-meta">{{ staff_user.date_joined|date:"M d, Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="staff-section">
+            <div class="staff-section-header">
+                <h3 class="staff-section-title">
+                    <i class="fas fa-chart-bar"></i> {% trans "Summary" %}
+                </h3>
+            </div>
+            <div class="staff-stats-bar">
+                {% if blog_post_count > 0 %}
+                <div class="staff-stat-card">
+                    <div class="staff-stat-icon total"><i class="fas fa-blog"></i></div>
+                    <div class="staff-stat-info">
+                        <span class="staff-stat-value">{{ blog_post_count }}</span>
+                        <span class="staff-stat-label">{% trans "Blog Posts" %}</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% if has_pos %}
+                <div class="staff-stat-card">
+                    <div class="staff-stat-icon pos"><i class="fas fa-receipt"></i></div>
+                    <div class="staff-stat-info">
+                        <span class="staff-stat-value">{{ pos_orders_30d }}</span>
+                        <span class="staff-stat-label">{% trans "POS Orders (30d)" %}</span>
+                    </div>
+                </div>
+                <div class="staff-stat-card">
+                    <div class="staff-stat-icon active"><i class="fas fa-business-time"></i></div>
+                    <div class="staff-stat-info">
+                        <span class="staff-stat-value">{{ pos_shifts_30d }}</span>
+                        <span class="staff-stat-label">{% trans "Shifts (30d)" %}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    {# New staff member — just show the standard form #}
+    {{ block.super }}
+    {% endif %}
+</div>
+<script src="{% static 'accounts/js/staff_management.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% load element_tags %}
+{# Container preview with layout picker or content #}
+
+{% with layout_initialized=element.content.layout_initialized %}
+{% with children=element.cached_children %}
+{% with has_children=children|length %}
+
+{% if not layout_initialized and not has_children %}
+    {# Show layout picker for uninitialized empty containers #}
+    {% include "element_builder/partials/layout_picker.html" %}
+{% else %}
+    {# Render container with children and drop zone #}
+    <div class="eb-container {% if not has_children %}eb-container-empty{% endif %}"
+         data-container-id="{{ element.id }}"
+         style="display: {{ element.content.layout|default:'flex' }};
+                flex-direction: {{ element.content.direction|default:'column' }};
+                gap: {{ element.content.gap|default:'16px' }};
+                flex-wrap: {{ element.content.wrap|default:'nowrap' }};">
+
+        {% for child in children %}
+            <div class="eb-child-wrapper"
+                 data-child-id="{{ child.id }}"
+                 style="flex: {{ child.content.flex|default:'1 1 auto' }};">
+                {% include "element_builder/element_preview_wrapper.html" with element=child %}
+            </div>
+        {% empty %}
+            {# Empty drop zone #}
+            <div class="eb-drop-zone" data-container-id="{{ element.id }}">
+                <i class="fas fa-plus-circle"></i>
+                <span>Drop elements here</span>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endwith %}
+{% endwith %}
+{% endwith %}

@@ -1,0 +1,545 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/css/staff_profile.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'accounts/js/staff_profile.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="staff-profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+        </div>
+        <div class="profile-info">
+            <h1>
+                <span id="name-display">{{ user.get_full_name|default:user.username }}</span>
+                <button type="button" class="edit-inline-btn" id="edit-name-btn" title="{% trans 'Edit name' %}">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+            </h1>
+            <div class="inline-edit-form" id="name-edit-form" data-url="{% url 'admin:accounts_update_name' %}">
+                <input type="text" id="edit-first-name" value="{{ user.first_name }}" placeholder="{% trans 'First name' %}">
+                <input type="text" id="edit-last-name" value="{{ user.last_name }}" placeholder="{% trans 'Last name' %}">
+                <button type="button" class="save-btn" id="name-save-btn" title="{% trans 'Save' %}"><i class="fas fa-check"></i></button>
+                <button type="button" class="cancel-btn" id="name-cancel-btn" title="{% trans 'Cancel' %}"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="email">{{ user.email }}</div>
+            <div class="profile-meta">
+                <span><i class="fas fa-calendar-alt"></i> {% trans "Joined" %} {{ user.date_joined|date:"M d, Y" }}</span>
+                {% if user.last_login %}
+                <span><i class="fas fa-clock"></i> {% trans "Last login" %} {{ user.last_login|timesince }} {% trans "ago" %}</span>
+                {% endif %}
+            </div>
+            <div class="profile-roles">
+                {% if user.is_superuser %}
+                <span class="role-badge owner-badge"><i class="fas fa-crown"></i> {% trans "Owner" %}</span>
+                {% endif %}
+                {% for role in roles %}
+                <span class="role-badge color-{{ role.color }}"><i class="{{ role.icon }}"></i> {{ role.display_name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="admin-tabs" style="margin-top: -1px; border-radius: 0 0 12px 12px; margin-bottom: 24px;">
+        <button type="button" class="admin-tab-btn active" data-tab="overview">
+            <i class="fas fa-th-large"></i>
+            <span class="label">{% trans "Overview" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="security">
+            <i class="fas fa-shield-alt"></i>
+            <span class="label">{% trans "Security" %}</span>
+        </button>
+        {% if has_pos %}
+        <button type="button" class="admin-tab-btn" data-tab="pos">
+            <i class="fas fa-cash-register"></i>
+            <span class="label">{% trans "POS" %}</span>
+        </button>
+        {% endif %}
+        <button type="button" class="admin-tab-btn" data-tab="activity">
+            <i class="fas fa-history"></i>
+            <span class="label">{% trans "Activity" %}</span>
+        </button>
+    </div>
+
+    <!-- ===== TAB: Overview ===== -->
+    <div class="admin-tab-content active" data-tab="overview">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-value">{% if mfa_enabled %}{% trans "On" %}{% else %}{% trans "Off" %}{% endif %}</div>
+                <div class="stat-label">{% trans "2FA Status" %}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <div class="stat-value">{{ trusted_device_count }}</div>
+                <div class="stat-label">{% trans "Trusted Devices" %}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div class="stat-value">{{ mobile_device_count }}{% if max_devices_per_user %}<small>/{{ max_devices_per_user }}</small>{% endif %}</div>
+                <div class="stat-label">{% trans "Mobile Devices" %}</div>
+            </div>
+            {% if has_pos %}
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div class="stat-value">{{ pos_orders_30d }}</div>
+                <div class="stat-label">{% trans "POS Orders (30d)" %}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-value">{{ pos_shifts_30d }}</div>
+                <div class="stat-label">{% trans "Shifts (30d)" %}</div>
+            </div>
+            {% endif %}
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-pen-fancy"></i>
+                </div>
+                <div class="stat-value">{{ blog_post_count }}</div>
+                <div class="stat-label">{% trans "Blog Posts" %}</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-bolt"></i> {% trans "Quick Actions" %}</h2>
+            </div>
+            <div class="security-section-content">
+                <div class="mfa-actions">
+                    <a href="{% url 'admin:password_change' %}" class="mfa-action-card">
+                        <div class="action-icon"><i class="fas fa-key"></i></div>
+                        <div class="action-content">
+                            <div class="action-title">{% trans "Change Password" %}</div>
+                            <div class="action-subtitle">{% trans "Update your login password" %}</div>
+                        </div>
+                    </a>
+                    {% if not mfa_enabled %}
+                    <a href="/accounts/2fa/totp/activate/" class="mfa-action-card">
+                        <div class="action-icon" style="background: rgba(40, 167, 69, 0.12); color: #28a745;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">{% trans "Enable 2FA" %}</div>
+                            <div class="action-subtitle">{% trans "Protect your account" %}</div>
+                        </div>
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'admin:auth_user_change' user.pk %}" class="mfa-action-card">
+                        <div class="action-icon"><i class="fas fa-user-edit"></i></div>
+                        <div class="action-content">
+                            <div class="action-title">{% trans "Edit Full Profile" %}</div>
+                            <div class="action-subtitle">{% trans "All account fields" %}</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions Summary -->
+        {% if permissions_summary %}
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-user-lock"></i> {% trans "Permissions" %}</h2>
+            </div>
+            <div class="security-section-content">
+                <div class="permissions-grid">
+                    {% for perm in permissions_summary %}
+                    <div class="permission-item">
+                        <span class="perm-label"><i class="{{ perm.icon }}"></i> {{ perm.label }}</span>
+                        <span class="permission-badge {{ perm.level }}">{{ perm.level }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ===== TAB: Security ===== -->
+    <div class="admin-tab-content" data-tab="security">
+        <!-- 2FA Section -->
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-shield-alt"></i> {% trans "Two-Factor Authentication" %}</h2>
+            </div>
+            <div class="security-section-content">
+                {% if mfa_enabled %}
+                <div class="mfa-status-banner enabled">
+                    <div class="status-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="status-content">
+                        <div class="status-title">{% trans "Two-Factor Authentication is Active" %}</div>
+                        <div class="status-subtitle">
+                            {% if totp_authenticator %}
+                            {% trans "Added on" %} {{ totp_authenticator.created_at|date:"M d, Y" }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="mfa-actions">
+                    <a href="/accounts/2fa/totp/deactivate/" class="mfa-action-card">
+                        <div class="action-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="action-content">
+                            <div class="action-title">{% trans "Authenticator App" %}</div>
+                            <div class="action-subtitle">{% trans "Reconfigure or deactivate" %}</div>
+                        </div>
+                    </a>
+                    <a href="/accounts/2fa/recovery-codes/" class="mfa-action-card">
+                        <div class="action-icon"><i class="fas fa-key"></i></div>
+                        <div class="action-content">
+                            <div class="action-title">{% trans "Recovery Codes" %}</div>
+                            <div class="action-subtitle">{{ recovery_codes_remaining }} {% trans "codes remaining" %}</div>
+                        </div>
+                    </a>
+                </div>
+                {% else %}
+                <div class="mfa-status-banner disabled">
+                    <div class="status-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="status-content">
+                        <div class="status-title">{% trans "Two-Factor Authentication is Not Enabled" %}</div>
+                        <div class="status-subtitle">{% trans "Protect your account with an additional layer of security" %}</div>
+                    </div>
+                    <a href="/accounts/2fa/totp/activate/" class="btn-primary">
+                        <i class="fas fa-shield-alt"></i> {% trans "Enable 2FA" %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Trusted Devices -->
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-laptop"></i> {% trans "Trusted Devices" %}</h2>
+            </div>
+            <div class="security-section-content">
+                {% if trusted_devices %}
+                <ul class="trusted-device-list">
+                    {% for device in trusted_devices %}
+                    <li class="trusted-device-item">
+                        <div class="device-icon">
+                            {% if 'iPhone' in device.device_name or 'iPad' in device.device_name %}
+                            <i class="fas fa-mobile-alt"></i>
+                            {% elif 'Android' in device.device_name %}
+                            <i class="fab fa-android"></i>
+                            {% elif 'Windows' in device.device_name %}
+                            <i class="fab fa-windows"></i>
+                            {% elif 'macOS' in device.device_name %}
+                            <i class="fab fa-apple"></i>
+                            {% elif 'Linux' in device.device_name %}
+                            <i class="fab fa-linux"></i>
+                            {% else %}
+                            <i class="fas fa-desktop"></i>
+                            {% endif %}
+                        </div>
+                        <div class="device-info">
+                            <div class="device-name">{{ device.device_name }}</div>
+                            <div class="device-meta">
+                                {% if device.last_used_at %}
+                                {% trans "Last used" %}: {{ device.last_used_at|timesince }} {% trans "ago" %}
+                                {% else %}
+                                {% trans "Created" %}: {{ device.created_at|timesince }} {% trans "ago" %}
+                                {% endif %}
+                                &bull;
+                                {% trans "Trusted until" %}: {{ device.expires_at|date:"M d, Y" }}
+                            </div>
+                        </div>
+                        <div class="device-actions">
+                            <form method="post" action="{% url 'admin:accounts_revoke_trusted_device' device.pk %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="revoke-btn" data-confirm="{% trans 'Are you sure you want to revoke this device?' %}">
+                                    <i class="fas fa-times"></i> {% trans "Revoke" %}
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div style="margin-top: 16px; text-align: right;">
+                    <form method="post" action="{% url 'admin:accounts_revoke_all_trusted_devices' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-danger btn-sm" data-confirm="{% trans 'Are you sure you want to revoke ALL trusted devices?' %}">
+                            <i class="fas fa-trash"></i> {% trans "Revoke All" %}
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="no-devices">
+                    <i class="fas fa-laptop"></i>
+                    <p>{% trans "No trusted devices yet." %}</p>
+                    <p style="font-size: 12px;">{% trans "When you check 'Remember this device' during 2FA login, your device will appear here." %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Registered Mobile Devices -->
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-mobile-alt"></i> {% trans "Registered Mobile Devices" %}</h2>
+                {% if max_devices_per_user %}
+                <span class="device-limit-badge">
+                    {{ mobile_device_count }} / {{ max_devices_per_user }} {% trans "devices" %}
+                </span>
+                {% endif %}
+            </div>
+            <div class="security-section-content">
+                {% if mobile_devices %}
+                <ul class="session-list">
+                    {% for device in mobile_devices %}
+                    <li class="session-item">
+                        <div class="session-icon">
+                            {% if device.platform == 'ios' %}
+                            <i class="fab fa-apple"></i>
+                            {% elif device.platform == 'android' %}
+                            <i class="fab fa-android"></i>
+                            {% else %}
+                            <i class="fas fa-mobile-alt"></i>
+                            {% endif %}
+                        </div>
+                        <div class="session-info">
+                            <div class="session-name">{{ device.device_name }}</div>
+                            <div class="session-meta">
+                                {% if device.last_active %}
+                                {% trans "Last active" %}: {{ device.last_active|timesince }} {% trans "ago" %}
+                                {% endif %}
+                                {% if device.last_ip %}
+                                &bull; {{ device.last_ip }}
+                                {% endif %}
+                                {% if device.has_push %}
+                                &bull; <span class="push-active"><i class="fas fa-bell"></i> {% trans "Push notifications" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="device-actions">
+                            {% if device.token_pk %}
+                            <button type="button" class="revoke-btn revoke-session-btn"
+                                    data-url="{% url 'admin:accounts_revoke_mobile_session' device.token_pk %}">
+                                <i class="fas fa-trash-alt"></i> {% trans "Remove" %}
+                            </button>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="no-devices">
+                    <i class="fas fa-mobile-alt"></i>
+                    <p>{% trans "No mobile devices registered." %}</p>
+                    <p style="font-size: 12px;">{% trans "Devices will appear here when you sign in to the Spwig mobile app." %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TAB: POS ===== -->
+    {% if has_pos %}
+    <div class="admin-tab-content" data-tab="pos">
+        <!-- POS Staff Info -->
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-id-badge"></i> {% trans "Staff Info" %}</h2>
+            </div>
+            <div class="security-section-content">
+                <div class="pos-info-grid">
+                    <div class="pos-info-card">
+                        <h4>{% trans "Role" %}</h4>
+                        <div class="pos-info-value">
+                            {% if pos_staff and pos_staff.is_manager %}
+                            <span class="badge" style="background: rgba(40, 167, 69, 0.15); color: #28a745;">{% trans "Manager" %}</span>
+                            {% elif pos_staff %}
+                            <span class="badge" style="background: rgba(65, 118, 144, 0.15); color: var(--primary);">{% trans "Cashier" %}</span>
+                            {% else %}
+                            <span style="color: var(--body-quiet-color);">{% trans "Not configured" %}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if pos_staff %}
+                    <div class="pos-info-card">
+                        <h4>{% trans "Max Discount %" %}</h4>
+                        <div class="pos-info-value">{{ pos_staff.max_discount_percentage }}%</div>
+                    </div>
+                    {% if pos_staff.max_discount_amount %}
+                    <div class="pos-info-card">
+                        <h4>{% trans "Max Discount Amount" %}</h4>
+                        <div class="pos-info-value">{{ pos_staff.max_discount_amount }}</div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+                <!-- Cashier PIN -->
+                <div class="pos-info-card" style="margin-bottom: 0;">
+                    <h4>{% trans "Cashier PIN" %}</h4>
+                    <div class="pin-display">
+                        <span id="pin-display">
+                            {% if pos_staff and pos_staff.cashier_pin %}
+                            <span class="pin-dots">
+                                {% for c in pos_staff.cashier_pin %}<span class="pin-dot"></span>{% endfor %}
+                            </span>
+                            {% else %}
+                            <span class="pin-not-set">{% trans "Not set" %}</span>
+                            {% endif %}
+                        </span>
+                        <button type="button" class="edit-inline-btn" id="edit-pin-btn" title="{% trans 'Set PIN' %}">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                    <div class="pin-edit-form" id="pin-edit-form" data-url="{% url 'admin:accounts_update_pin' %}">
+                        <input type="password" id="edit-pin-input" maxlength="6" placeholder="4-6 {% trans 'digits' %}" inputmode="numeric" pattern="\d{4,6}" autocomplete="off">
+                        <button type="button" class="save-btn" id="pin-save-btn" title="{% trans 'Save' %}"><i class="fas fa-check"></i></button>
+                        <button type="button" class="cancel-btn" id="pin-cancel-btn" title="{% trans 'Cancel' %}"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assigned Terminals -->
+        {% if pos_terminals %}
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-tv"></i> {% trans "Assigned Terminals" %}</h2>
+            </div>
+            <div class="security-section-content">
+                <ul class="terminal-list">
+                    {% for terminal in pos_terminals %}
+                    <li class="terminal-item">
+                        <div class="terminal-icon"><i class="fas fa-cash-register"></i></div>
+                        <div>
+                            <div class="terminal-name">{{ terminal.name }}</div>
+                            <div class="terminal-meta">
+                                {% if terminal.warehouse %}{{ terminal.warehouse.name }}{% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Recent Shifts -->
+        {% if pos_recent_shifts %}
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-clock"></i> {% trans "Recent Shifts" %}</h2>
+            </div>
+            <div class="security-section-content">
+                <table class="shift-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Terminal" %}</th>
+                            <th>{% trans "Start" %}</th>
+                            <th>{% trans "End" %}</th>
+                            <th>{% trans "Sales" %}</th>
+                            <th>{% trans "Txns" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for shift in pos_recent_shifts %}
+                        <tr>
+                            <td>{{ shift.terminal.name }}</td>
+                            <td>{{ shift.started_at|date:"M d, H:i" }}</td>
+                            <td>{% if shift.ended_at %}{{ shift.ended_at|date:"M d, H:i" }}{% else %}<span style="color: #28a745; font-weight: 600;">{% trans "Active" %}</span>{% endif %}</td>
+                            <td>{{ shift.total_sales }}</td>
+                            <td>{{ shift.total_transactions }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ===== TAB: Activity ===== -->
+    <div class="admin-tab-content" data-tab="activity">
+        <!-- Recent Blog Posts -->
+        {% if recent_blog_posts %}
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-pen-fancy"></i> {% trans "Recent Blog Posts" %}</h2>
+            </div>
+            <div class="security-section-content">
+                <ul class="activity-list">
+                    {% for post in recent_blog_posts %}
+                    <li class="activity-item">
+                        <div class="activity-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">
+                                <a href="{% url 'admin:blog_blogpost_change' post.pk %}">{{ post.title }}</a>
+                                <span class="activity-badge {% if post.status == 'published' %}published{% else %}draft{% endif %}">{{ post.get_status_display }}</span>
+                            </div>
+                            <div class="activity-meta">{{ post.created_at|date:"M d, Y" }}</div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Account Timeline -->
+        <div class="security-section">
+            <div class="security-section-header">
+                <h2><i class="fas fa-stream"></i> {% trans "Account Timeline" %}</h2>
+            </div>
+            <div class="security-section-content">
+                <ul class="activity-list">
+                    {% if user.last_login %}
+                    <li class="activity-item">
+                        <div class="activity-icon"><i class="fas fa-sign-in-alt"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">{% trans "Last login" %}</div>
+                            <div class="activity-meta">{{ user.last_login|date:"M d, Y H:i" }} ({{ user.last_login|timesince }} {% trans "ago" %})</div>
+                        </div>
+                    </li>
+                    {% endif %}
+                    <li class="activity-item">
+                        <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">{% trans "Account created" %}</div>
+                            <div class="activity-meta">{{ user.date_joined|date:"M d, Y H:i" }}</div>
+                        </div>
+                    </li>
+                    {% if mfa_enabled and totp_authenticator %}
+                    <li class="activity-item">
+                        <div class="activity-icon" style="background: rgba(40, 167, 69, 0.12); color: #28a745;"><i class="fas fa-shield-alt"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">{% trans "2FA enabled" %}</div>
+                            <div class="activity-meta">{{ totp_authenticator.created_at|date:"M d, Y" }}</div>
+                        </div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Receipt Templates" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-receipt"></i>
+                {% trans "Receipt Templates" %}
+            </h1>
+            <p class="subtitle">{% trans "Customize receipt layouts for each store location" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:pos_app_receipttemplate_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Template" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name...' %}"
+                    value="">
+            </div>
+
+            <!-- Scope -->
+            <div class="filter-field">
+                <label for="filter-scope">
+                    <i class="fas fa-layer-group"></i> {% trans "Scope" %}
+                </label>
+                <select id="filter-scope">
+                    <option value="">{% trans "All Scopes" %}</option>
+                    <option value="default">{% trans "Default Template" %}</option>
+                    <option value="store_group">{% trans "Store Group" %}</option>
+                    <option value="warehouse">{% trans "Specific Store" %}</option>
+                </select>
+            </div>
+
+            <!-- Paper Width -->
+            <div class="filter-field">
+                <label for="filter-paper-width">
+                    <i class="fas fa-ruler-horizontal"></i> {% trans "Paper Width" %}
+                </label>
+                <select id="filter-paper-width">
+                    <option value="">{% trans "All Widths" %}</option>
+                    {% for width_value, width_label in paper_widths %}
+                    <option value="{{ width_value }}">{{ width_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- QR Code -->
+            <div class="filter-field">
+                <label for="filter-qr-enabled">
+                    <i class="fas fa-qrcode"></i> {% trans "QR Code" %}
+                </label>
+                <select id="filter-qr-enabled">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Enabled" %}</option>
+                    <option value="false">{% trans "Disabled" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Templates" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-receipt"></i>
+            <span id="template-count">{{ cl.result_count }}</span> {% trans "template" %}{{ cl.result_count|pluralize:"s" }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="template-results">
+        {% include "admin/pos_app/receipttemplate/partials/template_cards.html" with templates=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {{ cl.result_count }} {% trans "template" %}{{ cl.result_count|pluralize:"s" }}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url 'pos_admin:receipttemplate_filter' %}"
+     data-results-container="template-results"
+     data-results-count="template-count"
+     class="pos-hidden"></div>
+</div>
+{% endblock %}

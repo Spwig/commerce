@@ -1,0 +1,26 @@
+{% load i18n %}
+{% if translation_needs_setup %}
+<div class="setup-progress-banner" id="translation-setup-banner">
+    <div class="setup-progress-ring">
+        <svg viewBox="0 0 48 48">
+            <circle class="ring-bg" cx="24" cy="24" r="20"></circle>
+        </svg>
+        <span class="ring-text"><i class="fas fa-language"></i></span>
+    </div>
+
+    <div class="setup-progress-info">
+        <p class="setup-progress-title">{% trans "Translation Services Available" %}</p>
+        <p class="setup-progress-subtitle">{% trans "Set up local or external translation to translate your store content into multiple languages." %}</p>
+    </div>
+
+    <div class="setup-progress-actions">
+        <a href="{% url 'translations:dashboard' %}" class="setup-progress-btn">
+            <i class="fas fa-arrow-right"></i>
+            {% trans "Configure" %}
+        </a>
+        <button type="button" class="setup-progress-btn btn-subtle" onclick="this.closest('.setup-progress-banner').style.display='none'" title="{% trans 'Dismiss' %}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+{% endif %}

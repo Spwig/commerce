@@ -1,0 +1,226 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Email Template Preview" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<!-- Monaco Editor CDN - CSP allowlist needed for cdnjs.cloudflare.com -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.min.css">
+<link rel="stylesheet" href="{% static 'email_system/admin/css/template_preview.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="preview-container">
+    <div class="preview-header">
+        <h1>
+            <i class="fas fa-eye"></i>
+            {% trans "Email Template Preview" %}: {{ template.get_template_type_display }}
+        </h1>
+
+        <div class="preview-controls">
+            <div class="language-selector-group">
+                <label for="language-select">
+                    <i class="fas fa-language"></i> {% trans "Language" %}:
+                </label>
+                <select id="language-select" data-action="change-language">
+                    {% for lang in languages %}
+                    <option value="{{ lang.code }}" {% if lang.code == language %}selected{% endif %}>
+                        {{ lang.name }}{% if lang.has_translation and not lang.is_base %} ✓{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if language != base_language %}
+                <button type="button" class="btn-edit-translation" data-action="show-translation-editor" data-language="{{ language }}">
+                    <i class="fas fa-edit"></i> {% trans "Edit Translation" %}
+                </button>
+                {% endif %}
+            </div>
+
+            <button type="button" class="btn-primary" data-action="show-test-email-modal">
+                <i class="fas fa-paper-plane"></i> {% trans "Send Test Email" %}
+            </button>
+
+            <button type="button" class="btn-secondary" data-action="reload-page">
+                <i class="fas fa-sync-alt"></i> {% trans "Refresh" %}
+            </button>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>{% trans "Error" %}:</strong> {{ error }}
+    </div>
+    {% else %}
+
+    {% if viewing_translation and not translation_exists %}
+    <!-- Missing Translation Notice -->
+    <div class="translation-notice warning-notice">
+        <div class="notice-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="notice-content">
+            <h3>{% trans "Translation Not Available" %}</h3>
+            <p>
+                {% blocktrans with lang_name=base_language_name %}
+                No translation exists for this template yet. The {{ lang_name }} (base) template will be used until a translation is created.
+                {% endblocktrans %}
+            </p>
+            <button type="button" class="btn-create-translation" data-action="show-translation-editor" data-language="{{ language }}">
+                <i class="fas fa-plus-circle"></i> {% trans "Create Translation" %}
+            </button>
+        </div>
+    </div>
+    {% elif viewing_translation and translation_exists %}
+    <!-- Translation Exists Notice -->
+    <div class="translation-notice info-notice">
+        <div class="notice-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="notice-content">
+            <p>
+                <strong>{% trans "Viewing Translation:" %}</strong>
+                {% for lang in languages %}
+                    {% if lang.code == language %}{{ lang.name }}{% endif %}
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="preview-subject">
+        <div class="preview-subject-label">{% trans "Subject" %}</div>
+        <div class="preview-subject-text">{{ subject }}</div>
+    </div>
+
+    <div class="preview-grid">
+        <div class="preview-panel">
+            <div class="preview-panel-header">
+                <i class="fas fa-desktop"></i>
+                {% trans "HTML Preview" %}
+            </div>
+            <iframe
+                src="{% url 'email_system:template_preview_html' template.id %}?language={{ language }}"
+                class="preview-iframe"
+                title="{% trans 'HTML Preview' %}">
+            </iframe>
+        </div>
+
+        <div class="preview-panel">
+            <div class="preview-panel-header">
+                <i class="fas fa-align-left"></i>
+                {% trans "Plain Text Version" %}
+            </div>
+            <div class="preview-panel-content">
+                <div class="preview-text">{{ plain_text_body }}</div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+<!-- Test Email Modal -->
+<div id="testEmailModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>
+                <i class="fas fa-paper-plane"></i>
+                {% trans "Send Test Email" %}
+            </h2>
+        </div>
+        <div class="modal-body">
+            <label for="test-email-input">{% trans "Recipient Email Address" %}</label>
+            <input
+                type="email"
+                id="test-email-input"
+                placeholder="test@example.com"
+                value="{{ user.email }}">
+            <div id="test-email-success" class="success-message"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" data-action="hide-test-email-modal">
+                {% trans "Cancel" %}
+            </button>
+            <button type="button" class="btn-primary" data-action="send-test-email">
+                <i class="fas fa-paper-plane"></i> {% trans "Send" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Translation Editor Modal -->
+<div id="translationEditorModal" class="modal">
+    <div class="modal-content translation-modal-content">
+        <div class="modal-header">
+            <h2>
+                <i class="fas fa-language"></i>
+                <span id="translation-modal-title">{% trans "Edit Translation" %}</span>
+            </h2>
+            <button type="button" class="modal-close-btn" data-action="hide-translation-editor">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body translation-modal-body">
+            <!-- Subject Editor -->
+            <div class="translation-field">
+                <label for="translation-subject">
+                    <i class="fas fa-envelope"></i>
+                    {% trans "Subject Line" %}
+                </label>
+                <input
+                    type="text"
+                    id="translation-subject"
+                    class="translation-input"
+                    placeholder="{% trans 'Translated subject line' %}">
+            </div>
+
+            <!-- HTML/MJML Editor -->
+            <div class="translation-field">
+                <div class="translation-field-header">
+                    <label>
+                        <i class="fas fa-code"></i>
+                        {% trans "HTML Content" %}
+                    </label>
+                    <button type="button" class="btn-copy-base" data-action="copy-from-base" data-field="html">
+                        <i class="fas fa-copy"></i> {% trans "Copy from Base" %}
+                    </button>
+                </div>
+                <div id="translation-html-editor" class="translation-code-editor"></div>
+            </div>
+
+            <!-- Plain Text Editor -->
+            <div class="translation-field">
+                <div class="translation-field-header">
+                    <label>
+                        <i class="fas fa-align-left"></i>
+                        {% trans "Plain Text Content" %}
+                    </label>
+                    <button type="button" class="btn-copy-base" data-action="copy-from-base" data-field="text">
+                        <i class="fas fa-copy"></i> {% trans "Copy from Base" %}
+                    </button>
+                </div>
+                <div id="translation-text-editor" class="translation-code-editor"></div>
+            </div>
+
+            <div id="translation-save-success" class="success-message"></div>
+            <div id="translation-save-error" class="error-message"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" data-action="hide-translation-editor">
+                {% trans "Cancel" %}
+            </button>
+            <button type="button" class="btn-primary" id="save-translation-btn" data-action="save-translation">
+                <i class="fas fa-save"></i> {% trans "Save Translation" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Monaco Editor CDN - CSP allowlist needed for cdnjs.cloudflare.com -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+<script src="{% static 'email_system/js/template-preview.js' %}" defer></script>
+{% endblock %}

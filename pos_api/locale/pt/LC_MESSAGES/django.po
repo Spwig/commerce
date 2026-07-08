@@ -1,0 +1,1497 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "POS API"
+msgstr "API POS"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "É necessária uma licença POS válida para acessar este endpoint."
+
+msgid "POS access requires a staff account."
+msgstr "O acesso POS requer uma conta de funcionário."
+
+msgid "You are not assigned to this terminal."
+msgstr "Você não está atribuído a este terminal."
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "Você não tem permissão: %(label)s."
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "Seleções de variantes do conjunto: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "Lista de IDs de BundleItem opcionais para excluir"
+
+msgid "Search by email, phone, or name"
+msgstr "Buscar por e-mail, telefone ou nome"
+
+msgid "ID of the product to adjust stock for."
+msgstr "ID do produto para ajustar o estoque."
+
+msgid "ID of the variant (required for variable products)."
+msgstr "ID da variante (obrigatório para produtos variáveis)."
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"Tipo de ajuste: \"receive\" adiciona estoque (ex: nova remessa), \"damage\" "
+"remove estoque (ex: item quebrado), \"recount\" define a contagem absoluta "
+"de on_hand, \"return\" adiciona estoque de volta (ex: devolução do cliente)."
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"Para receive/return: unidades a adicionar. Para damage: unidades a remover. "
+"Para recount: nova contagem absoluta de on_hand."
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "Explicação necessária para este ajuste (rastreamento de auditoria)."
+
+msgid "Optional UUID for offline deduplication."
+msgstr "UUID opcional para deduplicação offline."
+
+msgid "Signed quantity delta."
+msgstr "Delta de quantidade assinado."
+
+msgid "Last four digits of card number (digits only)"
+msgstr "Últimos quatro dígitos do número do cartão (apenas dígitos)"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr ""
+"Valor a ser cobrado. Se não for fornecido, cobrará o saldo restante total."
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr ""
+"ID de pagamento do provedor do terminal (ex. ID do Stripe PaymentIntent)"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr ""
+"ID do leitor específico do provedor (ex. Adyen POIID, Square device_id)"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "ID de transação específico do provedor para verificação de status"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr ""
+"Status inicial -- geralmente \"pendente\" para provedores assíncronos, "
+"\"concluído\" para sincronizado (Adyen)"
+
+msgid "Current payment status"
+msgstr "Status atual do pagamento"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "ID de pagamento do provedor (quando bem-sucedido)"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "Motivo da cancelação (quando cancelado)"
+
+msgid "POS staff login"
+msgstr "Login do funcionário POS"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr ""
+"Autenticar um membro da equipe para acesso ao POS. Retorna tokens de acesso "
+"e atualização. Usa o mesmo sistema de token da API do Admin "
+"(MobileTokenAuthentication)."
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "Login bem-sucedido, retorna tokens e configuração do terminal"
+
+msgid "Invalid credentials"
+msgstr "Credenciais inválidas"
+
+msgid "User is not a staff member"
+msgstr "O usuário não é um membro da equipe"
+
+msgid "Refresh POS access token"
+msgstr "Atualizar token de acesso POS"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "Trocar um token de atualização por um novo token de acesso."
+
+msgid "New access token"
+msgstr "Novo token de acesso"
+
+msgid "Invalid or expired refresh token"
+msgstr "Token de atualização inválido ou expirado"
+
+msgid "POS logout"
+msgstr "Logout do POS"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "Invalidar o token de acesso e o token de atualização atuais."
+
+msgid "Logged out successfully"
+msgstr "Deslogado com sucesso"
+
+msgid "Get current POS cart"
+msgstr "Obter carrinho POS atual"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr ""
+"Retorna o carrinho atual para o caixa autenticado. Cria um novo carrinho se "
+"um não existir. Requer autenticação de staff e licença POS válida."
+
+msgid "Add item to POS cart"
+msgstr "Adicionar item ao carrinho POS"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"Adicione um produto ao carrinho do caixa. Suporta adicionar por ID do "
+"produto ou código de barras. Quando o código de barras é fornecido sem "
+"product_id, o produto é resolvido automaticamente. Requer autenticação de "
+"staff e licença POS válida."
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "Produto inválido, variante ou estoque insuficiente"
+
+msgid "Update cart item quantity"
+msgstr "Atualizar quantidade do item do carrinho"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Atualize a quantidade de um item do carrinho. Defina a quantidade para 0 "
+"para remover o item. Requer autenticação de staff e licença POS válida."
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "Quantidade inválida ou estoque insuficiente"
+
+msgid "Cart item not found"
+msgstr "Item do carrinho não encontrado"
+
+msgid "Remove item from cart"
+msgstr "Remover item do carrinho"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Remover um item específico do carrinho. Requer autenticação de membro da "
+"equipe e licença POS válida."
+
+msgid "Apply voucher to cart"
+msgstr "Aplicar voucher ao carrinho"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr ""
+"Aplicar um cupom/código de desconto ao carrinho. Apenas um cupom pode estar "
+"ativo por vez. Requer autenticação de funcionário e licença POS válida."
+
+msgid "Invalid or expired voucher code"
+msgstr "Código de cupom inválido ou expirado"
+
+msgid "Remove voucher from cart"
+msgstr "Remover cupom do carrinho"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Remover o cupom aplicado do carrinho. Requer autenticação de membro da "
+"equipe e licença POS válida."
+
+msgid "No voucher applied"
+msgstr "Nenhum cupom aplicado"
+
+msgid "Apply gift card to cart"
+msgstr "Aplicar cartão-presente ao carrinho"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Aplicar um código de cartão-presente ao carrinho para cobrir parte ou todo o"
+" total. Requer autenticação de funcionário e licença POS válida."
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "Cartão-presente inválido ou saldo insuficiente"
+
+msgid "Clear all items from cart"
+msgstr "Limpar todos os itens do carrinho"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Remover todos os itens, cupons e cartões-presente do carrinho. Requer "
+"autenticação de funcionário e licença POS válida."
+
+msgid "Apply manual discount to cart item"
+msgstr "Aplicar desconto manual a um item do carrinho"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Aplicar um desconto manual de funcionário a um item específico do carrinho. "
+"Retorna requires_approval=true se o desconto ultrapassar os limites do "
+"funcionário. Requer autenticação de funcionário e licença POS válida."
+
+msgid "Discount applied or requires approval"
+msgstr "Desconto aplicado ou requer aprovação"
+
+msgid "Invalid discount or not authorized"
+msgstr "Desconto inválido ou não autorizado"
+
+msgid "Remove manual discount from cart item"
+msgstr "Remover desconto manual do item do carrinho"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Remover um desconto manual de funcionário de um item específico do carrinho."
+" Requer autenticação de funcionário e licença POS válida."
+
+msgid "Discount removed"
+msgstr "Desconto removido"
+
+msgid "Apply manual discount to cart"
+msgstr "Aplicar desconto manual ao carrinho"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Aplicar um desconto manual de funcionário ao carrinho inteiro. Retorna "
+"requires_approval=true se o desconto ultrapassar os limites do funcionário. "
+"Requer autenticação de funcionário e licença POS válida."
+
+msgid "Remove manual discount from cart"
+msgstr "Remover desconto manual do carrinho"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Remover o desconto manual do funcionário do carrinho. Requer autenticação do"
+" funcionário e licença POS válida."
+
+msgid "Verify manager PIN"
+msgstr "Verificar PIN do gerente"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Verifique se um PIN é válido para um gerente que pode aprovar descontos. "
+"Retorna o nome do gerente se for válido. Requer autenticação de funcionário "
+"e licença POS válida."
+
+msgid "PIN verification result"
+msgstr "Resultado da verificação do PIN"
+
+msgid "Approve discount with manager PIN"
+msgstr "Aprovar desconto com o PIN do gerente"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Aplique um desconto que excede os limites dos funcionários com aprovação do "
+"gerente. Requer um PIN válido do gerente para prosseguir. Requer "
+"autenticação de funcionário e licença POS válida."
+
+msgid "Discount approved and applied"
+msgstr "Desconto aprovado e aplicado"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "PIN inválido ou parâmetros de desconto"
+
+msgid "Park current cart"
+msgstr "Estacionar carrinho atual"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Salve o estado atual do carrinho para restauração posterior. Usado quando um"
+" cliente precisa se afastar e outro cliente precisa ser atendido. Requer "
+"autenticação de funcionário e licença POS válida."
+
+msgid "Cart parked successfully"
+msgstr "Carrinho estacionado com sucesso"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "O carrinho está vazio ou não pode ser estacionado"
+
+msgid "List parked carts"
+msgstr "Listar carrinhos estacionados"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr ""
+"Obter todos os carrinhos estacionados para o terminal atual. Requer "
+"autenticação do funcionário e licença POS válida."
+
+msgid "List of parked carts"
+msgstr "Lista de carrinhos estacionados"
+
+msgid "Restore parked cart"
+msgstr "Restaurar carrinho estacionado"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr ""
+"Restaurar um carrinho temporariamente armazenado, substituindo o conteúdo do"
+" carrinho atual. O carrinho atual será limpo antes da restauração. Requer "
+"autenticação de funcionário e licença POS válida."
+
+msgid "Cart restored successfully"
+msgstr "Carrinho restaurado com sucesso"
+
+msgid "Current cart is not empty"
+msgstr "O carrinho atual não está vazio"
+
+msgid "Parked cart not found"
+msgstr "Carrinho parado não encontrado"
+
+msgid "Delete parked cart"
+msgstr "Excluir carrinho parado"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Excluir permanentemente um carrinho temporariamente armazenado. Isso não "
+"pode ser desfeito. Requer autenticação de funcionário e licença POS válida."
+
+msgid "Parked cart deleted"
+msgstr "Carrinho parado excluído"
+
+msgid "List POS products"
+msgstr "Listar produtos POS"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"Retorna produtos disponíveis para venda no estabelecimento, filtrados por "
+"canal de venda. Inclui níveis de estoque específicos do depósito quando um "
+"terminal é identificado. Produtos com imagens aparecem primeiro, ordenados "
+"pela popularidade por depósito."
+
+msgid "Search by name, SKU, or barcode"
+msgstr "Buscar por nome, SKU ou código de barras"
+
+msgid "Filter by category ID"
+msgstr "Filtrar por ID de categoria"
+
+msgid "Warehouse for stock levels"
+msgstr "Armazém para níveis de estoque"
+
+msgid "Page number (default: 1)"
+msgstr "Número da página (padrão: 1)"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "Itens por página (padrão: 50, máximo: 200)"
+
+msgid "Get product detail"
+msgstr "Obter detalhes do produto"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr ""
+"Retorna detalhes completos do produto, incluindo variantes e estoque do "
+"depósito."
+
+msgid "Barcode lookup"
+msgstr "Pesquisa por código de barras"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr ""
+"Buscar um produto ou variante por código de barras. Busca rápida e indexada "
+"para varredura."
+
+msgid "No product found with this barcode"
+msgstr "Nenhum produto encontrado com este código de barras"
+
+msgid "List categories"
+msgstr "Listar categorias"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "Retorna a árvore de categorias para navegação de produtos POS."
+
+msgid "Process cash payment"
+msgstr "Processar pagamento em dinheiro"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Concluir uma transação POS com pagamento em dinheiro. Valida que o valor "
+"apresentado cobre o total do pedido e calcula o troco. Cria um Pedido com "
+"canal='pos' e um registro POSPayment. Requer uma sessão aberta no terminal. "
+"Requer autenticação de funcionário e licença POS válida."
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "Carrinho vazio ou valor em espécie insuficiente"
+
+msgid "Process card payment"
+msgstr "Processar pagamento com cartão"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Concluir uma transação POS com pagamento por cartão. O processamento do "
+"cartão é assumido como sendo realizado por um terminal de cartão externo. "
+"Este endpoint registra a referência do cartão e os últimos quatro dígitos. "
+"Requer uma sessão aberta no terminal. Requer autenticação de funcionário e "
+"licença POS válida."
+
+msgid "Empty cart"
+msgstr "Esvaziar carrinho"
+
+msgid "Check gift card balance"
+msgstr "Verificar saldo do cartão-presente"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr ""
+"Verificar o saldo de um cartão-presente para checkout POS. Retorna o saldo "
+"atual se válido, ou uma mensagem de erro se inválido. Requer autenticação de"
+" funcionário."
+
+msgid "Gift card balance info"
+msgstr "Informações do saldo do cartão-presente"
+
+msgid "Invalid gift card or missing code"
+msgstr "Cartão-presente inválido ou código ausente"
+
+msgid "Process gift card payment"
+msgstr "Processar pagamento com cartão-presente"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Complete uma transação POS usando um cartão-presente. Valida se o cartão-"
+"presente tem saldo suficiente. Se o saldo do cartão-presente for menor que o"
+" total do pedido, use o endpoint de pagamento dividido em vez disso. Exige "
+"uma sessão aberta no terminal. Exige autenticação de funcionário e licença "
+"POS válida."
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "Carrinho vazio, cartão-presente inválido ou saldo insuficiente"
+
+msgid "Process split tender payment"
+msgstr "Processar pagamento de propina dividida"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Complete uma transação POS usando múltiplos métodos de pagamento (tender "
+"dividido). O total de todos os pagamentos deve cobrir o total do pedido. O "
+"troco é calculado no último pagamento em dinheiro, se o total exceder o "
+"valor do pedido. Requer uma sessão aberta no terminal. Requer autenticação "
+"de funcionário e licença POS válida."
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "Carrinho vazio, pagamentos inválidos ou total insuficiente"
+
+msgid "Process terminal card payment"
+msgstr "Processar pagamento com cartão no terminal"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Complete uma transação POS com pagamento via terminal de cartão integrado. O"
+" frontend deve já ter coletado o pagamento via SDK do terminal e obtido um "
+"provider_payment_id (ex. Stripe PaymentIntent). Este endpoint verifica se o "
+"pagamento foi bem-sucedido antes de criar o pedido. Requer uma sessão aberta"
+" no terminal. Requer autenticação de funcionário e licença POS válida."
+
+msgid "Empty cart or payment verification failed"
+msgstr "Carrinho vazio ou verificação do pagamento falhou"
+
+msgid "Search customers"
+msgstr "Buscar clientes"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Procure por clientes por e-mail, telefone, nome ou sobrenome. Retorna até 20"
+" resultados correspondentes. Necessário no mínimo 2 caracteres. Exige "
+"autenticação de funcionário e licença POS válida."
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "Consulta de pesquisa (email, telefone ou nome). Mínimo 2 caracteres."
+
+msgid "Search query too short"
+msgstr "Consulta de busca muito curta"
+
+msgid "Create walk-in customer"
+msgstr "Criar cliente de passagem"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"Crie um novo cliente para uma venda de cliente que entra. Se um cliente com "
+"o e-mail fornecido já existir, retorna o cliente existente em vez de criar "
+"um duplicado. O e-mail é opcional para clientes que entram totalmente "
+"anônimos. Exige autenticação de funcionário e licença POS válida."
+
+msgid "Existing customer found with this email"
+msgstr "Cliente existente encontrado com este e-mail"
+
+msgid "Get customer details"
+msgstr "Obter detalhes do cliente"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Recuperar detalhes do cliente, incluindo informações de contato e histórico "
+"de pedidos recentes. Requer autenticação de staff e licença POS válida."
+
+msgid "List stock levels for warehouse"
+msgstr "Listar níveis de estoque para o armazém"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Retorna níveis de estoque paginados para o depósito do terminal. Suporta "
+"busca por nome do produto ou SKU e filtragem para itens com baixo estoque ou"
+" sem estoque. Requer autenticação de staff e licença POS válida."
+
+msgid "Search by product name or SKU"
+msgstr "Pesquisar por nome do produto ou SKU"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "Apenas retornar itens com estoque igual ou inferior ao limite baixo"
+
+msgid "Only return items with zero available stock"
+msgstr "Apenas retornar itens com estoque disponível zero"
+
+msgid "Warehouse not determined"
+msgstr "Armazém não determinado"
+
+msgid "Get product stock detail"
+msgstr "Obter detalhes do estoque do produto"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr ""
+"Retorna níveis de estoque para um produto específico no depósito do "
+"terminal, incluindo a quebra por variantes. Requer autenticação de staff e "
+"licença POS válida."
+
+msgid "Check stock across all locations"
+msgstr "Verificar estoque em todas as localizações"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Retorna os níveis de estoque de um produto em todas as localizações de "
+"armazém. Útil para verificar se um item fora de estoque está disponível em "
+"outra localização. O armazém do terminal atual é marcado com "
+"is_current=true. Requer autenticação de staff e licença POS válida."
+
+msgid "Adjust stock levels"
+msgstr "Ajustar níveis de estoque"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"Ajuste o estoque de um produto no depósito do terminal. Suporta quatro tipos"
+" de ajuste: 'receber' (adicionar estoque de um envio), 'danos' (remover "
+"estoque danificado/perdido), 'recontagem' (definir o on_hand absoluto com "
+"base na contagem física), 'devolução' (adicionar estoque de volta de uma "
+"devolução do cliente). Cria um registro de auditoria StockMovement imutável."
+" Requer autenticação de funcionário, licença POS válida e permissão "
+"pos_stock_adjustment."
+
+msgid "Stock adjusted successfully"
+msgstr "Estoque ajustado com sucesso"
+
+msgid "Validation error or warehouse not determined"
+msgstr "Erro de validação ou depósito não determinado"
+
+msgid "Permission denied or POS license required"
+msgstr "Permissão negada ou licença POS necessária"
+
+msgid "Product or stock item not found"
+msgstr "Produto ou item em estoque não encontrado"
+
+msgid "List stock movement history"
+msgstr "Listar histórico de movimento de estoque"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Retorna registros de movimento de estoque paginados para o armazém do "
+"terminal. Útil para auditoria de alterações recentes no estoque (ajustes, "
+"danos, recontagens, devoluções). Suporta filtragem por produto e tipo de "
+"movimento. Requer autenticação de staff e licença POS válida."
+
+msgid "Filter movements by product ID"
+msgstr "Filtrar movimentos por ID do produto"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr ""
+"Tipos de movimento separados por vírgula para incluir (ex: 'damage,recount')"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "Itens por página (padrão: 20, máximo: 100)"
+
+msgid "Get customer loyalty info"
+msgstr "Obter informações de fidelidade do cliente"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"Recupera o status de associação, nível e saldo de pontos de fidelidade de um"
+" cliente. Retorna `is_member: false` se o cliente não tiver associação ativa"
+" de fidelidade. Requer autenticação de staff e licença POS válida."
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"Informações de membro de fidelidade. `is_member` indica se o cliente tem uma"
+" membresia ativa. Quando verdadeiro, inclui `tier_name`, `tier_color` e "
+"`available_points`."
+
+msgid "Preview loyalty points for cart"
+msgstr "Pré-visualizar pontos de fidelidade para o carrinho"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Calcular os pontos de fidelidade que o cliente ganharia para um total de "
+"carrinho dado. Retorna 0 se o cliente não tiver uma membrosia de fidelidade "
+"ativa. Requer autenticação de funcionário e licença POS válida."
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr ""
+"Total do carrinho como uma string decimal (ex.: '49.99'). O padrão é '0'."
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr ""
+"Pré-visualização de pontos. `points_preview` é o número de pontos que o "
+"cliente ganharia para o total do carrinho dado."
+
+msgid "List POS orders"
+msgstr "Listar pedidos POS"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Retorna pedidos com filtragem avançada por intervalo de data, origem, "
+"cliente, caixa e pesquisa. Suporta a visualização de pedidos web para "
+"cenários de devolução. Padrão: apenas pedidos de hoje desse terminal. Modo "
+"de pesquisa: Quando 'search' é fornecido, os filtros de data/origem/caixa "
+"são ignorados para encontrar qualquer pedido por número, nome do cliente, "
+"e-mail ou telefone. Requer autenticação de funcionário e licença POS válida."
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr ""
+"Data de início para filtro de intervalo (formato ISO, padrão: hoje). "
+"Ignorado quando a pesquisa for fornecida."
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr ""
+"Data de fim para filtro de intervalo (formato ISO, padrão: hoje). Ignorado "
+"quando a pesquisa for fornecida."
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr ""
+"Filtro de origem do pedido: this_terminal (padrão), all_pos, all (inclui "
+"web). Ignorado quando uma pesquisa for fornecida."
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr ""
+"Filtrar por ID do usuário do cliente. Ignorado quando a pesquisa for "
+"fornecida."
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr ""
+"Filtrar por ID do funcionário caixa. Ignorado quando a pesquisa for "
+"fornecida."
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr ""
+"Pesquisar em TODOS os pedidos por número do pedido, nome do cliente, e-mail "
+"ou telefone. Ignora filtros de data/origem."
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "Filtrar por status do pedido (aplica-se em ambos os modos)"
+
+msgid "Get order details"
+msgstr "Obter detalhes do pedido"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Retorna detalhes completos do pedido, incluindo itens e detalhes do "
+"pagamento. Suporta pedidos POS e web (para cenários de devolução). Requer "
+"autenticação de funcionário e licença POS válida."
+
+msgid "Get receipt data for printing"
+msgstr "Obter dados do recibo para impressão"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"Retorna dados formatados como recibo para um pedido POS, incluindo "
+"informações da loja, itens, pagamentos e texto do rodapé. Projeto para "
+"impressoras térmicas ESC/POS. Requer autenticação de funcionário e licença "
+"POS válida."
+
+msgid "Process order refund"
+msgstr "Processar reembolso do pedido"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Processa um reembolso total ou parcial para um pedido POS. Para reembolsos "
+"parciais, especifique os itens e as quantidades a serem reembolsadas. Cria "
+"um registro de reembolso e atualiza os totais do pedido e do turno. Requer "
+"um turno aberto no terminal. Requer autenticação de funcionário e licença "
+"POS válida."
+
+msgid "Refund processed successfully"
+msgstr "Reembolso processado com sucesso"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "Solicitação de reembolso inválida ou pedido já reembolsado"
+
+msgid "Void a POS order"
+msgstr "Anular um pedido POS"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Cancela um pedido POS do turno atual. Apenas pedidos colocados durante o "
+"turno atual podem ser cancelados. Isso cria um reembolso total e inverte "
+"todas as alterações de pagamento e estoque. Requer um turno aberto no "
+"terminal. Requer autenticação de funcionário e licença POS válida."
+
+msgid "Order voided successfully"
+msgstr "Pedido anulado com sucesso"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "O pedido não pode ser anulado (não pertence ao turno atual)"
+
+msgid "List POS cashiers"
+msgstr "Listar caixas do POS"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Retorna a lista de membros da equipe que processaram pedidos POS. Usado para"
+" preencher o menu suspenso de filtro do caixa. Requer autenticação de equipe"
+" e licença POS válida."
+
+msgid "List of cashiers"
+msgstr "Lista de caixas"
+
+msgid "Send digital receipt"
+msgstr "Enviar recibo digital"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Envie um recibo digital ao cliente por e-mail, SMS ou WhatsApp. O recibo é "
+"enviado de forma assíncrona por meio de uma tarefa Celery. Requer "
+"autenticação de equipe e licença POS válida."
+
+msgid "Receipt queued for sending"
+msgstr "Recibo em fila para envio"
+
+msgid "Get receipt sending status"
+msgstr "Obter status do envio do recibo"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr ""
+"Verifique quais recibos digitais foram enviados para um pedido. Retorna os "
+"carimbos de hora para entregas por e-mail e SMS/WhatsApp."
+
+msgid "Receipt status"
+msgstr "Status do recibo"
+
+msgid "Get current shift summary"
+msgstr "Obter resumo do turno atual"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Retorna o resumo do turno aberto para o caixa atual no terminal, incluindo "
+"totais, contagem de transações e quebra de método de pagamento. Retorna "
+"turno nulo se nenhum turno estiver aberto. Requer autenticação de "
+"funcionário e licença POS válida."
+
+msgid "Open a new shift"
+msgstr "Abrir um novo turno"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Inicie um novo turno no terminal. Apenas um turno aberto é permitido por "
+"terminal por vez. Registra o valor em dinheiro inicial. Requer autenticação "
+"de funcionário e licença POS válida."
+
+msgid "Invalid opening cash amount"
+msgstr "Valor inicial de dinheiro inválido"
+
+msgid "A shift is already open on this terminal"
+msgstr "Um turno já está aberto neste terminal"
+
+msgid "Close current shift"
+msgstr "Fechar turno atual"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Feche o turno aberto atual. Registra o valor em dinheiro final e calcula a "
+"diferença entre o esperado e o real. Requer autenticação de funcionário e "
+"licença POS válida."
+
+msgid "Record cash movement"
+msgstr "Registrar movimento de dinheiro"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Registre um movimento de entrada ou saída de caixa durante o turno. "
+"Exemplos: adicionar flutuante, remover para depósito, dinheiro de pequeno "
+"valor. Requer um turno aberto no terminal. Requer autenticação do "
+"funcionário e licença POS válida."
+
+msgid "Cash movement recorded"
+msgstr "Movimento de dinheiro registrado"
+
+msgid "Invalid movement data"
+msgstr "Dados de movimento inválidos"
+
+msgid "Get daily sales report"
+msgstr "Obter relatório de vendas diárias"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Retorna um relatório agregado de vendas diárias para o terminal, incluindo "
+"totais, número de transações, valor médio por transação e análise do método "
+"de pagamento. Requer autenticação do funcionário e licença POS válida."
+
+msgid "Report date (ISO format, default: today)"
+msgstr "Data do relatório (formato ISO, padrão: hoje)"
+
+msgid "Get top selling products"
+msgstr "Obter produtos mais vendidos"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr ""
+"Retorna os produtos mais vendidos para o terminal em uma data específica, "
+"classificados pela quantidade vendida. Requer autenticação do funcionário e "
+"licença POS válida."
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "Número de produtos a serem devolvidos (padrão: 10, máximo: 50)"
+
+msgid "Sync products since timestamp"
+msgstr "Sincronizar produtos desde o carimbo de data/hora"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Retorna produtos que foram criados ou atualizados desde o carimbo de tempo "
+"fornecido. Usado para sincronização incremental de produtos com o banco de "
+"dados local do terminal POS. Retorna um sync_token para a próxima "
+"solicitação de sincronização. Requer autenticação de staff e licença POS "
+"válida."
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr ""
+"Carimbo de tempo ISO para obter alterações desde. Omita para sincronização "
+"completa."
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "Itens por página (padrão: 100, máximo: 200)"
+
+msgid "Sync customers since timestamp"
+msgstr "Sincronizar clientes desde o carimbo de data/hora"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Retorna clientes que foram criados ou que fizeram pedidos desde o carimbo de"
+" tempo fornecido. Usado para busca de clientes offline. Requer autenticação "
+"de staff e licença POS válida."
+
+msgid "Customer sync data"
+msgstr "Dados de sincronização de clientes"
+
+msgid "Upload offline transactions"
+msgstr "Carregar transações offline"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Carregamento em lote de transações que foram processadas enquanto o terminal"
+" estava offline. Cada transação cria um Pedido com itens e pagamentos. Usa "
+"local_id para idempotência — uploads duplicados são detectados e ignorados. "
+"Requer autenticação de staff e licença POS válida."
+
+msgid "Upload results with success/failure per transaction"
+msgstr "Carregar resultados com sucesso/falha por transação"
+
+msgid "Get sync status"
+msgstr "Obter status de sincronização"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Retorna o horário atual do servidor e as contagens do banco de dados para "
+"planejamento de sincronização. Requer autenticação de pessoal e licença POS "
+"válida."
+
+msgid "Get sync version info"
+msgstr "Obter informações de versão de sincronização"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr ""
+"Retorna a versão da API e a versão do esquema de dados para verificação de "
+"compatibilidade do cliente. Os clientes devem limpar e resincronizar quando "
+"a versão do esquema aumentar."
+
+msgid "Version information"
+msgstr "Informações de versão"
+
+msgid "Upload offline stock adjustments"
+msgstr "Carregar ajustes de estoque offline"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"Carregamento em lote de ajustes de estoque que foram enfileirados enquanto o"
+" terminal estava offline. Cada ajuste usa uma chave de idempotência para "
+"evitar duplicatas. Requer autenticação de pessoal, licença POS válida e "
+"permissão de ajuste de estoque."
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "Carregar resultados com sucesso/falha por ajuste"
+
+msgid "POS license or permission required"
+msgstr "Licença ou permissão POS necessária"
+
+msgid "Sync orders for offline cache"
+msgstr "Sincronizar pedidos para cache offline"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Retorna pedidos para cache offline no terminal POS. Os pedidos POS têm "
+"prioridade sobre os pedidos da web até o limite de sincronização do "
+"terminal. Suporta sincronização delta via parâmetro 'since'. Requer "
+"autenticação de funcionário e licença POS válida."
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr ""
+"Carimbo de tempo ISO para sincronização delta. Omita para sincronização "
+"completa."
+
+msgid "Register POS terminal"
+msgstr "Registrar terminal POS"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr ""
+"Registre um novo dispositivo como terminal POS usando um código de "
+"emparelhamento. O código de emparelhamento é gerado no painel de "
+"administração ao criar um terminal."
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "Terminal registrado com sucesso, retorna a configuração do terminal"
+
+msgid "Invalid or expired pairing code"
+msgstr "Código de emparelhamento inválido ou expirado"
+
+msgid "Get terminal configuration"
+msgstr "Obter configuração do terminal"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr ""
+"Retorna a configuração atual do terminal, incluindo configurações de "
+"hardware."
+
+msgid "Terminal heartbeat"
+msgstr "Pulso do terminal"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr ""
+"Relata que o terminal está online. Deve ser chamado a cada 60 segundos."
+
+msgid "Heartbeat recorded"
+msgstr "Pulso registrado"
+
+msgid "Get receipt template"
+msgstr "Obter modelo de recibo"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr ""
+"Retorna o modelo de recibo para o depósito do terminal. Caso o depósito não "
+"tenha um modelo específico, recorre ao modelo padrão (sem depósito "
+"atribuído). Retorna valores padrão razoáveis caso nenhum modelo exista."
+
+msgid "Receipt template data"
+msgstr "Dados do modelo de recibo"
+
+msgid "Get promo slides"
+msgstr "Obter slides de promoção"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr ""
+"Retorna slides promocionais para o depósito do terminal. Os slides são "
+"exibidos na tela voltada para o cliente durante períodos de inatividade."
+
+msgid "List of promo slides with image URLs"
+msgstr "Lista de slides promocionais com URLs de imagens"
+
+msgid "Generate display pairing code"
+msgstr "Gerar código de emparelhamento de exibição"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr ""
+"Gerar um código de emparelhamento de 6 dígitos de curta duração para "
+"autenticação da tela do cliente. O código expira após 5 minutos e pode ser "
+"usado apenas uma vez. Gerar um novo código invalida qualquer código "
+"existente e não utilizado para este terminal."
+
+msgid "Pairing code generated"
+msgstr "Código de emparelhamento gerado"
+
+msgid "List managers for unlock override"
+msgstr "Listar gerentes para substituição de desbloqueio"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr ""
+"Retorna a lista de gerentes (ID e nome) para o fluxo de desbloqueio de "
+"substituição de gerente."
+
+msgid "List of managers"
+msgstr "Lista de gerentes"
+
+msgid "Verify unlock PIN"
+msgstr "Verificar PIN de desbloqueio"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr ""
+"Verifique o PIN de um caixa ou gerente para desbloquear o terminal. Após 3 "
+"tentativas falhas, apenas o PIN do gerente será aceito. Todas as tentativas "
+"são registradas para fins de auditoria."
+
+msgid "PIN verified successfully"
+msgstr "PIN verificado com sucesso"
+
+msgid "Invalid PIN"
+msgstr "PIN inválido"
+
+msgid "Log terminal lock event"
+msgstr "Registrar evento de bloqueio do terminal"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr ""
+"Registrar quando um terminal estiver bloqueado (manualmente ou via timeout "
+"de bloqueio automático). Este endpoint é apenas para logs de auditoria e não"
+" altera o estado do terminal."
+
+msgid "Event logged successfully"
+msgstr "Evento registrado com sucesso"
+
+msgid "Invalid event type"
+msgstr "Tipo de evento inválido"
+
+msgid "Verify unlock card"
+msgstr "Verificar cartão de desbloqueio"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr ""
+"Verifique o swiping do cartão de identificação do funcionário para "
+"desbloquear o terminal. Os dados do cartão são hash e comparados com os "
+"hashes de cartões armazenados. Após 3 tentativas falhadas de PIN, apenas "
+"cartões de gerente são aceitos."
+
+msgid "Card verified successfully"
+msgstr "Cartão verificado com sucesso"
+
+msgid "Card not recognized"
+msgstr "Cartão não reconhecido"
+
+msgid "Register staff unlock card"
+msgstr "Registrar cartão de desbloqueio do funcionário"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr ""
+"Registre um swipe de cartão para o desbloqueio rápido do terminal do usuário"
+" atual."
+
+msgid "Card registered successfully"
+msgstr "Cartão registrado com sucesso"
+
+msgid "Card already registered to another user"
+msgstr "Cartão já registrado para outro usuário"
+
+msgid "Remove staff unlock card"
+msgstr "Remover cartão de desbloqueio do funcionário"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "Remova o cartão de desbloqueio registrado do usuário atual."
+
+msgid "Card removed successfully"
+msgstr "Cartão removido com sucesso"
+
+msgid "Set cashier PIN"
+msgstr "Definir PIN do caixa"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"Defina ou atualize o PIN do caixa do usuário atual para bloqueio/desbloqueio"
+" do terminal. O PIN deve ter 4 a 6 dígitos. Ambos o PIN e o pin_confirm "
+"devem corresponder."
+
+msgid "PIN set successfully"
+msgstr "PIN definido com sucesso"
+
+msgid "Get terminal provider config"
+msgstr "Obter configuração do provedor do terminal"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"Retorna a configuração do provedor do terminal para o terminal atual, "
+"incluindo o modo de integração (sdk, cloud ou manual) e detalhes do leitor "
+"conectado. Usado pelo frontend POS no início para determinar se um leitor de"
+" cartão integrado está disponível e qual fluxo de pagamento usar."
+
+msgid "Create connection token"
+msgstr "Criar token de conexão"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"Cria um token de conexão de curta duração para fornecedores de terminais em "
+"modo SDK (ex. Stripe Terminal JS SDK). O frontend chama esse endpoint ao "
+"inicializar o SDK para estabelecer uma conexão direta com o leitor. Apenas "
+"SDK. Fornecedores de nuvem não usam tokens de conexão. Retorna 400 se o "
+"fornecedor não suportar tokens SDK."
+
+msgid "List card readers"
+msgstr "Listar leitores de cartão"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"Lista os leitores de cartão disponíveis do provedor do terminal. Funciona "
+"para provedores em modo SDK e modo cloud. Cada objeto de leitor contém: id, "
+"label, type, serial_number e status."
+
+msgid "Create payment intent for terminal"
+msgstr "Criar intenção de pagamento para o terminal"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"Cria um PaymentIntent para coleta de cartão presente no leitor do terminal. "
+"O frontend usa o client_secret retornado para coletar o pagamento via SDK. "
+"Apenas SDK. Provedores de nuvem devem usar initiate-cloud-payment. Se a "
+"moeda for omitida, o padrão será a moeda configurada no terminal."
+
+msgid "Capture/verify terminal payment"
+msgstr "Capturar/verificar pagamento do terminal"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr ""
+"Verifica se um PaymentIntent foi processado com sucesso no leitor do "
+"terminal e retorna os detalhes do cartão (marca, últimos 4 dígitos) do "
+"provedor. SDK apenas."
+
+msgid "Cancel terminal payment"
+msgstr "Cancelar pagamento do terminal"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"Cancela um PaymentIntent pendente no leitor do terminal (ex: cliente "
+"cancelou). SDK apenas. Provedores de nuvem devem usar cancel-cloud-payment."
+
+msgid "Initiate cloud payment on reader"
+msgstr "Iniciar pagamento em nuvem no leitor"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"Envia uma solicitação de pagamento para um leitor de cartão via API de nuvem"
+" do provedor. Apenas para provedores de terminal em modo de nuvem (Adyen, "
+"Square, SumUp, Zettle). Nuvem apenas. Retorna 400 se o provedor usar o modo "
+"SDK. Se a moeda for omitida, será usada a moeda configurada no terminal."
+
+msgid "Check cloud payment status"
+msgstr "Verificar status do pagamento em nuvem"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"Verifique o status de um pagamento iniciado na nuvem. Retorna o status "
+"atual: pendente, concluído, falhado ou cancelado. Quando o status for "
+"'concluído', a resposta inclui card_brand, last4 e o payment_id do "
+"fornecedor. Quando for 'cancelado', inclui cancel_reason. O frontend deve "
+"verificar a cada 2 segundos até que o status deixe de ser 'pendente'."
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr ""
+"ID de transação específico do provedor retornado por initiate-cloud-payment"
+
+msgid "Cancel cloud payment"
+msgstr "Cancelar pagamento em nuvem"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr ""
+"Cancelar um pagamento iniciado em nuvem pendente no leitor. Apenas nuvem. O "
+"comportamento varia conforme o provedor."
+
+msgid "Begin WebAuthn registration"
+msgstr "Iniciar registro WebAuthn"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr ""
+"Gerar opções de registro para inscrição biométrica. Retorna desafio e opções"
+" de criação de credenciais."
+
+msgid "Registration options"
+msgstr "Opções de registro"
+
+msgid "Complete WebAuthn registration"
+msgstr "Concluir registro WebAuthn"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr ""
+"Verificar atestado e armazenar credencial para desbloqueio biométrico."
+
+msgid "Credential registered"
+msgstr "Credencial registrada"
+
+msgid "Verification failed"
+msgstr "Verificação falhou"
+
+msgid "Begin WebAuthn authentication"
+msgstr "Iniciar autenticação WebAuthn"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"Gerar desafio de autenticação para desbloqueio biométrico. Retorna "
+"allowCredentials para o usuário bloqueado e todos os gerentes. Se "
+"failed_attempts >= 3, apenas as credenciais dos gerentes são incluídas."
+
+msgid "Authentication options"
+msgstr "Opções de autenticação"
+
+msgid "No credentials registered"
+msgstr "Nenhuma credencial registrada"
+
+msgid "Complete WebAuthn authentication"
+msgstr "Concluir autenticação WebAuthn"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "Verificar afirmação biométrica e desbloquear terminal."
+
+msgid "Authentication successful"
+msgstr "Autenticação bem-sucedida"

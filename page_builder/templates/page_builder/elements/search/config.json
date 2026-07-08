@@ -1,0 +1,529 @@
+{
+  "element_type": "search",
+  "name": "Search Bar",
+  "description": "Search form with autocomplete for products, categories, brands, and blog posts",
+  "version": "1.0.0",
+  "category": "navigation",
+  "icon": "fas fa-search",
+  "author": "Page Builder System",
+  "tags": ["search", "autocomplete", "products", "navigation", "form"],
+  "supports_translation": true,
+  "translation_domain": "search_element",
+  "template_file": "template.html",
+  "scripts": [
+    "/static/search/js/search-autocomplete.js",
+    "/static/page_builder/js/elements/search-element.js"
+  ],
+  "inherit_base": true,
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-search",
+      "order": 1,
+      "properties": {
+        "placeholder_group": {
+          "type": "property_group",
+          "label": "Placeholder & Labels",
+          "columns": 1,
+          "properties": {
+            "placeholder": {
+              "type": "string",
+              "label": "Placeholder Text",
+              "default": "Search products, categories...",
+              "translatable": true
+            },
+            "aria_label": {
+              "type": "string",
+              "label": "Accessibility Label",
+              "default": "Search",
+              "translatable": true,
+              "help_text": "Screen reader label for the search input"
+            }
+          }
+        },
+        "button_group": {
+          "type": "property_group",
+          "label": "Search Button",
+          "properties": {
+            "show_button": {
+              "type": "boolean",
+              "label": "Show Button",
+              "default": true
+            },
+            "button_text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "",
+              "translatable": true,
+              "help_text": "Leave empty for icon-only button"
+            },
+            "button_icon": {
+              "type": "select",
+              "label": "Button Icon",
+              "options": [
+                {"value": "fa-search", "label": "Search (magnifying glass)"},
+                {"value": "fa-arrow-right", "label": "Arrow Right"},
+                {"value": "none", "label": "No Icon"}
+              ],
+              "default": "fa-search"
+            }
+          }
+        }
+      }
+    },
+    "behavior": {
+      "label": "Behavior",
+      "icon": "fas fa-cogs",
+      "order": 2,
+      "properties": {
+        "submit_behavior_group": {
+          "type": "property_group",
+          "label": "Submit Behavior",
+          "columns": 1,
+          "properties": {
+            "submit_action": {
+              "type": "select",
+              "label": "On Submit",
+              "options": [
+                {"value": "redirect", "label": "Go to Search Results Page"},
+                {"value": "inline", "label": "Show Results Below (AJAX)"},
+                {"value": "autocomplete_only", "label": "Autocomplete Only (No Submit)"}
+              ],
+              "default": "redirect",
+              "help_text": "What happens when user presses Enter or clicks the search button"
+            },
+            "results_page_url": {
+              "type": "url",
+              "label": "Search Results Page URL",
+              "default": "/search/",
+              "help_text": "URL to redirect to for full search results"
+            },
+            "query_param": {
+              "type": "string",
+              "label": "Query Parameter Name",
+              "default": "q",
+              "help_text": "URL parameter for the search query"
+            }
+          }
+        },
+        "autocomplete_group": {
+          "type": "property_group",
+          "label": "Autocomplete Settings",
+          "properties": {
+            "autocomplete_enabled": {
+              "type": "boolean",
+              "label": "Enable Autocomplete",
+              "default": true,
+              "help_text": "Show suggestions as user types"
+            },
+            "use_global_settings": {
+              "type": "boolean",
+              "label": "Use Global Search Settings",
+              "default": true,
+              "help_text": "Use settings from Admin > Search Settings instead of element-specific settings"
+            }
+          }
+        },
+        "autocomplete_overrides_group": {
+          "type": "property_group",
+          "label": "Autocomplete Overrides",
+          "help_text": "Only applies when 'Use Global Search Settings' is disabled",
+          "properties": {
+            "min_query_length": {
+              "type": "number",
+              "label": "Min Query Length",
+              "default": 2,
+              "min": 1,
+              "max": 10,
+              "help_text": "Minimum characters before autocomplete triggers"
+            },
+            "debounce_ms": {
+              "type": "number",
+              "label": "Debounce (ms)",
+              "default": 300,
+              "min": 100,
+              "max": 1000,
+              "step": 50,
+              "help_text": "Delay before autocomplete request"
+            },
+            "max_results": {
+              "type": "number",
+              "label": "Max Results",
+              "default": 8,
+              "min": 3,
+              "max": 20,
+              "help_text": "Maximum suggestions to show"
+            }
+          }
+        },
+        "content_types_group": {
+          "type": "property_group",
+          "label": "Content Types",
+          "help_text": "Which content types to show in autocomplete",
+          "properties": {
+            "search_products": {
+              "type": "boolean",
+              "label": "Search Products",
+              "default": true
+            },
+            "search_categories": {
+              "type": "boolean",
+              "label": "Search Categories",
+              "default": true
+            },
+            "search_brands": {
+              "type": "boolean",
+              "label": "Search Brands",
+              "default": true
+            },
+            "search_blog_posts": {
+              "type": "boolean",
+              "label": "Search Blog Posts",
+              "default": true
+            }
+          }
+        }
+      }
+    },
+    "input_style": {
+      "label": "Input Style",
+      "icon": "fas fa-palette",
+      "order": 3,
+      "properties": {
+        "input_appearance_group": {
+          "type": "property_group",
+          "label": "Input Appearance",
+          "properties": {
+            "input_size": {
+              "type": "select",
+              "label": "Size",
+              "options": [
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"},
+                {"value": "xl", "label": "Extra Large"}
+              ],
+              "default": "md"
+            },
+            "input_style": {
+              "type": "select",
+              "label": "Style",
+              "options": [
+                {"value": "default", "label": "Default (border)"},
+                {"value": "filled", "label": "Filled Background"},
+                {"value": "minimal", "label": "Minimal (underline only)"},
+                {"value": "pill", "label": "Pill (rounded)"}
+              ],
+              "default": "default"
+            },
+            "full_width": {
+              "type": "boolean",
+              "label": "Full Width",
+              "default": true
+            }
+          }
+        },
+        "input_colors_group": {
+          "type": "property_group",
+          "label": "Input Colors",
+          "properties": {
+            "input_background": {
+              "type": "color_advanced",
+              "label": "Background Color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "input_text_color": {
+              "type": "color_advanced",
+              "label": "Text Color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "input_border_color": {
+              "type": "color_advanced",
+              "label": "Border Color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "input_focus_border_color": {
+              "type": "color_advanced",
+              "label": "Focus Border Color",
+              "utility": "color_picker",
+              "default": ""
+            }
+          }
+        }
+      }
+    },
+    "button_style": {
+      "label": "Button Style",
+      "icon": "fas fa-hand-pointer",
+      "order": 4,
+      "properties": {
+        "button_appearance_group": {
+          "type": "property_group",
+          "label": "Button Appearance",
+          "properties": {
+            "button_style": {
+              "type": "select",
+              "label": "Style",
+              "options": [
+                {"value": "primary", "label": "Primary"},
+                {"value": "secondary", "label": "Secondary"},
+                {"value": "outline", "label": "Outline"},
+                {"value": "ghost", "label": "Ghost (transparent)"}
+              ],
+              "default": "primary"
+            },
+            "button_position": {
+              "type": "select",
+              "label": "Position",
+              "options": [
+                {"value": "inside", "label": "Inside Input"},
+                {"value": "outside", "label": "Outside Input"}
+              ],
+              "default": "inside"
+            }
+          }
+        },
+        "button_colors_group": {
+          "type": "property_group",
+          "label": "Button Colors",
+          "properties": {
+            "button_background": {
+              "type": "color_advanced",
+              "label": "Background Color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "button_text_color": {
+              "type": "color_advanced",
+              "label": "Text/Icon Color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "button_hover_background": {
+              "type": "color_advanced",
+              "label": "Hover Background",
+              "utility": "color_picker",
+              "default": ""
+            }
+          }
+        }
+      }
+    },
+    "dropdown_style": {
+      "label": "Dropdown Style",
+      "icon": "fas fa-list",
+      "order": 5,
+      "properties": {
+        "dropdown_display_group": {
+          "type": "property_group",
+          "label": "Display Options",
+          "help_text": "What to show in autocomplete results",
+          "properties": {
+            "show_thumbnails": {
+              "type": "boolean",
+              "label": "Show Thumbnails",
+              "default": true
+            },
+            "show_prices": {
+              "type": "boolean",
+              "label": "Show Prices (products)",
+              "default": true
+            },
+            "show_sku": {
+              "type": "boolean",
+              "label": "Show SKU (products)",
+              "default": false
+            },
+            "show_stock_status": {
+              "type": "boolean",
+              "label": "Show Stock Status",
+              "default": false
+            },
+            "show_product_count": {
+              "type": "boolean",
+              "label": "Show Product Count (categories/brands)",
+              "default": true
+            },
+            "show_view_all_link": {
+              "type": "boolean",
+              "label": "Show 'View All' Link",
+              "default": true
+            }
+          }
+        },
+        "dropdown_colors_group": {
+          "type": "property_group",
+          "label": "Dropdown Colors",
+          "properties": {
+            "dropdown_background": {
+              "type": "color_advanced",
+              "label": "Background Color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "dropdown_border_color": {
+              "type": "color_advanced",
+              "label": "Border Color",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "dropdown_item_hover": {
+              "type": "color_advanced",
+              "label": "Item Hover Color",
+              "utility": "color_picker",
+              "default": ""
+            }
+          }
+        }
+      }
+    },
+    "inline_results": {
+      "label": "Inline Results",
+      "icon": "fas fa-th",
+      "order": 6,
+      "properties": {
+        "inline_layout_group": {
+          "type": "property_group",
+          "label": "Layout",
+          "help_text": "Applies when 'On Submit' is set to 'Show Results Below'",
+          "properties": {
+            "inline_layout": {
+              "type": "select",
+              "label": "Layout",
+              "options": [
+                {"value": "grid", "label": "Grid"},
+                {"value": "list", "label": "List"}
+              ],
+              "default": "grid"
+            },
+            "inline_columns": {
+              "type": "select",
+              "label": "Columns (Grid)",
+              "options": [
+                {"value": "2", "label": "2 Columns"},
+                {"value": "3", "label": "3 Columns"},
+                {"value": "4", "label": "4 Columns"}
+              ],
+              "default": "4"
+            },
+            "inline_max_results": {
+              "type": "number",
+              "label": "Max Results",
+              "default": 12,
+              "min": 4,
+              "max": 48,
+              "step": 4,
+              "help_text": "Maximum results to show inline"
+            }
+          }
+        },
+        "inline_features_group": {
+          "type": "property_group",
+          "label": "Features",
+          "properties": {
+            "inline_show_filters": {
+              "type": "boolean",
+              "label": "Show Content Type Filters",
+              "default": true,
+              "help_text": "Show tabs to filter by Products, Categories, etc."
+            },
+            "inline_show_pagination": {
+              "type": "boolean",
+              "label": "Show Load More Button",
+              "default": true
+            },
+            "inline_empty_message": {
+              "type": "string",
+              "label": "No Results Message",
+              "default": "No results found. Try a different search term.",
+              "translatable": true
+            }
+          }
+        },
+        "inline_style_group": {
+          "type": "property_group",
+          "label": "Style",
+          "properties": {
+            "inline_background": {
+              "type": "color_advanced",
+              "label": "Results Background",
+              "utility": "color_picker",
+              "default": ""
+            },
+            "inline_card_style": {
+              "type": "select",
+              "label": "Card Style",
+              "options": [
+                {"value": "default", "label": "Default"},
+                {"value": "minimal", "label": "Minimal"},
+                {"value": "bordered", "label": "Bordered"}
+              ],
+              "default": "default"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "placeholder": {"type": "string", "label": "Placeholder Text", "default": "Search products, categories...", "translatable": true},
+    "aria_label": {"type": "string", "label": "Accessibility Label", "default": "Search", "translatable": true},
+    "show_button": {"type": "boolean", "label": "Show Search Button", "default": true},
+    "button_text": {"type": "string", "label": "Button Text", "default": "", "translatable": true},
+    "button_icon": {"type": "select", "label": "Button Icon", "default": "fa-search"},
+    "submit_action": {"type": "select", "label": "On Submit", "default": "redirect"},
+    "results_page_url": {"type": "url", "label": "Search Results Page URL", "default": "/search/"},
+    "query_param": {"type": "string", "label": "Query Parameter Name", "default": "q"},
+    "autocomplete_enabled": {"type": "boolean", "label": "Enable Autocomplete", "default": true},
+    "use_global_settings": {"type": "boolean", "label": "Use Global Search Settings", "default": true},
+    "min_query_length": {"type": "number", "label": "Min Query Length", "default": 2},
+    "debounce_ms": {"type": "number", "label": "Debounce (ms)", "default": 300},
+    "max_results": {"type": "number", "label": "Max Results", "default": 8},
+    "search_products": {"type": "boolean", "label": "Search Products", "default": true},
+    "search_categories": {"type": "boolean", "label": "Search Categories", "default": true},
+    "search_brands": {"type": "boolean", "label": "Search Brands", "default": true},
+    "search_blog_posts": {"type": "boolean", "label": "Search Blog Posts", "default": true},
+    "input_size": {"type": "select", "label": "Input Size", "default": "md"},
+    "input_style": {"type": "select", "label": "Input Style", "default": "default"},
+    "full_width": {"type": "boolean", "label": "Full Width", "default": true},
+    "input_background": {"type": "color_advanced", "label": "Input Background", "default": ""},
+    "input_text_color": {"type": "color_advanced", "label": "Input Text Color", "default": ""},
+    "input_border_color": {"type": "color_advanced", "label": "Input Border Color", "default": ""},
+    "input_focus_border_color": {"type": "color_advanced", "label": "Input Focus Border", "default": ""},
+    "button_style": {"type": "select", "label": "Button Style", "default": "primary"},
+    "button_position": {"type": "select", "label": "Button Position", "default": "inside"},
+    "button_background": {"type": "color_advanced", "label": "Button Background", "default": ""},
+    "button_text_color": {"type": "color_advanced", "label": "Button Text Color", "default": ""},
+    "button_hover_background": {"type": "color_advanced", "label": "Button Hover Background", "default": ""},
+    "show_thumbnails": {"type": "boolean", "label": "Show Thumbnails", "default": true},
+    "show_prices": {"type": "boolean", "label": "Show Prices", "default": true},
+    "show_sku": {"type": "boolean", "label": "Show SKU", "default": false},
+    "show_stock_status": {"type": "boolean", "label": "Show Stock Status", "default": false},
+    "show_product_count": {"type": "boolean", "label": "Show Product Count", "default": true},
+    "show_view_all_link": {"type": "boolean", "label": "Show View All Link", "default": true},
+    "dropdown_background": {"type": "color_advanced", "label": "Dropdown Background", "default": ""},
+    "dropdown_border_color": {"type": "color_advanced", "label": "Dropdown Border", "default": ""},
+    "dropdown_item_hover": {"type": "color_advanced", "label": "Dropdown Hover", "default": ""},
+    "inline_layout": {"type": "select", "label": "Inline Layout", "default": "grid"},
+    "inline_columns": {"type": "select", "label": "Inline Columns", "default": "4"},
+    "inline_max_results": {"type": "number", "label": "Inline Max Results", "default": 12},
+    "inline_show_filters": {"type": "boolean", "label": "Show Inline Filters", "default": true},
+    "inline_show_pagination": {"type": "boolean", "label": "Show Load More", "default": true},
+    "inline_empty_message": {"type": "string", "label": "No Results Message", "default": "No results found. Try a different search term.", "translatable": true},
+    "inline_background": {"type": "color_advanced", "label": "Inline Background", "default": ""},
+    "inline_card_style": {"type": "select", "label": "Inline Card Style", "default": "default"}
+  },
+  "translations": {
+    "en": {"name": "Search Bar", "description": "Search form with autocomplete for products, categories, brands, and blog posts"},
+    "es": {"name": "Barra de Busqueda", "description": "Formulario de busqueda con autocompletado para productos, categorias, marcas y publicaciones del blog"},
+    "fr": {"name": "Barre de Recherche", "description": "Formulaire de recherche avec autocompletion pour produits, categories, marques et articles de blog"},
+    "de": {"name": "Suchleiste", "description": "Suchformular mit Autovervollstandigung fur Produkte, Kategorien, Marken und Blogbeitrage"},
+    "pt": {"name": "Barra de Pesquisa", "description": "Formulario de pesquisa com autocompletar para produtos, categorias, marcas e posts do blog"},
+    "zh-hans": {"name": "搜索栏", "description": "带有自动完成功能的搜索表单，可搜索产品、类别、品牌和博客文章"},
+    "ja": {"name": "検索バー", "description": "製品、カテゴリ、ブランド、ブログ記事のオートコンプリート機能付き検索フォーム"}
+  }
+}

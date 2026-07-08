@@ -1,0 +1,154 @@
+{% load i18n %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+<div class="list-row-cards">
+    {% for gift_card in gift_cards %}
+    <div class="list-row-card{% if not gift_card.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ gift_card.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-gift"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_giftcard_change' gift_card.pk %}">
+                    {{ gift_card.code }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-envelope"></i> {{ gift_card.recipient_email }}
+                {% if gift_card.recipient_name %}
+                    &mdash; {{ gift_card.recipient_name }}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if not gift_card.is_active %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-ban"></i> {% trans "Inactive" %}
+                    </span>
+                {% elif gift_card.is_expired %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-clock"></i> {% trans "Expired" %}
+                    </span>
+                {% elif gift_card.is_fully_redeemed %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Fully Redeemed" %}
+                    </span>
+                {% elif gift_card.first_used_at %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-chart-pie"></i> {% trans "Partially Used" %}
+                    </span>
+                {% elif gift_card.issued_at %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-envelope"></i> {% trans "Issued" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-file-alt"></i> {% trans "Created" %}
+                    </span>
+                {% endif %}
+
+                {% if gift_card.product %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-box"></i> {{ gift_card.product.name|truncatewords:3 }}
+                    </span>
+                {% endif %}
+
+                {% if gift_card.scheduled_send_at and not gift_card.issued_at %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-calendar-alt"></i> {% trans "Scheduled" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Balance" %}</span>
+                    <span class="list-row-card-stat-value text-primary">
+                        {{ gift_card.current_balance }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Initial" %}</span>
+                    <span class="list-row-card-stat-value">{{ gift_card.initial_value }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Redeemed" %}</span>
+                    <span class="list-row-card-stat-value">{{ gift_card.redemption_percentage|floatformat:0 }}%</span>
+                </div>
+                {% if gift_card.expires_at %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Expires" %}</span>
+                    <span class="list-row-card-stat-value">{{ gift_card.expires_at|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if gift_card.issued_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>{% trans "Issued" %}: {{ gift_card.issued_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if gift_card.first_used_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>{% trans "First used" %}: {{ gift_card.first_used_at|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ gift_card.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if gift_card.sender_name %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{% trans "From" %}: {{ gift_card.sender_name }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_giftcard_change' gift_card.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit gift card' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if gift_card.order_item %}
+            <a href="{% url 'admin:orders_order_change' gift_card.order_item.order.id %}"
+               class="list-row-card-action"
+               title="{% trans 'View order' %}">
+                <i class="fas fa-shopping-bag"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:catalog_giftcardtransaction_changelist' %}?gift_card__id__exact={{ gift_card.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View transactions' %}">
+                <i class="fas fa-history"></i>
+            </a>
+            <a href="{% url 'admin:catalog_giftcard_delete' gift_card.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete gift card' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-gift"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No gift cards found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

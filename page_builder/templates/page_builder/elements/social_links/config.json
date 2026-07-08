@@ -1,0 +1,167 @@
+{
+  "element_type": "social_links",
+  "name": "Social Links",
+  "description": "Display social media profile links with icons",
+  "version": "1.0.2",
+  "category": "social",
+  "icon": "fas fa-share-alt",
+  "author": "Page Builder System",
+  "tags": ["social", "links", "facebook", "twitter", "instagram"],
+  "supports_translation": false,
+  "template_file": "template.html",
+  "inherit_base": true,
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "basic": {
+      "label": "Basic",
+      "icon": "fas fa-sliders-h",
+      "order": 1,
+      "properties": {
+        "platforms_group": {
+          "type": "property_group",
+          "label": "Social Platforms",
+          "columns": 1,
+          "properties": {
+            "platforms": {
+              "type": "array",
+              "label": "Platforms",
+              "full_width": true,
+              "item_type": "object",
+              "item_properties": {
+                "platform": {
+                  "type": "select",
+                  "label": "Platform",
+                  "options": [
+                    {"value": "facebook", "label": "Facebook", "icon": "fas fa-facebook-f"},
+                    {"value": "twitter", "label": "Twitter/X", "icon": "fas fa-x-twitter"},
+                    {"value": "instagram", "label": "Instagram", "icon": "fas fa-instagram"},
+                    {"value": "linkedin", "label": "LinkedIn", "icon": "fas fa-linkedin-in"},
+                    {"value": "youtube", "label": "YouTube", "icon": "fas fa-youtube"},
+                    {"value": "tiktok", "label": "TikTok", "icon": "fas fa-tiktok"},
+                    {"value": "pinterest", "label": "Pinterest", "icon": "fas fa-pinterest-p"},
+                    {"value": "whatsapp", "label": "WhatsApp", "icon": "fas fa-whatsapp"},
+                    {"value": "telegram", "label": "Telegram", "icon": "fas fa-telegram"},
+                    {"value": "snapchat", "label": "Snapchat", "icon": "fas fa-snapchat"},
+                    {"value": "discord", "label": "Discord", "icon": "fas fa-discord"},
+                    {"value": "github", "label": "GitHub", "icon": "fas fa-github"},
+                    {"value": "email", "label": "Email", "icon": "fas fa-envelope"}
+                  ]
+                },
+                "url": {
+                  "type": "url",
+                  "label": "Profile URL"
+                }
+              }
+            }
+          }
+        },
+        "style_group": {
+          "type": "property_group",
+          "label": "Style",
+          "properties": {
+            "style": {
+              "type": "select",
+              "label": "Display Style",
+              "options": [
+                {"value": "icons", "label": "Icons Only"},
+                {"value": "icons_rounded", "label": "Icons Rounded"},
+                {"value": "icons_square", "label": "Icons Square"},
+                {"value": "icons_circle", "label": "Icons Circle"}
+              ],
+              "default": "icons"
+            },
+            "size": {
+              "type": "select",
+              "label": "Size",
+              "options": [
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"},
+                {"value": "xl", "label": "Extra Large"}
+              ],
+              "default": "md"
+            },
+            "gap": {
+              "type": "number",
+              "label": "Gap (px)",
+              "default": 12,
+              "min": 0,
+              "max": 50
+            }
+          }
+        },
+        "color_group": {
+          "type": "property_group",
+          "label": "Colors",
+          "properties": {
+            "color_scheme": {
+              "type": "select",
+              "label": "Color Scheme",
+              "options": [
+                {"value": "brand", "label": "Brand Colors"},
+                {"value": "monochrome", "label": "Monochrome"},
+                {"value": "custom", "label": "Custom Color"}
+              ],
+              "default": "brand"
+            },
+            "custom_color": {
+              "type": "color_advanced",
+              "label": "Custom Color",
+              "utility": "color_picker",
+              "default": "#374151",
+              "show_when": {
+                "property": "color_scheme",
+                "values": ["custom", "monochrome"]
+              }
+            }
+          }
+        },
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout",
+          "columns": 1,
+          "properties": {
+            "alignment": {
+              "type": "select",
+              "label": "Alignment",
+              "options": [
+                {"value": "left", "label": "Left"},
+                {"value": "center", "label": "Center"},
+                {"value": "right", "label": "Right"}
+              ],
+              "default": "center"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "platforms": {"type": "array", "label": "Social Platforms", "item_type": "object", "item_properties": {"platform": {"type": "select", "label": "Platform", "options": [{"value": "facebook", "label": "Facebook", "icon": "fas fa-facebook-f"}, {"value": "twitter", "label": "Twitter/X", "icon": "fas fa-x-twitter"}, {"value": "instagram", "label": "Instagram", "icon": "fas fa-instagram"}, {"value": "linkedin", "label": "LinkedIn", "icon": "fas fa-linkedin-in"}, {"value": "youtube", "label": "YouTube", "icon": "fas fa-youtube"}, {"value": "tiktok", "label": "TikTok", "icon": "fas fa-tiktok"}, {"value": "pinterest", "label": "Pinterest", "icon": "fas fa-pinterest-p"}, {"value": "whatsapp", "label": "WhatsApp", "icon": "fas fa-whatsapp"}, {"value": "telegram", "label": "Telegram", "icon": "fas fa-telegram"}, {"value": "snapchat", "label": "Snapchat", "icon": "fas fa-snapchat"}, {"value": "discord", "label": "Discord", "icon": "fas fa-discord"}, {"value": "github", "label": "GitHub", "icon": "fas fa-github"}, {"value": "email", "label": "Email", "icon": "fas fa-envelope"}]}, "url": {"type": "url", "label": "Profile URL"}}},
+    "style": {"type": "select", "label": "Display Style", "options": [{"value": "icons", "label": "Icons Only"}, {"value": "icons_rounded", "label": "Icons Rounded"}, {"value": "icons_square", "label": "Icons Square"}, {"value": "icons_circle", "label": "Icons Circle"}], "default": "icons"},
+    "size": {"type": "select", "label": "Icon Size", "options": [{"value": "sm", "label": "Small"}, {"value": "md", "label": "Medium"}, {"value": "lg", "label": "Large"}, {"value": "xl", "label": "Extra Large"}], "default": "md"},
+    "color_scheme": {"type": "select", "label": "Color Scheme", "options": [{"value": "brand", "label": "Brand Colors"}, {"value": "monochrome", "label": "Monochrome"}, {"value": "custom", "label": "Custom Color"}], "default": "brand"},
+    "custom_color": {"type": "color_advanced", "label": "Custom Color", "utility": "color_picker", "default": "#374151", "show_when": {"property": "color_scheme", "values": ["custom", "monochrome"]}},
+    "alignment": {"type": "select", "label": "Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "center"},
+    "gap": {"type": "number", "label": "Gap Between Icons (px)", "default": 12, "min": 0, "max": 50}
+  },
+  "translations": {
+    "en": {"name": "Social Links", "description": "Display social media profile links with icons"},
+    "es": {"name": "Enlaces Sociales", "description": "Muestra enlaces de perfiles de redes sociales con iconos"},
+    "fr": {"name": "Liens Sociaux", "description": "Affiche les liens des profils de medias sociaux avec des icones"},
+    "de": {"name": "Soziale Links", "description": "Zeigt Social-Media-Profillinks mit Symbolen an"},
+    "ar": {"name": "rwabet altwasl alajtemay", "description": "erd rwabet mlfat altwasl alajtemay me alayqwnat"}
+  },
+  "defaults": {
+    "platforms": [
+      {"platform": "facebook", "url": ""},
+      {"platform": "twitter", "url": ""},
+      {"platform": "instagram", "url": ""}
+    ],
+    "style": "icons",
+    "size": "md",
+    "color_scheme": "brand",
+    "alignment": "center",
+    "gap": 12
+  }
+}

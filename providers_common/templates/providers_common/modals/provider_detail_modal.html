@@ -1,0 +1,122 @@
+{% load static i18n %}
+<!-- Provider Detail Modal -->
+<div id="provider-detail-modal" class="provider-modal-overlay provider-modal-hidden"
+     data-brand-logos-path="{% static 'providers_common/images/brands/payment_methods/' %}">
+    <div class="provider-modal">
+        <!-- Modal Header -->
+        <div class="provider-modal-header">
+            <div class="provider-modal-title-section">
+                <div class="provider-modal-logo" id="modal-provider-logo">
+                    <!-- Logo will be inserted by JS -->
+                </div>
+                <div class="provider-modal-title-info">
+                    <h2 id="modal-provider-name">Provider Name</h2>
+                    <div class="provider-modal-status" id="modal-provider-status">
+                        <!-- Status badge will be inserted by JS -->
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="provider-modal-close" data-action="close-provider-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="provider-modal-body">
+            <!-- Description -->
+            <div class="provider-modal-section">
+                <p class="provider-modal-description" id="modal-provider-description">
+                    <!-- Description will be inserted by JS -->
+                </p>
+            </div>
+
+            <!-- Payment Methods / Capabilities Grid -->
+            <div class="provider-modal-section provider-modal-hidden" id="modal-payment-methods-section">
+                <h3 class="provider-modal-section-title">
+                    <i class="fas fa-credit-card"></i> {% trans "Accepted Payment Methods" %}
+                </h3>
+                <div class="payment-methods-grid" id="modal-payment-methods-grid">
+                    <!-- Payment method logos will be inserted by JS -->
+                </div>
+            </div>
+
+            <!-- Supported Currencies -->
+            <div class="provider-modal-section provider-modal-hidden" id="modal-currencies-section">
+                <h3 class="provider-modal-section-title">
+                    <i class="fas fa-dollar-sign"></i> {% trans "Supported Currencies" %}
+                </h3>
+                <div class="provider-modal-pills" id="modal-currencies-list">
+                    <!-- Currency pills will be inserted by JS -->
+                </div>
+            </div>
+
+            <!-- Features Checklist -->
+            <div class="provider-modal-section provider-modal-hidden" id="modal-features-section">
+                <h3 class="provider-modal-section-title">
+                    <i class="fas fa-check-circle"></i> {% trans "Features & Capabilities" %}
+                </h3>
+                <div class="provider-features-grid" id="modal-features-grid">
+                    <!-- Features will be inserted by JS -->
+                </div>
+            </div>
+
+            <!-- Geographic Coverage -->
+            <div class="provider-modal-section provider-modal-hidden" id="modal-regions-section">
+                <h3 class="provider-modal-section-title">
+                    <i class="fas fa-globe"></i> {% trans "Geographic Coverage" %}
+                </h3>
+                <div class="provider-modal-info" id="modal-regions-info">
+                    <!-- Region info will be inserted by JS -->
+                </div>
+            </div>
+
+            <!-- Compliance & Security -->
+            <div class="provider-modal-section provider-modal-hidden" id="modal-compliance-section">
+                <h3 class="provider-modal-section-title">
+                    <i class="fas fa-shield-alt"></i> {% trans "Compliance & Security" %}
+                </h3>
+                <div class="compliance-badges" id="modal-compliance-badges">
+                    <!-- Compliance badges will be inserted by JS -->
+                </div>
+            </div>
+
+            <!-- Pricing Information -->
+            <div class="provider-modal-section provider-modal-hidden" id="modal-pricing-section">
+                <h3 class="provider-modal-section-title">
+                    <i class="fas fa-tags"></i> {% trans "Pricing" %}
+                </h3>
+                <div class="provider-modal-info" id="modal-pricing-info">
+                    <!-- Pricing info will be inserted by JS -->
+                </div>
+            </div>
+
+            <!-- Version History (collapsible, lazy-loaded) -->
+            <div class="provider-modal-section provider-modal-hidden" id="modal-version-history-section">
+                <h3 class="provider-modal-section-title" data-action="toggle-version-history">
+                    <i class="fas fa-history"></i> {% trans "Version History" %}
+                    <i class="fas fa-chevron-down version-history-toggle-icon"></i>
+                </h3>
+                <div id="modal-version-history-content" class="provider-modal-hidden">
+                    <p class="version-history-loading">
+                        <i class="fas fa-spinner fa-spin"></i> {% trans "Loading..." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="provider-modal-footer">
+            <div class="provider-modal-actions" id="modal-provider-actions">
+                <!-- Action buttons will be inserted by JS -->
+            </div>
+            <div class="provider-modal-links">
+                <a href="#" id="modal-provider-docs" class="provider-modal-hidden" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-book"></i> {% trans "Documentation" %}
+                </a>
+                <a href="#" id="modal-provider-website" class="provider-modal-hidden" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Provider Website" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

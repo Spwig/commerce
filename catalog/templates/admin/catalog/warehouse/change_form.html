@@ -1,0 +1,330 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with name=original.name %}Edit Warehouse: {{ name }}{% endblocktrans %}
+    {% else %}
+        {% trans "Add Warehouse" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/warehouse_change_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="warehouse-change-form">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    {% if original %}
+                        <i class="fas fa-warehouse"></i>
+                        {% blocktrans with name=original.name %}Edit Warehouse: {{ name }}{% endblocktrans %}
+                    {% else %}
+                        <i class="fas fa-plus"></i> {% trans "Add New Warehouse" %}
+                    {% endif %}
+                </h1>
+                {% if original %}
+                <div class="header-meta">
+                    <span class="meta-item"><i class="fas fa-barcode"></i> {{ original.code }}</span>
+                    <span class="meta-item"><i class="fas fa-globe"></i> {{ original.region }}</span>
+                    <span class="meta-item"><i class="fas fa-map-marker-alt"></i> {{ original.city }}, {{ original.country }}</span>
+                    {% if original.is_active %}
+                    <span class="wh-status-badge active"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+                    {% else %}
+                    <span class="wh-status-badge inactive"><i class="fas fa-pause-circle"></i> {% trans "Inactive" %}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="wh-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="wh-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Banner -->
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Form -->
+    <form method="post" id="warehouse_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+
+        {% if not is_popup %}
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic Info" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="address" role="tab" aria-selected="false">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="label">{% trans "Address" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="settings" role="tab" aria-selected="false">
+                <i class="fas fa-cog"></i>
+                <span class="label">{% trans "Settings" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="display" role="tab" aria-selected="false">
+                <i class="fas fa-eye"></i>
+                <span class="label">{% trans "Display" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="contact" role="tab" aria-selected="false">
+                <i class="fas fa-address-book"></i>
+                <span class="label">{% trans "Contact" %}</span>
+            </button>
+        </div>
+        {% endif %}
+
+        <!-- Basic Info Tab -->
+        <div class="admin-tab-content active" id="tab-basic" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-basic' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-warehouse"></i> {% trans "Warehouse Details" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if not field.is_readonly and field.field.name == 'is_active' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.label_tag }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% elif field.is_readonly %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                <div class="readonly">{{ field.contents }}</div>
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if not is_popup %}
+        <!-- Address Tab -->
+        <div class="admin-tab-content" id="tab-address" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-address' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-map-marker-alt"></i> {% trans "Address" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-geocoding' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-map-pin"></i> {% trans "Geocoding" %}</h2>
+                    <p class="form-card-description">{% trans "Optional: Used for distance-based fulfillment routing." %}</p>
+                    <div class="two-column-layout">
+                        {% for line in fieldset %}
+                            {% for field in line %}
+                            <div class="column">
+                                <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                    {% if field.is_readonly %}
+                                        {{ field.label_tag }}
+                                        <div class="readonly">{{ field.contents }}</div>
+                                    {% else %}
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field.field }}
+                                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="admin-tab-content" id="tab-settings" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-fulfillment' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-cog"></i> {% trans "Fulfillment Settings" %}</h2>
+                    <p class="form-card-description">{% trans "Higher priority warehouses are checked first. Stock buffer is a safety percentage to prevent overselling." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-pos' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-cash-register"></i> {% trans "POS / Retail Store" %}</h2>
+                    <p class="form-card-description">{% trans "Enable to use this warehouse as a physical store with POS terminals." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if not field.is_readonly and field.field.name == 'is_retail_location' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.label_tag }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% elif field.is_readonly %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                <div class="readonly">{{ field.contents }}</div>
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Display Tab -->
+        <div class="admin-tab-content" id="tab-display" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-display' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-eye"></i> {% trans "Customer Display" %}</h2>
+                    <p class="form-card-description">{% trans "Configure how this warehouse appears to customers on product pages." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if not field.is_readonly and field.field.name == 'show_on_frontend' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.label_tag }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% elif field.is_readonly %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                <div class="readonly">{{ field.contents }}</div>
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Contact Tab -->
+        <div class="admin-tab-content" id="tab-contact" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-contact' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-address-book"></i> {% trans "Contact Information" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Hidden submit row -->
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'catalog/js/warehouse_change_form.js' %}"></script>
+{% endblock %}

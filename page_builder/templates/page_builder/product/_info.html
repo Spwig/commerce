@@ -1,0 +1,366 @@
+{% load i18n static merchant_trans currency_tags %}
+{# Product Info Partial - brand, price, variants, add-to-cart, meta, trust badges #}
+{# Context: product, variants, attribute_assignments, has_attribute_mappings, review_stats, template_options #}
+{# Also uses: payments_enabled, express_checkout_methods, show_payment_setup_prompt, show_trial_mode_banner #}
+
+<div class="product-info" data-product-name="{{ product.name }}">
+    {% if template_options.show_brand and product.brand %}
+    <p class="product-info__brand">{{ product.brand.name }}</p>
+    {% endif %}
+
+    <h1 class="product-info__title">{{ product.name }}</h1>
+
+    {% if review_stats %}
+    <div class="product-info__rating">
+        <div class="star-rating" aria-label="{% blocktrans with rating=review_stats.average %}Rated {{ rating }} out of 5{% endblocktrans %}">
+            {% for i in "12345" %}
+            <i class="fas fa-star {% if forloop.counter <= review_stats.average %}star-rating__star--filled{% else %}star-rating__star--empty{% endif %}"></i>
+            {% endfor %}
+        </div>
+        <a href="#reviews" class="product-info__review-link">
+            {{ review_stats.average }} ({{ review_stats.total }} {% mtrans 'reviews' %})
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="product-info__price" id="product-price">
+        {% if product.is_on_sale %}
+        <span class="price price--sale">{{ product|product_price:current_currency.code }}</span>
+        <span class="price price--compare">{{ product|product_compare_price:current_currency.code }}</span>
+        <span class="price__badge">{% mtrans 'Sale' %}</span>
+        {% else %}
+        <span class="price">{{ product|product_price:current_currency.code }}</span>
+        {% endif %}
+    </div>
+
+    {% if template_options.show_short_description and product.short_description %}
+    <div class="product-info__description">{{ product.short_description|safe }}</div>
+    {% endif %}
+
+    {% if product.features %}
+    <div class="product-features">
+        <h3 class="product-features__title">{% mtrans 'Key Features' %}</h3>
+        <ul class="product-features__list">
+            {% for key, value in product.features.items %}
+            <li class="product-features__item">
+                <strong>{{ key }}:</strong> {{ value }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Stock Status -->
+    {% include "catalog/includes/stock_status.html" %}
+
+    <!-- Visual Design Editor (customizable products) -->
+    {% if has_design_editor %}
+    {% include "customizable_product/editor.html" %}
+    {% endif %}
+
+    <!-- Bundle Contents -->
+    {% if product.product_type == 'bundle' and bundle_items %}
+    <div class="bundle-contents" id="bundle-contents">
+        <h3 class="bundle-contents__title">
+            <i class="fas fa-cubes"></i> {% mtrans "What's Included" %}
+        </h3>
+
+        {% if product.bundle_pricing_strategy == 'percentage_discount' and product.bundle_discount_percentage > 0 %}
+        <div class="bundle-savings">
+            <i class="fas fa-tag"></i>
+            <span>{{ product.bundle_discount_percentage }}% {% mtrans 'bundle discount applied' %}</span>
+        </div>
+        {% endif %}
+
+        <div class="bundle-items-list">
+            {% for item in bundle_items %}
+            <div class="bundle-item"
+                 data-bundle-item-id="{{ item.id }}"
+                 data-optional="{{ item.is_optional|yesno:'true,false' }}"
+                 data-allow-variant="{{ item.allow_variant_selection|yesno:'true,false' }}">
+                <div class="bundle-item__image">
+                    {% if item.component_product.primary_image_listing_url %}
+                    <img src="{{ item.component_product.primary_image_listing_url }}"
+                         alt="{{ item.component_product.name }}"
+                         loading="lazy">
+                    {% else %}
+                    <div class="bundle-item__placeholder"><i class="fas fa-box"></i></div>
+                    {% endif %}
+                </div>
+                <div class="bundle-item__info">
+                    <span class="bundle-item__name">{{ item.component_product.name }}</span>
+                    {% if item.component_variant and not item.allow_variant_selection %}
+                    <span class="bundle-item__variant">{{ item.component_variant.name }}</span>
+                    {% endif %}
+                    {% if item.allow_variant_selection %}
+                    <select class="bundle-item__variant-select" data-bundle-item-id="{{ item.id }}">
+                        <option value="">— {% mtrans 'Choose variant' %} —</option>
+                    </select>
+                    {% endif %}
+                </div>
+                <div class="bundle-item__meta">
+                    <span class="bundle-item__qty">&times;{{ item.quantity }}</span>
+                    {% if item.is_optional %}
+                    <label class="bundle-item__optional">
+                        <input type="checkbox" checked data-bundle-item-id="{{ item.id }}">
+                        <span>{% mtrans 'Include' %}</span>
+                    </label>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script id="bundle-items-data" type="application/json">{{ bundle_items_json|safe }}</script>
+    {% endif %}
+
+    <!-- Product Dependency Notices -->
+    {% if blocking_dependencies %}
+    <div class="product-dependency-notice product-dependency-notice--required">
+        <i class="fas fa-lock"></i>
+        <div class="product-dependency-notice__content">
+            {% for dep in blocking_dependencies %}
+            <p>
+                {% if dep.customer_message %}
+                    {{ dep.customer_message }}
+                {% else %}
+                    {% blocktrans with name=dep.required_product.name %}This product requires you to own "{{ name }}" first.{% endblocktrans %}
+                {% endif %}
+                <a href="{{ dep.required_product.get_absolute_url }}">{% mtrans 'View product' %} &rarr;</a>
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% if soft_recommendations %}
+    <div class="product-dependency-notice product-dependency-notice--recommends">
+        <i class="fas fa-lightbulb"></i>
+        <div class="product-dependency-notice__content">
+            {% for dep in soft_recommendations %}
+            <p>
+                {% if dep.customer_message %}
+                    {{ dep.customer_message }}
+                {% else %}
+                    {% blocktrans with name=dep.required_product.name %}Works best with "{{ name }}".{% endblocktrans %}
+                {% endif %}
+                <a href="{{ dep.required_product.get_absolute_url }}">{% mtrans 'View product' %} &rarr;</a>
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Variant Selection -->
+    {% if attribute_assignments %}
+    {# Mode 1: Attribute-based variant selection #}
+    <div class="product-variants" id="variant-selector" data-mode="attributes">
+        {% for assignment in attribute_assignments %}
+        <div class="variant-group" data-attribute="{{ assignment.attribute.slug }}" data-type="{{ assignment.attribute.type }}">
+            <label class="variant-group__label">
+                {{ assignment.attribute.name }}:
+                <span class="variant-group__selected" id="selected-{{ assignment.attribute.slug }}"></span>
+            </label>
+
+            {% if assignment.attribute.type == 'select' %}
+            <div class="variant-group__options">
+                <select class="variant-select" data-attribute="{{ assignment.attribute.slug }}">
+                    <option value="">— {% mtrans 'Choose' %} {{ assignment.attribute.name }} —</option>
+                    {% for value in assignment.allowed_values.all %}
+                    <option value="{{ value.slug }}" data-display="{{ value.value }}">{{ value.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% elif assignment.attribute.type == 'radio' %}
+            <div class="variant-group__options variant-group__options--radio">
+                {% for value in assignment.allowed_values.all %}
+                <label class="variant-radio">
+                    <input type="radio" name="attr-{{ assignment.attribute.slug }}"
+                           value="{{ value.slug }}" data-attribute="{{ assignment.attribute.slug }}"
+                           data-display="{{ value.value }}">
+                    <span class="variant-radio__label">{{ value.value }}</span>
+                </label>
+                {% endfor %}
+            </div>
+
+            {% elif assignment.attribute.type == 'color' %}
+            <div class="variant-group__options">
+                {% for value in assignment.allowed_values.all %}
+                <button type="button"
+                        class="variant-swatch variant-swatch--color"
+                        data-attribute="{{ assignment.attribute.slug }}"
+                        data-value="{{ value.slug }}"
+                        data-display="{{ value.value }}"
+                        {% if value.color_hex %}
+                        style="--swatch-color: {{ value.color_hex }}"
+                        {% endif %}
+                        title="{{ value.value }}"
+                        aria-label="{{ value.value }}">
+                    {% if value.color_hex %}
+                    <span class="variant-swatch__check"><i class="fas fa-check"></i></span>
+                    {% else %}
+                    <span class="variant-swatch__letter">{{ value.value|first }}</span>
+                    {% endif %}
+                </button>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <div class="variant-group__options">
+                {% for value in assignment.allowed_values.all %}
+                <button type="button"
+                        class="variant-swatch variant-swatch--text"
+                        data-attribute="{{ assignment.attribute.slug }}"
+                        data-value="{{ value.slug }}"
+                        data-display="{{ value.value }}">
+                    {{ value.value }}
+                </button>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% elif variants.count > 1 %}
+    {# Mode 2: Direct variant selection (no attribute mappings) #}
+    <div class="product-variants" id="variant-selector" data-mode="direct">
+        <div class="variant-group">
+            <label class="variant-group__label">
+                {% mtrans 'Variant' %}:
+                <span class="variant-group__selected" id="selected-variant"></span>
+            </label>
+            <div class="variant-group__options">
+                {% for variant in variants %}
+                {% if variant.is_active %}
+                <button type="button"
+                        class="variant-swatch {% if variant.color_swatch %}variant-swatch--color{% else %}variant-swatch--text{% endif %}"
+                        data-variant-id="{{ variant.id }}"
+                        {% if variant.color_swatch %}
+                        style="--swatch-color: {{ variant.color_swatch }}"
+                        title="{{ variant.name }}"
+                        aria-label="{{ variant.name }}"
+                        {% endif %}>
+                    {% if variant.color_swatch %}
+                    <span class="variant-swatch__check"><i class="fas fa-check"></i></span>
+                    {% else %}
+                    {{ variant.name }}
+                    {% endif %}
+                </button>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if region_unavailable %}
+    <!-- Region Unavailable Notice -->
+    <div class="product-region-notice">
+        <i class="fas fa-globe"></i>
+        <p>{% mtrans 'This product is not available for purchase in your region.' %}</p>
+    </div>
+    {% else %}
+    <!-- Quantity & Add to Cart -->
+    <div class="product-actions">
+        <div class="quantity-selector">
+            <button type="button" class="quantity-selector__btn" id="qty-decrease" aria-label="{% mtrans 'Decrease quantity' %}">
+                <i class="fas fa-minus"></i>
+            </button>
+            <input type="number"
+                   id="quantity"
+                   name="quantity"
+                   value="1"
+                   min="1"
+                   max="{{ product.max_quantity|default:99 }}"
+                   class="quantity-selector__input"
+                   aria-label="{% mtrans 'Quantity' %}">
+            <button type="button" class="quantity-selector__btn" id="qty-increase" aria-label="{% mtrans 'Increase quantity' %}">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        <button type="button"
+                class="btn btn--primary btn--lg btn--add-to-cart"
+                id="add-to-cart"
+                data-product-id="{{ product.id }}"
+                {% if blocking_dependencies and request.user.is_authenticated %}disabled{% endif %}>
+            <i class="fas fa-shopping-cart"></i>
+            <span>{% mtrans 'Add to Cart' %}</span>
+        </button>
+    </div>
+
+    <!-- Express Checkout -->
+    {% if payments_enabled %}
+        {% if express_checkout_methods %}
+            <div class="express-checkout" id="express-checkout">
+                <div class="express-checkout__divider">
+                    <span>{% mtrans 'or checkout with' %}</span>
+                </div>
+                <div class="express-checkout__buttons">
+                    {% for method in express_checkout_methods %}
+                        <button type="button"
+                                class="express-btn {{ method.button_class }}"
+                                id="pdp-{{ method.slug }}"
+                                data-action="express-checkout"
+                                data-provider="{{ method.provider_slug }}"
+                                data-method="{{ method.slug }}"
+                                {% if method.requires_js_check %}style="display: none;" data-js-check="{{ method.js_check }}"{% endif %}>
+                            <i class="{{ method.icon }}"></i>
+                            {% if method.slug == 'apple_pay' or method.slug == 'google_pay' %}
+                                Pay
+                            {% else %}
+                                {{ method.name }}
+                            {% endif %}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        {% elif show_payment_setup_prompt %}
+            <div class="express-checkout__setup-prompt">
+                <p class="express-checkout__setup-text">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% mtrans 'No payment providers configured.' %}
+                </p>
+                <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="express-checkout__setup-link">
+                    {% mtrans 'Configure Payment Providers' %}
+                </a>
+            </div>
+        {% endif %}
+    {% elif show_trial_mode_banner %}
+        <div class="express-checkout__trial-notice">
+            <p class="express-checkout__trial-text">
+                <i class="fas fa-info-circle"></i>
+                {% mtrans 'Payment processing disabled in trial mode.' %}
+            </p>
+            <a href="{% url 'admin:core_licensestatus_changelist' %}" class="express-checkout__setup-link">
+                {% mtrans 'Activate License' %}
+            </a>
+        </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Product Meta -->
+    <div class="product-meta">
+        {% if template_options.show_sku and product.sku %}
+        <p class="product-meta__item">
+            <span class="product-meta__label">{% mtrans 'SKU' %}:</span>
+            <span class="product-meta__value" id="product-sku">{{ product.sku }}</span>
+        </p>
+        {% endif %}
+        {% if product.category %}
+        <p class="product-meta__item">
+            <span class="product-meta__label">{% mtrans 'Category' %}:</span>
+            <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="product-meta__link">
+                {{ product.category.name }}
+            </a>
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- Trust Badges -->
+    {% if product_trust_badges %}
+    <div class="trust-badges">
+        {% include "page_builder/includes/_trust_badges.html" with trust_badges=product_trust_badges %}
+    </div>
+    {% endif %}
+</div>

@@ -1,0 +1,517 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Announcement Bar / Notification Zone Styles */
+/* Uses theme widget tokens: --theme-widget-announcement-{property} */
+/* Modal uses theme modal tokens: --theme-element-modal-{property} */
+
+/* =============================================================
+   Notification Zone (dedicated header zone)
+   ============================================================= */
+
+.header-zone--notification {
+    padding: 0;
+}
+
+/* =============================================================
+   Base Announcement Bar
+   ============================================================= */
+
+.widget-announcement {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: var(--theme-widget-announcement-bar-padding-y, var(--theme-space-2, 0.5rem)) var(--theme-widget-announcement-bar-padding-x, var(--theme-space-4, 1rem));
+    background: var(--theme-widget-announcement-bar-bg, var(--theme-color-primary, #3B82F6));
+    color: var(--theme-widget-announcement-bar-color, var(--theme-color-text-inverse, white));
+    font-family: var(--theme-font-family-body, inherit);
+    font-size: var(--theme-widget-announcement-bar-font-size, var(--theme-font-size-sm, 0.875rem));
+    font-weight: var(--theme-widget-announcement-bar-font-weight, var(--theme-font-weight-medium, 500));
+    text-align: center;
+    overflow: hidden;
+    line-height: var(--theme-line-height-normal, 1.5);
+}
+
+/* =============================================================
+   Announcement Track (contains items)
+   ============================================================= */
+
+.announcement-viewport {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    align-items: center;
+}
+
+.announcement-track {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-widget-announcement-gap, var(--theme-space-8, 2rem));
+    flex: none; /* Prevent flex shrink */
+    width: max-content; /* Size to content */
+    min-width: 100%; /* Ensure full width minimum */
+}
+
+.announcement-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: 0 var(--theme-space-8, 2rem);
+    min-width: 200px; /* Prevent too-narrow items */
+    max-width: 600px; /* Prevent too-wide items */
+    flex-shrink: 0;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* Text wrapping for long content */
+.announcement-item-text {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.announcement-item a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* =============================================================
+   Horizontal Scroll Mode
+   ============================================================= */
+
+/* Viewport: stationary clip + fade mask (stays at visible edges) */
+.widget-announcement[data-display-mode="scroll_horizontal"] .announcement-viewport {
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black var(--theme-widget-announcement-fade-width, 3rem),
+        black calc(100% - var(--theme-widget-announcement-fade-width, 3rem)),
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black var(--theme-widget-announcement-fade-width, 3rem),
+        black calc(100% - var(--theme-widget-announcement-fade-width, 3rem)),
+        transparent 100%
+    );
+}
+
+/* Focus outlines for links/controls */
+.announcement-link,
+.announcement-close,
+.announcement-control {
+    position: relative; /* For outline positioning */
+}
+
+.announcement-link:focus-visible,
+.announcement-close:focus-visible,
+.announcement-control:focus-visible {
+    outline: 2px solid var(--theme-color-primary, #3b82f6);
+    outline-offset: 2px;
+    z-index: 10; /* Above mask */
+}
+
+/* Fallback for non-WebKit browsers */
+@supports not (-webkit-mask-image: linear-gradient(to right, transparent, black)) {
+    .widget-announcement[data-display-mode="scroll_horizontal"] .announcement-viewport::before,
+    .widget-announcement[data-display-mode="scroll_horizontal"] .announcement-viewport::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: var(--theme-widget-announcement-fade-width, 3rem);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .widget-announcement[data-display-mode="scroll_horizontal"] .announcement-viewport::before {
+        left: 0;
+        background: linear-gradient(
+            to right,
+            var(--announcement-bg-color, var(--theme-color-primary, #3b82f6)),
+            transparent
+        );
+    }
+
+    .widget-announcement[data-display-mode="scroll_horizontal"] .announcement-viewport::after {
+        right: 0;
+        background: linear-gradient(
+            to left,
+            var(--announcement-bg-color, var(--theme-color-primary, #3b82f6)),
+            transparent
+        );
+    }
+}
+
+/* Track: full-width content that scrolls inside the viewport */
+.widget-announcement[data-display-mode="scroll_horizontal"] .announcement-track {
+    flex: none;
+    width: max-content;
+    white-space: nowrap;
+    animation: announcement-scroll-horizontal var(--theme-widget-announcement-scroll-speed, 20s) linear infinite;
+}
+
+.widget-announcement[data-display-mode="scroll_horizontal"]:hover .announcement-track {
+    animation-play-state: paused;
+}
+
+.widget-announcement[data-display-mode="scroll_horizontal"] .announcement-item {
+    display: inline-flex;
+    padding: 0 var(--theme-space-8, 2rem);
+}
+
+@keyframes announcement-scroll-horizontal {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* =============================================================
+   Vertical Cycle Mode
+   ============================================================= */
+
+.widget-announcement[data-display-mode="scroll_vertical"] .announcement-track {
+    position: relative;
+    height: 1.5em;
+}
+
+.widget-announcement[data-display-mode="scroll_vertical"] .announcement-item {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(100%);
+    transition:
+        opacity var(--theme-widget-announcement-vertical-transition-duration, 500ms) var(--theme-widget-announcement-vertical-transition-timing, ease),
+        transform var(--theme-widget-announcement-vertical-transition-duration, 500ms) var(--theme-widget-announcement-vertical-transition-timing, ease);
+}
+
+.widget-announcement[data-display-mode="scroll_vertical"] .announcement-item.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.widget-announcement[data-display-mode="scroll_vertical"] .announcement-item.exiting {
+    opacity: 0;
+    transform: translateY(-100%);
+}
+
+/* =============================================================
+   Static Mode
+   ============================================================= */
+
+.widget-announcement[data-display-mode="static"] .announcement-track {
+    position: relative;
+    height: 1.5em;
+}
+
+.widget-announcement[data-display-mode="static"] .announcement-item {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--theme-widget-announcement-vertical-transition-duration, 500ms) ease;
+}
+
+.widget-announcement[data-display-mode="static"] .announcement-item.active {
+    opacity: 1;
+}
+
+/* Ellipsis handling for static mode */
+.widget-announcement:not([data-display-mode="scroll_horizontal"]) .announcement-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =============================================================
+   Announcement Text & Link
+   ============================================================= */
+
+.announcement-text {
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.announcement-link {
+    color: var(--theme-widget-announcement-link-color, inherit);
+    text-decoration: var(--theme-widget-announcement-link-underline, underline);
+    font-weight: var(--theme-font-weight-medium, 500);
+    transition: opacity var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.announcement-link:hover {
+    opacity: var(--theme-widget-announcement-link-hover-opacity, 0.8);
+}
+
+/* =============================================================
+   Close/Dismiss Button
+   ============================================================= */
+
+.announcement-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--theme-widget-announcement-close-btn-size, 1.25rem) + 0.25rem);
+    height: calc(var(--theme-widget-announcement-close-btn-size, 1.25rem) + 0.25rem);
+    margin-left: var(--theme-space-4, 1rem);
+    background: transparent;
+    border: none;
+    color: var(--theme-widget-announcement-close-btn-color, inherit);
+    cursor: pointer;
+    opacity: 0.7;
+    border-radius: var(--theme-radius-sm, 0.25rem);
+    transition: opacity var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+    flex-shrink: 0;
+    font-size: var(--theme-widget-announcement-close-btn-size, 1.25rem);
+    line-height: 1;
+}
+
+.announcement-close:hover {
+    opacity: var(--theme-widget-announcement-close-btn-hover-opacity, 1);
+}
+
+/* =============================================================
+   Announcement Modal
+   ============================================================= */
+
+.announcement-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--theme-z-modal-backdrop, 1040);
+    background: var(--theme-element-modal-backdrop-color, rgba(0, 0, 0, 0.5));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 300ms ease, visibility 300ms ease;
+}
+
+.announcement-modal-backdrop.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.announcement-modal {
+    position: relative;
+    z-index: var(--theme-z-modal, 1050);
+    background: var(--theme-element-modal-bg, var(--theme-color-surface, #fff));
+    border-radius: var(--theme-element-modal-radius, var(--theme-radius-xl, 1rem));
+    box-shadow: var(--theme-element-modal-shadow, var(--theme-shadow-xl));
+    max-width: var(--theme-widget-announcement-modal-max-width, 36rem);
+    width: calc(100% - var(--theme-space-8, 2rem));
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow-y: auto;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 300ms ease;
+}
+
+.announcement-modal-backdrop.visible .announcement-modal {
+    transform: scale(1) translateY(0);
+}
+
+/* Close Button */
+.announcement-modal-close {
+    position: absolute;
+    top: var(--theme-space-3, 0.75rem);
+    right: var(--theme-space-3, 0.75rem);
+    z-index: 1;
+    width: var(--theme-element-modal-close-button-size, 36px);
+    height: var(--theme-element-modal-close-button-size, 36px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--theme-element-modal-close-button-bg, transparent);
+    border: none;
+    border-radius: var(--theme-radius-full, 9999px);
+    color: var(--theme-element-modal-close-button-color, var(--theme-color-text-muted));
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: color var(--theme-transition-duration-fast, 150ms) ease,
+                background var(--theme-transition-duration-fast, 150ms) ease;
+}
+
+.announcement-modal-close:hover {
+    color: var(--theme-element-modal-close-button-color-hover, var(--theme-color-text));
+    background: var(--theme-element-modal-close-button-bg-hover, var(--theme-color-surface-hover));
+}
+
+/* Modal Content */
+.announcement-modal-content {
+    padding: var(--theme-element-modal-padding, var(--theme-space-6, 1.5rem));
+}
+
+/* Banner Image Mode */
+.announcement-modal-image-banner {
+    width: 100%;
+    max-height: var(--theme-widget-announcement-modal-image-max-height, 300px);
+    object-fit: cover;
+    border-radius: var(--theme-widget-announcement-modal-image-radius, var(--theme-radius-md))
+                   var(--theme-widget-announcement-modal-image-radius, var(--theme-radius-md)) 0 0;
+    display: block;
+}
+
+/* Background Image Mode */
+.announcement-modal-image-bg {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--theme-widget-announcement-modal-image-radius, var(--theme-radius-md))
+                   var(--theme-widget-announcement-modal-image-radius, var(--theme-radius-md)) 0 0;
+    min-height: var(--theme-widget-announcement-modal-image-max-height, 300px);
+    display: flex;
+    align-items: flex-end;
+    padding: var(--theme-space-6, 1.5rem);
+}
+
+.announcement-modal-image-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--announcement-overlay-opacity, 0.5));
+    border-radius: inherit;
+}
+
+.announcement-modal-image-bg .announcement-modal-overlay-content {
+    position: relative;
+    z-index: 1;
+    color: var(--theme-color-text-inverse, #fff);
+}
+
+/* Modal Title */
+.announcement-modal-title {
+    font-size: var(--theme-widget-announcement-modal-title-size, var(--theme-font-size-xl, 1.25rem));
+    font-weight: var(--theme-widget-announcement-modal-title-weight, var(--theme-font-weight-semibold, 600));
+    margin: 0 0 var(--theme-space-3, 0.75rem);
+    line-height: var(--theme-line-height-tight, 1.25);
+}
+
+/* Modal Body */
+.announcement-modal-body {
+    font-size: var(--theme-widget-announcement-modal-body-size, var(--theme-font-size-base, 1rem));
+    color: var(--theme-widget-announcement-modal-body-color, var(--theme-color-text-light, #374151));
+    line-height: var(--theme-line-height-relaxed, 1.625);
+    margin: 0 0 var(--theme-space-4, 1rem);
+}
+
+/* Modal Link Button */
+.announcement-modal-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: var(--theme-widget-announcement-modal-link-btn-padding-y, var(--theme-space-3, 0.75rem))
+             var(--theme-widget-announcement-modal-link-btn-padding-x, var(--theme-space-6, 1.5rem));
+    background: var(--theme-widget-announcement-modal-link-btn-bg, var(--theme-color-primary));
+    color: var(--theme-widget-announcement-modal-link-btn-color, var(--theme-color-text-inverse, #fff));
+    border: none;
+    border-radius: var(--theme-widget-announcement-modal-link-btn-radius, var(--theme-radius-md));
+    font-size: var(--theme-font-size-base, 1rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity var(--theme-transition-duration-fast, 150ms) ease;
+}
+
+.announcement-modal-link-btn:hover {
+    opacity: 0.9;
+}
+
+/* =============================================================
+   Mobile Responsive
+   ============================================================= */
+
+@media (max-width: 640px) {
+    .widget-announcement {
+        font-size: var(--theme-widget-announcement-bar-font-size-mobile, var(--theme-font-size-xs, 0.75rem));
+        padding: var(--theme-space-1, 0.25rem) var(--theme-space-2, 0.5rem);
+    }
+
+    .announcement-item {
+        padding: 0 var(--theme-space-4, 1rem);
+        min-width: 150px;
+    }
+
+    .widget-announcement[data-display-mode="scroll_horizontal"] .announcement-item {
+        padding: 0 var(--theme-space-4, 1rem);
+    }
+
+    .widget-announcement[data-display-mode="scroll_horizontal"] .announcement-viewport {
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 1.5rem,
+            black calc(100% - 1.5rem),
+            transparent 100%
+        );
+        mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 1.5rem,
+            black calc(100% - 1.5rem),
+            transparent 100%
+        );
+    }
+
+    .announcement-close {
+        margin-left: var(--theme-space-2, 0.5rem);
+    }
+
+    .announcement-modal {
+        width: calc(100% - var(--theme-space-4, 1rem));
+    }
+
+    .announcement-modal-title {
+        font-size: var(--theme-font-size-lg, 1.125rem);
+    }
+
+    .announcement-modal-content {
+        padding: var(--theme-space-4, 1rem);
+    }
+}
+
+/* =============================================================
+   Reduced Motion
+   ============================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .widget-announcement[data-display-mode="scroll_horizontal"] .announcement-track {
+        animation: none;
+    }
+
+    .widget-announcement[data-display-mode="scroll_vertical"] .announcement-item {
+        transition: none;
+    }
+
+    .announcement-modal-backdrop {
+        transition: none;
+    }
+
+    .announcement-modal {
+        transition: none;
+    }
+}

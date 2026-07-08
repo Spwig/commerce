@@ -1,0 +1,120 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for msg in messages %}
+    <div class="list-row-card{% if msg.status == 'unread' %} message-unread{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ msg.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if msg.status == 'unread' %}
+                <i class="fas fa-envelope"></i>
+            {% elif msg.status == 'replied' %}
+                <i class="fas fa-reply"></i>
+            {% else %}
+                <i class="fas fa-envelope-open"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:admin_api_customermessage_change' msg.pk %}">
+                    {{ msg.subject|truncatewords:12 }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-user"></i> {{ msg.name }} &mdash; {{ msg.email }}
+                {% if msg.phone %}
+                    &mdash; <i class="fas fa-phone"></i> {{ msg.phone }}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if msg.status == 'unread' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-circle"></i> {% trans "Unread" %}
+                    </span>
+                {% elif msg.status == 'read' %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-eye"></i> {% trans "Read" %}
+                    </span>
+                {% elif msg.status == 'replied' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-reply"></i> {% trans "Replied" %}
+                    </span>
+                {% elif msg.status == 'archived' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-archive"></i> {% trans "Archived" %}
+                    </span>
+                {% endif %}
+
+                {% if msg.message_type == 'general' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-info-circle"></i> {% trans "General" %}
+                    </span>
+                {% elif msg.message_type == 'support' %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-life-ring"></i> {% trans "Support" %}
+                    </span>
+                {% elif msg.message_type == 'order' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-shopping-bag"></i> {% trans "Order" %}
+                    </span>
+                {% elif msg.message_type == 'product' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-box"></i> {% trans "Product" %}
+                    </span>
+                {% elif msg.message_type == 'other' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-ellipsis-h"></i> {% trans "Other" %}
+                    </span>
+                {% endif %}
+
+                {% if msg.order %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-receipt"></i> {% trans "Order" %} #{{ msg.order.id }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Received" %}: {{ msg.created_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if msg.read_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-eye"></i>
+                    <span>{% trans "Read by" %} {{ msg.read_by.get_short_name }}</span>
+                </div>
+                {% endif %}
+                {% if msg.replied_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-reply"></i>
+                    <span>{% trans "Replied by" %} {{ msg.replied_by.get_short_name }} &mdash; {{ msg.replied_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <p class="message-preview">{{ msg.message|truncatewords:25 }}</p>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:admin_api_customermessage_change' msg.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View message' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-envelope-open"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No messages found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">{% trans "Try adjusting your filters or search terms." %}</p>
+    </div>
+    {% endfor %}
+</div>
