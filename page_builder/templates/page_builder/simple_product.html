@@ -1,0 +1,613 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{{ product.name }} - {{ site_settings.site_name|default:'Shop' }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/pages/simple-product.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/includes/stock_status.css' %}">
+{% endblock %}
+
+{% block extra_head %}
+<meta property="og:title" content="{{ product.name }}">
+<meta property="og:description" content="{{ product.short_description|default:product.full_description|striptags|truncatewords:30 }}">
+{% if product.primary_image_url %}
+<meta property="og:image" content="{{ product.primary_image_url }}">
+{% endif %}
+<meta property="product:price:amount" content="{{ product.price }}">
+<meta property="product:price:currency" content="{{ site_settings.currency_code|default:'USD' }}">
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <div class="container">
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+            </li>
+            {% if product.category %}
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="breadcrumb__link">{{ product.category.name }}</a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                {{ product.name }}
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Product Section -->
+<section class="product-section">
+    <div class="container">
+        <div class="product-layout">
+            <!-- Product Gallery -->
+            <div class="product-gallery">
+                <div class="product-gallery__main">
+                    <div class="product-gallery__zoom-container" id="gallery-zoom">
+                        {% if images %}
+                        <img src="{{ images.0.media_asset.get_display_url }}"
+                             alt="{{ product.name }}"
+                             class="product-gallery__image"
+                             id="main-image"
+                             data-zoom-src="{{ images.0.media_asset.get_original_url|default:images.0.media_asset.get_display_url }}">
+                        {% elif product.primary_image_url %}
+                        <img src="{{ product.primary_image_url }}"
+                             alt="{{ product.name }}"
+                             class="product-gallery__image"
+                             id="main-image">
+                        {% else %}
+                        <div class="product-gallery__placeholder">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        {% endif %}
+                        <div class="product-gallery__zoom-lens" id="zoom-lens"></div>
+                    </div>
+                    <div class="product-gallery__zoom-result" id="zoom-result"></div>
+                </div>
+
+                {% if images.count > 1 %}
+                <div class="product-gallery__thumbnails">
+                    {% for image in images %}
+                    <button class="product-gallery__thumb {% if forloop.first %}product-gallery__thumb--active{% endif %}"
+                            data-image="{{ image.media_asset.get_display_url }}"
+                            data-zoom="{{ image.media_asset.get_original_url|default:image.media_asset.get_display_url }}"
+                            aria-label="{% mtrans 'View image' %} {{ forloop.counter }}">
+                        <img src="{{ image.media_asset.thumbnail_small|default:image.media_asset.get_display_url }}"
+                             alt="{{ product.name }} - {{ forloop.counter }}"
+                             loading="lazy">
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                {% if product.brand %}
+                <p class="product-info__brand">{{ product.brand.name }}</p>
+                {% endif %}
+
+                <h1 class="product-info__title" data-product-name="{{ product.name|escapejs }}">{{ product.name }}</h1>
+
+                {% if review_stats %}
+                <div class="product-info__rating">
+                    <div class="star-rating" aria-label="{% blocktrans with rating=review_stats.average %}Rated {{ rating }} out of 5{% endblocktrans %}">
+                        {% for i in "12345" %}
+                        <i class="fas fa-star {% if forloop.counter <= review_stats.average %}star-rating__star--filled{% else %}star-rating__star--empty{% endif %}"></i>
+                        {% endfor %}
+                    </div>
+                    <a href="#reviews" class="product-info__review-link">
+                        {{ review_stats.average }} ({{ review_stats.total }} {% mtrans 'reviews' %})
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="product-info__price" id="product-price">
+                    {% if product.is_on_sale %}
+                    <span class="price price--sale">{{ product.formatted_price }}</span>
+                    <span class="price price--compare">{{ product.formatted_compare_price }}</span>
+                    <span class="price__badge">{% mtrans 'Sale' %}</span>
+                    {% else %}
+                    <span class="price">{{ product.formatted_price }}</span>
+                    {% endif %}
+                </div>
+
+                {% if product.short_description %}
+                <div class="product-info__description">{{ product.short_description|safe }}</div>
+                {% endif %}
+
+                {% if product.features %}
+                <div class="product-features">
+                    <h3 class="product-features__title">{% mtrans 'Key Features' %}</h3>
+                    <ul class="product-features__list">
+                        {% for key, value in product.features.items %}
+                        <li class="product-features__item">
+                            <strong>{{ key }}:</strong> {{ value }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Stock Status -->
+                {% include "catalog/includes/stock_status.html" %}
+
+                <!-- Bundle Contents -->
+                {% if product.product_type == 'bundle' and bundle_items %}
+                <div class="bundle-contents" id="bundle-contents">
+                    <h3 class="bundle-contents__title">
+                        <i class="fas fa-cubes"></i> {% mtrans "What's Included" %}
+                    </h3>
+
+                    {% if product.bundle_pricing_strategy == 'percentage_discount' and product.bundle_discount_percentage > 0 %}
+                    <div class="bundle-savings">
+                        <i class="fas fa-tag"></i>
+                        <span>{{ product.bundle_discount_percentage }}% {% mtrans 'bundle discount applied' %}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="bundle-items-list">
+                        {% for item in bundle_items %}
+                        <div class="bundle-item"
+                             data-bundle-item-id="{{ item.id }}"
+                             data-optional="{{ item.is_optional|yesno:'true,false' }}"
+                             data-allow-variant="{{ item.allow_variant_selection|yesno:'true,false' }}">
+                            <div class="bundle-item__image">
+                                {% if item.component_product.primary_image_listing_url %}
+                                <img src="{{ item.component_product.primary_image_listing_url }}"
+                                     alt="{{ item.component_product.name }}"
+                                     loading="lazy">
+                                {% else %}
+                                <div class="bundle-item__placeholder"><i class="fas fa-box"></i></div>
+                                {% endif %}
+                            </div>
+                            <div class="bundle-item__info">
+                                <span class="bundle-item__name">{{ item.component_product.name }}</span>
+                                {% if item.component_variant and not item.allow_variant_selection %}
+                                <span class="bundle-item__variant">{{ item.component_variant.name }}</span>
+                                {% endif %}
+                                {% if item.allow_variant_selection %}
+                                <select class="bundle-item__variant-select" data-bundle-item-id="{{ item.id }}">
+                                    <option value="">— {% mtrans 'Choose variant' %} —</option>
+                                </select>
+                                {% endif %}
+                            </div>
+                            <div class="bundle-item__meta">
+                                <span class="bundle-item__qty">&times;{{ item.quantity }}</span>
+                                {% if item.is_optional %}
+                                <label class="bundle-item__optional">
+                                    <input type="checkbox" checked data-bundle-item-id="{{ item.id }}">
+                                    <span>{% mtrans 'Include' %}</span>
+                                </label>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <script id="bundle-items-data" type="application/json">{{ bundle_items_json|safe }}</script>
+                {% endif %}
+
+                <!-- Variant Selection -->
+                {% if attribute_assignments %}
+                {# Mode 1: Attribute-based variant selection #}
+                <div class="product-variants" id="variant-selector" data-mode="attributes">
+                    {% for assignment in attribute_assignments %}
+                    <div class="variant-group" data-attribute="{{ assignment.attribute.slug }}" data-type="{{ assignment.attribute.type }}">
+                        <label class="variant-group__label">
+                            {{ assignment.attribute.name }}:
+                            <span class="variant-group__selected" id="selected-{{ assignment.attribute.slug }}"></span>
+                        </label>
+
+                        {% if assignment.attribute.type == 'select' %}
+                        {# Dropdown selector #}
+                        <div class="variant-group__options">
+                            <select class="variant-select" data-attribute="{{ assignment.attribute.slug }}">
+                                <option value="">— {% mtrans 'Choose' %} {{ assignment.attribute.name }} —</option>
+                                {% for value in assignment.allowed_values.all %}
+                                <option value="{{ value.slug }}" data-display="{{ value.value }}">{{ value.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        {% elif assignment.attribute.type == 'radio' %}
+                        {# Vertical radio list #}
+                        <div class="variant-group__options variant-group__options--radio">
+                            {% for value in assignment.allowed_values.all %}
+                            <label class="variant-radio">
+                                <input type="radio" name="attr-{{ assignment.attribute.slug }}"
+                                       value="{{ value.slug }}" data-attribute="{{ assignment.attribute.slug }}"
+                                       data-display="{{ value.value }}">
+                                <span class="variant-radio__label">{{ value.value }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        {% elif assignment.attribute.type == 'color' %}
+                        {# Color swatches #}
+                        <div class="variant-group__options">
+                            {% for value in assignment.allowed_values.all %}
+                            <button type="button"
+                                    class="variant-swatch variant-swatch--color"
+                                    data-attribute="{{ assignment.attribute.slug }}"
+                                    data-value="{{ value.slug }}"
+                                    data-display="{{ value.value }}"
+                                    {% if value.color_hex %}
+                                    style="--swatch-color: {{ value.color_hex }}"
+                                    {% endif %}
+                                    title="{{ value.value }}"
+                                    aria-label="{{ value.value }}">
+                                {% if value.color_hex %}
+                                <span class="variant-swatch__check"><i class="fas fa-check"></i></span>
+                                {% else %}
+                                <span class="variant-swatch__letter">{{ value.value|first }}</span>
+                                {% endif %}
+                            </button>
+                            {% endfor %}
+                        </div>
+
+                        {% else %}
+                        {# Default: button pills (type='button' or any other) #}
+                        <div class="variant-group__options">
+                            {% for value in assignment.allowed_values.all %}
+                            <button type="button"
+                                    class="variant-swatch variant-swatch--text"
+                                    data-attribute="{{ assignment.attribute.slug }}"
+                                    data-value="{{ value.slug }}"
+                                    data-display="{{ value.value }}">
+                                {{ value.value }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% elif variants.count > 1 %}
+                {# Mode 2: Direct variant selection (no attribute mappings) #}
+                <div class="product-variants" id="variant-selector" data-mode="direct">
+                    <div class="variant-group">
+                        <label class="variant-group__label">
+                            {% mtrans 'Variant' %}:
+                            <span class="variant-group__selected" id="selected-variant"></span>
+                        </label>
+                        <div class="variant-group__options">
+                            {% for variant in variants %}
+                            {% if variant.is_active %}
+                            <button type="button"
+                                    class="variant-swatch {% if variant.color_swatch %}variant-swatch--color{% else %}variant-swatch--text{% endif %}"
+                                    data-variant-id="{{ variant.id }}"
+                                    {% if variant.color_swatch %}
+                                    style="--swatch-color: {{ variant.color_swatch }}"
+                                    title="{{ variant.name }}"
+                                    aria-label="{{ variant.name }}"
+                                    {% endif %}>
+                                {% if variant.color_swatch %}
+                                <span class="variant-swatch__check"><i class="fas fa-check"></i></span>
+                                {% else %}
+                                {{ variant.name }}
+                                {% endif %}
+                            </button>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Quantity & Add to Cart -->
+                <div class="product-actions">
+                    <div class="quantity-selector">
+                        <button type="button" class="quantity-selector__btn" id="qty-decrease" aria-label="{% mtrans 'Decrease quantity' %}">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number"
+                               id="quantity"
+                               name="quantity"
+                               value="1"
+                               min="1"
+                               max="{{ product.max_quantity|default:99 }}"
+                               class="quantity-selector__input"
+                               aria-label="{% mtrans 'Quantity' %}">
+                        <button type="button" class="quantity-selector__btn" id="qty-increase" aria-label="{% mtrans 'Increase quantity' %}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn--primary btn--lg btn--add-to-cart"
+                            id="add-to-cart"
+                            data-product-id="{{ product.id }}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>{% mtrans 'Add to Cart' %}</span>
+                    </button>
+                </div>
+
+                <!-- Express Checkout -->
+                {% if payments_enabled %}
+                    {% if express_checkout_methods %}
+                        <div class="express-checkout" id="express-checkout">
+                            <div class="express-checkout__divider">
+                                <span>{% mtrans 'or checkout with' %}</span>
+                            </div>
+                            <div class="express-checkout__buttons">
+                                {% for method in express_checkout_methods %}
+                                    <button type="button"
+                                            class="express-btn {{ method.button_class }}"
+                                            id="pdp-{{ method.slug }}"
+                                            data-action="express-checkout"
+                                            data-provider="{{ method.provider_slug }}"
+                                            data-method="{{ method.slug }}"
+                                            {% if method.requires_js_check %}style="display: none;" data-js-check="{{ method.js_check }}"{% endif %}>
+                                        <i class="{{ method.icon }}"></i>
+                                        {% if method.slug == 'apple_pay' or method.slug == 'google_pay' %}
+                                            Pay
+                                        {% else %}
+                                            {{ method.name }}
+                                        {% endif %}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% elif show_payment_setup_prompt %}
+                        <!-- Staff-only: No payment providers configured -->
+                        <div class="express-checkout__setup-prompt">
+                            <p class="express-checkout__setup-text">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                {% mtrans 'No payment providers configured.' %}
+                            </p>
+                            <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="express-checkout__setup-link">
+                                {% mtrans 'Configure Payment Providers' %}
+                            </a>
+                        </div>
+                    {% endif %}
+                {% elif show_trial_mode_banner %}
+                    <!-- Staff-only: Trial mode notice -->
+                    <div class="express-checkout__trial-notice">
+                        <p class="express-checkout__trial-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% mtrans 'Payment processing disabled in trial mode.' %}
+                        </p>
+                        <a href="{% url 'admin:core_licensestatus_changelist' %}" class="express-checkout__setup-link">
+                            {% mtrans 'Activate License' %}
+                        </a>
+                    </div>
+                {% endif %}
+
+                <!-- Product Meta -->
+                <div class="product-meta">
+                    {% if product.sku %}
+                    <p class="product-meta__item">
+                        <span class="product-meta__label">{% mtrans 'SKU' %}:</span>
+                        <span class="product-meta__value" id="product-sku">{{ product.sku }}</span>
+                    </p>
+                    {% endif %}
+                    {% if product.category %}
+                    <p class="product-meta__item">
+                        <span class="product-meta__label">{% mtrans 'Category' %}:</span>
+                        <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="product-meta__link">
+                            {{ product.category.name }}
+                        </a>
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="trust-badges">
+                    <div class="trust-badge">
+                        <i class="fas fa-truck"></i>
+                        <span>{% mtrans 'Free Shipping' %}</span>
+                    </div>
+                    <div class="trust-badge">
+                        <i class="fas fa-undo"></i>
+                        <span>{% mtrans '30-Day Returns' %}</span>
+                    </div>
+                    <div class="trust-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>{% mtrans 'Secure Payment' %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Product Tabs -->
+<section class="product-tabs-section">
+    <div class="container">
+        <div class="product-tabs">
+            <div class="product-tabs__nav" role="tablist">
+                <button class="product-tabs__tab product-tabs__tab--active"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="tab-description"
+                        data-tab="description">
+                    {% mtrans 'Description' %}
+                </button>
+                {% if product.show_specifications and product.specifications %}
+                <button class="product-tabs__tab"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-specifications"
+                        data-tab="specifications">
+                    {% mtrans 'Specifications' %}
+                </button>
+                {% endif %}
+                {% if product.show_reviews %}
+                <button class="product-tabs__tab"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-reviews"
+                        data-tab="reviews">
+                    {% mtrans 'Reviews' %}
+                    {% if review_stats %}({{ review_stats.total }}){% endif %}
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="product-tabs__content">
+                <!-- Description Tab -->
+                <div class="product-tabs__panel product-tabs__panel--active"
+                     id="tab-description"
+                     role="tabpanel">
+                    <div class="product-description">
+                        {{ product.full_description|safe }}
+                    </div>
+                </div>
+
+                {% if product.show_specifications and product.specifications %}
+                <!-- Specifications Tab -->
+                <div class="product-tabs__panel"
+                     id="tab-specifications"
+                     role="tabpanel"
+                     hidden>
+                    <table class="specs-table">
+                        <tbody>
+                            {% for key, value in product.specifications.items %}
+                            <tr>
+                                <th>{{ key }}</th>
+                                <td>{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {% if product.show_reviews %}
+                <!-- Reviews Tab -->
+                <div class="product-tabs__panel"
+                     id="tab-reviews"
+                     role="tabpanel"
+                     hidden>
+                    <div class="reviews-section" id="reviews">
+                        {% if review_stats %}
+                        <div class="reviews-summary">
+                            <div class="reviews-summary__score">
+                                <span class="reviews-summary__number">{{ review_stats.average }}</span>
+                                <div class="reviews-summary__stars">
+                                    {% for i in "12345" %}
+                                    <i class="fas fa-star {% if forloop.counter <= review_stats.average %}star--filled{% else %}star--empty{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <span class="reviews-summary__count">{{ review_stats.total }} {% mtrans 'reviews' %}</span>
+                            </div>
+                            <div class="reviews-summary__breakdown">
+                                {% for star, data in review_stats.breakdown.items reversed %}
+                                <div class="rating-bar">
+                                    <span class="rating-bar__label">{{ star }} <i class="fas fa-star"></i></span>
+                                    <div class="rating-bar__track">
+                                        <div class="rating-bar__fill" style="width: {{ data.percent }}%"></div>
+                                    </div>
+                                    <span class="rating-bar__count">{{ data.count }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="reviews-list">
+                            {% for review in reviews %}
+                            <article class="review-card">
+                                <div class="review-card__header">
+                                    <div class="review-card__author">
+                                        <div class="review-card__avatar">
+                                            {{ review.user.first_name|slice:":1"|default:review.user.username|slice:":1"|upper }}
+                                        </div>
+                                        <div>
+                                            <span class="review-card__name">
+                                                {{ review.user.get_full_name|default:review.user.username }}
+                                            </span>
+                                            {% if review.verified_purchase %}
+                                            <span class="review-card__verified">
+                                                <i class="fas fa-check-circle"></i> {% mtrans 'Verified Purchase' %}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="review-card__rating">
+                                        {% for i in "12345" %}
+                                        <i class="fas fa-star {% if forloop.counter <= review.rating %}star--filled{% else %}star--empty{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% if review.title %}
+                                <h4 class="review-card__title">{{ review.title }}</h4>
+                                {% endif %}
+                                <div class="review-card__content">{{ review.comment|safe }}</div>
+                                <div class="review-card__footer">
+                                    <time class="review-card__date" datetime="{{ review.created_at|date:'c' }}">
+                                        {{ review.created_at|date:"M d, Y" }}
+                                    </time>
+                                    {% if review.helpful_count > 0 %}
+                                    <span class="review-card__helpful">
+                                        {{ review.helpful_count }} {% mtrans 'found this helpful' %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </article>
+                            {% empty %}
+                            <div class="reviews-empty">
+                                <i class="fas fa-comment-alt"></i>
+                                <p>{% mtrans 'No reviews yet. Be the first to review this product!' %}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+{% if related_products %}
+<section class="related-section">
+    <div class="container">
+        <h2 class="section__title">{% mtrans 'You May Also Like' %}</h2>
+        <div class="product-grid product-grid--4">
+            {% for related in related_products %}
+            <article class="product-card">
+                <a href="{% url 'page_builder:product_detail' product_slug=related.slug %}" class="product-card__link">
+                    <div class="product-card__image-wrapper">
+                        {% if related.primary_image_listing_url %}
+                        <img src="{{ related.primary_image_listing_url }}" alt="{{ related.name }}" class="product-card__image" loading="lazy">
+                        {% else %}
+                        <div class="product-card__placeholder">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="product-card__content">
+                    <h3 class="product-card__title">
+                        <a href="{% url 'page_builder:product_detail' product_slug=related.slug %}">{{ related.name }}</a>
+                    </h3>
+                    <div class="product-card__price">
+                        {% if related.is_on_sale %}
+                        <span class="price price--sale">{{ related.formatted_price }}</span>
+                        <span class="price price--compare">{{ related.formatted_compare_price }}</span>
+                        {% else %}
+                        <span class="price">{{ related.formatted_price }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Hidden variant data for JavaScript -->
+<script id="variants-data" type="application/json">{{ variants_json|safe }}</script>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'catalog/js/stock_status.js' %}"></script>
+<script src="{% static 'page_builder/js/product-base.js' %}"></script>
+{% endblock %}

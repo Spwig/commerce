@@ -1,0 +1,714 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'management/css/system_dashboard.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:management_systemmetrics_changelist' %}">{% trans 'System Metrics' %}</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-server"></i>
+            {% trans "System Dashboard" %}
+        </h1>
+        <p class="subtitle">{% trans "Monitor system health, performance metrics, and resource usage" %}</p>
+
+        <!-- Header Actions -->
+        <div class="dashboard-header-actions">
+            <button class="button default" data-action="refresh-metrics">
+                <i class="fas fa-sync-alt"></i> {% trans "Refresh Now" %}
+            </button>
+            <button class="button" data-action="collect-metrics">
+                <i class="fas fa-database"></i> {% trans "Collect Metrics" %}
+            </button>
+            <label class="auto-refresh-label">
+                <input type="checkbox" id="auto-refresh">
+                <span>{% trans "Auto-refresh every 30 seconds" %}</span>
+            </label>
+            <span id="last-updated" class="last-updated"></span>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="dashboard-stats-grid" id="metrics-grid">
+            <!-- CPU Metrics -->
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-microchip"></i></div>
+                <div class="value" id="cpu-percent">{{ current_metrics.cpu_percent|floatformat:1 }}%</div>
+                <div class="label">{% trans "CPU Usage" %}</div>
+            </div>
+
+            <!-- Memory Metrics -->
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-memory"></i></div>
+                <div class="value" id="memory-percent">{{ current_metrics.memory_percent|floatformat:1 }}%</div>
+                <div class="label">{% trans "Memory Usage" %}</div>
+            </div>
+
+            <!-- Disk Metrics -->
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-hdd"></i></div>
+                <div class="value" id="disk-percent">{{ current_metrics.disk_percent|floatformat:1 }}%</div>
+                <div class="label">{% trans "Disk Usage" %}</div>
+            </div>
+
+            <!-- Active Sessions -->
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fab fa-python"></i></div>
+                <div class="value" id="active-sessions">{{ current_metrics.active_sessions }}</div>
+                <div class="label">{% trans "Active Sessions" %}</div>
+            </div>
+        </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+
+        <!-- Detailed Metrics Section -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-tachometer-alt"></i>
+                {% trans "Resource Details" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+                <!-- CPU Details -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon card-icon-cpu">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3>{% trans "CPU" %}</h3>
+                    <div class="dashboard-metric-bar">
+                        <div class="dashboard-metric-bar-fill dashboard-percent-bar" style="width: {{ current_metrics.cpu_percent }}%"></div>
+                    </div>
+                    <div class="dashboard-metric-details">
+                        <div><strong>{% trans "CPU Cores" %}:</strong> {{ current_metrics.cpu_count }}</div>
+                        <div><strong>{% trans "Load Average" %}:</strong> {{ current_metrics.load_average.0|floatformat:2 }}, {{ current_metrics.load_average.1|floatformat:2 }}, {{ current_metrics.load_average.2|floatformat:2 }}</div>
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span id="cpu-status" class="{% if current_metrics.cpu_percent < 50 %}status-good{% elif current_metrics.cpu_percent < 80 %}status-warning{% else %}status-danger{% endif %}">
+                                {% if current_metrics.cpu_percent < 50 %}{% trans "Good" %}{% elif current_metrics.cpu_percent < 80 %}{% trans "Warning" %}{% else %}{% trans "High" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Details -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon card-icon-memory">
+                        <i class="fas fa-memory"></i>
+                    </div>
+                    <h3>{% trans "Memory" %}</h3>
+                    <div class="dashboard-metric-bar">
+                        <div class="dashboard-metric-bar-fill dashboard-percent-bar" style="width: {{ current_metrics.memory_percent }}%"></div>
+                    </div>
+                    <div class="dashboard-metric-details">
+                        <div><strong>{% trans "Used" %}:</strong> <span id="memory-used">{{ current_metrics.memory_used|filesizeformat }}</span></div>
+                        <div><strong>{% trans "Available" %}:</strong> <span id="memory-available">{{ current_metrics.memory_available|filesizeformat }}</span></div>
+                        <div><strong>{% trans "Total" %}:</strong> <span id="memory-total">{{ current_metrics.memory_total|filesizeformat }}</span></div>
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span id="memory-status" class="{% if current_metrics.memory_percent < 70 %}status-good{% elif current_metrics.memory_percent < 90 %}status-warning{% else %}status-danger{% endif %}">
+                                {% if current_metrics.memory_percent < 70 %}{% trans "Good" %}{% elif current_metrics.memory_percent < 90 %}{% trans "Warning" %}{% else %}{% trans "High" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disk Details -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon card-icon-disk">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                    <h3>{% trans "Disk" %}</h3>
+                    <div class="dashboard-metric-bar">
+                        <div class="dashboard-metric-bar-fill dashboard-percent-bar" style="width: {{ current_metrics.disk_percent }}%"></div>
+                    </div>
+                    <div class="dashboard-metric-details">
+                        <div><strong>{% trans "Used" %}:</strong> <span id="disk-used">{{ current_metrics.disk_used|filesizeformat }}</span></div>
+                        <div><strong>{% trans "Free" %}:</strong> <span id="disk-free">{{ current_metrics.disk_free|filesizeformat }}</span></div>
+                        <div><strong>{% trans "Total" %}:</strong> <span id="disk-total">{{ current_metrics.disk_total|filesizeformat }}</span></div>
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span id="disk-status" class="{% if current_metrics.disk_percent < 80 %}status-good{% elif current_metrics.disk_percent < 95 %}status-warning{% else %}status-danger{% endif %}">
+                                {% if current_metrics.disk_percent < 80 %}{% trans "Good" %}{% elif current_metrics.disk_percent < 95 %}{% trans "Warning" %}{% else %}{% trans "Critical" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Details -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon card-icon-network">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3>{% trans "Network" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div><strong>{% trans "Bytes Sent" %}:</strong> <span id="network-sent">{{ current_metrics.network_bytes_sent|filesizeformat }}</span></div>
+                        <div><strong>{% trans "Bytes Received" %}:</strong> <span id="network-recv">{{ current_metrics.network_bytes_recv|filesizeformat }}</span></div>
+                        <div><strong>{% trans "Packets Sent" %}:</strong> <span id="network-packets-sent">{{ current_metrics.network_packets_sent|floatformat:0 }}</span></div>
+                        <div><strong>{% trans "Packets Received" %}:</strong> <span id="network-packets-recv">{{ current_metrics.network_packets_recv|floatformat:0 }}</span></div>
+                    </div>
+                </div>
+
+                <!-- Django/Cache Details -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon card-icon-app">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>{% trans "Application" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div><strong>{% trans "Active Sessions" %}:</strong> {{ current_metrics.active_sessions }}</div>
+                        <div><strong>{% trans "Cache Hits" %}:</strong> <span id="cache-hits">{{ current_metrics.cache_hits }}</span></div>
+                        <div><strong>{% trans "Cache Misses" %}:</strong> <span id="cache-misses">{{ current_metrics.cache_misses }}</span></div>
+                        <div><strong>{% trans "Timestamp" %}:</strong> <span id="system-timestamp">{{ current_metrics.timestamp|date:"M j, Y H:i:s" }}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Health Section -->
+        {% if system_status %}
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-heartbeat"></i>
+                {% trans "Service Health" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+                <!-- Database Health -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if system_status.db_healthy %}card-icon-success{% else %}card-icon-danger{% endif %}">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>{% trans "Database" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span class="{% if system_status.db_healthy %}status-good{% else %}status-danger{% endif %}">
+                                {% if system_status.db_healthy %}{% trans "Healthy" %}{% else %}{% trans "Unhealthy" %}{% endif %}
+                            </span>
+                        </div>
+                        {% if system_status.db_details %}
+                        <div><strong>{% trans "Database" %}:</strong> {{ system_status.db_details.name }}</div>
+                        {% if system_status.db_details.size_display %}
+                        <div><strong>{% trans "Size" %}:</strong> {{ system_status.db_details.size_display }}</div>
+                        {% endif %}
+                        {% if system_status.db_details.connections %}
+                        <div><strong>{% trans "Connections" %}:</strong> {{ system_status.db_details.connections }}</div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Redis Health -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if system_status.redis_healthy %}card-icon-success{% else %}card-icon-danger{% endif %}">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>{% trans "Redis" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span class="{% if system_status.redis_healthy %}status-good{% else %}status-danger{% endif %}">
+                                {% if system_status.redis_healthy %}{% trans "Healthy" %}{% else %}{% trans "Unhealthy" %}{% endif %}
+                            </span>
+                        </div>
+                        {% if system_status.redis_details %}
+                        {% if system_status.redis_details.memory_used_display %}
+                        <div><strong>{% trans "Memory Used" %}:</strong> {{ system_status.redis_details.memory_used_display }}</div>
+                        {% endif %}
+                        {% if system_status.redis_details.connected_clients %}
+                        <div><strong>{% trans "Connected Clients" %}:</strong> {{ system_status.redis_details.connected_clients }}</div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Celery Health -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if system_status.celery_healthy %}card-icon-success{% else %}card-icon-danger{% endif %}">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>{% trans "Celery Workers" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span class="{% if system_status.celery_healthy %}status-good{% else %}status-danger{% endif %}">
+                                {% if system_status.celery_healthy %}{% trans "Running" %}{% else %}{% trans "Not Running" %}{% endif %}
+                            </span>
+                        </div>
+                        {% if system_status.celery_details %}
+                        <div><strong>{% trans "Active Workers" %}:</strong> {{ system_status.celery_details.active_workers|default:0 }}</div>
+                        <div><strong>{% trans "Queued Tasks" %}:</strong> {{ system_status.celery_details.queued_tasks|default:0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- SSL Certificate -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if system_status.ssl_valid %}card-icon-success{% elif system_status.ssl_days_remaining and system_status.ssl_days_remaining < 30 %}card-icon-warning{% else %}card-icon-danger{% endif %}">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>{% trans "SSL Certificate" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span class="{% if system_status.ssl_valid and system_status.ssl_days_remaining > 30 %}status-good{% elif system_status.ssl_valid %}status-warning{% else %}status-danger{% endif %}">
+                                {% if system_status.ssl_valid %}
+                                    {% if system_status.ssl_days_remaining > 30 %}{% trans "Valid" %}{% else %}{% trans "Expiring Soon" %}{% endif %}
+                                {% else %}
+                                    {% trans "Invalid" %}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if system_status.ssl_domain %}
+                        <div><strong>{% trans "Domain" %}:</strong> {{ system_status.ssl_domain }}</div>
+                        {% endif %}
+                        {% if system_status.ssl_days_remaining is not None %}
+                        <div><strong>{% trans "Days Remaining" %}:</strong> {{ system_status.ssl_days_remaining }}</div>
+                        {% endif %}
+                        {% if system_status.ssl_expiry_date %}
+                        <div><strong>{% trans "Expires" %}:</strong> {{ system_status.ssl_expiry_date|date:"M j, Y" }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Deployment Status Section -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-rocket"></i>
+                {% trans "Deployment Status" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+                <!-- Version Info -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon card-icon-version">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <h3>{% trans "Version" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div><strong>{% trans "Current" %}:</strong> {{ system_status.current_version|default:"Unknown" }}</div>
+                        {% if system_status.update_available and not license_status.is_hosted %}
+                        <div>
+                            <strong>{% trans "Available" %}:</strong>
+                            <span class="status-warning">{{ system_status.available_version }}</span>
+                        </div>
+                        <div class="update-badge">
+                            <i class="fas fa-arrow-circle-up"></i> {% trans "Update Available" %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Hotfix Status -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if hotfix_status.hotfix_available %}card-icon-warning{% elif hotfix_status.current_hotfix %}card-icon-success{% else %}card-icon-muted{% endif %}">
+                        <i class="fas fa-band-aid"></i>
+                    </div>
+                    <h3>{% trans "Hotfix Status" %}</h3>
+                    <div class="dashboard-metric-details">
+                        {% if hotfix_status.current_hotfix %}
+                        <div>
+                            <strong>{% trans "Applied" %}:</strong>
+                            v{{ hotfix_status.current_version }}-hf{{ hotfix_status.current_hotfix }}
+                        </div>
+                        {% else %}
+                        <div>
+                            <strong>{% trans "Applied" %}:</strong>
+                            <span class="status-good">{% trans "Base image" %}</span>
+                        </div>
+                        {% endif %}
+                        {% if hotfix_status.hotfix_available and hotfix_status.latest_hotfix %}
+                        <div>
+                            <strong>{% trans "Available" %}:</strong>
+                            <span class="status-warning">hf{{ hotfix_status.latest_hotfix.hotfix_number }}</span>
+                        </div>
+                        {% if hotfix_status.latest_hotfix.security_update %}
+                        <div class="update-badge">
+                            <i class="fas fa-shield-alt"></i> {% trans "Security Hotfix" %}
+                        </div>
+                        {% else %}
+                        <div class="update-badge">
+                            <i class="fas fa-band-aid"></i> {% trans "Hotfix Available" %}
+                        </div>
+                        {% endif %}
+                        {% if hotfix_status.latest_hotfix.changelog %}
+                        <div><small>{{ hotfix_status.latest_hotfix.changelog|truncatewords:15 }}</small></div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Last Backup -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if last_backup %}card-icon-success{% else %}card-icon-warning{% endif %}">
+                        <i class="fas fa-save"></i>
+                    </div>
+                    <h3>{% trans "Last Backup" %}</h3>
+                    <div class="dashboard-metric-details">
+                        {% if last_backup %}
+                        <div><strong>{% trans "Date" %}:</strong> {{ last_backup.created_at|date:"M j, Y H:i" }}</div>
+                        <div><strong>{% trans "Type" %}:</strong> {{ last_backup.get_backup_type_display }}</div>
+                        <div><strong>{% trans "Status" %}:</strong>
+                            <span class="{% if last_backup.status == 'completed' %}status-good{% elif last_backup.status == 'failed' %}status-danger{% else %}status-warning{% endif %}">
+                                {{ last_backup.get_status_display }}
+                            </span>
+                        </div>
+                        {% if last_backup.file_size %}
+                        <div><strong>{% trans "Size" %}:</strong> {{ last_backup.file_size|filesizeformat }}</div>
+                        {% endif %}
+                        {% else %}
+                        <div class="no-data">{% trans "No backups yet" %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Backup Schedule -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if backup_schedule and backup_schedule.is_enabled %}card-icon-success{% else %}card-icon-muted{% endif %}">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>{% trans "Backup Schedule" %}</h3>
+                    <div class="dashboard-metric-details">
+                        {% if backup_schedule and backup_schedule.is_enabled %}
+                        <div>
+                            <strong>{% trans "Frequency" %}:</strong>
+                            {{ backup_schedule.get_frequency_display }} {% trans "at" %} {{ backup_schedule.time_of_day|time:"H:i" }}
+                        </div>
+                        {% if backup_schedule.next_run %}
+                        <div><strong>{% trans "Next Run" %}:</strong> {{ backup_schedule.next_run|date:"M j, Y H:i" }}</div>
+                        {% endif %}
+                        <div><strong>{% trans "Retention" %}:</strong> {{ backup_schedule.retention_days }} {% trans "days" %}</div>
+                        {% else %}
+                        <div class="no-data">{% trans "Not configured" %}</div>
+                        <a href="{% url 'admin:management_backup_schedule' %}" class="button small">
+                            {% trans "Configure Schedule" %}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Remote Storage -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if remote_destinations %}card-icon-success{% else %}card-icon-muted{% endif %}">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>{% trans "Remote Storage" %}</h3>
+                    <div class="dashboard-metric-details">
+                        {% if remote_destinations %}
+                        <div><strong>{% trans "Destinations" %}:</strong> {{ remote_destinations|length }}</div>
+                        {% for dest in remote_destinations %}
+                        <div>
+                            <span class="{% if dest.connection_status == 'connected' %}status-good{% elif dest.connection_status == 'error' %}status-danger{% else %}status-warning{% endif %}">
+                                {{ dest.name }}
+                            </span>
+                            <small>({{ dest.get_provider_type_display }})</small>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="no-data">{% trans "Not configured" %}</div>
+                        {% endif %}
+                        <a href="{% url 'admin:management_storage_destinations' %}" class="button small" style="margin-top: 6px;">
+                            {% trans "Manage" %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Maintenance Mode -->
+                <div class="dashboard-action-card">
+                    <div class="card-icon {% if system_status.maintenance_mode %}card-icon-warning{% else %}card-icon-success{% endif %}">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>{% trans "Maintenance Mode" %}</h3>
+                    <div class="dashboard-metric-details">
+                        <div>
+                            <strong>{% trans "Status" %}:</strong>
+                            <span class="{% if system_status.maintenance_mode %}status-warning{% else %}status-good{% endif %}">
+                                {% if system_status.maintenance_mode %}{% trans "Enabled" %}{% else %}{% trans "Disabled" %}{% endif %}
+                            </span>
+                        </div>
+                        {% if system_status.maintenance_mode and system_status.maintenance_reason %}
+                        <div><strong>{% trans "Reason" %}:</strong> {{ system_status.maintenance_reason }}</div>
+                        {% endif %}
+                        <div class="maintenance-toggle">
+                            <button class="button {% if system_status.maintenance_mode %}default{% else %}warning{% endif %}"
+                                    data-action="toggle-maintenance" data-value="{% if system_status.maintenance_mode %}false{% else %}true{% endif %}">
+                                {% if system_status.maintenance_mode %}
+                                    <i class="fas fa-power-off"></i> {% trans "Disable" %}
+                                {% else %}
+                                    <i class="fas fa-wrench"></i> {% trans "Enable" %}
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Section -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="quick-actions-grid">
+                <a href="{% url 'admin:management_create_full_backup' %}" class="quick-action-btn">
+                    <i class="fas fa-download"></i>
+                    <span>{% trans "Create Backup" %}</span>
+                </a>
+                <a href="{% url 'admin:management_restore' %}" class="quick-action-btn">
+                    <i class="fas fa-upload"></i>
+                    <span>{% trans "Restore" %}</span>
+                </a>
+                {% if not license_status.is_hosted %}
+                {% if system_status.update_available %}
+                <a href="{% url 'admin:management_upgrade' %}" class="quick-action-btn highlight">
+                    <i class="fas fa-arrow-circle-up"></i>
+                    <span>{% trans "Upgrade" %}</span>
+                </a>
+                {% else %}
+                <button class="quick-action-btn" data-action="check-for-updates">
+                    <i class="fas fa-sync"></i>
+                    <span>{% trans "Check Updates" %}</span>
+                </button>
+                {% endif %}
+                {% endif %}
+                <button class="quick-action-btn" data-action="run-diagnostics">
+                    <i class="fas fa-stethoscope"></i>
+                    <span>{% trans "Diagnostics" %}</span>
+                </button>
+                <a href="{% url 'admin:management_backup_schedule' %}" class="quick-action-btn">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Backup Schedule" %}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Running Operations Progress Section -->
+        <div id="operations-progress" class="dashboard-actions-section{% if not running_backup and not running_restore and not running_upgrade %} mgmt-hidden{% endif %}">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-spinner fa-spin"></i>
+                {% trans "Running Operations" %}
+            </h2>
+            <div class="operations-list">
+                {% if running_backup %}
+                <div class="operation-card" id="backup-progress-card" data-backup-id="{{ running_backup.id }}">
+                    <div class="operation-header">
+                        <i class="fas fa-save"></i>
+                        <span class="operation-title">{% trans "Backup in Progress" %}</span>
+                        <span class="operation-type">{{ running_backup.get_backup_type_display }}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ running_backup.progress_percent|default:0 }}%"></div>
+                    </div>
+                    <div class="operation-details">
+                        <span class="progress-percent">{{ running_backup.progress_percent|default:0 }}%</span>
+                        <span class="current-step">{{ running_backup.current_step|default:'' }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if running_restore %}
+                <div class="operation-card" id="restore-progress-card" data-restore-id="{{ running_restore.id }}">
+                    <div class="operation-header">
+                        <i class="fas fa-upload"></i>
+                        <span class="operation-title">{% trans "Restore in Progress" %}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ running_restore.progress_percent|default:0 }}%"></div>
+                    </div>
+                    <div class="operation-details">
+                        <span class="progress-percent">{{ running_restore.progress_percent|default:0 }}%</span>
+                        <span class="current-step">{{ running_restore.current_step|default:'' }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if running_upgrade and not license_status.is_hosted %}
+                <div class="operation-card" id="upgrade-progress-card" data-upgrade-id="{{ running_upgrade.id }}">
+                    <div class="operation-header">
+                        <i class="fas fa-arrow-circle-up"></i>
+                        <span class="operation-title">{% trans "Upgrade in Progress" %}</span>
+                        <span class="operation-type">{{ running_upgrade.from_version }} → {{ running_upgrade.to_version }}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ running_upgrade.progress_percent|default:0 }}%"></div>
+                    </div>
+                    <div class="operation-details">
+                        <span class="progress-percent">{{ running_upgrade.progress_percent|default:0 }}%</span>
+                        <span class="current-step">{{ running_upgrade.current_step|default:'' }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Backups Section -->
+        {% if recent_backups %}
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-history"></i>
+                {% trans "Recent Backups" %}
+            </h2>
+            <div class="table-container">
+                <table class="result-list">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Date" %}</th>
+                            <th>{% trans "Type" %}</th>
+                            <th>{% trans "Status" %}</th>
+                            <th>{% trans "Size" %}</th>
+                            <th>{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for backup in recent_backups %}
+                        <tr>
+                            <td>{{ backup.created_at|date:"M j, Y H:i" }}</td>
+                            <td>{{ backup.get_backup_type_display }}</td>
+                            <td>
+                                <span class="{% if backup.status == 'completed' %}status-good{% elif backup.status == 'failed' %}status-danger{% else %}status-warning{% endif %}">
+                                    {{ backup.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{% if backup.file_size %}{{ backup.file_size|filesizeformat }}{% else %}-{% endif %}</td>
+                            <td>
+                                {% if backup.status == 'completed' %}
+                                <a href="{% url 'admin:management_restore_confirm' backup.id %}" class="button small">
+                                    {% trans "Restore" %}
+                                </a>
+                                {% if backup.local_path %}
+                                <a href="{{ backup.local_path }}" class="button small default" download>
+                                    {% trans "Download" %}
+                                </a>
+                                {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Performance Charts Section -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-chart-line"></i>
+                {% trans "Performance Charts" %}
+            </h2>
+            <div class="dashboard-2col-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-microchip"></i> {% trans "CPU Usage Over Time" %}</h3>
+                    <canvas id="cpuChart" width="400" height="200"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-memory"></i> {% trans "Memory Usage Over Time" %}</h3>
+                    <canvas id="memoryChart" width="400" height="200"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-hdd"></i> {% trans "Disk Usage Over Time" %}</h3>
+                    <canvas id="diskChart" width="400" height="200"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fab fa-python"></i> {% trans "Active Sessions Over Time" %}</h3>
+                    <canvas id="sessionsChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {% if recent_metrics %}
+        <!-- Recent Metrics Section -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-history"></i>
+                {% trans "Recent Metrics" %}
+            </h2>
+            <div class="table-container">
+                <table class="result-list">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Time" %}</th>
+                            <th>{% trans "CPU %" %}</th>
+                            <th>{% trans "Memory %" %}</th>
+                            <th>{% trans "Disk %" %}</th>
+                            <th>{% trans "Sessions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for metric in recent_metrics %}
+                        <tr>
+                            <td>{{ metric.timestamp|date:"H:i:s" }}</td>
+                            <td>{{ metric.cpu_percent|floatformat:1 }}%</td>
+                            <td>{{ metric.memory_percent|floatformat:1 }}%</td>
+                            <td>{{ metric.disk_percent|floatformat:1 }}%</td>
+                            <td>{{ metric.active_sessions }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div id="system-dashboard-config" class="mgmt-hidden"
+     data-metrics-api-url="{% url 'admin:management_metrics_api' %}"
+     data-collect-metrics-url="{% url 'admin:management_collect_metrics' %}"
+     data-toggle-maintenance-url="{% url 'admin:management_toggle_maintenance' %}"
+     data-check-updates-url="{% url 'admin:management_check_updates' %}"
+     data-run-diagnostics-url="{% url 'admin:management_run_diagnostics' %}"
+     data-upgrade-url="{% url 'admin:management_upgrade' %}"
+     data-backup-progress-url="{% url 'admin:management_backup_progress' 0 %}"
+     data-restore-progress-url="{% url 'admin:management_restore_progress' 0 %}"
+     data-upgrade-progress-url="{% url 'admin:management_upgrade_progress' 0 %}"
+     data-label-cpu="{% trans 'CPU Usage (%)' %}"
+     data-label-memory="{% trans 'Memory Usage (%)' %}"
+     data-label-disk="{% trans 'Disk Usage (%)' %}"
+     data-label-sessions="{% trans 'Active Sessions' %}"
+     data-label-last-updated="{% trans 'Last updated' %}"
+     data-label-database="{% trans 'Database' %}"
+     data-label-redis="{% trans 'Redis' %}"
+     data-label-celery="{% trans 'Celery Workers' %}"
+     data-label-ssl="{% trans 'SSL Certificate' %}"
+     data-label-days-remaining="{% trans 'Days remaining' %}"
+     data-label-disk-space="{% trans 'Disk Space' %}"
+     data-label-used="{% trans 'used' %}"
+     data-label-free="{% trans 'free' %}"
+     data-label-diag-results="{% trans 'Diagnostics Results' %}"
+     data-label-close="{% trans 'Close' %}"
+     data-msg-maintenance-reason="{% trans 'Enter maintenance reason (optional):' %}"
+     data-msg-failed-maintenance="{% trans 'Failed to toggle maintenance mode' %}"
+     data-msg-checking="{% trans 'Checking...' %}"
+     data-msg-update-available="{% trans 'Update available:' %}"
+     data-msg-view-upgrade="{% trans 'Would you like to view upgrade options?' %}"
+     data-msg-latest-version="{% trans 'You are running the latest version' %}"
+     data-msg-failed-check="{% trans 'Failed to check for updates' %}"
+     data-msg-running="{% trans 'Running...' %}"
+     data-msg-diagnostics-failed="{% trans 'Diagnostics failed' %}"
+     data-msg-failed-diagnostics="{% trans 'Failed to run diagnostics' %}"
+     data-msg-no-results="{% trans 'No results available' %}"
+     data-msg-unknown="{% trans 'Unknown error' %}"></div>
+<script src="{% static 'management/js/system-dashboard.js' %}"></script>
+{% endblock %}

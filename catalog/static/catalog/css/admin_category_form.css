@@ -1,0 +1,268 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Category Admin Form Styles
+ * Tabbed interface for category management
+ * Uses shared tab styles from admin-base.css
+ */
+
+/* Header Styling */
+.category-admin-header {
+    background: var(--primary);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid var(--border-color);
+}
+
+.category-admin-header .header-title h1 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-admin-header .header-title h1 i {
+    color: var(--body-fg);
+}
+
+.category-admin-header .header-title h1 .header-thumbnail {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--border-color);
+    background: var(--body-bg);
+}
+
+.category-admin-header .header-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.category-admin-header .meta-item {
+    font-size: 13px;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.category-admin-header .meta-item i {
+    color: var(--body-fg);
+}
+
+.category-admin-header .header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Tab Content Panel - extending admin-base.css tabs */
+.tab-content {
+    background: var(--selected-bg);
+    border-radius: 0 0 8px 8px;
+    padding: 24px;
+    border: 1px solid var(--border-color);
+    border-top: none;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Rows */
+.form-row {
+    margin-bottom: 16px;
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--body-fg);
+}
+
+.form-row .help {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+.form-row .error {
+    color: var(--error-fg);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Checkbox rows */
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-row input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.checkbox-row label {
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Image Preview */
+.image-preview-container {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.image-preview-item {
+    flex: 1;
+    min-width: 200px;
+}
+
+.image-preview-box {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.image-preview-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.image-preview-box .placeholder {
+    color: var(--body-quiet-color);
+    text-align: center;
+}
+
+.image-preview-box .placeholder i {
+    font-size: 48px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Help Text Box */
+.help-text {
+    background: rgba(79, 70, 229, 0.05);
+    padding: 12px 16px;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary);
+    font-size: 13px;
+    color: var(--body-fg);
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.help-text i {
+    color: var(--primary);
+    margin-right: 6px;
+}
+
+/* SEO Preview */
+.seo-preview {
+    background: var(--body-bg);
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    margin-top: 20px;
+}
+
+.seo-preview h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+#seo-preview-content {
+    padding: 16px;
+    background: var(--darkened-bg);
+    border-radius: 4px;
+}
+
+.seo-preview-title {
+    color: var(--link-fg);
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.seo-preview-url {
+    color: var(--success-fg);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.seo-preview-description {
+    color: var(--body-quiet-color);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.seo-preview-disclaimer {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .category-admin-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .category-admin-header .header-actions {
+        width: auto;
+    }
+
+    .image-preview-container {
+        flex-direction: column;
+    }
+
+    .image-preview-item {
+        min-width: 100%;
+    }
+}

@@ -1,0 +1,49 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Loyaltytier List
+ *
+ * Description: Changelist styles for loyalty loyaltytier
+ * Template: loyalty/templates/admin/loyalty/loyaltytier/change_list.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ * - core/static/core/admin/css/changelist-utilities.css (shared changelist patterns)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Tier-specific card styles */
+.tier-card {
+    transition: all 0.2s ease;
+}
+
+.tier-card.inactive {
+    opacity: 0.7;
+}
+
+.list-row-card-icon.tier {
+    background: linear-gradient(135deg, var(--primary), var(--link-hover-color));
+    color: var(--primary-fg);
+}
+
+/* Tier rank badge */
+.tier-rank-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--primary);
+    color: var(--primary-fg);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Hide default table view */
+#result_list {
+    display: none;
+}

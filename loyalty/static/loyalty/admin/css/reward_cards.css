@@ -1,0 +1,50 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Reward Cards
+ *
+ * Description: Card layout styles for loyalty reward_cards
+ * Template: loyalty/templates/admin/loyalty/partials/reward_cards.html
+ * Extracted: 2026-02-13
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css (list-row-card system)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Reward-specific card styles */
+.reward-card {
+    transition: all 0.2s ease;
+}
+
+.reward-card.featured {
+    border-left: 3px solid var(--warning-fg);
+}
+
+.reward-card.out-of-stock {
+    opacity: 0.7;
+}
+
+.list-row-card-icon.discount {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.list-row-card-icon.product {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.list-row-card-icon.shipping {
+    background: var(--info-bg);
+    color: var(--info-fg);
+}
+
+.list-row-card-icon.experience {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+

@@ -1,0 +1,143 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Design - Update Confirm
+ *
+ * Description: Admin interface styles for update_confirm.html
+ * Template: design/templates/admin/design/widget/update_confirm.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+.update-confirm-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.update-confirm-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.update-confirm-icon {
+    font-size: 3rem;
+    color: var(--warning-color);
+}
+
+.update-confirm-title h1 {
+    margin: 0 0 0.5rem 0;
+    color: var(--body-fg);
+}
+
+.update-confirm-subtitle {
+    color: var(--body-quiet-color);
+    font-size: 1rem;
+}
+
+.update-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.update-info-item {
+    padding: 1rem;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.update-info-item label {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--body-quiet-color);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.update-info-item .value {
+    font-size: 1.125rem;
+    color: var(--body-fg);
+    font-weight: 500;
+}
+
+.update-changelog {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.update-changelog h2 {
+    margin: 0 0 1rem 0;
+    color: var(--body-fg);
+    font-size: 1.125rem;
+}
+
+.update-changelog pre {
+    color: var(--body-fg);
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
+.update-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.update-actions button,
+.update-actions a {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.update-actions .btn-cancel {
+    background: var(--body-quiet-color);
+    color: var(--body-bg);
+    border: none;
+}
+
+.update-actions .btn-cancel:hover {
+    background: var(--body-fg);
+}
+
+.update-actions .btn-update {
+    background: var(--primary);
+    color: var(--body-bg);
+    border: none;
+}
+
+.update-actions .btn-update:hover {
+    background: var(--link-hover-color);
+}

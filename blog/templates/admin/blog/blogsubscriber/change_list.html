@@ -1,0 +1,188 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Blog Subscribers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'blog/admin/css/blog_admin_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-users"></i>
+                {% trans "Blog Subscribers" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage email subscribers for blog notifications" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:blog_blogsubscriber_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Subscriber" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="dashboard-stats-grid dashboard-stats-grid--spaced">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value">{{ total_count }}</div>
+            <div class="label">{% trans "Total Subscribers" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon stat-icon--success"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ verified_count }}</div>
+            <div class="label">{% trans "Verified" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon stat-icon--warning"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ pending_count }}</div>
+            <div class="label">{% trans "Pending" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon stat-icon--primary"><i class="fas fa-toggle-on"></i></div>
+            <div class="value">{{ active_count }}</div>
+            <div class="label">{% trans "Active" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by email or name...' %}"
+                    value="">
+            </div>
+
+            <!-- Verification Status -->
+            <div class="filter-field">
+                <label for="filter-verification">
+                    <i class="fas fa-check-double"></i> {% trans "Verification" %}
+                </label>
+                <select id="filter-verification">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="verified">{% trans "Verified" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                    <option value="bounced">{% trans "Bounced" %}</option>
+                </select>
+            </div>
+
+            <!-- Frequency -->
+            <div class="filter-field">
+                <label for="filter-frequency">
+                    <i class="fas fa-bell"></i> {% trans "Frequency" %}
+                </label>
+                <select id="filter-frequency">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="immediate">{% trans "Immediate" %}</option>
+                    <option value="weekly">{% trans "Weekly" %}</option>
+                    <option value="monthly">{% trans "Monthly" %}</option>
+                </select>
+            </div>
+
+            <!-- Active Status -->
+            <div class="filter-field">
+                <label for="filter-active">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-active">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Unsubscribed" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-subscriber" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Subscribers" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-user"></i>
+            <span id="subscriber-count">{{ cl.result_count }}</span> {% trans "subscriber" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="subscriber-results">
+        {% include "admin/blog/blogsubscriber/partials/subscriber_cards.html" with subscribers=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 subscriber{% plural %}{{ counter }} subscribers{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'subscribers' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+
+    <div id="list-filter-config"
+     class="blog-hidden"
+     data-filter-url="{% url 'blog_admin:filter_blog_subscribers' %}"
+     data-results-container="subscriber-results"
+     data-results-count="subscriber-count"></div>
+</div>
+{% endblock %}

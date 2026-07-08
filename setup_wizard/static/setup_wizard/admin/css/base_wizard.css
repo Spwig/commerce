@@ -1,0 +1,321 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Setup Wizard - Base Wizard Styles
+ *
+ * Description: Styles specific to the setup wizard that extend wizard-base.css
+ * Template: setup_wizard/templates/setup_wizard/base.html
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/wizard-base.css (shared wizard styles)
+ * - core/static/core/admin/css/admin-base.css
+ */
+
+/* ==========================================================================
+   Setup Wizard Container
+   ========================================================================== */
+
+.setup-wizard-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: var(--body-bg, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px var(--shadow-color, rgba(0, 0, 0, 0.1));
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Wizard Header
+   ========================================================================== */
+
+.setup-wizard-header {
+    background: linear-gradient(135deg, var(--primary, #417690) 0%, var(--link-fg, #5a9bc4) 100%);
+    color: var(--primary-fg, #fff);
+    padding: 2rem;
+    text-align: center;
+}
+
+.setup-wizard-header .wizard-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-fg, #fff);
+}
+
+.setup-wizard-header .wizard-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Progress Bar
+   ========================================================================== */
+
+.setup-progress-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+}
+
+.setup-progress-bar {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.setup-progress-fill {
+    background: var(--success-fg, #28a745);
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.3s ease;
+}
+
+.setup-progress-text {
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 0;
+    color: var(--primary-fg, #fff);
+}
+
+/* ==========================================================================
+   Step Navigation Indicators
+   ========================================================================== */
+
+.setup-step-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.setup-step-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.setup-step-indicator.active {
+    background: var(--success-fg, #28a745);
+    transform: scale(1.2);
+}
+
+.setup-step-indicator.completed {
+    background: var(--success-fg, #28a745);
+}
+
+/* ==========================================================================
+   Wizard Body
+   ========================================================================== */
+
+.setup-wizard-body {
+    padding: 3rem;
+}
+
+/* ==========================================================================
+   Step Header
+   ========================================================================== */
+
+.setup-step-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.setup-step-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--primary, #417690);
+}
+
+.setup-step-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+    margin: 0 0 0.5rem 0;
+}
+
+.setup-step-description {
+    color: var(--body-quiet-color, #666);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Form Elements
+   ========================================================================== */
+
+.setup-form-section {
+    margin-bottom: 2rem;
+}
+
+.setup-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.setup-form-label {
+    display: block;
+    font-weight: 500;
+    color: var(--body-fg, #333);
+    margin-bottom: 0.5rem;
+}
+
+.setup-form-label .required {
+    color: var(--error-fg, #dc3545);
+}
+
+.setup-form-help {
+    font-size: 0.875rem;
+    color: var(--body-quiet-color, #666);
+    margin-top: 0.25rem;
+}
+
+.setup-form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 6px;
+    border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.setup-form-check-input {
+    margin-top: 0.25rem;
+}
+
+.setup-form-check-label {
+    font-weight: 500;
+    color: var(--body-fg, #333);
+    margin: 0;
+}
+
+/* ==========================================================================
+   Alerts
+   ========================================================================== */
+
+.setup-alert-error {
+    background: var(--message-error-bg, #f8d7da);
+    color: var(--body-fg, #721c24);
+    border: 1px solid var(--message-error-border, #f5c6cb);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   Skip Notice
+   ========================================================================== */
+
+.setup-skip-notice {
+    text-align: center;
+    padding: 1rem;
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 6px;
+    margin-bottom: 2rem;
+}
+
+.setup-skip-notice small {
+    color: var(--body-quiet-color, #666);
+}
+
+/* ==========================================================================
+   Wizard Actions Bar
+   ========================================================================== */
+
+.setup-wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3rem;
+    background: var(--darkened-bg, #f8f9fa);
+    border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.setup-actions-left,
+.setup-actions-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.setup-wizard-actions .btn-outline {
+    background: var(--body-bg, #fff);
+    color: var(--primary, #417690);
+    border: 2px solid var(--primary, #417690);
+}
+
+.setup-wizard-actions .btn-outline:hover {
+    background: var(--primary, #417690);
+    color: var(--primary-fg, #fff);
+}
+
+.setup-wizard-actions .btn-warning {
+    background: var(--close-button-bg, #6c757d);
+    color: var(--button-fg, #fff);
+    margin-left: 1rem;
+}
+
+/* ==========================================================================
+   Payment Info Step
+   ========================================================================== */
+
+.setup-payment-info {
+    text-align: center;
+    padding: 2rem;
+}
+
+.setup-payment-icon {
+    font-size: 4rem;
+    color: var(--primary, #417690);
+    margin-bottom: 1.5rem;
+}
+
+.setup-payment-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+    margin-bottom: 1rem;
+}
+
+.setup-payment-description {
+    color: var(--body-quiet-color, #666);
+    margin-bottom: 1.5rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .setup-wizard-container {
+        margin: 1rem;
+        border-radius: 8px;
+    }
+
+    .setup-wizard-header,
+    .setup-wizard-body {
+        padding: 2rem 1.5rem;
+    }
+
+    .setup-wizard-actions {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+
+    .setup-actions-left,
+    .setup-actions-right {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

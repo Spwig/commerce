@@ -1,0 +1,56 @@
+{% load i18n %}
+<div class="wizard-step-header">
+    <div class="wizard-step-icon">
+        <i class="fas fa-store"></i>
+    </div>
+    <h3 class="wizard-step-title">{% trans "Your Store" %}</h3>
+    <p class="wizard-step-description">{% trans "Let's set up the basics. What's your store called?" %}</p>
+</div>
+
+<form id="wizard-form-store" novalidate>
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_site_name">{% trans "Store Name" %} <span style="color: var(--error-fg)">*</span></label>
+        {{ form.site_name }}
+        {% if form.site_name.help_text %}
+        <p class="help-text">{{ form.site_name.help_text }}</p>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="id_site_url">{% trans "Store URL" %} <span style="color: var(--error-fg)">*</span></label>
+        {{ form.site_url }}
+        {% if form.site_url.help_text %}
+        <p class="help-text">{{ form.site_url.help_text }}</p>
+        {% endif %}
+    </div>
+
+    {% if is_hosted %}
+    <div class="form-group custom-domain-callout"
+         style="background: var(--surface-bg, #f8f9fa); border: 1px solid var(--border-color, #e0e0e0); border-radius: 8px; padding: 1rem; margin-top: -0.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-globe" style="color: var(--primary-color, #2563eb);"></i>
+            <strong>{% trans "Want to use your own domain?" %}</strong>
+        </div>
+        <p class="help-text" style="margin: 0.5rem 0 0;">
+            {% trans "After completing the setup, you can connect a custom domain like www.yourstore.com from Settings → Domain." %}
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+        <label for="id_site_description">{% trans "Description" %}</label>
+        {{ form.site_description }}
+        {% if form.site_description.help_text %}
+        <p class="help-text">{{ form.site_description.help_text }}</p>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="id_favicon">{% trans "Favicon" %}</label>
+        {{ form.favicon }}
+        {% if form.favicon.help_text %}
+        <p class="help-text">{{ form.favicon.help_text }}</p>
+        {% endif %}
+    </div>
+</form>

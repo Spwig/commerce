@@ -1,0 +1,63 @@
+{% load i18n merchant_trans %}
+<article class="reviews-display__card">
+    <div class="reviews-display__card-header">
+        {% if element.content.show_rating|default:True %}
+        <div class="reviews-display__stars">
+            {% for i in "12345" %}
+            <i class="{% if forloop.counter <= review.rating %}fas{% else %}far{% endif %} fa-star"></i>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if element.content.show_verified_badge|default:True %}
+        {% if review.is_verified_purchase or review.verified %}
+        <span class="reviews-display__verified">
+            <i class="fas fa-check-circle"></i>
+            {% mtrans "Verified Purchase" %}
+        </span>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    {% if review.title %}
+    <h4 class="reviews-display__review-title">{{ review.title }}</h4>
+    {% endif %}
+
+    <p class="reviews-display__content">{{ review.comment|striptags|truncatechars:200 }}</p>
+
+    {% if element.content.show_images|default:True and review.images %}
+    <div class="reviews-display__images">
+        {% for image in review.images %}
+        <img src="{{ image.url|default:image }}" alt="{% mtrans 'Review image' %}" class="reviews-display__image" loading="lazy">
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="reviews-display__footer">
+        {% if element.content.show_avatar|default:True %}
+        <span class="reviews-display__avatar">{{ review.author|default:review.user.get_full_name|default:review.user.username|make_list|first }}</span>
+        {% endif %}
+        <div class="reviews-display__footer-text">
+            <span class="reviews-display__author">{{ review.author|default:review.user.get_full_name|default:review.user.username }}</span>
+            {% if element.content.show_date|default:True %}
+            <span class="reviews-display__date">
+                {% if review.created_at %}
+                {{ review.created_at|date:"M j, Y" }}
+                {% else %}
+                {{ review.date }}
+                {% endif %}
+            </span>
+            {% endif %}
+            {% if element.content.show_product_name and review.product %}
+            <a href="{{ review.product.get_absolute_url }}" class="reviews-display__product-name">{{ review.product.name }}</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if element.content.show_helpful_votes and review.helpful_count %}
+    <div class="reviews-display__helpful">
+        <i class="far fa-thumbs-up"></i>
+        {{ review.helpful_count }} {% mtrans "found this helpful" %}
+    </div>
+    {% endif %}
+</article>

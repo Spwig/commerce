@@ -1,0 +1,141 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Activate Spwig" %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'core/images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'core/images/favicon-16x16.png' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/activate.css' %}">
+</head>
+<body>
+    <div class="activate-page">
+        <!-- Animated gradient background -->
+        <div class="activate-background"></div>
+
+        <!-- Centered container -->
+        <div class="activate-container">
+            <div class="activate-card">
+
+                {% if result and result.success %}
+                {# ── SUCCESS STATE ── #}
+                <div class="activate-success">
+                    <div class="activate-success-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                    </div>
+
+                    <h1 class="activate-success-title">{% trans "Activation Complete" %}</h1>
+                    <p class="activate-success-subtitle">
+                        {% trans "Your Spwig installation has been activated" %}
+                        {% if result.license_type %}({{ result.license_type }}){% endif %}.
+                    </p>
+
+                    {% if result.admin_username and result.admin_password %}
+                    <div class="activate-credentials">
+                        <h3>{% trans "Your Admin Credentials" %}</h3>
+                        <div class="activate-credential-row">
+                            <span class="activate-credential-label">{% trans "Username" %}</span>
+                            <span class="activate-credential-value">{{ result.admin_username }}</span>
+                        </div>
+                        <div class="activate-credential-row">
+                            <span class="activate-credential-label">{% trans "Password" %}</span>
+                            <span class="activate-credential-value">{{ result.admin_password }}</span>
+                        </div>
+                        <p class="activate-credentials-warning">
+                            {% trans "Save these credentials now. The password will not be shown again." %}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <a href="/en/admin/" class="activate-continue">
+                        <span>{% trans "Continue to Setup" %}</span>
+                        <svg class="activate-continue-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+
+                {% else %}
+                {# ── ACTIVATION FORM ── #}
+                <div class="activate-header">
+                    <img src="{% static 'images/spwig_logo.svg' %}" alt="Spwig" class="activate-logo">
+                    <h1 class="activate-title">{% trans "Activate Spwig" %}</h1>
+                    <p class="activate-subtitle">
+                        {% trans "Enter your setup token to activate this installation." %}
+                    </p>
+                </div>
+
+                {% if error %}
+                <div class="activate-alert activate-alert-error">
+                    <svg class="activate-alert-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <span>{{ error }}</span>
+                </div>
+                {% endif %}
+
+                <form method="post" class="activate-form">
+                    {% csrf_token %}
+
+                    <div class="activate-field">
+                        <label for="setup_token" class="activate-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0110 0v4"/>
+                            </svg>
+                            {% trans "Setup Token" %}
+                        </label>
+                        <textarea
+                            id="setup_token"
+                            name="setup_token"
+                            class="activate-textarea"
+                            placeholder="{% trans "Paste your setup token here (eyJ...)" %}"
+                            required
+                            autofocus
+                        >{{ request.POST.setup_token|default:"" }}</textarea>
+                    </div>
+
+                    <button type="submit" class="activate-submit">
+                        <span>{% trans "Activate" %}</span>
+                        <svg class="activate-submit-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <div class="activate-help">
+                    <p class="activate-help-title">{% trans "Don't have a license?" %}</p>
+                    <div class="activate-help-options">
+                        <div class="activate-help-option">
+                            <strong>{% trans "Developer License (Free)" %}</strong>
+                            <span>{% trans "Create a developer account at" %} <a href="https://spwig.com" target="_blank" rel="noopener">spwig.com</a> {% trans "to get a free developer license for testing and development." %}</span>
+                        </div>
+                        <div class="activate-help-option">
+                            <strong>{% trans "Production License" %}</strong>
+                            <span>{% trans "Purchase a production license at" %} <a href="https://spwig.com" target="_blank" rel="noopener">spwig.com</a> {% trans "to go live with your store." %}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="activate-footer">
+                <div class="activate-footer-powered">
+                    <img src="{% static 'core/images/favicon-16x16.png' %}" alt="" class="activate-footer-favicon">
+                    <a href="https://spwig.com" target="_blank" rel="noopener">{% trans "Powered by Spwig" %}</a>
+                </div>
+                <div class="activate-footer-copyright">
+                    &copy; {% now "Y" %} Spwig contributors
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

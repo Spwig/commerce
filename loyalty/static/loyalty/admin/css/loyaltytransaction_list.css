@@ -1,0 +1,53 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Loyaltytransaction List
+ *
+ * Description: Changelist styles for loyalty loyaltytransaction
+ * Template: loyalty/templates/admin/loyalty/loyaltytransaction/change_list.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ * - core/static/core/admin/css/changelist-utilities.css (shared changelist patterns)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Transaction-specific card styles */
+.transaction-card {
+    transition: all 0.2s ease;
+}
+
+.transaction-positive {
+    border-left: 3px solid var(--success-fg);
+}
+
+.transaction-negative {
+    border-left: 3px solid var(--error-fg);
+}
+
+.list-row-card-stat-value.success {
+    color: var(--success-fg);
+}
+
+.list-row-card-stat-value.error {
+    color: var(--error-fg);
+}
+
+.list-row-card-icon.success {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.list-row-card-icon.error {
+    background: var(--error-bg);
+    color: var(--error-fg);
+}
+
+/* Hide default table view */
+#result_list {
+    display: none;
+}

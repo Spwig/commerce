@@ -1,0 +1,332 @@
+{
+  "element_type": "blog_post_grid",
+  "name": "Blog Post Grid",
+  "description": "Display blog posts in a responsive grid layout with filtering options",
+  "version": "1.0.1",
+  "category": "content",
+  "icon": "fas fa-th-large",
+  "author": "Page Builder System",
+  "tags": ["blog", "posts", "grid", "articles", "content", "news"],
+  "supports_translation": true,
+  "translation_domain": "blog_post_grid_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/blog-post-grid.css"],
+  "disable_base_properties": ["text_color"],
+  "context_provider": "page_builder.context_providers.blog_post_grid_context",
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-newspaper",
+      "order": 1,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Latest Posts",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "string",
+              "label": "Subtitle",
+              "default": "",
+              "translatable": true
+            }
+          }
+        },
+        "source_group": {
+          "type": "property_group",
+          "label": "Post Source",
+          "columns": 1,
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "options": [
+                {"value": "dynamic", "label": "Live from Blog"},
+                {"value": "static", "label": "Manual Selection"}
+              ],
+              "default": "dynamic",
+              "help_text": "Choose between live blog data or manually configured posts"
+            },
+            "source": {
+              "type": "select",
+              "label": "Post Source",
+              "options": [
+                {"value": "recent", "label": "Recent Posts"},
+                {"value": "featured", "label": "Featured Posts"},
+                {"value": "pinned", "label": "Pinned Posts"},
+                {"value": "category", "label": "From Category"},
+                {"value": "tag", "label": "With Tag"}
+              ],
+              "default": "recent",
+              "show_if": {"data_source": "dynamic"}
+            },
+            "category_slug": {
+              "type": "string",
+              "label": "Category Slug",
+              "help_text": "Enter the category slug to filter by",
+              "show_if": {"source": "category", "data_source": "dynamic"}
+            },
+            "tag_slug": {
+              "type": "string",
+              "label": "Tag Slug",
+              "help_text": "Enter the tag slug to filter by",
+              "show_if": {"source": "tag", "data_source": "dynamic"}
+            },
+            "max_posts": {
+              "type": "number",
+              "label": "Number of Posts",
+              "default": 6,
+              "min": 1,
+              "max": 24,
+              "show_if": {"data_source": "dynamic"}
+            }
+          }
+        },
+        "static_posts_group": {
+          "type": "property_group",
+          "label": "Static Posts",
+          "columns": 1,
+          "show_if": {"data_source": "static"},
+          "properties": {
+            "posts": {
+              "type": "array",
+              "label": "Blog Posts",
+              "full_width": true,
+              "help_text": "Manually add posts when using static data source",
+              "item_schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string", "label": "Title", "translatable": true},
+                  "excerpt": {"type": "textarea", "label": "Excerpt", "translatable": true, "rows": 2},
+                  "image": {"type": "image", "label": "Featured Image"},
+                  "url": {"type": "url", "label": "Post URL", "link_selector": true},
+                  "category": {"type": "string", "label": "Category"},
+                  "author": {"type": "string", "label": "Author"},
+                  "date": {"type": "string", "label": "Date"},
+                  "reading_time": {"type": "number", "label": "Reading Time (min)"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "icon": "fas fa-grip-horizontal",
+      "order": 2,
+      "properties": {
+        "layout_group": {
+          "type": "property_group",
+          "label": "Grid Layout",
+          "properties": {
+            "columns": {
+              "type": "select",
+              "label": "Columns",
+              "options": [
+                {"value": "1", "label": "1 Column"},
+                {"value": "2", "label": "2 Columns"},
+                {"value": "3", "label": "3 Columns"},
+                {"value": "4", "label": "4 Columns"}
+              ],
+              "default": "3"
+            },
+            "gap": {
+              "type": "select",
+              "label": "Card Gap",
+              "options": [
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"}
+              ],
+              "default": "md"
+            }
+          }
+        },
+        "style_group": {
+          "type": "property_group",
+          "label": "Card Style",
+          "properties": {
+            "card_style": {
+              "type": "select",
+              "label": "Card Style",
+              "options": [
+                {"value": "default", "label": "Default"},
+                {"value": "minimal", "label": "Minimal"},
+                {"value": "overlay", "label": "Image Overlay"},
+                {"value": "horizontal", "label": "Horizontal"}
+              ],
+              "default": "default"
+            },
+            "image_ratio": {
+              "type": "select",
+              "label": "Image Ratio",
+              "options": [
+                {"value": "16/9", "label": "16:9 (Widescreen)"},
+                {"value": "4/3", "label": "4:3 (Standard)"},
+                {"value": "1/1", "label": "1:1 (Square)"},
+                {"value": "3/2", "label": "3:2"}
+              ],
+              "default": "16/9"
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-eye",
+      "order": 3,
+      "properties": {
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Show/Hide Elements",
+          "properties": {
+            "show_image": {
+              "type": "boolean",
+              "label": "Show Featured Image",
+              "default": true
+            },
+            "show_excerpt": {
+              "type": "boolean",
+              "label": "Show Excerpt",
+              "default": true
+            },
+            "show_category": {
+              "type": "boolean",
+              "label": "Show Category",
+              "default": true
+            },
+            "show_author": {
+              "type": "boolean",
+              "label": "Show Author",
+              "default": true
+            },
+            "show_date": {
+              "type": "boolean",
+              "label": "Show Date",
+              "default": true
+            },
+            "show_reading_time": {
+              "type": "boolean",
+              "label": "Show Reading Time",
+              "default": true
+            }
+          }
+        },
+        "format_group": {
+          "type": "property_group",
+          "label": "Formatting",
+          "properties": {
+            "excerpt_length": {
+              "type": "number",
+              "label": "Excerpt Length (chars)",
+              "default": 120,
+              "min": 50,
+              "max": 300
+            },
+            "date_format": {
+              "type": "select",
+              "label": "Date Format",
+              "options": [
+                {"value": "relative", "label": "Relative (e.g., 2 days ago)"},
+                {"value": "short", "label": "Short (Jan 15, 2025)"},
+                {"value": "long", "label": "Long (January 15, 2025)"}
+              ],
+              "default": "short"
+            }
+          }
+        }
+      }
+    },
+    "cta": {
+      "label": "CTA",
+      "icon": "fas fa-arrow-right",
+      "order": 4,
+      "properties": {
+        "read_more_group": {
+          "type": "property_group",
+          "label": "Read More",
+          "properties": {
+            "show_read_more": {
+              "type": "boolean",
+              "label": "Show Read More Link",
+              "default": true
+            },
+            "read_more_text": {
+              "type": "string",
+              "label": "Read More Text",
+              "default": "Read More",
+              "translatable": true
+            }
+          }
+        },
+        "view_all_group": {
+          "type": "property_group",
+          "label": "View All",
+          "properties": {
+            "show_view_all": {
+              "type": "boolean",
+              "label": "Show View All Button",
+              "default": false
+            },
+            "view_all_text": {
+              "type": "string",
+              "label": "View All Text",
+              "default": "View All Posts",
+              "translatable": true
+            },
+            "view_all_url": {
+              "type": "link_selector",
+              "label": "View All URL",
+              "default": "/blog/"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {"type": "string", "default": "Latest Posts", "translatable": true},
+    "subtitle": {"type": "string", "default": "", "translatable": true},
+    "data_source": {"type": "select", "default": "dynamic"},
+    "source": {"type": "select", "default": "recent"},
+    "category_slug": {"type": "string"},
+    "tag_slug": {"type": "string"},
+    "max_posts": {"type": "number", "default": 6},
+    "posts": {"type": "array"},
+    "columns": {"type": "select", "default": "3"},
+    "card_style": {"type": "select", "default": "default"},
+    "image_ratio": {"type": "select", "default": "16/9"},
+    "gap": {"type": "select", "default": "md"},
+    "show_image": {"type": "boolean", "default": true},
+    "show_excerpt": {"type": "boolean", "default": true},
+    "show_category": {"type": "boolean", "default": true},
+    "show_author": {"type": "boolean", "default": true},
+    "show_date": {"type": "boolean", "default": true},
+    "show_reading_time": {"type": "boolean", "default": true},
+    "excerpt_length": {"type": "number", "default": 120},
+    "date_format": {"type": "select", "default": "short"},
+    "show_read_more": {"type": "boolean", "default": true},
+    "read_more_text": {"type": "string", "default": "Read More", "translatable": true},
+    "show_view_all": {"type": "boolean", "default": false},
+    "view_all_text": {"type": "string", "default": "View All Posts", "translatable": true},
+    "view_all_url": {"type": "link_selector", "default": "/blog/"}
+  },
+  "translations": {
+    "en": {"name": "Blog Post Grid", "description": "Display blog posts in a responsive grid layout"},
+    "es": {"name": "Cuadrícula de Blog", "description": "Mostrar publicaciones de blog en una cuadrícula responsive"},
+    "fr": {"name": "Grille d'Articles", "description": "Afficher les articles de blog dans une grille responsive"},
+    "de": {"name": "Blog-Raster", "description": "Blog-Beiträge in einem responsiven Raster anzeigen"},
+    "pt": {"name": "Grade de Blog", "description": "Exibir posts de blog em uma grade responsiva"},
+    "zh-hans": {"name": "博客文章网格", "description": "以响应式网格布局显示博客文章"},
+    "ja": {"name": "ブログ記事グリッド", "description": "ブログ記事をレスポンシブグリッドで表示"}
+  }
+}

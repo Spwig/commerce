@@ -1,0 +1,87 @@
+{% extends "affiliate/base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "My Commissions" context "affiliate" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate/commissions.css' %}">
+{% endblock %}
+
+{% block page_title %}{% trans "Commissions" context "affiliate" %}{% endblock %}
+
+{% block page_description %}
+<p>{% trans "Track your earned commissions" context "affiliate" %}</p>
+{% endblock %}
+
+{% block content %}
+<div class="commissions-container">
+    {% if commissions %}
+        <div class="affiliate-table-container">
+            <table class="affiliate-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Date" context "table" %}</th>
+                        <th>{% trans "Program" context "table" %}</th>
+                        <th>{% trans "Order" context "table" %}</th>
+                        <th>{% trans "Order Total" context "table" %}</th>
+                        <th>{% trans "Commission" context "table" %}</th>
+                        <th>{% trans "Status" context "table" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commission in commissions %}
+                    <tr>
+                        <td>{{ commission.created_at|date:"M d, Y" }}</td>
+                        <td>{{ commission.program.name }}</td>
+                        <td>
+                            {% if commission.order %}
+                                #{{ commission.order.id }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if commission.order %}
+                                ${{ commission.order.total|floatformat:2|intcomma }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="commission-amount">${{ commission.amount|floatformat:2|intcomma }}</td>
+                        <td>
+                            <span class="badge-affiliate badge-{{ commission.status }}">
+                                {{ commission.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+        <nav class="pagination-nav">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a></li>
+                {% endif %}
+                <li class="current">{% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}</li>
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-coins"></i>
+            <h3>{% trans "No Commissions Yet" context "empty" %}</h3>
+            <p>{% trans "Start promoting your affiliate links to earn commissions!" context "empty" %}</p>
+            <a href="{% url 'affiliate:links' %}" class="btn-affiliate btn-affiliate-primary mt-2">
+                <i class="fas fa-link"></i> {% trans "View My Links" context "action" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

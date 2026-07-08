@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Animation Test</title>
+
+    <!-- Load CSS in same order as visual builder -->
+    <link rel="stylesheet" href="/static/page_builder/css/canvas-isolation.css">
+    <link rel="stylesheet" href="/static/core/frontend/animations.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .test-section h2 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        /* Simulate page builder structure */
+        .pb-content-preview {
+            padding: 20px;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .element-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .element-content {
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .test-element {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            border-radius: 8px;
+        }
+
+        .control-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Canvas Animation Test</h1>
+
+        <div class="test-section">
+            <h2>Test 1: Animation Classes</h2>
+            <div class="pb-content-preview">
+                <div class="element-wrapper">
+                    <div class="element-content">
+                        <div id="classTest" class="test-element">
+                            Animation Class Test
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-buttons">
+                <button onclick="applyAnimationClass('fadeIn')">Fade In</button>
+                <button onclick="applyAnimationClass('slideInUp')">Slide In Up</button>
+                <button onclick="applyAnimationClass('zoomIn')">Zoom In</button>
+                <button onclick="applyAnimationClass('pulse')">Pulse</button>
+                <button onclick="applyAnimationClass('bounce')">Bounce</button>
+                <button onclick="clearAnimationClass()">Clear</button>
+            </div>
+            <div class="status" id="classStatus">Ready to test animation classes...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 2: Inline Animation Styles</h2>
+            <div class="pb-content-preview">
+                <div class="element-wrapper">
+                    <div class="element-content">
+                        <div id="inlineTest" class="test-element">
+                            Inline Style Test
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-buttons">
+                <button onclick="applyInlineAnimation()">Apply Inline Animation</button>
+                <button onclick="changeAnimationProperties()">Change Properties</button>
+                <button onclick="clearInlineAnimation()">Clear</button>
+            </div>
+            <div class="status" id="inlineStatus">Ready to test inline animations...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 3: Combined (Class + Inline Override)</h2>
+            <div class="pb-content-preview">
+                <div class="element-wrapper">
+                    <div class="element-content">
+                        <div id="combinedTest" class="test-element">
+                            Combined Test
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-buttons">
+                <button onclick="applyCombinedAnimation()">Apply Combined</button>
+                <button onclick="toggleInfinite()">Toggle Infinite</button>
+                <button onclick="clearCombinedAnimation()">Clear</button>
+            </div>
+            <div class="status" id="combinedStatus">Ready to test combined animations...</div>
+        </div>
+    </div>
+
+    <script>
+        // Test 1: Animation Classes
+        function applyAnimationClass(animationType) {
+            const element = document.getElementById('classTest');
+
+            // Remove all animation classes
+            element.className = element.className.replace(/animate-\w+/g, '').trim();
+
+            // Add new animation class
+            element.classList.add(`animate-${animationType}`);
+
+            // Force reflow to restart animation
+            void element.offsetWidth;
+
+            document.getElementById('classStatus').textContent =
+                `Applied animation class: animate-${animationType}`;
+        }
+
+        function clearAnimationClass() {
+            const element = document.getElementById('classTest');
+            element.className = element.className.replace(/animate-\w+/g, '').trim();
+            document.getElementById('classStatus').textContent = 'Animation class cleared';
+        }
+
+        // Test 2: Inline Animation Styles
+        function applyInlineAnimation() {
+            const element = document.getElementById('inlineTest');
+
+            // Apply inline animation styles
+            element.style.animationName = 'fadeIn';
+            element.style.animationDuration = '1s';
+            element.style.animationTimingFunction = 'ease-in-out';
+            element.style.animationIterationCount = '1';
+            element.style.animationFillMode = 'both';
+
+            // Force reflow
+            void element.offsetWidth;
+
+            document.getElementById('inlineStatus').textContent =
+                'Applied inline animation: fadeIn 1s ease-in-out';
+        }
+
+        function changeAnimationProperties() {
+            const element = document.getElementById('inlineTest');
+
+            element.style.animationName = 'pulse';
+            element.style.animationDuration = '0.5s';
+            element.style.animationIterationCount = 'infinite';
+
+            // Force reflow
+            void element.offsetWidth;
+
+            document.getElementById('inlineStatus').textContent =
+                'Changed to: pulse 0.5s infinite';
+        }
+
+        function clearInlineAnimation() {
+            const element = document.getElementById('inlineTest');
+            element.style.animation = '';
+            document.getElementById('inlineStatus').textContent = 'Inline animation cleared';
+        }
+
+        // Test 3: Combined
+        function applyCombinedAnimation() {
+            const element = document.getElementById('combinedTest');
+
+            // Add class
+            element.classList.add('animate-bounceIn');
+
+            // Override with inline styles
+            element.style.animationDuration = '2s';
+            element.style.animationDelay = '0.5s';
+
+            // Force reflow
+            void element.offsetWidth;
+
+            document.getElementById('combinedStatus').textContent =
+                'Applied: animate-bounceIn class with 2s duration, 0.5s delay override';
+        }
+
+        function toggleInfinite() {
+            const element = document.getElementById('combinedTest');
+
+            if (element.style.animationIterationCount === 'infinite') {
+                element.style.animationIterationCount = '1';
+                document.getElementById('combinedStatus').textContent =
+                    'Changed to single iteration';
+            } else {
+                element.style.animationIterationCount = 'infinite';
+                document.getElementById('combinedStatus').textContent =
+                    'Changed to infinite iterations';
+            }
+
+            // Force reflow
+            void element.offsetWidth;
+        }
+
+        function clearCombinedAnimation() {
+            const element = document.getElementById('combinedTest');
+            element.className = element.className.replace(/animate-\w+/g, '').trim();
+            element.style.animation = '';
+            document.getElementById('combinedStatus').textContent = 'Combined animation cleared';
+        }
+    </script>
+</body>
+</html>

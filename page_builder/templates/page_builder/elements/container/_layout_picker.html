@@ -1,0 +1,228 @@
+{% load i18n %}
+{# Layout Picker - Shown when a new container is dropped #}
+
+<div class="container-layout-picker" data-container-id="{{ element.id }}" style="
+    padding: 24px;
+    background: var(--body-bg, #1e1e1e);
+    border: 2px dashed var(--border-color, #3a3a3a);
+    border-radius: 12px;
+    text-align: center;
+">
+    <div class="layout-picker-header" style="margin-bottom: 20px;">
+        <i class="fas fa-th-large" style="font-size: 24px; color: var(--primary, #3b82f6); margin-bottom: 8px; display: block;"></i>
+        <h4 style="margin: 0 0 8px 0; color: var(--body-fg, #e0e0e0); font-size: 16px; font-weight: 600;">{% trans "Choose a Layout" %}</h4>
+        <p style="margin: 0; color: var(--body-quiet-color, #888); font-size: 13px;">{% trans "Select a preset layout or skip for an empty container" %}</p>
+    </div>
+
+    <div class="layout-options" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 12px;
+        max-width: 500px;
+        margin: 0 auto 20px auto;
+    ">
+        {# Full Width #}
+        <div class="layout-option" data-layout="full-width" title="{% trans 'Single full-width column' %}"
+             data-action="apply-container-layout" data-container-id="{{ element.id }}" data-layout-type="full-width"
+             style="
+            padding: 12px 8px;
+            border: 2px solid var(--border-color, #3a3a3a);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--body-bg, #1e1e1e);
+        ">
+            <div class="layout-preview" style="
+                background: var(--darkened-bg, #2a2a2a);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                min-height: 40px;
+            ">
+                <div class="preview-row" style="display: flex; gap: 4px;">
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                </div>
+            </div>
+            <span style="font-size: 11px; color: var(--body-quiet-color, #888);">{% trans "Full Width" %}</span>
+        </div>
+
+        {# 2 Equal Columns #}
+        <div class="layout-option" data-layout="2-equal" title="{% trans 'Two equal columns (50% / 50%)' %}"
+             data-action="apply-container-layout" data-container-id="{{ element.id }}" data-layout-type="2-equal"
+             style="
+            padding: 12px 8px;
+            border: 2px solid var(--border-color, #3a3a3a);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--body-bg, #1e1e1e);
+        ">
+            <div class="layout-preview" style="
+                background: var(--darkened-bg, #2a2a2a);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                min-height: 40px;
+            ">
+                <div class="preview-row" style="display: flex; gap: 4px;">
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                </div>
+            </div>
+            <span style="font-size: 11px; color: var(--body-quiet-color, #888);">{% trans "2 Equal" %}</span>
+        </div>
+
+        {# 2 Columns 33/66 #}
+        <div class="layout-option" data-layout="2-col-33-66" title="{% trans 'Two columns (33% / 66%)' %}"
+             data-action="apply-container-layout" data-container-id="{{ element.id }}" data-layout-type="2-col-33-66"
+             style="
+            padding: 12px 8px;
+            border: 2px solid var(--border-color, #3a3a3a);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--body-bg, #1e1e1e);
+        ">
+            <div class="layout-preview" style="
+                background: var(--darkened-bg, #2a2a2a);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                min-height: 40px;
+            ">
+                <div class="preview-row" style="display: flex; gap: 4px;">
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                    <div class="preview-col" style="flex: 2; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                </div>
+            </div>
+            <span style="font-size: 11px; color: var(--body-quiet-color, #888);">{% trans "33% / 66%" %}</span>
+        </div>
+
+        {# 2 Columns 66/33 #}
+        <div class="layout-option" data-layout="2-col-66-33" title="{% trans 'Two columns (66% / 33%)' %}"
+             data-action="apply-container-layout" data-container-id="{{ element.id }}" data-layout-type="2-col-66-33"
+             style="
+            padding: 12px 8px;
+            border: 2px solid var(--border-color, #3a3a3a);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--body-bg, #1e1e1e);
+        ">
+            <div class="layout-preview" style="
+                background: var(--darkened-bg, #2a2a2a);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                min-height: 40px;
+            ">
+                <div class="preview-row" style="display: flex; gap: 4px;">
+                    <div class="preview-col" style="flex: 2; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                </div>
+            </div>
+            <span style="font-size: 11px; color: var(--body-quiet-color, #888);">{% trans "66% / 33%" %}</span>
+        </div>
+
+        {# 3 Equal Columns #}
+        <div class="layout-option" data-layout="3-equal" title="{% trans 'Three equal columns' %}"
+             data-action="apply-container-layout" data-container-id="{{ element.id }}" data-layout-type="3-equal"
+             style="
+            padding: 12px 8px;
+            border: 2px solid var(--border-color, #3a3a3a);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--body-bg, #1e1e1e);
+        ">
+            <div class="layout-preview" style="
+                background: var(--darkened-bg, #2a2a2a);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                min-height: 40px;
+            ">
+                <div class="preview-row" style="display: flex; gap: 4px;">
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                </div>
+            </div>
+            <span style="font-size: 11px; color: var(--body-quiet-color, #888);">{% trans "3 Equal" %}</span>
+        </div>
+
+        {# 3 Columns 25/50/25 #}
+        <div class="layout-option" data-layout="3-col-25-50-25" title="{% trans 'Three columns (25% / 50% / 25%)' %}"
+             data-action="apply-container-layout" data-container-id="{{ element.id }}" data-layout-type="3-col-25-50-25"
+             style="
+            padding: 12px 8px;
+            border: 2px solid var(--border-color, #3a3a3a);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--body-bg, #1e1e1e);
+        ">
+            <div class="layout-preview" style="
+                background: var(--darkened-bg, #2a2a2a);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                min-height: 40px;
+            ">
+                <div class="preview-row" style="display: flex; gap: 4px;">
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                    <div class="preview-col" style="flex: 2; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 24px;"></div>
+                </div>
+            </div>
+            <span style="font-size: 11px; color: var(--body-quiet-color, #888);">{% trans "25/50/25" %}</span>
+        </div>
+
+        {# Header + 2 Columns #}
+        <div class="layout-option" data-layout="header-2col" title="{% trans 'One full row with two columns below' %}"
+             data-action="apply-container-layout" data-container-id="{{ element.id }}" data-layout-type="header-2col"
+             style="
+            padding: 12px 8px;
+            border: 2px solid var(--border-color, #3a3a3a);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--body-bg, #1e1e1e);
+        ">
+            <div class="layout-preview" style="
+                background: var(--darkened-bg, #2a2a2a);
+                border-radius: 4px;
+                padding: 8px;
+                margin-bottom: 8px;
+                min-height: 40px;
+            ">
+                <div class="preview-row" style="display: flex; gap: 4px; margin-bottom: 4px;">
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 12px;"></div>
+                </div>
+                <div class="preview-row" style="display: flex; gap: 4px;">
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 16px;"></div>
+                    <div class="preview-col" style="flex: 1; background: var(--primary, #3b82f6); opacity: 0.5; border-radius: 3px; min-height: 16px;"></div>
+                </div>
+            </div>
+            <span style="font-size: 11px; color: var(--body-quiet-color, #888);">{% trans "Header + 2 Col" %}</span>
+        </div>
+    </div>
+
+    <div class="layout-picker-footer">
+        <button type="button" class="skip-layout-btn"
+                data-action="skip-container-layout" data-container-id="{{ element.id }}"
+                style="
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border-color, #3a3a3a);
+            border-radius: 6px;
+            color: var(--body-quiet-color, #888);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        ">
+            <i class="fas fa-forward"></i>
+            {% trans "Skip - Empty Container" %}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,85 @@
+{% load i18n merchant_trans currency_tags %}
+{# Product Masonry Layout - matches category/masonry.html structure #}
+<div class="cat-masonry cat-masonry--cols-{{ element.content.masonry_columns|default:'3' }} cat-masonry--gap-{{ element.content.gap_size|default:'md' }}"
+     data-columns="{{ element.content.masonry_columns|default:'3' }}"
+     data-gap="{{ element.content.gap_size|default:'md' }}">
+    {% for product in products %}
+    <article class="cat-masonry__item"
+             data-product-id="{{ product.id }}"
+             data-product-type="{{ product.product_type }}"
+             data-product-slug="{{ product.slug }}">
+        <div class="cat-masonry__card">
+            <div class="cat-masonry__image-wrapper">
+                <a href="{{ product.get_absolute_url }}"
+                   class="cat-masonry__image-link"
+                   aria-label="{{ product.name }}">
+                    {% if product.primary_image_listing_url %}
+                    <img src="{{ product.primary_image_listing_url }}" alt="{{ product.name }}" class="cat-masonry__image" loading="lazy">
+                    {% else %}
+                    <div class="cat-masonry__placeholder">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    {% endif %}
+                </a>
+
+                {# Badge overlay #}
+                <div class="product-card__badges">
+                    {% if not product.is_in_stock %}
+                    <span class="product-card__badge product-card__badge--soldout">{% mtrans "Sold Out" %}</span>
+                    {% elif product.is_on_sale %}
+                    <span class="product-card__badge product-card__badge--sale">{% mtrans "Sale" %}</span>
+                    {% endif %}
+                    {% if product.product_type == 'bundle' %}
+                    <span class="product-card__badge product-card__badge--bundle">{% mtrans "Bundle" %}</span>
+                    {% endif %}
+                </div>
+
+                {# Quick action buttons on hover #}
+                <div class="cat-masonry__quick-actions">
+                    <button class="product-card__action-btn product-card__action-btn--wishlist"
+                            data-product-id="{{ product.id }}"
+                            aria-label="{% mtrans 'Add to wishlist' %}"
+                            type="button">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    {% if product.product_type == 'variable' %}
+                    <button class="product-card__action-btn product-card__action-btn--quickview"
+                            data-product-slug="{{ product.slug }}"
+                            aria-label="{% mtrans 'Quick view' %}"
+                            type="button">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div class="cat-masonry__overlay"></div>
+            </div>
+
+            <div class="cat-masonry__info">
+                <h3 class="cat-masonry__title">
+                    <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                </h3>
+                <div class="cat-masonry__price">
+                    {% if product.is_on_sale %}
+                    <span class="cat-masonry__price-current cat-masonry__price-current--sale">
+                        {{ product|product_price:current_currency.code }}
+                    </span>
+                    <span class="cat-masonry__price-original">
+                        {{ product|product_compare_price:current_currency.code }}
+                    </span>
+                    {% else %}
+                    <span class="cat-masonry__price-current">
+                        {{ product|product_price:current_currency.code }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="cat-masonry__empty">
+        <i class="fas fa-box-open"></i>
+        <p>{% mtrans 'No products to display.' %}</p>
+    </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,726 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static humanize admin_urls %}
+
+{% block title %}
+{% if original %}
+    {{ original.title|truncatechars:50 }} | {% trans "Blog Posts" %}
+{% else %}
+    {% trans "Add Blog Post" %} | {% trans "Blog Posts" %}
+{% endif %} | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'blog/admin/css/blog_change_form.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/ckeditor_media_library.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'utilities/translation_editor/current/translation_editor.css' %}">
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/ckeditor_media_library.js' %}"></script>
+<script src="{% static 'blog/admin/js/blog_change_form.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="blog-content"{% if original %} data-post-id="{{ original.pk }}"{% endif %}>
+
+{% if original %}
+    {# Dashboard Header for Existing Posts #}
+    <div class="blog-dashboard-header">
+        <h1>
+            <i class="fas fa-newspaper"></i>
+            {{ original.title }}
+        </h1>
+
+        <div class="post-meta">
+            {% if original.category %}
+            <div class="post-meta-item">
+                <i class="fas fa-folder"></i>
+                <span>{{ original.category.name }}</span>
+            </div>
+            {% endif %}
+            {% if original.created_by %}
+            <div class="post-meta-item">
+                <i class="fas fa-user"></i>
+                <span>{{ original.created_by.get_full_name|default:original.created_by.username }}</span>
+            </div>
+            {% endif %}
+            <div class="post-meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>{% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+            </div>
+        </div>
+
+        <div class="post-badges">
+            {# Status Badge #}
+            {% if original.status == 'published' %}
+            <span class="post-badge published">
+                <i class="fas fa-check-circle"></i> {% trans "Published" %}
+            </span>
+            {% elif original.status == 'draft' %}
+            <span class="post-badge draft">
+                <i class="fas fa-file-alt"></i> {% trans "Draft" %}
+            </span>
+            {% elif original.status == 'scheduled' %}
+            <span class="post-badge scheduled">
+                <i class="fas fa-clock"></i> {% trans "Scheduled" %}
+            </span>
+            {% elif original.status == 'archived' %}
+            <span class="post-badge archived">
+                <i class="fas fa-archive"></i> {% trans "Archived" %}
+            </span>
+            {% endif %}
+
+            {# Feature Badges #}
+            {% if original.is_featured %}
+            <span class="post-badge featured">
+                <i class="fas fa-star"></i> {% trans "Featured" %}
+            </span>
+            {% endif %}
+
+            {% if original.is_pinned %}
+            <span class="post-badge pinned">
+                <i class="fas fa-thumbtack"></i> {% trans "Pinned" %}
+            </span>
+            {% endif %}
+
+            {% if original.use_page_builder %}
+            <span class="post-badge page-builder">
+                <i class="fas fa-puzzle-piece"></i> {% trans "Page Builder" %}
+            </span>
+            {% endif %}
+        </div>
+
+        {# Stats Cards #}
+        <div class="dashboard-stats-grid blog-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-eye"></i></div>
+                <div class="value">{{ original.view_count|intcomma }}</div>
+                <div class="label">{% trans "Views" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <div class="value">{{ original.reading_time_minutes }} {% trans "min" %}</div>
+                <div class="label">{% trans "Read Time" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-share-alt"></i></div>
+                <div class="value">{{ share_count|default:0|intcomma }}</div>
+                <div class="label">{% trans "Shares" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-envelope"></i></div>
+                <div class="value">{{ notification_count|default:0|intcomma }}</div>
+                <div class="label">{% trans "Emails Sent" %}</div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{# Main Form #}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+{% csrf_token %}
+
+{# Render inline formset management forms (required for Django admin POST processing) #}
+{% for inline_admin_formset in inline_admin_formsets %}
+    {{ inline_admin_formset.formset.management_form }}
+{% endfor %}
+
+{% if errors %}
+<p class="errornote">
+    {% blocktranslate count counter=errors|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+</p>
+{{ adminform.form.non_field_errors }}
+{% for inline_admin_formset in inline_admin_formsets %}
+    {{ inline_admin_formset.formset.non_form_errors }}
+{% endfor %}
+{% endif %}
+
+    {# Form Container with Sidebar #}
+    <div class="blog-form-container">
+        <div class="blog-main-form">
+            {% if original %}
+                {# Tabs Container #}
+                <div class="blog-tabs-container">
+                    {# Tabs Navigation #}
+                    <div class="blog-tabs-nav admin-tabs">
+                        <button type="button" class="blog-tab-btn admin-tab-btn active" data-tab="content">
+                            <i class="fas fa-file-alt"></i>
+                            <span>{% trans "Content" %}</span>
+                        </button>
+                        <button type="button" class="blog-tab-btn admin-tab-btn" data-tab="media-seo">
+                            <i class="fas fa-image"></i>
+                            <span>{% trans "Media & SEO" %}</span>
+                        </button>
+                        <button type="button" class="blog-tab-btn admin-tab-btn" data-tab="publishing">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>{% trans "Publishing" %}</span>
+                        </button>
+                        <button type="button" class="blog-tab-btn admin-tab-btn" data-tab="sharing">
+                            <i class="fas fa-share-square"></i>
+                            <span>{% trans "Sharing" %}</span>
+                        </button>
+                        <button type="button" class="blog-tab-btn admin-tab-btn" data-tab="design">
+                            <i class="fas fa-palette"></i>
+                            <span>{% trans "Design" %}</span>
+                        </button>
+                    </div>
+
+                    {# Tab 1: Content #}
+                    <div class="blog-tab-content admin-tab-content active" id="tab-content">
+                        <div class="module">
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "title" or field.field.name == "slug" or field.field.name == "excerpt" %}
+                                            <div class="form-row {% if field.field.name %}field-{{ field.field.name }}{% endif %}{% if field.field.errors %} errors{% endif %}{% if field.field.field.required %} required{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.label_tag }}
+                                                    {{ field.field }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+
+                            {# Page Builder Toggle #}
+                            <div class="form-row field-use_page_builder">
+                                {% for fieldset in adminform %}
+                                    {% for line in fieldset %}
+                                        {% for field in line %}
+                                            {% if field.field.name == "use_page_builder" %}
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.field }}
+                                                    {{ field.label_tag }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+
+                            {# Simple Content (CKEditor) #}
+                            <div id="simple-content-wrapper">
+                                {% for fieldset in adminform %}
+                                    {% for line in fieldset %}
+                                        {% for field in line %}
+                                            {% if field.field.name == "simple_content" %}
+                                                <div class="form-row field-simple_content">
+                                                    {{ field.errors }}
+                                                    <div>
+                                                        {{ field.label_tag }}
+                                                        {{ field.field }}
+                                                        {% if field.field.help_text %}
+                                                            <p class="help">{{ field.field.help_text|safe }}</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+
+                            {# Page Builder Mode #}
+                            <div id="page-builder-wrapper" class="blog-hidden">
+                                <div class="page-builder-info">
+                                    {% if original.content_page %}
+                                    <h4>
+                                        <i class="fas fa-puzzle-piece"></i>
+                                        {% trans "Page Builder Mode Active" %}
+                                    </h4>
+                                    <p>
+                                        {% trans "This post uses a Page Builder page for its content layout." %}
+                                        <a href="{% url 'admin:page_builder_page_change' original.content_page.pk %}" class="btn-link">
+                                            {% trans "Edit Page Layout" %} &rarr;
+                                        </a>
+                                    </p>
+                                    {% else %}
+                                    <h4>
+                                        <i class="fas fa-puzzle-piece"></i>
+                                        {% trans "Page Builder Mode" %}
+                                    </h4>
+                                    <p>
+                                        {% trans "Page Builder mode is enabled. Save the post to create the page layout." %}
+                                    </p>
+                                    {% endif %}
+                                </div>
+
+                                {% for fieldset in adminform %}
+                                    {% for line in fieldset %}
+                                        {% for field in line %}
+                                            {% if field.field.name == "content_page" %}
+                                                <div class="form-row field-content_page">
+                                                    {{ field.errors }}
+                                                    <div>
+                                                        {{ field.label_tag }}
+                                                        {{ field.field }}
+                                                        {% if field.field.help_text %}
+                                                            <p class="help">{{ field.field.help_text|safe }}</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Tab 2: Media & SEO #}
+                    <div class="blog-tab-content admin-tab-content" id="tab-media-seo">
+                        <div class="module">
+                            <h2>{% trans "Media" %}</h2>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "featured_image" or field.field.name == "og_image" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.label_tag }}
+                                                    {{ field.field }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="module blog-module--spaced">
+                            <h2>{% trans "SEO Settings" %}</h2>
+                            <div id="seo-generator-container"></div>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "meta_title" or field.field.name == "meta_description" or field.field.name == "seo_auto_generated" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {% if field.field.name == "seo_auto_generated" %}
+                                                        {{ field.field }}
+                                                        {{ field.label_tag }}
+                                                    {% else %}
+                                                        {{ field.label_tag }}
+                                                        {{ field.field }}
+                                                    {% endif %}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {# Tab 3: Publishing #}
+                    <div class="blog-tab-content admin-tab-content" id="tab-publishing">
+                        <div class="module">
+                            <h2>{% trans "Publishing Options" %}</h2>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "status" or field.field.name == "scheduled_at" or field.field.name == "published_at" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.label_tag }}
+                                                    {{ field.field }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="module blog-module--spaced">
+                            <h2>{% trans "Organization" %}</h2>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "category" or field.field.name == "tags" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.label_tag }}
+                                                    {{ field.field }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="module blog-module--spaced">
+                            <h2>{% trans "Display Options" %}</h2>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "is_featured" or field.field.name == "is_pinned" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.field }}
+                                                    {{ field.label_tag }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {# Tab 4: Sharing & Notifications #}
+                    <div class="blog-tab-content admin-tab-content" id="tab-sharing">
+                        <div class="module">
+                            <h2>{% trans "Subscriber Notifications" %}</h2>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "notify_subscribers" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.field }}
+                                                    {{ field.label_tag }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+
+                            {% if original.notification_sent %}
+                            <div class="form-row">
+                                <div class="post-badge published">
+                                    <i class="fas fa-check-circle"></i>
+                                    {% trans "Notifications sent" %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="module blog-module--spaced">
+                            <h2>{% trans "Social Auto-Share" %}</h2>
+                            <div class="form-section-info">
+                                <p>{% trans "Select platforms to automatically share this post when published." %}</p>
+                            </div>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "auto_share_facebook" or field.field.name == "auto_share_instagram" or field.field.name == "auto_share_linkedin" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.field }}
+                                                    {{ field.label_tag }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "social_share_message" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.label_tag }}
+                                                    {{ field.field }}
+                                                    <span id="share-message-counter" class="help">0/280</span>
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+
+                        {# Auto-Share Status #}
+                        {% if auto_shares %}
+                        <div class="module blog-module--spaced">
+                            <h2>{% trans "Share Status" %}</h2>
+                            <div class="auto-share-status">
+                                {% for share in auto_shares %}
+                                <div class="share-status-item">
+                                    <div class="share-status-icon {{ share.social_account.provider_key }}">
+                                        {% if share.social_account.provider_key == 'facebook' %}
+                                            <i class="fab fa-facebook-f"></i>
+                                        {% elif share.social_account.provider_key == 'instagram' %}
+                                            <i class="fab fa-instagram"></i>
+                                        {% elif share.social_account.provider_key == 'linkedin' %}
+                                            <i class="fab fa-linkedin-in"></i>
+                                        {% else %}
+                                            <i class="fas fa-share-alt"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="share-status-info">
+                                        <div class="share-status-platform">{{ share.social_account.name }}</div>
+                                        <div class="share-status-state {{ share.status }}">
+                                            {% if share.status == 'posted' %}
+                                                {% trans "Posted" %} {{ share.posted_at|naturaltime }}
+                                            {% elif share.status == 'pending' %}
+                                                {% trans "Pending" %}
+                                            {% elif share.status == 'scheduled' %}
+                                                {% trans "Scheduled for" %} {{ share.scheduled_at|date:"M d, H:i" }}
+                                            {% elif share.status == 'failed' %}
+                                                {% trans "Failed" %}: {{ share.error_message|truncatewords:10 }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if share.status == 'posted' and share.platform_post_url %}
+                                        <a href="{{ share.platform_post_url }}" class="share-status-action" target="_blank">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    {% elif share.status == 'failed' %}
+                                        <button type="button" class="share-retry-btn share-status-action" data-share-id="{{ share.pk }}">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {# Tab 5: Design #}
+                    <div class="blog-tab-content admin-tab-content" id="tab-design">
+                        <div class="module">
+                            <h2>{% trans "Design Settings" %}</h2>
+                            <div class="form-section-info">
+                                <p>{% trans "Choose a template layout for this blog post. For advanced customization, use the Page Builder." %}</p>
+                            </div>
+                            {% for fieldset in adminform %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == "page_template" %}
+                                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                                {{ field.errors }}
+                                                <div>
+                                                    {{ field.label_tag }}
+                                                    {{ field.field }}
+                                                    {% if field.field.help_text %}
+                                                        <p class="help">{{ field.field.help_text|safe }}</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if original %}
+        {# Mobile Sidebar Toggle Button #}
+        <button type="button" class="blog-sidebar-toggle" id="blog-sidebar-toggle" aria-label="{% trans 'Toggle Sidebar' %}">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        {# Sidebar Backdrop #}
+        <div class="blog-sidebar-backdrop" id="blog-sidebar-backdrop"></div>
+
+        {# Sidebar #}
+        <div class="blog-sidebar" id="blog-sidebar">
+            {# Close Button for Mobile #}
+            <button type="button" class="blog-sidebar-close" id="blog-sidebar-close" aria-label="{% trans 'Close Sidebar' %}">
+                <i class="fas fa-times"></i>
+            </button>
+
+            {# Quick Actions #}
+            <div class="sidebar-card">
+                <h3>
+                    <i class="fas fa-bolt"></i>
+                    {% trans "Quick Actions" %}
+                </h3>
+
+                {% if original.status == 'published' %}
+                <a href="{{ original.get_absolute_url }}" class="quick-action-btn" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>{% trans "View on Site" %}</span>
+                </a>
+                {% endif %}
+
+                {% if original.use_page_builder and original.content_page %}
+                <a href="{% url 'admin:page_builder_page_change' original.content_page.pk %}" class="quick-action-btn primary">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span>{% trans "Edit Page Layout" %}</span>
+                </a>
+                {% endif %}
+
+                <a href="{% url 'admin:blog_blogpost_add' %}?duplicate={{ original.pk }}" class="quick-action-btn secondary" id="duplicate-post-btn" data-confirm-msg="{% trans 'Create a duplicate of this post?' %}">
+                    <i class="fas fa-copy"></i>
+                    <span>{% trans "Duplicate Post" %}</span>
+                </a>
+
+                <a href="{% url opts|admin_urlname:'delete' original.pk %}" class="quick-action-btn danger">
+                    <i class="fas fa-trash"></i>
+                    <span>{% trans "Delete Post" %}</span>
+                </a>
+            </div>
+
+            {# Post Status #}
+            <div class="sidebar-card">
+                <h3>
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Post Status" %}
+                </h3>
+                <div class="post-status-display">
+                    {% if original.status == 'published' %}
+                        <div class="post-status-indicator published">
+                            <i class="fas fa-check-circle"></i> {% trans "Published" %}
+                        </div>
+                        {% if original.published_at %}
+                        <div class="post-status-date">
+                            {{ original.published_at|date:"F d, Y H:i" }}
+                        </div>
+                        {% endif %}
+                    {% elif original.status == 'draft' %}
+                        <div class="post-status-indicator draft">
+                            <i class="fas fa-file-alt"></i> {% trans "Draft" %}
+                        </div>
+                    {% elif original.status == 'scheduled' %}
+                        <div class="post-status-indicator scheduled">
+                            <i class="fas fa-clock"></i> {% trans "Scheduled" %}
+                        </div>
+                        {% if original.scheduled_at %}
+                        <div class="post-status-date">
+                            {{ original.scheduled_at|date:"F d, Y H:i" }}
+                        </div>
+                        {% endif %}
+                    {% elif original.status == 'archived' %}
+                        <div class="post-status-indicator archived">
+                            <i class="fas fa-archive"></i> {% trans "Archived" %}
+                        </div>
+                    {% endif %}
+
+                    <div class="post-status-date blog-status-updated">
+                        <i class="fas fa-sync-alt"></i> {% trans "Updated" %}: {{ original.updated_at|naturaltime }}
+                    </div>
+                </div>
+            </div>
+
+            {# Auto-Share Status (Summary) #}
+            <div class="sidebar-card">
+                <h3>
+                    <i class="fas fa-share-alt"></i>
+                    {% trans "Auto-Share" %}
+                </h3>
+                {% if configured_social_accounts %}
+                <div class="auto-share-status">
+                    {% for account in configured_social_accounts %}
+                    <div class="share-status-item">
+                        <div class="share-status-icon {{ account.provider_key }}">
+                            {% if account.provider_key == 'facebook' %}
+                                <i class="fab fa-facebook-f"></i>
+                            {% elif account.provider_key == 'instagram' %}
+                                <i class="fab fa-instagram"></i>
+                            {% elif account.provider_key == 'linkedin' %}
+                                <i class="fab fa-linkedin-in"></i>
+                            {% elif account.provider_key == 'twitter' or account.provider_key == 'x' %}
+                                <i class="fab fa-x-twitter"></i>
+                            {% else %}
+                                <i class="fas fa-share-alt"></i>
+                            {% endif %}
+                        </div>
+                        <div class="share-status-info">
+                            <div class="share-status-platform">{{ account.name }}</div>
+                            <div class="share-status-state pending">
+                                {% if account.provider_key == 'facebook' and original.auto_share_facebook %}
+                                    {% trans "Will share" %}
+                                {% elif account.provider_key == 'instagram' and original.auto_share_instagram %}
+                                    {% trans "Will share" %}
+                                {% elif account.provider_key == 'linkedin' and original.auto_share_linkedin %}
+                                    {% trans "Will share" %}
+                                {% else %}
+                                    {% trans "Ready" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state-message">
+                    <p class="blog-empty-state-text">
+                        {% trans "No social accounts configured for auto-sharing." %}
+                    </p>
+                    <a href="{% url 'admin:blog_socialconnectoraccount_changelist' %}" class="quick-action-btn secondary">
+                        <i class="fas fa-plug"></i>
+                        <span>{% trans "Set Up Social Accounts" %}</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Submit Buttons #}
+    <div class="submit-row blog-submit-row">
+        <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+        <input type="submit" value="{% trans 'Save and continue editing' %}" class="default" name="_continue">
+        {% if show_delete_link %}
+            <p class="deletelink-box"><a href="{% url opts|admin_urlname:'delete' original.pk %}" class="deletelink">{% trans "Delete" %}</a></p>
+        {% endif %}
+    </div>
+</form>
+</div>
+
+{% include "admin/includes/translation_editor_init.html" %}
+{% endblock %}

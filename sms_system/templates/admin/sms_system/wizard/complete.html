@@ -1,0 +1,93 @@
+{% extends "admin/sms_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_title_tag %}{% trans "Setup Complete" %}{% endblock %}
+{% block wizard_title %}{% trans "Setup Complete" %}{% endblock %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <div class="completion-header">
+        <i class="fas fa-check-circle"></i>
+        <h2>{% trans "Your SMS provider has been configured!" %}</h2>
+        <p>{% trans "You can now send SMS and WhatsApp messages from your store." %}</p>
+    </div>
+
+    {% if account %}
+    <div class="summary-card">
+        <h3>
+            <i class="fas fa-info-circle"></i>
+            {% trans "Account Details" %}
+        </h3>
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Display Name" %}</span>
+            <span class="summary-value">{{ account.display_name }}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Provider" %}</span>
+            <span class="summary-value">{{ account.provider_display_name }}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Status" %}</span>
+            <span class="summary-value">
+                {% if account.connection_status == 'success' %}
+                <i class="fas fa-check-circle sms-icon-success"></i> {% trans "Connected" %}
+                {% else %}
+                <i class="fas fa-exclamation-triangle sms-icon-muted"></i> {{ account.get_connection_status_display }}
+                {% endif %}
+            </span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Default SMS" %}</span>
+            <span class="summary-value">
+                {% if account.is_default_sms %}
+                <i class="fas fa-check sms-icon-success"></i> {% trans "Yes" %}
+                {% else %}
+                <i class="fas fa-times sms-icon-muted"></i> {% trans "No" %}
+                {% endif %}
+            </span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Default WhatsApp" %}</span>
+            <span class="summary-value">
+                {% if account.is_default_whatsapp %}
+                <i class="fas fa-check sms-icon-success"></i> {% trans "Yes" %}
+                {% else %}
+                <i class="fas fa-times sms-icon-muted"></i> {% trans "No" %}
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="summary-card">
+        <h3>
+            <i class="fas fa-rocket"></i>
+            {% trans "What's Next?" %}
+        </h3>
+        <div class="checklist-box">
+            <ul class="checklist">
+                <li>
+                    <i class="fas fa-file-alt"></i>
+                    <a href="{% url 'admin:sms_system_smstemplate_changelist' %}">{% trans "Configure SMS templates" %}</a>
+                </li>
+                <li>
+                    <i class="fas fa-paper-plane"></i>
+                    <a href="{% url 'admin:sms_system_smsoutbox_changelist' %}">{% trans "View message logs" %}</a>
+                </li>
+                <li>
+                    <i class="fas fa-plus-circle"></i>
+                    <a href="{% url 'sms_system:wizard_step1' %}">{% trans "Add another provider" %}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:sms_system_smsprovideraccount_changelist' %}" class="btn btn-primary">
+        <i class="fas fa-list"></i> {% trans "View All Accounts" %}
+    </a>
+</div>
+{% endblock %}

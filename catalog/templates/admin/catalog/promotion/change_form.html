@@ -1,0 +1,591 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}
+{% if original %}{% trans "Edit Promotion" %}{% else %}{% trans "Create Promotion" %}{% endif %} | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/promotion-wizard.css' %}">
+<script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Header -->
+    <div class="wizard-header">
+        <a href="{% url 'admin:catalog_promotion_changelist' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Promotions" %}
+        </a>
+        <h1>
+            <i class="fas fa-badge-percent"></i>
+            {% if original %}{% trans "Edit Promotion" %}{% else %}{% trans "Create Promotion" %}{% endif %}
+        </h1>
+        <p class="wizard-subtitle">
+            {% if original %}
+                {% trans "Update promotion details and product targeting" %}
+            {% else %}
+                {% trans "Configure a bulk discount campaign for multiple products" %}
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Step Indicators -->
+    <div class="wizard-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Basics" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Discount" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Schedule" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Products" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="5">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Review" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Form -->
+    <form id="wizard-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="wizard-content">
+            <!-- Step 1: Basics -->
+            <div class="wizard-step" data-step="1">
+                <h2 class="step-title">
+                    <i class="fas fa-info-circle"></i> {% trans "Promotion Basics" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Start by giving your promotion a name and description." %}
+                </p>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="id_name">{% trans "Promotion Name" %} <span class="required">*</span></label>
+                        <input type="text" id="id_name" name="name" class="form-control"
+                               placeholder="{% trans 'e.g., Summer Sale 20% Off' %}"
+                               value="{% if original %}{{ original.name }}{% endif %}"
+                               maxlength="200" required>
+                        <p class="help-text">{% trans "Choose a clear name to identify this promotion in your admin." %}</p>
+                        <p class="error-message" id="name-error"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_description">{% trans "Description" %}</label>
+                        <textarea id="id_description" name="description" class="form-control" rows="3"
+                                  placeholder="{% trans 'Describe the purpose of this promotion...' %}">{% if original %}{{ original.description }}{% endif %}</textarea>
+                        <p class="help-text">{% trans "Internal description for your reference." %}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="id_is_active" name="is_active"
+                                   {% if not original or original.is_active %}checked{% endif %}>
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">
+                                <strong>{% trans "Active" %}</strong>
+                                <span class="checkbox-description">{% trans "Promotion will be active during scheduled dates" %}</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Discount -->
+            <div class="wizard-step" data-step="2" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-percent"></i> {% trans "Discount Settings" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Choose the type and value of discount to apply." %}
+                </p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-tags"></i> {% trans "Discount Type" %}
+                    </h3>
+
+                    <div class="discount-type-cards">
+                        <label class="discount-type-card{% if not original or original.discount_type == 'percentage_off' %} selected{% endif %}" data-type="percentage_off">
+                            <input type="radio" name="discount_type" value="percentage_off"
+                                   {% if not original or original.discount_type == 'percentage_off' %}checked{% endif %}>
+                            <div class="card-icon">
+                                <i class="fas fa-percent"></i>
+                            </div>
+                            <h4>{% trans "Percentage Off" %}</h4>
+                            <p>{% trans "Reduce price by %" %}</p>
+                            <div class="card-check"><i class="fas fa-check-circle"></i></div>
+                        </label>
+
+                        <label class="discount-type-card{% if original and original.discount_type == 'amount_off' %} selected{% endif %}" data-type="amount_off">
+                            <input type="radio" name="discount_type" value="amount_off"
+                                   {% if original and original.discount_type == 'amount_off' %}checked{% endif %}>
+                            <div class="card-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <h4>{% trans "Amount Off" %}</h4>
+                            <p>{% trans "Reduce by fixed $" %}</p>
+                            <div class="card-check"><i class="fas fa-check-circle"></i></div>
+                        </label>
+
+                        <label class="discount-type-card{% if original and original.discount_type == 'fixed_price' %} selected{% endif %}" data-type="fixed_price">
+                            <input type="radio" name="discount_type" value="fixed_price"
+                                   {% if original and original.discount_type == 'fixed_price' %}checked{% endif %}>
+                            <div class="card-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <h4>{% trans "Fixed Price" %}</h4>
+                            <p>{% trans "Set exact sale price" %}</p>
+                            <div class="card-check"><i class="fas fa-check-circle"></i></div>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_discount_value">
+                            <span id="discount-value-label">{% trans "Discount Value" %}</span>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="input-with-addon">
+                            <span class="input-addon" id="discount-prefix" style="display: none;">$</span>
+                            <input type="number" id="id_discount_value" name="discount_value"
+                                   class="form-control" step="0.01" min="0"
+                                   placeholder="{% trans 'Enter value' %}"
+                                   value="{% if original %}{{ original.discount_value }}{% endif %}" required>
+                            <span class="input-addon" id="discount-suffix">%</span>
+                        </div>
+                        <p class="help-text" id="discount-help">{% trans "Enter percentage off (0-100)." %}</p>
+                        <p class="error-message" id="discount_value-error"></p>
+                    </div>
+
+                    <!-- Discount Preview -->
+                    <div class="discount-preview-card">
+                        <div class="preview-value" id="discount-display">
+                            {% if original %}
+                                {% if original.discount_type == 'percentage_off' %}{{ original.discount_value }}% OFF
+                                {% elif original.discount_type == 'amount_off' %}${{ original.discount_value }} OFF
+                                {% else %}${{ original.discount_value }}{% endif %}
+                            {% else %}?{% endif %}
+                        </div>
+                        <div class="preview-label" id="discount-type-label">
+                            {% if original %}{{ original.get_discount_type_display }}{% else %}{% trans "Preview will appear here" %}{% endif %}
+                        </div>
+                        <div class="preview-example" id="discount-example">
+                            <i class="fas fa-calculator"></i>
+                            {% trans "Example: $100 product" %} &rarr; <strong id="example-price">{% if original and original.discount_type == 'percentage_off' %}${{ "100"|add:"-"|floatformat:2 }}{% else %}$?{% endif %}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Schedule -->
+            <div class="wizard-step" data-step="3" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-calendar-days"></i> {% trans "Schedule" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Set when this promotion should be active." %}
+                </p>
+
+                <div class="form-section">
+                    <div class="info-box">
+                        <div class="info-box-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="info-box-content">
+                            <h4>{% trans "How Scheduling Works" %}</h4>
+                            <p>{% trans "The promotion will automatically activate on the start date and deactivate on the end date. Leave the end date empty for a promotion with no expiration." %}</p>
+                        </div>
+                    </div>
+
+                    <div class="date-picker-row">
+                        <div class="form-group">
+                            <label for="id_start_date">{% trans "Start Date" %} <span class="required">*</span></label>
+                            <input type="datetime-local" id="id_start_date" name="start_date" class="form-control"
+                                   value="{% if original %}{{ original.start_date|date:'Y-m-d' }}T{{ original.start_date|time:'H:i' }}{% endif %}" required>
+                            <p class="help-text">{% trans "When the promotion begins" %}</p>
+                            <p class="error-message" id="start_date-error"></p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_end_date">{% trans "End Date" %}</label>
+                            <input type="datetime-local" id="id_end_date" name="end_date" class="form-control"
+                                   value="{% if original and original.end_date %}{{ original.end_date|date:'Y-m-d' }}T{{ original.end_date|time:'H:i' }}{% endif %}">
+                            <p class="help-text">{% trans "Leave empty for no expiration" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Products -->
+            <div class="wizard-step" data-step="4" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-bullseye"></i> {% trans "Product Selection" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Choose which products this promotion applies to." %}
+                </p>
+
+                <div class="form-section product-target-selector">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-crosshairs"></i> {% trans "Apply To" %}
+                    </h3>
+
+                    <div class="target-type-cards">
+                        <label class="target-type-card{% if not original or original.apply_to == 'all' %} selected{% endif %}" data-type="all">
+                            <input type="radio" name="apply_to" value="all"
+                                   {% if not original or original.apply_to == 'all' %}checked{% endif %}>
+                            <i class="fas fa-store"></i>
+                            <span>{% trans "All Products" %}</span>
+                        </label>
+
+                        <label class="target-type-card{% if original and original.apply_to == 'categories' %} selected{% endif %}" data-type="categories">
+                            <input type="radio" name="apply_to" value="categories"
+                                   {% if original and original.apply_to == 'categories' %}checked{% endif %}>
+                            <i class="fas fa-folder"></i>
+                            <span>{% trans "Categories" %}</span>
+                        </label>
+
+                        <label class="target-type-card{% if original and original.apply_to == 'brands' %} selected{% endif %}" data-type="brands">
+                            <input type="radio" name="apply_to" value="brands"
+                                   {% if original and original.apply_to == 'brands' %}checked{% endif %}>
+                            <i class="fas fa-copyright"></i>
+                            <span>{% trans "Brands" %}</span>
+                        </label>
+
+                        <label class="target-type-card{% if original and original.apply_to == 'collections' %} selected{% endif %}" data-type="collections">
+                            <input type="radio" name="apply_to" value="collections"
+                                   {% if original and original.apply_to == 'collections' %}checked{% endif %}>
+                            <i class="fas fa-layer-group"></i>
+                            <span>{% trans "Collections" %}</span>
+                        </label>
+
+                        <label class="target-type-card{% if original and original.apply_to == 'products' %} selected{% endif %}" data-type="products">
+                            <input type="radio" name="apply_to" value="products"
+                                   {% if original and original.apply_to == 'products' %}checked{% endif %}>
+                            <i class="fas fa-box"></i>
+                            <span>{% trans "Products" %}</span>
+                        </label>
+                    </div>
+
+                    <!-- Categories Selector -->
+                    <div id="categories-selector" class="selector-container">
+                        <div class="selector-manager">
+                            <div class="selector-column">
+                                <h3><i class="fas fa-folder"></i> {% trans "Available Categories" %}</h3>
+                                <div class="selector-search">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="categories-search" placeholder="{% trans 'Search categories...' %}">
+                                </div>
+                                <div class="selector-actions">
+                                    <button type="button" class="selector-move-btn" id="categories-move-btn" disabled>
+                                        <i class="fas fa-arrow-right"></i> {% trans "Add Selected" %}
+                                    </button>
+                                </div>
+                                <div class="selector-list" id="categories-available">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <div>{% trans "Loading..." %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="selector-column">
+                                <h3><i class="fas fa-check-circle"></i> {% trans "Selected Categories" %}</h3>
+                                <div class="selector-list" id="categories-selected">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-hand-pointer"></i>
+                                        <div>{% trans "Drag categories here" %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brands Selector -->
+                    <div id="brands-selector" class="selector-container">
+                        <div class="selector-manager">
+                            <div class="selector-column">
+                                <h3><i class="fas fa-copyright"></i> {% trans "Available Brands" %}</h3>
+                                <div class="selector-search">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="brands-search" placeholder="{% trans 'Search brands...' %}">
+                                </div>
+                                <div class="selector-actions">
+                                    <button type="button" class="selector-move-btn" id="brands-move-btn" disabled>
+                                        <i class="fas fa-arrow-right"></i> {% trans "Add Selected" %}
+                                    </button>
+                                </div>
+                                <div class="selector-list" id="brands-available">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <div>{% trans "Loading..." %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="selector-column">
+                                <h3><i class="fas fa-check-circle"></i> {% trans "Selected Brands" %}</h3>
+                                <div class="selector-list" id="brands-selected">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-hand-pointer"></i>
+                                        <div>{% trans "Drag brands here" %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collections Selector -->
+                    <div id="collections-selector" class="selector-container">
+                        <div class="selector-manager">
+                            <div class="selector-column">
+                                <h3><i class="fas fa-layer-group"></i> {% trans "Available Collections" %}</h3>
+                                <div class="selector-search">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="collections-search" placeholder="{% trans 'Search collections...' %}">
+                                </div>
+                                <div class="selector-actions">
+                                    <button type="button" class="selector-move-btn" id="collections-move-btn" disabled>
+                                        <i class="fas fa-arrow-right"></i> {% trans "Add Selected" %}
+                                    </button>
+                                </div>
+                                <div class="selector-list" id="collections-available">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <div>{% trans "Loading..." %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="selector-column">
+                                <h3><i class="fas fa-check-circle"></i> {% trans "Selected Collections" %}</h3>
+                                <div class="selector-list" id="collections-selected">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-hand-pointer"></i>
+                                        <div>{% trans "Drag collections here" %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Selector -->
+                    <div id="products-selector" class="selector-container">
+                        <div class="selector-manager">
+                            <div class="selector-column">
+                                <h3><i class="fas fa-box"></i> {% trans "Available Products" %}</h3>
+                                <div class="selector-search">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="products-search" placeholder="{% trans 'Search products...' %}">
+                                </div>
+                                <div class="selector-actions">
+                                    <button type="button" class="selector-move-btn" id="products-move-btn" disabled>
+                                        <i class="fas fa-arrow-right"></i> {% trans "Add Selected" %}
+                                    </button>
+                                </div>
+                                <div class="selector-list" id="products-available">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <div>{% trans "Loading..." %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="selector-column">
+                                <h3><i class="fas fa-check-circle"></i> {% trans "Selected Products" %}</h3>
+                                <div class="selector-list" id="products-selected">
+                                    <div class="selector-empty">
+                                        <i class="fas fa-hand-pointer"></i>
+                                        <div>{% trans "Drag products here" %}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden inputs to store selected IDs -->
+                    <input type="hidden" name="categories" id="hidden-categories"
+                           value="{% if original %}{% for cat in original.categories.all %}{{ cat.pk }}{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}">
+                    <input type="hidden" name="brands" id="hidden-brands"
+                           value="{% if original %}{% for brand in original.brands.all %}{{ brand.pk }}{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}">
+                    <input type="hidden" name="collections" id="hidden-collections"
+                           value="{% if original %}{% for col in original.collections.all %}{{ col.pk }}{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}">
+                    <input type="hidden" name="products" id="hidden-products"
+                           value="{% if original %}{% for prod in original.products.all %}{{ prod.pk }}{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}">
+                </div>
+            </div>
+
+            <!-- Step 5: Review -->
+            <div class="wizard-step" data-step="5" style="display: none;">
+                <h2 class="step-title">
+                    <i class="fas fa-check-double"></i> {% trans "Review & Save" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Review your promotion settings before saving." %}
+                </p>
+
+                <div class="review-summary">
+                    <div class="review-section">
+                        <h3><i class="fas fa-info-circle"></i> {% trans "Basics" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Name" %}</span>
+                                <span class="review-value" id="review-name">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Status" %}</span>
+                                <span class="review-value" id="review-status">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-percent"></i> {% trans "Discount" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Type" %}</span>
+                                <span class="review-value" id="review-discount-type">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Value" %}</span>
+                                <span class="review-value review-badge primary" id="review-discount-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-calendar-days"></i> {% trans "Schedule" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Start Date" %}</span>
+                                <span class="review-value" id="review-start-date">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "End Date" %}</span>
+                                <span class="review-value" id="review-end-date">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h3><i class="fas fa-bullseye"></i> {% trans "Products" %}</h3>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Apply To" %}</span>
+                                <span class="review-value" id="review-apply-to">-</span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label">{% trans "Selection" %}</span>
+                                <span class="review-value" id="review-selection">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Settings -->
+                <div class="advanced-toggle" id="advanced-toggle">
+                    <div class="toggle-label">
+                        <i class="fas fa-sliders"></i>
+                        <span>{% trans "Advanced Settings" %}</span>
+                    </div>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="advanced-settings-content" id="advanced-settings">
+                    <div class="form-group">
+                        <label for="id_priority">{% trans "Priority" %}</label>
+                        <input type="number" id="id_priority" name="priority" class="form-control"
+                               value="{% if original %}{{ original.priority }}{% else %}0{% endif %}" min="0">
+                        <p class="help-text">{% trans "Higher priority promotions are applied first when multiple promotions apply to the same product." %}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="id_can_stack" name="can_stack_with_product_sales"
+                                   {% if original and original.can_stack_with_product_sales %}checked{% endif %}>
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">
+                                <strong>{% trans "Stackable with product sales" %}</strong>
+                                <span class="checkbox-description">{% trans "Allow this promotion to be combined with individual product sale prices" %}</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Validation Errors -->
+                <div class="alert alert-error" id="form-errors" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="form-errors-message"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="wizard-navigation">
+            <div class="nav-buttons">
+                <button type="button" class="btn btn-secondary" id="btn-prev" style="display: none;">
+                    <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-next">
+                    {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="submit" class="btn btn-success btn-large" id="btn-save" style="display: none;">
+                    <i class="fas fa-check"></i>
+                    {% if original %}{% trans "Save Promotion" %}{% else %}{% trans "Create Promotion" %}{% endif %}
+                </button>
+            </div>
+            {% if original %}
+            <a href="{% url 'admin:catalog_promotion_delete' original.pk %}" class="btn btn-link btn-danger">
+                <i class="fas fa-trash"></i> {% trans "Delete" %}
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<script type="application/json" id="promotion-change-form-i18n">
+{
+    "i18n": {
+        "nameRequired": "{% trans 'Promotion name is required.' %}",
+        "invalidDiscount": "{% trans 'Please enter a valid discount value.' %}",
+        "percentageExceeds100": "{% trans 'Percentage cannot exceed 100%.' %}",
+        "startDateRequired": "{% trans 'Start date is required.' %}",
+        "enterPercentageOff": "{% trans 'Enter percentage off (0-100).' %}",
+        "discountPercentageLabel": "{% trans 'Discount Percentage' %}",
+        "enterAmountOff": "{% trans 'Enter fixed amount off each product.' %}",
+        "discountAmountLabel": "{% trans 'Discount Amount' %}",
+        "enterFixedPrice": "{% trans 'Enter the fixed sale price.' %}",
+        "salePriceLabel": "{% trans 'Sale Price' %}",
+        "previewWillAppear": "{% trans 'Preview will appear here' %}",
+        "percentageOff": "{% trans 'Percentage Off' %}",
+        "amountOff": "{% trans 'Amount Off' %}",
+        "fixedSalePrice": "{% trans 'Fixed Sale Price' %}",
+        "noItemsAvailable": "{% trans 'No items available' %}",
+        "dragItemsHere": "{% trans 'Drag items here' %}",
+        "errorLoadingItems": "{% trans 'Error loading items' %}",
+        "active": "{% trans 'Active' %}",
+        "inactive": "{% trans 'Inactive' %}",
+        "noEndDate": "{% trans 'No end date' %}",
+        "allProducts": "{% trans 'All Products' %}",
+        "specificCategories": "{% trans 'Specific Categories' %}",
+        "specificBrands": "{% trans 'Specific Brands' %}",
+        "specificCollections": "{% trans 'Specific Collections' %}",
+        "specificProducts": "{% trans 'Specific Products' %}",
+        "storeWide": "{% trans 'Store-wide' %}",
+        "selected": "{% trans 'selected' %}",
+        "noneSelected": "{% trans 'None selected' %}"
+    }
+}
+</script>
+<script src="{% static 'catalog/js/promotion_change_form.js' %}"></script>
+{% endblock %}

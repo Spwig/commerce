@@ -1,0 +1,25 @@
+{# Developer Submission Summary Component #}
+{# Usage: {% include 'email_system/mjml_components/dev_submission_summary.mjml' with component_name=component_name component_type=component_type version=version %} #}
+{# Displays component name, type badge, and version in a compact info block #}
+
+<mj-section background-color="#f8fafc" padding="16px 24px" border-radius="8px">
+  <mj-column>
+    <mj-text
+      font-size="18px"
+      font-weight="700"
+      color="#1e293b"
+      padding-bottom="8px"
+    >
+      {{ component_name }}
+    </mj-text>
+    <mj-text
+      font-size="13px"
+      color="#64748b"
+      line-height="20px"
+    >
+      <span style="background: #e2e8f0; color: #475569; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">{{ component_type }}</span>
+      &nbsp;&nbsp;
+      <span style="color: #94a3b8;">v{{ version }}</span>
+    </mj-text>
+  </mj-column>
+</mj-section>

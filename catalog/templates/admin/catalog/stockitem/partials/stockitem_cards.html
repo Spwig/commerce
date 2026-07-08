@@ -1,0 +1,78 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for item in stock_items %}
+    <div class="stock-item-card">
+        <div class="card-header">
+            <div class="product-info">
+                <h3>
+                    <a href="{% url 'admin:catalog_product_change' item.product.id %}">
+                        {{ item.product.name }}
+                    </a>
+                </h3>
+                <div class="sku">
+                    {% trans "SKU" %}: {{ item.product.sku|default:"-" }}
+                    {% if item.variant %}
+                    | {% trans "Variant" %}: {{ item.variant }}
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                {% if item.available <= 0 %}
+                <span class="stock-status status-out">
+                    🔴 {% trans "Out of Stock" %}
+                </span>
+                {% elif item.available <= item.effective_low_stock_threshold %}
+                <span class="stock-status status-low">
+                    ⚠️ {% trans "Low Stock" %}
+                </span>
+                {% else %}
+                <span class="stock-status status-ok">
+                    ✅ {% trans "In Stock" %}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="stock-metric">
+                <div class="metric-label">{% trans "On Hand" %}</div>
+                <div class="metric-value">{{ item.on_hand }}</div>
+            </div>
+            <div class="stock-metric">
+                <div class="metric-label">{% trans "Allocated" %}</div>
+                <div class="metric-value">{{ item.allocated }}</div>
+            </div>
+            <div class="stock-metric">
+                <div class="metric-label">{% trans "Available" %}</div>
+                <div class="metric-value">{{ item.available }}</div>
+            </div>
+            <div class="stock-metric">
+                <div class="metric-label">{% trans "Alert Threshold" %}</div>
+                <div class="metric-value">{{ item.low_stock_threshold }}</div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <div class="warehouse-info">
+                <i class="fas fa-warehouse"></i>
+                <strong>{{ item.warehouse.name }}</strong>
+                {% if item.warehouse.code %}
+                ({{ item.warehouse.code }})
+                {% endif %}
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'admin:catalog_stockitem_change' item.pk %}">
+                    <i class="fas fa-edit"></i> {% trans "Edit" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <i class="fas fa-boxes"></i>
+        <h2>{% trans "No Stock Items Found" %}</h2>
+        <p>{% trans "No stock items match your current filters." %}</p>
+    </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,76 @@
+{% load i18n merchant_trans %}
+{# Main field wrapper - includes appropriate field type template #}
+
+<div class="form-field field-{{ field.field_type }} field-width-{{ field.width }}"
+     data-field-name="{{ field.field_name }}"
+     data-field-type="{{ field.field_type }}"
+     data-required="{{ field.is_required|yesno:'true,false' }}"
+     {% if field.css_class %}class="{{ field.css_class }}"{% endif %}>
+
+    {% if field.field_type == 'heading' %}
+        {% include "form_builder/fields/heading.html" %}
+    {% elif field.field_type == 'paragraph' %}
+        {% include "form_builder/fields/paragraph.html" %}
+    {% elif field.field_type == 'divider' %}
+        {% include "form_builder/fields/divider.html" %}
+    {% elif field.field_type == 'hidden' %}
+        {% include "form_builder/fields/hidden.html" %}
+    {% else %}
+        {# Standard field with label #}
+        {% if field.translated_label %}
+        <label for="field-{{ field.field_name }}" class="field-label">
+            {{ field.translated_label }}
+            {% if field.is_required %}<span class="required-indicator">*</span>{% endif %}
+        </label>
+        {% endif %}
+
+        <div class="field-input-wrapper">
+            {% if field.field_type == 'text' %}
+                {% include "form_builder/fields/text.html" %}
+            {% elif field.field_type == 'textarea' %}
+                {% include "form_builder/fields/textarea.html" %}
+            {% elif field.field_type == 'email' %}
+                {% include "form_builder/fields/email.html" %}
+            {% elif field.field_type == 'phone' %}
+                {% include "form_builder/fields/phone.html" %}
+            {% elif field.field_type == 'number' %}
+                {% include "form_builder/fields/number.html" %}
+            {% elif field.field_type == 'url' %}
+                {% include "form_builder/fields/url.html" %}
+            {% elif field.field_type == 'date' %}
+                {% include "form_builder/fields/date.html" %}
+            {% elif field.field_type == 'time' %}
+                {% include "form_builder/fields/time.html" %}
+            {% elif field.field_type == 'datetime' %}
+                {% include "form_builder/fields/datetime.html" %}
+            {% elif field.field_type == 'select' %}
+                {% include "form_builder/fields/select.html" %}
+            {% elif field.field_type == 'checkbox' %}
+                {% include "form_builder/fields/checkbox.html" %}
+            {% elif field.field_type == 'checkbox_group' %}
+                {% include "form_builder/fields/checkbox_group.html" %}
+            {% elif field.field_type == 'radio' %}
+                {% include "form_builder/fields/radio.html" %}
+            {% elif field.field_type == 'file' %}
+                {% include "form_builder/fields/file.html" %}
+            {% elif field.field_type == 'product_select' %}
+                {% include "form_builder/fields/product_select.html" %}
+            {% elif field.field_type == 'rating_stars' %}
+                {% include "form_builder/fields/rating_stars.html" %}
+            {% elif field.field_type == 'rating_likert' %}
+                {% include "form_builder/fields/rating_likert.html" %}
+            {% elif field.field_type == 'rating_nps' %}
+                {% include "form_builder/fields/rating_nps.html" %}
+            {% else %}
+                {# Fallback to text input #}
+                {% include "form_builder/fields/text.html" %}
+            {% endif %}
+        </div>
+
+        {% if field.translated_help_text %}
+        <span class="field-help-text">{{ field.translated_help_text }}</span>
+        {% endif %}
+
+        <span class="field-error"></span>
+    {% endif %}
+</div>

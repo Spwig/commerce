@@ -1,0 +1,130 @@
+{% load i18n %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards" id="results-container">
+    {% for provider in providers %}
+    <div class="list-row-card{% if not provider.is_active %} disabled{% endif %}">
+        <div class="list-row-card-icon">
+            {% if provider.provider_key == 'stripe_terminal' %}
+                <i class="fab fa-stripe text-primary icon-size-28"></i>
+            {% else %}
+                <i class="fas fa-credit-card text-primary icon-medium"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:pos_app_posterminalprovider_change' provider.pk %}">
+                    {{ provider.display_name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-cog"></i>
+                {{ provider.provider_key }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if provider.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if provider.connection_status == 'connected' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-link"></i> {% trans "Connected" %}
+                    </span>
+                {% elif provider.connection_status == 'error' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Error" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-question-circle"></i> {% trans "Not Tested" %}
+                    </span>
+                {% endif %}
+
+                {% if provider.reader_count %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-wifi"></i> {{ provider.reader_count }} {% trans "reader" %}{{ provider.reader_count|pluralize }}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if provider.connection_error %}
+            <div class="list-row-card-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ provider.connection_error|truncatewords:15 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Readers" %}</span>
+                    <span class="list-row-card-stat-value">{{ provider.reader_count|default:"0" }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Last Tested" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if provider.last_tested_at %}
+                            {{ provider.last_tested_at|timesince }}
+                        {% else %}
+                            {% trans "Never" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ provider.created_at|date:"M d, Y" }}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ provider.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:pos_app_posterminalprovider_change' provider.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit provider' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:pos_app_posterminalreader_changelist' %}?provider__id__exact={{ provider.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View readers' %}">
+                <i class="fas fa-wifi"></i>
+            </a>
+            <button type="button"
+                    class="list-row-card-action test-connection-btn"
+                    data-provider-id="{{ provider.pk }}"
+                    title="{% trans 'Test connection' %}">
+                <i class="fas fa-plug"></i>
+            </button>
+            <a href="{% url 'admin:pos_app_posterminalprovider_delete' provider.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete provider' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-credit-card"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No terminal providers configured." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Add a provider to enable integrated card payments in your POS." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

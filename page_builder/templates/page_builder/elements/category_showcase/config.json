@@ -1,0 +1,236 @@
+{
+  "element_type": "category_showcase",
+  "name": "Category Showcase",
+  "version": "1.1.0",
+  "category": "ecommerce",
+  "icon": "fas fa-th-large",
+  "description": "Visual category navigation display",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/category-showcase.css"],
+  "tabs": {
+    "content": {
+      "label": "Content",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "source_group": {
+          "type": "property_group",
+          "label": "Data Source",
+          "columns": 1,
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "default": "dynamic",
+              "options": [
+                {"value": "dynamic", "label": "Live from store"},
+                {"value": "static", "label": "Manual selection"}
+              ]
+            },
+            "source_type": {
+              "type": "select",
+              "label": "Category Source",
+              "default": "top_level",
+              "options": [
+                {"value": "top_level", "label": "Top-Level Categories"},
+                {"value": "featured", "label": "Featured Categories"},
+                {"value": "children_of", "label": "Children of Category"}
+              ],
+              "show_if": {"data_source": "dynamic"}
+            },
+            "parent_category_id": {
+              "type": "entity_picker",
+              "entity_type": "category",
+              "label": "Parent Category",
+              "show_if": {"source_type": "children_of"}
+            },
+            "max_categories": {
+              "type": "number",
+              "label": "Maximum Categories",
+              "default": 6,
+              "min": 2,
+              "max": 12,
+              "show_if": {"data_source": "dynamic"}
+            }
+          }
+        },
+        "manual_categories_group": {
+          "type": "property_group",
+          "label": "Selected Categories",
+          "columns": 1,
+          "show_if": {"data_source": "static"},
+          "properties": {
+            "category_ids": {
+              "type": "category_picker",
+              "label": "Categories",
+              "full_width": true
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-eye",
+      "order": 2,
+      "properties": {
+        "display_group": {
+          "type": "property_group",
+          "label": "Show / Hide",
+          "properties": {
+            "show_product_count": {
+              "type": "boolean",
+              "label": "Show Product Count",
+              "default": true
+            },
+            "show_description": {
+              "type": "boolean",
+              "label": "Show Description",
+              "default": false
+            },
+            "show_image": {
+              "type": "boolean",
+              "label": "Show Category Image",
+              "default": true
+            },
+            "show_view_all": {
+              "type": "boolean",
+              "label": "Show View All Button",
+              "default": false
+            },
+            "view_all_text": {
+              "type": "string",
+              "label": "View All Button Text",
+              "default": "View All Categories",
+              "translatable": true,
+              "show_if": {"show_view_all": true}
+            }
+          }
+        },
+        "filter_group": {
+          "type": "property_group",
+          "label": "Category Filters",
+          "columns": 1,
+          "properties": {
+            "hide_empty": {
+              "type": "boolean",
+              "label": "Hide Empty Categories",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "icon": "fas fa-th-large",
+      "order": 3,
+      "properties": {
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout Options",
+          "properties": {
+            "style": {
+              "type": "select",
+              "label": "Display Style",
+              "default": "cards",
+              "options": [
+                {"value": "cards", "label": "Cards"},
+                {"value": "tiles", "label": "Tiles"},
+                {"value": "overlay", "label": "Image Overlay"},
+                {"value": "minimal", "label": "Minimal"}
+              ]
+            },
+            "columns": {
+              "type": "select",
+              "label": "Columns",
+              "default": "4",
+              "options": [
+                {"value": "2", "label": "2 Columns"},
+                {"value": "3", "label": "3 Columns"},
+                {"value": "4", "label": "4 Columns"},
+                {"value": "5", "label": "5 Columns"},
+                {"value": "6", "label": "6 Columns"}
+              ]
+            },
+            "image_ratio": {
+              "type": "select",
+              "label": "Image Ratio",
+              "default": "1/1",
+              "options": [
+                {"value": "1/1", "label": "Square (1:1)"},
+                {"value": "4/3", "label": "Standard (4:3)"},
+                {"value": "16/9", "label": "Wide (16:9)"},
+                {"value": "3/4", "label": "Portrait (3:4)"}
+              ]
+            },
+            "spacing": {
+              "type": "select",
+              "label": "Spacing",
+              "default": "normal",
+              "options": [
+                {"value": "tight", "label": "Tight"},
+                {"value": "normal", "label": "Normal"},
+                {"value": "loose", "label": "Loose"}
+              ]
+            }
+          }
+        }
+      }
+    },
+    "header": {
+      "label": "Header",
+      "icon": "fas fa-heading",
+      "order": 4,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Shop by Category",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "string",
+              "label": "Section Subtitle",
+              "default": "",
+              "translatable": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "data_source": {"type": "select", "label": "Data Source", "default": "dynamic", "options": [{"value": "dynamic", "label": "Live from store"}, {"value": "static", "label": "Manual selection"}]},
+    "source_type": {"type": "select", "label": "Category Source", "default": "top_level", "options": [{"value": "top_level", "label": "Top-Level Categories"}, {"value": "featured", "label": "Featured Categories"}, {"value": "children_of", "label": "Children of Category"}], "show_if": {"data_source": "dynamic"}},
+    "parent_category_id": {"type": "entity_picker", "entity_type": "category", "label": "Parent Category", "show_if": {"source_type": "children_of"}},
+    "category_ids": {"type": "category_picker", "label": "Categories", "default": []},
+    "max_categories": {"type": "number", "label": "Maximum Categories", "default": 6, "min": 2, "max": 12},
+    "show_product_count": {"type": "boolean", "label": "Show Product Count", "default": true},
+    "show_description": {"type": "boolean", "label": "Show Description", "default": false},
+    "show_image": {"type": "boolean", "label": "Show Category Image", "default": true},
+    "hide_empty": {"type": "boolean", "label": "Hide Empty Categories", "default": false},
+    "style": {"type": "select", "label": "Display Style", "default": "cards", "options": [{"value": "cards", "label": "Cards"}, {"value": "tiles", "label": "Tiles"}, {"value": "overlay", "label": "Image Overlay"}, {"value": "minimal", "label": "Minimal"}]},
+    "columns": {"type": "select", "label": "Columns", "default": "4", "options": [{"value": "2", "label": "2 Columns"}, {"value": "3", "label": "3 Columns"}, {"value": "4", "label": "4 Columns"}, {"value": "5", "label": "5 Columns"}, {"value": "6", "label": "6 Columns"}]},
+    "image_ratio": {"type": "select", "label": "Image Ratio", "default": "1/1", "options": [{"value": "1/1", "label": "Square (1:1)"}, {"value": "4/3", "label": "Standard (4:3)"}, {"value": "16/9", "label": "Wide (16:9)"}, {"value": "3/4", "label": "Portrait (3:4)"}]},
+    "spacing": {"type": "select", "label": "Spacing", "default": "normal", "options": [{"value": "tight", "label": "Tight"}, {"value": "normal", "label": "Normal"}, {"value": "loose", "label": "Loose"}]},
+    "title": {"type": "string", "label": "Section Title", "default": "Shop by Category", "translatable": true},
+    "subtitle": {"type": "string", "label": "Section Subtitle", "default": "", "translatable": true},
+    "show_view_all": {"type": "boolean", "label": "Show View All Button", "default": false},
+    "view_all_text": {"type": "string", "label": "View All Button Text", "default": "View All Categories", "translatable": true}
+  },
+  "translations": {
+    "en": {"name": "Category Showcase", "description": "Visual category navigation display"},
+    "es": {"name": "Escaparate de Categorías", "description": "Navegación visual de categorías"},
+    "fr": {"name": "Vitrine des Catégories", "description": "Navigation visuelle des catégories"},
+    "de": {"name": "Kategorie-Schaufenster", "description": "Visuelle Kategorie-Navigation"},
+    "pt": {"name": "Vitrine de Categorias", "description": "Navegação visual de categorias"},
+    "zh-hans": {"name": "分类展示", "description": "可视化分类导航展示"},
+    "ja": {"name": "カテゴリーショーケース", "description": "ビジュアルカテゴリーナビゲーション"}
+  }
+}

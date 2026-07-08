@@ -1,0 +1,29 @@
+{% load i18n %}
+{# Single social link - receives platform, url, brand_color, icon_size, padding, style from parent #}
+<a href="{{ url }}"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="{{ platform|title }}"
+   class="pb-social-link pb-social-{{ platform }}"
+   style="display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: {{ brand_color }};
+          text-decoration: none;
+          transition: opacity 0.2s ease;
+          {% if style == 'icons_rounded' %}
+          background-color: {{ brand_color }}10;
+          border-radius: 8px;
+          padding: {{ padding }};
+          {% elif style == 'icons_square' %}
+          background-color: {{ brand_color }}10;
+          border-radius: 0;
+          padding: {{ padding }};
+          {% elif style == 'icons_circle' %}
+          background-color: {{ brand_color }}10;
+          border-radius: 50%;
+          padding: {{ padding }};
+          {% endif %}">
+    <i class="fab {% if platform == 'facebook' %}fa-facebook-f{% elif platform == 'twitter' %}fa-x-twitter{% elif platform == 'instagram' %}fa-instagram{% elif platform == 'linkedin' %}fa-linkedin-in{% elif platform == 'youtube' %}fa-youtube{% elif platform == 'tiktok' %}fa-tiktok{% elif platform == 'pinterest' %}fa-pinterest-p{% elif platform == 'whatsapp' %}fa-whatsapp{% elif platform == 'telegram' %}fa-telegram{% elif platform == 'snapchat' %}fa-snapchat{% elif platform == 'discord' %}fa-discord{% elif platform == 'github' %}fa-github{% elif platform == 'email' %}fa-envelope{% else %}fa-link{% endif %}"
+       style="font-size: {{ icon_size }};"></i>
+</a>

@@ -1,0 +1,525 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static humanize currency_tags %}
+
+{% block title %}{% trans "Payment Dashboard" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'payment_providers/css/payment_dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {% trans 'Payment Dashboard' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="payment-dashboard">
+{# Dashboard Header #}
+<div class="dashboard-header">
+    <h1>
+        <i class="fas fa-credit-card"></i>
+        {% trans "Payment Dashboard" %}
+    </h1>
+    <div class="subtitle">
+        {% trans "Monitor payment performance, provider health, and transaction metrics" %}
+    </div>
+</div>
+
+{# Filters Section #}
+<div class="dashboard-filters">
+    <div class="filter-group">
+        <label for="period-select">
+            <i class="fas fa-calendar-alt"></i>
+            {% trans "Period" %}:
+        </label>
+        <select id="period-select" class="dashboard-select">
+            {% for value, label in period_options %}
+            <option value="{{ value }}" {% if value == current_period %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-group custom-date-range {% if current_period == 'custom' %}custom-date-display-flex{% else %}custom-date-display-none{% endif %}">
+        <label for="start-date">
+            <i class="fas fa-calendar"></i>
+            {% trans "From" %}:
+        </label>
+        <input type="date" id="start-date" class="dashboard-input" value="{{ start_date|date:'Y-m-d' }}">
+
+        <label for="end-date">
+            <i class="fas fa-calendar"></i>
+            {% trans "To" %}:
+        </label>
+        <input type="date" id="end-date" class="dashboard-input" value="{{ end_date|date:'Y-m-d' }}">
+    </div>
+
+    <div class="filter-group">
+        <button id="refresh-dashboard" class="util-btn">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        <label class="checkbox-label">
+            <input type="checkbox" id="compare-toggle" {% if compare_enabled %}checked{% endif %}>
+            <i class="fas fa-chart-line"></i>
+            {% trans "Compare with previous period" %}
+        </label>
+    </div>
+
+
+</div>
+
+{# Jump To Navigation #}
+<div class="jump-to-nav">
+    <label for="jump-to-select">
+        <i class="fas fa-compass"></i>
+        {% trans "Quick Navigation" %}:
+    </label>
+    <select id="jump-to-select" class="jump-to-select">
+        <option value="">{% trans "Jump to section..." %}</option>
+        <option value="actions-required">{% trans "Actions Required" %}</option>
+        <option value="revenue-chart">{% trans "Revenue Over Time" %}</option>
+        <option value="payment-performance">{% trans "Payment Performance" %}</option>
+        <option value="refund-metrics">{% trans "Refund Metrics" %}</option>
+        <option value="provider-performance">{% trans "Provider Performance" %}</option>
+        <option value="transaction-status">{% trans "Transaction Status" %}</option>
+        <option value="payment-methods">{% trans "Payment Methods" %}</option>
+        <option value="recent-transactions">{% trans "Recent Transactions" %}</option>
+        <option value="webhook-stats">{% trans "Webhook Statistics" %}</option>
+    </select>
+</div>
+
+{# Actions Required #}
+<div id="actions-required" class="dashboard-section">
+    <h2 class="dashboard-section-title">
+        <i class="fas fa-exclamation-circle"></i>
+        {% trans "Actions Required" %}
+    </h2>
+    <div class="dashboard-actions-grid">
+        <a href="{% url 'admin:payment_providers_paymenttransaction_changelist' %}?status=failed" class="dashboard-action-card payment-action-card">
+            <div class="card-icon action-icon-failed">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <h3>{{ action_cards.failed_transactions }}</h3>
+            <div class="description">{% trans "Failed Transactions (7d)" %}</div>
+        </a>
+
+        <a href="{% url 'admin:payment_providers_paymenttransaction_changelist' %}?status=authorized" class="dashboard-action-card payment-action-card">
+            <div class="card-icon action-icon-pending">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3>{{ action_cards.pending_captures }}</h3>
+            <div class="description">{% trans "Pending Captures" %}</div>
+        </a>
+
+        <a href="{% url 'admin:orders_order_changelist' %}?has_pending_refunds=true" class="dashboard-action-card payment-action-card">
+            <div class="card-icon action-icon-refunds">
+                <i class="fas fa-undo-alt"></i>
+            </div>
+            <h3>{{ action_cards.pending_refunds }}</h3>
+            <div class="description">{% trans "Pending Refunds" %}</div>
+        </a>
+
+        <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}?connection_status=error" class="dashboard-action-card payment-action-card">
+            <div class="card-icon action-icon-errors">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>{{ action_cards.connection_errors }}</h3>
+            <div class="description">{% trans "Connection Errors" %}</div>
+        </a>
+
+        <a href="{% url 'admin:payment_providers_paymentwebhook_changelist' %}?processed=false" class="dashboard-action-card payment-action-card">
+            <div class="card-icon action-icon-webhooks">
+                <i class="fas fa-bell"></i>
+            </div>
+            <h3>{{ action_cards.unprocessed_webhooks }}</h3>
+            <div class="description">{% trans "Unprocessed Webhooks" %}</div>
+        </a>
+    </div>
+</div>
+
+{# PRIMARY CHART: Revenue Over Time #}
+<div id="revenue-chart" class="dashboard-section">
+    <div class="section-header-flex">
+        <h2 class="dashboard-section-title section-title-no-margin">
+            <i class="fas fa-chart-area"></i>
+            {% trans "Payment Revenue Over Time" %}
+        </h2>
+        <div class="grouping-selector">
+            <span class="text-14 text-quiet mr-10">
+                <i class="fas fa-layer-group"></i> {% trans "Group by" %}:
+            </span>
+            <button class="grouping-btn {% if current_grouping == 'day' %}active{% endif %}" data-grouping="day">
+                {% trans "Day" %}
+            </button>
+            <button class="grouping-btn {% if current_grouping == 'week' %}active{% endif %}" data-grouping="week">
+                {% trans "Week" %}
+            </button>
+            <button class="grouping-btn {% if current_grouping == 'month' %}active{% endif %}" data-grouping="month">
+                {% trans "Month" %}
+            </button>
+        </div>
+    </div>
+    <div class="chart-container">
+        <canvas id="revenue-chart-canvas"></canvas>
+    </div>
+</div>
+
+{# Payment Performance Metrics #}
+<div id="payment-performance" class="dashboard-section">
+    <h2 class="dashboard-section-title">
+        <i class="fas fa-chart-line"></i>
+        {% trans "Payment Performance" %}
+    </h2>
+    <div class="dashboard-stats-grid">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon revenue">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="metric-title">{% trans "Total Revenue" %}</div>
+            </div>
+            <div class="metric-value">{{ payment_performance.current.revenue|format_currency:default_currency }}</div>
+            {% if compare_enabled and payment_performance.changes.revenue is not None %}
+            <div class="metric-change {% if payment_performance.changes.revenue >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if payment_performance.changes.revenue >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                {{ payment_performance.changes.revenue|floatformat:1 }}%
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon transactions">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div class="metric-title">{% trans "Total Transactions" %}</div>
+            </div>
+            <div class="metric-value">{{ payment_performance.current.transactions }}</div>
+            {% if compare_enabled and payment_performance.changes.transactions is not None %}
+            <div class="metric-change {% if payment_performance.changes.transactions >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if payment_performance.changes.transactions >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                {{ payment_performance.changes.transactions|floatformat:1 }}%
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon success-rate">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="metric-title">{% trans "Success Rate" %}</div>
+            </div>
+            <div class="metric-value">{{ payment_performance.current.success_rate|floatformat:2 }}%</div>
+            {% if compare_enabled and payment_performance.changes.success_rate is not None %}
+            <div class="metric-change {% if payment_performance.changes.success_rate >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if payment_performance.changes.success_rate >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                {{ payment_performance.changes.success_rate|floatformat:1 }}%
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon average">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="metric-title">{% trans "Average Transaction" %}</div>
+            </div>
+            <div class="metric-value">{{ payment_performance.current.average_transaction|format_currency:default_currency }}</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon authorized">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="metric-title">{% trans "Authorized (Not Captured)" %}</div>
+            </div>
+            <div class="metric-value">{{ payment_performance.current.authorized_amount|format_currency:default_currency }}</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon refunded">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <div class="metric-title">{% trans "Total Refunded" %}</div>
+            </div>
+            <div class="metric-value">{{ payment_performance.current.refunded_amount|format_currency:default_currency }}</div>
+        </div>
+    </div>
+</div>
+
+{# Refund Metrics #}
+<div id="refund-metrics" class="dashboard-section">
+    <h2 class="dashboard-section-title">
+        <i class="fas fa-undo"></i>
+        {% trans "Refund Metrics" %}
+    </h2>
+    <div class="dashboard-stats-grid metrics-grid-3">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon bg-warning-theme">
+                    <i class="fas fa-undo-alt"></i>
+                </div>
+                <div class="metric-title">{% trans "Total Refunded" %}</div>
+            </div>
+            <div class="metric-value">{{ refund_metrics.current.total_refunded|format_currency:default_currency }}</div>
+            {% if compare_enabled and refund_metrics.changes.total_refunded is not None %}
+            <div class="metric-change {% if refund_metrics.changes.total_refunded <= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if refund_metrics.changes.total_refunded <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                {{ refund_metrics.changes.total_refunded|floatformat:1 }}%
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon bg-info-theme">
+                    <i class="fas fa-list-ol"></i>
+                </div>
+                <div class="metric-title">{% trans "Refund Count" %}</div>
+            </div>
+            <div class="metric-value">{{ refund_metrics.current.refund_count }}</div>
+            {% if compare_enabled and refund_metrics.changes.refund_count is not None %}
+            <div class="metric-change {% if refund_metrics.changes.refund_count <= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if refund_metrics.changes.refund_count <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                {{ refund_metrics.changes.refund_count|floatformat:1 }}%
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon bg-danger-theme">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="metric-title">{% trans "Refund Rate" %}</div>
+            </div>
+            <div class="metric-value">{{ refund_metrics.current.refund_rate|floatformat:2 }}%</div>
+        </div>
+    </div>
+</div>
+
+{# Provider Performance #}
+<div id="provider-performance" class="dashboard-section">
+    <h2 class="dashboard-section-title">
+        <i class="fas fa-server"></i>
+        {% trans "Provider Performance Comparison" %}
+    </h2>
+    <div class="provider-performance-grid">
+        {% for provider in provider_performance %}
+        <div class="provider-card">
+            <div class="provider-card-header">
+                {% if provider.provider_logo %}
+                <img src="{{ provider.provider_logo }}" alt="{{ provider.provider_name }}" class="provider-logo">
+                {% else %}
+                <div class="provider-logo-placeholder">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                {% endif %}
+                <div class="provider-info">
+                    <div class="provider-name">{{ provider.provider_name }}</div>
+                    <div class="provider-status">
+                        {% if provider.is_default %}
+                        <span class="badge badge-primary">{% trans "Default" %}</span>
+                        {% endif %}
+                        {% if provider.is_active %}
+                        <span class="badge badge-success">{% trans "Active" %}</span>
+                        {% else %}
+                        <span class="badge badge-secondary">{% trans "Inactive" %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="provider-stats">
+                <div class="provider-stat">
+                    <div class="stat-label">{% trans "Revenue" %}</div>
+                    <div class="stat-value">{{ provider.total_revenue|format_currency:default_currency }}</div>
+                </div>
+                <div class="provider-stat">
+                    <div class="stat-label">{% trans "Transactions" %}</div>
+                    <div class="stat-value">{{ provider.total_transactions }}</div>
+                </div>
+                <div class="provider-stat">
+                    <div class="stat-label">{% trans "Success Rate" %}</div>
+                    <div class="stat-value stat-rate {% if provider.success_rate >= 95 %}success{% elif provider.success_rate >= 85 %}warning{% else %}danger{% endif %}">
+                        {{ provider.success_rate|floatformat:1 }}%
+                    </div>
+                </div>
+                <div class="provider-stat">
+                    <div class="stat-label">{% trans "Avg Amount" %}</div>
+                    <div class="stat-value">{{ provider.average_amount|format_currency:default_currency }}</div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-credit-card fa-3x"></i>
+            <p>{% trans "No payment providers configured" %}</p>
+            <a href="{% url 'payment_providers:wizard_step1' %}" class="button primary">
+                {% trans "Setup First Provider" %}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{# Charts Row: Transaction Status & Payment Methods #}
+<div class="dashboard-section">
+    <div class="charts-row">
+        <div class="chart-half" id="transaction-status">
+            <h3 class="section-subtitle">
+                <i class="fas fa-pie-chart"></i>
+                {% trans "Transaction Status Breakdown" %}
+            </h3>
+            <div class="chart-container-sm">
+                <canvas id="status-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-half" id="payment-methods">
+            <h3 class="section-subtitle">
+                <i class="fas fa-credit-card"></i>
+                {% trans "Payment Methods Distribution" %}
+            </h3>
+            <div class="chart-container-sm">
+                <canvas id="payment-methods-chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Recent Transactions #}
+<div id="recent-transactions" class="dashboard-section">
+    <h2 class="dashboard-section-title">
+        <i class="fas fa-list"></i>
+        {% trans "Recent Transactions" %}
+    </h2>
+    <div class="table-container">
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Transaction ID" %}</th>
+                    <th>{% trans "Order" %}</th>
+                    <th>{% trans "Provider" %}</th>
+                    <th>{% trans "Amount" %}</th>
+                    <th>{% trans "Payment Method" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Date" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in recent_transactions %}
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:payment_providers_paymenttransaction_change' txn.id %}">
+                            {{ txn.transaction_id|truncatechars:20 }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if txn.order_number %}
+                        <a href="{% url 'admin:orders_order_changelist' %}?order_number={{ txn.order_number }}">
+                            {{ txn.order_number }}
+                        </a>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ txn.provider_name }}</td>
+                    <td class="text-right">{{ txn.amount|format_currency:default_currency }}</td>
+                    <td>{{ txn.payment_method_type|default:"-" }}</td>
+                    <td>
+                        <span class="status-badge status-{{ txn.status }}">
+                            {{ txn.status|upper }}
+                        </span>
+                    </td>
+                    <td class="text-muted">{{ txn.created_at|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        {% trans "No recent transactions" %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{# Webhook Statistics #}
+<div id="webhook-stats" class="dashboard-section">
+    <h2 class="dashboard-section-title">
+        <i class="fas fa-webhook"></i>
+        {% trans "Webhook Statistics" %}
+    </h2>
+    <div class="dashboard-stats-grid metrics-grid-4">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon bg-primary-theme">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="metric-title">{% trans "Total Webhooks" %}</div>
+            </div>
+            <div class="metric-value">{{ webhook_stats.total }}</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon bg-success-theme">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="metric-title">{% trans "Processed" %}</div>
+            </div>
+            <div class="metric-value">{{ webhook_stats.processed }}</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon bg-warning-theme">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="metric-title">{% trans "Unprocessed" %}</div>
+            </div>
+            <div class="metric-value">{{ webhook_stats.unprocessed }}</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon bg-info-theme">
+                    <i class="fas fa-shield-check"></i>
+                </div>
+                <div class="metric-title">{% trans "Signature Verified" %}</div>
+            </div>
+            <div class="metric-value">{{ webhook_stats.verified }}</div>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+
+<script type="application/json" id="payment-dashboard-data">
+{
+    "revenueOverTime": {{ revenue_over_time_json|safe }},
+    "transactionByStatus": {{ transaction_by_status_json|safe }},
+    "paymentMethods": {{ payment_methods_json|safe }},
+    "currentPeriod": "{{ current_period|escapejs }}",
+    "compareEnabled": {{ compare_enabled|yesno:"true,false" }},
+    "currentGrouping": "{{ current_grouping|escapejs }}",
+    "defaultCurrency": "{{ default_currency|escapejs }}"
+}
+</script>
+<script src="{% static 'payment_providers/js/payment_dashboard.js' %}"></script>
+
+{% endblock %}

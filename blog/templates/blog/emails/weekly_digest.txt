@@ -1,0 +1,18 @@
+{% load i18n %}
+{% trans "Your Weekly Blog Digest" %}
+============================
+
+{% trans "Here's what you missed this week" %}
+
+{% for post in posts %}
+{{ post.title }}
+{{ post.excerpt|truncatewords:30 }}
+{% trans "Read more" %}: https://{{ site.domain }}{{ post.get_absolute_url }}
+
+{% endfor %}
+---
+
+{% trans "You received this email because you subscribed to our weekly blog digest." %}
+
+{% trans "Manage preferences" %}: {{ preferences_url }}
+{% trans "Unsubscribe" %}: {{ unsubscribe_url }}

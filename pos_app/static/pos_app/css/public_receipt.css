@@ -1,0 +1,279 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Pos App Frontend
+ *
+ * Description: Frontend styles for public_receipt.html
+ * Template: pos_app/templates/pos/public_receipt.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - Theme CSS variables (loaded via page_builder/base.html or admin base)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+:root {
+            --color-bg: #f8f9fa;
+            --color-card: #ffffff;
+            --color-text: #1f2937;
+            --color-muted: #6b7280;
+            --color-border: #e5e7eb;
+            --color-success: #16a34a;
+            --color-accent: #0284c7;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .receipt-container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .receipt-card {
+            background: var(--color-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .receipt-header {
+            padding: 30px 24px;
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .store-logo {
+            max-width: 120px;
+            max-height: 60px;
+            margin-bottom: 12px;
+        }
+
+        .store-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .store-info {
+            font-size: 12px;
+            color: var(--color-muted);
+        }
+
+        .receipt-title {
+            background: #f3f4f6;
+            padding: 12px 24px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            letter-spacing: 0.05em;
+        }
+
+        .receipt-section {
+            padding: 20px 24px;
+        }
+
+        .receipt-section + .receipt-section {
+            border-top: 1px solid var(--color-border);
+        }
+
+        .order-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .meta-item {
+            font-size: 13px;
+        }
+
+        .meta-label {
+            color: var(--color-muted);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .meta-value {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .meta-item.right {
+            text-align: right;
+        }
+
+        .items-header {
+            display: grid;
+            grid-template-columns: 1fr 60px 100px;
+            gap: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 1fr 60px 100px;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .item-sku {
+            font-size: 11px;
+            color: var(--color-muted);
+            margin-top: 2px;
+        }
+
+        .item-qty, .item-price {
+            text-align: center;
+        }
+
+        .item-price {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .totals-section {
+            background: #fafafa;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+
+        .total-row.discount {
+            color: var(--color-success);
+        }
+
+        .total-row.grand-total {
+            font-size: 18px;
+            font-weight: 700;
+            padding-top: 12px;
+            margin-top: 8px;
+            border-top: 2px solid var(--color-border);
+        }
+
+        .payment-section {
+            background: #f9fafb;
+        }
+
+        .payment-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 4px 0;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-badge {
+            font-size: 11px;
+            color: var(--color-muted);
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .thank-you {
+            text-align: center;
+            padding: 30px 24px;
+            background: var(--color-card);
+        }
+
+        .thank-you-text {
+            font-size: 16px;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .return-policy {
+            font-size: 11px;
+            color: var(--color-muted);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .branding {
+            text-align: center;
+            padding: 16px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .branding a {
+            font-size: 11px;
+            color: var(--color-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .branding a:hover {
+            color: var(--color-text);
+        }
+
+        .branding img {
+            width: 12px;
+            height: 12px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .receipt-card {
+                box-shadow: none;
+            }
+            .branding {
+                display: none;
+            }
+        }

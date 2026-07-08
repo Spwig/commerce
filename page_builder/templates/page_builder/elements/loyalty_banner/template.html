@@ -1,0 +1,85 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Loyalty Banner Element -->
+{% with member=element_context.member tiers=element_context.tiers %}
+<section class="loyalty-banner loyalty-banner--{{ element.content.style|default:'card' }} loyalty-banner--{{ element.content.display_mode|default:'enrollment' }}"
+         {% hover_animation_attrs element %}
+         style="--loyalty-primary: {{ element.content.primary_color|default:'#f59e0b' }};
+                {% base_styles element %}"
+         data-show-for="{{ element.content.show_for|default:'all' }}">
+
+    <div class="loyalty-banner__container">
+        <div class="loyalty-banner__icon-wrapper">
+            <i class="{{ element.content.icon|default:'fas fa-crown' }}"></i>
+        </div>
+
+        <div class="loyalty-banner__content">
+            {% if element.content.display_mode == 'points_summary' and member %}
+            <!-- Points Summary Mode (for logged-in members) -->
+            <h3 class="loyalty-banner__greeting">{% mtrans "Welcome back," %} {{ member.user.first_name|default:member.user.username }}!</h3>
+            <div class="loyalty-banner__points-display">
+                <span class="loyalty-banner__points-value">{{ member.points_balance|default:0 }}</span>
+                <span class="loyalty-banner__points-label">{% mtrans "Points" %}</span>
+            </div>
+            {% if member.tier %}
+            <span class="loyalty-banner__tier">{{ member.tier.name }} {% mtrans "Member" %}</span>
+            {% endif %}
+
+            {% elif element.content.display_mode == 'tier_progress' and member %}
+            <!-- Tier Progress Mode -->
+            <h3 class="loyalty-banner__title">{% mtrans "Your Rewards Progress" %}</h3>
+            <div class="loyalty-banner__progress">
+                <div class="loyalty-banner__progress-bar">
+                    <div class="loyalty-banner__progress-fill" style="width: {{ member.tier_progress|default:50 }}%;"></div>
+                </div>
+                <div class="loyalty-banner__progress-labels">
+                    <span>{{ member.tier.name|default:"Bronze" }}</span>
+                    <span>{{ member.next_tier.name|default:"Silver" }}</span>
+                </div>
+            </div>
+            <p class="loyalty-banner__progress-text">
+                {% blocktrans with points=member.points_to_next_tier|default:500 %}{{ points }} points to next tier{% endblocktrans %}
+            </p>
+
+            {% elif element.content.display_mode == 'benefits' %}
+            <!-- Benefits Overview Mode -->
+            <h3 class="loyalty-banner__title">{{ element.content.title }}</h3>
+            {% if element.content.show_benefits|default:True %}
+            <ul class="loyalty-banner__benefits">
+                {% for benefit in element.content.benefits %}
+                <li class="loyalty-banner__benefit">
+                    <i class="{{ benefit.icon }}"></i>
+                    <span>{{ benefit.text }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% else %}
+            <!-- Enrollment CTA Mode (default) -->
+            <h3 class="loyalty-banner__title">{{ element.content.title }}</h3>
+            <p class="loyalty-banner__description">{{ element.content.description }}</p>
+
+            {% if element.content.show_benefits|default:True %}
+            <ul class="loyalty-banner__benefits">
+                {% for benefit in element.content.benefits %}
+                <li class="loyalty-banner__benefit">
+                    <i class="{{ benefit.icon }}"></i>
+                    <span>{{ benefit.text }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endif %}
+
+            <a href="{{ element.content.button_url|default:'/account/loyalty/' }}" class="loyalty-banner__btn">
+                {% if element.content.display_mode == 'points_summary' or element.content.display_mode == 'tier_progress' %}
+                {% mtrans "View Rewards" %}
+                {% else %}
+                {{ element.content.button_text }}
+                {% endif %}
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endwith %}

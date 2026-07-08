@@ -1,0 +1,455 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/admin/css/license_status.css' %}">
+    <script src="{% static 'core/admin/js/license_status.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="license-dashboard">
+    <h1>{% trans "Platform License Status" %}</h1>
+
+    {% if trial_mode %}
+    <div class="warning-banner">
+        <h3>⚠️ {% trans "Trial Mode Active" %}</h3>
+        <p>{% trans "This platform is running in trial mode. Payment processing is disabled. Please activate a valid license to enable all features." %}</p>
+    </div>
+    {% endif %}
+
+    <!-- Status Card -->
+    <div class="license-status-card">
+        <div class="status-header">
+            {% if is_licensed %}
+            <div class="status-badge licensed">
+                <span class="status-icon">✓</span>
+                <span>{% trans "Licensed" %}</span>
+            </div>
+            {% else %}
+            <div class="status-badge trial">
+                <span class="status-icon">⚠</span>
+                <span>{% trans "Trial Mode" %}</span>
+            </div>
+            {% endif %}
+
+            <div class="action-buttons">
+                <button type="button" class="btn btn-primary" data-action="refresh-license">
+                    {% trans "Refresh License" %}
+                </button>
+                <button type="button" class="btn btn-secondary" data-action="clear-license-cache">
+                    {% trans "Clear Cache" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- License Details -->
+        <div class="license-details-grid">
+            <div class="detail-item">
+                <div class="detail-label">{% trans "License Type" %}</div>
+                <div class="detail-value">{{ license_info.license_type|title }}</div>
+            </div>
+
+            {% if is_licensed %}
+            <div class="detail-item">
+                <div class="detail-label">{% trans "License Key" %}</div>
+                <div class="detail-value">{{ license_info.license_key }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Licensed To" %}</div>
+                <div class="detail-value">{% if license_info.company %}{{ license_info.company }} ({{ license_info.owner_name }}){% else %}{{ license_info.owner_name }}{% endif %}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Owner Email" %}</div>
+                <div class="detail-value">{{ license_info.owner_email }}</div>
+            </div>
+            {% endif %}
+
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Platform Version" %}</div>
+                <div class="detail-value">{{ license_info.platform_version }}</div>
+            </div>
+
+            {% if license_info.expires_at %}
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Expires At" %}</div>
+                <div class="detail-value">{{ license_info.expires_at }}</div>
+            </div>
+            {% endif %}
+
+            {% if is_licensed %}
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Max Installations" %}</div>
+                <div class="detail-value">{{ license_info.max_installations }}</div>
+            </div>
+            {% endif %}
+
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Update Status" %}</div>
+                <div class="detail-value">
+                    {% if updates_available %}
+                        {% if support_status == "full_updates" %}
+                            <span class="license-update-full">✓ {% trans "Full Updates Available" %}</span>
+                        {% elif support_status == "maintenance_updates" %}
+                            <span class="license-update-maintenance">⚠ {% trans "Maintenance Updates Only" %}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="license-update-eol">✗ {% trans "End of Life" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Status -->
+        {% if is_licensed and maintenance_status %}
+        <div class="entitlements-section license-maintenance-section">
+            <h3 class="entitlement-group-title">{% trans "Maintenance Status" %}</h3>
+            <div class="license-details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">{% trans "Status" %}</div>
+                    <div class="detail-value">
+                        {% if maintenance_status.active %}
+                            <span class="license-update-full">&#10003; {% trans "Active" %}</span>
+                        {% elif maintenance_status.in_grace_period %}
+                            <span class="license-update-maintenance">&#9888; {% trans "Grace Period" %} ({{ maintenance_status.grace_days_remaining }} {% trans "days remaining" %})</span>
+                        {% else %}
+                            <span class="license-update-eol">&#10007; {% trans "Expired" %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if maintenance_status.expires_at %}
+                <div class="detail-item">
+                    <div class="detail-label">{% trans "Expires" %}</div>
+                    <div class="detail-value">{{ maintenance_status.expires_at }}</div>
+                </div>
+                {% endif %}
+
+                {% if maintenance_status.active and maintenance_status.days_remaining is not None %}
+                <div class="detail-item">
+                    <div class="detail-label">{% trans "Days Remaining" %}</div>
+                    <div class="detail-value {% if maintenance_status.days_remaining <= 7 %}pos-days-critical{% elif maintenance_status.days_remaining <= 30 %}pos-days-warning{% endif %}">
+                        {{ maintenance_status.days_remaining }} {% trans "days" %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="detail-item">
+                    <div class="detail-label">{% trans "Spwig Services" %}</div>
+                    <div class="detail-value">
+                        {% if spwig_services_available %}
+                            <span class="license-update-full">&#10003; {% trans "Available" %}</span>
+                        {% else %}
+                            <span class="license-update-eol">&#10007; {% trans "Disabled" %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-label">{% trans "Affected Services" %}</div>
+                    <div class="detail-value">
+                        {% trans "GeoIP, Address Autocomplete, Push Notifications, Feature Updates" %}
+                    </div>
+                </div>
+            </div>
+
+            {% if not maintenance_status.active %}
+            <div class="license-renew-cta">
+                <a href="https://spwig.com/en/purchase?renew={{ license_info.license_key }}" class="button" target="_blank" rel="noopener">
+                    {% trans "Renew Maintenance" %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Entitlements (grouped) -->
+        {% if license_info.entitlements %}
+        <div class="entitlements-section">
+            {% if license_info.entitlements_grouped.platform %}
+            <div class="entitlement-group">
+                <h3 class="entitlement-group-title">{% trans "Platform Features" %}</h3>
+                <div class="entitlement-items">
+                    {% for ent in license_info.entitlements_grouped.platform %}
+                    <div class="entitlement-item">
+                        {% if ent.value %}
+                        <span class="entitlement-icon entitlement-enabled">&#10003;</span>
+                        {% else %}
+                        <span class="entitlement-icon entitlement-disabled">&#10007;</span>
+                        {% endif %}
+                        <span class="entitlement-name">{{ ent.name }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if license_info.entitlements_grouped.product %}
+            <div class="entitlement-group">
+                <h3 class="entitlement-group-title">{% trans "Product Access" %}</h3>
+                <div class="entitlement-items">
+                    {% for ent in license_info.entitlements_grouped.product %}
+                    <div class="entitlement-item">
+                        {% if ent.value %}
+                        <span class="entitlement-icon entitlement-enabled">&#10003;</span>
+                        {% else %}
+                        <span class="entitlement-icon entitlement-disabled">&#10007;</span>
+                        {% endif %}
+                        <span class="entitlement-name">{{ ent.name }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if license_info.entitlements_grouped.quota %}
+            <div class="entitlement-group">
+                <h3 class="entitlement-group-title">{% trans "Quotas" %}</h3>
+                <div class="entitlement-items">
+                    {% for ent in license_info.entitlements_grouped.quota %}
+                    <div class="entitlement-item">
+                        <span class="entitlement-icon entitlement-quota">{{ ent.value }}</span>
+                        <span class="entitlement-name">{{ ent.name }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if license_info.entitlements_grouped.addon %}
+            <div class="entitlement-group">
+                <h3 class="entitlement-group-title">{% trans "Add-ons" %}</h3>
+                <div class="entitlement-items">
+                    {% for ent in license_info.entitlements_grouped.addon %}
+                    <div class="entitlement-item">
+                        {% if ent.value %}
+                        <span class="entitlement-icon entitlement-enabled">&#10003;</span>
+                        {% else %}
+                        <span class="entitlement-icon entitlement-disabled">&#10007;</span>
+                        {% endif %}
+                        <span class="entitlement-name">{{ ent.name }}</span>
+                        {% if ent.expires_at %}
+                        <span class="entitlement-expiry">{% trans "expires" %} {{ ent.expires_at }}</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% else %}
+        <!-- Legacy features display (backward compat for old license files) -->
+        <h3>{% trans "Enabled Features" %}</h3>
+        <ul class="feature-list">
+            {% for feature, enabled in license_info.features.items %}
+            <li>
+                {% if enabled %}
+                <span class="feature-enabled">&#10003;</span>
+                {% else %}
+                <span class="feature-disabled">&#10007;</span>
+                {% endif %}
+                <span>{{ feature|title }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- Available Add-ons -->
+        {% if available_addons %}
+        <div class="addons-section">
+            <h3 class="entitlement-group-title">{% trans "Available Add-ons" %}</h3>
+            <div class="addon-cards">
+                {% for addon in available_addons %}
+                <div class="addon-card">
+                    <div class="addon-name">{{ addon.name }}</div>
+                    {% if addon.description %}
+                    <div class="addon-description">{{ addon.description }}</div>
+                    {% endif %}
+                    <div class="addon-price">
+                        &euro;{{ addon.price_eur }}{% if addon.billing_period == 'yearly' %}/{% trans "yr" %}{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- POS License Section -->
+    {% if pos_license %}
+    <div class="license-status-card pos-license-card">
+        <div class="status-header">
+            <div class="pos-license-title">
+                <h2>{% trans "POS License" %}</h2>
+                {% if pos_license.valid %}
+                <div class="status-badge licensed pos-badge">
+                    <span class="status-icon">✓</span>
+                    <span>{% trans "Active" %}</span>
+                </div>
+                {% elif pos_license.status == 'grace' %}
+                <div class="status-badge warning pos-badge">
+                    <span class="status-icon">⚠</span>
+                    <span>{% trans "Grace Period" %}</span>
+                </div>
+                {% elif pos_license.status == 'expired' %}
+                <div class="status-badge trial pos-badge">
+                    <span class="status-icon">✗</span>
+                    <span>{% trans "Expired" %}</span>
+                </div>
+                {% else %}
+                <div class="status-badge pos-not-configured pos-badge">
+                    <span class="status-icon">—</span>
+                    <span>{% trans "Not Configured" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if pos_license.license_key %}
+        <div class="license-details-grid">
+            <div class="detail-item">
+                <div class="detail-label">{% trans "License Key" %}</div>
+                <div class="detail-value">{{ pos_license.license_key }}</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Status" %}</div>
+                <div class="detail-value">
+                    {% if pos_license.status == 'active' %}
+                        <span class="pos-status-active">{% trans "Active" %}</span>
+                    {% elif pos_license.status == 'grace' %}
+                        <span class="pos-status-grace">{% trans "Grace Period" %}</span>
+                    {% elif pos_license.status == 'expired' %}
+                        <span class="pos-status-expired">{% trans "Expired" %}</span>
+                    {% else %}
+                        {{ pos_license.status|title }}
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if pos_license.expires_at %}
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Expires" %}</div>
+                <div class="detail-value">{{ pos_license.expires_at }}</div>
+            </div>
+            {% endif %}
+
+            {% if pos_license.days_remaining is not None %}
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Days Remaining" %}</div>
+                <div class="detail-value {% if pos_license.days_remaining <= 7 %}pos-days-critical{% elif pos_license.days_remaining <= 30 %}pos-days-warning{% endif %}">
+                    {{ pos_license.days_remaining }} {% trans "days" %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if pos_license.status == 'grace' and pos_license.grace_period_ends %}
+            <div class="detail-item">
+                <div class="detail-label">{% trans "Grace Period Ends" %}</div>
+                <div class="detail-value pos-status-grace">{{ pos_license.grace_period_ends }}</div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- POS License Activation -->
+        {% if not pos_license.valid %}
+        <div class="pos-activation-section">
+            <h3>{% trans "Activate POS License" %}</h3>
+            <p class="pos-activation-desc">{% trans "Enter your POS license key to enable Spwig POS on this installation." %}</p>
+            <div class="pos-activation-form">
+                <input type="text" id="pos-license-key-input"
+                    placeholder="POS-XXXX-XXXX-XXXX-XXXX"
+                    pattern="POS-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}"
+                    maxlength="23">
+                <button type="button" class="button" data-action="activate-pos-license">
+                    {% trans "Activate POS" %}
+                </button>
+            </div>
+            <div id="pos-activation-result" class="pos-activation-result"></div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Activation Section -->
+    {% if trial_mode %}
+    <div class="license-status-card">
+        <h2>{% trans "Activate License" %}</h2>
+
+        <!-- Activate by Key (Recommended) -->
+        <div class="activation-method license-activation-method-primary">
+            <h3 class="license-activation-heading-primary">🔑 {% trans "Activate by License Key" %} ({% trans "Recommended" %})</h3>
+            <p class="license-activation-description">{% trans "Enter your license key to automatically fetch and activate your license from the update server." %}</p>
+
+            <div class="license-activation-row">
+                <input type="text" id="license-key-input" placeholder="{% trans "Enter license key (e.g., SHOP-XXXX-XXXX-XXXX-XXXX)" %}"
+                    class="license-input-field">
+                <select id="environment-type-select" class="license-select-field">
+                    <option value="production">{% trans "Production" %}</option>
+                    <option value="development">{% trans "Development" %}</option>
+                    <option value="staging">{% trans "Staging" %}</option>
+                </select>
+                <button type="button" class="button license-activate-btn" data-action="activate-license-by-key">
+                    ⚡ {% trans "Activate" %}
+                </button>
+            </div>
+
+            <div id="activation-result" class="license-activation-result"></div>
+        </div>
+
+        <!-- Upload File (Alternative) -->
+        <div class="activation-method">
+            <h3 class="license-activation-heading-secondary">📤 {% trans "Upload License File" %} ({% trans "Alternative" %})</h3>
+            <p class="license-activation-description">{% trans "If you have a license.json file, you can upload it directly." %}</p>
+
+            <div class="upload-section">
+                <input type="file" id="license-file-input" accept=".json" class="license-hidden">
+                <button type="button" class="button" data-action="trigger-file-input" data-target="license-file-input">
+                    📁 {% trans "Choose File" %}
+                </button>
+            </div>
+
+            <div id="upload-result" class="license-activation-result"></div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script type="application/json" id="license-status-config" nonce="{{ request.csp_nonce }}">
+{
+    "urls": {
+        "activate": "{% url "admin:core_licensestatus_activate" %}",
+        "upload": "{% url "admin:core_licensestatus_upload" %}",
+        "clearCache": "{% url "admin:core_licensestatus_clear_cache" %}",
+        "refreshLicense": "{% url "admin:core_licensestatus_refresh" %}",
+        "activatePos": "{% url "pos_admin:activate_license" %}"
+    },
+    "i18n": {
+        "enterLicenseKey": "{% trans "Please enter a license key" %}",
+        "activatingLicense": "{% trans "Activating license... Please wait" %}",
+        "owner": "{% trans "Owner" %}",
+        "type": "{% trans "Type" %}",
+        "environment": "{% trans "Environment" %}",
+        "installations": "{% trans "Installations" %}",
+        "pageWillReload": "{% trans "Page will reload automatically..." %}",
+        "activationFailed": "{% trans "Activation Failed" %}",
+        "connectionError": "{% trans "Connection Error" %}",
+        "uploadingLicense": "{% trans "Uploading and validating license..." %}",
+        "licenseKey": "{% trans "License Key" %}",
+        "uploadFailed": "{% trans "Upload Failed" %}",
+        "confirmClearCache": "{% trans "Are you sure you want to clear the license cache?" %}",
+        "error": "{% trans "Error" %}",
+        "enterPosKey": "{% trans "Please enter a POS license key." %}",
+        "invalidPosFormat": "{% trans "Invalid format. Expected: POS-XXXX-XXXX-XXXX-XXXX" %}",
+        "activatingPos": "{% trans "Activating POS license..." %}",
+        "activationFailedGeneral": "{% trans "Activation failed." %}",
+        "refreshingLicense": "{% trans "Refreshing license from server..." %}",
+        "refreshFailed": "{% trans "License Refresh Failed" %}"
+    }
+}
+</script>
+{% endblock %}

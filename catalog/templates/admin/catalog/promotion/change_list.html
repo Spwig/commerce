@@ -1,0 +1,230 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Promotions" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/promotions-dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-badge-percent"></i>
+                {% trans "Sales & Promotions" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage bulk discounts and promotional campaigns across your product catalog" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_promotion_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Create Promotion" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="dashboard-stats-wrapper">
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon total">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="value">{{ total_count }}</div>
+                <div class="label">{% trans "Total Promotions" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon active">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="value">{{ active_count }}</div>
+                <div class="label">{% trans "Active Now" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon scheduled">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="value">{{ scheduled_count }}</div>
+                <div class="label">{% trans "Scheduled" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon expired">
+                    <i class="fas fa-calendar-xmark"></i>
+                </div>
+                <div class="value">{{ expired_count }}</div>
+                <div class="label">{% trans "Expired" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+    <div class="dashboard-content">
+
+        <!-- Quick Actions -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h3>{% trans "Create Promotion" %}</h3>
+                    <p class="description">{% trans "Create a new promotional discount campaign" %}</p>
+                    <a href="{% url 'admin:catalog_promotion_add' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Create" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="filters-panel" id="filters-panel">
+            <div class="filters-panel-header">
+                <h3 class="filters-panel-title">
+                    <i class="fas fa-filter"></i> {% trans "Filters" %}
+                </h3>
+                <button type="button" class="filters-toggle" data-action="toggle-filters">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+
+            <div class="filters-panel-fields" id="filters-panel-fields">
+                <!-- Search -->
+                <div class="filter-field">
+                    <label for="filter-search">
+                        <i class="fas fa-search"></i> {% trans "Search" %}
+                    </label>
+                    <input
+                        type="text"
+                        id="filter-search"
+                        placeholder="{% trans 'Search by name...' %}"
+                        value="">
+                </div>
+
+                <!-- Status Filter -->
+                <div class="filter-field">
+                    <label for="filter-status">
+                        <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                    </label>
+                    <select id="filter-status">
+                        <option value="">{% trans "All Statuses" %}</option>
+                        <option value="active">{% trans "Active" %}</option>
+                        <option value="scheduled">{% trans "Scheduled" %}</option>
+                        <option value="expired">{% trans "Expired" %}</option>
+                        <option value="inactive">{% trans "Inactive" %}</option>
+                    </select>
+                </div>
+
+                <!-- Discount Type Filter -->
+                <div class="filter-field">
+                    <label for="filter-discount-type">
+                        <i class="fas fa-percent"></i> {% trans "Discount Type" %}
+                    </label>
+                    <select id="filter-discount-type">
+                        <option value="">{% trans "All Types" %}</option>
+                        <option value="percentage_off">{% trans "Percentage Off" %}</option>
+                        <option value="amount_off">{% trans "Amount Off" %}</option>
+                        <option value="fixed_price">{% trans "Fixed Price" %}</option>
+                    </select>
+                </div>
+
+                <!-- Apply To Filter -->
+                <div class="filter-field">
+                    <label for="filter-apply-to">
+                        <i class="fas fa-bullseye"></i> {% trans "Applies To" %}
+                    </label>
+                    <select id="filter-apply-to">
+                        <option value="">{% trans "All Targets" %}</option>
+                        <option value="all">{% trans "All Products" %}</option>
+                        <option value="categories">{% trans "Categories" %}</option>
+                        <option value="brands">{% trans "Brands" %}</option>
+                        <option value="collections">{% trans "Collections" %}</option>
+                        <option value="products">{% trans "Specific Products" %}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filters-panel-footer">
+                <div class="active-filters" id="active-filters"></div>
+                <div class="filters-panel-actions">
+                    <button type="button" class="button" data-action="apply-filters">
+                        <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                    </button>
+                    <button type="button" class="button secondary" data-action="clear-filters">
+                        <i class="fas fa-times"></i> {% trans "Clear All" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions bar for bulk operations -->
+        {% if action_form and actions_on_top and cl.show_admin_actions %}
+        <form id="changelist-form" method="post">
+            {% csrf_token %}
+            <div class="actions">
+                {{ action_form.action }}
+                <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+                {% if actions_selection_counter %}
+                <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <h2>{% trans "Promotions" %}</h2>
+            <span class="results-count" id="results-count">
+                <i class="fas fa-badge-percent"></i>
+                <span id="promotion-count">{{ cl.result_count }}</span> {% trans "promotion" %}{{ cl.result_count|pluralize }}
+            </span>
+        </div>
+
+        <!-- Results Container -->
+        <div id="promotion-results">
+            {% now "Y-m-d H:i:s" as now %}
+            {% include "admin/catalog/partials/promotion_cards.html" with promotions=cl.result_list now=now %}
+        </div>
+
+        {% if action_form and actions_on_top and cl.show_admin_actions %}
+        </form>
+        {% endif %}
+
+        <!-- Pagination -->
+        {% if cl.result_count %}
+        <p class="paginator">
+            {% if cl.result_count == 1 %}
+                {% blocktrans count counter=cl.result_count %}1 promotion{% plural %}{{ counter }} promotions{% endblocktrans %}
+            {% else %}
+                {{ cl.result_count }} {% trans 'promotions' %}
+            {% endif %}
+
+            {% if show_all_url %}
+                <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+            {% endif %}
+        </p>
+        {% endif %}
+
+    </div> <!-- /dashboard-content -->
+
+</div>
+
+<div id="list-filter-config"
+     data-filter-url="{% url 'catalog_admin:filter_promotions' %}"
+     data-results-container="promotion-results"
+     data-results-count="promotion-count"
+     style="display:none;"></div>
+{% endblock %}

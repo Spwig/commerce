@@ -1,0 +1,165 @@
+{% load i18n static %}
+
+<div class="list-row-card{% if not post.status == 'published' %} draft{% endif %}" data-post-id="{{ post.id }}">
+    <!-- Checkbox -->
+    <div class="list-row-card-checkbox">
+        <input type="checkbox" class="post-select action-select" value="{{ post.pk }}" id="post-{{ post.pk }}">
+    </div>
+
+    <!-- Featured Image -->
+    <div class="list-row-card-icon post-thumbnail">
+        <a href="{% url 'admin:blog_blogpost_change' post.pk %}">
+            {% if post.featured_image %}
+                <img src="{{ post.featured_image.thumbnail_small }}" alt="{{ post.title }}" loading="lazy">
+            {% else %}
+                <i class="fas fa-newspaper"></i>
+            {% endif %}
+        </a>
+        {% if post.is_featured %}
+            <span class="featured-indicator" title="{% trans 'Featured Post' %}">
+                <i class="fas fa-star"></i>
+            </span>
+        {% endif %}
+        {% if post.is_pinned %}
+            <span class="pinned-indicator" title="{% trans 'Pinned Post' %}">
+                <i class="fas fa-thumbtack"></i>
+            </span>
+        {% endif %}
+    </div>
+
+    <!-- Content -->
+    <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+            <a href="{% url 'admin:blog_blogpost_change' post.pk %}">{{ post.title }}</a>
+        </h3>
+
+        <p class="list-row-card-subtitle">
+            {% if post.category %}
+                <i class="fas fa-folder"></i> {{ post.category.name }}
+            {% else %}
+                <i class="fas fa-folder-open"></i> {% trans "Uncategorized" %}
+            {% endif %}
+            {% if post.tags.exists %}
+                <span class="post-tags">
+                    <i class="fas fa-tags"></i>
+                    {% for tag in post.tags.all|slice:":3" %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    {% if post.tags.count > 3 %}+{{ post.tags.count|add:"-3" }}{% endif %}
+                </span>
+            {% endif %}
+        </p>
+
+        <!-- Badges -->
+        <div class="list-row-card-badges">
+            <!-- Status Badge -->
+            {% if post.status == 'published' %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Published" %}
+                </span>
+            {% elif post.status == 'draft' %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-file-alt"></i> {% trans "Draft" %}
+                </span>
+            {% elif post.status == 'scheduled' %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-clock"></i> {% trans "Scheduled" %}
+                </span>
+            {% elif post.status == 'archived' %}
+                <span class="list-row-card-badge list-row-card-badge-warning">
+                    <i class="fas fa-archive"></i> {% trans "Archived" %}
+                </span>
+            {% endif %}
+
+            <!-- Content Type Badge -->
+            {% if post.use_page_builder %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-puzzle-piece"></i> {% trans "Page Builder" %}
+                </span>
+            {% endif %}
+
+            <!-- Auto-share indicators -->
+            {% if post.auto_share_facebook or post.auto_share_instagram or post.auto_share_linkedin %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-share-alt"></i> {% trans "Auto-share" %}
+                </span>
+            {% endif %}
+
+            <!-- Notification Status -->
+            {% if post.notify_subscribers and post.notification_sent %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-envelope-circle-check"></i> {% trans "Notified" %}
+                </span>
+            {% elif post.notify_subscribers and not post.notification_sent %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-envelope"></i> {% trans "Will Notify" %}
+                </span>
+            {% endif %}
+        </div>
+
+        <!-- Stats -->
+        <div class="list-row-card-stats">
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Views" %}</span>
+                <span class="list-row-card-stat-value">{{ post.view_count }}</span>
+            </div>
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Read Time" %}</span>
+                <span class="list-row-card-stat-value">{{ post.reading_time_minutes }} {% trans "min" %}</span>
+            </div>
+            {% if post.status == 'scheduled' and post.scheduled_at %}
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Scheduled" %}</span>
+                <span class="list-row-card-stat-value">{{ post.scheduled_at|date:"M d, H:i" }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Meta -->
+        <div class="list-row-card-meta">
+            {% if post.published_at %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>{% trans "Published" %}: {{ post.published_at|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-clock"></i>
+                <span>{% trans "Updated" %}: {{ post.updated_at|timesince }} {% trans "ago" %}</span>
+            </div>
+            {% if post.created_by %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-user"></i>
+                <span>{{ post.created_by.get_full_name|default:post.created_by.username }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="list-row-card-actions">
+        <a href="{% url 'admin:blog_blogpost_change' post.pk %}"
+           class="list-row-card-action"
+           title="{% trans 'Edit post' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        {% if post.status == 'published' %}
+        <a href="{{ post.get_absolute_url }}"
+           class="list-row-card-action"
+           title="{% trans 'View on site' %}"
+           target="_blank">
+            <i class="fas fa-external-link-alt"></i>
+        </a>
+        {% endif %}
+        {% if post.use_page_builder and post.content_page %}
+        <a href="{% url 'admin:page_builder_page_change' post.content_page.pk %}"
+           class="list-row-card-action"
+           title="{% trans 'Edit page layout' %}">
+            <i class="fas fa-puzzle-piece"></i>
+        </a>
+        {% endif %}
+        <a href="{% url 'admin:blog_blogpost_delete' post.pk %}"
+           class="list-row-card-action"
+           title="{% trans 'Delete post' %}">
+            <i class="fas fa-trash"></i>
+        </a>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+{% load i18n merchant_trans %}
+{# Review step content - shared across checkout templates #}
+
+<!-- Contact Review -->
+<div class="review-section">
+    <div class="review-section__title">{% mtrans 'Contact' %}</div>
+    <div class="review-section__content" id="review-contact"></div>
+</div>
+
+<!-- Shipping Review -->
+<div class="review-section">
+    <div class="review-section__title">{% mtrans 'Shipping Address' %}</div>
+    <div class="review-section__content" id="review-shipping"></div>
+</div>
+
+<!-- Shipping Method Review -->
+<div class="review-section">
+    <div class="review-section__title">{% mtrans 'Shipping Method' %}</div>
+    <div class="review-section__content" id="review-shipping-method"></div>
+</div>
+
+<!-- Payment Review -->
+<div class="review-section">
+    <div class="review-section__title">{% mtrans 'Payment' %}</div>
+    <div class="review-section__content" id="review-payment"></div>
+</div>
+
+<!-- Items Review -->
+<div class="review-section">
+    <div class="review-section__title">{% mtrans 'Items' %}</div>
+    <div class="review-items" id="review-items"></div>
+</div>
+
+<!-- Order Total Review -->
+<div class="review-section">
+    <div class="review-section__title">{% mtrans 'Order Total' %}</div>
+    <div class="review-totals" id="review-totals">
+        <div class="review-totals__row" id="review-subtotal-row">
+            <span>{% mtrans 'Subtotal' %}</span>
+            <span id="review-subtotal"></span>
+        </div>
+        <div class="review-totals__row" id="review-shipping-row">
+            <span>{% mtrans 'Shipping' %}</span>
+            <span id="review-shipping-cost"></span>
+        </div>
+        <div class="review-totals__row review-totals__row--discount" id="review-discount-row" hidden>
+            <span>{% mtrans 'Discount' %}</span>
+            <span id="review-discount"></span>
+        </div>
+        <div class="review-totals__row" id="review-tax-row" hidden>
+            <span>{% mtrans 'Tax' %}</span>
+            <span id="review-tax"></span>
+        </div>
+        <div class="review-totals__row review-totals__row--total">
+            <span>{% mtrans 'Total' %}</span>
+            <span id="review-total"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Widget Section -->
+<div class="review-section" id="review-payment-section" style="display: none;">
+    <div class="review-section__title">{% mtrans 'Complete Payment' %}</div>
+    <div id="review-payment-container"></div>
+</div>

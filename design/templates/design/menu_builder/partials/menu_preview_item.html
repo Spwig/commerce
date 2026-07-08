@@ -1,0 +1,57 @@
+{% load i18n %}
+{# Recursive menu item partial for preview #}
+{# Context: item, depth #}
+
+{% if item.item_type == 'divider' %}
+    <li class="preview-menu-divider"></li>
+{% elif item.item_type == 'header' %}
+    <li class="preview-menu-header">{{ item.get_resolved_title }}</li>
+{% else %}
+    <li class="preview-menu-item preview-item-type-{{ item.item_type }}{% if item.has_children %} has-dropdown{% endif %}"
+        {% if item.style_config.text_color or item.style_config.hover_color or item.style_config.background %}
+        style="{% if item.style_config.text_color %}--item-color: {{ item.style_config.text_color }};{% endif %}{% if item.style_config.hover_color %}--item-hover-color: {{ item.style_config.hover_color }};{% endif %}{% if item.style_config.background %}--item-bg: {{ item.style_config.background }};{% endif %}"
+        {% endif %}>
+        <a href="{{ item.get_resolved_url|default:'#' }}"
+           class="preview-menu-link"
+           target="{{ item.target|default:'_self' }}"
+           style="{% if item.style_config.text_color %}color: {{ item.style_config.text_color }};{% endif %}{% if item.style_config.background %}background-color: {{ item.style_config.background }};{% endif %}{% if item.style_config.font_weight %}font-weight: {{ item.style_config.font_weight }};{% endif %}{% if item.style_config.font_size %}font-size: {{ item.style_config.font_size }};{% endif %}{% if item.style_config.padding %}padding: {{ item.style_config.padding }};{% endif %}">
+
+            {% if item.icon %}
+                <i class="preview-menu-icon {{ item.icon }}"></i>
+            {% endif %}
+
+            <span>{{ item.get_resolved_title|default:"Untitled" }}</span>
+
+            {% if item.badge_text %}
+                <span class="preview-menu-badge"
+                      {% if item.badge_color %}style="background-color: {{ item.badge_color }};"{% endif %}>
+                    {{ item.badge_text }}
+                </span>
+            {% endif %}
+
+            {% if item.has_children %}
+                <i class="preview-expand-icon fas fa-chevron-down"></i>
+            {% endif %}
+        </a>
+
+        {% if item.has_children %}
+            <ul class="preview-dropdown preview-menu-list">
+                {% for child in item.get_children %}
+                    {% include "design/menu_builder/partials/menu_preview_item.html" with item=child depth=depth|add:1 %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if item.item_type == 'category_tree' %}
+            {# Show placeholder for dynamic category tree #}
+            <ul class="preview-dropdown preview-menu-list">
+                <li class="preview-menu-item">
+                    <span class="preview-menu-link" style="opacity: 0.6; font-style: italic;">
+                        <i class="preview-menu-icon fas fa-sitemap"></i>
+                        <span>{% trans "Categories load dynamically..." %}</span>
+                    </span>
+                </li>
+            </ul>
+        {% endif %}
+    </li>
+{% endif %}

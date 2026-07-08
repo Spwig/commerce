@@ -1,0 +1,127 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Reactivate Subscription" %} - {{ subscription.store_name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li><a href="{% url 'accounts:dashboard' %}" class="text-gray-700 hover:text-blue-600">{% trans "Account" %}</a></li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <a href="{% url 'accounts:hosting_detail' %}" class="text-gray-700 hover:text-blue-600">{% trans "Hosting Subscription" %}</a>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <span class="text-gray-500">{% trans "Reactivate" %}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Info Card -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-play-circle text-green-600 text-xl mr-3"></i>
+                        <h1 class="text-xl font-bold text-gray-900">{% trans "Reactivate Your Subscription" %}</h1>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-400 p-4 m-4 rounded">
+                    <div class="flex">
+                        <i class="fas fa-bolt text-green-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="text-sm font-medium text-green-800">{% trans "Ready to get back online" %}</p>
+                            <p class="text-sm text-green-700 mt-1">
+                                {% blocktrans with amount=amount %}
+                                    You will be charged <strong>&euro;{{ amount }}</strong> immediately to reactivate your subscription. Your store will be back online shortly.
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {% if subscription.status == 'cancelled' %}
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mx-4 rounded">
+                    <div class="flex">
+                        <i class="fas fa-info-circle text-blue-400 mt-0.5 mr-3"></i>
+                        <p class="text-sm text-blue-700">
+                            {% trans "Reactivating will clear your termination countdown. Your data will no longer be scheduled for removal." %}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="p-6">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-play-circle mr-2"></i>
+                                {% blocktrans with amount=amount %}Reactivate &amp; Pay &euro;{{ amount }}{% endblocktrans %}
+                            </button>
+                            <a href="{% url 'accounts:hosting_detail' %}" class="inline-flex items-center justify-center px-6 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                {% trans "Go Back" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Subscription Summary -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">{% trans "Your Subscription" %}</h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Store" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ subscription.store_name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Plan" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ subscription.hosted_plan.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Status" %}</dt>
+                        <dd class="mt-1">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if subscription.status == 'suspended' %}bg-red-100 text-red-800
+                                {% elif subscription.status == 'cancelled' %}bg-gray-100 text-gray-800
+                                {% else %}bg-amber-100 text-amber-800{% endif %}">
+                                {{ subscription.get_status_display }}
+                            </span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Amount Due Today" %}</dt>
+                        <dd class="mt-1 text-lg font-bold text-green-600">&euro;{{ amount }}</dd>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-2">{% trans "Need help?" %}</h3>
+                    <p class="text-sm text-gray-600 mb-3">{% trans "Our support team is here to help with any questions about your hosting subscription." %}</p>
+                    <a href="mailto:support@spwig.com" class="text-sm text-blue-600 hover:text-blue-800">support@spwig.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

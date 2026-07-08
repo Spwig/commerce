@@ -1,0 +1,213 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static voucher_tags %}
+
+{% block title %}{% trans "Preview voucher import" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:vouchers_vouchercode_changelist' %}">{% trans "Voucher Codes" %}</a>
+    &rsaquo; <a href="{% url 'admin:vouchers_vouchercode_import' %}">{% trans "Import" %}</a>
+    &rsaquo; {% trans "Preview" %}
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<style>
+    .vp-wrap { max-width: 1100px; }
+    .vp-intro { background: var(--token-color-surface-soft, #f7f8fa); border: 1px solid var(--token-color-border, #e3e6ec); border-radius: 8px; padding: 16px 18px; margin-bottom: 18px; }
+    .vp-intro h2 { margin: 0 0 4px; font-size: 17px; }
+    .vp-intro p { margin: 0; color: var(--token-color-text-muted, #5b6573); font-size: 13px; }
+    .vp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .vp-stat { background: #fff; border: 1px solid var(--token-color-border, #e3e6ec); border-radius: 8px; padding: 14px 16px; }
+    .vp-stat .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--token-color-text-muted, #6b7280); margin-bottom: 4px; }
+    .vp-stat .value { font-size: 22px; font-weight: 600; }
+    .vp-stat.warn { background: #fef6e6; border-color: #e0a23a; }
+    .vp-stat.danger { background: #fdeae9; border-color: #cf3434; }
+    .vp-fieldset { border: 1px solid var(--token-color-border, #e3e6ec); border-radius: 8px; padding: 12px 18px 16px; margin-bottom: 20px; background: #fff; }
+    .vp-fieldset > legend { padding: 0 6px; font-weight: 600; font-size: 13px; color: var(--token-color-text-muted, #5b6573); text-transform: uppercase; letter-spacing: 0.04em; }
+    .vp-mapping-table { width: 100%; border-collapse: collapse; }
+    .vp-mapping-table th, .vp-mapping-table td { padding: 8px; font-size: 13px; text-align: left; border-bottom: 1px solid var(--token-color-border-soft, #f0f2f5); vertical-align: middle; }
+    .vp-mapping-table th { font-weight: 600; color: var(--token-color-text-muted, #6b7280); font-size: 12px; text-transform: uppercase; }
+    .vp-mapping-table tr:last-child td { border-bottom: none; }
+    .vp-mapping-table .required { color: #c0322f; margin-left: 4px; }
+    .vp-preview-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .vp-preview-table th, .vp-preview-table td { padding: 6px 8px; border-bottom: 1px solid var(--token-color-border-soft, #f0f2f5); vertical-align: top; }
+    .vp-preview-table th { background: var(--token-color-surface-soft, #f7f8fa); font-weight: 600; color: var(--token-color-text-muted, #6b7280); }
+    .vp-preview-table tr.duplicate td { background: rgba(207, 52, 52, 0.05); }
+    .vp-dup-list { font-family: monospace; font-size: 12px; background: #fef6e6; border: 1px dashed #e0a23a; padding: 8px 12px; border-radius: 4px; max-height: 120px; overflow: auto; margin-top: 8px; }
+    .vp-strategy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .vp-strategy label { display: block; padding: 12px; border: 1px solid var(--token-color-border, #e3e6ec); border-radius: 6px; cursor: pointer; background: #fff; }
+    .vp-strategy label:has(input:checked) { border-color: var(--token-color-primary, #3859e1); background: rgba(56, 89, 225, 0.04); }
+    .vp-strategy label strong { display: block; margin-bottom: 4px; }
+    .vp-strategy label span { font-size: 12px; color: var(--token-color-text-muted, #6b7280); }
+    .vp-invalid-list { max-height: 200px; overflow: auto; font-size: 12px; }
+    .vp-invalid-list table { width: 100%; border-collapse: collapse; }
+    .vp-invalid-list th, .vp-invalid-list td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #f0f2f5; }
+    .vp-actions { display: flex; gap: 12px; justify-content: flex-end; padding-top: 16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="vp-wrap">
+
+    <div class="vp-intro">
+        <h2><i class="fas fa-eye"></i> {% trans "Preview import" %}</h2>
+        <p>
+            {% blocktrans count counter=parsed.row_count %}
+                {{ counter }} row found in your file. Map the columns to voucher fields, decide what to do about duplicates, then confirm.
+            {% plural %}
+                {{ counter }} rows found in your file. Map the columns to voucher fields, decide what to do about duplicates, then confirm.
+            {% endblocktrans %}
+        </p>
+    </div>
+
+    <div class="vp-stats">
+        <div class="vp-stat">
+            <div class="label">{% trans "Rows parsed" %}</div>
+            <div class="value">{{ parsed.row_count }}</div>
+        </div>
+        <div class="vp-stat">
+            <div class="label">{% trans "Will import" %}</div>
+            <div class="value">{{ preview.new_count }}</div>
+        </div>
+        <div class="vp-stat{% if preview.duplicate_count %} warn{% endif %}">
+            <div class="label">{% trans "Duplicates" %}</div>
+            <div class="value">{{ preview.duplicate_count }}</div>
+        </div>
+        <div class="vp-stat{% if preview.invalid_rows %} danger{% endif %}">
+            <div class="label">{% trans "Will skip (invalid)" %}</div>
+            <div class="value">{{ preview.invalid_rows|length }}</div>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <fieldset class="vp-fieldset">
+            <legend>{% trans "Column mapping" %}</legend>
+            <p style="font-size:13px;color:var(--token-color-text-muted,#6b7280);margin:0 0 12px;">
+                {% trans "Only the code column is required. Map any optional columns you'd like preserved on the imported vouchers." %}
+            </p>
+            <table class="vp-mapping-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Voucher field" %}</th>
+                        <th>{% trans "Source column" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for target, spec in mappable_fields.items %}
+                    <tr>
+                        <td>
+                            <strong>{{ spec.label }}</strong>
+                            {% if spec.required %}<span class="required">*</span>{% endif %}
+                        </td>
+                        <td>
+                            <select name="map_{{ target }}">
+                                {% if not spec.required %}<option value="">— {% trans "Skip this field" %} —</option>{% endif %}
+                                {% for header in parsed.headers %}
+                                    <option value="{{ header }}" {% if mapping|get_item:target == header %}selected{% endif %}>{{ header }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+
+        <fieldset class="vp-fieldset">
+            <legend>{% trans "Duplicate code strategy" %}</legend>
+            <p style="font-size:13px;color:var(--token-color-text-muted,#6b7280);margin:0 0 12px;">
+                {% blocktrans count counter=preview.duplicate_count %}
+                    {{ counter }} code in this file already exists in your catalogue. Choose how to handle it.
+                {% plural %}
+                    {{ counter }} codes in this file already exist in your catalogue. Choose how to handle them.
+                {% endblocktrans %}
+            </p>
+
+            <div class="vp-strategy">
+                <label>
+                    <input type="radio" name="duplicate_strategy" value="skip" {% if selected_strategy != 'overwrite' and selected_strategy != 'fail' %}checked{% endif %}>
+                    <strong>{% trans "Skip duplicates" %}</strong>
+                    <span>{% trans "Keep the existing voucher rows untouched. Import only the new codes." %}</span>
+                </label>
+                <label>
+                    <input type="radio" name="duplicate_strategy" value="overwrite" {% if selected_strategy == 'overwrite' %}checked{% endif %}>
+                    <strong>{% trans "Overwrite settings" %}</strong>
+                    <span>{% trans "Update existing rows with this batch's settings. Codes and usage are preserved." %}</span>
+                </label>
+                <label>
+                    <input type="radio" name="duplicate_strategy" value="fail" {% if selected_strategy == 'fail' %}checked{% endif %}>
+                    <strong>{% trans "Fail the import" %}</strong>
+                    <span>{% trans "Abort if any duplicate is found. Lets you clean the file before retrying." %}</span>
+                </label>
+            </div>
+
+            {% if preview.sample_duplicates %}
+            <div class="vp-dup-list">
+                {% for code in preview.sample_duplicates %}{{ code }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                {% if preview.duplicate_count > preview.sample_duplicates|length %}
+                    <em>… {% blocktrans with extra=preview.duplicate_count|add:"-10" %}and {{ extra }} more{% endblocktrans %}</em>
+                {% endif %}
+            </div>
+            {% endif %}
+        </fieldset>
+
+        <fieldset class="vp-fieldset">
+            <legend>{% trans "Preview" %} <small style="font-weight:400;color:var(--token-color-text-muted,#6b7280);">{% trans "(first 20 rows)" %}</small></legend>
+            <div style="overflow-x:auto;">
+                <table class="vp-preview-table">
+                    <thead>
+                        <tr>
+                            {% for header in parsed.headers %}<th>{{ header }}</th>{% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in preview_rows %}
+                        <tr {% if mapping.code and row|get_item:mapping.code in preview.existing_codes %}class="duplicate"{% endif %}>
+                            {% for header in parsed.headers %}<td>{{ row|get_item:header }}</td>{% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+
+        {% if preview.invalid_rows %}
+        <fieldset class="vp-fieldset">
+            <legend>{% trans "Rows that will be skipped" %}</legend>
+            <div class="vp-invalid-list">
+                <table>
+                    <thead><tr><th>{% trans "Row" %}</th><th>{% trans "Code" %}</th><th>{% trans "Reason" %}</th></tr></thead>
+                    <tbody>
+                        {% for invalid in preview.invalid_rows %}
+                        <tr>
+                            <td>{{ invalid.row_number }}</td>
+                            <td>{{ invalid.code|default:"(empty)" }}</td>
+                            <td>{{ invalid.reason }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        {% endif %}
+
+        <div class="vp-actions">
+            <a href="{% url 'admin:vouchers_vouchercode_import' %}" class="button">{% trans "Start over" %}</a>
+            <button type="submit" class="default">
+                {% blocktrans count counter=preview.new_count %}
+                    Import {{ counter }} voucher
+                {% plural %}
+                    Import {{ counter }} vouchers
+                {% endblocktrans %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

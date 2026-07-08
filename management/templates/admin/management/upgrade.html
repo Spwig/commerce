@@ -1,0 +1,187 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "System Upgrade" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/system_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'management/css/upgrade.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; {% trans 'System Upgrade' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="upgrade-container">
+        <div class="upgrade-header">
+            <h1>
+                <i class="fas fa-arrow-circle-up"></i>
+                {% trans "System Upgrade" %}
+            </h1>
+            <p>{% trans "Upgrade your Spwig installation to the latest version" %}</p>
+        </div>
+
+        {% if update_available %}
+        <!-- Version Cards -->
+        <div class="version-cards">
+            <div class="version-card current">
+                <div class="label">{% trans "Current Version" %}</div>
+                <div class="version">{{ current_version }}</div>
+            </div>
+            <div class="version-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+            <div class="version-card new">
+                <div class="label">{% trans "Available Version" %}</div>
+                <div class="version">{{ available_version }}</div>
+            </div>
+        </div>
+
+        <!-- Changelog -->
+        {% if changelog %}
+        <div class="changelog-section">
+            <h3>
+                <i class="fas fa-list-alt"></i>
+                {% trans "What's New" %}
+            </h3>
+            <div class="changelog-content">
+                {{ changelog|safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Preflight Checks -->
+        <div class="preflight-section">
+            <h3>
+                <i class="fas fa-clipboard-check"></i>
+                {% trans "Pre-Upgrade Checks" %}
+            </h3>
+            <div class="preflight-checks" id="preflight-checks">
+                <div class="preflight-item pending" data-check="disk_space">
+                    <i class="fas fa-circle"></i>
+                    <span class="check-name">{% trans "Sufficient disk space" %}</span>
+                    <span class="check-status">{% trans "Pending" %}</span>
+                </div>
+                <div class="preflight-item pending" data-check="database">
+                    <i class="fas fa-circle"></i>
+                    <span class="check-name">{% trans "Database connection" %}</span>
+                    <span class="check-status">{% trans "Pending" %}</span>
+                </div>
+                <div class="preflight-item pending" data-check="backup">
+                    <i class="fas fa-circle"></i>
+                    <span class="check-name">{% trans "Recent backup available" %}</span>
+                    <span class="check-status">{% trans "Pending" %}</span>
+                </div>
+                <div class="preflight-item pending" data-check="permissions">
+                    <i class="fas fa-circle"></i>
+                    <span class="check-name">{% trans "Write permissions" %}</span>
+                    <span class="check-status">{% trans "Pending" %}</span>
+                </div>
+                <div class="preflight-item pending" data-check="network">
+                    <i class="fas fa-circle"></i>
+                    <span class="check-name">{% trans "Upgrade server connectivity" %}</span>
+                    <span class="check-status">{% trans "Pending" %}</span>
+                </div>
+            </div>
+            <div class="preflight-actions">
+                <button class="button" data-action="run-preflight-checks" id="run-checks-btn">
+                    <i class="fas fa-play"></i> {% trans "Run Pre-flight Checks" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Warning Banner -->
+        <div class="warning-banner">
+            <h3>
+                <i class="fas fa-exclamation-triangle"></i>
+                {% trans "Before You Upgrade" %}
+            </h3>
+            <ul>
+                <li>{% trans "A backup will be created automatically before the upgrade." %}</li>
+                <li>{% trans "Your site will be put into maintenance mode during the upgrade." %}</li>
+                <li>{% trans "The upgrade process may take several minutes." %}</li>
+                <li>{% trans "If something goes wrong, you can roll back to the backup." %}</li>
+                <li>{% trans "Do not close this page or navigate away during the upgrade." %}</li>
+            </ul>
+        </div>
+
+        <!-- Upgrade Progress (hidden initially) -->
+        <div class="upgrade-progress" id="upgrade-progress">
+            <h3>
+                <i class="fas fa-spinner fa-spin"></i>
+                {% trans "Upgrade in Progress" %}
+            </h3>
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="progress-info">
+                    <span class="progress-percent" id="progress-percent">0%</span>
+                    <span class="progress-step" id="progress-step">{% trans "Initializing..." %}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <form method="post" id="upgrade-form">
+            {% csrf_token %}
+            <div class="action-buttons">
+                <a href="{% url 'admin:management_system_dashboard' %}" class="button default">
+                    <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                </a>
+                <button type="submit" id="upgrade-btn" class="button primary" disabled>
+                    <i class="fas fa-arrow-circle-up"></i> {% trans "Start Upgrade" %}
+                </button>
+            </div>
+        </form>
+
+        {% else %}
+        <!-- No Update Available -->
+        <div class="no-update-message">
+            <i class="fas fa-check-circle"></i>
+            <h2>{% trans "You're up to date!" %}</h2>
+            <p>{% trans "You are running the latest version of Spwig" %}: {{ current_version }}</p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{% url 'admin:management_system_dashboard' %}" class="button default">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Dashboard" %}
+            </a>
+            <button class="button" data-action="check-for-updates">
+                <i class="fas fa-sync"></i> {% trans "Check Again" %}
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="upgrade-config" class="mgmt-hidden"
+     data-check-updates-url="{% url 'admin:management_check_updates' %}"
+     data-upgrade-start-url="{% url 'admin:management_upgrade_start' %}"
+     data-upgrade-progress-url="{% url 'admin:management_upgrade_progress' 0 %}"
+     data-available-version="{{ available_version|default:'' }}"
+     data-msg-checking="{% trans 'Checking...' %}"
+     data-msg-checks-complete="{% trans 'Checks Complete' %}"
+     data-msg-passed="{% trans 'Passed' %}"
+     data-msg-failed="{% trans 'Failed' %}"
+     data-msg-run-checks-first="{% trans 'Please run and pass all pre-flight checks before upgrading.' %}"
+     data-msg-confirm-upgrade="{% trans 'Are you sure you want to start the upgrade? A backup will be created first.' %}"
+     data-msg-starting="{% trans 'Starting...' %}"
+     data-msg-start-upgrade="{% trans 'Start Upgrade' %}"
+     data-msg-failed-start="{% trans 'Failed to start upgrade' %}"
+     data-msg-upgrade-completed="{% trans 'Upgrade completed successfully! The page will now reload.' %}"
+     data-msg-upgrade-failed="{% trans 'Upgrade failed' %}"
+     data-msg-no-updates="{% trans 'No updates available. You are running the latest version.' %}"
+     data-msg-failed-check="{% trans 'Failed to check for updates' %}"
+     data-msg-check-again="{% trans 'Check Again' %}"
+     data-msg-unknown="{% trans 'Unknown error' %}"></div>
+<script src="{% static 'management/js/upgrade.js' %}"></script>
+{% endblock %}

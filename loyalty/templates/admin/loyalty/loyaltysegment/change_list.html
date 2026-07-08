@@ -1,0 +1,134 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Loyalty Segments" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltysegment_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'loyalty/admin/js/segment_list.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if cl.formset and cl.formset.errors %}
+        <p class="errornote">
+            {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+        {{ cl.formset.management_form }}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-users-cog"></i>
+                {% trans "Loyalty Segments" %}
+            </h1>
+            <p class="subtitle">{% trans "Customer segments for targeted campaigns and personalized experiences" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:loyalty_loyaltysegment_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Segment" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filters-panel" class="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filter Segments" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+                <span class="filters-toggle-text">{% trans "Toggle Filters" %}</span>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text"
+                       id="filter-search"
+                       placeholder="{% trans 'Segment name or description...' %}"
+                       autocomplete="off">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-type">
+                    <i class="fas fa-cogs"></i> {% trans "Criteria Type" %}
+                </label>
+                <select id="filter-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="rule_based">{% trans "Rule-Based" %}</option>
+                    <option value="manual">{% trans "Manual Assignment" %}</option>
+                    <option value="dynamic">{% trans "Dynamic Calculation" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-order">
+                    <i class="fas fa-sort"></i> {% trans "Order By" %}
+                </label>
+                <select id="filter-order">
+                    <option value="-created_at">{% trans "Newest First" %}</option>
+                    <option value="created_at">{% trans "Oldest First" %}</option>
+                    <option value="name">{% trans "Name (A-Z)" %}</option>
+                    <option value="-name">{% trans "Name (Z-A)" %}</option>
+                    <option value="-member_count">{% trans "Most Members" %}</option>
+                    <option value="member_count">{% trans "Fewest Members" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button button-secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="filter-results-summary">
+        <span id="results-count">{{ cl.result_count }}</span>
+        {% blocktranslate count counter=cl.result_count %}segment found{% plural %}segments found{% endblocktranslate %}
+    </div>
+
+    <!-- Card-Based Results Container -->
+    <div id="results-container">
+        {% include "admin/loyalty/partials/segment_cards.html" with segments=cl.result_list %}
+    </div>
+
+    {% block pagination %}{% pagination cl %}{% endblock %}
+
+    <script type="application/json" id="segment-list-translations">
+    {"confirmRefresh": "{% trans 'Are you sure you want to refresh the segment membership? This may take a moment for large segments.' %}", "refreshQueued": "{% trans 'Segment refresh has been queued. The member count will be updated shortly.' %}", "errorRefresh": "{% trans 'An error occurred while refreshing the segment.' %}"}
+    </script>
+    <div id="list-filter-config"
+         data-filter-url="{% url 'loyalty:filter_segments' %}"
+         data-results-container="results-container"
+         data-results-count="results-count"
+         class="hidden"></div>
+</div>
+{% endblock %}

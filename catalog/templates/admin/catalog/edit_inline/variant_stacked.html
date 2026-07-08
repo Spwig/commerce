@@ -1,0 +1,512 @@
+{% load i18n admin_urls static admin_readonly %}
+{# Hide the add-related button on selected_attributes to prevent validation errors #}
+{# Styles moved to catalog/static/catalog/admin/css/edit_inline_variant_stacked.css #}
+{# CSS is loaded via ProductVariantInline's Media class #}
+<div class="js-inline-admin-formset inline-group variant-inline-group"
+     id="{{ inline_admin_formset.formset.prefix }}-group"
+     data-inline-type="stacked"
+     data-inline-formset="{{ inline_admin_formset.inline_formset_data }}">
+{{ inline_admin_formset.formset.management_form }}
+<fieldset class="module {{ inline_admin_formset.classes }}" aria-labelledby="{{ inline_admin_formset.formset.prefix }}-heading">
+  <h2 id="{{ inline_admin_formset.formset.prefix }}-heading" class="inline-heading">
+    <i class="fas fa-boxes"></i>
+    {% if inline_admin_formset.formset.max_num == 1 %}
+      {{ inline_admin_formset.opts.verbose_name|capfirst }}
+    {% else %}
+      {{ inline_admin_formset.opts.verbose_name_plural|capfirst }}
+    {% endif %}
+    <span class="variant-count-badge">{{ inline_admin_formset.formset.initial_form_count }}</span>
+  </h2>
+
+{{ inline_admin_formset.formset.non_form_errors }}
+
+<div class="variant-items-wrapper">
+{% for inline_admin_form in inline_admin_formset %}
+<details class="inline-related variant-inline-item{% if inline_admin_form.original or inline_admin_form.show_url %} has_original{% endif %}{% if forloop.last and inline_admin_formset.has_add_permission %} empty-form last-related{% endif %}"
+     id="{{ inline_admin_formset.formset.prefix }}-{% if forloop.last and inline_admin_formset.has_add_permission %}empty{% else %}{{ forloop.counter0 }}{% endif %}"
+     data-variant-index="{{ forloop.counter0 }}"
+     {% if inline_admin_form.original %}data-variant-id="{{ inline_admin_form.original.pk }}"{% endif %}
+     open>
+
+  <summary class="variant-header">
+    <span class="variant-collapse-indicator">
+      <i class="fas fa-chevron-right"></i>
+    </span>
+    <h3 class="inline-heading">
+      <i class="fas fa-box"></i>
+      <b>{{ inline_admin_formset.opts.verbose_name|capfirst }}:</b>
+      <span class="inline_label variant-label">
+        {% if inline_admin_form.original %}
+          {{ inline_admin_form.original }}
+          {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}
+            <a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}"
+               class="{{ inline_admin_formset.has_change_permission|yesno:'inlinechangelink,inlineviewlink' }}">
+              {% if inline_admin_formset.has_change_permission %}{% translate "Change" %}{% else %}{% translate "View" %}{% endif %}
+            </a>
+          {% endif %}
+        {% else %}
+          #{{ forloop.counter }} (New)
+        {% endif %}
+      </span>
+      {% if inline_admin_form.show_url %}<a href="{{ inline_admin_form.absolute_url %}">{% translate "View on site" %}</a>{% endif %}
+    </h3>
+
+    {% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission %}
+      <div class="variant-delete">
+        {% if inline_admin_form.original %}
+          <button type="button"
+                  class="delete-variant-btn"
+                  data-variant-id="{{ inline_admin_form.original.pk }}"
+                  data-variant-name="{{ inline_admin_form.original }}"
+                  title="{% translate 'Delete this variant' %}">
+            <i class="fas fa-trash"></i>
+          </button>
+          {# Keep hidden deletion field for form compatibility but hide it #}
+          <div style="display: none;">{{ inline_admin_form.deletion_field.field }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </summary>
+
+  {% if inline_admin_form.form.non_field_errors %}
+    <div class="variant-errors">{{ inline_admin_form.form.non_field_errors }}</div>
+  {% endif %}
+
+  <div class="variant-content">
+    <!-- Basic Information Section -->
+    <div class="variant-section variant-basic-info">
+      <h4>
+        <i class="fas fa-info-circle"></i> {% translate "Basic Information" %}
+        <span class="help-tooltip" title="{% translate 'Basic details that identify this variant, such as its display name, SKU, and whether it is available for sale' %}">
+          <i class="fas fa-question-circle"></i>
+        </span>
+      </h4>
+      <div class="variant-fields">
+        {% for field in inline_admin_form.form %}
+          {% if field.name in "name,sku,is_active" %}
+            <div class="variant-field field-{{ field.name }}">
+              <div class="field-label">
+                {{ field.label_tag }}
+                {% if field.name == "name" %}
+                  <span class="help-tooltip" title="{% translate 'A descriptive name for this variant that customers will see. Example: Blue T-Shirt - Size Large' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                {% elif field.name == "sku" %}
+                  <span class="help-tooltip" title="{% translate 'Stock Keeping Unit - A unique identifier for this variant used for inventory tracking. Must be unique across your entire catalog' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                {% elif field.name == "is_active" %}
+                  <span class="help-tooltip" title="{% translate 'Controls whether this variant is available for purchase. Inactive variants are hidden from customers but remain in your catalog' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                {% endif %}
+              </div>
+              <div class="field-widget">{{ field }}</div>
+              {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+              {% endif %}
+              {% if field.help_text %}
+                <div class="field-help">{{ field.help_text }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Attributes Section -->
+    <div class="variant-section variant-attributes">
+      <h4>
+        <i class="fas fa-tags"></i> {% translate "Attributes" %}
+        <span class="help-tooltip" title="{% translate 'Define the characteristics that distinguish this variant, such as size, color, or material. These attributes help customers identify and choose the specific variant they want' %}">
+          <i class="fas fa-question-circle"></i>
+        </span>
+      </h4>
+      <div class="variant-fields">
+        {% for field in inline_admin_form.form %}
+          {% if field.name == "selected_attributes" %}
+            <div class="variant-field field-{{ field.name }}">
+              <div class="field-label">
+                {{ field.label_tag }}
+                <span class="help-tooltip" title="{% translate 'Select the attribute values that define this variant. Only values from attributes assigned to this product in the Product Attributes section above are available here.' %}">
+                  <i class="fas fa-question-circle"></i>
+                </span>
+              </div>
+              <div class="field-widget attributes-widget">{{ field }}</div>
+              {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+              {% endif %}
+              <div class="field-help">
+                {% translate "To add new attribute values, use the 'Product Attributes & Variations' section in the Variations tab above." %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {% for field in inline_admin_form.form %}
+          {% if field.name == "color_swatch" %}
+            <div class="variant-field field-{{ field.name }}">
+              <div class="field-label">
+                {{ field.label_tag }}
+                <span class="help-tooltip" title="{% translate 'Optional color code for this variant. This will display as a color swatch on your storefront, making it easier for customers to select color options visually' %}">
+                  <i class="fas fa-question-circle"></i>
+                </span>
+              </div>
+              <div class="field-widget color-swatch-widget">
+                {{ field }}
+                <button type="button" class="color-picker-trigger" data-field-id="{{ field.auto_id }}">
+                  <i class="fas fa-palette"></i> {% translate "Pick Color" %}
+                </button>
+                <div class="color-preview" id="{{ field.auto_id }}-preview"></div>
+              </div>
+              {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+              {% endif %}
+              {% if field.help_text %}
+                <div class="field-help">{{ field.help_text }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Variant Images Section -->
+    <div class="variant-section variant-images">
+      <h4>
+        <i class="fas fa-images"></i> {% translate "Variant Images" %}
+        <span class="help-tooltip" title="{% translate 'Add images specific to this variant. These images will be shown when customers select this variant. You can set one as primary, control gallery visibility, and add descriptive alt text for accessibility' %}">
+          <i class="fas fa-question-circle"></i>
+        </span>
+      </h4>
+      <div class="variant-images-manager">
+        <div class="variant-images-grid" id="variant-images-grid-{{ forloop.counter0 }}">
+          {% if inline_admin_form.original and inline_admin_form.original.images.exists %}
+            {% for image in inline_admin_form.original.images.all %}
+              <div class="variant-image-card" data-image-id="{{ image.id }}" data-media-asset-id="{{ image.media_asset.id }}">
+                <div class="image-card-header">
+                  <i class="fas fa-grip-vertical drag-handle"></i>
+                  {% if image.is_primary %}<span class="primary-badge"><i class="fas fa-star"></i> Primary</span>{% endif %}
+                  <button type="button" class="image-card-delete" data-image-id="{{ image.id }}" aria-label="Delete image">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                <div class="image-card-preview">
+                  <img src="{{ image.thumbnail_medium }}" alt="{{ image.alt_text }}">
+                </div>
+                <div class="image-card-details">
+                  <div class="form-row">
+                    <label for="alt_text_{{ image.id }}">Alt Text</label>
+                    <input type="text" id="alt_text_{{ image.id }}" name="image_{{ image.id }}_alt_text" value="{{ image.alt_text }}" class="image-alt-input">
+                  </div>
+                  <div class="image-card-toggles">
+                    <label class="toggle-label" for="image_{{ image.id }}_show_in_gallery">
+                      <input type="checkbox" id="image_{{ image.id }}_show_in_gallery" name="image_{{ image.id }}_show_in_gallery" {% if image.show_in_gallery %}checked{% endif %} class="image-toggle">
+                      <span>Show in Gallery</span>
+                    </label>
+                    <label class="toggle-label" for="image_{{ image.id }}_show_in_listing">
+                      <input type="checkbox" id="image_{{ image.id }}_show_in_listing" name="image_{{ image.id }}_show_in_listing" {% if image.show_in_listing %}checked{% endif %} class="image-toggle">
+                      <span>Show in Listing</span>
+                    </label>
+                    <label class="toggle-label" for="image_{{ image.id }}_is_primary">
+                      <input type="checkbox" id="image_{{ image.id }}_is_primary" name="image_{{ image.id }}_is_primary" {% if image.is_primary %}checked{% endif %} class="image-primary-toggle" data-image-id="{{ image.id }}">
+                      <span>Set as Primary</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="no-images-placeholder">
+              <i class="fas fa-images"></i>
+              <p>No images added yet</p>
+              <p class="help">Click the button below to add images from your media library</p>
+            </div>
+          {% endif %}
+        </div>
+        <button type="button" class="add-variant-media-btn" id="add-variant-media-btn-{{ forloop.counter0 }}">
+          <i class="fas fa-plus"></i> {% translate "Add Images from Media Library" %}
+        </button>
+        <input type="hidden" id="variant-images-data-{{ forloop.counter0 }}" name="{{ inline_admin_form.form.prefix }}-images_data" value="">
+      </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="variant-section variant-pricing">
+      <h4>
+        <i class="fas fa-dollar-sign"></i> {% translate "Pricing" %}
+        <span class="help-tooltip" title="{% translate 'Set the pricing strategy for this variant. You can inherit the price from the parent product or set a specific price for this variant' %}">
+          <i class="fas fa-question-circle"></i>
+        </span>
+      </h4>
+      <div class="variant-fields">
+        {% for field in inline_admin_form.form %}
+          {% if field.name in "pricing_strategy,price" %}
+            <div class="variant-field field-{{ field.name }}">
+              <div class="field-label">
+                {{ field.label_tag }}
+                {% if field.name == "pricing_strategy" %}
+                  <span class="help-tooltip" title="{% translate 'Choose how this variant is priced. Inherit from Product uses the price set on the parent product. Specific Price allows you to set a unique price for this variant' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                {% elif field.name == "price" %}
+                  <span class="help-tooltip" title="{% translate 'The selling price for this variant. Only used when Pricing Strategy is set to Specific Price. Leave empty to inherit from the parent product' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                {% endif %}
+              </div>
+              <div class="field-widget">{{ field }}</div>
+              {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+              {% endif %}
+              {% if field.help_text %}
+                <div class="field-help">{{ field.help_text }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Physical Attributes Section -->
+    <div class="variant-section variant-physical">
+      <h4>
+        <i class="fas fa-box"></i> {% translate "Physical Attributes" %}
+        <span class="help-tooltip" title="{% translate 'Weight, dimensions, and shipping package for this variant. Leave fields blank to inherit from the parent product' %}">
+          <i class="fas fa-question-circle"></i>
+        </span>
+      </h4>
+      <div class="variant-fields">
+        {% for field in inline_admin_form.form %}
+          {% if field.name == "weight" or field.name == "length" or field.name == "width" or field.name == "height" or field.name == "barcode" or field.name == "preferred_shipping_package" %}
+            <div class="field-wrapper{% if field.errors %} field-error{% endif %}">
+              <div class="field-label">
+                {{ field.label_tag }}
+                {% if field.name == "weight" %}
+                  <span class="help-tooltip" title="{% translate 'Variant weight in kilograms. Leave blank to use parent product weight' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                  {% if original.product.weight %}
+                    <span class="inherit-indicator" title="{% translate 'Parent product weight' %}">
+                      ({% translate 'Parent' %}: {{ original.product.weight }} kg)
+                    </span>
+                  {% endif %}
+                {% elif field.name == "length" %}
+                  <span class="help-tooltip" title="{% translate 'Variant length in centimeters. Leave blank to use parent product length' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                  {% if original.product.length %}
+                    <span class="inherit-indicator" title="{% translate 'Parent product length' %}">
+                      ({% translate 'Parent' %}: {{ original.product.length }} cm)
+                    </span>
+                  {% endif %}
+                {% elif field.name == "width" %}
+                  <span class="help-tooltip" title="{% translate 'Variant width in centimeters. Leave blank to use parent product width' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                  {% if original.product.width %}
+                    <span class="inherit-indicator" title="{% translate 'Parent product width' %}">
+                      ({% translate 'Parent' %}: {{ original.product.width }} cm)
+                    </span>
+                  {% endif %}
+                {% elif field.name == "height" %}
+                  <span class="help-tooltip" title="{% translate 'Variant height in centimeters. Leave blank to use parent product height' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                  {% if original.product.height %}
+                    <span class="inherit-indicator" title="{% translate 'Parent product height' %}">
+                      ({% translate 'Parent' %}: {{ original.product.height }} cm)
+                    </span>
+                  {% endif %}
+                {% elif field.name == "barcode" %}
+                  <span class="help-tooltip" title="{% translate 'Variant-specific barcode for scanning and inventory. Leave blank to use product GTIN, UPC, or EAN' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                  {% if original.product.gtin or original.product.upc or original.product.ean %}
+                    <span class="inherit-indicator" title="{% translate 'Parent product barcode' %}">
+                      ({% translate 'Parent' %}: {{ original.product.gtin|default:original.product.upc|default:original.product.ean }})
+                    </span>
+                  {% endif %}
+                {% elif field.name == "preferred_shipping_package" %}
+                  <span class="help-tooltip" title="{% translate 'Predefined shipping package for this variant. If set, package dimensions will be used for shipping calculations instead of product dimensions' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                  {% if original.product.preferred_shipping_package %}
+                    <span class="inherit-indicator" title="{% translate 'Parent product package' %}">
+                      ({% translate 'Parent' %}: {{ original.product.preferred_shipping_package.name }})
+                    </span>
+                  {% endif %}
+                {% endif %}
+              </div>
+              <div class="field-widget">{{ field }}</div>
+              {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+              {% endif %}
+              {% if field.help_text %}
+                <div class="field-help">{{ field.help_text }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Stock Management Section -->
+    <div class="variant-section variant-stock">
+      <h4>
+        <i class="fas fa-warehouse"></i> {% translate "Stock Management" %}
+        <span class="help-tooltip" title="{% translate 'Track inventory levels for this variant across your warehouses. On Hand shows total inventory, Allocated shows quantity reserved for orders, and Available is what customers can purchase. Set low stock alerts to be notified when inventory runs low' %}">
+          <i class="fas fa-question-circle"></i>
+        </span>
+      </h4>
+
+      {% if inline_admin_form.original %}
+        <!-- Stock Status Badge -->
+        <div class="stock-status-container">
+          <div class="stock-status-badge stock-badge-{{ inline_admin_form.original.stock_status }}">
+            {% if inline_admin_form.original.stock_status == 'in_stock' %}
+              <i class="fas fa-check-circle"></i> {% translate "In Stock" %}
+            {% elif inline_admin_form.original.stock_status == 'low_stock' %}
+              <i class="fas fa-exclamation-triangle"></i> {% translate "Low Stock" %}
+            {% else %}
+              <i class="fas fa-times-circle"></i> {% translate "Out of Stock" %}
+            {% endif %}
+            <span class="stock-quantity">{{ inline_admin_form.original.available_stock }} available</span>
+          </div>
+        </div>
+
+        <!-- Stock Items per Warehouse -->
+        <div class="variant-stock-items">
+          <table class="variant-stock-table">
+            <thead>
+              <tr>
+                <th>
+                  {% translate "Warehouse" %}
+                  <span class="help-tooltip" title="{% translate 'The warehouse location where this inventory is stored' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </th>
+                <th>
+                  {% translate "On Hand" %}
+                  <span class="help-tooltip" title="{% translate 'Total physical inventory currently in the warehouse. Adjust this value when receiving new stock or performing inventory counts' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </th>
+                <th>
+                  {% translate "Allocated" %}
+                  <span class="help-tooltip" title="{% translate 'Quantity reserved for existing orders that have not yet been fulfilled. This is automatically managed by the system' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </th>
+                <th>
+                  {% translate "Available" %}
+                  <span class="help-tooltip" title="{% translate 'Quantity available for customers to purchase (On Hand minus Allocated). This is what shows on your storefront' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </th>
+                <th>
+                  {% translate "Low Stock Alert" %}
+                  <span class="help-tooltip" title="{% translate 'Set a threshold to receive notifications when available stock falls below this level. Leave at 0 to disable low stock alerts' %}">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for stock_item in inline_admin_form.original.stock_items.all %}
+                <tr class="stock-item-row" data-stock-item-id="{{ stock_item.id }}">
+                  <td class="warehouse-name">
+                    <i class="fas fa-warehouse"></i> {{ stock_item.warehouse.name }}
+                    <small class="warehouse-code">({{ stock_item.warehouse.code }})</small>
+                  </td>
+                  <td>
+                    <input type="number"
+                           name="stock_item_{{ stock_item.id }}_on_hand"
+                           value="{{ stock_item.on_hand }}"
+                           min="0"
+                           class="stock-input stock-on-hand">
+                  </td>
+                  <td class="stock-allocated">{{ stock_item.allocated }}</td>
+                  <td class="stock-available">
+                    <strong>{{ stock_item.available }}</strong>
+                  </td>
+                  <td>
+                    <input type="number"
+                           name="stock_item_{{ stock_item.id }}_low_stock_threshold"
+                           value="{{ stock_item.low_stock_threshold }}"
+                           min="0"
+                           class="stock-input stock-threshold"
+                           placeholder="0">
+                  </td>
+                </tr>
+              {% empty %}
+                <tr class="no-stock-items">
+                  <td colspan="5">
+                    <div class="no-stock-placeholder">
+                      <i class="fas fa-inbox"></i>
+                      <p>{% translate "No stock records for this variant yet" %}</p>
+                      <p class="help-text">{% translate "Stock will be created when you add inventory to warehouses" %}</p>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            {% if inline_admin_form.original.stock_items.exists %}
+              <tfoot>
+                <tr class="stock-totals">
+                  <td><strong>{% translate "Totals" %}</strong></td>
+                  <td><strong>{{ inline_admin_form.original.total_stock }}</strong></td>
+                  <td><strong>{{ inline_admin_form.original.allocated_stock }}</strong></td>
+                  <td><strong>{{ inline_admin_form.original.available_stock }}</strong></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            {% endif %}
+          </table>
+        </div>
+
+        <!-- Readonly Fields for Additional Status -->
+        <div class="variant-fields readonly-fields stock-readonly-info">
+          {% for readonly_field_name in inline_admin_form.model_admin.readonly_fields %}
+            {% if readonly_field_name not in 'stock_summary' %}
+              <div class="variant-field field-readonly">
+                <div class="field-label"><strong>{% get_readonly_field_label inline_admin_form readonly_field_name %}:</strong></div>
+                <div class="field-value">{% call_admin_method inline_admin_form readonly_field_name inline_admin_form.original %}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="new-variant-stock-info">
+          <p class="help-text">
+            <i class="fas fa-info-circle"></i>
+            {% translate "Save this variant first to manage stock levels" %}
+          </p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Hidden fields for remaining form fields -->
+    {% for field in inline_admin_form.form %}
+      {% if field.name not in "name,sku,is_active,selected_attributes,color_swatch,pricing_strategy,price" %}
+        {% if not field.is_hidden %}
+          <div class="variant-field field-{{ field.name }}" style="display: none;">
+            {{ field }}
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+  {% if inline_admin_form.fk_field %}{{ inline_admin_form.fk_field.field }}{% endif %}
+
+  <!-- Hidden fields -->
+  {% for field in inline_admin_form.form.hidden_fields %}
+    {{ field }}
+  {% endfor %}
+</details>
+{% endfor %}
+</div>{# End variant-items-wrapper #}
+</fieldset>
+</div>

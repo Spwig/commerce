@@ -1,0 +1,142 @@
+{% extends "admin/migration/sync/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-plug"></i>
+        {% trans "Connect to Remote Instance" %}
+    </h3>
+    <p>{% trans "Connect to another Spwig installation to sync settings. You can use a saved connection or set up a new one." %}</p>
+</div>
+
+<form method="post" id="connection-form">
+    {% csrf_token %}
+
+    {% if connections %}
+    <!-- Saved Connections -->
+    <div class="content-box">
+        <h3><i class="fas fa-bookmark"></i> {% trans "Saved Connections" %}</h3>
+        <div class="saved-connections-grid">
+            {% for conn in connections %}
+            <div class="connection-card {% if preselected_id == conn.pk|slugify %}selected{% endif %}"
+                 data-connection-id="{{ conn.pk }}"
+                 data-url="{{ conn.remote_url }}"
+                 data-role="{{ conn.role }}"
+                 data-name="{{ conn.name }}">
+                <div class="connection-card-header">
+                    <span class="connection-name">{{ conn.name }}</span>
+                    <span class="connection-role-badge role-{{ conn.role }}">{{ conn.get_role_display }}</span>
+                </div>
+                <div class="connection-card-url">{{ conn.remote_url }}</div>
+                {% if conn.is_verified %}
+                <div class="connection-card-status verified">
+                    <i class="fas fa-check-circle"></i> {% trans "Verified" %}
+                    {% if conn.remote_site_name %} &mdash; {{ conn.remote_site_name }}{% endif %}
+                </div>
+                {% else %}
+                <div class="connection-card-status">
+                    <i class="fas fa-question-circle"></i> {% trans "Not verified" %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-divider">
+            <span>{% trans "or configure a new connection" %}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- New Connection Form -->
+    <div class="content-box">
+        <h3><i class="fas fa-plus-circle"></i> {% trans "Connection Details" %}</h3>
+
+        <input type="hidden" name="connection_id" id="connection_id" value="">
+
+        <div class="form-group">
+            <label for="name">{% trans "Connection Name" %} <span class="required">*</span></label>
+            <input type="text" name="name" id="name" class="form-control"
+                   placeholder="{% trans 'e.g., Production Server' %}" required>
+            <div class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "A friendly name to identify this connection." %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="remote_url">{% trans "Remote URL" %} <span class="required">*</span></label>
+            <input type="url" name="remote_url" id="remote_url" class="form-control"
+                   placeholder="https://yourstore.com" required>
+            <div class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "The full URL of the remote Spwig installation." %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="auth_token">{% trans "Sync Token" %} <span class="required">*</span></label>
+            <input type="password" name="auth_token" id="auth_token" class="form-control"
+                   placeholder="{% trans 'Paste the sync token from the remote instance' %}" required>
+            <div class="help-text">
+                <i class="fas fa-key"></i>
+                {% trans "Generate a sync token on the remote instance under Sync Dashboard > Manage Tokens." %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="role">{% trans "Role" %}</label>
+            <select name="role" id="role" class="form-control">
+                <option value="staging">{% trans "Staging" %}</option>
+                <option value="production">{% trans "Production" %}</option>
+                <option value="backup">{% trans "Backup" %}</option>
+                <option value="other">{% trans "Other" %}</option>
+            </select>
+            <div class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Marking a connection as 'Production' enables additional safety checks when pushing changes." %}
+            </div>
+        </div>
+
+        <!-- Test Connection -->
+        <div class="form-group">
+            <button type="button" class="btn btn-secondary" id="test-connection-btn">
+                <i class="fas fa-plug"></i>
+                {% trans "Test Connection" %}
+            </button>
+            <div id="connection-test-result" class="connection-test-result sync-hidden"></div>
+        </div>
+    </div>
+
+    <div class="wizard-actions">
+        <a href="{% url 'admin:migration_syncjob_changelist' %}" class="btn btn-secondary">
+            <i class="fas fa-times"></i>
+            {% trans "Cancel" %}
+        </a>
+        <button type="submit" class="btn btn-primary" id="next-button">
+            {% trans "Next: Select Categories" %}
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+
+<script type="application/json" id="sync-step1-config">
+{
+    "testConnectionUrl": "{% url 'admin:sync_api_test_connection' %}",
+    "csrfToken": "{{ csrf_token }}",
+    "translations": {
+        "testing": "{% trans 'Testing connection...' as t %}{{ t|escapejs }}",
+        "success": "{% trans 'Connection successful!' as t %}{{ t|escapejs }}",
+        "failed": "{% trans 'Connection failed' as t %}{{ t|escapejs }}",
+        "version": "{% trans 'Version' as t %}{{ t|escapejs }}",
+        "siteName": "{% trans 'Site Name' as t %}{{ t|escapejs }}",
+        "categories": "{% trans 'Categories' as t %}{{ t|escapejs }}"
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'migration/js/sync_connection.js' %}" defer></script>
+{% endblock %}

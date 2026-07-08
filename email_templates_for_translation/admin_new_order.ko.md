@@ -1,0 +1,48 @@
+---
+template_type: admin_new_order
+category: Admin Notifications
+---
+
+# Email Template: admin_new_order
+
+## Subject
+새로운 주문이 도착했습니다 - 주문 #{{ order_number }}
+
+## HTML Content
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold">
+          새로운 주문이 도착했습니다
+        </mj-text>
+        <mj-text>
+          A new order has been placed on your store.
+        </mj-text>
+        <mj-text>
+          <strong>Order Number:</strong> {{ order_number }}
+        </mj-text>
+        <mj-text>
+          <strong>Customer:</strong> {{ customer_name }}
+        </mj-text>
+        <mj-text>
+          <strong>Total:</strong> {{ order_total }}
+        </mj-text>
+        <mj-button href="{{ admin_order_url }}" background-color="{{ theme.color.primary|default:'#2563eb' }}">
+          View in Admin
+        </mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+
+## Text Content
+새로운 주문이 도착했습니다
+
+A new order has been placed on your store.
+
+Order Number: {{ order_number }}
+Customer: {{ customer_name }}
+Total: {{ order_total }}
+
+View in admin: {{ admin_order_url }}

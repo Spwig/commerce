@@ -1,0 +1,101 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Blog Post Carousel Element -->
+<section class="blog-carousel blog-carousel--{{ element.content.card_style|default:'default' }}"
+         data-blog-post-carousel
+         data-autoplay="{{ element.content.autoplay|default:'false' }}"
+         data-interval="{{ element.content.autoplay_interval|default:'5' }}"
+         data-infinite="{{ element.content.infinite_loop|default:'true' }}"
+         data-pause-hover="{{ element.content.pause_on_hover|default:'true' }}"
+         data-per-view="{{ element.content.posts_per_view|default:'3' }}"
+         {% hover_animation_attrs element %}
+         style="{% base_styles element %}">
+
+    {% if element.content.title %}
+    <div class="blog-carousel__header">
+        <div class="blog-carousel__header-text">
+            <h2 class="blog-carousel__title">{{ element.content.title }}</h2>
+            {% if element.content.subtitle %}
+            <p class="blog-carousel__subtitle">{{ element.content.subtitle }}</p>
+            {% endif %}
+        </div>
+        {% if element.content.show_arrows|default:True %}
+        <div class="blog-carousel__nav blog-carousel__nav--header">
+            <button class="blog-carousel__arrow blog-carousel__arrow--prev" aria-label="{% mtrans 'Previous' %}">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="blog-carousel__arrow blog-carousel__arrow--next" aria-label="{% mtrans 'Next' %}">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="blog-carousel__viewport">
+        <div class="blog-carousel__track" style="--posts-per-view: {{ element.content.posts_per_view|default:'3' }};">
+            {% with posts=element_context.posts|default:element.content.posts %}
+            {% for post in posts %}
+            <article class="blog-carousel__slide">
+                <div class="blog-carousel__card">
+                    {% if element.content.show_image|default:True %}
+                    <a href="{{ post.url|default:post.get_absolute_url }}" class="blog-carousel__image-link">
+                        <div class="blog-carousel__image-wrapper" style="aspect-ratio: {{ element.content.image_ratio|default:'16/9' }};">
+                            {% if post.image or post.featured_image %}
+                            <img src="{% if post.image %}{{ post.image }}{% elif post.featured_image.file %}{{ post.featured_image.file.url }}{% endif %}"
+                                 alt="{{ post.title }}"
+                                 class="blog-carousel__image"
+                                 loading="lazy">
+                            {% else %}
+                            <div class="blog-carousel__image-placeholder">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            {% endif %}
+                            {% if element.content.card_style == 'overlay' %}
+                            <div class="blog-carousel__overlay"></div>
+                            {% endif %}
+                        </div>
+                    </a>
+                    {% endif %}
+
+                    <div class="blog-carousel__content">
+                        {% if element.content.show_category|default:True and post.category %}
+                        <span class="blog-carousel__category">
+                            {{ post.category.name|default:post.category }}
+                        </span>
+                        {% endif %}
+
+                        <h3 class="blog-carousel__post-title">
+                            <a href="{{ post.url|default:post.get_absolute_url }}">{{ post.title }}</a>
+                        </h3>
+
+                        {% if element.content.show_excerpt|default:True and post.excerpt %}
+                        <p class="blog-carousel__excerpt">{{ post.excerpt|truncatechars:100 }}</p>
+                        {% endif %}
+
+                        {% if element.content.show_date|default:True %}
+                        <span class="blog-carousel__date">
+                            <i class="far fa-calendar-alt"></i>
+                            {% if post.published_at %}
+                            {{ post.published_at|date:"M j, Y" }}
+                            {% else %}
+                            {{ post.date }}
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="blog-carousel__empty">
+                <i class="fas fa-newspaper"></i>
+                <p>{% mtrans "No posts to display" %}</p>
+            </div>
+            {% endfor %}
+            {% endwith %}
+        </div>
+    </div>
+
+    {% if element.content.show_dots|default:True %}
+    <div class="blog-carousel__dots"></div>
+    {% endif %}
+</section>

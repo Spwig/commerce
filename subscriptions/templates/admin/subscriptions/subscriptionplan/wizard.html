@@ -1,0 +1,592 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Subscription Plan" %} | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'subscriptions/admin/css/wizard_wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Header -->
+    <div class="wizard-header">
+        <h1>
+            <i class="fas fa-magic"></i>
+            {% trans "Create Subscription Plan" %}
+        </h1>
+        <p class="wizard-subtitle">
+            {% trans "Set up a new subscription template with guided steps" %}
+        </p>
+    </div>
+
+    <!-- Step Indicators -->
+    <div class="wizard-steps" id="wizard-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Plan Basics" %}</div>
+        </div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Pricing Tiers" %}</div>
+        </div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Trial & Setup" %}</div>
+        </div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Quantity & Commitment" %}</div>
+        </div>
+        <div class="step" data-step="5">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Cancellation" %}</div>
+        </div>
+        <div class="step" data-step="6">
+            <div class="step-number">6</div>
+            <div class="step-label">{% trans "Visibility" %}</div>
+        </div>
+        <div class="step" data-step="7">
+            <div class="step-number">7</div>
+            <div class="step-label">{% trans "Review" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <form id="wizard-form" method="post">
+            {% csrf_token %}
+
+            <!-- Step 1: Plan Basics -->
+            <div class="wizard-step" id="step-1">
+                <h2 class="wizard-step-title">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Plan Basics" %}
+                </h2>
+                <p class="wizard-step-description">
+                    {% trans "Give your subscription plan a name and description. This will be shown to customers when they choose a subscription." %}
+                </p>
+
+                <div class="info-box info-box-blue">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong>{% trans "Tip:" %}</strong>
+                        {% trans "Choose clear, descriptive names like 'Premium Plan' or 'Essential Subscription'. Good names help customers understand your offerings at a glance." %}
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="plan-name" class="required">
+                            <i class="fas fa-tag"></i> {% trans "Plan Name" %}
+                        </label>
+                        <input type="text" id="plan-name" name="name" class="form-control" required
+                               placeholder="{% trans 'e.g., Premium Plan, Essential Subscription' %}">
+                        <div class="form-help">
+                            {% trans "The name customers will see when selecting a subscription" %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plan-description">
+                            <i class="fas fa-align-left"></i> {% trans "Description" %}
+                        </label>
+                        <textarea id="plan-description" name="description" class="form-control" rows="4"
+                                  placeholder="{% trans 'Describe what this plan includes, benefits, features...' %}"></textarea>
+                        <div class="form-help">
+                            {% trans "Optional: Detailed description of plan features and benefits" %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Pricing Model" %}</h3>
+                    <p class="form-section-description">
+                        {% trans "Select how pricing will be structured for this plan" %}
+                    </p>
+
+                    <div class="pricing-model-cards" id="pricing-model-cards">
+                        <div class="model-card" data-model="tiered">
+                            <div class="model-card-icon"><i class="fas fa-layer-group"></i></div>
+                            <div class="model-card-title">{% trans "Tiered Pricing" %}</div>
+                            <div class="model-card-description">
+                                {% trans "Offer multiple commitment options (monthly, annual) with different discounts" %}
+                            </div>
+                        </div>
+
+                        <div class="model-card" data-model="quantity_based">
+                            <div class="model-card-icon"><i class="fas fa-users"></i></div>
+                            <div class="model-card-title">{% trans "Quantity-Based" %}</div>
+                            <div class="model-card-description">
+                                {% trans "Per-seat or per-user pricing that scales with quantity" %}
+                            </div>
+                        </div>
+
+                        <div class="model-card" data-model="flat">
+                            <div class="model-card-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <div class="model-card-title">{% trans "Flat Rate" %}</div>
+                            <div class="model-card-description">
+                                {% trans "Single price with no variations or tiers" %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="pricing-model" name="pricing_model" value="tiered">
+                </div>
+            </div>
+
+            <!-- Step 2: Pricing Tiers -->
+            <div class="wizard-step hidden" id="step-2">
+                <h2 class="wizard-step-title">
+                    <i class="fas fa-layer-group"></i>
+                    {% trans "Pricing Tiers" %}
+                </h2>
+                <p class="wizard-step-description">
+                    {% trans "Configure billing cycles and discount percentages. Actual prices will be calculated from product prices." %}
+                </p>
+
+                <div class="info-box info-box-blue">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>{% trans "How it works:" %}</strong>
+                        {% trans "Subscription plans are templates that apply discount percentages to product prices. For example, a 10% discount tier applied to a $50 product would charge $45." %}
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div id="pricing-tiers-container">
+                        <!-- Tiers will be added dynamically -->
+                        <div class="no-tiers-message" id="no-tiers-message">
+                            <i class="fas fa-plus-circle no-tiers-icon"></i>
+                            <p>{% trans "No pricing tiers yet. Click 'Add Pricing Tier' to get started." %}</p>
+                        </div>
+                    </div>
+
+                    <button type="button" class="add-tier-btn" id="add-tier-btn">
+                        <i class="fas fa-plus"></i>
+                        {% trans "Add Pricing Tier" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Trial & Setup Fees -->
+            <div class="wizard-step hidden" id="step-3">
+                <h2 class="wizard-step-title">
+                    <i class="fas fa-gift"></i>
+                    {% trans "Trial & Setup Fees" %}
+                </h2>
+                <p class="wizard-step-description">
+                    {% trans "Configure trial periods and one-time setup fees for new subscriptions" %}
+                </p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Trial Period" %}</h3>
+
+                    <div class="form-group">
+                        <label for="trial-period-days">
+                            <i class="fas fa-calendar-alt"></i> {% trans "Trial Period (Days)" %}
+                        </label>
+                        <input type="number" id="trial-period-days" name="trial_period_days"
+                               class="form-control" value="0" min="0" max="365">
+                        <div class="form-help">
+                            {% trans "Number of free trial days before first charge (0 for no trial)" %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="trial-price">
+                            <i class="fas fa-tag"></i> {% trans "Trial Price (Optional)" %}
+                        </label>
+                        <input type="number" id="trial-price" name="trial_price"
+                               class="form-control" step="0.01" min="0" placeholder="0.00">
+                        <div class="form-help">
+                            {% trans "Optional reduced price during trial (leave empty for free trial)" %}
+                        </div>
+                    </div>
+
+                    <div class="info-box info-box-green">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>{% trans "Example:" %}</strong>
+                            {% trans "A 14-day trial with no trial price means customers get 14 days free before their first billing cycle." %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Setup Fee" %}</h3>
+
+                    <div class="form-group">
+                        <label for="setup-fee">
+                            <i class="fas fa-dollar-sign"></i> {% trans "One-Time Setup Fee" %}
+                        </label>
+                        <input type="number" id="setup-fee" name="setup_fee"
+                               class="form-control" value="0.00" step="0.01" min="0">
+                        <div class="form-help">
+                            {% trans "One-time fee charged when customer first subscribes (0.00 for no fee)" %}
+                        </div>
+                    </div>
+
+                    <div class="info-box info-box-blue">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            {% trans "Setup fees are charged once at subscription start, separate from recurring billing." %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Quantity & Commitment -->
+            <div class="wizard-step hidden" id="step-4">
+                <h2 class="wizard-step-title">
+                    <i class="fas fa-calculator"></i>
+                    {% trans "Quantity & Commitment" %}
+                </h2>
+                <p class="wizard-step-description">
+                    {% trans "Configure per-seat pricing and minimum commitment requirements" %}
+                </p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Quantity-Based Pricing" %}</h3>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allow-quantity" name="allow_quantity">
+                            <span>{% trans "Enable per-seat/per-user pricing" %}</span>
+                        </label>
+                        <div class="form-help">
+                            {% trans "Allow customers to select quantity (price will be multiplied by quantity)" %}
+                        </div>
+                    </div>
+
+                    <div id="quantity-settings" class="hidden">
+                        <div class="form-group">
+                            <label for="minimum-quantity">
+                                <i class="fas fa-arrow-down"></i> {% trans "Minimum Quantity" %}
+                            </label>
+                            <input type="number" id="minimum-quantity" name="minimum_quantity"
+                                   class="form-control" value="1" min="1">
+                            <div class="form-help">
+                                {% trans "Minimum number of units required" %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maximum-quantity">
+                                <i class="fas fa-arrow-up"></i> {% trans "Maximum Quantity (Optional)" %}
+                            </label>
+                            <input type="number" id="maximum-quantity" name="maximum_quantity"
+                                   class="form-control" min="1" placeholder="{% trans 'Unlimited' %}">
+                            <div class="form-help">
+                                {% trans "Maximum number of units allowed (leave empty for unlimited)" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Billing Limits" %}</h3>
+
+                    <div class="form-group">
+                        <label for="max-billing-cycles">
+                            <i class="fas fa-repeat"></i> {% trans "Maximum Billing Cycles (Optional)" %}
+                        </label>
+                        <input type="number" id="max-billing-cycles" name="max_billing_cycles"
+                               class="form-control" min="1" placeholder="{% trans 'Unlimited' %}">
+                        <div class="form-help">
+                            {% trans "Total number of billing cycles before subscription automatically ends (leave empty for unlimited)" %}
+                        </div>
+                    </div>
+
+                    <div class="info-box info-box-blue">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            {% trans "Use billing limits for time-boxed subscriptions like '12-month memberships' or 'annual packages'." %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Cancellation & Policies -->
+            <div class="wizard-step hidden" id="step-5">
+                <h2 class="wizard-step-title">
+                    <i class="fas fa-ban"></i>
+                    {% trans "Cancellation & Policies" %}
+                </h2>
+                <p class="wizard-step-description">
+                    {% trans "Define how customers can cancel subscriptions and configure grace periods" %}
+                </p>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Cancellation Policy" %}</h3>
+
+                    <div class="policy-cards" id="cancellation-policy-cards">
+                        <div class="policy-card" data-policy="anytime">
+                            <div class="policy-card-icon"><i class="fas fa-bolt"></i></div>
+                            <div class="policy-card-title">{% trans "Cancel Anytime" %}</div>
+                            <p class="policy-card-description">
+                                {% trans "Immediate cancellation and access removal" %}
+                            </p>
+                        </div>
+
+                        <div class="policy-card" data-policy="end_of_period">
+                            <div class="policy-card-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div class="policy-card-title">{% trans "End of Period" %}</div>
+                            <p class="policy-card-description">
+                                {% trans "Cancel but keep access until period ends" %}
+                            </p>
+                        </div>
+
+                        <div class="policy-card" data-policy="minimum_commitment">
+                            <div class="policy-card-icon"><i class="fas fa-lock"></i></div>
+                            <div class="policy-card-title">{% trans "Minimum Commitment" %}</div>
+                            <p class="policy-card-description">
+                                {% trans "Require minimum billing cycles first" %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="cancellation-policy" name="cancellation_policy" value="end_of_period">
+
+                    <div id="commitment-settings" class="hidden">
+                        <div class="form-group">
+                            <label for="minimum-commitment-cycles">
+                                <i class="fas fa-hourglass-start"></i> {% trans "Minimum Commitment (Cycles)" %}
+                            </label>
+                            <input type="number" id="minimum-commitment-cycles" name="minimum_commitment_cycles"
+                                   class="form-control" value="0" min="0">
+                            <div class="form-help">
+                                {% trans "Number of billing cycles required before cancellation is allowed" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Grace Periods" %}</h3>
+
+                    <div class="form-group">
+                        <label for="grace-period-days">
+                            <i class="fas fa-clock"></i> {% trans "Payment Failure Grace Period (Days)" %}
+                        </label>
+                        <input type="number" id="grace-period-days" name="grace_period_days"
+                               class="form-control" value="0" min="0" max="90">
+                        <div class="form-help">
+                            {% trans "Days to keep access active after payment failure (0 for immediate suspension)" %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reactivation-period-days">
+                            <i class="fas fa-redo"></i> {% trans "Reactivation Period (Days)" %}
+                        </label>
+                        <input type="number" id="reactivation-period-days" name="reactivation_period_days"
+                               class="form-control" value="0" min="0" max="90">
+                        <div class="form-help">
+                            {% trans "Days after cancellation during which customer can reactivate (0 to disable)" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Visibility & Status -->
+            <div class="wizard-step hidden" id="step-6">
+                <h2 class="wizard-step-title">
+                    <i class="fas fa-eye"></i>
+                    {% trans "Visibility & Status" %}
+                </h2>
+                <p class="wizard-step-description">
+                    {% trans "Control whether customers can see and purchase this plan" %}
+                </p>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="is-active" name="is_active" checked>
+                            <span>{% trans "Active" %}</span>
+                        </label>
+                        <div class="form-help">
+                            {% trans "Whether this plan can be purchased by customers" %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="is-public" name="is_public" checked>
+                            <span>{% trans "Public" %}</span>
+                        </label>
+                        <div class="form-help">
+                            {% trans "Show this plan on product pages and subscription lists" %}
+                        </div>
+                    </div>
+
+                    <div class="info-box info-box-blue">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>{% trans "Tip:" %}</strong>
+                            {% trans "Keep plans active and public unless you want to hide them from customers. Inactive plans cannot be purchased, and non-public plans won't appear in listings." %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">{% trans "Display Order" %}</h3>
+
+                    <div class="form-group">
+                        <label for="sort-order">
+                            <i class="fas fa-sort-numeric-down"></i> {% trans "Sort Order" %}
+                        </label>
+                        <input type="number" id="sort-order" name="sort_order"
+                               class="form-control" value="0" min="0">
+                        <div class="form-help">
+                            {% trans "Display order on subscription pages (lower numbers appear first)" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7: Review & Create -->
+            <div class="wizard-step hidden" id="step-7">
+                <h2 class="wizard-step-title">
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Review & Create" %}
+                </h2>
+                <p class="wizard-step-description">
+                    {% trans "Review your subscription plan configuration before creating it" %}
+                </p>
+
+                <div id="validation-errors" class="error-summary hidden">
+                    <div class="error-summary-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% trans "Please fix the following errors:" %}
+                    </div>
+                    <ul class="error-list" id="error-list"></ul>
+                </div>
+
+                <div class="review-section">
+                    <div class="review-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Plan Information" %}
+                    </div>
+                    <div class="review-grid">
+                        <div class="review-label">{% trans "Plan Name:" %}</div>
+                        <div class="review-value" id="review-name">-</div>
+
+                        <div class="review-label">{% trans "Description:" %}</div>
+                        <div class="review-value" id="review-description">-</div>
+
+                        <div class="review-label">{% trans "Pricing Model:" %}</div>
+                        <div class="review-value" id="review-pricing-model">-</div>
+                    </div>
+                </div>
+
+                <div class="review-section" id="review-tiers-section">
+                    <div class="review-section-title">
+                        <i class="fas fa-layer-group"></i>
+                        {% trans "Pricing Tiers" %}
+                    </div>
+                    <div id="review-tiers">-</div>
+                </div>
+
+                <div class="review-section">
+                    <div class="review-section-title">
+                        <i class="fas fa-gift"></i>
+                        {% trans "Trial & Setup" %}
+                    </div>
+                    <div class="review-grid">
+                        <div class="review-label">{% trans "Trial Period:" %}</div>
+                        <div class="review-value" id="review-trial">-</div>
+
+                        <div class="review-label">{% trans "Trial Price:" %}</div>
+                        <div class="review-value" id="review-trial-price">-</div>
+
+                        <div class="review-label">{% trans "Setup Fee:" %}</div>
+                        <div class="review-value" id="review-setup-fee">-</div>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <div class="review-section-title">
+                        <i class="fas fa-calculator"></i>
+                        {% trans "Quantity & Commitment" %}
+                    </div>
+                    <div class="review-grid">
+                        <div class="review-label">{% trans "Allow Quantity:" %}</div>
+                        <div class="review-value" id="review-allow-quantity">-</div>
+
+                        <div class="review-label">{% trans "Minimum Quantity:" %}</div>
+                        <div class="review-value" id="review-min-quantity">-</div>
+
+                        <div class="review-label">{% trans "Maximum Quantity:" %}</div>
+                        <div class="review-value" id="review-max-quantity">-</div>
+
+                        <div class="review-label">{% trans "Max Billing Cycles:" %}</div>
+                        <div class="review-value" id="review-max-cycles">-</div>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <div class="review-section-title">
+                        <i class="fas fa-ban"></i>
+                        {% trans "Cancellation & Policies" %}
+                    </div>
+                    <div class="review-grid">
+                        <div class="review-label">{% trans "Cancellation Policy:" %}</div>
+                        <div class="review-value" id="review-cancellation">-</div>
+
+                        <div class="review-label">{% trans "Minimum Commitment:" %}</div>
+                        <div class="review-value" id="review-commitment">-</div>
+
+                        <div class="review-label">{% trans "Grace Period:" %}</div>
+                        <div class="review-value" id="review-grace">-</div>
+
+                        <div class="review-label">{% trans "Reactivation Period:" %}</div>
+                        <div class="review-value" id="review-reactivation">-</div>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <div class="review-section-title">
+                        <i class="fas fa-eye"></i>
+                        {% trans "Visibility & Status" %}
+                    </div>
+                    <div class="review-grid">
+                        <div class="review-label">{% trans "Active:" %}</div>
+                        <div class="review-value" id="review-active">-</div>
+
+                        <div class="review-label">{% trans "Public:" %}</div>
+                        <div class="review-value" id="review-public">-</div>
+
+                        <div class="review-label">{% trans "Sort Order:" %}</div>
+                        <div class="review-value" id="review-sort">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden field for tiers data -->
+            <input type="hidden" id="tiers-data" name="tiers_data">
+
+            <!-- Navigation Buttons -->
+            <div class="wizard-navigation">
+                <button type="button" class="btn btn-secondary wizard-btn-hidden" id="prev-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    {% trans "Previous" %}
+                </button>
+                <button type="button" class="btn btn-primary" id="next-btn">
+                    {% trans "Next" %}
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="submit" class="btn btn-success wizard-btn-hidden" id="submit-btn">
+                    <i class="fas fa-check"></i>
+                    {% trans "Create Subscription Plan" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="application/json" id="subscription-wizard-i18n">{"pricingTier": "{% trans 'Pricing Tier' %}", "setDefault": "{% trans 'Set Default' %}", "remove": "{% trans 'Remove' %}", "tierName": "{% trans 'Tier Name' %}", "tierNamePlaceholder": "{% trans 'e.g., Monthly, Annual' %}", "billingCycle": "{% trans 'Billing Cycle' %}", "daily": "{% trans 'Daily' %}", "weekly": "{% trans 'Weekly' %}", "monthly": "{% trans 'Monthly' %}", "quarterly": "{% trans 'Quarterly' %}", "semiannual": "{% trans 'Semi-Annual' %}", "annual": "{% trans 'Annual' %}", "billingInterval": "{% trans 'Billing Interval' %}", "billingIntervalHelp": "{% trans 'e.g., 2 for every 2 months' %}", "discountPct": "{% trans 'Discount %' %}", "discountHelp": "{% trans 'Discount off product price' %}", "noTiersMsg": "{% trans 'No pricing tiers yet. Click Add Pricing Tier to get started.' %}", "planNameRequired": "{% trans 'Plan name is required' %}", "tierRequired": "{% trans 'At least one pricing tier is required' %}", "tierNameRequired": "{% trans 'All tiers must have a name' %}", "tieredPricing": "{% trans 'Tiered Pricing' %}", "quantityBased": "{% trans 'Quantity-Based' %}", "flatRate": "{% trans 'Flat Rate' %}", "defaultLabel": "{% trans 'Default' %}", "every": "{% trans 'Every' %}", "discount": "{% trans 'discount' %}", "days": "{% trans 'days' %}", "noTrial": "{% trans 'No trial' %}", "free": "{% trans 'Free' %}", "yes": "{% trans 'Yes' %}", "no": "{% trans 'No' %}", "unlimited": "{% trans 'Unlimited' %}", "cancelAnytime": "{% trans 'Cancel Anytime' %}", "cancelAtPeriodEnd": "{% trans 'Cancel at Period End' %}", "minimumCommitment": "{% trans 'Minimum Commitment Required' %}", "cycles": "{% trans 'cycles' %}", "none": "{% trans 'None' %}", "disabled": "{% trans 'Disabled' %}"}</script>
+<script src="{% static 'subscriptions/admin/js/subscription_wizard.js' %}"></script>
+{% endblock %}

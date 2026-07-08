@@ -1,0 +1,548 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Social Sharing Dashboard" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'social_sharing/css/social-sharing-dashboard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-share-nodes"></i>
+            {% trans "Social Sharing Dashboard" %}
+        </h1>
+        <p class="subtitle">
+            {% blocktrans with start=start_date|date:"M d, Y" end=end_date|date:"M d, Y" %}
+            Analytics and settings for the last 30 days ({{ start }} - {{ end }})
+            {% endblocktrans %}
+        </p>
+
+    </div>
+
+        <!-- KPI Statistics Cards -->
+    <div class="dashboard-stats-grid">
+        <!-- Total Shares -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-share-nodes"></i></div>
+            <div class="value">{{ total_shares|default:0 }}</div>
+            <div class="label">{% trans "Total Shares" %}</div>
+        </div>
+
+        <!-- Shares Today -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-calendar-day"></i></div>
+            <div class="value">{{ shares_today|default:0 }}</div>
+            <div class="label">{% trans "Shares Today" %}</div>
+        </div>
+
+        <!-- Shares This Month -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <div class="value">{{ shares_this_month|default:0 }}</div>
+            <div class="label">{% trans "Shares This Month" %}</div>
+        </div>
+
+        <!-- Top Platform -->
+        <div class="dashboard-stat-card">
+            <div class="icon platform-icon-{{ top_platform.platform }}">
+                {% if top_platform.platform == 'facebook' %}
+                    <i class="fab fa-facebook"></i>
+                {% elif top_platform.platform == 'twitter' %}
+                    <i class="fab fa-x-twitter"></i>
+                {% elif top_platform.platform == 'linkedin' %}
+                    <i class="fab fa-linkedin"></i>
+                {% elif top_platform.platform == 'pinterest' %}
+                    <i class="fab fa-pinterest"></i>
+                {% elif top_platform.platform == 'whatsapp' %}
+                    <i class="fab fa-whatsapp"></i>
+                {% elif top_platform.platform == 'telegram' %}
+                    <i class="fab fa-telegram"></i>
+                {% elif top_platform.platform == 'email' %}
+                    <i class="fas fa-envelope"></i>
+                {% else %}
+                    <i class="fas fa-share"></i>
+                {% endif %}
+            </div>
+            <div class="value">{{ top_platform.count|default:0 }}</div>
+            <div class="label">{% trans "Top Platform" %}</div>
+        </div>
+
+        <!-- Top Shared Product -->
+        {% if top_product %}
+        <div class="dashboard-stat-card stat-card-product">
+            {% if top_product.thumbnail %}
+            <div class="icon product-thumbnail">
+                <img src="{{ top_product.thumbnail }}" alt="{{ top_product.name }}" loading="lazy">
+            </div>
+            {% else %}
+            <div class="icon"><i class="fas fa-box"></i></div>
+            {% endif %}
+            <div class="value">{{ top_product.count }}</div>
+            <div class="label">
+                {% trans "Top Product" %}<br>
+                <small>{{ top_product.name|truncatechars:25 }}</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-box"></i></div>
+            <div class="value">-</div>
+            <div class="label">{% trans "Top Product" %}</div>
+        </div>
+        {% endif %}
+
+        <!-- Most Active Sharer -->
+        {% if most_active_sharer %}
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-user-check"></i></div>
+            <div class="value">{{ most_active_sharer.count }}</div>
+            <div class="label">
+                {% trans "Most Active Sharer" %}<br>
+                <small>{{ most_active_sharer.name|truncatechars:25 }}</small>
+            </div>
+        </div>
+        {% else %}
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-user-check"></i></div>
+            <div class="value">-</div>
+            <div class="label">{% trans "Most Active Sharer" %}</div>
+        </div>
+        {% endif %}
+    </div>
+
+
+    <!-- Main Content Area -->
+
+        <!-- Quick Actions -->
+        <div class="action-cards-section">
+            <h2 class="section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="action-cards-grid">
+
+                <div class="action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>{% trans "Social Shares" %}</h3>
+                    <p class="description">{% trans "View individual share events" %}</p>
+                    <a href="{% url 'admin:social_sharing_socialshare_changelist' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>{% trans "Share Counts" %}</h3>
+                    <p class="description">{% trans "Aggregated share statistics" %}</p>
+                    <a href="{% url 'admin:social_sharing_sharecount_changelist' %}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                    </a>
+                </div>
+
+                <div class="action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3>{% trans "Settings" %}</h3>
+                    <p class="description">{% trans "Configure social sharing" %}</p>
+                    <a href="#settings-section" class="btn scroll-link">
+                        <i class="fas fa-arrow-right"></i> {% trans "Configure" %}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="charts-grid">
+
+                <!-- Shares Over Time Chart -->
+                <div class="chart-card chart-card-wide">
+                    <h3>
+                        <i class="fas fa-chart-line"></i>
+                        {% trans "Shares Over Time (Last 30 Days)" %}
+                    </h3>
+                    <canvas id="sharesTrendChart"></canvas>
+                </div>
+
+                <!-- Platform Distribution Chart -->
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-chart-pie"></i>
+                        {% trans "Shares by Platform" %}
+                    </h3>
+                    <canvas id="platformDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables Grid -->
+        <div class="tables-grid">
+            <!-- Top Sharers Section -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    {% trans "Top 10 Sharers (Last 30 Days)" %}
+                </h2>
+                {% if top_sharers %}
+                <div class="table-responsive">
+                    <table class="social-sharing-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Rank" %}</th>
+                                <th>{% trans "User" %}</th>
+                                <th>{% trans "Shares" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sharer in top_sharers %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-trophy trophy-gold"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-trophy trophy-silver"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-trophy trophy-bronze"></i> #{{ forloop.counter }}
+                                    {% else %}
+                                        #{{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin:auth_user_change' sharer.id %}" class="content-link">
+                                        {{ sharer.name|truncatechars:30 }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <strong>{{ sharer.count }}</strong> {% trans "shares" %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No sharers in the selected period." %}</p>
+                {% endif %}
+            </div>
+
+            <!-- Top Platforms Section -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-ranking-star"></i>
+                    {% trans "Top 5 Platforms" %}
+                </h2>
+                {% if top_platforms %}
+                <div class="table-responsive">
+                    <table class="social-sharing-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Rank" %}</th>
+                                <th>{% trans "Platform" %}</th>
+                                <th>{% trans "Shares" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for platform in top_platforms %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-trophy trophy-gold"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-trophy trophy-silver"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-trophy trophy-bronze"></i> #{{ forloop.counter }}
+                                    {% else %}
+                                        #{{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="platform-badge platform-{{ platform.platform }}">
+                                        {{ platform.name }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>{{ platform.count }}</strong> {% trans "shares" %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No platform data available." %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Additional Tables Grid -->
+        <div class="tables-grid">
+            <!-- Recent Shares Section -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i>
+                    {% trans "Recent Shares" %}
+                </h2>
+                {% if recent_shares %}
+                <div class="table-responsive">
+                    <table class="social-sharing-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Date" %}</th>
+                                <th>{% trans "User" %}</th>
+                                <th>{% trans "Platform" %}</th>
+                                <th>{% trans "Content" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for share in recent_shares %}
+                            <tr>
+                                <td>{{ share.shared_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    {% if share.user %}
+                                        <a href="{% url 'admin:auth_user_change' share.user.id %}" class="content-link">
+                                            {{ share.user.get_full_name|default:share.user.email|truncatechars:30 }}
+                                        </a>
+                                    {% else %}
+                                        <em>{% trans "Anonymous" %}</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="platform-badge platform-{{ share.platform }}">
+                                        {{ share.get_platform_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if share.content_object %}
+                                        {% if share.content_type.model == 'product' %}
+                                            <a href="{% url 'admin:catalog_product_change' share.object_id %}" class="content-link">
+                                                {{ share.content_object.name|truncatechars:50 }}
+                                            </a>
+                                        {% elif share.content_type.model == 'category' %}
+                                            <a href="{% url 'admin:catalog_category_change' share.object_id %}" class="content-link">
+                                                {{ share.content_object.name|truncatechars:50 }}
+                                            </a>
+                                        {% elif share.content_type.model == 'page' %}
+                                            <a href="{% url 'admin:page_builder_page_change' share.object_id %}" class="content-link">
+                                                {{ share.content_object.title|truncatechars:50 }}
+                                            </a>
+                                        {% else %}
+                                            {{ share.content_type.model|title }} #{{ share.object_id }}
+                                        {% endif %}
+                                    {% else %}
+                                        <em>{% trans "Content deleted" %}</em>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No recent shares." %}</p>
+                {% endif %}
+
+                <!-- View All Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:social_sharing_socialshare_changelist' %}" class="btn">
+                        <i class="fas fa-list"></i> {% trans "View All Shares" %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Top Shared Content Section -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-fire"></i>
+                    {% trans "Top 5 Most Shared Content" %}
+                </h2>
+                {% if top_shared_content %}
+                <div class="table-responsive">
+                    <table class="social-sharing-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Rank" %}</th>
+                                <th>{% trans "Content" %}</th>
+                                <th>{% trans "Platform" %}</th>
+                                <th>{% trans "Shares" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for content in top_shared_content %}
+                            <tr>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-trophy trophy-gold"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-trophy trophy-silver"></i> #{{ forloop.counter }}
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-trophy trophy-bronze"></i> #{{ forloop.counter }}
+                                    {% else %}
+                                        #{{ forloop.counter }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if content.content_object %}
+                                        {% if content.content_type.model == 'product' %}
+                                            <a href="{% url 'admin:catalog_product_change' content.object_id %}" class="content-link">
+                                                {{ content.content_object.name|truncatechars:50 }}
+                                            </a>
+                                        {% elif content.content_type.model == 'category' %}
+                                            <a href="{% url 'admin:catalog_category_change' content.object_id %}" class="content-link">
+                                                {{ content.content_object.name|truncatechars:50 }}
+                                            </a>
+                                        {% elif content.content_type.model == 'page' %}
+                                            <a href="{% url 'admin:page_builder_page_change' content.object_id %}" class="content-link">
+                                                {{ content.content_object.title|truncatechars:50 }}
+                                            </a>
+                                        {% else %}
+                                            {{ content.content_type.model|title }} #{{ content.object_id }}
+                                        {% endif %}
+                                    {% else %}
+                                        <em>{% trans "Content deleted" %}</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="platform-badge platform-{{ content.platform }}">
+                                        {{ content.get_platform_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong>{{ content.count }}</strong> {% trans "shares" %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-data">{% trans "No shared content yet." %}</p>
+                {% endif %}
+
+                <!-- View All Button -->
+                <div class="view-all-button">
+                    <a href="{% url 'admin:social_sharing_sharecount_changelist' %}" class="btn">
+                        <i class="fas fa-chart-bar"></i> {% trans "View All Share Counts" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="settings-section" id="settings-section">
+            <h2 class="section-title">
+                <i class="fas fa-cog"></i>
+                {% trans "Social Sharing Settings" %}
+            </h2>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" class="settings-form">
+                {% csrf_token %}
+
+                <!-- Enable On Section -->
+                <div class="settings-group">
+                    <h3>{% trans "Enable Social Sharing On" %}</h3>
+                    <div class="settings-row">
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="enable_on_products" {% if settings.enable_on_products %}checked{% endif %}>
+                                <span>{% trans "Products" %}</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="enable_on_categories" {% if settings.enable_on_categories %}checked{% endif %}>
+                                <span>{% trans "Categories" %}</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="enable_on_blog_posts" {% if settings.enable_on_blog_posts %}checked{% endif %}>
+                                <span>{% trans "Blog Posts" %}</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="enable_on_pages" {% if settings.enable_on_pages %}checked{% endif %}>
+                                <span>{% trans "Pages" %}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display Settings -->
+                <div class="settings-group">
+                    <h3>{% trans "Display Settings" %}</h3>
+                    <div class="settings-row">
+                        <div class="setting-item">
+                            <label>{% trans "Button Placement" %}</label>
+                            <select name="placement_position">
+                                {% for value, label in position_choices %}
+                                <option value="{{ value }}" {% if settings.placement_position == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="show_counts" {% if settings.show_counts %}checked{% endif %}>
+                                <span>{% trans "Show Share Counts" %}</span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="track_shares" {% if settings.track_shares %}checked{% endif %}>
+                                <span>{% trans "Track Share Events" %}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="settings-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> {% trans "Save Settings" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    
+</div>
+
+{{ shares_trend_json|json_script:"shares-trend-data" }}
+{{ platform_distribution_json|json_script:"platform-dist-data" }}
+<script type="application/json" id="social-dashboard-i18n">
+{
+    "shares": "{% trans "Shares" %}",
+    "share_singular": "{% trans "share" %}",
+    "shares_plural": "{% trans "shares" %}"
+}
+</script>
+<script src="{% static 'social_sharing/admin/js/social-dashboard.js' %}"></script>
+{% endblock %}

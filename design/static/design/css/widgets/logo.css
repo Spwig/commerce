@@ -1,0 +1,72 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Logo Widget Styles */
+/* Uses theme widget tokens for customizable styling */
+/* Token pattern: --theme-widget-logo-{property} */
+
+.widget-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--theme-space-2, 0.5rem);
+}
+
+.widget-logo a {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+}
+
+.widget-logo a:hover {
+  opacity: 0.8;
+}
+
+.widget-logo .logo-image {
+  display: block;
+  height: auto;
+  max-height: var(--theme-widget-logo-max-height, var(--theme-header-logo-height, 40px));
+  max-width: var(--theme-widget-logo-max-width, 200px);
+  width: auto;
+  object-fit: contain;
+}
+
+.widget-logo .logo-text {
+  font-family: var(--theme-font-family-heading, var(--theme-font-serif, inherit));
+  font-size: var(--theme-widget-logo-text-font-size, var(--theme-font-size-xl, 1.25rem));
+  font-weight: var(--theme-widget-logo-text-font-weight, var(--theme-font-weight-bold, 700));
+  letter-spacing: var(--theme-widget-logo-text-letter-spacing, var(--theme-letter-spacing-tight, -0.025em));
+  color: var(--theme-widget-logo-text-color, var(--theme-header-text-color, currentColor));
+  line-height: 1;
+}
+
+/* Logo with tagline */
+.widget-logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.widget-logo-tagline {
+  font-size: var(--theme-font-size-xs, 0.75rem);
+  color: var(--theme-color-text-muted, #6b7280);
+  margin-top: var(--theme-space-1, 0.25rem);
+}
+
+/* ==========================================================================
+   Mobile Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .widget-logo .logo-image {
+    max-height: var(--theme-widget-logo-max-height-mobile, 32px);
+    max-width: var(--theme-widget-logo-max-width-mobile, 140px);
+  }
+
+  .widget-logo .logo-text {
+    font-size: var(--theme-widget-logo-text-font-size-mobile, var(--theme-font-size-lg, 1.125rem));
+  }
+
+  .widget-logo-tagline {
+    display: none;
+  }
+}

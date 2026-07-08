@@ -1,0 +1,62 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Form Responses" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'form_builder/css/admin_form_builder.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-inbox"></i>
+                {% trans "Form Responses" %}
+            </h1>
+            <p class="subtitle">{% trans "View and manage form submissions" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:form_builder_form_changelist' %}" class="button secondary">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Forms" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="dashboard-stats-grid mb-20">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-inbox"></i></div>
+            <div class="value">{{ total_responses }}</div>
+            <div class="label">{% trans "Total Responses" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ completed_responses }}</div>
+            <div class="label">{% trans "Completed" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-edit"></i></div>
+            <div class="value">{{ draft_responses }}</div>
+            <div class="label">{% trans "Drafts" %}</div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Responses" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-inbox"></i>
+            {{ cl.result_count }} {% trans "response" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Table -->
+    <div class="results">
+        {{ block.super }}
+    </div>
+</div>
+{% endblock %}

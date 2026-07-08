@@ -1,0 +1,301 @@
+{% load i18n %}
+{# Form Field Partial - Renders individual form fields #}
+
+{% with show_required=element.content.show_required_indicator|default:True show_help=element.content.show_help_text|default:True %}
+<div class="fb-field fb-field--{{ field.field_type }} fb-field--{{ field.width }}"
+     data-field-id="{{ field.id }}"
+     data-field-name="{{ field.field_name }}"
+     data-field-type="{{ field.field_type }}"
+     {% if field.css_class %}{{ field.css_class }}{% endif %}>
+
+    {# Field Types: text, textarea, email, phone, number, url, date, time, datetime #}
+    {% if field.field_type in 'text,email,phone,number,url,date,time,datetime' %}
+        <div class="form-group">
+            <label class="form-label" for="field_{{ field.field_name }}">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <input type="{% if field.field_type == 'phone' %}tel{% elif field.field_type == 'datetime' %}datetime-local{% else %}{{ field.field_type }}{% endif %}"
+                   id="field_{{ field.field_name }}"
+                   name="{{ field.field_name }}"
+                   class="form-input"
+                   {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+                   {% if field.is_required %}required{% endif %}
+                   {% if field.default_value %}value="{{ field.default_value }}"{% endif %}
+                   {% if field.min_length %}minlength="{{ field.min_length }}"{% endif %}
+                   {% if field.max_length %}maxlength="{{ field.max_length }}"{% endif %}
+                   {% if field.min_value %}min="{{ field.min_value }}"{% endif %}
+                   {% if field.max_value %}max="{{ field.max_value }}"{% endif %}
+                   {% if field.pattern %}pattern="{{ field.pattern }}"{% endif %}>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">
+                {% if field.pattern_message %}{{ field.pattern_message }}{% else %}{% trans "Please enter a valid value." %}{% endif %}
+            </div>
+        </div>
+
+    {# Textarea #}
+    {% elif field.field_type == 'textarea' %}
+        <div class="form-group">
+            <label class="form-label" for="field_{{ field.field_name }}">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <textarea id="field_{{ field.field_name }}"
+                      name="{{ field.field_name }}"
+                      class="form-input form-textarea"
+                      rows="4"
+                      {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+                      {% if field.is_required %}required{% endif %}
+                      {% if field.min_length %}minlength="{{ field.min_length }}"{% endif %}
+                      {% if field.max_length %}maxlength="{{ field.max_length }}"{% endif %}>{{ field.default_value }}</textarea>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please enter a valid value." %}</div>
+        </div>
+
+    {# Select Dropdown #}
+    {% elif field.field_type == 'select' %}
+        <div class="form-group">
+            <label class="form-label" for="field_{{ field.field_name }}">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <select id="field_{{ field.field_name }}"
+                    name="{{ field.field_name }}"
+                    class="form-input form-select"
+                    {% if field.is_required %}required{% endif %}>
+                <option value="">{% trans "Please select..." %}</option>
+                {% for option in field.options %}
+                <option value="{{ option.value }}" {% if option.value == field.default_value %}selected{% endif %}>{{ option.label }}</option>
+                {% endfor %}
+            </select>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please select an option." %}</div>
+        </div>
+
+    {# Single Checkbox #}
+    {% elif field.field_type == 'checkbox' %}
+        <div class="form-group">
+            <label class="form-checkbox">
+                <input type="checkbox"
+                       id="field_{{ field.field_name }}"
+                       name="{{ field.field_name }}"
+                       value="1"
+                       class="form-checkbox__input"
+                       {% if field.is_required %}required{% endif %}
+                       {% if field.default_value == '1' or field.default_value == 'true' %}checked{% endif %}>
+                <span class="form-checkbox__label">
+                    {{ field.label }}
+                    {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+                </span>
+            </label>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "This field is required." %}</div>
+        </div>
+
+    {# Checkbox Group #}
+    {% elif field.field_type == 'checkbox_group' %}
+        <div class="form-group">
+            <label class="form-label">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <div class="form-checkbox-group">
+                {% for option in field.options %}
+                <label class="form-checkbox">
+                    <input type="checkbox"
+                           id="field_{{ field.field_name }}_{{ forloop.counter }}"
+                           name="{{ field.field_name }}"
+                           value="{{ option.value }}"
+                           class="form-checkbox__input">
+                    <span class="form-checkbox__label">{{ option.label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please select at least one option." %}</div>
+        </div>
+
+    {# Radio Buttons #}
+    {% elif field.field_type == 'radio' %}
+        <div class="form-group">
+            <label class="form-label">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <div class="form-radio-group">
+                {% for option in field.options %}
+                <label class="form-radio">
+                    <input type="radio"
+                           id="field_{{ field.field_name }}_{{ forloop.counter }}"
+                           name="{{ field.field_name }}"
+                           value="{{ option.value }}"
+                           class="form-radio__input"
+                           {% if field.is_required %}required{% endif %}
+                           {% if option.value == field.default_value %}checked{% endif %}>
+                    <span class="form-radio__label">{{ option.label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please select an option." %}</div>
+        </div>
+
+    {# File Upload #}
+    {% elif field.field_type == 'file' %}
+        <div class="form-group">
+            <label class="form-label" for="field_{{ field.field_name }}">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <div class="form-file-upload">
+                <input type="file"
+                       id="field_{{ field.field_name }}"
+                       name="{{ field.field_name }}"
+                       class="form-file-input"
+                       {% if field.is_required %}required{% endif %}
+                       {% if field.file_config.allowed_types %}accept=".{{ field.file_config.allowed_types|join:',.'}}"{% endif %}
+                       {% if field.file_config.max_files > 1 %}multiple{% endif %}>
+                <label for="field_{{ field.field_name }}" class="form-file-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>{% trans "Choose file" %}</span>
+                </label>
+                <div class="form-file-info"></div>
+            </div>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% elif field.file_config.max_size_mb %}
+            <small class="form-help-text">{% trans "Max file size:" %} {{ field.file_config.max_size_mb }}MB</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please select a valid file." %}</div>
+        </div>
+
+    {# Star Rating #}
+    {% elif field.field_type == 'rating_stars' %}
+        <div class="form-group">
+            <label class="form-label">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <div class="form-star-rating" data-max="{{ field.rating_config.max_stars|default:5 }}">
+                <input type="hidden" name="{{ field.field_name }}" value="{{ field.default_value }}">
+                {% for i in "12345"|make_list %}
+                <button type="button" class="form-star" data-value="{{ i }}" aria-label="{% trans 'Rate' %} {{ i }}">
+                    <i class="far fa-star"></i>
+                </button>
+                {% endfor %}
+            </div>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please provide a rating." %}</div>
+        </div>
+
+    {# NPS Score #}
+    {% elif field.field_type == 'rating_nps' %}
+        <div class="form-group">
+            <label class="form-label">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <div class="form-nps-rating">
+                <input type="hidden" name="{{ field.field_name }}" value="{{ field.default_value }}">
+                <div class="form-nps-scale">
+                    {% for i in "0123456789"|make_list %}
+                    <button type="button" class="form-nps-btn" data-value="{{ forloop.counter0 }}">{{ forloop.counter0 }}</button>
+                    {% endfor %}
+                    <button type="button" class="form-nps-btn" data-value="10">10</button>
+                </div>
+                <div class="form-nps-labels">
+                    <span>{% trans "Not likely" %}</span>
+                    <span>{% trans "Very likely" %}</span>
+                </div>
+            </div>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please provide a score." %}</div>
+        </div>
+
+    {# Likert Scale #}
+    {% elif field.field_type == 'rating_likert' %}
+        <div class="form-group">
+            <label class="form-label">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <div class="form-likert-scale">
+                {% for option in field.options %}
+                <label class="form-likert-option">
+                    <input type="radio"
+                           name="{{ field.field_name }}"
+                           value="{{ option.value }}"
+                           {% if field.is_required %}required{% endif %}>
+                    <span class="form-likert-label">{{ option.label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please select an option." %}</div>
+        </div>
+
+    {# Section Heading (display only) #}
+    {% elif field.field_type == 'heading' %}
+        <div class="fb-field__heading">
+            <h4>{{ field.label }}</h4>
+            {% if field.help_text %}
+            <p>{{ field.help_text }}</p>
+            {% endif %}
+        </div>
+
+    {# Paragraph Text (display only) #}
+    {% elif field.field_type == 'paragraph' %}
+        <div class="fb-field__paragraph">
+            <p>{{ field.label }}</p>
+        </div>
+
+    {# Divider (display only) #}
+    {% elif field.field_type == 'divider' %}
+        <hr class="fb-field__divider">
+
+    {# Hidden Field #}
+    {% elif field.field_type == 'hidden' %}
+        <input type="hidden"
+               name="{{ field.field_name }}"
+               value="{{ field.default_value }}">
+
+    {# Fallback for unknown types #}
+    {% else %}
+        <div class="form-group">
+            <label class="form-label" for="field_{{ field.field_name }}">
+                {{ field.label }}
+                {% if field.is_required and show_required %}<span class="form-required">*</span>{% endif %}
+            </label>
+            <input type="text"
+                   id="field_{{ field.field_name }}"
+                   name="{{ field.field_name }}"
+                   class="form-input"
+                   {% if field.placeholder %}placeholder="{{ field.placeholder }}"{% endif %}
+                   {% if field.is_required %}required{% endif %}
+                   {% if field.default_value %}value="{{ field.default_value }}"{% endif %}>
+            {% if field.help_text and show_help %}
+            <small class="form-help-text">{{ field.help_text }}</small>
+            {% endif %}
+            <div class="form-error" style="display: none;">{% trans "Please enter a valid value." %}</div>
+        </div>
+    {% endif %}
+</div>
+{% endwith %}

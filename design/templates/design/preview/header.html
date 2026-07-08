@@ -1,0 +1,340 @@
+{% load static i18n theme_tags core_extras announcements_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header Preview - {{ header.name }}</title>
+
+    <!-- Favicon -->
+    {% favicon_meta %}
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- CSS Load Order: Base → Theme → Brand → Zones → Widgets -->
+
+    <!-- 1. Base CSS (for .container class and base styles) -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <!-- 2. Theme CSS - Sets CSS variables -->
+    {% if theme_css_url %}
+        <link rel="stylesheet" href="{{ theme_css_url }}">
+    {% endif %}
+
+    <!-- 3. Brand CSS - Overrides theme variables -->
+    {% if brand_css_url %}
+        <link rel="stylesheet" href="{{ brand_css_url }}">
+    {% endif %}
+
+    <!-- 4. Header/Footer Zones CSS (layout structure) -->
+    <link rel="stylesheet" href="{% static 'design/css/header-footer-zones.css' %}">
+
+    <!-- 5. Header Preset Zones CSS (preset-specific styling via theme tokens) -->
+    <link rel="stylesheet" href="{% static 'design/css/header-preset-zones.css' %}">
+
+    <!-- 6. Widget CSS - Individual widget stylesheets using theme variables -->
+    <link rel="stylesheet" href="{% static 'design/css/widgets/logo.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/search.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/account.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/language.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/currency.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/social.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/newsletter.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/contact.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/text.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/links.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/payment.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/trust_badges.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/announcement.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/custom.css' %}">
+
+    <!-- 7. Preview-specific styles -->
+    <link rel="stylesheet" href="{% static 'design/css/preview.css' %}">
+
+    {% if header.custom_css %}
+    <!-- 8. Header custom CSS (merchant-defined) -->
+    <style>{{ header.custom_css|safe }}</style>
+    {% endif %}
+</head>
+<body>
+    <div class="preview-container">
+        <div class="preview-info">
+            {% trans "Preview" %}: {{ header.name }} ({{ header.layout_type }})
+        </div>
+
+        <header class="site-header header-preset-{{ header.layout_type }}{% if header.css_classes %} {{ header.css_classes }}{% endif %}" role="banner"
+                {% if header.is_sticky %}data-sticky="true"{% if header.sticky_offset %} data-sticky-offset="{{ header.sticky_offset }}"{% endif %}{% endif %}>
+            {% comment %} Render notification zone if enabled {% endcomment %}
+            {% if header.enable_notification_zone %}
+            {% get_active_announcements as announcements %}
+            {% if announcements %}
+            {% with nz_config=header.get_notification_zone_config %}
+            <div class="header-zone header-zone--notification"{% with override_style=zone_overrides|zone_override_styles:'notification' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+                <div class="widget-announcement"
+                     data-display-mode="{{ nz_config.display_mode|default:'scroll_horizontal' }}"
+                     data-scroll-speed="{{ nz_config.scroll_speed|default:'20' }}"
+                     data-cycle-duration="{{ nz_config.cycle_duration|default:'5' }}"
+                     data-pause-hover="{{ nz_config.pause_on_hover|default:'true' }}"
+                     data-ignore-dismiss="true">
+
+                    <div class="announcement-viewport">
+                        <div class="announcement-track">
+                            {% for ann in announcements %}
+                            <div class="announcement-item"
+                                 {% if ann.show_modal %}data-modal-id="{{ ann.id }}"{% endif %}
+                                 {% if ann.show_modal %}role="button" tabindex="0"{% endif %}>
+                                {% if not ann.show_modal and ann.resolved_url %}
+                                    <a href="{{ ann.resolved_url }}" class="announcement-item-text announcement-link">{{ ann.title|safe }}</a>
+                                {% else %}
+                                    <span class="announcement-item-text">{{ ann.title|safe }}</span>
+                                {% endif %}
+                                {% if ann.show_modal and ann.link_text %}
+                                    <button type="button" class="announcement-modal-trigger" data-announcement-id="{{ ann.id }}">{{ ann.link_text }}</button>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if nz_config.dismissible %}
+                    <button type="button" class="announcement-close" aria-label="{% trans 'Close announcement' %}">&times;</button>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Announcement modal — rendered once per page #}
+            <div id="announcement-modal" class="announcement-modal-backdrop" aria-hidden="true">
+                <div class="announcement-modal" role="dialog" aria-modal="true">
+                    <button type="button" class="announcement-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
+                    <div class="announcement-modal-content"></div>
+                </div>
+            </div>
+            {% endwith %}
+            {% endif %}
+            {% endif %}
+
+            {% comment %}
+            Zones are stored as: primary-zone_sub-zone
+            e.g., "top-bar_full", "main-header_center", "bottom-bar_full"
+
+            We need to group them by primary zone and render each primary zone separately
+            {% endcomment %}
+
+            {% comment %} Render top-bar if it exists {% endcomment %}
+            {% if zones.top_bar_full or zones.top_bar_left or zones.top_bar_center or zones.top_bar_right %}
+                <div class="header-zone header-zone--top-bar"{% with override_style=zone_overrides|zone_override_styles:'top-bar' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+                    <div class="container">
+                        <div class="header-zone__inner">
+                            {% if zones.top_bar_left %}
+                                <div class="header-zone__section header-zone__section--left">
+                                    {% for placement in zones.top_bar_left %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.top_bar_center %}
+                                <div class="header-zone__section header-zone__section--center">
+                                    {% for placement in zones.top_bar_center %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.top_bar_right %}
+                                <div class="header-zone__section header-zone__section--right">
+                                    {% for placement in zones.top_bar_right %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.top_bar_full %}
+                                <div class="header-zone__section header-zone__section--full">
+                                    {% for placement in zones.top_bar_full %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% comment %} Render main-header {% endcomment %}
+            {% if zones.main_header_left or zones.main_header_center or zones.main_header_right or zones.main_header_full %}
+                <div class="header-zone header-zone--main"{% with override_style=zone_overrides|zone_override_styles:'main-header' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+                    <div class="container">
+                        <div class="header-zone__inner">
+                            {% if zones.main_header_left %}
+                                <div class="header-zone__section header-zone__section--left">
+                                    {% for placement in zones.main_header_left %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.main_header_center %}
+                                <div class="header-zone__section header-zone__section--center">
+                                    {% for placement in zones.main_header_center %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.main_header_right %}
+                                <div class="header-zone__section header-zone__section--right">
+                                    {% for placement in zones.main_header_right %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.main_header_full %}
+                                <div class="header-zone__section header-zone__section--full">
+                                    {% for placement in zones.main_header_full %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% comment %} Render bottom-bar if it exists {% endcomment %}
+            {% if zones.bottom_bar_full or zones.bottom_bar_left or zones.bottom_bar_center or zones.bottom_bar_right %}
+                <div class="header-zone header-zone--bottom-bar"{% with override_style=zone_overrides|zone_override_styles:'bottom-bar' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+                    <div class="container">
+                        <div class="header-zone__inner">
+                            {% if zones.bottom_bar_left %}
+                                <div class="header-zone__section header-zone__section--left">
+                                    {% for placement in zones.bottom_bar_left %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.bottom_bar_center %}
+                                <div class="header-zone__section header-zone__section--center">
+                                    {% for placement in zones.bottom_bar_center %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.bottom_bar_right %}
+                                <div class="header-zone__section header-zone__section--right">
+                                    {% for placement in zones.bottom_bar_right %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.bottom_bar_full %}
+                                <div class="header-zone__section header-zone__section--full">
+                                    {% for placement in zones.bottom_bar_full %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% comment %} Render mega-menu-bar if it exists {% endcomment %}
+            {% if zones.mega_menu_bar_full or zones.mega_menu_bar_left or zones.mega_menu_bar_center or zones.mega_menu_bar_right %}
+                <div class="header-zone header-zone--mega-menu-bar"{% with override_style=zone_overrides|zone_override_styles:'mega-menu-bar' %}{% if override_style %} style="{{ override_style }}"{% endif %}{% endwith %}>
+                    <div class="container">
+                        <div class="header-zone__inner">
+                            {% if zones.mega_menu_bar_left %}
+                                <div class="header-zone__section header-zone__section--left">
+                                    {% for placement in zones.mega_menu_bar_left %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.mega_menu_bar_center %}
+                                <div class="header-zone__section header-zone__section--center">
+                                    {% for placement in zones.mega_menu_bar_center %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.mega_menu_bar_right %}
+                                <div class="header-zone__section header-zone__section--right">
+                                    {% for placement in zones.mega_menu_bar_right %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if zones.mega_menu_bar_full %}
+                                <div class="header-zone__section header-zone__section--full">
+                                    {% for placement in zones.mega_menu_bar_full %}
+                                        <div class="widget-wrapper">
+                                            {% render_widget placement %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </header>
+
+        <!-- Demo Content -->
+        <div class="demo-content">
+            <h1>{% trans "Header Preview" %}</h1>
+            <p>{% trans "This is a preview of your header template. The header above will appear on all pages using this template." %}</p>
+            <p>{% trans "Scroll down to see how the header behaves with content below it." %}</p>
+
+            {% for i in "12345" %}
+                <p style="margin-top: 2rem;">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Announcement Widget JS (for notification zone scroll/cycle/dismiss) -->
+    <script src="{% static 'design/js/announcement-widget.js' %}" defer></script>
+</body>
+</html>

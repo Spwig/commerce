@@ -1,0 +1,27 @@
+{% extends "page_builder/product/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Full Width Product Template - Hero gallery spanning full width, info centered below #}
+{# Editorial feel that emphasizes imagery. Great for lifestyle, luxury, food, home goods #}
+
+{% block product_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-full-width.css' %}">
+{% endblock %}
+
+{% block product_layout %}
+{# Full-width hero gallery #}
+<section class="product-hero product-hero--{{ template_options.hero_gallery_height|default:'medium' }}">
+    {% include "page_builder/product/_gallery.html" %}
+</section>
+
+{# Centered product info below gallery #}
+<section class="product-section product-section--full-width">
+    <div class="container container--narrow">
+        <div class="product-layout product-layout--full-width product-layout--{{ template_options.content_alignment|default:'centered' }}">
+            {% include "page_builder/product/_info.html" %}
+        </div>
+    </div>
+</section>
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}

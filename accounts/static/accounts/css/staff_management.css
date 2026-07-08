@@ -1,0 +1,1079 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Staff Management - Change List & Change Form Styles */
+
+/* ====================================================================
+   Stats Bar (top of change_list)
+   Uses .dashboard-grid + .metric-card from dashboard.css
+   ==================================================================== */
+.staff-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.staff-stat-card {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.staff-stat-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+.staff-stat-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.staff-stat-icon.total { background: var(--primary-bg); color: var(--primary); }
+.staff-stat-icon.active { background: var(--success-bg); color: var(--success-fg); }
+.staff-stat-icon.pos { background: var(--warning-bg); color: var(--warning-fg); }
+.staff-stat-icon.security { background: var(--error-bg); color: var(--error-fg); }
+
+.staff-stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.staff-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--body-fg);
+    line-height: 1;
+}
+
+.staff-stat-label {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ====================================================================
+   Staff Card Avatar (initials in list cards)
+   ==================================================================== */
+.staff-card-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+/* ====================================================================
+   Staff Change Form Header
+   ==================================================================== */
+.staff-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin-bottom: 0;
+}
+
+.staff-detail-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+.staff-detail-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.staff-detail-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--body-fg);
+    margin: 0 0 4px;
+}
+
+.staff-detail-email {
+    font-size: 14px;
+    color: var(--body-quiet-color);
+    margin: 0 0 10px;
+}
+
+.staff-detail-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.staff-detail-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    flex-shrink: 0;
+}
+
+.staff-detail-meta i {
+    width: 14px;
+    text-align: center;
+    margin-right: 4px;
+}
+
+.staff-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.staff-status-badge.active {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.staff-status-badge.inactive {
+    background: var(--error-bg);
+    color: var(--error-fg);
+}
+
+/* ====================================================================
+   Role Toggle Cards (Roles & Access tab)
+   ==================================================================== */
+.role-toggle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.role-toggle-card {
+    background: var(--darkened-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.role-toggle-card.assigned {
+    border-color: var(--primary);
+    background: var(--selected-bg);
+}
+
+.role-toggle-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.role-toggle-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.role-toggle-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.role-toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.role-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.role-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--border-color);
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.role-toggle-slider:before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.role-toggle-switch input:checked + .role-toggle-slider {
+    background: var(--primary);
+}
+
+.role-toggle-switch input:checked + .role-toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.role-toggle-desc {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.role-toggle-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.role-toggle-meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--body-bg);
+    color: var(--body-quiet-color);
+    border: 1px solid var(--border-color);
+}
+
+.role-toggle-meta-badge i {
+    font-size: 9px;
+}
+
+/* ====================================================================
+   Effective Permissions Grid
+   ==================================================================== */
+.permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.permission-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.permission-item-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 13px;
+    flex-shrink: 0;
+    background: var(--body-bg);
+    color: var(--body-quiet-color);
+}
+
+.permission-item-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--body-fg);
+}
+
+.permission-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+}
+
+.permission-badge.full {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.permission-badge.view {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.permission-badge.none {
+    background: var(--body-bg);
+    color: var(--body-quiet-color);
+}
+
+/* ====================================================================
+   POS Settings Grid
+   ==================================================================== */
+.pos-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.pos-setting-card {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.pos-setting-card h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pos-setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 13px;
+}
+
+.pos-setting-row + .pos-setting-row {
+    border-top: 1px solid var(--hairline-color);
+}
+
+.pos-setting-label {
+    color: var(--body-quiet-color);
+}
+
+.pos-setting-value {
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.pos-setting-value.editable {
+    cursor: pointer;
+    color: var(--primary);
+}
+
+.pos-setting-value.editable:hover {
+    text-decoration: underline;
+}
+
+/* POS inline edit form */
+.pos-inline-edit {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.pos-inline-edit.visible {
+    display: block;
+}
+
+.pos-inline-edit .form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.pos-inline-edit label {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    min-width: 120px;
+}
+
+.pos-inline-edit input,
+.pos-inline-edit select {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 13px;
+}
+
+.pos-inline-edit input:focus,
+.pos-inline-edit select:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.pos-inline-edit .form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* ====================================================================
+   Terminals Table & Shifts Table
+   ==================================================================== */
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+}
+
+.staff-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.staff-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--hairline-color);
+    color: var(--body-fg);
+}
+
+.staff-table tr:hover td {
+    background: var(--selected-bg);
+}
+
+.staff-table .empty-row td {
+    text-align: center;
+    color: var(--body-quiet-color);
+    font-style: italic;
+    padding: 20px;
+}
+
+/* ====================================================================
+   Security Section
+   ==================================================================== */
+.security-section {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.security-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.security-section h3 i {
+    color: var(--primary);
+}
+
+/* ====================================================================
+   Activity Timeline
+   ==================================================================== */
+.activity-timeline {
+    position: relative;
+    padding-left: 24px;
+}
+
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.activity-item {
+    position: relative;
+    padding: 8px 0 16px;
+}
+
+.activity-item::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 12px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid var(--darkened-bg);
+}
+
+.activity-item-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 2px;
+}
+
+.activity-item-meta {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+}
+
+/* ====================================================================
+   Section Card (used in change_form tabs)
+   ==================================================================== */
+.staff-section {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.staff-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.staff-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.staff-section-title i {
+    color: var(--primary);
+}
+
+/* ====================================================================
+   Form Buttons
+   ==================================================================== */
+.staff-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.staff-btn-primary {
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-color: var(--primary);
+}
+
+.staff-btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.staff-btn-secondary {
+    background: var(--darkened-bg);
+    color: var(--body-fg);
+    border-color: var(--border-color);
+}
+
+.staff-btn-secondary:hover {
+    background: var(--body-bg);
+    border-color: var(--primary);
+}
+
+.staff-btn-danger {
+    background: var(--error-bg);
+    color: var(--error-fg);
+    border-color: var(--error-fg);
+}
+
+.staff-btn-danger:hover {
+    opacity: 0.9;
+}
+
+.staff-btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* ====================================================================
+   Toast Notification
+   ==================================================================== */
+.staff-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 10000;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 400px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.staff-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.staff-toast.success {
+    background: #22c55e;
+}
+
+.staff-toast.error {
+    background: #ef4444;
+}
+
+/* ====================================================================
+   Session/Device Items
+   ==================================================================== */
+.session-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    transition: opacity 0.3s ease;
+}
+
+.session-item-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--darkened-bg);
+    border-radius: 8px;
+    color: var(--body-quiet-color);
+    flex-shrink: 0;
+}
+
+.session-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.session-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.session-item-meta {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+}
+
+/* ====================================================================
+   Action Bar
+   ==================================================================== */
+.staff-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.staff-action-bar h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--body-fg);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.staff-action-bar h2 i {
+    color: var(--primary);
+}
+
+/* ====================================================================
+   Empty State
+   ==================================================================== */
+.staff-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--body-quiet-color);
+}
+
+.staff-empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.staff-empty-state h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 8px;
+}
+
+.staff-empty-state p {
+    font-size: 14px;
+    margin: 0 0 20px;
+}
+
+/* ====================================================================
+   Blog Posts in Activity Tab
+   ==================================================================== */
+.blog-post-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--hairline-color);
+}
+
+.blog-post-item:last-child {
+    border-bottom: none;
+}
+
+.blog-post-status {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.blog-post-status.published { background: var(--success-bg); color: var(--success-fg); }
+.blog-post-status.draft { background: var(--warning-bg); color: var(--warning-fg); }
+
+/* ====================================================================
+   General Tab Form Fields
+   ==================================================================== */
+.staff-general-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.staff-form-full {
+    grid-column: 1 / -1;
+}
+
+.staff-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.staff-form-field > label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.staff-form-field input[type="text"],
+.staff-form-field input[type="email"],
+.staff-form-field input[type="url"],
+.staff-form-field select {
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.staff-form-field input:focus,
+.staff-form-field select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.staff-form-field.has-error input,
+.staff-form-field.has-error select {
+    border-color: var(--error-fg);
+}
+
+.staff-form-field.has-error input:focus {
+    box-shadow: 0 0 0 3px var(--error-bg);
+}
+
+.staff-field-error {
+    font-size: 12px;
+    color: var(--error-fg);
+    font-weight: 500;
+}
+
+.staff-field-help {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    line-height: 1.4;
+}
+
+/* ====================================================================
+   Status Toggle Switches (General Tab)
+   ==================================================================== */
+.staff-status-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.staff-form-toggle {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+}
+
+.staff-form-toggle:hover {
+    border-color: var(--border-color);
+}
+
+.staff-toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: block;
+}
+
+.staff-toggle-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.staff-toggle-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--border-color);
+    border-radius: 13px;
+    transition: background 0.3s ease;
+}
+
+.staff-toggle-track::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.staff-toggle-switch input:checked + .staff-toggle-track {
+    background: var(--primary);
+}
+
+.staff-toggle-switch input:checked + .staff-toggle-track::before {
+    transform: translateX(22px);
+}
+
+.staff-toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.staff-toggle-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+/* ====================================================================
+   Password Section (General Tab)
+   ==================================================================== */
+.staff-password-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.staff-password-info p {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin: 0;
+    flex: 1;
+}
+
+/* ====================================================================
+   Form Actions (Save Buttons)
+   ==================================================================== */
+.staff-form-actions {
+    display: flex;
+    gap: 10px;
+    padding: 20px 0 0;
+}
+
+/* ====================================================================
+   Form Errors Banner
+   ==================================================================== */
+.staff-form-errors {
+    padding: 14px 18px;
+    background: var(--error-bg);
+    border: 1px solid var(--error-fg);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    color: var(--error-fg);
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.staff-form-errors i {
+    font-size: 16px;
+    margin-top: 1px;
+    flex-shrink: 0;
+}
+
+.staff-form-errors p {
+    margin: 0 0 4px;
+}
+
+.staff-form-errors p:last-child {
+    margin-bottom: 0;
+}
+
+/* ====================================================================
+   Responsive
+   ==================================================================== */
+@media (max-width: 768px) {
+    .staff-stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .staff-detail-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .staff-detail-meta {
+        align-items: center;
+    }
+
+    .role-toggle-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .permissions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pos-settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .staff-general-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-password-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .staff-form-actions {
+        flex-direction: column;
+    }
+}

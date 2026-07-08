@@ -1,0 +1,105 @@
+{% load i18n %}
+
+{% if items %}
+<div class="list-row-cards">
+    {% for item in items %}
+    <div class="list-row-card{% if item.status == 'failed' %} disabled{% endif %}">
+        <div class="list-row-card-icon">
+            {% if item.message_type == 'whatsapp' %}
+            <i class="fab fa-whatsapp"></i>
+            {% else %}
+            <i class="fas fa-sms"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:sms_system_smsoutbox_change' item.pk %}">{{ item.phone }}</a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {{ item.message|truncatechars:80 }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if item.status == 'pending' %}
+                <span class="list-row-card-badge list-row-card-badge-warning">
+                    <i class="fas fa-clock"></i> {% trans "Pending" %}
+                </span>
+                {% elif item.status == 'queued' %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-list"></i> {% trans "Queued" %}
+                </span>
+                {% elif item.status == 'sent' %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-paper-plane"></i> {% trans "Sent" %}
+                </span>
+                {% elif item.status == 'delivered' %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-double"></i> {% trans "Delivered" %}
+                </span>
+                {% elif item.status == 'failed' %}
+                <span class="list-row-card-badge list-row-card-badge-error">
+                    <i class="fas fa-times-circle"></i> {% trans "Failed" %}
+                </span>
+                {% elif item.status == 'skipped' %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-forward"></i> {% trans "Skipped" %}
+                </span>
+                {% endif %}
+
+                {% if item.message_type == 'whatsapp' %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fab fa-whatsapp"></i> {% trans "WhatsApp" %}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-sms"></i> {% trans "SMS" %}
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    {{ item.created_at|timesince }} {% trans "ago" %}
+                </span>
+                {% if item.sent_at %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-paper-plane"></i>
+                    {% trans "Sent" %} {{ item.sent_at|timesince }} {% trans "ago" %}
+                </span>
+                {% endif %}
+                {% if item.retry_count > 0 %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-redo"></i>
+                    {% blocktrans count counter=item.retry_count %}{{ counter }} retry{% plural %}{{ counter }} retries{% endblocktrans %}
+                </span>
+                {% endif %}
+                {% if item.account %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-mobile-alt"></i>
+                    {{ item.account.display_name }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:sms_system_smsoutbox_change' item.pk %}" class="list-row-card-action" title="{% trans 'View' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="list-row-cards">
+    <div class="list-row-card empty-state">
+        <div class="list-row-card-content empty-state-content">
+            <i class="fas fa-paper-plane empty-state-icon"></i>
+            <p class="empty-state-text">{% trans "No messages found matching your criteria." %}</p>
+            <p class="empty-state-hint">{% trans "Try adjusting your filters or search terms." %}</p>
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,318 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static humanize %}
+
+{% block title %}{% trans "Referral Program" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'referrals/admin/css/referralprogram_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="program-admin-header">
+        <div class="header-title">
+            <h1>
+                <i class="fas fa-user-friends"></i>
+                {% if original %}{{ original.name }}{% else %}{% trans "Referral Program" %}{% endif %}
+            </h1>
+            <div class="header-meta">
+                <span class="meta-item">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Configure your referral program rewards, rules, and tracking settings" %}
+                </span>
+                {% if original %}
+                <span class="meta-item">
+                    <i class="fas fa-toggle-on"></i>
+                    {% trans "Status" %}: <strong>{{ original.get_status_display }}</strong>
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="submit" form="program-form" class="util-btn" name="_save" title="{% trans 'Save program' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    {% if stats %}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value">{{ stats.total_referrers|intcomma|default:"0" }}</div>
+            <div class="label">{% trans "Total Referrers" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-mouse-pointer"></i></div>
+            <div class="value">{{ stats.total_clicks|intcomma|default:"0" }}</div>
+            <div class="label">{% trans "Referral Clicks" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-user-plus"></i></div>
+            <div class="value">{{ stats.total_conversions|intcomma|default:"0" }}</div>
+            <div class="label">{% trans "Conversions" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ stats.pending_attributions|intcomma|default:"0" }}</div>
+            <div class="label">{% trans "Pending Attributions" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-gift"></i></div>
+            <div class="value">{{ stats.total_rewards_issued|intcomma|default:"0" }}</div>
+            <div class="label">{% trans "Rewards Issued" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ stats.total_rewards_redeemed|intcomma|default:"0" }}</div>
+            <div class="label">{% trans "Rewards Redeemed" %}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Form -->
+    <form method="post" id="program-form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Hidden JSON fields (populated by modals) -->
+        <input type="hidden" name="reward_config" id="id_reward_config" value="{{ adminform.form.reward_config.value|default:'{}' }}">
+        <input type="hidden" name="eligibility_rules" id="id_eligibility_rules" value="{{ adminform.form.eligibility_rules.value|default:'{}' }}">
+        <input type="hidden" name="timing_config" id="id_timing_config" value="{{ adminform.form.timing_config.value|default:'{}' }}">
+        <input type="hidden" name="caps_config" id="id_caps_config" value="{{ adminform.form.caps_config.value|default:'{}' }}">
+        <input type="hidden" name="tracking_config" id="id_tracking_config" value="{{ adminform.form.tracking_config.value|default:'{}' }}">
+        <input type="hidden" name="fraud_policy" id="id_fraud_policy" value="{{ adminform.form.fraud_policy.value|default:'{}' }}">
+
+        <!-- Display Form Errors -->
+        {% if adminform.form.errors or adminform.form.non_field_errors %}
+        <div class="form-errors-banner">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="error-content">
+                <h3>{% trans "Please correct the errors below" %}</h3>
+                {% if adminform.form.non_field_errors %}
+                    <ul class="errorlist">
+                        {% for error in adminform.form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="basic" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Basic Info" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="rewards" role="tab" aria-selected="false">
+                <i class="fas fa-gift"></i>
+                <span class="label">{% trans "Rewards" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="rules" role="tab" aria-selected="false">
+                <i class="fas fa-tasks"></i>
+                <span class="label">{% trans "Rules & Limits" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="tracking" role="tab" aria-selected="false">
+                <i class="fas fa-chart-line"></i>
+                <span class="label">{% trans "Tracking & Fraud" %}</span>
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Basic Information Tab -->
+            <div class="tab-panel active" data-panel="basic" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+                    <p class="form-card-description">{% trans "Configure the basic settings for your referral program." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.name.label_tag }}
+                                {{ adminform.form.name }}
+                                {% if adminform.form.name.help_text %}<p class="help">{{ adminform.form.name.help_text }}</p>{% endif %}
+                                {% if adminform.form.name.errors %}<p class="error">{{ adminform.form.name.errors }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.status.label_tag }}
+                                {{ adminform.form.status }}
+                                {% if adminform.form.status.help_text %}<p class="help">{{ adminform.form.status.help_text }}</p>{% endif %}
+                                {% if adminform.form.status.errors %}<p class="error">{{ adminform.form.status.errors }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.terms_and_conditions.label_tag }}
+                                {{ adminform.form.terms_and_conditions }}
+                                {% if adminform.form.terms_and_conditions.help_text %}<p class="help">{{ adminform.form.terms_and_conditions.help_text }}</p>{% endif %}
+                                {% if adminform.form.terms_and_conditions.errors %}<p class="error">{{ adminform.form.terms_and_conditions.errors }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rewards Tab -->
+            <div class="tab-panel" data-panel="rewards" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-gift"></i> {% trans "Reward Configuration" %}</h2>
+                    <p class="form-card-description">{% trans "Configure what rewards referrers and referees receive." %}</p>
+
+                    <div class="config-preview-box">
+                        <div class="preview-content" id="reward-config-preview">
+                            <p class="empty-state">{% trans "Click 'Configure Rewards' to set up your reward structure." %}</p>
+                        </div>
+                        <button type="button" class="config-btn" id="open-reward-modal">
+                            <i class="fas fa-cog"></i> {% trans "Configure Rewards" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rules & Limits Tab -->
+            <div class="tab-panel" data-panel="rules" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-clipboard-check"></i> {% trans "Eligibility Rules" %}</h2>
+                    <p class="form-card-description">{% trans "Define who can participate and earn rewards." %}</p>
+
+                    <div class="config-preview-box">
+                        <div class="preview-content" id="eligibility-config-preview">
+                            <p class="empty-state">{% trans "Click 'Configure Eligibility' to set up participation rules." %}</p>
+                        </div>
+                        <button type="button" class="config-btn" id="open-eligibility-modal">
+                            <i class="fas fa-cog"></i> {% trans "Configure Eligibility" %}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2><i class="fas fa-stopwatch"></i> {% trans "Timing Configuration" %}</h2>
+                    <p class="form-card-description">{% trans "Control when rewards are issued and attribution windows." %}</p>
+
+                    <div class="config-preview-box">
+                        <div class="preview-content" id="timing-config-preview">
+                            <p class="empty-state">{% trans "Click 'Configure Timing' to set up reward timing rules." %}</p>
+                        </div>
+                        <button type="button" class="config-btn" id="open-timing-modal">
+                            <i class="fas fa-cog"></i> {% trans "Configure Timing" %}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2><i class="fas fa-chart-bar"></i> {% trans "Caps & Limits" %}</h2>
+                    <p class="form-card-description">{% trans "Set maximum rewards and participation limits." %}</p>
+
+                    <div class="config-preview-box">
+                        <div class="preview-content" id="caps-config-preview">
+                            <p class="empty-state">{% trans "Click 'Configure Limits' to set up reward caps." %}</p>
+                        </div>
+                        <button type="button" class="config-btn" id="open-caps-modal">
+                            <i class="fas fa-cog"></i> {% trans "Configure Limits" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracking & Fraud Tab -->
+            <div class="tab-panel" data-panel="tracking" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-chart-line"></i> {% trans "Tracking Configuration" %}</h2>
+                    <p class="form-card-description">{% trans "Configure how referrals are tracked and attributed." %}</p>
+
+                    <div class="config-preview-box">
+                        <div class="preview-content" id="tracking-config-preview">
+                            <p class="empty-state">{% trans "Click 'Configure Tracking' to set up tracking settings." %}</p>
+                        </div>
+                        <button type="button" class="config-btn" id="open-tracking-modal">
+                            <i class="fas fa-cog"></i> {% trans "Configure Tracking" %}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2><i class="fas fa-shield-alt"></i> {% trans "Fraud Policy" %}</h2>
+                    <p class="form-card-description">{% trans "Protect your program from fraudulent referrals." %}</p>
+
+                    <div class="config-preview-box">
+                        <div class="preview-content" id="fraud-config-preview">
+                            <p class="empty-state">{% trans "Click 'Configure Fraud Detection' to set up fraud prevention." %}</p>
+                        </div>
+                        <button type="button" class="config-btn" id="open-fraud-modal">
+                            <i class="fas fa-cog"></i> {% trans "Configure Fraud Detection" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit buttons (hidden, triggered by header buttons) -->
+        <div class="submit-row referrals-hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+</div>
+
+<!-- Modal Templates -->
+{% include "admin/referrals/referralprogram/modals/reward_config_modal.html" %}
+{% include "admin/referrals/referralprogram/modals/eligibility_modal.html" %}
+{% include "admin/referrals/referralprogram/modals/timing_modal.html" %}
+{% include "admin/referrals/referralprogram/modals/caps_modal.html" %}
+{% include "admin/referrals/referralprogram/modals/tracking_modal.html" %}
+{% include "admin/referrals/referralprogram/modals/fraud_modal.html" %}
+
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="application/json" id="referralprogram-form-config">
+{
+    "currency_symbol": "{{ currency_symbol|default:'$' }}",
+    "i18n": {
+        "configure_rewards_empty": "{% trans "Click 'Configure Rewards' to set up your reward structure." %}",
+        "configure_eligibility_empty": "{% trans "Click 'Configure Eligibility' to set up participation rules." %}",
+        "configure_timing_empty": "{% trans "Click 'Configure Timing' to set up reward timing rules." %}",
+        "configure_limits_empty": "{% trans "Click 'Configure Limits' to set up reward caps." %}",
+        "configure_tracking_empty": "{% trans "Click 'Configure Tracking' to set up tracking settings." %}",
+        "configure_fraud_empty": "{% trans "Click 'Configure Fraud Detection' to set up fraud prevention." %}",
+        "referrer": "{% trans "Referrer" %}",
+        "referee": "{% trans "Referee" %}",
+        "expiry": "{% trans "Expiry" %}",
+        "days": "{% trans "days" %}",
+        "new_customers_only": "{% trans "New customers only" %}",
+        "min_order": "{% trans "Min order" %}",
+        "referrer_min_orders": "{% trans "Referrer min orders" %}",
+        "cookie_ttl": "{% trans "Cookie TTL" %}",
+        "attribution": "{% trans "Attribution" %}",
+        "issue_rewards": "{% trans "Issue rewards" %}",
+        "max_per_month": "{% trans "Max/month" %}",
+        "max_reward_per_month": "{% trans "Max reward/month" %}",
+        "program_budget": "{% trans "Program budget" %}",
+        "per_month": "{% trans "/month" %}",
+        "referrals": "{% trans "referrals" %}",
+        "url_param": "{% trans "URL param" %}",
+        "code_format": "{% trans "Code format" %}",
+        "conversion": "{% trans "Conversion" %}",
+        "policy": "{% trans "Policy" %}",
+        "auto_reject_at": "{% trans "Auto-reject at" %}",
+        "manual_review_at": "{% trans "Manual review at" %}",
+        "risk": "{% trans "risk" %}",
+        "pts": "{% trans "pts" %}"
+    }
+}
+</script>
+<script src="{% static 'referrals/admin/js/referralprogram_form.js' %}"></script>
+{% endblock %}

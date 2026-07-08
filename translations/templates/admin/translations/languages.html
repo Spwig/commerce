@@ -1,0 +1,233 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Language Management" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'translations/admin/css/translations.css' %}">
+<link rel="stylesheet" href="{% static 'translations/admin/css/languages.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="dashboard-header">
+        <h1><span class="fas fa-globe"></span>{% trans "Language Management" %}</h1>
+        <p class="subtitle">
+            {% trans "Manage front end languages available to your customers" %}
+        </p>
+    </div>
+    
+
+    <!-- Statistics Bar -->
+    <div class="language-stats">
+        <div class="stat-card">
+            <div class="stat-label">{% trans "Total Languages" %}</div>
+            <div class="stat-number">{{ total_languages }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">{% trans "Active Languages" %}</div>
+            <div class="stat-number" id="active-count">{{ active_count }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">{% trans "M2M100 Support" %}</div>
+            <div class="stat-number">100</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">{% trans "NLLB Support" %}</div>
+            <div class="stat-number">200+</div>
+        </div>
+    </div>
+
+    <!-- Model Recommendations -->
+    <div class="module">
+        <div class="translation-model-guide">
+            <h3>
+                <i class="fas fa-info-circle"></i> {% trans "Translation Model Guide" %}
+            </h3>
+            <p>
+                <strong>{% trans "For commercial and general use:" %}</strong>
+            </p>
+            <ul>
+                <li><strong>{% trans "M2M100 Standard (418M)" %}</strong> - {% trans "Fast translations for 100 languages. Ideal for high-volume, basic translation needs." %}</li>
+                <li><strong>{% trans "M2M100 Premium (1.2B)" %}</strong> - {% trans "Higher accuracy for the same 100 languages. Best for professional content requiring quality." %}</li>
+                <li><strong>{% trans "External Providers" %}</strong> - {% trans "Use for languages not supported by M2M100 or when you need the highest quality translations." %}</li>
+            </ul>
+            <p>
+                <strong>{% trans "For non-commercial/research only:" %}</strong>
+                {% trans "NLLB-200+ supports over 200 languages but is restricted to non-commercial use due to its CC-BY-NC-4.0 license." %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Badge Legend -->
+    <div class="module badge-legend-section">
+        <div class="badge-legend-header" data-action="toggle-badge-legend">
+            <h3>
+                <i class="fas fa-info-circle"></i> {% trans "Badge Guide" %}
+                <i class="fas fa-chevron-down toggle-icon" id="legend-toggle"></i>
+            </h3>
+        </div>
+        <div class="badge-legend-content" id="badge-legend" hidden>
+            <div class="legend-item">
+                <span class="language-badge badge-limited">{% trans "Limited" %}</span>
+                <span class="legend-description">
+                    {% trans "The M2M100 Standard model supports this language but may not provide the best translation results. Consider installing and activating M2M100 Premium if you haven't already or use an external provider for this language." %}
+                </span>
+            </div>
+            <div class="legend-item">
+                <span class="language-badge badge-nllb">API/NLLB</span>
+                <span class="legend-description">
+                    {% trans "This language is not supported by M2M100 models. You can either:" %}
+                    <br>• {% trans "Configure an external translation provider (Google, DeepL, Azure, etc.) that supports this language" %}
+                    <br>• {% trans "For non-commercial/research use only: Install NLLB-200 model" %}
+                    <br><strong class="nllb-commercial-warning">{% trans "⚠️ NLLB-200 has a CC-BY-NC-4.0 license and cannot be used commercially." %}</strong>
+                </span>
+            </div>
+            <div class="legend-item">
+                <span class="language-badge badge-rtl">RTL</span>
+                <span class="legend-description">
+                    {% trans "This language is written right-to-left (e.g., Arabic, Hebrew, Persian). Special handling may be required for proper text display." %}
+                </span>
+            </div>
+            <div class="legend-item">
+                <span class="language-badge badge-default">{% trans "Default" %}</span>
+                <span class="legend-description">
+                    {% trans "This is the site's default language. It will be used as a fallback when translations are not available." %}
+                </span>
+            </div>
+            <div class="legend-indicators">
+                <h4>{% trans "Support Indicators:" %}</h4>
+                <div class="legend-item">
+                    <span class="language-indicator indicator-full"></span>
+                    <span class="legend-description">{% trans "Full support - High quality translations available" %}</span>
+                </div>
+                <div class="legend-item">
+                    <span class="language-indicator indicator-limited"></span>
+                    <span class="legend-description">{% trans "Limited support - Basic translations, quality may vary" %}</span>
+                </div>
+                <div class="legend-item">
+                    <span class="language-indicator indicator-none"></span>
+                    <span class="legend-description">{% trans "External only - Requires NLLB or external provider" %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Manager Grid -->
+    <div class="language-manager">
+        <!-- Available Languages -->
+        <div class="language-column">
+            <h2>
+                <i class="fas fa-globe"></i>
+                {% trans "Available Languages" %}
+                <span class="count" id="available-count">({{ available_languages|length }})</span>
+            </h2>
+            <div class="search-box column-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="language-search" placeholder="{% trans 'Search languages...' %}" class="form-control">
+            </div>
+            <div class="language-list" id="available-languages">
+                {% for lang in available_languages %}
+                <div class="language-item"
+                     data-id="{{ lang.id }}"
+                     data-code="{{ lang.code }}"
+                     data-support="{{ lang.m2m100_support }}"
+                     data-requires-nllb="{{ lang.requires_nllb|lower }}">
+                    <span class="language-indicator indicator-{{ lang.m2m100_support }}"></span>
+                    <span class="language-flag">{{ lang.flag }}</span>
+                    <div class="language-info">
+                        <div class="language-name">{{ lang.native_name }}</div>
+                        <div class="language-code">{{ lang.code }} - {{ lang.name }}</div>
+                    </div>
+                    {% if lang.requires_nllb %}
+                    <span class="language-badge badge-nllb" title="{% trans 'Requires an external translation provider that supports this language or NLLB-200 (non-commercial use only)' %}">
+                        API/NLLB
+                    </span>
+                    {% endif %}
+                    {% if lang.m2m100_support == 'limited' %}
+                    <span class="language-badge badge-limited" title="{% trans 'Limited support in M2M100 Standard. Consider installing M2M100 Premium for better results' %}">
+                        {% trans "Limited" %}
+                    </span>
+                    {% endif %}
+                    {% if lang.rtl %}
+                    <span class="language-badge badge-rtl" title="{% trans 'Right-to-left language' %}">
+                        RTL
+                    </span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Active Languages -->
+        <div class="language-column">
+            <h2>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Active Languages" %}
+                <span class="count" id="active-list-count">({{ active_languages|length }})</span>
+            </h2>
+            <div class="language-list" id="active-languages">
+                {% for lang in active_languages %}
+                <div class="language-item {% if lang.is_default %}is-default{% endif %}"
+                     data-id="{{ lang.id }}"
+                     data-code="{{ lang.code }}"
+                     data-support="{{ lang.m2m100_support }}"
+                     data-requires-nllb="{{ lang.requires_nllb|lower }}">
+                    <span class="drag-handle">
+                        <i class="fas fa-grip-vertical"></i>
+                    </span>
+                    <span class="language-indicator indicator-{{ lang.m2m100_support }}"></span>
+                    <span class="language-flag">{{ lang.flag }}</span>
+                    <div class="language-info">
+                        <div class="language-name">{{ lang.native_name }}</div>
+                        <div class="language-code">{{ lang.code }} - {{ lang.name }}</div>
+                    </div>
+                    {% if lang.is_default %}
+                    <span class="language-badge badge-default">
+                        {% trans "Default" %}
+                    </span>
+                    {% endif %}
+                    {% if lang.requires_nllb %}
+                    <span class="language-badge badge-nllb" title="{% trans 'Requires an external translation provider that supports this language or NLLB-200 (non-commercial use only)' %}">
+                        API/NLLB
+                    </span>
+                    {% endif %}
+                    {% if lang.m2m100_support == 'limited' %}
+                    <span class="language-badge badge-limited" title="{% trans 'Limited support in M2M100 Standard. Consider installing M2M100 Premium for better results' %}">
+                        {% trans "Limited" %}
+                    </span>
+                    {% endif %}
+                    <button class="btn-remove-language" data-id="{{ lang.id }}" title="{% trans 'Remove language' %}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="submit-row">
+        <button id="save-languages" class="default">
+            <i class="fas fa-save"></i>
+            {% trans "Save Configuration" %}
+        </button>
+        <button id="reset-languages" class="button">
+            <i class="fas fa-undo"></i>
+            {% trans "Reset to Default" %}
+        </button>
+        <a href="{% url 'translations:dashboard' %}" class="button">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back to Dashboard" %}
+        </a>
+    </div>
+</div>
+
+<script src="{% static 'translations/admin/js/languages.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,16 @@
+<div class="radio-group" role="radiogroup" aria-labelledby="label-{{ field.field_name }}">
+    {% for option in field.options %}
+    <div class="radio-item">
+        <input type="radio"
+               id="field-{{ field.field_name }}-{{ forloop.counter }}"
+               name="{{ field.field_name }}"
+               value="{{ option.value }}"
+               {% if field.is_required and forloop.first %}required{% endif %}
+               {% if field.default_value == option.value %}checked{% endif %}
+               class="form-radio">
+        <label for="field-{{ field.field_name }}-{{ forloop.counter }}" class="radio-label">
+            {{ option.label }}
+        </label>
+    </div>
+    {% endfor %}
+</div>

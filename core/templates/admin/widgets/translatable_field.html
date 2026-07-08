@@ -1,0 +1,32 @@
+{% comment %}
+Translatable Field Widget Template
+
+Renders a form field with a translation button that opens the translation editor.
+The translation button is always rendered - JavaScript will handle visibility based on context.
+
+Context variables:
+- base_widget_html: Rendered HTML of the base input widget
+- field_name: Name of the field
+- field_type: 'text' or 'richtext'
+- is_richtext: Boolean indicating if this is a CKEditor field
+- ckeditor_config: CKEditor config name if applicable
+{% endcomment %}
+
+<div class="translatable-field-wrapper">
+    {# Render the base widget (TextInput, Textarea, etc.) #}
+    <div class="translatable-field-input">
+        {{ base_widget_html|safe }}
+    </div>
+
+    {# Translation button - JavaScript will handle visibility #}
+    <button
+        type="button"
+        class="util-btn translate-field-btn translatable-field-btn"
+        data-field-name="{{ field_name }}"
+        data-field-type="{{ field_type }}"
+        {% if is_richtext %}data-ckeditor-config="{{ ckeditor_config }}"{% endif %}
+        title="Translate this field to other languages"
+    >
+        <i class="fas fa-language"></i>
+    </button>
+</div>

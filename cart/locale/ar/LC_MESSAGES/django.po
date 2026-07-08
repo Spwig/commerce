@@ -1,0 +1,2700 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Action and method IDs required"
+msgstr "تتطلب الإجراءات والمعرفات الخاصة بالطرق"
+
+msgid "{} method(s) enabled"
+msgstr "\"تم تمكين {} طريقة\""
+
+msgid "{} method(s) disabled"
+msgstr "\"تم تعطيل {} طريقة\""
+
+msgid "{} method(s) deleted"
+msgstr "تم حذف {} طريقة (طرق)"
+
+msgid "Unknown action"
+msgstr "إجراء غير معروف"
+
+msgid "Invalid request data"
+msgstr "بيانات الطلب غير صحيحة"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "لقد حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+
+msgid "Basic Information"
+msgstr "المعلومات الأساسية"
+
+msgid "Geographic Scope"
+msgstr "المدى الجغرافي"
+
+msgid "Application Rules"
+msgstr "قواعد التطبيق"
+
+msgid "Product Exemptions"
+msgstr "استثناءات المنتجات"
+
+msgid "Timestamps"
+msgstr "أوقات الطوابع الزمني"
+
+msgid "Rate %"
+msgstr "نسبة الرسم (%)"
+
+msgid "Cart"
+msgstr "سلة التسوق"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "أدخل كنسبة مئوية (مثل، 8.25 لـ 8.25%)"
+
+msgid "Rate (%)"
+msgstr "نسبة الرسم (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "من فضلك أكمل الخطوة الأولى أولاً"
+
+msgid "Please complete the wizard steps"
+msgstr "من فضلك أكمل خطوات عجينة السحر"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "تم إنشاء طريقة الشحن \"%(name)s\" بنجاح!"
+
+msgid "Please configure rate tables for this method."
+msgstr "من فضلك قم بتكوين جداول الأسعار لهذه الطريقة."
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "فشل في إنشاء طريقة الشحن: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "احصل على بيانات السلة الصغيرة"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    استرداد محتوى السلة الحالية بتنسيق مناسب للمكون mini-cart. تعمل مع "
+"المستخدمين المصادق عليهم (السلة مرتبطة بحساب المستخدم) والمستخدمين المجهولين "
+"(السلة مرتبطة بالجلسة). تشمل بيانات السلة جميع العناصر مع تفاصيل المنتجات، "
+"الكميات، الأسعار، والصور. **حالات الاستخدام:** - تحميل mini-cart الأولي على "
+"الصفحة - تحديث السلة بعد التغييرات الخارجية - فحص حالة السلة قبل الدفع "
+"**الاعتماد:** لا يتطلب اعتمادًا (يستخدم الجلسة للمستخدمين المجهولين)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "تم استرداد بيانات السلة بنجاح"
+
+msgid "Update cart item quantity"
+msgstr "تحديث كمية عنصر السلة"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    تحديث كمية عنصر في السلة. ضع الكمية إلى 0 لإزالة العنصر تمامًا. يتحقق "
+"النقطة من توفر المخزون قبل التحديث ويُعيد السلة المحدثة بالكامل. **حالات "
+"الاستخدام:** - أزرار زيادة/تقليل الكمية في mini-cart - تغييرات مباشرة في "
+"إدخال الكمية - إزالة العناصر (الكمية = 0) **الاعتماد:** لا يتطلب اعتمادًا "
+"(يتحقق من أن العنصر ينتمي إلى سلة المستخدم) **التحقق:** - يجب أن يكون العنصر "
+"موجودًا في سلة المستخدم - يجب أن تكون الكمية عددًا صحيحًا غير سالب - يتم التحقق "
+"من توفر المخزون للمنتجات التي تتبع المخزون\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "تم تحديث السلة بنجاح"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "بيانات الطلب غير صحيحة أو المخزون غير كافٍ"
+
+msgid "Cart item not found"
+msgstr "لم يتم العثور على عنصر السلة"
+
+msgid "Remove item from cart"
+msgstr "إزالة العنصر من السلة"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    إزالة عنصر من السلة بشكل كامل. ترجع بيانات السلة المحدثة بعد الإزالة. "
+"**حالات الاستخدام:** - زر حذف في عناصر السلة - مسح عناصر محددة **الاعتماد:** "
+"لا يتطلب أي اعتماد (يتحقق من أن العنصر ينتمي إلى سلة المستخدم)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "تمت إزالة العنصر بنجاح"
+
+msgid "Get empty cart recommendations"
+msgstr "احصل على توصيات السلة الفارغة"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    احصل على توصيات منتج ذكية لحالة السلة الفارغة. تُرجع اقتراحات شخصية تنظمة "
+"في أقسام مُسماة بناءً على: - **المنتجات التي شاهدها مؤخرًا**: المنتجات التي "
+"شاهدها المستخدم (مبنية على الجلسة للمستخدمين الضيوف) - **المنتجات "
+"المرتبطة**: المنتجات في نفس الفئات التي شُاهدت مؤخرًا - **للبيع**: المنتجات "
+"التي يتم بيعها حاليًا بخصم - **المتجدة**: المنتجات الشائعة حسب المشاهدات/"
+"المبيعات - **المنتجات المميزة**: المنتجات التي اختارها المحرر كمصدر افتراضي "
+"جميع المنتجات التي تُرجعها مُؤكد أنها متوفرة في المخزون ومتاحة للشراء. **حالات "
+"الاستخدام:** - حالة سلة فارغة في سلة التسوق الصغيرة - أقسام \"قد تحب\" - فرص "
+"لبيع منتجات مترابطة **الاعتماد:** لا يتطلب أي اعتماد (يستخدم الجلسة "
+"للمستخدمين الضيوف) **التخصيص:** - المستخدمون الضيوف: بناءً على المنتجات التي "
+"شُاهدها مؤخرًا في الجلسة - المستخدمون المسجلون: بناءً على تاريخ الحساب "
+"والأفضليات\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr ""
+"عدد المنتجات القصوى التي يجب إرجاعها (القيمة الافتراضية: 6، القصوى: 12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "تم استرداد التوصيات بنجاح"
+
+msgid "User"
+msgstr "المستخدم"
+
+msgid "Session Key"
+msgstr " khóa phiên làm việc"
+
+msgid "Cart Currency"
+msgstr "عملة السلة"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"كود العملة لجميع العناصر في هذه السلة (مثال: EUR, NZD). الفارغ يعني العملة "
+"الافتراضية للمتجـر."
+
+msgid "Default Layout"
+msgstr "ال bố cục mặc định"
+
+msgid "Compact View"
+msgstr "عرض مضغوط"
+
+msgid "Detailed View"
+msgstr "عرض تفصيلي"
+
+msgid "Minimal View"
+msgstr "عرض أدنى"
+
+msgid "Sidebar Cart"
+msgstr "سلة التسوق في جانبي الصفحة"
+
+msgid "Overlay Cart"
+msgstr "سلة التسوق فوقية"
+
+msgid "How the cart is displayed"
+msgstr "كيف يتم عرض السلة"
+
+msgid "Cart Layout"
+msgstr " bố cục của giỏ hàng"
+
+msgid "Show Product Images"
+msgstr "إظهار صور المنتجات"
+
+msgid "Show Product Variants"
+msgstr "إظهار متغيرات المنتجات"
+
+msgid "Show Remove Button"
+msgstr "إظهار زر الإزالة"
+
+msgid "Show Quantity Controls"
+msgstr "إظهار مراقبة الكمية"
+
+msgid "Show Item Totals"
+msgstr "إظهار إجمالي العناصر"
+
+msgid "Show Cart Summary"
+msgstr "إظهار ملخص السلة"
+
+msgid "Show Savings"
+msgstr "إظهار الخصومات"
+
+msgid "Single Page Checkout"
+msgstr "صفحة الدفع الواحدة"
+
+msgid "Multi-Step Checkout"
+msgstr "خطوات الدفع المتعددة"
+
+msgid "Accordion Style"
+msgstr "نمط الأكورديون"
+
+msgid "Wizard Style"
+msgstr "نمط الساحر"
+
+msgid "Checkout Flow"
+msgstr "تدفق عملية الدفع"
+
+msgid "Shipping Address"
+msgstr "عنوان الشحن"
+
+msgid "Shipping Method"
+msgstr "طريقة الشحن"
+
+msgid "Calculated shipping cost"
+msgstr "تكلفة الشحن المستندة إلى الحساب"
+
+msgid "Shipping Cost"
+msgstr "تكلفة الشحن"
+
+msgid "Estimated Delivery Date"
+msgstr "تاريخ التوصيل المتوقع"
+
+msgid "Shipping Notes"
+msgstr "ملاحظات الشحن"
+
+msgid "None"
+msgstr "لا شيء"
+
+msgid "Percentage"
+msgstr "نسبة مئوية"
+
+msgid "Fixed Amount"
+msgstr "مبلغ ثابت"
+
+msgid "POS manual discount type"
+msgstr "نوع الخصم اليدوي في نقاط البيع"
+
+msgid "POS manual discount value"
+msgstr "قيمة الخصم اليدوي في نقاط البيع"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "قيمة الخصم (نسبة أو مبلغ ثابت)"
+
+msgid "POS discount applied by"
+msgstr "تطبيق الخصم في نقاط البيع بواسطة"
+
+msgid "POS discount approved by"
+msgstr "الخصم في نقاط البيع وافق عليه"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "مدير وافق على الخصم إذا تجاوز حد الموظفين"
+
+msgid "POS discount reason"
+msgstr "سبب الخصم في نقاط البيع"
+
+msgid "Created At"
+msgstr "تم الإنشاء في"
+
+msgid "Updated At"
+msgstr "تم التحديث في"
+
+msgid "Shopping Cart"
+msgstr "سلة التسوق"
+
+msgid "Shopping Carts"
+msgstr "سلال التسوق"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "سلة {username}"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "السلة (الجلسة: {session})"
+
+msgid "No shipping required"
+msgstr "لا يوجد شحن مطلوب"
+
+msgid "Shipping address required"
+msgstr "تحتاج إلى عنوان الشحن"
+
+msgid "Available shipping methods retrieved"
+msgstr "تم استرداد طرق الشحن المتاحة"
+
+msgid "Shipping calculated successfully"
+msgstr "تم حساب الشحن بنجاح"
+
+msgid "Invalid gift card code"
+msgstr "رمز بطاقة الهدايا غير صحيح"
+
+msgid "Gift card already applied"
+msgstr "تم تطبيق بطاقة الهدايا بالفعل"
+
+msgid "Gift card is not active"
+msgstr "بطاقة الهدايا غير نشطة"
+
+msgid "Gift card has expired"
+msgstr "انتهت صلاحية بطاقة الهدايا"
+
+msgid "Gift card has been fully redeemed"
+msgstr "تم استرداد بطاقة الهدايا بالكامل"
+
+msgid "Gift card cannot be used"
+msgstr "لا يمكن استخدام بطاقة الهدايا"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"تعارض العملات. بطاقة الهدايا بالعملة {card_currency}، بينما السلة بالعملة "
+"{cart_currency}"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"هذه بطاقة الهدايا موجودة في {card_currency}. يرجى تغيير عملتك إلى "
+"{card_currency} لاستخدامها."
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "لا يمكن استخدام بطاقات الهدايا لشراء بطاقات هدايا أخرى"
+
+msgid "Cart total is already covered"
+msgstr "إجمالي العربة مغطى بالفعل"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "تعذر معالجة تحويل العملة لبطاقة الهدايا"
+
+msgid "Gift card applied successfully"
+msgstr "تم تطبيق بطاقة الهدايا بنجاح"
+
+msgid "Product"
+msgstr "المنتج"
+
+msgid "Variant"
+msgstr "المتغير"
+
+msgid "Quantity"
+msgstr "الكمية"
+
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"تخصيص المنتجات مع أسعار محسوبة: {customization_option_id: {'value': '...', "
+"'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "التعديلات"
+
+msgid "Is Subscription"
+msgstr "هل هو اشتراك؟"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "هل سيتم شراء هذا العنصر كاشتراك"
+
+msgid "Subscription Plan"
+msgstr "خطة الاشتراك"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "خطة الاشتراك المختارة للدفع المتكرر"
+
+msgid "Pricing Tier"
+msgstr "مستوى الأسعار"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "مستوى السعر المحدد (تكرار الفاتورة) لل구독"
+
+msgid "Payment Token"
+msgstr "رمز الدفع"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr "طريقة الدفع المحفوظة للفواتير الاشتراكية (مطلوبة للاشتراكات)"
+
+msgid "Parent Bundle"
+msgstr "حزمة الأصل"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "إذا كان هذا جزءًا من الحزمة، المرجع إلى عنصر سلة التسوق للحزمة"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"تفاصيل الحجز: {start_datetime, end_datetime, resource_id, persons, timezone}"
+
+msgid "Booking Data"
+msgstr "بيانات الحجز"
+
+msgid "Customer notes for this item"
+msgstr "ملاحظات العميل لهذا البند"
+
+msgid "Notes"
+msgstr "ملاحظات"
+
+msgid "manual discount type"
+msgstr "نوع الخصم اليدوي"
+
+msgid "manual discount value"
+msgstr "قيمة الخصم اليدوي"
+
+msgid "discount applied by"
+msgstr "الخصم تم تطبيقه بواسطة"
+
+msgid "discount approved by"
+msgstr "الخصم وافق عليه"
+
+msgid "discount reason"
+msgstr "سبب الخصم"
+
+msgid "Cart Item"
+msgstr "عنصر السلة"
+
+msgid "Cart Items"
+msgstr "عناصر السلة"
+
+msgid "My Wishlist"
+msgstr "قوائم رغباتي"
+
+msgid "Name"
+msgstr "الاسم"
+
+msgid "Grid Layout"
+msgstr "مخطط الشبكة"
+
+msgid "List Layout"
+msgstr "مخطط القائمة"
+
+msgid "How wishlist items are displayed"
+msgstr "كيفية عرض عناصر قائمة الرغبات"
+
+msgid "Wishlist Layout"
+msgstr "مخطط قائمة الرغبات"
+
+msgid "Is Public"
+msgstr "هل هي عامة"
+
+msgid "Share Slug"
+msgstr "مشاركة الرابط"
+
+msgid "Show Prices"
+msgstr "عرض الأسعار"
+
+msgid "Show Availability"
+msgstr "عرض التوفر"
+
+msgid "Show Add to Cart"
+msgstr "عرض زر إضافة إلى السلة"
+
+msgid "Wishlist"
+msgstr "قائمة الرغبات"
+
+msgid "Wishlists"
+msgstr "قوائم الرغبات"
+
+msgid "Low"
+msgstr "منخفض"
+
+msgid "Medium"
+msgstr "متوسط"
+
+msgid "High"
+msgstr "عالي"
+
+msgid "Priority"
+msgstr "الأولوية"
+
+msgid "Notify When Available"
+msgstr "إشعار عند توفرها"
+
+msgid "Notify When On Sale"
+msgstr "إشعار عند البيع"
+
+msgid "Wishlist Item"
+msgstr "عنصر قائمة الرغبات"
+
+msgid "Wishlist Items"
+msgstr "عناصر قائمة الرغبات"
+
+msgid "Viewed At"
+msgstr "تم الاطلاع عليه في"
+
+msgid "View Count"
+msgstr "عدد المشاهدات"
+
+msgid "Recently Viewed Product"
+msgstr "المنتج الذي تم مشاهدته مؤخراً"
+
+msgid "Recently Viewed Products"
+msgstr "المنتجات التي تم مشاهدتها مؤخراً"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "الجلسة: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{product} تم مشاهدته بواسطة {user}"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Flat Rate"
+msgstr "التكلفة الثابتة"
+
+msgid "Free Shipping"
+msgstr "الشحن المجاني"
+
+msgid "Weight Based"
+msgstr "وفق الوزن"
+
+msgid "Price Based"
+msgstr "وفق السعر"
+
+msgid "Real-Time Carrier Rates"
+msgstr "rates الحالية لشركات الشحن"
+
+msgid "Local Pickup"
+msgstr "التسلم المحلي"
+
+msgid "Table Rate"
+msgstr "التكلفة بناءً على الجدول"
+
+msgid "Method Type"
+msgstr "نوع الطريقة"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "تكلفة الشحن الثابتة (لنوع flat_rate)"
+
+msgid "Flat Rate Cost"
+msgstr "تكلفة التكلفة الثابتة"
+
+msgid "Minimum cart value to qualify"
+msgstr "أدنى قيمة سلة للتأهل"
+
+msgid "Minimum Order Value"
+msgstr "أدنى قيمة طلب"
+
+msgid "Maximum cart value to qualify"
+msgstr "أقصى قيمة سلة للتأهل"
+
+msgid "Maximum Order Value"
+msgstr "أقصى قيمة طلب"
+
+msgid "Minimum cart weight (kg)"
+msgstr "أدنى وزن سلة (كجم)"
+
+msgid "Minimum Weight"
+msgstr "أدنى وزن"
+
+msgid "Maximum cart weight (kg)"
+msgstr "أقصى وزن سلة (كجم)"
+
+msgid "Maximum Weight"
+msgstr "أقصى وزن"
+
+msgid "Shipping Zones"
+msgstr "مناطق الشحن"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"مناطق حيث تكون طريقة الشحن هذه متاحة. إذا كانت فارغة، تطبق القيود القديمة "
+"للبلد/الولاية."
+
+msgid "Pickup Locations"
+msgstr "أماكن التسلم"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"المواقع التي يمكن فيها للعملاء استلام الطلبات باستخدام هذه طريقة الشحن. "
+"ينطبق فقط على نوع طريقة الشحن 'local_pickup'."
+
+msgid "Minimum delivery time in business days"
+msgstr "أقل فترة تسليم بالأيام العملية"
+
+msgid "Minimum Delivery Days"
+msgstr "أدنى أيام التوصيل"
+
+msgid "Maximum delivery time in business days"
+msgstr "أقصى فترة تسليم بالأيام العملية"
+
+msgid "Maximum Delivery Days"
+msgstr "أقصى أيام التوصيل"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "فئة أيقونة Font Awesome (مثل، 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "الأيقونة"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"صورة طريقة الشحن المخصصة من مكتبة الوسائط. إذا تم تقديمها، فإنها تأخذ "
+"الأولوية على الأيقونة."
+
+msgid "Image"
+msgstr "الصورة"
+
+msgid "Sort Order"
+msgstr "ترتيب الفرز"
+
+msgid "Is Active"
+msgstr "هل هو نشط"
+
+msgid "Custom Carrier"
+msgstr "承运人自定义"
+
+msgid "Carrier"
+msgstr "承运人"
+
+msgid "Carrier-specific service code"
+msgstr "رمز خدمة خاص بال承运人"
+
+msgid "Carrier Service Code"
+msgstr "رمز خدمة承运人"
+
+msgid "Shipping Methods"
+msgstr "طرق الشحن"
+
+msgid "Shipping method is not active"
+msgstr "طريقة الشحن غير نشطة"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "المبلغ الأدنى للطلب هو {value} مطلوب"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "تجاوزت القيمة القصوى للطلب {value}"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "الوزن الأدنى المطلوب هو {weight} كجم"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "تجاوزت القيمة القصوى للوزن {weight} كجم"
+
+msgid "Cart contains only digital products"
+msgstr "عربة التسوق تحتوي على المنتجات الرقمية فقط"
+
+msgid "Available"
+msgstr "متاح"
+
+msgid "No geographic restrictions"
+msgstr "لا تقييدات جغرافية"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "متاحة في {zone}"
+
+msgid "Not available in your location"
+msgstr "غير متاح في موقعك الجغرافي"
+
+msgid "Available worldwide"
+msgstr "متاح عالمياً"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "رمز البلد حسب ISO 3166-1 alpha-2"
+
+msgid "Country"
+msgstr "الدولة"
+
+msgid "State/Province/Region"
+msgstr "الولاية/المنطقة/الإقليم"
+
+msgid "State"
+msgstr "الولاية"
+
+msgid "City name (optional)"
+msgstr "اسم المدينة (اختياري)"
+
+msgid "City"
+msgstr "المدينة"
+
+msgid "List of specific postal codes (optional)"
+msgstr "قائمة الرموز البريدية الخاصة (اختيارية)"
+
+msgid "Postal Codes"
+msgstr "أكواد البريد"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "نسبة الضريبة كرقم عشري (مثل، 0.0825 لـ 8.25%)"
+
+msgid "Rate"
+msgstr "السعر"
+
+msgid "Sales Tax"
+msgstr "ضريبة المبيعات"
+
+msgid "Custom Tax"
+msgstr "ضريبة خاصة"
+
+msgid "Tax Type"
+msgstr "نوع الضريبة"
+
+msgid "Apply tax to shipping costs"
+msgstr "تطبيق الضريبة على تكاليف الشحن"
+
+msgid "Applies to Shipping"
+msgstr "يطبق على الشحن"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "احسب فوق الضرائب الأخرى (ضريبة مركبة)"
+
+msgid "Compound Tax"
+msgstr "ضريبة مركبة"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "أنواع المنتجات المعفاة من هذه الضريبة (مثل، ['digital', 'service'])"
+
+msgid "Exempt Product Types"
+msgstr "أنواع المنتجات المعفاة"
+
+msgid "Categories exempt from this tax"
+msgstr "الفئات المعفاة من هذه الضريبة"
+
+msgid "Exempt Categories"
+msgstr "الفئات المعفاة"
+
+msgid "Higher priority rules take precedence"
+msgstr "تستفيد القواعد ذات الأولوية الأعلى"
+
+msgid "Tax Rate"
+msgstr "نسبة الضريبة"
+
+msgid "Tax Rates"
+msgstr "نسب الضريبة"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "أوروبا"
+
+msgid "North America"
+msgstr "أمريكا الشمالية"
+
+msgid "Asia Pacific"
+msgstr "آسيا والمحيط الهادئ"
+
+msgid "Middle East"
+msgstr "الشرق الأوسط"
+
+msgid "Africa"
+msgstr "أفريقيا"
+
+msgid "Latin America"
+msgstr "أمريكا اللاتينية"
+
+msgid "Oceania"
+msgstr "أوقيانوسيا"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "معرِّف فريد (مثل eu_vat، us_sales_tax)"
+
+msgid "Key"
+msgstr "الكلمة الرئيسية"
+
+msgid "Font Awesome icon class"
+msgstr "فئة أيقونات Font Awesome"
+
+msgid "Default Tax Type"
+msgstr "نوع الضريبة الافتراضي"
+
+msgid "Region"
+msgstr "المنطقة"
+
+msgid "Version for tracking rate updates"
+msgstr "الإصدار لمتابعة تحديثات النسبة"
+
+msgid "Version"
+msgstr "الإصدار"
+
+msgid "Last Updated"
+msgstr "آخر تحديث"
+
+msgid "Tax Preset Group"
+msgstr "مجموعة الضريبة المحددة مسبقًا"
+
+msgid "Tax Preset Groups"
+msgstr "مجموعات الضريبة المحددة مسبقًا"
+
+msgid "Preset Group"
+msgstr "مجموعة الإعدادات المسبقة"
+
+msgid "Country Code"
+msgstr "رمز الدولة"
+
+msgid "Country Name"
+msgstr "اسم الدولة"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "رمز المنطقة/الولاية (للإعدادات المسبقة الخاصة بـ US/CA)"
+
+msgid "State Code"
+msgstr "رمز المنطقة/الولاية"
+
+msgid "State Name"
+msgstr "اسم المنطقة/الولاية"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "نسبة الضريبة كرقم عشري (مثل، 0.20 لـ 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "ملاحظات إضافية (مثلاً، 'ارتفع من 22% في يوليو 2025')"
+
+msgid "Tax Preset Rate"
+msgstr "معدل الضريبة المحدد مسبقًا"
+
+msgid "Tax Preset Rates"
+msgstr "معدلات الضريبة المحددة مسبقًا"
+
+msgid "Billing Address"
+msgstr "عنوان الفاتورة"
+
+msgid "Billing Same as Shipping"
+msgstr "عنوان الفاتورة هو نفسه عنوان الشحن"
+
+msgid "Shipping Address Data"
+msgstr "بيانات عنوان الشحن"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"بيانات عنوان الشحن المؤقتة (لن تُحفظ في نموذج العنوان حتى يتم تقديم الطلب)"
+
+msgid "Billing Address Data"
+msgstr "بيانات عنوان الفاتورة"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"بيانات عنوان الفاتورة المؤقتة (لن تُحفظ في نموذج العنوان حتى يتم تقديم الطلب)"
+
+msgid "Selected Shipping Method"
+msgstr "طريقة الشحن المختارة"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "قائمة مؤقتة لطرق الشحن المتاحة مع أسعارها"
+
+msgid "Available Shipping Methods"
+msgstr "طرق الشحن المتاحة"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "تحليل تفصيلي للضريبة حسب الاختصاص"
+
+msgid "Tax Breakdown"
+msgstr "تحليل الضريبة"
+
+msgid "Tax Amount"
+msgstr "مبلغ الضريبة"
+
+msgid "Payment Provider"
+msgstr "مزوّد الدفع"
+
+msgid "Subtotal"
+msgstr "المجموع الفرعي"
+
+msgid "Discount Amount"
+msgstr "مبلغ الخصم"
+
+msgid "Gift Card Discount"
+msgstr "خصم بطاقة الهدايا"
+
+msgid "Total discount from applied gift cards"
+msgstr "الخصم الكلي من بطاقات الهدايا المستخدمة"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "المجموع النهائي: الفرعية + الشحن + الضريبة - الخصومات"
+
+msgid "Total Amount"
+msgstr "المجموع الإجمالي"
+
+msgid "Cart Review"
+msgstr "مراجعة السلة"
+
+msgid "Billing Information"
+msgstr "معلومات الفاتورة"
+
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+msgid "Order Review"
+msgstr "مراجعة الطلب"
+
+msgid "Step Completed"
+msgstr "الخطوة مكتملة"
+
+msgid "Expires At"
+msgstr "ينتهي في"
+
+msgid "Metadata"
+msgstr "المetadata"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "بيانات إضافية (مثل معلومات الشراء من السوق)"
+
+msgid "Checkout Session"
+msgstr "جلسة الدفع"
+
+msgid "Checkout Sessions"
+msgstr "جلسة الدفعات"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "استلام طلب {cart}"
+
+msgid "Gift Card"
+msgstr "بطاقة الهدايا"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "المبلغ بالعملة الأساسية (يستخدم لحسابات السلة)"
+
+msgid "Original Currency Amount"
+msgstr "المبلغ بالعملة الأصلية"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"الخصم بالعملة الأصلية لبطاقة الهدايا (لبطاقات الهدايا بالعملات الأجنبية)"
+
+msgid "Exchange Rate"
+msgstr "معدل الصرف"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "السعر: العملة الخاصة ببطاقة الهدايا -> العملة الأساسية في وقت التقديم"
+
+msgid "Applied At"
+msgstr "تم تطبيقها في"
+
+msgid "Applied Gift Card"
+msgstr "بطاقة الهدايا المستخدمة"
+
+msgid "Applied Gift Cards"
+msgstr "بطاقات الهدايا المستخدمة"
+
+msgid "This gift card cannot be used"
+msgstr "لا يمكن استخدام هذه البطاقة الهدايا"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "قيمة الخصم تتجاوز الرصيد المتاح لبطاقة الهدايا"
+
+msgid "Total customization price (per unit)"
+msgstr "سعر التخصيص الإجمالي (في الوحدة)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "'فوري' للعناصر الرقمية، 'شحن' للعناصر المادية"
+
+msgid "True if this item is a component of a bundle"
+msgstr "صحيح إذا كان هذا العنصر مكونًا من حزمة"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "معرّف عنصر السلة الأب إذا كان هذا عنصرًا مكونًا"
+
+msgid "Child items if this is a bundle parent"
+msgstr "عناصر فرعية إذا كان هذا عنصرًا أبًا لحزمة"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr "خريطة من bundle_item_id إلى variant_id للخيارات التي اخترها العميل"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr ""
+"قائمة بـ bundle_item_ids يجب استبعادها (للعناصر الاختيارية التي لا يريدها "
+"العميل)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"خريطة من slot_id إلى قائمة بأيدي الخيارات المحددة للمنتجات القابلة للتخصيص"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "معرّف الإعداد المسبق المستخدم كنقطة بداية"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"تفاصيل الحجز: start_datetime، end_datetime، resource_id، persons، timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "يجب أن يكون الكمية على الأقل 1"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "تحتاج إلى خطة اشتراك لشراء الاشتراكات"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "يجب توفير رمز الدفع للمشتريات بالاشتراكات"
+
+msgid "Product not found"
+msgstr "لم يتم العثور على المنتج"
+
+msgid "This product does not support subscriptions"
+msgstr "هذا المنتج لا يدعم الاشتراكات"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "خطة الاشتراك غير صالحة أو غير نشطة"
+
+msgid "This plan is not available for this product"
+msgstr "هذا الخطة غير متاحة لهذا المنتج"
+
+msgid "Invalid or inactive payment token"
+msgstr "رمز الدفع غير صالح أو غير نشط"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "لم يتم العثور على مستوى الأسعار أو لا ينتمي إلى الخطة المحددة"
+
+msgid "No pricing tier available for this plan"
+msgstr "لا توجد مستوى سعر متاح لهذا الخطة"
+
+msgid "Quantity cannot be negative"
+msgstr "لا يمكن أن يكون الكمية سلبية"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "رمز بطاقة الهدايا (مثل، GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "المبلغ المُطبَّق من هذه البطاقة الالكترونية (بالعملة الأساسية)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "الرصيد المتبقّي على بطاقة الهدايا بعد هذا الاستخدام"
+
+msgid "Base currency code"
+msgstr "رمز العملة الأساسية"
+
+msgid "Gift card's native currency code"
+msgstr "رمز العملة الأصلية للبطاقة الهدية"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"مبلغ الخصم بالعملة الأصلية للبطاقة الالكترونية (للبطاقات الالكترونية "
+"بالعملات الأجنبية)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr "إما address_id أو تفاصيل العنوان الكاملة مطلوبة. مفقود: {fields}"
+
+msgid "This product requires customization"
+msgstr "هذا المنتج يتطلب التخصيص"
+
+msgid "Invalid design token"
+msgstr "رمز التصميم غير صحيح"
+
+msgid "Design not found or expired"
+msgstr "التصميم غير موجود أو انتهت صلاحيته"
+
+msgid "This product does not support customization"
+msgstr "هذا المنتج لا يدعم التخصيص"
+
+msgid "Invalid customization option"
+msgstr "خيار التخصيص غير صحيح"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "الشخصنة '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "الشخصنة المطلوبة '{name}' مفقودة"
+
+msgid "Insufficient stock"
+msgstr "لا يوجد كمية كافية من المخزون"
+
+msgid "Bundle has no components configured"
+msgstr "الحزمة ليس لها مكونات محددة"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "لا يمكن استبعاد مكون الحزمة غير الإلزامي: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "اختيار المتغير مطلوب لـ: {name}"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "المتغير غير الفعال تم اختياره لـ: {name}"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "الكمية غير الكافية من المخزون لمكون الحزمة: {name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "تم تحديث كمية الحزمة في السلة"
+
+msgid "Bundle added to cart"
+msgstr "أضيفت الحزمة إلى السلة"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "الفراغ المطلوب '{name}' ليس لديه أي اختيار."
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "الفراغ '{name}' يتطلب على الأقل {min} اختيار."
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "الفراغ '{name}' يسمح بأقصى حد {max} اختيار."
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "رقم فتحة غير صالحة: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "الخيار {opt_id} غير صالح للمساحة '{slot}'."
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr ""
+"اختيار غير متوافق في المساحة '{slot}'. بعض الخيارات غير متوافقة مع خياراتك "
+"الأخرى."
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"اختيار مُستبعد في المساحة '{slot}'. بعض الخيارات تتعارض مع خياراتك الأخرى."
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "لا يوجد كمية كافية من المكون: {name}"
+
+msgid "Configured product added to cart"
+msgstr "أضيف المنتج المخصص إلى السلة"
+
+msgid "Either user or session_key must be provided"
+msgstr "يجب تقديم إما المستخدم أو جلسة المفتاح"
+
+msgid "This product is no longer available"
+msgstr "هذا المنتج غير متوفر anymore"
+
+msgid "You must be logged in to purchase this product."
+msgstr "يجب أن تكون مسجلاً دخولك لشراء هذا المنتج."
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "يتطلب هذا المنتج أن يكون لديك \"%(required)s\" أولاً."
+
+msgid "Product variant not found"
+msgstr "لم يتم العثور على متغير المنتج"
+
+msgid "Configuration is required for configurable products"
+msgstr "الإعداد مطلوب لمنتجات قابلة للتخصيص"
+
+msgid "Booking added to cart"
+msgstr "تم إضافة الحجز إلى السلة"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "لا يوجد كمية كافية من المخزون للمقدار المطلوب"
+
+msgid "Cart item quantity updated"
+msgstr "تم تحديث كمية العنصر في السلة"
+
+msgid "Item added to cart"
+msgstr "أضيف العنصر إلى السلة"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr ""
+"لا يمكن تغيير كميات المكونات مباشرة. قم بتحديث المنتج الأصلي بدلاً من ذلك."
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"تم إزالة العنصر من السلة. تم أيضًا إزالة %(names)s (المنتج المطلوب لم يعد في "
+"السلة)."
+
+msgid "Item removed from cart"
+msgstr "أزيل العنصر من السلة"
+
+msgid "Cart item updated"
+msgstr "تم تحديث عناصر السلة"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr ""
+"لا يمكن إزالة عناصر المكونات مباشرة. قم بإزالة المنتج الأصلي بدلاً من ذلك."
+
+msgid "Cart cleared"
+msgstr "تم إفراغ السلة"
+
+msgid "Voucher removed"
+msgstr "تم حذف الكوبون"
+
+msgid "Voucher not found in cart"
+msgstr "لم يتم العثور على الكوبون في السلة"
+
+msgid "Gift card removed"
+msgstr "تم حذف بطاقة الهدايا"
+
+msgid "Gift card not found in cart"
+msgstr "لم يتم العثور على بطاقة الهدايا في السلة"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count} عناصر تم دمجها في العربة"
+
+msgid "Account creation required to proceed"
+msgstr "تتطلب العملية إنشاء حساب"
+
+msgid "Address not found"
+msgstr "لم يتم العثور على العنوان"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "يجب تقديم إما address_id أو address_data"
+
+msgid "Shipping address set"
+msgstr "تم تحديد عنوان الشحن"
+
+msgid "Billing address must be provided"
+msgstr "يجب تقديم عنوان الفواتير"
+
+msgid "Billing address set"
+msgstr "تم تحديد عنوان الفواتير"
+
+msgid "Shipping address must be set first"
+msgstr "يجب تحديد عنوان الشحن أولاً"
+
+msgid "Shipping method not found"
+msgstr "لم يتم العثور على طريقة الشحن"
+
+msgid "Shipping method selected"
+msgstr "تم اختيار طريقة الشحن"
+
+msgid "Payment provider not found"
+msgstr "لم يتم العثور على مزود الدفع"
+
+msgid "Payment provider is not properly configured"
+msgstr "موفّر الدفع لم يتم تكوينه بشكل صحيح"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "موفّر الدفع غير متاح لموقعك أو عملتك"
+
+msgid "Payment method selected"
+msgstr "تم اختيار طريقة الدفع"
+
+msgid "Cart is empty"
+msgstr "السلة فارغة"
+
+msgid "Shipping address is required"
+msgstr "يجب تقديم عنوان الشحن"
+
+msgid "Shipping method is required"
+msgstr "يجب تقديم طريقة الشحن"
+
+msgid "Billing address is required"
+msgstr "يجب تقديم عنوان الفواتير"
+
+msgid "Payment method is required"
+msgstr "يجب تقديم طريقة الدفع"
+
+msgid "Checkout session has expired"
+msgstr "انتهت جلسة إنهاء الشراء"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "لا يوجد كمية كافية من {product}"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\" يتطلب امتلاك \"%(required)s\" مسبقًا."
+
+msgid "Customer email is required"
+msgstr "يجب إدخال بريد العميل"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "لا يمكن تخصيص مستودع للطلب. يرجى الاتصال بالدعم."
+
+msgid "Insufficient stock to complete order"
+msgstr "لا يوجد مخزون كافٍ لإكمال الطلب"
+
+msgid "Error processing order. Please try again."
+msgstr "خطأ في معالجة الطلب. يرجى المحاولة مرة أخرى."
+
+msgid "Order created successfully"
+msgstr "تم إنشاء الطلب بنجاح"
+
+msgid "Wishlist item updated"
+msgstr "تم تحديث عنصر قائمة الرغبات"
+
+msgid "Item added to wishlist"
+msgstr "أضيف العنصر إلى قائمة الرغبات"
+
+msgid "Item removed from wishlist"
+msgstr "تم إزالة العنصر من قائمة الرغبات"
+
+msgid "Item moved to cart"
+msgstr "تم نقل العنصر إلى السلة"
+
+msgid "Wishlist cleared"
+msgstr "تم إفراغ قائمة الرغبات"
+
+msgid "Wishlist with this name already exists"
+msgstr "قائمة الأمنيات بهذا الاسم موجودة بالفعل"
+
+msgid "Wishlist created"
+msgstr "تم إنشاء قائمة الرغبات"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "مراقبة سلال العملاء النشطة والمهجورة"
+
+msgid "Add"
+msgstr "إضافة"
+
+msgid "cart"
+msgstr "سلة"
+
+msgid "Filters"
+msgstr " bộ lọc"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Search by user, session, or email..."
+msgstr "بحث بواسطة المستخدم أو الجلسة أو البريد الإلكتروني..."
+
+msgid "User Type"
+msgstr "نوع المستخدم"
+
+msgid "All Carts"
+msgstr "جميع السلب"
+
+msgid "Registered Users"
+msgstr "المستخدمون المسجلون"
+
+msgid "Guest Carts"
+msgstr "سلب الضيوف"
+
+msgid "Cart Status"
+msgstr "حالة السلة"
+
+msgid "All"
+msgstr "كل"
+
+msgid "Active (< 24h)"
+msgstr "نشطة (< 24 ساعة)"
+
+msgid "Abandoned (> 24h)"
+msgstr "مستحيلة (> 24 ساعة)"
+
+msgid "Empty"
+msgstr "فارغة"
+
+msgid "Has Shipping"
+msgstr "تحتوي على شحن"
+
+msgid "No Shipping"
+msgstr "لا يوجد شحن"
+
+msgid "Min Cart Value"
+msgstr "قيمة السلة الدنيا"
+
+msgid "Min value"
+msgstr "القيمة الدنيا"
+
+msgid "Max Cart Value"
+msgstr "قيمة السلة القصوى"
+
+msgid "Max value"
+msgstr "القيمة القصوى"
+
+msgid "Created From"
+msgstr "من تاريخ الإنشاء"
+
+msgid "Created To"
+msgstr "إلى تاريخ الإنشاء"
+
+msgid "Apply Filters"
+msgstr "تطبيق الفلتر"
+
+msgid "Clear All"
+msgstr "مسح الكل"
+
+msgid "Run the selected action"
+msgstr "تنفيذ الإجراء المحدد"
+
+msgid "Go"
+msgstr "اذهب"
+
+msgid "of"
+msgstr "من"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "1 عربة"
+msgstr[1] "%(counter)s عربات"
+msgstr[2] "%(counter)s عربات"
+msgstr[3] "%(counter)s عربات"
+msgstr[4] "%(counter)s عربات"
+msgstr[5] "%(counter)s عربات"
+
+msgid "carts"
+msgstr "السلب"
+
+msgid "Show all"
+msgstr "إظهار الكل"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "Add Shipping Method"
+msgstr "إضافة طريقة الشحن"
+
+msgid "Configure a new shipping method for your store"
+msgstr "تكوين طريقة شحن جديدة لمتجرك"
+
+msgid "Method Basics"
+msgstr "أسس الطريقة"
+
+msgid "Eligibility"
+msgstr "الأهلية"
+
+msgid "Coverage"
+msgstr "الغطاء"
+
+msgid "Features"
+msgstr "الميزات"
+
+msgid "Review"
+msgstr "مراجعة"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "تحديد الهوية الأساسية ونوع هذا طريقة الشحن."
+
+msgid "Method Name"
+msgstr "اسم الطريقة"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "مثلاً، الشحن القياسي، التوصيل السريع"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "اسم عرضي لطريقة الشحن لهذه العملاء"
+
+msgid "Optional description of this shipping method"
+msgstr "وصف اختياري لهذه طريقة الشحن"
+
+msgid "Display Icon"
+msgstr "أيقونة العرض"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"اختر صورة من مكتبة الوسائط أو اختر أيقونة من مكتبة Font Awesome. الصورة لها "
+"الأولوية إذا تم تقديمها مع الأيقونة."
+
+msgid "Custom Image"
+msgstr "صورة مخصصة"
+
+msgid "Font Awesome Icon"
+msgstr "أيقونة Font Awesome"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "اختر أيقونة من مكتبة Font Awesome"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Make this method available to customers immediately"
+msgstr "أجعل هذه الطريقة متاحة للعملاء فوراً"
+
+msgid "Method Type & Pricing"
+msgstr "نوع الطريقة وسعرها"
+
+msgid "Select method type..."
+msgstr "اختر نوع الطريقة..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "التكلفة الثابتة - تكلفة الشحن الثابتة"
+
+msgid "Free Shipping - No charge"
+msgstr "الشحن المجاني - بدون رسوم"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "وفق الوزن - حساب التكلفة بناءً على وزن السلة"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "وفق السعر - حساب التكلفة بناءً على مجموع سلة الشراء"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "الأسعار الفعلية للناقلين - أسعار حية من الناقلين"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "الاستلام من الموقع - يقوم العميل بالاستلام من الموقع"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "الأسعار الثابتة - قواعد معقدة بناءً على الوزن/السعر/الوجهة"
+
+msgid "Method Types:"
+msgstr "أنواع الطرق:"
+
+msgid "Flat Rate:"
+msgstr "سعر ثابت:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "تكلفة شحن ثابتة بغض النظر عن طلب الشراء"
+
+msgid "Free Shipping:"
+msgstr "الشحن المجاني:"
+
+msgid "No shipping charge"
+msgstr "لا يوجد رسوم شحن"
+
+msgid "Weight/Price Based:"
+msgstr "وفق الوزن/السعر:"
+
+msgid "Calculate using rate tables"
+msgstr "احسب باستخدام جداول الأسعار"
+
+msgid "Real-Time:"
+msgstr "حالة الوقت الحقيقي:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "احصل على الأسعار الحية من USPS، FedEx، UPS، أو DHL"
+
+msgid "Local Pickup:"
+msgstr "التوصيل المحلي:"
+
+msgid "Customer picks up at your location"
+msgstr "العميل يأخذ المنتجات من موقعك"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "تكلفة الشحن الثابتة التي يتم فرضها على العميل"
+
+msgid "No Configured Providers"
+msgstr "لا توجد مزودين م 구성ين"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"تحتاج إلى تكوين مزود واحد على الأقل للشحن يدعم الأسعار الفعلية قبل استخدام "
+"هذا النوع من الطرق."
+
+msgid "Connect Provider"
+msgstr "ربط المزود"
+
+msgid "Manage Providers"
+msgstr "إدارة المزودين"
+
+msgid "Select a configured shipping provider"
+msgstr "اختر مزود الشحن الم 구성"
+
+msgid "Tip:"
+msgstr "نصيحة:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"يتم عرض فقط مزودي الخدمة الذين تم تكوينهم ويدعمون الأسعار الفعلية أعلاه."
+
+msgid "Manage providers"
+msgstr "إدارة الموردين"
+
+msgid "Service Code"
+msgstr "رمز الخدمة"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "رمز خدمة محدد من الناقل (اختياري)"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Next Step"
+msgstr "الخطوة التالية"
+
+msgid "Eligibility Conditions"
+msgstr "شروط الأهلية"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr "حدد متى يجب أن تكون هذه طريقة الشحن متاحة بناءً على قيمة السلة وزنها."
+
+msgid "Order Value Restrictions"
+msgstr "قيود قيمة الطلب"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr "تعيين الحد الأدنى أو الأقصى لمتطلبات مجموع سلة الشراء لهذا الطريقة."
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "الطريقة متاحة فقط إذا كان مجموع سلة الشراء على الأقل بهذا المبلغ"
+
+msgid "No maximum"
+msgstr "لا يوجد حد أقصى"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "الطريقة متاحة فقط إذا كان مجموع سلة الشراء أقل من هذا المبلغ"
+
+msgid "Examples:"
+msgstr " أمثلة:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr "الشحن المجاني للطلبات فوق 50 دولار: ضع الحد الأدنى عند 50.00"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr "الشحن الاقتصادي للطلبات تحت 100 دولار: ضع الحد الأقصى عند 100.00"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr "الشحن القياسي لـ $25-200: ضبط الحد الأدنى والحد الأقصى"
+
+msgid "Weight Restrictions"
+msgstr "قيود الوزن"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr ""
+"ضبط الحد الأدنى أو الحد الأقصى لمتطلبات وزن العربة الإجمالي لهذا الطريقة."
+
+msgid "Minimum Weight (kg)"
+msgstr "الوزن الأدنى (килограммы)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr "الطريقة متاحة فقط إذا كان وزن العربة الإجمالي على الأقل هذا القيمة"
+
+msgid "Maximum Weight (kg)"
+msgstr "الوزن الأقصى (килограммы)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "الطريقة متاحة فقط إذا كان وزن العربة الإجمالي أقل من هذا القيمة"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "الشحن البريدي الخفيف للطرود تحت 2 كجم: ضبط الحد الأقصى على 2.00"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr "الشحن الثقيل للطرود فوق 20 كجم: ضبط الحد الأدنى على 20.00"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr "الشحن القياسي لـ 0.5 كجم-10 كجم: ضبط الحد الأدنى والحد الأقصى"
+
+msgid "Additional Options"
+msgstr "خيارات إضافية"
+
+msgid "Requires Shipping Address"
+msgstr "يتطلب عنوان الشحن"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"يجب على العميل تقديم عنوان الشحن لهذا الطريقة (تعطيل للبضائع الرقمية أو "
+"الاستلام المحلي)"
+
+msgid "Previous"
+msgstr "السابق"
+
+msgid "Geographic Coverage"
+msgstr "الغطاء الجغرافي"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr "تحديد أين يمكن استخدام هذه طريقة الشحن باستخدام مناطق الشحن."
+
+msgid "Zone-Based Coverage:"
+msgstr "الغطاء القائم على المناطق:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"استخدم مناطق الشحن لتحقيق تغطية جغرافية مرنة ومرتبطة بالقواعد. هذا النهج "
+"يعمل بشكل سلس مع قواعد الشحن ويتيح التحكم الدقيق في الأماكن التي تكون فيها "
+"طرقك متاحة."
+
+msgid "Select Shipping Zones"
+msgstr "تحديد مناطق الشحن"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"اختر المناطق التي يمكن فيها استخدام هذه الطريقة. اترك الفراغ لجعلها متاحة "
+"عالمياً."
+
+msgid "Available Zones"
+msgstr "المناطق المتاحة"
+
+msgid "Add selected zones"
+msgstr "إضافة المناطق المحددة"
+
+msgid "Add all zones"
+msgstr "إضافة جميع المناطق"
+
+msgid "Remove selected zones"
+msgstr "إزالة المناطق المحددة"
+
+msgid "Remove all zones"
+msgstr "إزالة جميع المناطق"
+
+msgid "Selected Zones"
+msgstr "المناطق المحددة"
+
+msgid "No shipping zones found!"
+msgstr "لم يتم العثور على مناطق شحن!"
+
+msgid "You need to create shipping zones first."
+msgstr "تحتاج إلى إنشاء مناطق الشحن أولاً."
+
+msgid "Create a shipping zone"
+msgstr "إنشاء منطقة شحن"
+
+msgid "Method Features"
+msgstr "خصائص الطريقة"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr "تكوين تقديرات التوصيل، ترتيب العرض، والميزات الخاصة بالطريقة."
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "اختر المواقع الجغرافية التي يمكن فيها للعملاء استلام طلباتهم."
+
+msgid "Available Pickup Locations"
+msgstr "المواقع المتاحة لاستلام الطلبات"
+
+msgid "Available Locations"
+msgstr "المواقع المتاحة"
+
+msgid "Selected Locations"
+msgstr "المواقع المختارة"
+
+msgid "No pickup locations found!"
+msgstr "لم يتم العثور على مواقع استلام!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr "تحتاج إلى إنشاء مواقع الاستلام المحلية أولاً لطرق الاستلام المحلية."
+
+msgid "Create a pickup location"
+msgstr "إنشاء موقع لاستلام الطلبات"
+
+msgid "Carrier API Status"
+msgstr "حالة واجهة برمجة التطبيقات الخاصة بالناقل"
+
+msgid "Carrier:"
+msgstr "الناقل:"
+
+msgid "Service Code:"
+msgstr "رمز الخدمة:"
+
+msgid "API Configuration Status"
+msgstr "حالة تكوين واجهة برمجة التطبيقات"
+
+msgid "Checking API credentials..."
+msgstr "فحص بيانات واجهة برمجة التطبيقات..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr "تأكد من أن بيانات الدخول الخاصة بك للناقل محددة في إعدادات مزود الشحن."
+
+msgid "Enable Rate Caching"
+msgstr "تفعيل تخزين معدلات الأسعار"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"تخزين نتائج أسعار الناقل لمدة 15 دقيقة لتحسين الأداء وتقليل مكالمات API"
+
+msgid "Rate Table Configuration"
+msgstr "تكوين جدول أسعار الشحن"
+
+msgid "Weight-Based Rates:"
+msgstr "أسعار الشحن بناءً على الوزن:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr "سيكون بإمكانك تكوين أسعار درجية بناءً على وزن العربة بعد إنشاء الطريقة."
+
+msgid "Price-Based Rates:"
+msgstr "أسعار الشحن بناءً على السعر:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"سيكون بإمكانك تكوين أسعار درجية بناءً على مجموع العربة الجزئي بعد إنشاء "
+"الطريقة."
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr "يمكن إدارة جداول الأسعار من صفحة تعديل الطريقة بعد إنشائها."
+
+msgid "Delivery Time Estimate"
+msgstr "تقدير وقت التوصيل"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "تقديم تقديرات فترة التوصيل للعملاء."
+
+msgid "Fastest delivery time in business days"
+msgstr "أقرب وقت تسليم في أيام العمل"
+
+msgid "Slowest delivery time in business days"
+msgstr "أطول وقت تسليم في أيام العمل"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "الشحن القياسي: 3-5 أيام عمل"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "الشحن express: 1-2 أيام عمل"
+
+msgid "International shipping: 7-14 business days"
+msgstr "الشحن الدولي: 7-14 أيام عمل"
+
+msgid "Display Settings"
+msgstr "إعدادات العرض"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr "الأرقام الأقل تظهر أولاً. استخدم هذا لتحكم في ترتيب عرض الطرق للعملاء."
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"تعيين ترتيبات الترتيب بزيادات قدرها 10 (0، 10، 20) لتسهيل إدراج طرق جديدة "
+"بين الطرق الموجودة."
+
+msgid "Review & Create"
+msgstr "مراجعة وإنشاء"
+
+msgid "API credentials verified successfully"
+msgstr "تم التحقق من بيانات واجهة برمجة التطبيقات بنجاح"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "راجع تكوين طريقة الشحن الخاصة بك وإنشائها."
+
+msgid "Edit"
+msgstr "تحرير"
+
+msgid "Name:"
+msgstr "الاسم:"
+
+msgid "Method Type:"
+msgstr "نوع الطريقة:"
+
+msgid "Description:"
+msgstr "الوصف:"
+
+msgid "Display Icon:"
+msgstr "أيقونة العرض:"
+
+msgid "Status:"
+msgstr "الحالة:"
+
+msgid "Inactive"
+msgstr "غير نشط"
+
+msgid "Flat Rate Cost:"
+msgstr "تكلفة التكلفة الثابتة:"
+
+msgid "Min Order Value:"
+msgstr "قيمة الطلب الدنيا:"
+
+msgid "Max Order Value:"
+msgstr "قيمة الطلب القصوى:"
+
+msgid "Min Weight:"
+msgstr "وزن أقل:"
+
+msgid "Max Weight:"
+msgstr "وزن أقصى:"
+
+msgid "Requires Shipping Address:"
+msgstr "يتطلب عنوان الشحن:"
+
+msgid "Yes"
+msgstr "نعم"
+
+msgid "No"
+msgstr "لا"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr "لا شروط صلاحية محددة - الطريقة متاحة لكل قيم عربة التسوق والأوزان"
+
+msgid "Shipping Zones:"
+msgstr "مناطق الشحن:"
+
+msgid "Coverage:"
+msgstr "المغطى:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "عالمي (لا توجد مناطق مختارة)"
+
+msgid "Pickup Locations:"
+msgstr "مواقع الاستلام:"
+
+msgid "location"
+msgstr "الموقع"
+
+msgid "Delivery Time:"
+msgstr "وقت التوصيل:"
+
+msgid "Instant Pickup"
+msgstr "استلام فوري"
+
+msgid "Delivery Estimate:"
+msgstr "تقدير التوصيل:"
+
+msgid "business days"
+msgstr "الأيام العملية"
+
+msgid "Sort Order:"
+msgstr "ترتيب الفرز:"
+
+msgid "Rate Caching:"
+msgstr "تخزين معدل:"
+
+msgid "Enabled"
+msgstr "مفعل"
+
+msgid "What happens next:"
+msgstr "ما سيحدث بعد ذلك:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "ستتم إنشاء طريقة الشحن الخاصة بك باستخدام الإعدادات أعلاه"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "سيتم تحويلك لتكوين جداول الأسعار لهذه الطريقة"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr "ستكون الطريقة متاحة فوراً للعملاء (إذا تم استيفاء شروط الصلاحية)"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr "ستتم إنشاء الطريقة كغير نشطة - قم بتفعيلها عند الانتهاء"
+
+msgid "Create Shipping Method"
+msgstr "إنشاء طريقة شحن"
+
+msgid "Creating..."
+msgstr "في عملية الإنشاء..."
+
+msgid "Session"
+msgstr "الجلسة"
+
+msgid "Registered"
+msgstr "مسجل"
+
+msgid "Guest"
+msgstr "ضيوف"
+
+msgid "item"
+msgstr "العنصر"
+
+msgid "Shipping Set"
+msgstr "مجموعة الشحن"
+
+msgid "Cart Total"
+msgstr "إجمالي العربة"
+
+msgid "Items"
+msgstr "العناصر"
+
+msgid "Savings"
+msgstr "الفرص"
+
+msgid "Shipping"
+msgstr "الشحن"
+
+msgid "Grand Total"
+msgstr "المجموع الكلي"
+
+msgid "Updated"
+msgstr "تم تحديثه"
+
+msgid "ago"
+msgstr "منذ"
+
+msgid "Created"
+msgstr "تم إنشاؤه"
+
+msgid "Est. Delivery"
+msgstr "التوصيل المتوقع"
+
+msgid "View cart details"
+msgstr "عرض تفاصيل العربة"
+
+msgid "Edit cart"
+msgstr "تحرير العربة"
+
+msgid "Delete cart"
+msgstr "حذف العربة"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "هل أنت متأكد أنك تريد إزالة هذه العربة؟"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "لم يتم العثور على أي عربات تسوق تتوافق مع معاييرك."
+
+msgid "Try adjusting your filters or search terms."
+msgstr "حاول تعديل الفلاتر أو كلمات البحث."
+
+msgid "Edit Shipping Method"
+msgstr "تحرير وسيلة الشحن"
+
+msgid "Save and continue editing"
+msgstr "حفظ والانتقال إلى التحرير"
+
+msgid "Please correct the errors below"
+msgstr "يرجى تصحيح الأخطاء أدناه"
+
+msgid "Basic"
+msgstr "أساسية"
+
+msgid "Pricing"
+msgstr "التسعير"
+
+msgid "Display"
+msgstr "عرض"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "اختياري: قيود على التوفر بناءً على قيمة الطلب أو الوزن."
+
+msgid "Delivery Time"
+msgstr "وقت التسليم"
+
+msgid "Display Options"
+msgstr "خيارات العرض"
+
+msgid "Carrier Integration"
+msgstr "تكامل المُرسل"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr "قم بتكوين الإعدادات الخاصة بالناقل لاستعلامات معدلات الوقت الفعلي."
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "قم بتكوين خيارات الشحن والأسعار وطرق التوصيل"
+
+msgid "method"
+msgstr "الطريقة"
+
+msgid "active"
+msgstr "فعال"
+
+msgid "Add Method"
+msgstr "أضف طريقة"
+
+msgid "Bulk Actions"
+msgstr "إجراءات جماعية"
+
+msgid "Enable Selected"
+msgstr "تفعيل المحدد"
+
+msgid "Disable Selected"
+msgstr "تعطيل المحدد"
+
+msgid "Delete Selected"
+msgstr "حذف المشاركات المحددة"
+
+msgid "Apply"
+msgstr "تطبيق"
+
+msgid "selected"
+msgstr "المحدد"
+
+msgid "All Status"
+msgstr "جميع الحالات"
+
+msgid "All Types"
+msgstr "جميع الأنواع"
+
+msgid "Real-Time Rates"
+msgstr "rates فورية"
+
+msgid "Clear all filters"
+msgstr "مسح جميع الفلاتر"
+
+msgid "Clear Filters"
+msgstr "مسح الفلاتر"
+
+msgid "Search methods..."
+msgstr "ابحث عن الطرق..."
+
+msgid "Select All"
+msgstr "اختر الكل"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s طريقة"
+msgstr[1] "%(counter)s طريقتين"
+msgstr[2] "%(counter)s طرق"
+msgstr[3] "%(counter)s طرق"
+msgstr[4] "%(counter)s طرق"
+msgstr[5] "%(counter)s طرق"
+
+msgid "No shipping methods found"
+msgstr "لم يتم العثور على أي طرق شحن"
+
+msgid "Try adjusting your filters or search query."
+msgstr "حاول تعديل مرشحاتك أو استعلام البحث."
+
+msgid "Get started by creating your first shipping method."
+msgstr "ابدأ بإنشاء أول طريقة شحن لك."
+
+msgid "Add First Method"
+msgstr "أضف الطريقة الأولى"
+
+msgid "Loading..."
+msgstr "جار التحميل..."
+
+msgid "Order Value:"
+msgstr "قيمة الطلب:"
+
+msgid "Weight:"
+msgstr "الوزن:"
+
+msgid "Zones:"
+msgstr "المناطق:"
+
+msgid "zone"
+msgstr "منطقة"
+
+msgid "Countries:"
+msgstr "البلدان:"
+
+msgid "country"
+msgstr "بلد"
+
+msgid "Worldwide"
+msgstr "عالمي"
+
+msgid "Pickup:"
+msgstr "التسلم:"
+
+msgid "Delivery:"
+msgstr "التسليم:"
+
+msgid "Edit method"
+msgstr "تحرير الطريقة"
+
+msgid "Toggle active status"
+msgstr "تبديل حالة النشاط"
+
+msgid "Delete method"
+msgstr "حذف الطريقة"
+
+msgid "Edit Tax Rate"
+msgstr "تحرير معدل الضريبة"
+
+msgid "Add Tax Rate"
+msgstr "أضف معدل الضريبة"
+
+msgid "Geography"
+msgstr "الجغرافيا"
+
+msgid "Rules"
+msgstr "القواعد"
+
+msgid "Exemptions"
+msgstr "الاستثناءات"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"حدد أين تُطبق هذه معدل الضريبة. اترك الدولة/المدينة فارغة لمعدلات تغطي الدولة "
+"بأكملها."
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "استبعد أنواع المنتجات أو الفئات المحددة من هذا معدل الضريبة."
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"قم بتكوين قواعد الضريبة لمتجرك. يتم مطابقة معدلات الضريبة لعناوين العملاء "
+"أثناء الدفع."
+
+msgid "Load Presets"
+msgstr "تحميل الإعدادات المسبقة"
+
+msgid "Total Rules"
+msgstr "قواعد الكلية"
+
+msgid "Countries"
+msgstr "البلدان"
+
+msgid "Tax Types"
+msgstr "أنواع الضريبة"
+
+msgid "Search by name, country, state..."
+msgstr "ابحث بواسطة الاسم، البلد، الولاية..."
+
+msgid "All Countries"
+msgstr "جميع البلدان"
+
+msgid "Custom"
+msgstr "مخصص"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Clear"
+msgstr "مسح"
+
+msgid "Tax Rules"
+msgstr "قواعد الضريبة"
+
+msgid "rules"
+msgstr "القواعد"
+
+msgid "Load Tax Rate Presets"
+msgstr "تحميل تشكيلات معدلات الضريبة"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr "أضف بسرعة معدلات ضرائب قياسية لمنطقتك. لن يتم تكرار المعدلات الموجودة."
+
+msgid "rates"
+msgstr "معدلات"
+
+msgid "Load"
+msgstr "تحميل"
+
+msgid "Close"
+msgstr "إغلاق"
+
+msgid "postal codes"
+msgstr "رموز البريد"
+
+msgid "Shipping Taxed"
+msgstr "الشحن مقرون بالضريبة"
+
+msgid "Compound"
+msgstr "متراكب"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "No tax rates configured"
+msgstr "لم يتم تكوين أي معدلات ضريبية"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"استخدم 'تحميل الإعدادات الافتراضية' لإضافة معدلات قياسية بسرعة لمنطقتك، أو "
+"أضف المعدلات يدوياً."
+
+msgid "Get current cart"
+msgstr "احصل على السلة الحالية"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"احصل على السلة الحالية للمستخدم المصادق عليه أو الجلسة. ترجع عناصر السلة، "
+"المجموع الجزئي، الخصومات، الضرائب، والمجموع الكلي. تقوم بإنشاء سلة تلقائيًا "
+"إذا لم تكن موجودة."
+
+msgid "Add item to cart"
+msgstr "إضافة العنصر إلى السلة"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"أضف منتجًا إلى السلة مع الكمية المحددة. يمكن تضمين معرف التباين، والتعديلات، "
+"والملاحظات بشكل اختياري. يتحقق من توفر المنتج في المخزون ويقوم بدمجه مع عنصر "
+"السلة الحالي إذا كان المنتج أو التباين نفسه. بالنسبة للمنتجات المُشتركة، اضف "
+"is_subscription=true مع subscription_plan_id، وpayment_token_id، ومع ذلك "
+"يمكن تضمين pricing_tier_id اختياريًا."
+
+msgid "Update cart item"
+msgstr "تحديث عنصر السلة"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"تحديث كمية عنصر السلة أو التعديلات أو الملاحظات. يتحقق من الكمية الجديدة "
+"مقارنة بتوافر المخزون. يعيد السلة المحدثة مع إجماليات محسوبة من جديد."
+
+msgid "Remove cart item"
+msgstr "إزالة عنصر السلة"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"إزالة عنصر معين من السلة. يحسب إجماليات السلة من جديد ويتحقق من أي قسائم تمت "
+"تطبيقها مقارنة بإجمالي السلة الجديدة."
+
+msgid "Clear cart"
+msgstr "مسح السلة"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"إزالة جميع العناصر من السلة. كما تزيل أي قسائم تم تطبيقها. يظل كائن السلة "
+"موجودًا لكنه يصبح فارغًا."
+
+msgid "Apply voucher code"
+msgstr "تطبيق كود الفائدة"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"تطبيق رمز قسيمة على السلة. تحقق من قبول القسيمة والمتطلبات الدنيا للشراء "
+"والحد من الاستخدام. تُحسب وتُطبّق خصم على إجمالي السلة."
+
+msgid "Remove voucher"
+msgstr "إزالة الكوبون"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"إزالة كوبون معين من السلة حسب الكود. إعادة حساب إجمالي السلة بدون خصم "
+"الكوبون. يمكن للمستخدم إعادة تطبيق الكوبون لاحقًا إذا كان مؤهلاً لذلك."
+
+msgid "Apply gift card"
+msgstr "تطبيق بطاقة هدية"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"تطبيق كود بطاقة هدية على السلة. يتحقق من حالة بطاقة الهدايا، الرصيد، "
+"والعملة. لا يمكن استخدام بطاقات الهدايا لشراء بطاقات هدايا أخرى. المبلغ "
+"المطبق محدود بالرصيد الموجود في بطاقة الهدايا أو إجمالي السلة المتبقّي."
+
+msgid "Remove gift card"
+msgstr "إزالة بطاقة هدية"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"إزالة بطاقة هدية محددة من السلة حسب الكود. لن يؤثر رصيد بطاقة الهدايا حتى "
+"إتمام عملية الدفع. يمكن للمستخدم إعادة تطبيق بطاقة الهدايا."
+
+msgid "Get cart summary"
+msgstr "احصل على ملخص السلة"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"احصل على ملخص سلة مشتريات خفيف يتضمن عدد العناصر، والصافي، والاجمالي. أسرع "
+"من نقطة النهاية الكاملة للسلة. مفيد لعرض شارة سلة المشتريات في الرأس أو عرض "
+"المجموع السريع."
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"لا يمكن تعديل العناصر المكونة مباشرة. قم بتحديث المنتج الأصلي بدلاً من ذلك."
+
+msgid "List user wishlists"
+msgstr "قائمة قوائم رغبات المستخدم"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"احصل على جميع قوائم الرغبات للمستخدم المصادق عليه. يمكن للمستخدمين أن يكون "
+"لديهم عدة قوائم رغبة لأغراض مختلفة (مثلاً: 'عيد الميلاد'، 'الزواج'، "
+"'الآراء'). ترجع أسماء قوائم الرغبة، عدد العناصر، والإعدادات الخصوصية."
+
+msgid "Create wishlist"
+msgstr "إنشاء قائمة رغبات"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"أنشئ قائمة رغبة جديدة للمستخدم المصادق عليه. حدد الاسم، الوصف، والوضع "
+"الخصوصية (عام/خاصة). يمكن مشاركة القوائم العامة عبر عنوان URL."
+
+msgid "Get wishlist details"
+msgstr "احصل على تفاصيل قائمة الرغبات"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"احصل على معلومات تفصيلية عن قائمة الرغبات الخاصة، بما في ذلك جميع العناصر، "
+"الأسعار، توفرها، وإعدادات المشاركة. يمكن الوصول إليها فقط من قبل مالك قائمة "
+"الرغبات إلا إذا كانت مشاركة علنًا."
+
+msgid "Update wishlist"
+msgstr "تحديث قائمة الرغبات"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"تحديث معلومات قائمة الرغبات بما في ذلك الاسم، الوصف، أو إعدادات الخصوصية. "
+"يمكن جعل قائمة الرغبات عامة أو خاصة. فقط المالك يمكنه تحديثها."
+
+msgid "Partially update wishlist"
+msgstr "تحديث قائمة الرغبات جزئيًا"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"تحديث حقول القائمة المرغوبة المحددة دون إرسال بيانات القائمة بأكملها. يُستخدم "
+"لتبديل الخصوصية أو إعادة تسمية القائمة المرغوبة."
+
+msgid "Delete wishlist"
+msgstr "حذف قائمة الرغبات"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"حذف قائمة الامنيات المفضلة بشكل دائم مع جميع عناصرها. لا يمكن التراجع عن هذا "
+"الإجراء. يمكن فقط المالك حذفها."
+
+msgid "Add item to wishlist"
+msgstr "إضافة عنصر إلى قائمة الرغبات"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"إضافة منتج إلى قائمة المرغوبات مع خيار التباين والكمية والملاحظات. يمنع "
+"التكرار. يمكن إضافته إلى قائمة المرغوبات الافتراضية أو تحديد معرف قائمة "
+"المرغوبات."
+
+msgid "Remove item from wishlist"
+msgstr "إزالة العنصر من قائمة الرغبات"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"إزالة عنصر معين من قائمة الرغبات. يمكن إضافة العنصر لاحقًا. لا يؤثر على توفر "
+"المنتج."
+
+msgid "Move item to cart"
+msgstr "نقل العنصر إلى السلة"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"نقل عنصر من قائمة الرغبات مباشرة إلى سلة التسوق. يتحقق من توفر المخزون. يُزال "
+"العنصر من قائمة الرغبات بعد إضافته الناجحة إلى السلة."
+
+msgid "Get public wishlist by share slug"
+msgstr "احصل على قائمة الامنيات المفضلة العامة عبر رابط المشاركة"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"عرض قائمة رغبات عامة باستخدام رابط URL الخاص بالمشاركة. يمكن لأي شخص لديه "
+"الرابط مشاهدة القوائم العامة. مفيد لقائمة سجل الهدايا والقوائم التي تُشارك مع "
+"العائلة والأصدقاء."
+
+msgid "ID of the wishlist item to remove"
+msgstr "معرّف عنصر القائمة المرغوبة لمسحها"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "معرّف عنصر القائمة المرغوبة لنقله إلى السلة"
+
+msgid "Share slug of the public wishlist"
+msgstr "الرابط القصير للقائمة المرغوبة العامة لمشاركتها"
+
+msgid "Wishlist not found"
+msgstr "لم يتم العثور على قائمة الرغبات"
+
+msgid "Get checkout session"
+msgstr "احصل على جلسة الدفع"
+
+msgid "Set shipping address"
+msgstr "حدد عنوان الشحن"
+
+msgid "Set billing address"
+msgstr "حدد عنوان الفاتورة"
+
+msgid "Get available shipping methods"
+msgstr "احصل على طرق الشحن المتاحة"
+
+msgid "Get available payment providers"
+msgstr "احصل على مزودي الدفع المتاحين"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"تُرجع موفري الدفع المتاحين لدولة العميل وعملته. تُفلتر بناءً على الدول التي يتم "
+"الشحن إليها، والقدرات الخاصة بالموفر، والتكوين التجاري."
+
+msgid "Set shipping method"
+msgstr "حدد طريقة الشحن"
+
+msgid "Set payment method"
+msgstr "حدد طريقة الدفع"
+
+msgid "Validate checkout"
+msgstr "تأكيد الخروج"
+
+msgid "Complete checkout"
+msgstr "إكمال الخروج"
+
+msgid "Get recently viewed products"
+msgstr "احصل على المنتجات التي تم عرضها مؤخرًا"
+
+msgid "Get recently viewed details"
+msgstr "احصل على تفاصيل المنتجات التي تم عرضها مؤخرًا"
+
+msgid "List shipping methods"
+msgstr "قائمة وسائل الشحن"
+
+msgid "Get shipping method details"
+msgstr "احصل على تفاصيل وسائل الشحن"
+
+msgid "List tax rates"
+msgstr "قائمة معدلات الضرائب"
+
+msgid "Get tax rate details"
+msgstr "احصل على تفاصيل معدل الضريبة"
+
+msgid "Create tax rate"
+msgstr "إنشاء معدل ضريبة"
+
+msgid "Update tax rate"
+msgstr "تحديث معدل الضريبة"
+
+msgid "Partial update tax rate"
+msgstr "تحديث معدل الضريبة جزئيًا"
+
+msgid "Delete tax rate"
+msgstr "حذف معدل الضريبة"
+
+msgid "Calculate applicable taxes"
+msgstr "حساب الضرائب المطبقة"
+
+msgid "Tax rates grouped by country"
+msgstr "معدلات الضريبة المجموعة حسب الدولة"
+
+msgid "Load preset tax rates"
+msgstr "تحميل معدلات الضريبة المسبقة"
+
+msgid "List tax preset groups"
+msgstr "قائمة مجموعات معدلات الضريبة المسبقة"
+
+msgid "Get preset group details"
+msgstr "احصل على تفاصيل المجموعة المسبقة"
+
+msgid "List rates in a preset group"
+msgstr "قائمة بالأسعار في مجموعة مسبقة"

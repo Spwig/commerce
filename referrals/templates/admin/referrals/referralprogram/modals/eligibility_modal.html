@@ -1,0 +1,88 @@
+{% load i18n %}
+
+<!-- Eligibility Rules Modal -->
+<div class="admin-modal-overlay" id="eligibility-modal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title"><i class="fas fa-clipboard-check"></i> {% trans "Configure Eligibility Rules" %}</h2>
+            <button type="button" class="admin-modal-close" data-modal="eligibility-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="admin-modal-section">
+                <h3>{% trans "Referrer Requirements" %}</h3>
+
+                <div class="form-row">
+                    <label for="elig-referrer-min-orders">{% trans "Minimum Orders" %}</label>
+                    <input type="number" id="elig-referrer-min-orders" min="0" placeholder="1">
+                    <p class="help">{% trans "Minimum number of completed orders before they can refer (0 = no minimum)" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="elig-referrer-min-spend">{% trans "Minimum Total Spend" %}</label>
+                    <input type="number" id="elig-referrer-min-spend" step="0.01" min="0" placeholder="0.00">
+                    <p class="help">{% trans "Minimum lifetime spend required to refer others" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="elig-exclude-staff">
+                        <input type="checkbox" id="elig-exclude-staff" checked>
+                        {% trans "Exclude staff accounts from referring" %}
+                    </label>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Referee Requirements" %}</h3>
+
+                <div class="form-row">
+                    <label for="elig-new-customers-only">
+                        <input type="checkbox" id="elig-new-customers-only" checked>
+                        {% trans "New customers only (must have no previous orders)" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="elig-referee-min-order-value">{% trans "Minimum First Order Value" %}</label>
+                    <input type="number" id="elig-referee-min-order-value" step="0.01" min="0" placeholder="25.00">
+                    <p class="help">{% trans "Minimum order value for referral to qualify" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="elig-require-email-verify">
+                        <input type="checkbox" id="elig-require-email-verify">
+                        {% trans "Require email verification" %}
+                    </label>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Product/Category Restrictions" %}</h3>
+
+                <div class="form-row">
+                    <label for="elig-exclude-sale-items">
+                        <input type="checkbox" id="elig-exclude-sale-items">
+                        {% trans "Exclude sale/discounted items" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="elig-allowed-categories">{% trans "Allowed Categories (comma-separated IDs)" %}</label>
+                    <input type="text" id="elig-allowed-categories" placeholder="1,2,3">
+                    <p class="help">{% trans "Leave blank to allow all categories" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="elig-excluded-products">{% trans "Excluded Products (comma-separated IDs)" %}</label>
+                    <input type="text" id="elig-excluded-products" placeholder="10,25,50">
+                    <p class="help">{% trans "Specific products that don't qualify for referrals" %}</p>
+                </div>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="referral-modal-btn-secondary" data-modal="eligibility-modal">{% trans "Cancel" %}</button>
+            <button type="button" class="referral-modal-btn-primary" id="save-eligibility-config">{% trans "Save Configuration" %}</button>
+        </div>
+    </div>
+</div>

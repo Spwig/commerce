@@ -1,0 +1,2692 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Korean <LL@li.org>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Action and method IDs required"
+msgstr "작업 및 메서드 ID가 필요합니다"
+
+msgid "{} method(s) enabled"
+msgstr "\"{} 방법이 활성화됨\""
+
+msgid "{} method(s) disabled"
+msgstr "\"{} 방법이 비활성화됨\""
+
+msgid "{} method(s) deleted"
+msgstr "{} 개의 메서드가 삭제되었습니다."
+
+msgid "Unknown action"
+msgstr "알 수 없는 작업"
+
+msgid "Invalid request data"
+msgstr "잘못된 요청 데이터"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "예기치 못한 오류가 발생했습니다. 다시 시도해 주세요."
+
+msgid "Basic Information"
+msgstr "기본 정보"
+
+msgid "Geographic Scope"
+msgstr "지리적 범위"
+
+msgid "Application Rules"
+msgstr "적용 규칙"
+
+msgid "Product Exemptions"
+msgstr "제품 예외"
+
+msgid "Timestamps"
+msgstr "타임스탬프"
+
+msgid "Rate %"
+msgstr "율 %"
+
+msgid "Cart"
+msgstr "장바구니"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "백분율로 입력 (예: 8.25로 8.25%)"
+
+msgid "Rate (%)"
+msgstr "율 (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "먼저 단계 1을 완료하세요"
+
+msgid "Please complete the wizard steps"
+msgstr "마법사 단계를 완료하세요"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "배송 방법 \"%(name)s\"이(가) 성공적으로 생성되었습니다!"
+
+msgid "Please configure rate tables for this method."
+msgstr "이 방법에 대한 요금표를 구성하십시오."
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "배송 방법을 생성하는 데 실패했습니다: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "미니 카트 데이터 가져오기"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    마이니카트 구성 요소에 맞게 현재 장바구니 내용을 검색합니다. 인증된 사용"
+"자(사용자 계정에 연결된 장바구니)와 익명 사용자(세션에 연결된 장바구니) 모두"
+"에 적용됩니다. 장바구니 데이터에는 제품 세부 정보, 수량, 가격 및 이미지가 포"
+"함된 모든 항목이 포함됩니다. **사용 사례:** - 페이지에 처음 마이니카트를 로드"
+"할 때 - 외부 변경 후 장바구니 새로 고침 - 체크아웃 전 장바구니 상태 확인 **인"
+"증:** 필요 없음(익명 사용자에게는 세션을 사용합니다)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "카트 데이터가 성공적으로 검색되었습니다."
+
+msgid "Update cart item quantity"
+msgstr "카트 항목 수량 업데이트"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    장바구니에 있는 항목의 수량을 업데이트합니다. 수량을 0으로 설정하여 항목"
+"을 완전히 제거할 수 있습니다. 업데이트 전에 재고 가용성을 검증하고 전체 업데"
+"이트된 장바구니를 반환합니다. **사용 사례:** - 마이니카트의 수량 증가/감소 버"
+"튼 - 직접 수량 입력 변경 - 항목 제거(수량=0) **인증:** 필요 없음(항목이 사용"
+"자의 장바구니에 속하는지 확인) **검증:** - 항목은 사용자의 장바구니에 있어야 "
+"함 - 수량은 음수가 아닌 정수여야 함 - 재고 추적 제품의 재고 가용성을 확인\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "카트가 성공적으로 업데이트되었습니다."
+
+msgid "Invalid request data or insufficient stock"
+msgstr "잘못된 요청 데이터 또는 재고 부족"
+
+msgid "Cart item not found"
+msgstr "카트 항목을 찾을 수 없습니다."
+
+msgid "Remove item from cart"
+msgstr "카트에서 항목 제거"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    카트에서 항목을 완전히 제거합니다. 제거 후 업데이트된 카트 데이터를 반환"
+"합니다. **사용 사례:** - 카트 항목의 삭제 버튼 - 특정 항목 삭제 **인증:** 필"
+"요 없음 (항목이 사용자의 카트에 속하는지 검증)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "항목이 성공적으로 제거되었습니다."
+
+msgid "Get empty cart recommendations"
+msgstr "비어 있는 카트 추천 가져오기"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    빈 장바구니 상태에 맞춘 지능형 제품 추천을 가져옵니다. 사용자가 본 제품"
+"을 기반으로 (익명 사용자의 경우 세션 기반) **최근 본 상품**, **관련 상품**(최"
+"근 본 상품과 동일한 카테고리의 상품), **할인 중인 상품**, **트렌딩 상품**(조"
+"회/판매 기준으로 인기 있는 상품), **추천 상품**(편집자가 선정한 상품)으로 라"
+"벨이 지정된 섹션에 맞춰 개인화된 추천을 반환합니다. 모든 반환된 제품은 재고"
+"가 확보되어 구매 가능한 것으로 확인되었습니다. **사용 사례:** - 미니 장바구니"
+"의 빈 상태 - \"당신이 좋아할 만한 상품\" 섹션 - 교차 판매 기회 **인증:** 필"
+"요 없음 (익명 사용자의 경우 세션을 사용함) **개인화:** - 익명 사용자: 세션 기"
+"반으로 최근 본 상품을 기준으로 함 - 인증된 사용자: 계정 이력 및 선호도를 기준"
+"으로 함\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "반환할 제품의 최대 수량 (기본값: 6, 최대: 12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "추천이 성공적으로 검색되었습니다."
+
+msgid "User"
+msgstr "사용자"
+
+msgid "Session Key"
+msgstr "세션 키"
+
+msgid "Cart Currency"
+msgstr "카트 통화"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"이 장바구니에 있는 모든 항목에 적용되는 통화 코드 (예: EUR, NZD). 빈 값은 상"
+"점의 기본 통화를 의미합니다."
+
+msgid "Default Layout"
+msgstr "기본 레이아웃"
+
+msgid "Compact View"
+msgstr "간결한 보기"
+
+msgid "Detailed View"
+msgstr "상세 보기"
+
+msgid "Minimal View"
+msgstr "최소 보기"
+
+msgid "Sidebar Cart"
+msgstr "사이드바 장바구니"
+
+msgid "Overlay Cart"
+msgstr "오버레이 장바구니"
+
+msgid "How the cart is displayed"
+msgstr "장바구니의 표시 방식"
+
+msgid "Cart Layout"
+msgstr "장바구니 레이아웃"
+
+msgid "Show Product Images"
+msgstr "제품 이미지 표시"
+
+msgid "Show Product Variants"
+msgstr "제품 변형 표시"
+
+msgid "Show Remove Button"
+msgstr "제거 버튼 표시"
+
+msgid "Show Quantity Controls"
+msgstr "수량 조절 표시"
+
+msgid "Show Item Totals"
+msgstr "아이템 합계 표시"
+
+msgid "Show Cart Summary"
+msgstr "장바구니 요약 표시"
+
+msgid "Show Savings"
+msgstr "할인 금액 표시"
+
+msgid "Single Page Checkout"
+msgstr "단일 페이지 결제"
+
+msgid "Multi-Step Checkout"
+msgstr "다단계 결제"
+
+msgid "Accordion Style"
+msgstr "에코던 스타일"
+
+msgid "Wizard Style"
+msgstr "마법사 스타일"
+
+msgid "Checkout Flow"
+msgstr "결제 흐름"
+
+msgid "Shipping Address"
+msgstr "배송 주소"
+
+msgid "Shipping Method"
+msgstr "배송 방식"
+
+msgid "Calculated shipping cost"
+msgstr "계산된 배송 비용"
+
+msgid "Shipping Cost"
+msgstr "배송 비용"
+
+msgid "Estimated Delivery Date"
+msgstr "예상 배송일"
+
+msgid "Shipping Notes"
+msgstr "배송 메모"
+
+msgid "None"
+msgstr "없음"
+
+msgid "Percentage"
+msgstr "백분율"
+
+msgid "Fixed Amount"
+msgstr "고정 금액"
+
+msgid "POS manual discount type"
+msgstr "POS 수동 할인 유형"
+
+msgid "POS manual discount value"
+msgstr "POS 수동 할인 금액"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "할인 금액 (백분율 또는 고정 금액)"
+
+msgid "POS discount applied by"
+msgstr "POS 할인 적용자"
+
+msgid "POS discount approved by"
+msgstr "POS 할인 승인자"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "직원 한도를 초과한 경우 할인을 승인한 관리자"
+
+msgid "POS discount reason"
+msgstr "POS 할인 사유"
+
+msgid "Created At"
+msgstr "생성 시간"
+
+msgid "Updated At"
+msgstr "업데이트 시간"
+
+msgid "Shopping Cart"
+msgstr "쇼핑 장바구니"
+
+msgid "Shopping Carts"
+msgstr "쇼핑 장바구니들"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "{username}의 장바구니"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "장바구니 (세션: {session})"
+
+msgid "No shipping required"
+msgstr "배송 필요 없음"
+
+msgid "Shipping address required"
+msgstr "배송 주소 필요"
+
+msgid "Available shipping methods retrieved"
+msgstr "사용 가능한 배송 방식 불러옴"
+
+msgid "Shipping calculated successfully"
+msgstr "배송 비용 계산 완료"
+
+msgid "Invalid gift card code"
+msgstr "무효한 선물 카드 코드"
+
+msgid "Gift card already applied"
+msgstr "이미 적용된 선물 카드"
+
+msgid "Gift card is not active"
+msgstr "활성화되지 않은 선물 카드"
+
+msgid "Gift card has expired"
+msgstr "만료된 선물 카드"
+
+msgid "Gift card has been fully redeemed"
+msgstr "선물 카드가 완전히 사용되었습니다."
+
+msgid "Gift card cannot be used"
+msgstr "사용할 수 없는 선물 카드"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"통화 불일치. 선물 카드는 {card_currency}입니다. 장바구니는 {cart_currency}입"
+"니다."
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"이 기프트 카드는 {card_currency}입니다. 사용하려면 화면의 통화를 "
+"{card_currency}로 전환하세요."
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "선물 카드는 다른 선물 카드를 구매하는 데 사용할 수 없습니다."
+
+msgid "Cart total is already covered"
+msgstr "카트 총액은 이미 커버됨"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "선물 카드 통화 변환을 처리할 수 없습니다"
+
+msgid "Gift card applied successfully"
+msgstr "선물 카드가 성공적으로 적용됨"
+
+msgid "Product"
+msgstr "상품"
+
+msgid "Variant"
+msgstr "옵션"
+
+msgid "Quantity"
+msgstr "수량"
+
+msgid "Unit Price"
+msgstr "단위 가격"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"계산된 가격이 있는 제품 커스터마이징: {customization_option_id: {'value': "
+"'...', 'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "맞춤 설정"
+
+msgid "Is Subscription"
+msgstr "구독 여부"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "이 항목이 구독으로 구매될지 여부"
+
+msgid "Subscription Plan"
+msgstr "구독 계획"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "정기 결제를 위한 선택된 구독 플랜"
+
+msgid "Pricing Tier"
+msgstr "가격 계층"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "구독용으로 선택된 가격 계층(청구 빈도)"
+
+msgid "Payment Token"
+msgstr "결제 토큰"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr "구독 결제를 위한 저장된 결제 수단 (구독이 필요한 경우 필수)"
+
+msgid "Parent Bundle"
+msgstr "상위 번들"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "이 항목이 번들 구성 요소인 경우 번들 CartItem에 대한 참조"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"예약 세부 정보: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+
+msgid "Booking Data"
+msgstr "예약 데이터"
+
+msgid "Customer notes for this item"
+msgstr "이 항목에 대한 고객 메모"
+
+msgid "Notes"
+msgstr "메모"
+
+msgid "manual discount type"
+msgstr "수동 할인 유형"
+
+msgid "manual discount value"
+msgstr "수동 할인 금액"
+
+msgid "discount applied by"
+msgstr "할인 적용자"
+
+msgid "discount approved by"
+msgstr "할인 승인자"
+
+msgid "discount reason"
+msgstr "할인 사유"
+
+msgid "Cart Item"
+msgstr "카트 항목"
+
+msgid "Cart Items"
+msgstr "카트 항목들"
+
+msgid "My Wishlist"
+msgstr "내 위시리스트"
+
+msgid "Name"
+msgstr "이름"
+
+msgid "Grid Layout"
+msgstr "그리드 레이아웃"
+
+msgid "List Layout"
+msgstr "리스트 레이아웃"
+
+msgid "How wishlist items are displayed"
+msgstr "위시리스트 항목의 표시 방식"
+
+msgid "Wishlist Layout"
+msgstr "위시리스트 레이아웃"
+
+msgid "Is Public"
+msgstr "공개 여부"
+
+msgid "Share Slug"
+msgstr "공유 슬러그"
+
+msgid "Show Prices"
+msgstr "가격 표시"
+
+msgid "Show Availability"
+msgstr "재고 표시"
+
+msgid "Show Add to Cart"
+msgstr "카트에 추가 표시"
+
+msgid "Wishlist"
+msgstr "위시리스트"
+
+msgid "Wishlists"
+msgstr "위시리스트들"
+
+msgid "Low"
+msgstr "낮음"
+
+msgid "Medium"
+msgstr "중간"
+
+msgid "High"
+msgstr "높음"
+
+msgid "Priority"
+msgstr "우선순위"
+
+msgid "Notify When Available"
+msgstr "재고가 있을 때 알림"
+
+msgid "Notify When On Sale"
+msgstr "할인 중일 때 알림"
+
+msgid "Wishlist Item"
+msgstr "위시리스트 항목"
+
+msgid "Wishlist Items"
+msgstr "위시리스트 항목들"
+
+msgid "Viewed At"
+msgstr "조회 시간"
+
+msgid "View Count"
+msgstr "조회 횟수"
+
+msgid "Recently Viewed Product"
+msgstr "최근 본 상품"
+
+msgid "Recently Viewed Products"
+msgstr "최근 본 상품들"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "세션: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{user}이(가) {product}를(을) 조회했습니다."
+
+msgid "Description"
+msgstr "설명"
+
+msgid "Flat Rate"
+msgstr "고정 배송비"
+
+msgid "Free Shipping"
+msgstr "무료 배송"
+
+msgid "Weight Based"
+msgstr "중량 기반"
+
+msgid "Price Based"
+msgstr "가격 기반"
+
+msgid "Real-Time Carrier Rates"
+msgstr "실시간 운송사 요금"
+
+msgid "Local Pickup"
+msgstr "현지 픽업"
+
+msgid "Table Rate"
+msgstr "표 기반 요금"
+
+msgid "Method Type"
+msgstr "방법 유형"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "고정된 배송 비용 (flat_rate 유형에 해당)"
+
+msgid "Flat Rate Cost"
+msgstr "고정 요금"
+
+msgid "Minimum cart value to qualify"
+msgstr "적격 최소 장바구니 금액"
+
+msgid "Minimum Order Value"
+msgstr "최소 주문 금액"
+
+msgid "Maximum cart value to qualify"
+msgstr "적격 최대 장바구니 금액"
+
+msgid "Maximum Order Value"
+msgstr "최대 주문 금액"
+
+msgid "Minimum cart weight (kg)"
+msgstr "적격 최소 장바구니 무게 (kg)"
+
+msgid "Minimum Weight"
+msgstr "최소 무게"
+
+msgid "Maximum cart weight (kg)"
+msgstr "적격 최대 장바구니 무게 (kg)"
+
+msgid "Maximum Weight"
+msgstr "최대 무게"
+
+msgid "Shipping Zones"
+msgstr "배송 지역"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"이 배송 방법이 제공되는 지역. 비어 있는 경우 기존 국가/주 제한이 적용됩니다."
+
+msgid "Pickup Locations"
+msgstr "픽업 장소"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"이 배송 방법을 사용하여 고객이 주문을 수령할 수 있는 위치. 이는 "
+"'local_pickup' 방법 유형에만 적용됩니다."
+
+msgid "Minimum delivery time in business days"
+msgstr "영업일 기준 최소 배송 시간"
+
+msgid "Minimum Delivery Days"
+msgstr "최소 배송 일수"
+
+msgid "Maximum delivery time in business days"
+msgstr "영업일 기준 최대 배송 시간"
+
+msgid "Maximum Delivery Days"
+msgstr "최대 배송 일수"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "Font Awesome 아이콘 클래스 (예: 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "아이콘"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"미디어 라이브러리에서 가져온 사용자 정의 배송 방법 이미지. 제공된 경우 아이콘"
+"보다 우선 적용됩니다."
+
+msgid "Image"
+msgstr "이미지"
+
+msgid "Sort Order"
+msgstr "정렬 순서"
+
+msgid "Is Active"
+msgstr "활성 상태"
+
+msgid "Custom Carrier"
+msgstr "사용자 정의 운송사"
+
+msgid "Carrier"
+msgstr "운송사"
+
+msgid "Carrier-specific service code"
+msgstr "운송사별 서비스 코드"
+
+msgid "Carrier Service Code"
+msgstr "운송사 서비스 코드"
+
+msgid "Shipping Methods"
+msgstr "배송 방법"
+
+msgid "Shipping method is not active"
+msgstr "배송 방법이 비활성화됨"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "최소 주문 금액 {value}이(가) 필요합니다."
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "최대 주문 금액 {value}을(를) 초과했습니다."
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "최소 무게 {weight}kg이(가) 필요합니다."
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "최대 무게 {weight}kg을(를) 초과했습니다."
+
+msgid "Cart contains only digital products"
+msgstr "장바구니에 디지털 제품만 포함됨"
+
+msgid "Available"
+msgstr "사용 가능"
+
+msgid "No geographic restrictions"
+msgstr "지리적 제한 없음"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "{zone}에서 사용 가능"
+
+msgid "Not available in your location"
+msgstr "당신의 위치에서는 이용할 수 없음"
+
+msgid "Available worldwide"
+msgstr "전 세계에서 이용 가능"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "ISO 3166-1 알파-2 국가 코드"
+
+msgid "Country"
+msgstr "국가"
+
+msgid "State/Province/Region"
+msgstr "주 / 도 / 지역"
+
+msgid "State"
+msgstr "주"
+
+msgid "City name (optional)"
+msgstr "도시 이름 (선택 사항)"
+
+msgid "City"
+msgstr "도시"
+
+msgid "List of specific postal codes (optional)"
+msgstr "구체적인 우편번호 목록 (선택 사항)"
+
+msgid "Postal Codes"
+msgstr "우편번호"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "세율을 소수로 표시 (예: 0.0825로 8.25%)"
+
+msgid "Rate"
+msgstr "요금"
+
+msgid "Sales Tax"
+msgstr "판매세"
+
+msgid "Custom Tax"
+msgstr "사용자 정의 세금"
+
+msgid "Tax Type"
+msgstr "세금 유형"
+
+msgid "Apply tax to shipping costs"
+msgstr "배송 비용에 세금 적용"
+
+msgid "Applies to Shipping"
+msgstr "배송에 적용됨"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "기타 세금 위에 계산 (복합 세금)"
+
+msgid "Compound Tax"
+msgstr "복합 세금"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "이 세금에서 면제되는 제품 유형 (예: ['digital', 'service'])"
+
+msgid "Exempt Product Types"
+msgstr "세금 면제 제품 유형"
+
+msgid "Categories exempt from this tax"
+msgstr "이 세금에서 면제된 카테고리"
+
+msgid "Exempt Categories"
+msgstr "면제 카테고리"
+
+msgid "Higher priority rules take precedence"
+msgstr "우선순위가 높은 규칙이 우선 적용됨"
+
+msgid "Tax Rate"
+msgstr "세율"
+
+msgid "Tax Rates"
+msgstr "세율"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "유럽"
+
+msgid "North America"
+msgstr "북미"
+
+msgid "Asia Pacific"
+msgstr "아시아 태평양"
+
+msgid "Middle East"
+msgstr "중동"
+
+msgid "Africa"
+msgstr "아프리카"
+
+msgid "Latin America"
+msgstr "라틴아메리카"
+
+msgid "Oceania"
+msgstr "오세아니아"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "유일한 식별자 (예: eu_vat, us_sales_tax)"
+
+msgid "Key"
+msgstr "키"
+
+msgid "Font Awesome icon class"
+msgstr "Font Awesome 아이콘 클래스"
+
+msgid "Default Tax Type"
+msgstr "기본 세금 유형"
+
+msgid "Region"
+msgstr "지역"
+
+msgid "Version for tracking rate updates"
+msgstr "율 업데이트 추적을 위한 버전"
+
+msgid "Version"
+msgstr "버전"
+
+msgid "Last Updated"
+msgstr "마지막 업데이트"
+
+msgid "Tax Preset Group"
+msgstr "세금 사전 설정 그룹"
+
+msgid "Tax Preset Groups"
+msgstr "세금 사전 설정 그룹들"
+
+msgid "Preset Group"
+msgstr "사전 설정 그룹"
+
+msgid "Country Code"
+msgstr "국가 코드"
+
+msgid "Country Name"
+msgstr "국가 이름"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "주/도 코드 (미국/캐나다 사전 설정용)"
+
+msgid "State Code"
+msgstr "주 코드"
+
+msgid "State Name"
+msgstr "주 이름"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "세율을 소수로 표시 (예: 0.20로 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "선택적 메모 (예: '2025년 7월에 22% 상승')"
+
+msgid "Tax Preset Rate"
+msgstr "세금 사전 설정율"
+
+msgid "Tax Preset Rates"
+msgstr "세금 사전 설정율들"
+
+msgid "Billing Address"
+msgstr "청구 주소"
+
+msgid "Billing Same as Shipping"
+msgstr "배송 주소와 동일"
+
+msgid "Shipping Address Data"
+msgstr "배송 주소 데이터"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr "임시 배송 주소 데이터 (주문 완료 전에는 Address 모델에 저장되지 않음)"
+
+msgid "Billing Address Data"
+msgstr "청구 주소 데이터"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr "임시 요금 주소 데이터 (주문 완료 전에는 Address 모델에 저장되지 않음)"
+
+msgid "Selected Shipping Method"
+msgstr "선택된 배송 방식"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "가용 배송 방법과 요금의 캐시 목록"
+
+msgid "Available Shipping Methods"
+msgstr "가용 배송 방식"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "관할 구역별 세금 세부 정보"
+
+msgid "Tax Breakdown"
+msgstr "세금 세부 정보"
+
+msgid "Tax Amount"
+msgstr "세금 금액"
+
+msgid "Payment Provider"
+msgstr "결제 제공업체"
+
+msgid "Subtotal"
+msgstr "소계"
+
+msgid "Discount Amount"
+msgstr "할인 금액"
+
+msgid "Gift Card Discount"
+msgstr "선물 카드 할인"
+
+msgid "Total discount from applied gift cards"
+msgstr "적용된 선물 카드에서의 총 할인 금액"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "최종 합계: 소계 + 배송 + 세금 - 할인"
+
+msgid "Total Amount"
+msgstr "총 금액"
+
+msgid "Cart Review"
+msgstr "장바구니 검토"
+
+msgid "Billing Information"
+msgstr "청구 정보"
+
+msgid "Payment Method"
+msgstr "결제 수단"
+
+msgid "Order Review"
+msgstr "주문 검토"
+
+msgid "Step Completed"
+msgstr "단계 완료"
+
+msgid "Expires At"
+msgstr "만료 시간"
+
+msgid "Metadata"
+msgstr "메타데이터"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr "추가 메타데이터 (예: 마켓플레이스 구매 정보)"
+
+msgid "Checkout Session"
+msgstr "체크아웃 세션"
+
+msgid "Checkout Sessions"
+msgstr "체크아웃 세션들"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "{cart} 결제"
+
+msgid "Gift Card"
+msgstr "선물 카드"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "기본 통화 금액 (카트 계산에 사용됨)"
+
+msgid "Original Currency Amount"
+msgstr "원래 통화 금액"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr "선물 카드의 원래 통화로 표시된 할인 (외화 선물 카드용)"
+
+msgid "Exchange Rate"
+msgstr "환율"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "환율: 선물 카드 통화 -> 신청 시점의 기본 통화"
+
+msgid "Applied At"
+msgstr "적용 시간"
+
+msgid "Applied Gift Card"
+msgstr "적용된 선물 카드"
+
+msgid "Applied Gift Cards"
+msgstr "적용된 선물 카드들"
+
+msgid "This gift card cannot be used"
+msgstr "이 선물 카드는 사용할 수 없습니다."
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "할인 금액이 선물 카드 잔액을 초과합니다."
+
+msgid "Total customization price (per unit)"
+msgstr "총 커스터마이징 가격 (단위당)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "디지털 항목에는 'instant', 물리 항목에는 'shipping'"
+
+msgid "True if this item is a component of a bundle"
+msgstr "이 항목이 묶음의 구성 요소인지 여부"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "이 항목이 구성 요소인 경우 상위 묶음 CartItem의 ID"
+
+msgid "Child items if this is a bundle parent"
+msgstr "이 항목이 번들 부모인 경우 자식 항목"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr "고객이 선택한 변형에 대한 bundle_item_id를 variant_id로 매핑"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr "제외할 bundle_item_ids 목록(고객이 원하지 않는 선택 사항 항목용)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"구성 가능한 제품에 대한 선택된 option_ids의 목록을 slot_id에 매핑한 내용"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "설정 사전 설정 ID는 시작 지점으로 사용됩니다"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"예약 세부 정보: start_datetime, end_datetime, resource_id, persons, timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "수량은 최소 1이어야 합니다."
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "구독 구매에는 구독 플랜이 필요합니다"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "구독 구매에는 결제 토큰이 필요합니다"
+
+msgid "Product not found"
+msgstr "제품을 찾을 수 없습니다"
+
+msgid "This product does not support subscriptions"
+msgstr "이 상품은 구독을 지원하지 않습니다"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "잘못된 또는 비활성화된 구독 계획"
+
+msgid "This plan is not available for this product"
+msgstr "이 플랜은 이 제품에 사용할 수 없습니다."
+
+msgid "Invalid or inactive payment token"
+msgstr "잘못된 또는 비활성화된 결제 토큰"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "가격 계층이 발견되지 않거나 선택된 플랜에 속하지 않습니다."
+
+msgid "No pricing tier available for this plan"
+msgstr "이 플랜에 가격 계층이 없습니다"
+
+msgid "Quantity cannot be negative"
+msgstr "수량은 음수가 될 수 없습니다"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "선물 카드 코드 (예: GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "이 기프트 카드에서 적용된 금액 (기본 통화 기준)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "이 적용 후 선물 카드의 잔액"
+
+msgid "Base currency code"
+msgstr "기본 통화 코드"
+
+msgid "Gift card's native currency code"
+msgstr "기프트 카드의 본래 통화 코드"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr "기프트 카드의 본화 통화로 표시된 할인 금액 (외화 기프트 카드용)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr "address_id 또는 전체 주소 정보가 필요합니다. 누락됨: {fields}"
+
+msgid "This product requires customization"
+msgstr "이 제품은 맞춤 설정이 필요합니다"
+
+msgid "Invalid design token"
+msgstr "잘못된 디자인 토큰"
+
+msgid "Design not found or expired"
+msgstr "디자인을 찾을 수 없거나 만료됨"
+
+msgid "This product does not support customization"
+msgstr "이 제품은 커스터마이징을 지원하지 않습니다."
+
+msgid "Invalid customization option"
+msgstr "잘못된 맞춤 설정 옵션"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "사양 '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "필수 사양 '{name}'이(가) 누락되었습니다."
+
+msgid "Insufficient stock"
+msgstr "재고가 부족합니다"
+
+msgid "Bundle has no components configured"
+msgstr "번들에 구성 요소가 설정되지 않았습니다"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "선택이 필수인 번들 구성 요소: {name}을(를) 제외할 수 없습니다."
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "{name}에 대한 변형 선택이 필요합니다."
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "{name}에 대한 유효하지 않은 변형이 선택되었습니다."
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "번들 구성 요소 {name}의 재고가 부족합니다."
+
+msgid "Bundle quantity updated in cart"
+msgstr "번들 수량이 장바구니에 업데이트되었습니다"
+
+msgid "Bundle added to cart"
+msgstr "번들이 장바구니에 추가되었습니다"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "필수 슬롯 '{name}'에 선택된 항목이 없습니다."
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "슬롯 '{name}'은(는) 최소 {min}개의 선택 항목이 필요합니다."
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "슬롯 '{name}'은(는) 최대 {max}개의 선택 항목을 허용합니다."
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "잘못된 슬롯 ID: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "슬롯 '{slot}'에 대해 옵션 {opt_id}은(는) 유효하지 않습니다."
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr ""
+"슬롯 '{slot}'의 선택이 호환되지 않습니다. 다른 선택과 호환되지 않는 옵션이 있"
+"습니다."
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"슬롯 '{slot}'의 선택이 제외되었습니다. 다른 선택과 충돌하는 옵션이 있습니다."
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "구성 요소 {name}의 재고가 부족합니다."
+
+msgid "Configured product added to cart"
+msgstr "설정된 제품이 장바구니에 추가되었습니다"
+
+msgid "Either user or session_key must be provided"
+msgstr "사용자 또는 session_key 중 하나가 제공되어야 합니다."
+
+msgid "This product is no longer available"
+msgstr "이 상품은 더 이상 제공되지 않습니다"
+
+msgid "You must be logged in to purchase this product."
+msgstr "이 제품을 구매하려면 로그인해야 합니다."
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "이 제품은 먼저 \"%(required)s\"를 소유해야 합니다."
+
+msgid "Product variant not found"
+msgstr "제품 변형을 찾을 수 없습니다"
+
+msgid "Configuration is required for configurable products"
+msgstr "설정 가능한 제품에는 설정이 필요합니다."
+
+msgid "Booking added to cart"
+msgstr "예약이 장바구니에 추가됨"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "요청한 수량에 대한 재고가 부족합니다"
+
+msgid "Cart item quantity updated"
+msgstr "장바구니 항목 수량이 업데이트되었습니다"
+
+msgid "Item added to cart"
+msgstr "항목이 장바구니에 추가되었습니다"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr ""
+"구성 요소의 수량은 직접 변경할 수 없습니다. 대신 부모 제품을 업데이트하십시"
+"오."
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"카트에서 항목이 제거되었습니다. 또한 %(names)s도 제거되었습니다(필수품이 더 "
+"이상 카트에 없습니다)."
+
+msgid "Item removed from cart"
+msgstr "항목이 장바구니에서 제거되었습니다"
+
+msgid "Cart item updated"
+msgstr "장바구니 항목이 업데이트되었습니다"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr ""
+"구성 요소 항목은 직접 제거할 수 없습니다. 대신 부모 제품을 제거하십시오."
+
+msgid "Cart cleared"
+msgstr "장바구니가 비워졌습니다"
+
+msgid "Voucher removed"
+msgstr "쿠폰이 제거되었습니다"
+
+msgid "Voucher not found in cart"
+msgstr "장바구니에서 쿠폰을 찾을 수 없습니다"
+
+msgid "Gift card removed"
+msgstr "기프트 카드가 제거되었습니다"
+
+msgid "Gift card not found in cart"
+msgstr "장바구니에 선물 카드가 없습니다."
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count}개 항목이 장바구니에 병합되었습니다."
+
+msgid "Account creation required to proceed"
+msgstr "계정 생성이 필요합니다"
+
+msgid "Address not found"
+msgstr "주소를 찾을 수 없습니다"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "address_id 또는 address_data 중 하나가 제공되어야 합니다."
+
+msgid "Shipping address set"
+msgstr "배송 주소가 설정되었습니다"
+
+msgid "Billing address must be provided"
+msgstr "청구 주소가 제공되어야 합니다"
+
+msgid "Billing address set"
+msgstr "청구 주소가 설정되었습니다"
+
+msgid "Shipping address must be set first"
+msgstr "배송 주소를 먼저 설정해야 합니다."
+
+msgid "Shipping method not found"
+msgstr "배송 방법을 찾을 수 없습니다"
+
+msgid "Shipping method selected"
+msgstr "배송 방법이 선택되었습니다"
+
+msgid "Payment provider not found"
+msgstr "결제 제공업체를 찾을 수 없습니다"
+
+msgid "Payment provider is not properly configured"
+msgstr "결제 제공업체가 올바르게 구성되지 않았습니다."
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "귀하의 위치 또는 통화에 대해 결제 제공업체가 사용할 수 없습니다."
+
+msgid "Payment method selected"
+msgstr "결제 방법이 선택되었습니다"
+
+msgid "Cart is empty"
+msgstr "장바구니가 비어 있습니다"
+
+msgid "Shipping address is required"
+msgstr "배송 주소가 필요합니다"
+
+msgid "Shipping method is required"
+msgstr "배송 방법이 필요합니다"
+
+msgid "Billing address is required"
+msgstr "청구 주소가 필요합니다"
+
+msgid "Payment method is required"
+msgstr "결제 방법이 필요합니다"
+
+msgid "Checkout session has expired"
+msgstr "체크아웃 세션이 만료되었습니다"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "{product}의 재고가 부족합니다."
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\"은(는) \"%(required)s\"의 사전 소유가 필요합니다."
+
+msgid "Customer email is required"
+msgstr "고객 이메일이 필요합니다"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "주문을 위한 창고를 할당할 수 없습니다. 지원팀에 문의하십시오."
+
+msgid "Insufficient stock to complete order"
+msgstr "주문을 완료할 수 있는 재고가 부족합니다"
+
+msgid "Error processing order. Please try again."
+msgstr "주문 처리 중 오류가 발생했습니다. 다시 시도하십시오."
+
+msgid "Order created successfully"
+msgstr "주문이 성공적으로 생성되었습니다"
+
+msgid "Wishlist item updated"
+msgstr "위시리스트 항목이 업데이트되었습니다"
+
+msgid "Item added to wishlist"
+msgstr "항목이 위시리스트에 추가되었습니다"
+
+msgid "Item removed from wishlist"
+msgstr "항목이 위시리스트에서 제거되었습니다"
+
+msgid "Item moved to cart"
+msgstr "항목이 장바구니로 이동했습니다"
+
+msgid "Wishlist cleared"
+msgstr "위시리스트가 비워졌습니다"
+
+msgid "Wishlist with this name already exists"
+msgstr "이 이름의 위시리스트가 이미 존재합니다."
+
+msgid "Wishlist created"
+msgstr "위시리스트가 생성되었습니다"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "활성 및 포기된 고객의 장바구니를 모니터링합니다."
+
+msgid "Add"
+msgstr "추가"
+
+msgid "cart"
+msgstr "장바구니"
+
+msgid "Filters"
+msgstr "필터"
+
+msgid "Search"
+msgstr "검색"
+
+msgid "Search by user, session, or email..."
+msgstr "사용자, 세션 또는 이메일로 검색..."
+
+msgid "User Type"
+msgstr "사용자 유형"
+
+msgid "All Carts"
+msgstr "모든 장바구니"
+
+msgid "Registered Users"
+msgstr "등록된 사용자"
+
+msgid "Guest Carts"
+msgstr "방문자 장바구니"
+
+msgid "Cart Status"
+msgstr "장바구니 상태"
+
+msgid "All"
+msgstr "모두"
+
+msgid "Active (< 24h)"
+msgstr "활성 상태 (<24시간)"
+
+msgid "Abandoned (> 24h)"
+msgstr "포기됨 (>24시간)"
+
+msgid "Empty"
+msgstr "비어 있음"
+
+msgid "Has Shipping"
+msgstr "배송 포함"
+
+msgid "No Shipping"
+msgstr "배송 없음"
+
+msgid "Min Cart Value"
+msgstr "최소 장바구니 금액"
+
+msgid "Min value"
+msgstr "최소 금액"
+
+msgid "Max Cart Value"
+msgstr "최대 장바구니 금액"
+
+msgid "Max value"
+msgstr "최대 금액"
+
+msgid "Created From"
+msgstr "생성일 (시작)"
+
+msgid "Created To"
+msgstr "생성일 (종료)"
+
+msgid "Apply Filters"
+msgstr "필터 적용"
+
+msgid "Clear All"
+msgstr "모두 지우기"
+
+msgid "Run the selected action"
+msgstr "선택된 작업 실행"
+
+msgid "Go"
+msgstr "시작"
+
+msgid "of"
+msgstr "의"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s 장바구니"
+msgstr[1] "%(counter)s 장바구니"
+
+msgid "carts"
+msgstr "장바구니"
+
+msgid "Show all"
+msgstr "모두 보기"
+
+msgid "Save"
+msgstr "저장"
+
+msgid "Add Shipping Method"
+msgstr "배송 방법 추가"
+
+msgid "Configure a new shipping method for your store"
+msgstr "쇼핑몰에 새 배송 방법을 구성하십시오."
+
+msgid "Method Basics"
+msgstr "기본 정보"
+
+msgid "Eligibility"
+msgstr "적용 조건"
+
+msgid "Coverage"
+msgstr "범위"
+
+msgid "Features"
+msgstr "기능"
+
+msgid "Review"
+msgstr "검토"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "이 배송 방법의 핵심 식별자 및 유형을 정의합니다."
+
+msgid "Method Name"
+msgstr "배송 방법 이름"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "예: 표준 배송, 익스프레스 배송"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "이 배송 방법에 대한 고객용 이름"
+
+msgid "Optional description of this shipping method"
+msgstr "이 배송 방법의 선택적 설명"
+
+msgid "Display Icon"
+msgstr "아이콘 표시"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"미디어 라이브러리에서 이미지를 선택하거나 Font Awesome 아이콘을 선택하세요. "
+"두 가지 모두 제공할 경우 이미지가 우선 적용됩니다."
+
+msgid "Custom Image"
+msgstr "사용자 정의 이미지"
+
+msgid "Font Awesome Icon"
+msgstr "Font Awesome 아이콘"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "Font Awesome 라이브러리에서 아이콘을 선택하세요"
+
+msgid "Active"
+msgstr "활성"
+
+msgid "Make this method available to customers immediately"
+msgstr "이 방법을 즉시 고객에게 제공하세요"
+
+msgid "Method Type & Pricing"
+msgstr "배송 방법 유형 및 가격"
+
+msgid "Select method type..."
+msgstr "배송 방법 유형 선택..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "고정 배송비 - 플랫 레이트"
+
+msgid "Free Shipping - No charge"
+msgstr "무료 배송 - 요금 없음"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "중량 기반 - 장바구니 중량으로 계산"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "가격 기반 - 장바구니 소계로 계산"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr "실시간 운송업체 비용 - 운송업체에서 제공하는 실시간 비용"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "현지 픽업 - 고객이 위치에서 수령"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "테이블 기반 - 중량/가격/목적지에 기반한 복잡한 규칙"
+
+msgid "Method Types:"
+msgstr "배송 방법 유형:"
+
+msgid "Flat Rate:"
+msgstr "고정 요금:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "주문과 무관한 고정 배송비"
+
+msgid "Free Shipping:"
+msgstr "무료 배송:"
+
+msgid "No shipping charge"
+msgstr "배송 요금 없음"
+
+msgid "Weight/Price Based:"
+msgstr "무게/가격 기반:"
+
+msgid "Calculate using rate tables"
+msgstr "요금표를 사용하여 계산"
+
+msgid "Real-Time:"
+msgstr "실시간:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "USPS, FedEx, UPS 또는 DHL에서 실시간 비용을 받아옵니다"
+
+msgid "Local Pickup:"
+msgstr "현지 픽업:"
+
+msgid "Customer picks up at your location"
+msgstr "고객이 귀하의 위치에서 수령"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "고객에게 부과되는 고정 배송비"
+
+msgid "No Configured Providers"
+msgstr "설정된 제공업체 없음"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"이 방법 유형을 사용하기 전에 실시간 비용을 지원하는 최소한 하나의 배송 제공업"
+"체를 구성해야 합니다."
+
+msgid "Connect Provider"
+msgstr "제공업체 연결"
+
+msgid "Manage Providers"
+msgstr "제공업체 관리"
+
+msgid "Select a configured shipping provider"
+msgstr "설정된 배송 제공업체 선택"
+
+msgid "Tip:"
+msgstr "팁:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"위에 표시된 제공업체는 구성되어 있고 실시간 비용을 지원하는 제공업체입니다."
+
+msgid "Manage providers"
+msgstr "제공업체 관리"
+
+msgid "Service Code"
+msgstr "서비스 코드"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "운송업체에서 제공하는 특정 서비스 코드(선택 사항)"
+
+msgid "Cancel"
+msgstr "취소"
+
+msgid "Next Step"
+msgstr "다음 단계"
+
+msgid "Eligibility Conditions"
+msgstr "적용 조건"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr ""
+"장바구니의 가치와 중량을 기반으로 이 배송 방법이 언제 사용 가능한지 정의합니"
+"다."
+
+msgid "Order Value Restrictions"
+msgstr "주문 금액 제한"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr "이 방법에 대한 장바구니 소계의 최소값 또는 최대값을 설정합니다."
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "장바구니 소계가 이 금액 이상일 때만 이 방법이 사용 가능합니다"
+
+msgid "No maximum"
+msgstr "최대 제한 없음"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "장바구니 소계가 이 금액 미만일 때만 이 방법이 사용 가능합니다"
+
+msgid "Examples:"
+msgstr "예시:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr "$50 이상 주문에 대한 무료 배송: 최소값을 50.00으로 설정"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr "$100 미만 주문에 대한 경제 배송: 최대값을 100.00으로 설정"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr "$25-$200 주문에 대한 표준 배송: 최소값과 최대값 모두 설정"
+
+msgid "Weight Restrictions"
+msgstr "무게 제한"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr "이 방법에 대한 총 장바구니 중량의 최소값 또는 최대값을 설정합니다."
+
+msgid "Minimum Weight (kg)"
+msgstr "최소 무게 (kg)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr "총 장바구니 중량이 이 값 이상일 때만 이 방법이 사용 가능합니다"
+
+msgid "Maximum Weight (kg)"
+msgstr "최대 무게 (kg)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr "총 장바구니 중량이 이 값 미만일 때만 이 방법이 사용 가능합니다"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "2kg 미만의 패키지에 대한 가벼운 배송: 최대값을 2.00으로 설정"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr "20kg 이상의 패키지에 대한 무거운 화물: 최소값을 20.00으로 설정"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr "0.5kg-10kg의 패키지에 대한 표준 배송: 최소값과 최대값 모두 설정"
+
+msgid "Additional Options"
+msgstr "추가 옵션"
+
+msgid "Requires Shipping Address"
+msgstr "배송 주소 필요"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"이 방법을 사용하려면 고객이 배송 주소를 제공해야 합니다(디지털 상품 또는 현"
+"지 픽업의 경우 비활성화 가능)"
+
+msgid "Previous"
+msgstr "이전"
+
+msgid "Geographic Coverage"
+msgstr "지리적 범위"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr "배송 구역을 사용하여 이 배송 방법이 제공되는 위치를 정의합니다."
+
+msgid "Zone-Based Coverage:"
+msgstr "지역 기반 배송 범위:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"유연한, 규칙 기반의 지리적 범위를 위해 배송 구역을 사용하세요. 이 접근 방식"
+"은 배송 규칙과 완벽하게 호환되며, 제공되는 방법의 위치를 정확하게 제어할 수 "
+"있습니다."
+
+msgid "Select Shipping Zones"
+msgstr "배송 지역 선택"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"이 방법이 제공되는 배송 구역을 선택하세요. 전 세계적으로 제공하려면 비워 두세"
+"요."
+
+msgid "Available Zones"
+msgstr "사용 가능한 지역"
+
+msgid "Add selected zones"
+msgstr "선택한 지역 추가"
+
+msgid "Add all zones"
+msgstr "모든 지역 추가"
+
+msgid "Remove selected zones"
+msgstr "선택한 지역 제거"
+
+msgid "Remove all zones"
+msgstr "모든 지역 제거"
+
+msgid "Selected Zones"
+msgstr "선택한 지역"
+
+msgid "No shipping zones found!"
+msgstr "배송 지역을 찾을 수 없습니다!"
+
+msgid "You need to create shipping zones first."
+msgstr "먼저 배송 구역을 생성해야 합니다."
+
+msgid "Create a shipping zone"
+msgstr "배송 지역 생성"
+
+msgid "Method Features"
+msgstr "방법 기능"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr "배송 예상 시간, 표시 순서, 방법별 기능을 구성합니다."
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr "고객이 주문을 수령할 수 있는 물리적 위치를 선택하세요."
+
+msgid "Available Pickup Locations"
+msgstr "사용 가능한 픽업 위치"
+
+msgid "Available Locations"
+msgstr "사용 가능한 위치"
+
+msgid "Selected Locations"
+msgstr "선택한 위치"
+
+msgid "No pickup locations found!"
+msgstr "픽업 위치를 찾을 수 없습니다!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr "현지 픽업 방법을 위해 먼저 픽업 위치를 생성해야 합니다."
+
+msgid "Create a pickup location"
+msgstr "픽업 위치 생성"
+
+msgid "Carrier API Status"
+msgstr "운송업체 API 상태"
+
+msgid "Carrier:"
+msgstr "운송업체:"
+
+msgid "Service Code:"
+msgstr "서비스 코드:"
+
+msgid "API Configuration Status"
+msgstr "API 구성 상태"
+
+msgid "Checking API credentials..."
+msgstr "API 인증 정보 확인 중..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr ""
+"배송 제공업체 설정에 운송업체 API 자격 증명이 구성되어 있는지 확인하세요."
+
+msgid "Enable Rate Caching"
+msgstr "요금 캐싱 활성화"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"성능을 향상시키고 API 호출을 줄이기 위해 운송업체 비용을 15분 동안 캐시합니다"
+
+msgid "Rate Table Configuration"
+msgstr "요금표 구성"
+
+msgid "Weight-Based Rates:"
+msgstr "중량 기반 요금:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr ""
+"방법이 생성된 후 장바구니 중량 기반의 계층형 비용을 구성할 수 있습니다."
+
+msgid "Price-Based Rates:"
+msgstr "가격 기반 요금:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"방법이 생성된 후 장바구니 소계 기반의 계층형 비용을 구성할 수 있습니다."
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr "생성 후 방법의 편집 페이지에서 비용 표을 관리할 수 있습니다."
+
+msgid "Delivery Time Estimate"
+msgstr "배송 시간 추정"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "고객에게 예상 배송 시간을 제공합니다."
+
+msgid "Fastest delivery time in business days"
+msgstr "영업일 기준 가장 빠른 배송 시간"
+
+msgid "Slowest delivery time in business days"
+msgstr "영업일 기준 가장 느린 배송 시간"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "표준 배송: 3-5 영업일"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "익스프레스 배송: 1-2 영업일"
+
+msgid "International shipping: 7-14 business days"
+msgstr "국제 배송: 7-14 영업일"
+
+msgid "Display Settings"
+msgstr "표시 설정"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr ""
+"작은 숫자가 먼저 표시됩니다. 이 기능을 사용하여 고객에게 방법이 표시되는 순서"
+"를 제어할 수 있습니다."
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"기존 방법들 사이에 새로운 방법을 쉽게 삽입할 수 있도록 10 단위(0, 10, 20)로 "
+"정렬 순서를 할당합니다."
+
+msgid "Review & Create"
+msgstr "검토 및 생성"
+
+msgid "API credentials verified successfully"
+msgstr "API 인증 정보가 성공적으로 확인되었습니다"
+
+msgid "Review your shipping method configuration and create it."
+msgstr "배송 방법 설정을 검토하고 생성하세요."
+
+msgid "Edit"
+msgstr "편집"
+
+msgid "Name:"
+msgstr "이름:"
+
+msgid "Method Type:"
+msgstr "방법 유형:"
+
+msgid "Description:"
+msgstr "설명:"
+
+msgid "Display Icon:"
+msgstr "표시 아이콘:"
+
+msgid "Status:"
+msgstr "상태:"
+
+msgid "Inactive"
+msgstr "비활성"
+
+msgid "Flat Rate Cost:"
+msgstr "고정 요금:"
+
+msgid "Min Order Value:"
+msgstr "최소 주문 금액:"
+
+msgid "Max Order Value:"
+msgstr "최대 주문 금액:"
+
+msgid "Min Weight:"
+msgstr "최소 무게:"
+
+msgid "Max Weight:"
+msgstr "최대 무게:"
+
+msgid "Requires Shipping Address:"
+msgstr "배송 주소 필요:"
+
+msgid "Yes"
+msgstr "예"
+
+msgid "No"
+msgstr "아니오"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr ""
+"적격 조건이 설정되지 않았습니다 - 모든 장바구니 값 및 무게에 대해 방법이 사"
+"용 가능합니다."
+
+msgid "Shipping Zones:"
+msgstr "배송 지역:"
+
+msgid "Coverage:"
+msgstr "범위:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "전 세계 (지역 선택 없음)"
+
+msgid "Pickup Locations:"
+msgstr "픽업 위치:"
+
+msgid "location"
+msgstr "위치"
+
+msgid "Delivery Time:"
+msgstr "배송 시간:"
+
+msgid "Instant Pickup"
+msgstr "즉시 픽업"
+
+msgid "Delivery Estimate:"
+msgstr "배송 추정:"
+
+msgid "business days"
+msgstr "영업일"
+
+msgid "Sort Order:"
+msgstr "정렬 순서:"
+
+msgid "Rate Caching:"
+msgstr "요금 캐싱:"
+
+msgid "Enabled"
+msgstr "활성화됨"
+
+msgid "What happens next:"
+msgstr "다음 단계:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "위의 설정으로 배송 방법이 생성됩니다."
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "이 방법의 요금표를 구성하도록 리디렉션됩니다."
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr "고객에게 즉시 제공됩니다(적격 조건이 충족될 경우)."
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr "이 방법은 비활성 상태로 생성됩니다 - 준비가 되면 이를 활성화하십시오."
+
+msgid "Create Shipping Method"
+msgstr "배송 방법 생성"
+
+msgid "Creating..."
+msgstr "생성 중..."
+
+msgid "Session"
+msgstr "세션"
+
+msgid "Registered"
+msgstr "등록됨"
+
+msgid "Guest"
+msgstr "방문자"
+
+msgid "item"
+msgstr "항목"
+
+msgid "Shipping Set"
+msgstr "배송 설정"
+
+msgid "Cart Total"
+msgstr "장바구니 합계"
+
+msgid "Items"
+msgstr "항목"
+
+msgid "Savings"
+msgstr "할인 금액"
+
+msgid "Shipping"
+msgstr "배송"
+
+msgid "Grand Total"
+msgstr "총 합계"
+
+msgid "Updated"
+msgstr "업데이트됨"
+
+msgid "ago"
+msgstr "전"
+
+msgid "Created"
+msgstr "생성일"
+
+msgid "Est. Delivery"
+msgstr "예상 배송"
+
+msgid "View cart details"
+msgstr "장바구니 상세 보기"
+
+msgid "Edit cart"
+msgstr "장바구니 편집"
+
+msgid "Delete cart"
+msgstr "장바구니 삭제"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "이 장바구니를 비우시겠습니까?"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "기준에 맞는 쇼핑 카트를 찾을 수 없습니다."
+
+msgid "Try adjusting your filters or search terms."
+msgstr "필터 또는 검색어를 조정해 보세요."
+
+msgid "Edit Shipping Method"
+msgstr "배송 방식 편집"
+
+msgid "Save and continue editing"
+msgstr "저장하고 편집 계속"
+
+msgid "Please correct the errors below"
+msgstr "아래의 오류를 수정해 주세요"
+
+msgid "Basic"
+msgstr "기본"
+
+msgid "Pricing"
+msgstr "가격"
+
+msgid "Display"
+msgstr "표시"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "선택 사항: 주문 금액 또는 무게에 따라 가용성을 제한합니다."
+
+msgid "Delivery Time"
+msgstr "배송 시간"
+
+msgid "Display Options"
+msgstr "표시 옵션"
+
+msgid "Carrier Integration"
+msgstr "운송업체 통합"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr "실시간 요금 조회를 위한 운송사별 설정을 구성합니다."
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "배송 옵션, 요금 및 배송 방법을 구성하세요."
+
+msgid "method"
+msgstr "방법"
+
+msgid "active"
+msgstr "활성"
+
+msgid "Add Method"
+msgstr "방법 추가"
+
+msgid "Bulk Actions"
+msgstr "대량 작업"
+
+msgid "Enable Selected"
+msgstr "선택한 항목 활성화"
+
+msgid "Disable Selected"
+msgstr "선택한 항목 비활성화"
+
+msgid "Delete Selected"
+msgstr "선택한 항목 삭제"
+
+msgid "Apply"
+msgstr "적용"
+
+msgid "selected"
+msgstr "선택됨"
+
+msgid "All Status"
+msgstr "모든 상태"
+
+msgid "All Types"
+msgstr "모든 유형"
+
+msgid "Real-Time Rates"
+msgstr "실시간 요금"
+
+msgid "Clear all filters"
+msgstr "모든 필터 초기화"
+
+msgid "Clear Filters"
+msgstr "필터 초기화"
+
+msgid "Search methods..."
+msgstr "방법 검색..."
+
+msgid "Select All"
+msgstr "모두 선택"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s 방법"
+msgstr[1] "%(counter)s 방법"
+
+msgid "No shipping methods found"
+msgstr "배송 방법을 찾을 수 없습니다"
+
+msgid "Try adjusting your filters or search query."
+msgstr "필터를 조정하거나 검색 쿼리를 시도해 보세요."
+
+msgid "Get started by creating your first shipping method."
+msgstr "첫 번째 배송 방법을 생성하여 시작하세요."
+
+msgid "Add First Method"
+msgstr "첫 번째 방법 추가"
+
+msgid "Loading..."
+msgstr "로딩 중..."
+
+msgid "Order Value:"
+msgstr "주문 금액:"
+
+msgid "Weight:"
+msgstr "무게:"
+
+msgid "Zones:"
+msgstr "지역:"
+
+msgid "zone"
+msgstr "지역"
+
+msgid "Countries:"
+msgstr "국가:"
+
+msgid "country"
+msgstr "국가"
+
+msgid "Worldwide"
+msgstr "전 세계"
+
+msgid "Pickup:"
+msgstr "픽업:"
+
+msgid "Delivery:"
+msgstr "배송:"
+
+msgid "Edit method"
+msgstr "방법 편집"
+
+msgid "Toggle active status"
+msgstr "활성 상태 전환"
+
+msgid "Delete method"
+msgstr "방법 삭제"
+
+msgid "Edit Tax Rate"
+msgstr "세율 편집"
+
+msgid "Add Tax Rate"
+msgstr "세율 추가"
+
+msgid "Geography"
+msgstr "지리"
+
+msgid "Rules"
+msgstr "규칙"
+
+msgid "Exemptions"
+msgstr "면제 항목"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"이 세율이 적용되는 곳을 정의합니다. 국가 전체에 적용되는 세율의 경우 주/도시"
+"를 비워 두세요."
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "이 세율에서 특정 상품 유형 또는 범주를 제외합니다."
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"상점을 위한 세금 규칙을 구성하세요. 체크아웃 시 세율이 고객 주소와 일치합니"
+"다."
+
+msgid "Load Presets"
+msgstr "사전 설정 불러오기"
+
+msgid "Total Rules"
+msgstr "총 규칙"
+
+msgid "Countries"
+msgstr "국가"
+
+msgid "Tax Types"
+msgstr "세금 유형"
+
+msgid "Search by name, country, state..."
+msgstr "이름, 국가, 주로 검색..."
+
+msgid "All Countries"
+msgstr "모든 국가"
+
+msgid "Custom"
+msgstr "사용자 정의"
+
+msgid "Status"
+msgstr "상태"
+
+msgid "Clear"
+msgstr "지우기"
+
+msgid "Tax Rules"
+msgstr "세금 규칙"
+
+msgid "rules"
+msgstr "규칙"
+
+msgid "Load Tax Rate Presets"
+msgstr "세율 사전설정 불러오기"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr ""
+"지역에 대한 표준 세율을 빠르게 추가하세요. 기존 세율은 중복되지 않습니다."
+
+msgid "rates"
+msgstr "세율"
+
+msgid "Load"
+msgstr "불러오기"
+
+msgid "Close"
+msgstr "닫기"
+
+msgid "postal codes"
+msgstr "우편번호"
+
+msgid "Shipping Taxed"
+msgstr "배송 세금"
+
+msgid "Compound"
+msgstr "복합"
+
+msgid "Delete"
+msgstr "삭제"
+
+msgid "No tax rates configured"
+msgstr "설정된 세율이 없습니다"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"'사전 설정 불러오기'를 사용하여 지역에 대한 표준 세율을 빠르게 추가하거나 수"
+"동으로 추가할 수 있습니다."
+
+msgid "Get current cart"
+msgstr "현재 카트 가져오기"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"인증된 사용자 또는 세션의 현재 카트를 가져옵니다. 카트 항목, 소계, 할인, 세"
+"금 및 총액을 반환합니다. 카트가 존재하지 않으면 자동으로 생성합니다."
+
+msgid "Add item to cart"
+msgstr "항목을 카트에 추가"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"지정된 수량으로 제품을 장바구니에 추가합니다. 선택적으로 변형 ID, 맞춤 설정 "
+"및 메모를 포함할 수 있습니다. 재고 가용성을 검증하고, 동일한 제품/변형의 기"
+"존 장바구니 항목과 병합합니다. 구독 제품인 경우 subscription_plan_id, "
+"payment_token_id와 함께 is_subscription=true를 포함하고, 선택적으로 "
+"pricing_tier_id도 포함할 수 있습니다."
+
+msgid "Update cart item"
+msgstr "카트 항목 업데이트"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"카트 항목의 수량, 커스터마이제이션 또는 메모를 업데이트합니다. 새 수량이 재"
+"고 가용성과 일치하는지 검증합니다. 업데이트된 카트와 재계산된 총액을 반환합니"
+"다."
+
+msgid "Remove cart item"
+msgstr "장바구니 항목 삭제"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"카트에서 특정 항목을 제거합니다. 카트 총액을 재계산하고, 새 카트 총액에 따라 "
+"적용된 바우처를 다시 검증합니다."
+
+msgid "Clear cart"
+msgstr "장바구니 비우기"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"장바구니에서 모든 항목을 제거합니다. 적용된 할인 쿠폰도 함께 제거됩니다. 장바"
+"구니 객체는 유지되지만 내용물은 비게 됩니다."
+
+msgid "Apply voucher code"
+msgstr "할인 코드 적용"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"장바구니에 할인 쿠폰 코드를 적용합니다. 쿠폰 사용 가능 여부, 최소 구매 금액, "
+"사용 횟수 제한 등을 검증한 후 장바구니 총액에 할인을 적용합니다."
+
+msgid "Remove voucher"
+msgstr "할인 쿠폰 삭제"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"코드를 통해 장바구니에서 특정 바우처를 제거합니다. 바우처 할인 없이 장바구니 "
+"총액을 재계산합니다. 사용자가 자격이 있을 경우 이후에 다시 바우처를 적용할 "
+"수 있습니다."
+
+msgid "Apply gift card"
+msgstr "선물 카드 적용"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"장바구니에 선물 카드 코드를 적용합니다. 선물 카드의 상태, 잔액 및 통화를 검증"
+"합니다. 선물 카드는 다른 선물 카드를 구매하는 데 사용할 수 없습니다. 적용 금"
+"액은 선물 카드 잔액 또는 남은 장바구니 총액에 한합니다."
+
+msgid "Remove gift card"
+msgstr "선물 카드 삭제"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"코드를 통해 장바구니에서 특정 선물 카드를 제거합니다. 결제가 완료되기 전까지 "
+"선물 카드 잔액은 영향을 받지 않습니다. 사용자는 선물 카드를 다시 적용할 수 있"
+"습니다."
+
+msgid "Get cart summary"
+msgstr "장바구니 요약 가져오기"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"아이템 수량, 소계 및 총액을 포함한 가벼운 장바구니 요약 정보를 가져옵니다. 전"
+"체 장바구니 엔드포인트보다 더 빠릅니다. 헤더 장바구니 배지나 빠른 총액 표시"
+"에 유용합니다."
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"구성 요소 항목은 직접 수정할 수 없습니다. 대신 부모 제품을 업데이트하세요."
+
+msgid "List user wishlists"
+msgstr "사용자 위시리스트 목록"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"인증된 사용자의 모든 위시리스트를 가져옵니다. 사용자는 '생일', '결혼식', '아"
+"이디어'와 같은 다양한 목적에 따라 여러 개의 위시리스트를 가질 수 있습니다. 위"
+"시리스트 이름, 항목 수, 프라이버시 설정을 반환합니다."
+
+msgid "Create wishlist"
+msgstr "위시리스트 생성"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"인증된 사용자를 위한 새로운 위시리스트를 생성합니다. 이름, 설명, 프라이버시 "
+"설정(공개/비공개)을 지정합니다. 공개 위시리스트는 URL을 통해 공유할 수 있습니"
+"다."
+
+msgid "Get wishlist details"
+msgstr "위시리스트 세부 정보 가져오기"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"특정 위시리스트에 대한 상세 정보를 가져옵니다. 모든 항목, 가격, 재고 상태 및 "
+"공유 설정이 포함됩니다. 공유된 경우에만 외부 사용자에게 접근 가능하며, 그렇"
+"지 않으면 위시리스트 소유자만 접근할 수 있습니다."
+
+msgid "Update wishlist"
+msgstr "위시리스트 업데이트"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"위시리스트의 이름, 설명, 또는 개인정보 설정을 포함한 정보를 업데이트합니다. "
+"위시리스트를 공개 또는 비공개로 설정할 수 있습니다. 업데이트는 위시리스트 소"
+"유자만 수행할 수 있습니다."
+
+msgid "Partially update wishlist"
+msgstr "위시리스트 부분 업데이트"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"전체 위시리스트 데이터를 보내지 않고 특정 위시리스트 필드를 업데이트합니다. "
+"개인정보 보호 설정 변경이나 위시리스트 이름 변경 등에 유용합니다."
+
+msgid "Delete wishlist"
+msgstr "위시리스트 삭제"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"위시리스트와 모든 항목을 영구적으로 삭제합니다. 되돌릴 수 없습니다. 오직 소유"
+"자만 삭제할 수 있습니다."
+
+msgid "Add item to wishlist"
+msgstr "아이템을 위시리스트에 추가"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"선택적으로 변형, 수량 및 메모를 포함하여 제품을 위시리스트에 추가합니다. 중복"
+"을 방지합니다. 기본 위시리스트에 추가하거나 위시리스트 ID를 지정할 수 있습니"
+"다."
+
+msgid "Remove item from wishlist"
+msgstr "아이템을 위시리스트에서 제거"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"위시리스트에서 특정 항목을 제거합니다. 이후 다시 추가할 수 있습니다. 제품의 "
+"가용성에는 영향을 주지 않습니다."
+
+msgid "Move item to cart"
+msgstr "아이템을 장바구니로 이동"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"위시리스트 항목을 바로 쇼핑 카트로 이동합니다. 재고 가용성을 확인합니다. 카트"
+"에 성공적으로 추가된 후 위시리스트에서 항목이 제거됩니다."
+
+msgid "Get public wishlist by share slug"
+msgstr "공유 슬러그로 공개 위시리스트 가져오기"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"공유 URL 슬러그를 사용하여 공개 위시리스트를 보세요. 링크를 가진 사람은 누구"
+"나 공개 위시리스트를 볼 수 있습니다. 선물 등록 및 가족/친구와 공유하는 위시리"
+"스트에 유용합니다."
+
+msgid "ID of the wishlist item to remove"
+msgstr "삭제할 위시리스트 항목의 ID"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "카트로 이동할 위시리스트 항목의 ID"
+
+msgid "Share slug of the public wishlist"
+msgstr "공개 위시리스트의 공유 슬러그"
+
+msgid "Wishlist not found"
+msgstr "위시리스트를 찾을 수 없습니다"
+
+msgid "Get checkout session"
+msgstr "체크아웃 세션 가져오기"
+
+msgid "Set shipping address"
+msgstr "배송 주소 설정"
+
+msgid "Set billing address"
+msgstr "청구 주소 설정"
+
+msgid "Get available shipping methods"
+msgstr "사용 가능한 배송 방식 가져오기"
+
+msgid "Get available payment providers"
+msgstr "사용 가능한 결제 제공업체 가져오기"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"고객의 국가 및 통화에 사용 가능한 결제 제공업체를 반환합니다. 배송 국가, 제공"
+"업체 기능 및 상인 설정을 기준으로 필터링됩니다."
+
+msgid "Set shipping method"
+msgstr "배송 방식 설정"
+
+msgid "Set payment method"
+msgstr "결제 방식 설정"
+
+msgid "Validate checkout"
+msgstr "체크아웃 검증"
+
+msgid "Complete checkout"
+msgstr "체크아웃 완료"
+
+msgid "Get recently viewed products"
+msgstr "최근 본 상품 가져오기"
+
+msgid "Get recently viewed details"
+msgstr "최근 본 상세 정보 가져오기"
+
+msgid "List shipping methods"
+msgstr "배송 방법 목록"
+
+msgid "Get shipping method details"
+msgstr "배송 방법 상세 정보 가져오기"
+
+msgid "List tax rates"
+msgstr "세율 목록"
+
+msgid "Get tax rate details"
+msgstr "세율 세부 정보 가져오기"
+
+msgid "Create tax rate"
+msgstr "세율 생성"
+
+msgid "Update tax rate"
+msgstr "세율 업데이트"
+
+msgid "Partial update tax rate"
+msgstr "세율 부분 업데이트"
+
+msgid "Delete tax rate"
+msgstr "세율 삭제"
+
+msgid "Calculate applicable taxes"
+msgstr "적용 가능한 세금 계산"
+
+msgid "Tax rates grouped by country"
+msgstr "국가별로 그룹화된 세율"
+
+msgid "Load preset tax rates"
+msgstr "사전 설정 세율 로드"
+
+msgid "List tax preset groups"
+msgstr "세율 사전 설정 그룹 목록"
+
+msgid "Get preset group details"
+msgstr "사전 설정 그룹 세부 정보 가져오기"
+
+msgid "List rates in a preset group"
+msgstr "사전 정의된 그룹에 있는 요율을 목록으로 표시"

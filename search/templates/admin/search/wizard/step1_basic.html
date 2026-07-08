@@ -1,0 +1,67 @@
+{% extends "admin/search/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Basic Information" %}</h2>
+    <p class="step-description">{% trans "Give your search engine a name and identifier. The slug will be used in URLs and API calls." %}</p>
+
+    <form method="post" id="wizard-form">
+        {% csrf_token %}
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="id_name">{% trans "Engine Name" %} <span class="required">*</span></label>
+                <input type="text" name="name" id="id_name" class="form-control"
+                       value="{{ wizard_data.name|default:'' }}"
+                       placeholder="{% trans 'e.g., Shop Search, Blog Search' %}" required>
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "A friendly name to identify this search engine." %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="id_slug">{% trans "Slug" %}</label>
+                <input type="text" name="slug" id="id_slug" class="form-control"
+                       value="{{ wizard_data.slug|default:'' }}"
+                       placeholder="{% trans 'e.g., shop-search, blog-search' %}">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "URL-safe identifier. Leave blank to auto-generate from the name." %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_active" {% if wizard_data.is_active or not wizard_data %}checked{% endif %}>
+                    {% trans "Active" %}
+                </label>
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Inactive engines won't be available for search queries." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Tip" %}</strong>
+                <p>{% trans "You can create multiple engines for different purposes. For example, a 'Shop Search' for products and a 'Blog Search' for articles." %}</p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:search_searchengine_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="wizard-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

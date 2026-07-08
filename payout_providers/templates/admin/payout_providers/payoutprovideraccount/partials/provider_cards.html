@@ -1,0 +1,14 @@
+{% load i18n %}
+{% if providers %}
+<div class="providers-grid">
+    {% for provider in providers %}
+        {% include "admin/payout_providers/payoutprovideraccount/provider_card.html" %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-money-bill-transfer"></i>
+    <h2>{% trans "No payout provider accounts found" %}</h2>
+    <p>{% trans "Try adjusting your filters or search terms." %}</p>
+</div>
+{% endif %}

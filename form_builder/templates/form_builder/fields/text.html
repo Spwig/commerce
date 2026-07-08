@@ -1,0 +1,10 @@
+<input type="text"
+       id="field-{{ field.field_name }}"
+       name="{{ field.field_name }}"
+       {% if field.translated_placeholder %}placeholder="{{ field.translated_placeholder }}"{% endif %}
+       {% if field.is_required %}required{% endif %}
+       {% if field.min_length %}minlength="{{ field.min_length }}"{% endif %}
+       {% if field.max_length %}maxlength="{{ field.max_length }}"{% endif %}
+       {% if field.validation_regex %}pattern="{{ field.validation_regex }}"{% endif %}
+       {% if field.default_value %}value="{{ field.default_value }}"{% endif %}
+       class="form-input">

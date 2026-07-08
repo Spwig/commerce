@@ -1,0 +1,170 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static humanize %}
+
+{% block title %}{% trans "Feed Sync Logs" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {# Page Header #}
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-history"></i>
+                {% trans "Feed Sync Logs" %}
+            </h1>
+            <p class="subtitle">{% trans "Monitor product feed synchronization history and troubleshoot errors" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'product_feeds:dashboard' %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Dashboard" %}
+            </a>
+        </div>
+    </div>
+
+    {# Stats #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-list"></i></div>
+            <div class="value">{{ total_count|default:"0" }}</div>
+            <div class="label">{% trans "Total Syncs" %}</div>
+            <small class="stat-meta">{% trans "all time" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-percentage"></i></div>
+            <div class="value">{{ success_rate|default:"0" }}%</div>
+            <div class="label">{% trans "Success Rate" %}</div>
+            <small class="stat-meta">{% trans "completed successfully" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ avg_duration|default:"0"|floatformat:0 }}s</div>
+            <div class="label">{% trans "Avg Duration" %}</div>
+            <small class="stat-meta">{% trans "average sync time" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-box"></i></div>
+            <div class="value">{{ total_products_synced|default:"0" }}</div>
+            <div class="label">{% trans "Products Synced" %}</div>
+            <small class="stat-meta">{% trans "total processed" %}</small>
+        </div>
+    </div>
+
+    {# Filters Panel #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            {# Search #}
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Account name, error message...' %}"
+                    value="">
+            </div>
+
+            {# Status Filter #}
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                    <option value="running">{% trans "Running" %}</option>
+                    <option value="success">{% trans "Success" %}</option>
+                    <option value="partial">{% trans "Partial" %}</option>
+                    <option value="failed">{% trans "Failed" %}</option>
+                </select>
+            </div>
+
+            {# Sync Type Filter #}
+            <div class="filter-field">
+                <label for="filter-sync-type">
+                    <i class="fas fa-sync"></i> {% trans "Sync Type" %}
+                </label>
+                <select id="filter-sync-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="full">{% trans "Full" %}</option>
+                    <option value="incremental">{% trans "Incremental" %}</option>
+                    <option value="manual">{% trans "Manual" %}</option>
+                    <option value="scheduled">{% trans "Scheduled" %}</option>
+                </select>
+            </div>
+
+            {# Account Filter #}
+            <div class="filter-field">
+                <label for="filter-account">
+                    <i class="fas fa-building"></i> {% trans "Account" %}
+                </label>
+                <select id="filter-account">
+                    <option value="">{% trans "All Accounts" %}</option>
+                    {% for account in feed_accounts %}
+                    <option value="{{ account.id }}">{{ account.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Results Info #}
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-history"></i>
+            <span id="log-count">{{ cl.result_count|default:logs|length }}</span>
+            {% trans "log" %}{{ cl.result_count|default:logs|length|pluralize }}
+        </span>
+    </div>
+
+    {# Sync Log Cards Results (no checkboxes - read-only) #}
+    <div id="log-results">
+        {% include "admin/product_feeds/feedsynclog/partials/log_cards.html" with logs=logs %}
+    </div>
+
+    {# Pagination #}
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 log{% plural %}{{ counter }} logs{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'logs' %}
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+
+<div id="feed-sync-log-config" class="hidden"
+     data-filter-url="{% url 'product_feeds:filter_sync_logs' %}"
+     data-results-container="log-results"
+     data-results-count="log-count"
+     data-running-count="{{ running_count|default:0 }}"></div>
+<script src="{% static 'product_feeds/admin/js/feed-sync-log-list.js' %}"></script>
+{% endblock %}

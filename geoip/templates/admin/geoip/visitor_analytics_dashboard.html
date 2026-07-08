@@ -1,0 +1,260 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Visitor Analytics" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'geoip/admin/css/visitor-analytics.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-chart-bar"></i>
+            {% trans "Visitor Analytics" %}
+        </h1>
+        <div class="d-flex gap-2">
+            <button class="va-period-btn {% if period == '7_days' %}active{% endif %}" data-period="7_days">{% trans "7 Days" %}</button>
+            <button class="va-period-btn {% if period == '30_days' %}active{% endif %}" data-period="30_days">{% trans "30 Days" %}</button>
+            <button class="va-period-btn {% if period == '90_days' %}active{% endif %}" data-period="90_days">{% trans "90 Days" %}</button>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-eye"></i></div>
+            <div class="value" id="kpi-total-views">{{ overview.total_views|default:0 }}</div>
+            <div class="label">{% trans "Total Page Views" %}</div>
+        </div>
+        <div class="dashboard-stat-card stat-card-primary">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value" id="kpi-unique-visitors">{{ overview.unique_visitors|default:0 }}</div>
+            <div class="label">{% trans "Unique Visitors" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-arrow-right-from-bracket"></i></div>
+            <div class="value" id="kpi-bounce-rate">{{ overview.bounce_rate|default:0 }}%</div>
+            <div class="label">{% trans "Bounce Rate" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-file-lines"></i></div>
+            <div class="value" id="kpi-avg-pages">{{ overview.avg_pages_per_session|default:0 }}</div>
+            <div class="label">{% trans "Avg Pages/Session" %}</div>
+        </div>
+        <div class="dashboard-stat-card stat-card-warning">
+            <div class="icon"><i class="fas fa-robot"></i></div>
+            <div class="value" id="kpi-bot-pct">{{ bot_summary.bot_pct|default:0 }}%</div>
+            <div class="label">{% trans "Bot Traffic" %}</div>
+        </div>
+    </div>
+
+    <!-- Traffic Trend Chart (full width) -->
+    <div class="card grid-full-width mt-6">
+        <h3 class="dashboard-section-title">
+            <i class="fas fa-chart-line"></i>
+            {% trans "Traffic Trends" %}
+        </h3>
+        <div class="chart-container">
+            <canvas id="trafficTrendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Two-column grid for content cards -->
+    <div class="dashboard-2col-grid mt-6">
+
+        <!-- Top Pages -->
+        <div class="card">
+            <h3 class="dashboard-section-title">
+                <i class="fas fa-ranking-star"></i>
+                {% trans "Top Pages" %}
+            </h3>
+            <div class="va-table-scroll">
+                <table class="va-table" id="top-pages-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Page" %}</th>
+                            <th class="va-table-num">{% trans "Views" %}</th>
+                            <th class="va-table-num">{% trans "Visitors" %}</th>
+                            <th class="va-table-num">{% trans "Entries" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for page in top_pages %}
+                        <tr>
+                            <td class="font-monospace va-url-cell">{{ page.url_path }}</td>
+                            <td class="va-table-num">{{ page.views }}</td>
+                            <td class="va-table-num">{{ page.unique_visitors }}</td>
+                            <td class="va-table-num">{{ page.entries }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="va-empty">{% trans "No page view data yet" %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Campaign Attribution -->
+        <div class="card">
+            <h3 class="dashboard-section-title">
+                <i class="fas fa-bullhorn"></i>
+                {% trans "Campaign Attribution" %}
+            </h3>
+            <div class="va-table-scroll">
+                <table class="va-table" id="campaigns-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Source" %}</th>
+                            <th>{% trans "Medium" %}</th>
+                            <th>{% trans "Campaign" %}</th>
+                            <th class="va-table-num">{% trans "Visitors" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in campaigns %}
+                        <tr>
+                            <td>{{ c.utm_source }}</td>
+                            <td>{{ c.utm_medium|default:"-" }}</td>
+                            <td>{{ c.utm_campaign|default:"-" }}</td>
+                            <td class="va-table-num">{{ c.visitors }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="va-empty">{% trans "No campaign data yet" %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Device Distribution -->
+        <div class="card">
+            <h3 class="dashboard-section-title">
+                <i class="fas fa-laptop-mobile"></i>
+                {% trans "Device Distribution" %}
+            </h3>
+            <div class="chart-container va-chart-small">
+                <canvas id="deviceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Geographic Distribution -->
+        <div class="card">
+            <h3 class="dashboard-section-title">
+                <i class="fas fa-globe"></i>
+                {% trans "Top Countries" %}
+            </h3>
+            <div class="va-table-scroll">
+                <table class="va-table" id="geo-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Country" %}</th>
+                            <th class="va-table-num">{% trans "Visitors" %}</th>
+                            <th class="va-table-num">{% trans "Page Views" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for g in geographic %}
+                        <tr>
+                            <td>{{ g.resolved_country }}</td>
+                            <td class="va-table-num">{{ g.visitors }}</td>
+                            <td class="va-table-num">{{ g.page_views }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="va-empty">{% trans "No geographic data yet" %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Top Referrers -->
+        <div class="card">
+            <h3 class="dashboard-section-title">
+                <i class="fas fa-link"></i>
+                {% trans "Top Referrers" %}
+            </h3>
+            <div class="va-table-scroll">
+                <table class="va-table" id="referrers-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Referrer" %}</th>
+                            <th class="va-table-num">{% trans "Visits" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in referrers %}
+                        <tr>
+                            <td class="font-monospace va-url-cell">{{ r.referrer }}</td>
+                            <td class="va-table-num">{{ r.count }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="2" class="va-empty">{% trans "No referrer data yet" %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Landing Pages -->
+        <div class="card">
+            <h3 class="dashboard-section-title">
+                <i class="fas fa-door-open"></i>
+                {% trans "Landing Pages" %}
+            </h3>
+            <div class="va-table-scroll">
+                <table class="va-table" id="landing-pages-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Page" %}</th>
+                            <th class="va-table-num">{% trans "Entries" %}</th>
+                            <th class="va-table-num">{% trans "Visitors" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lp in landing_pages %}
+                        <tr>
+                            <td class="font-monospace va-url-cell">{{ lp.url_path }}</td>
+                            <td class="va-table-num">{{ lp.entries }}</td>
+                            <td class="va-table-num">{{ lp.unique_visitors }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="va-empty">{% trans "No landing page data yet" %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- New vs Returning -->
+        <div class="card">
+            <h3 class="dashboard-section-title">
+                <i class="fas fa-user-plus"></i>
+                {% trans "New vs Returning" %}
+            </h3>
+            <div class="chart-container va-chart-small">
+                <canvas id="newReturningChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="application/json" id="analytics-config" nonce="{{ request.csp_nonce }}">
+{
+    "data_url": "{% url 'geoip_admin:visitor_analytics_data' %}",
+    "devices": {{ devices_json|safe }},
+    "new_vs_returning": {{ new_vs_returning_json|safe }}
+}
+</script>
+<script src="{% static 'geoip/admin/js/visitor-analytics.js' %}"></script>
+{% endblock %}

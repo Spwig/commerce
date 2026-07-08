@@ -1,0 +1,230 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{{ product.name }} - {{ site_settings.site_name|default:'Shop' }}{% endblock %}
+
+{% block extra_head %}
+<meta property="og:title" content="{{ product.name }}">
+<meta property="og:description" content="{{ product.short_description|default:product.full_description|striptags|truncatewords:30 }}">
+{% if product.primary_image_url %}
+<meta property="og:image" content="{{ product.primary_image_url }}">
+{% endif %}
+<link rel="stylesheet" href="{% static 'catalog/css/configurator.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/configurator_3d.css' %}">
+<link rel="stylesheet" href="{% static 'page_builder/css/product-base.css' %}">
+<!-- Import map + model-viewer modules must be in <head> so they execute
+     before defer scripts and upgrade custom elements in time -->
+<script type="importmap" nonce="{{ request.csp_nonce }}">
+{ "imports": { "three": "{% static 'core/vendor/js/three.module.min.js' %}" } }
+</script>
+<script type="module" src="{% static 'core/vendor/js/model-viewer-module.min.js' %}"></script>
+<script type="module" src="{% static 'core/vendor/js/model-viewer-effects.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <div class="container">
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+            </li>
+            {% if product.category %}
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="breadcrumb__link">{{ product.category.name }}</a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                {{ product.name }}
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Presets Section (rendered by JS if presets exist) -->
+<section class="configurator-section" id="presets-section-wrapper">
+    <div class="container">
+        <div class="configurator-presets" id="presets-section">
+            <h2 class="configurator-presets__title">
+                <i class="fas fa-magic"></i>
+                {% mtrans 'Start with a preset' %}
+            </h2>
+            <p class="configurator-presets__subtitle">{% mtrans 'Choose a starting configuration or build from scratch.' %}</p>
+            <div class="configurator-presets__grid" id="presets-grid"></div>
+            <button type="button" class="configurator-presets__scratch" id="start-scratch">
+                <i class="fas fa-tools"></i>
+                {% mtrans 'Build from scratch' %}
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- 3D Configurator Section -->
+<section class="configurator-3d-section">
+
+    <!-- Desktop: Standard 2-column grid layout -->
+    <div class="container configurator-3d-desktop-layout">
+        <div class="configurator-3d-layout">
+
+            <!-- Left: 3D Viewer -->
+            <div class="configurator-3d-viewer-wrap">
+                <div class="configurator-3d-viewer-container" id="viewer-container">
+                    <!-- Loading overlay -->
+                    <div class="configurator-3d-loading" id="viewer-loading">
+                        <div class="configurator-3d-loading__spinner">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                                <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+                            </svg>
+                            <div>{% mtrans 'Loading 3D model...' %}</div>
+                        </div>
+                    </div>
+
+                    <!-- Fullscreen toggle (desktop only) -->
+                    <button class="configurator-3d-fullscreen-btn" id="btn-3d-fullscreen"
+                            title="{% mtrans 'Toggle fullscreen' %}">
+                        <i class="fas fa-expand"></i>
+                    </button>
+
+                    <!-- model-viewer element -->
+                    <model-viewer
+                        id="product-3d-viewer"
+                        alt="{{ product.name }}"
+                        camera-controls
+                        touch-action="pan-y"
+                        interaction-prompt="none"
+                        loading="eager"
+                    >
+                        {% if bloom_strength %}
+                        <!-- Bloom post-processing for emissive glow -->
+                        <effect-composer render-mode="quality">
+                            <bloom-effect
+                                strength="{{ bloom_strength }}"
+                                radius="0.85"
+                                threshold="3.0"
+                                smoothing="0.5"
+                            ></bloom-effect>
+                        </effect-composer>
+                        {% endif %}
+                    </model-viewer>
+                </div>
+
+                <p class="configurator-3d-viewer-hint">
+                    <i class="fas fa-hand-pointer"></i>
+                    {% mtrans 'Drag to rotate, pinch to zoom' %}
+                </p>
+
+                <!-- AR Button (shown only on supported devices via CSS + JS class toggle) -->
+                <button class="configurator-3d-ar-btn" id="ar-button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/>
+                        <path d="M12 22V12"/>
+                        <path d="M22 7l-10 5"/>
+                        <path d="M2 7l10 5"/>
+                    </svg>
+                    {% mtrans 'View in AR' %}
+                </button>
+            </div>
+
+            <!-- Right: Wizard + Summary (desktop) -->
+            <div class="configurator-3d-right" id="config-wizard-desktop">
+                <!-- Product Header -->
+                <div class="configurator-3d-header">
+                    {% if product.brand %}
+                    <p class="configurator-header__brand">{{ product.brand.name }}</p>
+                    {% endif %}
+                    <h1 class="configurator-3d-header__name">{{ product.name }}</h1>
+                    {% if product.short_description %}
+                    <div class="configurator-3d-header__desc">{{ product.short_description|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Step Navigation -->
+                <div class="configurator-steps" id="steps-nav"></div>
+
+                <!-- Panel Container -->
+                <div class="configurator-panels" id="panels-container"></div>
+
+                <!-- Navigation Buttons -->
+                <div class="configurator-nav" id="wizard-nav">
+                    <button type="button" class="btn btn--outline btn--hidden" id="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>{% mtrans 'Back' %}</span>
+                    </button>
+                    <div class="configurator-nav__spacer"></div>
+                    <button type="button" class="btn btn--primary btn--lg" id="btn-next">
+                        <span>{% mtrans 'Next' %}</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="button" class="btn btn--primary btn--lg btn--hidden" id="btn-add-to-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>{% mtrans 'Add to Cart' %}</span>
+                    </button>
+                </div>
+
+                <!-- Summary -->
+                <aside class="configurator-summary" id="config-summary">
+                    <div class="configurator-summary__header">
+                        <h3 class="configurator-summary__title">{% mtrans 'Your Configuration' %}</h3>
+                    </div>
+                    <div class="configurator-summary__slots" id="summary-slots"></div>
+                    <div class="configurator-summary__divider"></div>
+                    <div class="configurator-summary__total">
+                        <span class="configurator-summary__total-label">{% mtrans 'Total' %}</span>
+                        <span class="configurator-summary__total-price" id="summary-total">-</span>
+                    </div>
+                    <button type="button" class="btn btn--primary btn--lg configurator-summary__cta" id="summary-add-to-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>{% mtrans 'Add to Cart' %}</span>
+                    </button>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile: Fixed 3D viewer background (JS moves model-viewer here on small screens) -->
+    <div class="config-3d-mobile-viewer" id="mobile-viewer-container" aria-hidden="true"></div>
+
+    <!-- Mobile: Bottom Sheet with draggable options panel -->
+    <div class="config-sheet" id="config-sheet" role="dialog" aria-label="{% mtrans 'Configuration options' %}">
+        <div class="config-sheet__handle" id="sheet-handle" role="separator" aria-label="{% mtrans 'Drag to resize' %}">
+            <div class="config-sheet__handle-bar"></div>
+        </div>
+        <div class="config-sheet__content" id="sheet-content">
+            <!-- JS moves wizard content here on mobile -->
+        </div>
+        <div class="config-sheet__footer" id="sheet-footer">
+            <div class="config-sheet__footer-price">
+                <span class="config-sheet__footer-label">{% mtrans 'Total' %}</span>
+                <span class="config-sheet__footer-amount" id="sheet-total">-</span>
+            </div>
+            <button type="button" class="btn btn--primary" id="sheet-add-to-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span>{% mtrans 'Add to Cart' %}</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Mobile Bottom Bar (fallback for non-3D configurator pages; hidden when sheet active) -->
+<div class="configurator-mobile-bar" id="mobile-bar">
+    <div class="configurator-mobile-bar__price">
+        <span class="configurator-mobile-bar__label">{% mtrans 'Total' %}</span>
+        <span class="configurator-mobile-bar__amount" id="mobile-total">-</span>
+    </div>
+    <button type="button" class="btn btn--primary" id="mobile-add-to-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span>{% mtrans 'Add to Cart' %}</span>
+    </button>
+</div>
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script id="configurator-data" type="application/json">{{ configurator_json|safe }}</script>
+<script src="{% static 'catalog/js/product_configurator.js' %}" defer></script>
+<script src="{% static 'catalog/js/configurator_3d_viewer.js' %}" defer></script>
+<script src="{% static 'catalog/js/configurator_3d_sheet.js' %}" defer></script>
+{% endblock %}

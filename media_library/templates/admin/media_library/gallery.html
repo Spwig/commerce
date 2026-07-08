@@ -1,0 +1,214 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_urls %}
+
+{% block title %}{% trans 'Media Gallery' %} | {{ site_settings.site_name|default:_('Spwig site admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/upload-queue.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'media_library/js/upload-queue.js' %}" defer></script>
+<script src="{% static 'media_library/js/media-library.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='media_library' %}">{% trans 'Media Library' %}</a>
+    &rsaquo; {% trans 'Gallery' %}
+</div>
+{% endblock %}
+
+{% block content %}
+    
+    <div id="content-main">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-images"></i> {% trans 'Media Gallery' %}</h1>
+        </div>
+        <div class="media-info-banner hidden" id="mediaInfoBanner">
+            <div class="banner-content">
+                <span class="banner-icon"><i class="fas fa-rocket"></i></span>
+                <span class="banner-text">
+                    {% trans "Your media is automatically optimized! Images are converted to WebP and videos to WebM/AV1 format for faster loading while maintaining quality." %}
+                </span>
+                <button class="banner-close" data-action="close-info-banner">×</button>
+            </div>
+        </div>
+
+        <div class="media-gallery">
+            <div class="media-sidebar">
+                <div class="sidebar-section">
+                    <h3>{% trans 'Upload' %}</h3>
+                    <div class="upload-zone">
+                        <div class="icon"><i class="fas fa-folder-open fa-3x"></i></div>
+                        <div class="text">{% trans 'Drop files here' %}</div>
+                        <div class="subtext">{% trans 'Images, Videos & 3D Models (max 100MB)' %}</div>
+                    </div>
+                </div>
+        
+                <div class="sidebar-section">
+                    <h3>{% trans 'Folders' %}</h3>
+                    <ul class="folder-tree">
+                        <li><a href="#" data-folder-id="" class="folder-link active">{% trans 'All Files' %}</a></li>
+                        {% for folder in folders %}
+                            <li><a href="#" data-folder-id="{{ folder.id }}" class="folder-link">{{ folder.name }}</a></li>
+                        {% endfor %}
+                        <li class="separator"></li>
+                        <li><a href="#" data-folder-id="recycle-bin" class="folder-link recycle-bin"><i class="fas fa-trash-alt"></i> {% trans 'Recycle Bin' %}</a></li>
+                    </ul>
+                </div>
+        
+                <div class="sidebar-section">
+                    <h3>{% trans 'Tags' %}</h3>
+                    <div class="tag-cloud">
+                        {% for tag in tags %}
+                            <a href="#" class="tag-item" data-tag-id="{{ tag.id }}">{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+    
+            <div class="media-content">
+                <div class="media-breadcrumbs">
+                    <a href="#" class="breadcrumb-item">{% trans 'Media Library' %}</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item">{% trans 'All Files' %}</span>
+                </div>
+        
+                <div class="media-search">
+                    <input type="text" class="search-input" placeholder="{% trans 'Search media...' %}">
+                </div>
+        
+                <div class="media-filters">
+                    <select class="filter-select" name="mime_type">
+                        <option value="">{% trans 'All Types' %}</option>
+                        <optgroup label="{% trans 'Images' %}">
+                            <option value="image/jpeg">JPEG</option>
+                            <option value="image/png">PNG</option>
+                            <option value="image/gif">GIF</option>
+                            <option value="image/webp">WebP</option>
+                            <option value="image/svg+xml">SVG</option>
+                        </optgroup>
+                        <optgroup label="{% trans 'Videos' %}">
+                            <option value="video/mp4">MP4</option>
+                            <option value="video/webm">WebM</option>
+                            <option value="video/quicktime">MOV</option>
+                            <option value="video/x-matroska">MKV</option>
+                            <option value="video/x-msvideo">AVI</option>
+                        </optgroup>
+                        <optgroup label="{% trans '3D Models' %}">
+                            <option value="model/gltf-binary">GLB</option>
+                            <option value="model/gltf+json">glTF</option>
+                        </optgroup>
+                    </select>
+            
+                    <select class="filter-select" name="size">
+                        <option value="">{% trans 'All Sizes' %}</option>
+                        <option value="small">{% trans 'Small' %} (&lt; 100KB)</option>
+                        <option value="medium">{% trans 'Medium' %} (100KB - 1MB)</option>
+                        <option value="large">{% trans 'Large' %} (&gt; 1MB)</option>
+                    </select>
+                </div>
+        
+                <div class="media-toolbar">
+                    <div class="media-actions">
+                        <button class="action-btn" data-action="select" disabled>{% trans 'Select Items' %}</button>
+                        <button class="action-btn" data-action="edit-details" disabled>{% trans 'Edit Details' %}</button>
+                        <button class="action-btn secondary" data-action="delete" disabled>{% trans 'Delete Selected' %}</button>
+                    </div>
+                    <div class="view-switcher">
+                        <button class="util-btn small active" data-view="grid" title="{% trans 'Grid View' %}"><i class="fas fa-th-large"></i></button>
+                        <button class="util-btn small" data-view="small" title="{% trans 'Small Grid' %}"><i class="fas fa-th"></i></button>
+                        <button class="util-btn small" data-view="list" title="{% trans 'List View' %}"><i class="fas fa-list"></i></button>
+                    </div>
+                </div>
+
+                <div class="mobile-tip">
+                    <i class="fas fa-hand-pointer"></i>
+                    {% trans 'Long press on an image to view it in full screen' %}
+                </div>
+
+                <div class="media-grid">
+                    {% if media_assets %}
+                        {% for asset in media_assets %}
+                            <div class="media-item" data-item-id="{{ asset.id }}" data-type="{% if asset.is_video %}video{% elif asset.is_3d_model %}3d{% else %}image{% endif %}">
+                                <div class="image-container">
+                                    {% if asset.is_3d_model %}
+                                        {% if asset.poster_image %}
+                                            <img src="{{ asset.poster_image.url }}" alt="{{ asset.alt_text|default:asset.title }}" loading="lazy">
+                                            <div class="model-badge" title="3D Model"><i class="fas fa-cube"></i></div>
+                                        {% else %}
+                                            <div class="no-image"><i class="fas fa-cube fa-3x"></i></div>
+                                        {% endif %}
+                                    {% elif asset.is_video %}
+                                        {% if asset.poster_image %}
+                                            <img src="{{ asset.poster_image.url }}" alt="{{ asset.alt_text|default:asset.title }}" loading="lazy">
+                                            <div class="video-indicator"><i class="fas fa-play-circle"></i></div>
+                                        {% else %}
+                                            <div class="no-image"><i class="fas fa-film fa-3x"></i></div>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if asset.thumbnail_small %}
+                                            <img src="{{ asset.thumbnail_small }}" alt="{{ asset.alt_text|default:asset.title }}" loading="lazy">
+                                        {% elif asset.webp_file %}
+                                            <img src="{{ asset.webp_file.url }}" alt="{{ asset.alt_text|default:asset.title }}" loading="lazy">
+                                        {% elif asset.original_file %}
+                                            <img src="{{ asset.original_file.url }}" alt="{{ asset.alt_text|default:asset.title }}" loading="lazy">
+                                        {% else %}
+                                            <div class="no-image"><i class="fas fa-file fa-3x"></i></div>
+                                        {% endif %}
+                                    {% endif %}
+                                    <div class="dimensions">
+                                        {% if asset.mime_type == 'image/svg+xml' %}
+                                            svg
+                                        {% elif asset.is_video and asset.duration %}
+                                            {{ asset.width|default:"-" }} × {{ asset.height|default:"-" }} • {{ asset.duration|floatformat:0 }}s
+                                        {% elif asset.width and asset.height %}
+                                            {{ asset.width }} × {{ asset.height }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="info">
+                                    <div class="title" title="{{ asset.title }}">{{ asset.title }}</div>
+                                    <div class="meta">
+                                        {{ asset.mime_type|default:_("Unknown") }}
+                                        {% if asset.file_size %}
+                                            • {{ asset.file_size|filesizeformat }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-results">
+                            <h3>{% trans 'No media files found' %}</h3>
+                            <p>{% trans 'Upload some images to get started!' %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    <!-- Hidden CSRF token for AJAX requests -->
+    {% csrf_token %}
+    </div>
+
+<script type="application/json" id="media-gallery-data">
+{
+    "translations": {
+        "selectItemsToDelete": "{% trans 'Please select items to delete' %}",
+        "selectItemsToRestore": "{% trans 'Please select items to restore' %}",
+        "confirmDelete": "{% trans 'Are you sure you want to delete the selected items?' %}",
+        "confirmPermanentDelete": "{% trans 'Are you sure you want to permanently delete the selected items? This cannot be undone!' %}",
+        "error": "{% trans 'Error:' %}"
+    }
+}
+</script>
+<script src="{% static 'media_library/admin/js/gallery.js' %}"></script>
+{% endblock %}

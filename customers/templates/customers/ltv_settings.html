@@ -1,0 +1,245 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Lifetime Value Settings" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'customers/css/ltv_admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Settings Header -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-chart-line"></i>
+            {% trans "Customer Lifetime Value Settings" %}
+        </h1>
+        <p class="subtitle">
+            {% trans "Configure how customer lifetime value is calculated for your store" %}
+        </p>
+    </div>
+
+    <!-- Data Quality Overview -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-value">{{ total_customers }}</div>
+            <div class="stat-label">{% trans "Customers with Orders" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-redo"></i></div>
+            <div class="stat-value">{{ repeat_customers }}</div>
+            <div class="stat-label">{% trans "Repeat Customers" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+            <div class="stat-value">{{ data_quality.data_span_days }}</div>
+            <div class="stat-label">{% trans "Days of Data" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
+            <div class="stat-value">{{ data_quality.quality_score|floatformat:0 }}%</div>
+            <div class="stat-label">{% trans "Data Quality Score" %}</div>
+        </div>
+    </div>
+
+    <!-- Settings Form -->
+    <div class="dashboard-section">
+        <h2>
+            <i class="fas fa-cog"></i>
+            {% trans "Calculation Method" %}
+        </h2>
+        <p class="help-text">
+            {% trans "Select the method used to calculate customer lifetime value. More advanced methods require sufficient data." %}
+        </p>
+
+        <form id="ltvSettingsForm" method="post">
+            {% csrf_token %}
+
+            <!-- Method Selection -->
+            <div class="form-group">
+                <label for="calculation_method">
+                    {% trans "LTV Calculation Method" %}
+                </label>
+
+                <div class="ltv-method-cards">
+                    {% for method_value, method_label in calculation_methods %}
+                    <div class="ltv-method-card {% if settings.calculation_method == method_value %}selected{% endif %}"
+                         data-method="{{ method_value }}">
+                        <input type="radio"
+                               name="calculation_method"
+                               id="method_{{ method_value }}"
+                               value="{{ method_value }}"
+                               {% if settings.calculation_method == method_value %}checked{% endif %}>
+                        <label for="method_{{ method_value }}">
+                            <div class="method-icon">
+                                {% if method_value == 'simple' %}
+                                    <i class="fas fa-calculator"></i>
+                                {% elif method_value == 'cohort' %}
+                                    <i class="fas fa-users-cog"></i>
+                                {% else %}
+                                    <i class="fas fa-brain"></i>
+                                {% endif %}
+                            </div>
+                            <h3>{{ method_label }}</h3>
+                            <p class="method-description">
+                                {% if method_value == 'simple' %}
+                                    {% trans "RFM-based calculation using Recency, Frequency, and Monetary scores. Fast and works with any amount of data." %}
+                                {% elif method_value == 'cohort' %}
+                                    {% trans "Groups customers by acquisition month and applies historical cohort performance. Requires at least 3 months of data." %}
+                                {% else %}
+                                    {% trans "Statistical BG/NBD and Gamma-Gamma models for probabilistic predictions. Requires 6+ months of data and 100+ repeat customers." %}
+                                {% endif %}
+                            </p>
+                            {% if method_value == 'simple' %}
+                                <span class="method-badge recommended">{% trans "Recommended" %}</span>
+                            {% elif method_value == 'cohort' and cohort_count > 0 %}
+                                <span class="method-badge available">{% trans "Available" %}</span>
+                            {% elif method_value == 'probabilistic' and data_quality.can_use_probabilistic %}
+                                <span class="method-badge available">{% trans "Available" %}</span>
+                            {% elif method_value == 'probabilistic' %}
+                                <span class="method-badge unavailable">{% trans "Insufficient Data" %}</span>
+                            {% endif %}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Advanced Settings -->
+            <div class="form-group">
+                <h3>
+                    <i class="fas fa-sliders-h"></i>
+                    {% trans "Advanced Settings" %}
+                </h3>
+
+                <div class="advanced-settings-grid">
+                    <div class="setting-item">
+                        <label for="default_discount_rate">
+                            {% trans "Discount Rate" %}
+                            <span class="help-icon" title="{% trans 'Annual discount rate for future value calculations (0.10 = 10%)' %}">
+                                <i class="fas fa-question-circle"></i>
+                            </span>
+                        </label>
+                        <input type="number"
+                               id="default_discount_rate"
+                               name="default_discount_rate"
+                               value="{{ settings.default_discount_rate }}"
+                               step="0.01"
+                               min="0"
+                               max="1"
+                               class="form-control">
+                        <small class="form-text">{% trans "Typically 0.10 (10%) for retail businesses" %}</small>
+                    </div>
+
+                    <div class="setting-item">
+                        <label for="min_data_quality_threshold">
+                            {% trans "Data Quality Threshold" %}
+                            <span class="help-icon" title="{% trans 'Minimum number of repeat customers required for probabilistic methods' %}">
+                                <i class="fas fa-question-circle"></i>
+                            </span>
+                        </label>
+                        <input type="number"
+                               id="min_data_quality_threshold"
+                               name="min_data_quality_threshold"
+                               value="{{ settings.min_data_quality_threshold }}"
+                               min="10"
+                               max="1000"
+                               class="form-control">
+                        <small class="form-text">{% trans "Current repeat customers" %}: {{ repeat_customers }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last Calculation Info -->
+            {% if settings.last_calculation_run %}
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Last calculation run" %}: {{ settings.last_calculation_run|date:"F d, Y g:i A" }}
+            </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="button" id="saveButton">
+                    <i class="fas fa-save"></i>
+                    {% trans "Save Settings" %}
+                </button>
+
+                <button type="button" class="button" id="saveAndRecalculateButton">
+                    <i class="fas fa-sync-alt"></i>
+                    {% trans "Save & Recalculate Now" %}
+                </button>
+
+                <a href="{% url 'customers:dashboard' %}?tab=cohorts" class="button">
+                    <i class="fas fa-chart-area"></i>
+                    {% trans "View Cohort Analytics" %}
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Data Quality Recommendations -->
+    {% if not data_quality.can_use_probabilistic %}
+    <div class="dashboard-section warning-section">
+        <h2>
+            <i class="fas fa-exclamation-triangle"></i>
+            {% trans "Data Quality Notice" %}
+        </h2>
+        <p>
+            {% if data_quality.recommendation == 'insufficient_customers' %}
+                {% trans "You need at least" %} {{ data_quality.min_threshold }} {% trans "repeat customers to use probabilistic methods. You currently have" %} {{ repeat_customers }}.
+            {% elif data_quality.recommendation == 'insufficient_history' %}
+                {% trans "You need at least 6 months of order history to use probabilistic methods. You currently have" %} {{ data_quality.data_span_days }} {% trans "days" %}.
+            {% else %}
+                {% trans "Your data quality is marginal for advanced methods. Consider using the Simple or Cohort method until you have more data." %}
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Category Multipliers (if any) -->
+    {% if category_multipliers %}
+    <div class="dashboard-section">
+        <h2>
+            <i class="fas fa-tags"></i>
+            {% trans "Category LTV Multipliers" %}
+        </h2>
+        <p class="help-text">
+            {% trans "Custom multipliers applied to specific product categories" %}
+        </p>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Multiplier" %}</th>
+                        <th>{% trans "Status" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for multiplier in category_multipliers %}
+                    <tr>
+                        <td>{{ multiplier.category.name }}</td>
+                        <td>{{ multiplier.multiplier }}x</td>
+                        <td>
+                            {% if multiplier.is_active %}
+                                <span class="badge badge-success">{% trans "Active" %}</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{% trans "Inactive" %}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script type="application/json" id="ltv-settings-i18n">{"confirmRecalculate": "{% trans 'This will recalculate LTV for all customers. This may take several minutes. Continue?' %}", "saving": "{% trans 'Saving...' %}", "errorSaving": "{% trans 'Error saving settings' %}", "saveSettings": "{% trans 'Save Settings' %}", "networkError": "{% trans 'Network error. Please try again.' %}"}</script>
+<script src="{% static 'customers/js/ltv_settings.js' %}"></script>
+{% endblock %}

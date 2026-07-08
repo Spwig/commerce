@@ -1,0 +1,142 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* 
+ * Modern Light Theme for Django Admin
+ * Clean, modern counterpart to the dark theme
+ */
+
+/* CSS Variables for Light Theme */
+html[data-theme="light"],
+html:not([data-theme]) {
+    /* Brand palette */
+    --primary: #95bbed;                   /* Primary blue accent */
+    --secondary: #5f6368;                 /* Secondary gray */
+    --accent: #8eb6ea;                    /* Accent blue */
+    --primary-fg: #ffffff;                /* Text on primary backgrounds */
+
+    /* Text and body */
+    --body-fg: #1a1a1a;                   /* Main text color */
+    --body-bg: #ffffff;                   /* Main background */
+    --body-quiet-color: #5f6368;          /* Muted text */
+    --body-medium-color: #3c4043;         /* Medium emphasis text */
+    --body-loud-color: #202124;           /* High emphasis text */
+    --primary-text: #1a1a1a;              /* Dark text */
+    --secondary-text: #5f6368;            /* Muted text */
+    --accent-text: #202124;               /* Dark headers */
+    --muted-fg: #5f6368;                  /* Muted foreground */
+    --quiet-text: #80868b;                /* Subtle text */
+
+    /* Surfaces and backgrounds */
+    --primary-bg: #ffffff;                /* Pure white background */
+    --secondary-bg: #f8f9fa;              /* Light gray */
+    --accent-bg: #ffffff;                 /* Card/container background */
+    --surface-bg: #d8eaf3;                /* Elevated surfaces */
+    --darkened-bg: #f8f9fa;               /* Slightly darker background */
+    --selected-bg: #e8f0fe;               /* Selected item background */
+    --selected-row: #f0f7ff;              /* Selected table row */
+    --selected-fg: #1a73e8;               /* Selected item text */
+    --preview-section-bg: #f8f9fa;        /* Preview section background */
+
+    /* Borders, dividers, and shadows */
+    --hairline-color: #e0e0e0;            /* Thin borders */
+    --border-color: #e0e0e0;
+    --divider-color: #dadce0;
+    --subtle-border: #f0f0f0;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.2);
+    --gradient-accent: linear-gradient(135deg, #ffffff 0%, #95bbed 100%);
+    --gradient-blue: linear-gradient(90deg, transparent, #1a73e8, transparent);
+
+    /* Header and breadcrumbs */
+    --header-color: #1a1a1a;
+    --header-branding-color: #1a73e8;
+    --header-bg: #ffffff;
+    --header-link-color: #1a1a1a;
+    --breadcrumbs-fg: #5f6368;
+    --breadcrumbs-link-fg: #1a73e8;
+    --breadcrumbs-bg: #f8f9fa;
+
+    /* Links */
+    --link-fg: #1a73e8;                   /* Link foreground */
+    --link-hover-color: #1557b0;          /* Same as link-hover for consistency */
+    --link-selected-fg: #1557b0;          /* Selected link color */
+    --link-color: #1a73e8;                /* Blue links */
+    --link-hover: #1557b0;                /* Darker blue hover */
+    --blue-border: #e8f0fe;               /* Light blue border */
+    --blue-accent: #1a73e8;               /* Google blue accent */
+    --blue-subtle: rgba(26, 115, 232, 0.08); /* Very subtle blue */
+
+    /* Buttons and actions */
+    --button-fg: #ffffff;                 /* Button text */
+    --button-bg: #1a73e8;                 /* Button background */
+    --button-hover-bg: #1557b0;           /* Button hover background */
+    --default-button-bg: #1a73e8;         /* Default button */
+    --default-button-hover-bg: #1557b0;   /* Default button hover */
+    --close-button-bg: #6c757d;           /* Close button gray */
+    --close-button-hover-bg: #5a6268;     /* Close button hover */
+    --delete-button-bg: #dc3545;          /* Delete button red */
+    --delete-button-hover-bg: #c82333;    /* Delete button hover */
+    --object-tools-fg: #ffffff;
+    --object-tools-bg: #1a73e8;
+    --object-tools-hover-bg: #1557b0;
+    --primary-color: #1a73e8;             /* Primary color for utilities */
+    --primary-hover: #1557b0;             /* Primary hover for utilities */
+    --button-primary: #1a73e8;            /* Blue button */
+    --button-hover: #1557b0;              /* Darker blue hover */
+
+    /* Functional and message colors */
+    --error-fg: #c62828;                  /* Dark red text */
+    --error-bg: #fdecea;                  /* Light red background */
+    --message-success-bg: #d4edda;        /* Light green */
+    --message-success-border: #c3e6cb;    /* Light green border */
+    --message-warning-bg: #fff3cd;        /* Light yellow */
+    --message-warning-border: #ffeeba;    /* Light yellow border */
+    --message-error-bg: #f8d7da;          /* Light red */
+    --message-error-border: #f5c6cb;      /* Light red border */
+    --message-info-bg: #d1ecf1;           /* Light blue */
+    --message-info-border: #bee5eb;       /* Light blue border */
+    --success-color: #137333;
+    --success-bg: #d4edda;                /* Light green background */
+    --success-fg: #137333;                /* Dark green text */
+    --warning-color: #ea8600;
+    --warning-bg: #fff8e1;                /* Light amber background */
+    --warning-fg: #e65100;                /* Dark orange text */
+    --error-color: #d93025;
+    --info-color: #0d8043;
+    --info-bg: #3c4043;
+    --info-fg: #ffffff;                   /* White text on info background */
+    --admin-info-bg: #e8f4f8;             /* Light cyan background for info banners */
+    --admin-info: #17a2b8;                /* Cyan accent for info banners */
+
+    /* Banner colors - MFA, Update, License */
+    --banner-warning-bg: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 152, 0, 0.1) 100%);
+    --banner-warning-border: rgba(255, 152, 0, 0.3);
+    --banner-warning-icon: #f57c00;       /* Amber icon */
+    --banner-warning-strong: #e68a00;     /* Amber bold text */
+    --banner-info-bg: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(100, 181, 246, 0.08) 100%);
+    --banner-info-border: rgba(33, 150, 243, 0.3);
+    --banner-info-icon: #1976d2;          /* Blue icon */
+    --banner-critical-bg: linear-gradient(135deg, rgba(255, 107, 53, 0.18) 0%, rgba(255, 68, 68, 0.12) 100%);
+    --banner-critical-border: rgba(255, 107, 53, 0.5);
+    --banner-critical-icon: #ff6b35;      /* Orange icon */
+    --banner-critical-strong: #ff6b35;    /* Orange bold text */
+    --banner-lockout-bg: linear-gradient(135deg, rgba(220, 53, 69, 0.18) 0%, rgba(200, 35, 51, 0.12) 100%);
+    --banner-lockout-border: rgba(220, 53, 69, 0.5);
+    --banner-lockout-icon: #dc3545;       /* Red icon */
+    --banner-lockout-strong: #dc3545;     /* Red bold text */
+    --banner-update-bg: linear-gradient(135deg, rgba(40, 167, 69, 0.12) 0%, rgba(46, 204, 113, 0.08) 100%);
+    --banner-update-border: rgba(40, 167, 69, 0.3);
+    --banner-update-icon: #28a745;        /* Green icon */
+    --banner-update-strong: #28a745;      /* Green bold text */
+    --banner-update-action-bg: #28a745;   /* Green button */
+    --banner-update-action-hover: #218838;/* Darker green hover */
+    --banner-dismiss-hover-bg: rgba(0, 0, 0, 0.1);
+
+    /* Accents for components */
+    --purple-accent: #7c4dff;             /* Purple accent for special elements */
+
+    /* Logo backplates */
+    --logo-plate-light: #ffffff;          /* White plate for dark logos */
+    --logo-plate-dark: #e8e8e8;           /* Light gray plate for light logos */
+    --logo-plate-border: rgba(0, 0, 0, 0.08); /* Subtle border */
+}

@@ -1,0 +1,150 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Configure Payment Methods" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'payment_providers/css/admin_provider_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-credit-card"></i>
+                {% trans "Configure Payment Methods" %} - {{ account.display_name|default:account.component.name }}
+            </h1>
+            <p class="subtitle">{% trans "Configure which payment methods are available at checkout" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <button type="button" class="button pp-sync-methods-btn change-list-action-button" data-account-id="{{ account.id }}">
+                <i class="fas fa-sync-alt"></i> {% trans "Sync from Provider" %}
+            </button>
+            <a href="{% url 'admin:payment_providers_paymentprovideraccount_change' account.id %}" class="button default change-list-action-button">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Provider" %}
+            </a>
+        </div>
+    </div>
+
+    {% if not has_methods %}
+    <div class="dashboard-card">
+        <div class="empty-state">
+            <i class="fas fa-credit-card fa-4x"></i>
+            <h2>{% trans "No Payment Methods Available" %}</h2>
+            <p>{% trans "Sync payment methods from your provider first using the button above." %}</p>
+        </div>
+    </div>
+    {% else %}
+
+    {# How it works #}
+    <div class="dashboard-card">
+        <h3><i class="fas fa-info-circle"></i> {% trans "How it works" %}</h3>
+        <p class="help">{% trans "The Global section applies to all customers. Add country-specific overrides below to customize methods for particular countries — country overrides take priority over global settings. Changes are saved automatically." %}</p>
+    </div>
+
+    {# ── Global Section ── #}
+    <div class="dashboard-card" id="pp-global-section">
+        <h3>
+            <i class="fas fa-globe"></i>
+            {{ global_data.country_name }}
+        </h3>
+        <p class="help" style="margin-bottom: 8px;">{% trans "These payment methods are available to customers in all countries unless overridden below." %}</p>
+
+        {% if global_data.available_methods %}
+        <div class="pp-country-actions" style="margin-bottom: 8px; display: flex; gap: 8px;">
+            <button type="button" class="button pp-toggle-all-btn" data-country="_global" data-action="enable" style="font-size: 11px; padding: 2px 8px;">
+                {% trans "Enable All" %}
+            </button>
+            <button type="button" class="button pp-toggle-all-btn" data-country="_global" data-action="disable" style="font-size: 11px; padding: 2px 8px;">
+                {% trans "Disable All" %}
+            </button>
+        </div>
+        <div class="pp-methods-list">
+            {% for method in global_data.available_methods %}
+            <div class="pp-method-row">
+                <label class="pp-method-toggle">
+                    <input type="checkbox"
+                           class="pp-method-checkbox"
+                           data-account-id="{{ account.id }}"
+                           data-country-code="_global"
+                           data-method-slug="{{ method.slug }}"
+                           {% if method.slug in global_data.enabled_methods %}checked{% endif %}>
+                    <span class="pp-method-name">{{ method.name }}</span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="help">{% trans "No payment methods available. Try syncing from the provider first." %}</p>
+        {% endif %}
+    </div>
+
+    {# ── Country Overrides ── #}
+    <div class="dashboard-card" id="pp-country-overrides-header">
+        <h3>
+            <i class="fas fa-flag"></i>
+            {% trans "Country Overrides" %}
+            <span class="help" style="font-weight: normal; font-size: 12px; margin-left: 8px;">{% trans "(optional)" %}</span>
+        </h3>
+        <p class="help">{% trans "Add country-specific configurations that override the global settings above. Useful if certain payment methods are only available or should be restricted in specific countries." %}</p>
+    </div>
+
+    <div id="payment-methods-grid">
+        {% for entry in country_data %}
+        <div class="dashboard-card pp-country-card" data-country="{{ entry.country_code }}">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>
+                    <i class="fas fa-flag"></i>
+                    {{ entry.country_name }} ({{ entry.country_code }})
+                </h3>
+                <button type="button" class="button pp-remove-country-btn" data-country="{{ entry.country_code }}" style="font-size: 11px; padding: 2px 8px;" title="{% trans 'Remove override — will fall back to global' %}">
+                    <i class="fas fa-times"></i> {% trans "Remove" %}
+                </button>
+            </div>
+
+            {% if entry.available_methods %}
+            <div class="pp-country-actions" style="margin-bottom: 8px; display: flex; gap: 8px;">
+                <button type="button" class="button pp-toggle-all-btn" data-country="{{ entry.country_code }}" data-action="enable" style="font-size: 11px; padding: 2px 8px;">
+                    {% trans "Enable All" %}
+                </button>
+                <button type="button" class="button pp-toggle-all-btn" data-country="{{ entry.country_code }}" data-action="disable" style="font-size: 11px; padding: 2px 8px;">
+                    {% trans "Disable All" %}
+                </button>
+            </div>
+            <div class="pp-methods-list">
+                {% for method in entry.available_methods %}
+                <div class="pp-method-row">
+                    <label class="pp-method-toggle">
+                        <input type="checkbox"
+                               class="pp-method-checkbox"
+                               data-account-id="{{ account.id }}"
+                               data-country-code="{{ entry.country_code }}"
+                               data-method-slug="{{ method.slug }}"
+                               {% if method.slug in entry.enabled_methods %}checked{% endif %}>
+                        <span class="pp-method-name">{{ method.name }}</span>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="help">{% trans "No payment methods available for this country. Methods from the global section will apply." %}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% endif %}
+</div>
+
+<script type="application/json" id="pp-methods-config">
+{
+    "i18n": {
+        "saved": "{% trans 'Saved' %}",
+        "error": "{% trans 'Error saving change' %}"
+    }
+}
+</script>
+<script src="{% static 'payment_providers/js/admin_provider_account.js' %}"></script>
+{% endblock %}

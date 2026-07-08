@@ -1,0 +1,229 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Customers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'customers/css/customer_changelist.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+        <div class="change-list-header">
+            <div>
+                <h1>
+                    <i class="fas fa-users"></i>
+                    {% trans "Customers" %}
+                </h1>
+                <p class="subtitle">{% trans "Manage customer accounts, profiles, and preferences" %}</p>
+            </div>
+            <div class="change-list-header-actions">
+                <a href="{% url 'admin:accounts_customerprofile_add' %}" class="button primary change-list-action-button">
+                    <i class="fas fa-user-plus"></i> {% trans "Add Customer" %}
+                </a>
+            </div>
+        </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name, username, or email...' %}"
+                    value="">
+            </div>
+
+            <!-- User Type -->
+            <div class="filter-field">
+                <label for="filter-user_type">
+                    <i class="fas fa-user-tag"></i> {% trans "User Type" %}
+                </label>
+                <select id="filter-user_type">
+                    <option value="">{% trans "All Customers" %}</option>
+                    <option value="is_affiliate">{% trans "Affiliates" %}</option>
+                    <option value="is_loyalty">{% trans "Loyalty Members" %}</option>
+                    <option value="is_staff">{% trans "Staff" %}</option>
+                </select>
+            </div>
+
+            <!-- Customer Segment -->
+            <div class="filter-field">
+                <label for="filter-segment">
+                    <i class="fas fa-users"></i> {% trans "Customer Segment" %}
+                </label>
+                <select id="filter-segment">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="vip">{% trans "VIP Customers" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="at_risk">{% trans "At Risk" %}</option>
+                </select>
+            </div>
+
+            <!-- Marketing Emails Status -->
+            <div class="filter-field">
+                <label for="filter-newsletter">
+                    <i class="fas fa-envelope"></i> {% trans "Marketing Emails" %}
+                </label>
+                <select id="filter-newsletter">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="subscribed">{% trans "Opted In" %}</option>
+                    <option value="not_subscribed">{% trans "Not Opted In" %}</option>
+                </select>
+            </div>
+
+            <!-- Total Spent Range -->
+            <div class="filter-field">
+                <label for="filter-min_spent">
+                    <i class="fas fa-dollar-sign"></i> {% trans "Min Total Spent" %}
+                </label>
+                <input
+                    type="number"
+                    id="filter-min_spent"
+                    placeholder="{% trans 'Min value' %}"
+                    min="0"
+                    step="0.01">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-max_spent">
+                    <i class="fas fa-dollar-sign"></i> {% trans "Max Total Spent" %}
+                </label>
+                <input
+                    type="number"
+                    id="filter-max_spent"
+                    placeholder="{% trans 'Max value' %}"
+                    min="0"
+                    step="0.01">
+            </div>
+
+            <!-- Order Count Range -->
+            <div class="filter-field">
+                <label for="filter-min_orders">
+                    <i class="fas fa-shopping-bag"></i> {% trans "Min Orders" %}
+                </label>
+                <input
+                    type="number"
+                    id="filter-min_orders"
+                    placeholder="{% trans 'Min orders' %}"
+                    min="0">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-max_orders">
+                    <i class="fas fa-shopping-bag"></i> {% trans "Max Orders" %}
+                </label>
+                <input
+                    type="number"
+                    id="filter-max_orders"
+                    placeholder="{% trans 'Max orders' %}"
+                    min="0">
+            </div>
+
+            <!-- Registration Date Range -->
+            <div class="filter-field">
+                <label for="filter-date_from">
+                    <i class="fas fa-calendar"></i> {% trans "Registered From" %}
+                </label>
+                <input
+                    type="date"
+                    id="filter-date_from">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-date_to">
+                    <i class="fas fa-calendar"></i> {% trans "Registered To" %}
+                </label>
+                <input
+                    type="date"
+                    id="filter-date_to">
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-customerprofile" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-users"></i>
+            <span id="customer-count">{{ cl.result_count }}</span> {% trans "customer" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="customer-results">
+        {% include "admin/accounts/customerprofile/partials/customer_cards.html" with customers=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 customer{% plural %}{{ counter }} customers{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'customers' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'customers:filter_customers' %}"
+         data-results-container="customer-results"
+         data-results-count="customer-count"
+         hidden></div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% load static theme_tags i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block head_title %}{% endblock %} | {{ site_settings.site_name|default:"Shop" }}</title>
+
+    {% theme_meta %}
+
+    <!-- Theme CSS -->
+    {% theme_css %}
+
+    <!-- Theme CSS Variables -->
+    {% theme_variables %}
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="entrance-body theme-{{ active_theme.slug|default:'default' }}">
+    {% block body %}
+        {% block content %}{% endblock %}
+    {% endblock %}
+
+    <!-- Theme JS -->
+    {% theme_js %}
+
+    {% block extra_body %}{% endblock %}
+</body>
+</html>

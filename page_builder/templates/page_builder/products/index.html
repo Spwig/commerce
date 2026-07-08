@@ -1,0 +1,119 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'All Products' %} - {{ site_settings.site_name|default:'Shop' }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/category-grid.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'All Products' %}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Page Header -->
+<section class="cat-page-header">
+    <div class="container">
+        <h1 class="cat-page-header__title">{% mtrans 'All Products' %}</h1>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="cat-section">
+    <div class="container">
+
+        <!-- Sort Bar -->
+        <div class="sort-bar">
+            <div class="sort-bar__info">
+                <span class="sort-bar__count">
+                    {{ total_count }} {% if total_count == 1 %}{% mtrans 'product' %}{% else %}{% mtrans 'products' %}{% endif %}
+                </span>
+            </div>
+            <div class="sort-bar__controls">
+                <label for="sort-select" class="sort-bar__label">{% mtrans 'Sort by' %}:</label>
+                <select id="sort-select" class="sort-bar__select" data-sort-select>
+                    {% for value, label in sort_choices %}
+                    <option data-url="?sort={{ value }}"
+                            {% if current_sort == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="product-grid">
+            {% for product in products %}
+                {% include 'page_builder/partials/product_card.html' with product=product %}
+            {% empty %}
+            <div class="product-grid__empty">
+                <i class="fas fa-box-open"></i>
+                <p>{% mtrans 'No products available yet.' %}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if paginator.num_pages > 1 %}
+        <nav class="pagination" aria-label="{% mtrans 'Page navigation' %}">
+            <ul class="pagination__list">
+                {% if page_obj.has_previous %}
+                <li class="pagination__item">
+                    <a href="?sort={{ current_sort }}&page={{ page_obj.previous_page_number }}"
+                       class="pagination__link pagination__link--prev"
+                       aria-label="{% mtrans 'Previous page' %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <li class="pagination__item">
+                        <span class="pagination__link pagination__link--active" aria-current="page">{{ num }}</span>
+                    </li>
+                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                    <li class="pagination__item">
+                        <a href="?sort={{ current_sort }}&page={{ num }}" class="pagination__link">{{ num }}</a>
+                    </li>
+                    {% elif num == 1 or num == paginator.num_pages %}
+                    <li class="pagination__item">
+                        <a href="?sort={{ current_sort }}&page={{ num }}" class="pagination__link">{{ num }}</a>
+                    </li>
+                    {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+                    <li class="pagination__item pagination__item--ellipsis">
+                        <span class="pagination__ellipsis">&hellip;</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="pagination__item">
+                    <a href="?sort={{ current_sort }}&page={{ page_obj.next_page_number }}"
+                       class="pagination__link pagination__link--next"
+                       aria-label="{% mtrans 'Next page' %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

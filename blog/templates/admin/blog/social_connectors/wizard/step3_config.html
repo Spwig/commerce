@@ -1,0 +1,243 @@
+{% extends "admin/blog/social_connectors/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Configure Account" %}</h2>
+    <p class="step-description">
+        {% blocktrans with provider=component.name %}
+        Enter your credentials and configure settings for {{ provider }}.
+        {% endblocktrans %}
+    </p>
+
+    {% if signup_url %}
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>{% trans "Don't have an account yet?" %}</strong>
+            <p>
+                {% trans "You'll need an account to connect." %}
+                <a href="{{ signup_url }}" target="_blank" rel="noopener">
+                    {% trans "Sign up here" %} <i class="fas fa-external-link-alt"></i>
+                </a>
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="config-form" class="credentials-form">
+        {% csrf_token %}
+
+        <!-- Account Name -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-tag"></i> {% trans "Account Name" %}
+            </h3>
+            <div class="form-group">
+                <label for="id_account_name">
+                    {% trans "Account Name" %}
+                    <span class="required">*</span>
+                </label>
+                <input type="text"
+                       name="account_name"
+                       id="id_account_name"
+                       class="form-control"
+                       required
+                       placeholder="{% trans "e.g., My Business Facebook, Company Twitter" %}">
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "Give this account a descriptive name to identify it in your dashboard." %}
+                </p>
+            </div>
+        </div>
+
+        <!-- API Credentials -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-key"></i> {% trans "API Credentials" %}
+            </h3>
+
+            {% if credential_schema %}
+                {% for field_name, field_config in credential_schema.items %}
+                <div class="form-group">
+                    <label for="id_{{ field_name }}">
+                        {{ field_config.label }}
+                        {% if field_config.required %}<span class="required">*</span>{% endif %}
+                    </label>
+
+                    {% if field_config.type == 'password' or field_config.secret %}
+                        <input type="password"
+                               name="{{ field_name }}"
+                               id="id_{{ field_name }}"
+                               class="form-control"
+                               {% if field_config.required %}required{% endif %}
+                               {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>
+                    {% elif field_config.type == 'text' %}
+                        <input type="text"
+                               name="{{ field_name }}"
+                               id="id_{{ field_name }}"
+                               class="form-control"
+                               {% if field_config.required %}required{% endif %}
+                               {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>
+                    {% elif field_config.type == 'select' %}
+                        <select name="{{ field_name }}"
+                                id="id_{{ field_name }}"
+                                class="form-control"
+                                {% if field_config.required %}required{% endif %}>
+                            <option value="">{% trans "Select..." %}</option>
+                            {% for choice in field_config.choices %}
+                                {% if choice.value %}
+                                <option value="{{ choice.value }}" {% if field_config.default == choice.value %}selected{% endif %}>{{ choice.label }}</option>
+                                {% else %}
+                                <option value="{{ choice }}" {% if field_config.default == choice %}selected{% endif %}>{{ choice }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    {% elif field_config.type == 'textarea' %}
+                        <textarea name="{{ field_name }}"
+                                  id="id_{{ field_name }}"
+                                  class="form-control"
+                                  rows="4"
+                                  {% if field_config.required %}required{% endif %}
+                                  {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}></textarea>
+                    {% elif field_config.type == 'boolean' %}
+                        <label class="checkbox-label">
+                            <input type="checkbox"
+                                   name="{{ field_name }}"
+                                   id="id_{{ field_name }}"
+                                   {% if field_config.default %}checked{% endif %}>
+                            {{ field_config.label }}
+                        </label>
+                    {% else %}
+                        <input type="text"
+                               name="{{ field_name }}"
+                               id="id_{{ field_name }}"
+                               class="form-control"
+                               {% if field_config.required %}required{% endif %}>
+                    {% endif %}
+
+                    {% if field_config.help_text %}
+                    <p class="help-text">
+                        <i class="fas fa-question-circle"></i> {{ field_config.help_text }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p>{% trans "This provider uses OAuth authentication. No manual credentials required." %}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Provider Settings -->
+        {% if settings_schema %}
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-cog"></i> {% trans "Provider Settings" %}
+            </h3>
+
+            {% for field_name, field_config in settings_schema.items %}
+            <div class="form-group">
+                <label for="id_setting_{{ field_name }}">
+                    {{ field_config.label }}
+                    {% if field_config.required %}<span class="required">*</span>{% endif %}
+                </label>
+
+                {% if field_config.type == 'textarea' %}
+                    <textarea name="setting_{{ field_name }}"
+                              id="id_setting_{{ field_name }}"
+                              class="form-control"
+                              rows="3"
+                              {% if field_config.required %}required{% endif %}
+                              {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>{% if field_config.default %}{{ field_config.default }}{% endif %}</textarea>
+                {% elif field_config.type == 'boolean' %}
+                    <label class="checkbox-label">
+                        <input type="checkbox"
+                               name="setting_{{ field_name }}"
+                               id="id_setting_{{ field_name }}"
+                               {% if field_config.default %}checked{% endif %}>
+                        {{ field_config.label }}
+                    </label>
+                {% elif field_config.type == 'select' %}
+                    <select name="setting_{{ field_name }}"
+                            id="id_setting_{{ field_name }}"
+                            class="form-control"
+                            {% if field_config.required %}required{% endif %}>
+                        <option value="">{% trans "Select..." %}</option>
+                        {% for choice in field_config.choices %}
+                        <option value="{{ choice.value|default:choice }}" {% if field_config.default == choice.value|default:choice %}selected{% endif %}>
+                            {{ choice.label|default:choice }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <input type="text"
+                           name="setting_{{ field_name }}"
+                           id="id_setting_{{ field_name }}"
+                           class="form-control"
+                           {% if field_config.required %}required{% endif %}
+                           {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}
+                           {% if field_config.default %}value="{{ field_config.default }}"{% endif %}>
+                {% endif %}
+
+                {% if field_config.help_text %}
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i> {{ field_config.help_text }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Account Settings -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-sliders-h"></i> {% trans "Account Settings" %}
+            </h3>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_active" checked>
+                    {% trans "Enable this account" %}
+                </label>
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "Uncheck to disable auto-sharing to this account." %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_default">
+                    {% trans "Set as default account" %}
+                </label>
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "Default accounts are automatically selected for new blog posts." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="security-notice">
+            <i class="fas fa-lock"></i>
+            <span>{% trans "Your credentials will be encrypted using AES-256 encryption before being stored in the database." %}</span>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'blog_admin:wizard_step2' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="config-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

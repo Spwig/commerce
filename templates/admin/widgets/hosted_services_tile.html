@@ -1,0 +1,53 @@
+{% load i18n static %}
+{% comment %}
+Dashboard tile — Spwig hosted-service usage.
+
+Renders three progress bars (GeoIP, Geocoder, Push) each showing
+"current / limit" for the largest-scoped window (month/day/hour). When any
+service is >=80%, the "Upgrade" button appears. Under paid tiers the usage
+still shows but with higher limits and no upgrade button.
+
+Expects ``hosted_services`` from ``core.context_processors.license_status``.
+
+Styles live in ``core/static/core/admin/css/hosted-services-tile.css``. The
+only inline style is the dynamic progress-bar width, which matches the CSP
+allowance for data-driven widths.
+{% endcomment %}
+
+{% if hosted_services.available %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/hosted-services-tile.css' %}">
+
+<div class="spwig-usage-tile" data-hook="hosted-services-tile">
+    <h3>
+        <span>{% trans "Spwig services usage" %}</span>
+        {% if hosted_services.any_over_80 %}
+        <a href="{{ hosted_services.upgrade_url }}" class="upgrade-btn" target="_blank" rel="noopener">
+            {% trans "Upgrade →" %}
+        </a>
+        {% endif %}
+    </h3>
+
+    {% for svc in hosted_services.services %}
+    <div class="row">
+        <span>
+            {% if svc.service == "geoip" %}{% trans "GeoIP" %}
+            {% elif svc.service == "geocoder" %}{% trans "Address lookup" %}
+            {% elif svc.service == "push" %}{% trans "Push notifications" %}
+            {% endif %}
+        </span>
+        {% if svc.primary_window %}
+        <div class="bar {% if svc.primary_window.pct >= 100 %}over{% elif svc.primary_window.pct >= 80 %}warn{% endif %}">
+            <span style="width: {% if svc.primary_window.pct > 100 %}100{% else %}{{ svc.primary_window.pct }}{% endif %}%"></span>
+        </div>
+        <span class="counts">
+            {{ svc.primary_window.current }} / {% if svc.primary_window.limit %}{{ svc.primary_window.limit }}{% else %}∞{% endif %}
+            <small class="window-label">({{ svc.primary_window.label }})</small>
+        </span>
+        {% else %}
+        <div></div>
+        <span class="no-data">{% if svc.error %}{{ svc.error }}{% else %}—{% endif %}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

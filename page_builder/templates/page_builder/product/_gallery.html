@@ -1,0 +1,64 @@
+{% load i18n static merchant_trans %}
+{# Product Gallery Partial - supports images and video #}
+{# Context: images, product #}
+
+<div class="product-gallery product-gallery--{{ product.gallery_type|default:'standard' }}" data-gallery-type="{{ product.gallery_type|default:'standard' }}">
+    <div class="product-gallery__main">
+        <div class="product-gallery__zoom-container" id="gallery-zoom">
+            {% if images %}
+                {% with first_image=images.0 %}
+                {% if first_image.media_asset.is_video %}
+                <video class="product-gallery__video product-gallery__media--active"
+                       id="main-video"
+                       controls playsinline preload="metadata"
+                       poster="{{ first_image.media_asset.poster_url|default:'' }}">
+                    <source src="{{ first_image.media_asset.get_display_url }}" type="{{ first_image.media_asset.mime_type }}">
+                </video>
+                {% else %}
+                <img src="{{ first_image.media_asset.get_display_url }}"
+                     alt="{{ product.name }}"
+                     class="product-gallery__image"
+                     id="main-image"
+                     data-zoom-src="{{ first_image.media_asset.get_original_url|default:first_image.media_asset.get_display_url }}">
+                {% endif %}
+                {% endwith %}
+            {% elif product.primary_image_url %}
+            <img src="{{ product.primary_image_url }}"
+                 alt="{{ product.name }}"
+                 class="product-gallery__image"
+                 id="main-image">
+            {% else %}
+            <div class="product-gallery__placeholder">
+                <i class="fas fa-box"></i>
+            </div>
+            {% endif %}
+            <div class="product-gallery__zoom-lens" id="zoom-lens"></div>
+        </div>
+        <div class="product-gallery__zoom-result" id="zoom-result"></div>
+    </div>
+
+    {% if images.count > 1 %}
+    <div class="product-gallery__thumbnails">
+        {% for image in images %}
+        <button class="product-gallery__thumb {% if forloop.first %}product-gallery__thumb--active{% endif %} {% if image.media_asset.is_video %}product-gallery__thumb--video{% endif %}"
+                data-image="{{ image.media_asset.get_display_url }}"
+                data-zoom="{{ image.media_asset.get_original_url|default:image.media_asset.get_display_url }}"
+                data-is-video="{{ image.media_asset.is_video|yesno:'true,false' }}"
+                {% if image.media_asset.is_video %}
+                data-video-type="{{ image.media_asset.mime_type }}"
+                data-poster="{{ image.media_asset.poster_url|default:'' }}"
+                {% endif %}
+                aria-label="{% if image.media_asset.is_video %}{% mtrans 'Play video' %} {{ forloop.counter }}{% else %}{% mtrans 'View image' %} {{ forloop.counter }}{% endif %}">
+            {% if image.media_asset.is_video %}
+            <div class="product-gallery__thumb-video-overlay">
+                <i class="fas fa-play"></i>
+            </div>
+            {% endif %}
+            <img src="{{ image.media_asset.thumbnail_small|default:image.media_asset.get_display_url }}"
+                 alt="{{ product.name }} - {{ forloop.counter }}"
+                 loading="lazy">
+        </button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

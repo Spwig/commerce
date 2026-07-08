@@ -1,0 +1,69 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Trust Badges Element -->
+<section class="trust-badges trust-badges--{{ element.content.style|default:'minimal' }} trust-badges--{{ element.content.size|default:'md' }} trust-badges--{{ element.content.layout|default:'inline' }}"
+         {% hover_animation_attrs element %}
+         style="{% if element.content.icon_color %}--trust-icon-color: {{ element.content.icon_color }};{% endif %}
+                {% if element.content.text_color %}--trust-text-color: {{ element.content.text_color }};{% endif %}
+                {% if element.content.badge_background %}--trust-badge-bg: {{ element.content.badge_background }};{% endif %}
+                {% if element.content.border_color %}--trust-border-color: {{ element.content.border_color }};{% endif %}
+                {% base_styles element %}">
+
+    {% if element.content.title %}
+    <h3 class="trust-badges__title">{{ element.content.title }}</h3>
+    {% endif %}
+
+    <div class="trust-badges__container"
+         style="justify-content: {{ element.content.alignment|default:'center' }};
+                {% if element.content.layout == 'grid' %}--trust-columns: {{ element.content.columns|default:'4' }};{% endif %}">
+        {% for badge in element.content.badges %}
+        <div class="trust-badges__item"
+             {% if element.content.show_tooltips|default:True and badge.description %}
+             title="{{ badge.description }}"
+             data-tooltip="{{ badge.description }}"
+             {% endif %}>
+            <div class="trust-badges__icon">
+                {% if badge.image %}
+                <img src="{{ badge.image }}" alt="{{ badge.title }}" class="trust-badges__image" loading="lazy">
+                {% elif badge.type == 'secure_checkout' %}
+                <i class="fas fa-lock"></i>
+                {% elif badge.type == 'money_back' %}
+                <i class="fas fa-undo-alt"></i>
+                {% elif badge.type == 'free_shipping' %}
+                <i class="fas fa-truck"></i>
+                {% elif badge.type == 'fast_delivery' %}
+                <i class="fas fa-shipping-fast"></i>
+                {% elif badge.type == 'support_24_7' %}
+                <i class="fas fa-headset"></i>
+                {% elif badge.type == 'quality' %}
+                <i class="fas fa-medal"></i>
+                {% elif badge.type == 'ssl' %}
+                <i class="fas fa-shield-alt"></i>
+                {% elif badge.type == 'satisfaction' %}
+                <i class="fas fa-thumbs-up"></i>
+                {% elif badge.type == 'verified' %}
+                <i class="fas fa-check-circle"></i>
+                {% elif badge.icon %}
+                <i class="{{ badge.icon }}"></i>
+                {% else %}
+                <i class="fas fa-star"></i>
+                {% endif %}
+            </div>
+            {% if element.content.style != 'icon_only' %}
+            <div class="trust-badges__content">
+                {% if badge.title %}
+                <span class="trust-badges__label">{{ badge.title }}</span>
+                {% endif %}
+                {% if element.content.show_descriptions and badge.description %}
+                <span class="trust-badges__description">{{ badge.description }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-shield-alt empty-state__icon"></i>
+            <p class="empty-state__text">{% mtrans "Add trust badges to display" %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>

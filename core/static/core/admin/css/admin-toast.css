@@ -1,0 +1,184 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Admin Toast & Modal Extras
+ * ==========================
+ * Toast notification styles for AdminModal.toast()
+ * Modal extras: type-icon colors, danger button, prompt input
+ * Uses slideIn/slideOut keyframes from notification-animations.css
+ */
+
+/* =====================================
+   TOAST NOTIFICATION SYSTEM
+   z-index: 10001 (above admin modals)
+   ===================================== */
+
+.admin-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 420px;
+    pointer-events: none;
+}
+
+.admin-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4, 8px);
+    padding: var(--space-5, 12px) var(--space-6, 16px);
+    border-radius: var(--radius-lg, 8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    background: var(--body-bg, #fff);
+    border-left: 4px solid var(--info-color, #0d8043);
+    color: var(--body-fg, #333);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    animation: slideIn 0.3s ease forwards;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.admin-toast.exiting {
+    animation: slideOut 0.3s ease forwards;
+}
+
+/* --- Type Variants --- */
+.admin-toast--success {
+    border-left-color: var(--success-color, #137333);
+}
+
+.admin-toast--error {
+    border-left-color: var(--error-color, #d93025);
+}
+
+.admin-toast--warning {
+    border-left-color: var(--warning-color, #ea8600);
+}
+
+.admin-toast--info {
+    border-left-color: var(--info-color, #0d8043);
+}
+
+/* --- Toast Icon --- */
+.admin-toast-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.admin-toast--success .admin-toast-icon {
+    color: var(--success-color, #137333);
+}
+
+.admin-toast--error .admin-toast-icon {
+    color: var(--error-color, #d93025);
+}
+
+.admin-toast--warning .admin-toast-icon {
+    color: var(--warning-color, #ea8600);
+}
+
+.admin-toast--info .admin-toast-icon {
+    color: var(--info-color, #0d8043);
+}
+
+/* --- Toast Message --- */
+.admin-toast-message {
+    flex: 1;
+    word-break: break-word;
+}
+
+/* --- Toast Close Button --- */
+.admin-toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    cursor: pointer;
+    color: var(--body-quiet-color, #999);
+    font-size: 0.875rem;
+    line-height: 1;
+    border-radius: var(--radius-md, 4px);
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.admin-toast-close:hover {
+    color: var(--body-fg, #333);
+    background: var(--selected-bg, rgba(0, 0, 0, 0.05));
+}
+
+/* =====================================
+   MODAL EXTRAS (AdminModal utilities)
+   ===================================== */
+
+/* --- Alert type icon colors --- */
+.admin-modal-icon--success {
+    color: var(--success-color, #137333) !important;
+}
+
+.admin-modal-icon--error {
+    color: var(--error-color, #d93025) !important;
+}
+
+.admin-modal-icon--warning {
+    color: var(--warning-color, #ea8600) !important;
+}
+
+.admin-modal-icon--info {
+    color: var(--primary, #417690) !important;
+}
+
+/* --- Danger button (destructive confirms) --- */
+.admin-modal-btn--danger {
+    background: var(--delete-button-bg, #dc3545) !important;
+    color: #fff !important;
+    border-color: var(--delete-button-bg, #dc3545) !important;
+}
+
+.admin-modal-btn--danger:hover {
+    opacity: 0.9;
+    filter: brightness(1.05);
+}
+
+/* --- Prompt input --- */
+.admin-modal-input {
+    width: 100%;
+    padding: var(--space-4, 8px) var(--space-5, 12px);
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: var(--radius-md, 4px);
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+    font-size: 0.9375rem;
+    margin-top: var(--space-4, 8px);
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-modal-input:focus {
+    outline: none;
+    border-color: var(--primary, #417690);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, #417690) 20%, transparent);
+}
+
+/* =====================================
+   RESPONSIVE
+   ===================================== */
+
+@media (max-width: 768px) {
+    .admin-toast-container {
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        max-width: 100%;
+        padding: var(--space-4, 8px);
+    }
+
+    .admin-toast {
+        border-radius: var(--radius-md, 4px);
+    }
+}

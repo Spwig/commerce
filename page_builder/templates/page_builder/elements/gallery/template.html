@@ -1,0 +1,124 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Image Gallery Element -->
+<section class="gallery section{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+data-gallery
+data-layout="{{ element.content.layout|default:'grid' }}"
+data-lightbox="{{ element.content.lightbox|yesno:'true,false' }}"
+data-auto-play="{{ element.content.auto_play|yesno:'true,false' }}"
+data-play-interval="{{ element.content.play_interval|default:'5' }}"
+data-columns="{{ element.content.columns|default:'3' }}"
+{% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+{% hover_animation_attrs element %}
+style="{% base_styles element %}">
+    <div class="container">
+        {% if element.content.title %}
+        <h2 class="section-header__title text-center">{{ element.content.title }}</h2>
+        {% endif %}
+
+        {% if element.content.description %}
+        <p class="section-header__subtitle text-center mb-8">{{ element.content.description }}</p>
+        {% endif %}
+
+        {% if element.content.images %}
+        <div class="gallery__container" data-layout="{{ element.content.layout|default:'grid' }}">
+            {% if element.content.layout == 'carousel' %}
+            <!-- Carousel Layout -->
+            <div class="carousel gallery__carousel">
+                <div class="carousel__wrapper">
+                    {% for image in element.content.images %}
+                    <div class="carousel__slide {% if forloop.first %}carousel__slide--active{% endif %}"
+                         data-slide="{{ forloop.counter0 }}">
+                        <img src="{{ image.src }}"
+                             alt="{{ image.alt }}"
+                             {% if element.content.lazy_loading %}loading="lazy"{% endif %}
+                             class="carousel__image">
+                        {% if element.content.show_captions and image.caption %}
+                        <div class="carousel__caption">
+                            {% if image.title %}<h3 class="carousel__caption-title">{{ image.title }}</h3>{% endif %}
+                            <p class="carousel__caption-text">{{ image.caption }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Carousel Controls -->
+                <button class="carousel__prev carousel__control" aria-label="{% mtrans 'Previous' %}">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel__next carousel__control" aria-label="{% mtrans 'Next' %}">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- Carousel Indicators -->
+                <div class="carousel__indicators">
+                    {% for image in element.content.images %}
+                    <button class="carousel__indicator {% if forloop.first %}carousel__indicator--active{% endif %}"
+                            data-slide="{{ forloop.counter0 }}"
+                            aria-label="{% mtrans 'Slide' %} {{ forloop.counter }}"></button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% else %}
+            <!-- Grid or Masonry Layout -->
+            <div class="gallery__grid grid grid--{{ element.content.columns|default:3 }} {% if element.content.layout == 'masonry' %}gallery__grid--masonry{% endif %}">
+                {% for image in element.content.images %}
+                <div class="gallery__item"
+                     {% if element.content.lightbox %}data-lightbox="gallery" data-src="{{ image.src }}" data-alt="{{ image.alt }}"{% endif %}>
+                    <div class="gallery__image-wrapper">
+                        <img src="{{ image.thumbnail|default:image.src }}"
+                             alt="{{ image.alt }}"
+                             {% if element.content.lazy_loading %}loading="lazy"{% endif %}
+                             class="gallery__image">
+
+                        {% if element.content.lightbox %}
+                        <div class="gallery__overlay">
+                            <i class="fas fa-search-plus gallery__zoom-icon"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if element.content.show_captions and image.caption or image.title %}
+                    <div class="gallery__item-caption">
+                        {% if image.title %}
+                        <h3 class="gallery__item-title">{{ image.title }}</h3>
+                        {% endif %}
+                        {% if image.caption %}
+                        <p class="gallery__item-text">{{ image.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-images empty-state__icon"></i>
+            <p class="empty-state__text">{% mtrans "Add images to create your gallery" %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+{% if element.content.lightbox and element.content.images %}
+<div id="lightbox-modal" class="modal modal--lightbox hidden">
+    <div class="modal__content modal__content--lightbox">
+        <img id="lightbox-image" src="" alt="" class="modal__image">
+        <button id="lightbox-close" class="modal__close" aria-label="{% mtrans 'Close' %}">
+            <i class="fas fa-times"></i>
+        </button>
+        <button id="lightbox-prev" class="modal__nav modal__nav--prev" aria-label="{% mtrans 'Previous' %}">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="lightbox-next" class="modal__nav modal__nav--next" aria-label="{% mtrans 'Next' %}">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div id="lightbox-caption" class="modal__caption"></div>
+    </div>
+</div>
+{% endif %}

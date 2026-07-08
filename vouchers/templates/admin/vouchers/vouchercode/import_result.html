@@ -1,0 +1,81 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Voucher import complete" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:vouchers_vouchercode_changelist' %}">{% trans "Voucher Codes" %}</a>
+    &rsaquo; {% trans "Import result" %}
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<style>
+    .vr-wrap { max-width: 760px; margin: 24px auto; }
+    .vr-card { background: #fff; border: 1px solid var(--token-color-border, #e3e6ec); border-radius: 10px; padding: 28px 32px; text-align: center; }
+    .vr-icon { font-size: 44px; color: #2c8a52; margin-bottom: 10px; }
+    .vr-title { font-size: 22px; margin: 0 0 6px; }
+    .vr-sub { color: var(--token-color-text-muted, #5b6573); margin: 0 0 24px; font-size: 14px; }
+    .vr-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+    .vr-stat { padding: 14px 12px; border: 1px solid var(--token-color-border-soft, #f0f2f5); border-radius: 8px; }
+    .vr-stat .v { font-size: 26px; font-weight: 600; }
+    .vr-stat .l { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--token-color-text-muted, #6b7280); margin-top: 4px; }
+    .vr-stat.imported { background: rgba(44, 138, 82, 0.06); border-color: #2c8a52; }
+    .vr-stat.updated { background: rgba(56, 89, 225, 0.06); border-color: #3859e1; }
+    .vr-stat.skipped { background: #fef6e6; border-color: #e0a23a; }
+    .vr-actions { display: flex; gap: 12px; justify-content: center; }
+    .vr-job-id { font-family: monospace; font-size: 12px; color: var(--token-color-text-muted, #6b7280); margin-top: 18px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="vr-wrap">
+    <div class="vr-card">
+        <div class="vr-icon"><i class="fas fa-check-circle"></i></div>
+        <h1 class="vr-title">{% trans "Import complete" %}</h1>
+        <p class="vr-sub">
+            {% trans "The vouchers below are now live in your catalogue." %}
+        </p>
+
+        <div class="vr-stats">
+            <div class="vr-stat imported">
+                <div class="v">{{ job.coupons_imported }}</div>
+                <div class="l">{% trans "Imported" %}</div>
+            </div>
+            <div class="vr-stat updated">
+                <div class="v">{{ job.coupons_skipped }}</div>
+                <div class="l">{% trans "Skipped" %}</div>
+            </div>
+            <div class="vr-stat">
+                <div class="v">{{ job.coupons_total }}</div>
+                <div class="l">{% trans "Rows processed" %}</div>
+            </div>
+            <div class="vr-stat">
+                <div class="v">{{ job.coupons_failed }}</div>
+                <div class="l">{% trans "Failed" %}</div>
+            </div>
+        </div>
+
+        <div class="vr-actions">
+            <a href="{{ vouchers_url }}?migration_job__id__exact={{ job.id }}" class="button default">
+                <i class="fas fa-eye"></i> {% trans "View imported vouchers" %}
+            </a>
+            <a href="{% url 'admin:vouchers_vouchercode_import' %}" class="button">
+                <i class="fas fa-file-import"></i> {% trans "Import another batch" %}
+            </a>
+            <a href="{% url 'admin:vouchers_vouchercode_changelist' %}" class="button">
+                {% trans "Back to voucher list" %}
+            </a>
+        </div>
+
+        <div class="vr-job-id">
+            {% trans "Batch ID" %}: {{ job.id }}
+        </div>
+    </div>
+</div>
+{% endblock %}

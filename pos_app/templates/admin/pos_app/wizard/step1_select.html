@@ -1,0 +1,93 @@
+{% extends "admin/pos_app/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_header %}
+<h1>
+    <div class="wizard-icon-large">
+        <i class="fas fa-credit-card"></i>
+    </div>
+    {% trans "Select Terminal Provider" %}
+</h1>
+<p class="wizard-subtitle">{% trans "Choose a payment terminal provider to accept card payments at the point of sale." %}</p>
+{% endblock %}
+
+{% block wizard_content %}
+<form method="post" id="provider-select-form">
+    {% csrf_token %}
+
+    <div class="provider-grid">
+        {% for provider in providers %}
+        <label class="provider-card" data-provider-type="{% if provider.is_builtin %}manual{% else %}component{% endif %}">
+            <input type="radio" name="provider_type" value="{% if provider.is_builtin %}manual{% else %}component{% endif %}"
+                   data-component-id="{% if provider.component %}{{ provider.component.id }}{% endif %}">
+
+            <div class="provider-card-inner">
+                <div class="provider-card-header">
+                    {% if provider.logo_url %}
+                    <div class="logo-plate" data-auto-contrast>
+                        <img src="{{ provider.logo_url }}"
+                             alt="{{ provider.manifest.name }}"
+                             loading="lazy"
+                             crossorigin="anonymous">
+                    </div>
+                    {% elif provider.is_builtin %}
+                    <div class="provider-logo-placeholder">
+                        <i class="fas fa-keyboard"></i>
+                    </div>
+                    {% else %}
+                    <div class="provider-logo-placeholder">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    {% endif %}
+
+                    <h3 class="provider-name">{{ provider.manifest.name }}</h3>
+                </div>
+
+                <p class="provider-description">{{ provider.manifest.description }}</p>
+
+                {% if provider.supported_readers %}
+                <div class="provider-readers">
+                    <span class="readers-label"><i class="fas fa-wifi"></i> {% trans "Supported Readers:" %}</span>
+                    <div class="reader-tags">
+                        {% for reader in provider.supported_readers|slice:":3" %}
+                        <span class="reader-tag">{{ reader.name }}</span>
+                        {% endfor %}
+                        {% if provider.supported_readers|length > 3 %}
+                        <span class="reader-tag more">+{{ provider.supported_readers|length|add:"-3" }} more</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if provider.is_builtin %}
+                <div class="provider-badge builtin">
+                    <i class="fas fa-keyboard"></i> {% trans "Manual Entry" %}
+                </div>
+                {% endif %}
+            </div>
+        </label>
+        {% empty %}
+        <div class="no-providers">
+            <i class="fas fa-plug"></i>
+            <p>{% trans "No terminal providers available." %}</p>
+            <p class="hint">{% trans "Install terminal provider components from the update server." %}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <input type="hidden" name="component_id" id="selected-component-id" value="">
+
+    <div class="wizard-actions">
+        <a href="{% url 'admin:pos_app_posterminalprovider_changelist' %}" class="btn btn-secondary">
+            {% trans "Cancel" %}
+        </a>
+        <button type="submit" class="btn btn-primary" id="continue-btn" disabled>
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'pos_app/admin/js/pos-wizard.js' %}"></script>
+{% endblock %}

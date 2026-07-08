@@ -1,0 +1,131 @@
+{% load i18n currency_tags merchant_trans %}
+{# Product Card Partial - shared across all product listing contexts #}
+{# Required context: product (Product model instance) #}
+{# Optional context: show_badge (default True), show_rating (default False), show_quick_actions (default True) #}
+
+<article class="product-card"
+         data-product-id="{{ product.id }}"
+         data-product-type="{{ product.product_type }}"
+         data-product-slug="{{ product.slug }}">
+
+    {# --- Image Section --- #}
+    <div class="product-card__image">
+        <a href="{% url 'page_builder:product_detail' product_slug=product.slug %}"
+           class="product-card__image-link"
+           aria-label="{{ product.name }}">
+            {% if product.primary_image_listing_url %}
+            <img src="{{ product.primary_image_listing_url }}"
+                 alt="{{ product.name }}"
+                 class="product-card__img"
+                 loading="lazy"
+                 width="400" height="400">
+            {% else %}
+            <div class="product-card__placeholder">
+                <i class="fas fa-box"></i>
+            </div>
+            {% endif %}
+        </a>
+
+        {# Badges #}
+        {% if show_badge|default:"True" != "False" %}
+        <div class="product-card__badges">
+            {% if not product.is_in_stock %}
+            <span class="product-card__badge product-card__badge--soldout">{% mtrans "Sold Out" %}</span>
+            {% elif product.is_on_sale %}
+            <span class="product-card__badge product-card__badge--sale">{% mtrans "Sale" %}</span>
+            {% endif %}
+            {% if product.product_type == 'bundle' %}
+            <span class="product-card__badge product-card__badge--bundle">{% mtrans "Bundle" %}</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# Quick Actions (wishlist, quick-view) #}
+        {% if show_quick_actions|default:"True" != "False" %}
+        <div class="product-card__actions">
+            <button class="product-card__action-btn product-card__action-btn--wishlist"
+                    data-product-id="{{ product.id }}"
+                    aria-label="{% mtrans 'Add to wishlist' %}"
+                    type="button">
+                <i class="far fa-heart"></i>
+            </button>
+            {% if product.product_type == 'variable' %}
+            <button class="product-card__action-btn product-card__action-btn--quickview"
+                    data-product-slug="{{ product.slug }}"
+                    aria-label="{% mtrans 'Quick view' %}"
+                    type="button">
+                <i class="fas fa-eye"></i>
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# Hover Overlay #}
+        <div class="product-card__overlay"></div>
+    </div>
+
+    {# --- Content Section --- #}
+    <div class="product-card__content">
+        {# Title #}
+        <h3 class="product-card__title">
+            <a href="{% url 'page_builder:product_detail' product_slug=product.slug %}">
+                {{ product.name }}
+            </a>
+        </h3>
+
+        {# Price — use customer's currency when multi-currency is enabled #}
+        <div class="product-card__price">
+            {% if product.is_on_sale %}
+            <span class="product-card__price-current product-card__price-current--sale">
+                {{ product|product_price:current_currency.code }}
+            </span>
+            <span class="product-card__price-original">
+                {{ product|product_compare_price:current_currency.code }}
+            </span>
+            {% else %}
+            <span class="product-card__price-current">
+                {{ product|product_price:current_currency.code }}
+            </span>
+            {% endif %}
+        </div>
+
+        {# Spacer to push button to bottom #}
+        <div class="product-card__spacer"></div>
+
+        {# Action Button (varies by product type) #}
+        <div class="product-card__button">
+            {% if product.product_type == 'simple' or product.product_type == 'digital' %}
+                {# Direct add to cart #}
+                <button class="product-card__add-btn"
+                        data-product-id="{{ product.id }}"
+                        type="button"
+                        {% if not product.is_in_stock and not product.allow_backorders %}disabled{% endif %}>
+                    {% if product.is_in_stock or product.allow_backorders %}
+                        <span class="spinner"></span>
+                        <span class="btn-text">
+                            <i class="fas fa-shopping-cart"></i>
+                            {% mtrans "Add to Cart" %}
+                        </span>
+                    {% else %}
+                        <span class="btn-text">{% mtrans "Sold Out" %}</span>
+                    {% endif %}
+                </button>
+            {% elif product.product_type == 'variable' %}
+                {# Quick-view modal trigger #}
+                <button class="product-card__quickview-btn"
+                        data-product-slug="{{ product.slug }}"
+                        type="button">
+                    <i class="fas fa-eye"></i>
+                    <span>{% mtrans "Quick View" %}</span>
+                </button>
+            {% else %}
+                {# View Options link for bundle/customizable/gift_card #}
+                <a href="{% url 'page_builder:product_detail' product_slug=product.slug %}"
+                   class="product-card__options-link">
+                    <span>{% mtrans "View Options" %}</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</article>

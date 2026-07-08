@@ -1,0 +1,246 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static humanize %}
+
+{% block title %}{% trans "Browse Social Connector Providers" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/provider-wizard.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/provider_modal.css' %}">
+<link rel="stylesheet" href="{% static 'blog/admin/css/social_connector_browse.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/version-history.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/logo-contrast.js' %}" defer></script>
+<script src="{% static 'providers_common/js/provider_modal.js' %}" defer></script>
+<script src="{% static 'providers_common/js/version-history.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:blog_socialconnectoraccount_changelist' %}">{% trans 'Social Accounts' %}</a>
+    &rsaquo; {% trans 'Browse Providers' %}
+</div>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="wizard-container browse-container">
+    <!-- Header -->
+    <div class="wizard-header">
+        <h1>{% trans "Browse Social Connector Providers" %}</h1>
+        <p class="wizard-subtitle">
+            {% trans "Choose a social media platform to connect for automatic blog post sharing." %}
+        </p>
+
+        {% if not has_update_server %}
+        <div class="alert alert-warning browse-alert--warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{% trans "Update Server Unavailable" %}</strong>
+                <p class="browse-alert__text">{% trans "Could not connect to the update server. Showing locally installed providers only." %}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Information Card -->
+    <div class="wizard-content browse-content-section">
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>{% trans "Social Connector Marketplace" %}</strong>
+                <p>{% trans "Install social media connectors to automatically share your blog posts to platforms like Facebook, Twitter/X, LinkedIn, and Instagram. Each connector handles OAuth authentication and API integration for you." %}</p>
+            </div>
+        </div>
+
+        <div class="help-box browse-help-box">
+            <i class="fas fa-rocket"></i>
+            <strong>{% trans "Getting Started" %}</strong>
+            <ol class="steps-list browse-steps-list">
+                <li>{% trans "Browse providers below and find your platform" %}</li>
+                <li>{% trans "Click 'Install' to add the provider to your store" %}</li>
+                <li>{% trans "Click 'Configure' to connect your social account" %}</li>
+                <li>{% trans "Enable auto-sharing on your blog posts" %}</li>
+            </ol>
+        </div>
+
+        <div class="security-notice browse-security-notice">
+            <i class="fas fa-chart-bar"></i>
+            {% blocktrans count counter=total_count %}
+                Currently: {{ counter }} provider available
+            {% plural %}
+                Currently: {{ counter }} providers available
+            {% endblocktrans %}
+        </div>
+    </div>
+
+    <!-- Providers Grid -->
+    {% if providers %}
+    <div class="providers-grid">
+        {% for provider in providers %}
+        <div class="provider-card {% if provider.is_installed %}provider-installed{% endif %} {% if provider.has_update %}has-update{% endif %}"
+             data-provider-slug="{{ provider.slug }}">
+
+            <!-- Update Badge -->
+            {% if provider.has_update %}
+            <div class="browse-update-badge">
+                <i class="fas fa-arrow-circle-up"></i>
+                {% trans "Update" %}
+            </div>
+            {% endif %}
+
+            <div class="provider-card-content">
+                <!-- Logo -->
+                {% if provider.thumbnail_url %}
+                <div class="provider-logo">
+                    <div class="logo-plate" data-auto-contrast>
+                        <img src="{{ provider.thumbnail_url }}"
+                             alt="{{ provider.name }}"
+                             loading="lazy"
+                             crossorigin="anonymous">
+                    </div>
+                </div>
+                {% else %}
+                <div class="provider-logo provider-logo-placeholder">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                {% endif %}
+
+                <h3 class="provider-name">{{ provider.name }}</h3>
+
+                {% if provider.description %}
+                <p class="provider-description">{{ provider.description|truncatewords:15 }}</p>
+                {% endif %}
+
+                <!-- Capabilities -->
+                {% if provider.capabilities %}
+                <div class="provider-capabilities">
+                    {% if provider.capabilities.text_posts %}
+                    <span class="capability-badge">
+                        <i class="fas fa-font"></i> {% trans "Text" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.image_posts %}
+                    <span class="capability-badge">
+                        <i class="fas fa-image"></i> {% trans "Images" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.link_preview %}
+                    <span class="capability-badge">
+                        <i class="fas fa-link"></i> {% trans "Links" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.scheduling %}
+                    <span class="capability-badge">
+                        <i class="fas fa-clock"></i> {% trans "Scheduling" %}
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Character Limit -->
+                {% if provider.character_limit %}
+                <div class="browse-char-limit">
+                    <i class="fas fa-text-width"></i> {% trans "Max" %} {{ provider.character_limit|intcomma }} {% trans "characters" %}
+                </div>
+                {% endif %}
+
+                <!-- Status Badge -->
+                <div class="browse-status-section">
+                    {% if provider.is_installed %}
+                    <span class="browse-badge browse-badge--installed">
+                        <i class="fas fa-check-circle"></i> {% trans "Installed" %}
+                        {% if provider.current_version %}v{{ provider.current_version }}{% endif %}
+                    </span>
+                    {% else %}
+                    <span class="browse-badge browse-badge--available">
+                        <i class="fas fa-download"></i> {% trans "Available" %}
+                        {% if provider.latest_version %}v{{ provider.latest_version }}{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Selection Indicator -->
+                <div class="provider-check">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="browse-card-actions">
+                {% if provider.is_installed %}
+                    {% if provider.has_update %}
+                    <button class="btn btn-primary"
+                            data-action="update-provider" data-slug="{{ provider.slug }}" data-version="{{ provider.latest_version }}">
+                        <i class="fas fa-sync-alt"></i> {% trans "Update" %}
+                    </button>
+                    {% else %}
+                    <a href="{% url 'blog_admin:wizard_step1' %}?provider={{ provider.slug }}" class="btn btn-primary btn--configure">
+                        <i class="fas fa-cog"></i> {% trans "Configure" %}
+                    </a>
+                    {% endif %}
+                {% else %}
+                <button class="btn btn-primary"
+                        data-action="install-provider" data-slug="{{ provider.slug }}" data-name="{{ provider.name }}">
+                    <i class="fas fa-download"></i> {% trans "Install" %}
+                </button>
+                {% endif %}
+
+                {% if provider.documentation_url %}
+                <a href="{{ provider.documentation_url }}" target="_blank" rel="noopener"
+                   class="btn btn-secondary" title="{% trans 'Documentation' %}">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="wizard-content">
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>{% trans "No Providers Available" %}</h3>
+            <p>{% trans "No social connector providers are currently available. Please check your update server connection or contact support." %}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Loading Overlay -->
+<div id="provider-install-loading" class="browse-loading-overlay">
+    <div class="browse-loading-panel">
+        <div class="browse-loading-spinner"></div>
+        <p id="loading-message" class="browse-loading-message">{% trans "Installing provider..." %}</p>
+    </div>
+</div>
+
+<!-- Provider Data for JavaScript -->
+{{ providers_json|json_script:"provider-data" }}
+
+<script id="social-connector-providers-data" type="application/json">
+{
+    "translations": {
+        "install": "{% trans 'Install' %}",
+        "installing": "{% trans 'Installing' %}",
+        "installed": "{% trans 'Provider installed successfully!' %}",
+        "installFailed": "{% trans 'Installation failed' %}",
+        "updateToVersion": "{% trans 'Update to version' %}",
+        "updating": "{% trans 'Updating provider...' %}",
+        "updated": "{% trans 'Provider updated successfully!' %}",
+        "updateFailed": "{% trans 'Update failed' %}"
+    }
+}
+</script>
+<script src="{% static 'blog/admin/js/social_connector_providers.js' %}"></script>
+
+{% include "providers_common/includes/version_history_i18n.html" %}
+
+{% csrf_token %}
+{% endblock %}

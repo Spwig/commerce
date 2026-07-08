@@ -1,0 +1,148 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+shop_venv/
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+!pos_app/frontend_build/
+build/
+
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+db.sqlite3-journal
+media/
+!static/.gitkeep
+staticfiles
+assets/collected/
+
+# Environment (any real-value env file; templates are allowlisted below)
+.env
+.env.*
+*.env
+!.env.example
+!.env.template
+!*.env.example
+!*.env.template
+
+# Runtime state (generated when merchant accepts license)
+license_acceptance.json
+
+# Language pack config (written by installer, read by settings.py at startup)
+installed_language_packs.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage.*
+
+# Documentation (dev-only reference, not deployed)
+docs/
+
+# Backup files
+*.bak
+*.backup
+
+# Node (if frontend assets)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Production - never commit private keys or certs
+*.pem
+*.key
+*.cert
+*.crt
+# Public keys (e.g. license verification key) are explicitly allowlisted where used
+!core/keys/*.pem
+
+# Archive
+.archive/
+
+# Celery runtime
+celerybeat-schedule
+
+# Keys (root-level .keys/ is private, but core/keys/ ships with codebase)
+.keys/
+!core/keys/
+!core/keys/license-public-key.pem
+
+# Claude Code artifacts (CLAUDE.md is now tracked — public AI/contributor guidance)
+.claude/
+.claude_code/
+
+# MCP configuration
+.mcp.json
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Test results (CI regenerates)
+test-results.xml
+
+# Ruff cache
+.ruff_cache/
+
+# Development screenshots (root-level only)
+/*.png
+
+# Dev-only directories (source lives in separate projects)
+components/
+components_data/
+sdks/
+.3dmodels/
+/themes/
+translator/
+upgrader/
+
+# Stray pip artifacts
+=*
+
+# Root-level test/dev scripts (formal tests live in tests/)
+/test_*.py
+/drop_test_db.py
+/populate_categories.py
+
+# Specific staticfiles that were previously tracked by mistake
+staticfiles/cart/css/admin_shipping_method.css
+staticfiles/cart/css/admin-cart-list.css
+staticfiles/cart/css/method-wizard.css
+staticfiles/catalog/css/admin_license_key.css
+staticfiles/catalog/css/admin_product_form.css
+staticfiles/catalog/js/admin_product_form.js
+staticfiles/catalog/js/admin_product_list.js
+staticfiles/catalog/js/admin_variant_inline.js
+staticfiles/core/admin/css/admin-sidebar.css
+staticfiles/core/admin/js/admin-base.js
+staticfiles/translations/admin/js/providers.js
+templates/admin/style_guide.html
+shop_venv
+media
+.tmp/*
+
+# Internal development + release tooling — NEVER goes public.
+# Everything under internal_tools/ is dev-only: build/push scripts,
+# fleet deploy tooling, OSS sync scripts, one-off migration scripts,
+# adhoc test/utility scripts, licence generation.
+internal_tools/

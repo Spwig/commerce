@@ -1,0 +1,287 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Configure Remote Storage" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/provider-wizard.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_storage_destinations' %}">{% trans 'Remote Storage' %}</a>
+    &rsaquo; {% trans 'Configure' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container"
+     data-provider-type="{{ provider_type }}"
+     data-test-url="{{ test_url }}">
+
+    <div class="wizard-header">
+        <h1>{% trans "Configure" %} {{ provider_name }}</h1>
+        <p class="wizard-subtitle">{% trans "Enter your credentials and storage settings" %}</p>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="wizard-steps">
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step active">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Review & Save" %}</div>
+        </div>
+    </div>
+
+    <div class="wizard-content">
+        <div class="wizard-step-content">
+            <form method="post" id="step2-form">
+                {% csrf_token %}
+
+                <!-- Destination Name -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-tag"></i> {% trans "Destination Name" %}
+                    </div>
+                    <div class="form-group">
+                        <label for="destination_name">{% trans "Name" %} <span class="required">*</span></label>
+                        <input type="text" id="destination_name" name="destination_name"
+                               class="form-control" required
+                               placeholder="{% trans 'e.g. My S3 Bucket, Office Backup Server' %}"
+                               value="{{ saved_name }}">
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "A friendly name to identify this destination." %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Fields (non-secret configuration) -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-cog"></i> {% trans "Storage Settings" %}
+                    </div>
+                    {% for field in settings_fields %}
+                    <div class="form-group" data-field-key="{{ field.key }}">
+                        <label for="setting_{{ field.key }}">
+                            {{ field.label }}
+                            {% if field.required %}<span class="required">*</span>{% endif %}
+                        </label>
+                        {% if field.type == 'select' %}
+                        <select id="setting_{{ field.key }}" name="setting_{{ field.key }}"
+                                class="form-control"
+                                {% if field.required %}required{% endif %}>
+                            {% for option in field.options %}
+                            <option value="{{ option.value }}"
+                                    {% if field.saved_value %}
+                                        {% if option.value == field.saved_value %}selected{% endif %}
+                                    {% elif option.value == field.default %}selected{% endif %}>
+                                {{ option.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% elif field.type == 'textarea' %}
+                        <textarea id="setting_{{ field.key }}" name="setting_{{ field.key }}"
+                                  class="form-control" rows="4"
+                                  {% if field.required %}required{% endif %}
+                                  placeholder="{{ field.help_text|default:'' }}">{{ field.saved_value }}</textarea>
+                        {% else %}
+                        <input type="{{ field.type|default:'text' }}"
+                               id="setting_{{ field.key }}" name="setting_{{ field.key }}"
+                               class="form-control"
+                               {% if field.required %}required{% endif %}
+                               value="{% firstof field.saved_value field.default %}"
+                               placeholder="{{ field.help_text|default:'' }}">
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {{ field.help_text }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Credential Fields -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-key"></i> {% trans "Credentials" %}
+                    </div>
+
+                    {% if requires_oauth %}
+                    {# OAuth providers: show client ID/secret fields + authorize button #}
+                    {% for field in credential_fields %}
+                    <div class="form-group">
+                        <label for="cred_{{ field.key }}">
+                            {{ field.label }}
+                            {% if field.required %}<span class="required">*</span>{% endif %}
+                        </label>
+                        {% if field.type == 'password' %}
+                        <div class="password-field-wrapper">
+                            <input type="password" id="cred_{{ field.key }}" name="cred_{{ field.key }}"
+                                   class="form-control"
+                                   {% if field.required %}required{% endif %}
+                                   value="{{ field.saved_value }}"
+                                   autocomplete="off">
+                            <button type="button" class="password-toggle" data-target="cred_{{ field.key }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        {% else %}
+                        <input type="text" id="cred_{{ field.key }}" name="cred_{{ field.key }}"
+                               class="form-control"
+                               {% if field.required %}required{% endif %}
+                               value="{{ field.saved_value }}"
+                               autocomplete="off">
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {{ field.help_text }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    {# Redirect URI for merchant to add to their OAuth app #}
+                    <div class="form-group">
+                        <label>{% trans "Redirect URI" %}</label>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="text" class="form-control" value="{{ oauth_redirect_uri }}"
+                                   id="oauth-redirect-uri" readonly style="background: var(--darkened-bg, #f8f8f8);">
+                            <button type="button" class="btn btn-secondary" id="btn-copy-redirect-uri"
+                                    style="white-space: nowrap;" title="{% trans 'Copy to clipboard' %}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Add this URL as an authorized redirect URI in your provider's developer console." %}
+                        </div>
+                    </div>
+
+                    {% if oauth_authorized %}
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 8px; background: #d4edda; border: 1px solid #c3e6cb; margin: 12px 0;">
+                        <i class="fas fa-check-circle" style="color: #28a745; font-size: 1.2em;"></i>
+                        <span style="color: #155724; font-weight: 500;">{% trans "Authorization successful" %}</span>
+                    </div>
+                    {% else %}
+                    <div style="margin: 16px 0;">
+                        <p style="margin-bottom: 12px; color: var(--body-quiet-color, #666);">
+                            {% trans "After entering your credentials and copying the redirect URI, authorize access:" %}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% else %}
+                    {# Non-OAuth providers: standard credential fields #}
+                    {% for field in credential_fields %}
+                    <div class="form-group">
+                        <label for="cred_{{ field.key }}">
+                            {{ field.label }}
+                            {% if field.required %}<span class="required">*</span>{% endif %}
+                        </label>
+                        {% if field.type == 'textarea' %}
+                        <textarea id="cred_{{ field.key }}" name="cred_{{ field.key }}"
+                                  class="form-control" rows="6"
+                                  {% if field.required %}required{% endif %}
+                                  placeholder="{{ field.help_text|default:'' }}">{{ field.saved_value }}</textarea>
+                        {% elif field.type == 'password' %}
+                        <div class="password-field-wrapper">
+                            <input type="password" id="cred_{{ field.key }}" name="cred_{{ field.key }}"
+                                   class="form-control"
+                                   {% if field.required %}required{% endif %}
+                                   value="{{ field.saved_value }}"
+                                   autocomplete="off">
+                            <button type="button" class="password-toggle" data-target="cred_{{ field.key }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        {% else %}
+                        <input type="text" id="cred_{{ field.key }}" name="cred_{{ field.key }}"
+                               class="form-control"
+                               {% if field.required %}required{% endif %}
+                               value="{{ field.saved_value }}"
+                               autocomplete="off">
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {{ field.help_text }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <div class="security-notice">
+                        <i class="fas fa-shield-alt"></i>
+                        {% trans "Credentials are encrypted at rest using AES-256 and never stored in plain text." %}
+                    </div>
+                </div>
+
+                <!-- Test Connection -->
+                <div class="form-section" {% if requires_oauth and not oauth_authorized %}style="display:none;" id="test-section-oauth"{% endif %}>
+                    <div class="form-section-title">
+                        <i class="fas fa-plug"></i> {% trans "Test Connection" %}
+                    </div>
+                    <div class="test-connection-area" id="test-connection-area">
+                        <div class="test-button-container" id="test-button-container">
+                            <button type="button" class="btn btn-secondary" id="btn-test-connection">
+                                <i class="fas fa-plug"></i> {% trans "Test Connection" %}
+                            </button>
+                            <p class="test-button-help">{% trans "Verify your credentials before saving." %}</p>
+                        </div>
+                    </div>
+                    <div id="test-results" class="test-results" style="display:none;"></div>
+                </div>
+
+                <div class="wizard-actions">
+                    <a href="{% url 'admin:management_storage_wizard_step1' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+                    </a>
+                    {% if requires_oauth and not oauth_authorized %}
+                    <button type="submit" class="btn btn-primary"
+                            formaction="{% url 'admin:management_storage_oauth_initiate' %}">
+                        <i class="fas fa-sign-in-alt"></i> {% trans "Authorize" %}
+                    </button>
+                    {% else %}
+                    <button type="submit" class="btn btn-primary">
+                        {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script id="storage-wizard-translations" type="application/json">
+{
+    "testing": "{% trans 'Testing connection...' %}",
+    "testSuccess": "{% trans 'Connection successful!' %}",
+    "testFailed": "{% trans 'Connection failed' %}",
+    "networkError": "{% trans 'Network error. Please try again.' %}"
+}
+</script>
+{% endblock %}
+
+{% block extrascript %}
+{{ block.super }}
+<script src="{% static 'management/js/storage-wizard.js' %}"></script>
+{% endblock %}

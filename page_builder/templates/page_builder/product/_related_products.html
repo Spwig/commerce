@@ -1,0 +1,41 @@
+{% load i18n static merchant_trans %}
+{# Related Products Partial #}
+{# Context: related_products, product (for show_related_products check) #}
+
+{% if product.show_related_products and related_products %}
+<section class="related-section">
+    <div class="container">
+        <h2 class="section__title">{% mtrans 'You May Also Like' %}</h2>
+        <div class="product-grid product-grid--4">
+            {% for related in related_products %}
+            <article class="product-card">
+                <a href="{% url 'page_builder:product_detail' product_slug=related.slug %}" class="product-card__link">
+                    <div class="product-card__image-wrapper">
+                        {% if related.primary_image_listing_url %}
+                        <img src="{{ related.primary_image_listing_url }}" alt="{{ related.name }}" class="product-card__image" loading="lazy">
+                        {% else %}
+                        <div class="product-card__placeholder">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="product-card__content">
+                    <h3 class="product-card__title">
+                        <a href="{% url 'page_builder:product_detail' product_slug=related.slug %}">{{ related.name }}</a>
+                    </h3>
+                    <div class="product-card__price">
+                        {% if related.is_on_sale %}
+                        <span class="price price--sale">{{ related.formatted_price }}</span>
+                        <span class="price price--compare">{{ related.formatted_compare_price }}</span>
+                        {% else %}
+                        <span class="price">{{ related.formatted_price }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

@@ -1,0 +1,84 @@
+{% load i18n merchant_trans %}
+{# Shipping address form fields - shared across checkout templates #}
+
+<!-- Saved Addresses -->
+{% if saved_addresses %}
+<div class="saved-addresses" id="saved-addresses">
+    {% for addr in saved_addresses %}
+    <label class="saved-address-card{% if addr.is_default %} saved-address-card--selected{% endif %}">
+        <input type="radio" name="saved_address" value="{{ addr.id }}"
+               {% if addr.is_default %}checked{% endif %}>
+        <div class="saved-address-card__info">
+            <div>
+                <span class="saved-address-card__name">{{ addr.name }}</span>
+                {% if addr.is_default %}<span class="saved-address-card__default">{% mtrans 'Default' %}</span>{% endif %}
+            </div>
+            <div>{{ addr.address1 }}{% if addr.address2 %}, {{ addr.address2 }}{% endif %}</div>
+            <div>{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</div>
+            <div>{{ addr.country }}</div>
+        </div>
+    </label>
+    {% endfor %}
+</div>
+<button type="button" class="new-address-toggle" id="new-address-toggle">
+    <i class="fas fa-plus"></i> {% mtrans 'Use a different address' %}
+</button>
+{% endif %}
+
+<!-- New Address Form -->
+<div id="new-address-form" {% if saved_addresses %}hidden{% endif %}>
+    <!-- Address autocomplete search -->
+    <div class="checkout-form-group">
+        <label for="address-search">{% mtrans 'Search Address' %}</label>
+        <input type="text" id="address-search" class="checkout-input"
+               placeholder="{% mtrans 'Start typing your address...' %}"
+               autocomplete="off">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="shipping-name">{% mtrans 'Full Name' %} <span class="required">*</span></label>
+        <input type="text" id="shipping-name" class="checkout-input" required>
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="shipping-company">{% mtrans 'Company' %}</label>
+        <input type="text" id="shipping-company" class="checkout-input">
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="shipping-address1">{% mtrans 'Address Line 1' %} <span class="required">*</span></label>
+        <input type="text" id="shipping-address1" class="checkout-input" required>
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="shipping-address2">{% mtrans 'Address Line 2' %}</label>
+        <input type="text" id="shipping-address2" class="checkout-input">
+    </div>
+
+    <div class="checkout-form-row">
+        <div class="checkout-form-group">
+            <label for="shipping-city">{% mtrans 'City' %} <span class="required">*</span></label>
+            <input type="text" id="shipping-city" class="checkout-input" required>
+        </div>
+        <div class="checkout-form-group">
+            <label for="shipping-state">{% mtrans 'State / Province' %} <span class="required">*</span></label>
+            <input type="text" id="shipping-state" class="checkout-input" required>
+        </div>
+    </div>
+
+    <div class="checkout-form-row">
+        <div class="checkout-form-group">
+            <label for="shipping-postal-code">{% mtrans 'Postal Code' %} <span class="required">*</span></label>
+            <input type="text" id="shipping-postal-code" class="checkout-input" required>
+        </div>
+        <div class="checkout-form-group">
+            <label for="shipping-country">{% mtrans 'Country' %} <span class="required">*</span></label>
+            <input type="text" id="shipping-country" class="checkout-input" required>
+        </div>
+    </div>
+
+    <div class="checkout-form-group">
+        <label for="shipping-phone">{% mtrans 'Phone' %}</label>
+        <input type="tel" id="shipping-phone" class="checkout-input">
+    </div>
+</div>

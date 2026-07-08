@@ -1,0 +1,751 @@
+{% load static i18n core_extras %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Rule Builder" %}{% if rule_group %} - {{ rule_group.name }}{% endif %}</title>
+
+    <!-- Favicon -->
+    {% favicon_meta %}
+
+    <!-- Font Awesome -->
+
+    <!-- Core Admin Theme Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+
+    <!-- Admin Base Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Rule Builder Styles -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/rule-builder.css' %}">
+</head>
+<body data-theme="{{ admin_theme|default:'light' }}">
+
+    <div class="rule-builder-container">
+        <!-- Left Sidebar - Rule Library -->
+        <div class="rule-sidebar-left">
+            <div class="rule-sidebar-header">
+                <h2><i class="fas fa-plus-circle"></i> {% trans "Add Rules" %}</h2>
+                <div class="rule-search-box">
+                    <input type="text" id="library-search" placeholder="{% trans 'Search rules...' %}">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="rule-sidebar-content" id="rule-library">
+                <!-- Logic Groups Section -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="logic-groups">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Logic Groups" %}</span>
+                    </div>
+                    <div class="library-section-content" id="logic-groups">
+                        <div class="library-item draggable-item" data-type="group" data-logic="AND" draggable="true">
+                            <i class="fas fa-layer-group"></i>
+                            <span>{% trans "AND Group" %}</span>
+                            <small>{% trans "All conditions must match" %}</small>
+                        </div>
+                        <div class="library-item draggable-item" data-type="group" data-logic="OR" draggable="true">
+                            <i class="fas fa-code-branch"></i>
+                            <span>{% trans "OR Group" %}</span>
+                            <small>{% trans "Any condition matches" %}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Geographic Rules -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="geo-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Geographic" %}</span>
+                    </div>
+                    <div class="library-section-content" id="geo-rules">
+                        <div class="library-geo-notice">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{% trans "Requires" %} <a href="{% url 'admin:geoip_geolocation_changelist' %}" target="_blank">{% trans "GeoIP" %}</a></span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="geo_country" draggable="true">
+                            <i class="fas fa-globe"></i>
+                            <span>{% trans "Country" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="geo_region" draggable="true">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>{% trans "Region/State" %}</span>
+                            <small class="requires-provider">{% trans "3rd party" %}</small>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="geo_city" draggable="true">
+                            <i class="fas fa-city"></i>
+                            <span>{% trans "City" %}</span>
+                            <small class="requires-provider">{% trans "3rd party" %}</small>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="geo_timezone" draggable="true">
+                            <i class="fas fa-clock"></i>
+                            <span>{% trans "Time Zone" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User & Authentication -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="user-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "User & Authentication" %}</span>
+                    </div>
+                    <div class="library-section-content" id="user-rules">
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="user_logged_in" draggable="true">
+                            <i class="fas fa-user-check"></i>
+                            <span>{% trans "Logged In Status" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="user_group" draggable="true">
+                            <i class="fas fa-users"></i>
+                            <span>{% trans "User Group" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="user_segment" draggable="true">
+                            <i class="fas fa-user-tag"></i>
+                            <span>{% trans "Customer Segment" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="user_lifetime_value" draggable="true">
+                            <i class="fas fa-gem"></i>
+                            <span>{% trans "Lifetime Value" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="user_order_count" draggable="true">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>{% trans "Order Count" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device & Technical -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="device-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Device & Technical" %}</span>
+                    </div>
+                    <div class="library-section-content" id="device-rules">
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="device_type" draggable="true">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>{% trans "Device Type" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="browser" draggable="true">
+                            <i class="fab fa-chrome"></i>
+                            <span>{% trans "Browser" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="operating_system" draggable="true">
+                            <i class="fas fa-laptop"></i>
+                            <span>{% trans "Operating System" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="screen_size" draggable="true">
+                            <i class="fas fa-expand"></i>
+                            <span>{% trans "Screen Size" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="connection_speed" draggable="true">
+                            <i class="fas fa-wifi"></i>
+                            <span>{% trans "Connection Speed" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time-Based -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="time-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Time-Based" %}</span>
+                    </div>
+                    <div class="library-section-content" id="time-rules">
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="date_range" draggable="true">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{% trans "Date Range" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="time_range" draggable="true">
+                            <i class="fas fa-clock"></i>
+                            <span>{% trans "Time of Day" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="day_of_week" draggable="true">
+                            <i class="fas fa-calendar-week"></i>
+                            <span>{% trans "Day of Week" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="business_hours" draggable="true">
+                            <i class="fas fa-store"></i>
+                            <span>{% trans "Business Hours" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Behavioral -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="behavioral-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Behavioral" %}</span>
+                    </div>
+                    <div class="library-section-content" id="behavioral-rules">
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="first_visit" draggable="true">
+                            <i class="fas fa-hand-sparkles"></i>
+                            <span>{% trans "First Time Visitor" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="visit_count" draggable="true">
+                            <i class="fas fa-redo"></i>
+                            <span>{% trans "Visit Count" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="page_views" draggable="true">
+                            <i class="fas fa-eye"></i>
+                            <span>{% trans "Page Views" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="time_on_site" draggable="true">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span>{% trans "Time on Site" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="referrer" draggable="true">
+                            <i class="fas fa-share"></i>
+                            <span>{% trans "Referrer Source" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="utm_campaign" draggable="true">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>{% trans "UTM Campaign" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- E-commerce -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="ecommerce-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "E-commerce" %}</span>
+                    </div>
+                    <div class="library-section-content" id="ecommerce-rules">
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="cart_value" draggable="true">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>{% trans "Cart Value" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="cart_items" draggable="true">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>{% trans "Cart Item Count" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="has_purchased" draggable="true">
+                            <i class="fas fa-receipt"></i>
+                            <span>{% trans "Has Purchased Before" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="abandoned_cart" draggable="true">
+                            <i class="fas fa-cart-arrow-down"></i>
+                            <span>{% trans "Abandoned Cart" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="wishlist_items" draggable="true">
+                            <i class="fas fa-heart"></i>
+                            <span>{% trans "Wishlist Items" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Language & Localization -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="language-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Language & Localization" %}</span>
+                    </div>
+                    <div class="library-section-content" id="language-rules">
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="browser_language" draggable="true">
+                            <i class="fas fa-language"></i>
+                            <span>{% trans "Browser Language" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="selected_language" draggable="true">
+                            <i class="fas fa-globe-americas"></i>
+                            <span>{% trans "Selected Language" %}</span>
+                        </div>
+                        <div class="library-item draggable-item" data-type="rule" data-rule-type="selected_currency" draggable="true">
+                            <i class="fas fa-coins"></i>
+                            <span>{% trans "Selected Currency" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saved Rules Section -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="saved-rules">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Saved Rules" %}</span>
+                        <span class="item-count" id="saved-rules-count">{{ saved_rules_count|default:0 }}</span>
+                    </div>
+                    <div class="library-search">
+                        <input type="text" id="saved-rules-search" placeholder="{% trans 'Search saved rules...' %}" class="library-search-input">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="library-section-content" id="saved-rules">
+                        {% for rule in saved_rules %}
+                        <div class="library-item draggable-item saved-rule" data-type="saved-rule" data-rule-id="{{ rule.id }}" draggable="true">
+                            <i class="fas fa-bookmark"></i>
+                            <span>{{ rule.name }}</span>
+                            <small>{{ rule.get_rule_type_display }}</small>
+                        </div>
+                        {% empty %}
+                        <p class="library-empty">{% trans "No saved rules yet" %}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Canvas - Rule Group Builder -->
+        <div class="rule-canvas-center">
+            <!-- Toolbar -->
+            <div class="rule-toolbar">
+                <div class="rule-toolbar-left">
+                    <button class="toolbar-btn" id="back-btn" data-url="{% url 'admin:page_builder_rulegroup_changelist' %}">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="btn-text">{% trans "Back" %}</span>
+                    </button>
+
+                    <select id="group-selector" class="property-select">
+                        <option value="">{% trans "New Rule Group" %}</option>
+                        {% for group in all_groups %}
+                        <option value="{{ group.id }}" {% if rule_group and rule_group.id == group.id %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <button class="toolbar-btn" id="new-group-btn" title="{% trans 'Create New Group' %}">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="rule-toolbar-center">
+                    <div class="logic-toggle-group">
+                        <span class="logic-toggle-label">{% trans "Group Logic:" %}</span>
+                        <button class="logic-toggle {% if not rule_group or rule_group.logic_operator == 'AND' %}active{% endif %}" data-logic="AND" title="{% trans 'All conditions must match' %}">
+                            {% trans "AND" %}
+                        </button>
+                        <button class="logic-toggle {% if rule_group and rule_group.logic_operator == 'OR' %}active{% endif %}" data-logic="OR" title="{% trans 'Any condition matches' %}">
+                            {% trans "OR" %}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="rule-toolbar-right">
+                    <button class="toolbar-btn" id="expand-all-btn" title="{% trans 'Expand All' %}">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                    <button class="toolbar-btn" id="collapse-all-btn" title="{% trans 'Collapse All' %}">
+                        <i class="fas fa-compress-alt"></i>
+                    </button>
+                    <button class="toolbar-btn" id="undo-btn" disabled title="{% trans 'Undo (Ctrl+Z)' %}">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="toolbar-btn" id="redo-btn" disabled title="{% trans 'Redo (Ctrl+Y)' %}">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="toolbar-btn btn-success" id="save-btn">
+                        <i class="fas fa-save"></i>
+                        <span class="btn-text">{% trans "Save" %}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="rule-canvas-area">
+                <!-- Group Info Bar -->
+                <div class="rule-info-bar">
+                    <div class="rule-info-left">
+                        <input type="text"
+                               id="group-name-input"
+                               class="group-name-input"
+                               value="{{ rule_group.name|default:'' }}"
+                               placeholder="{% trans 'Enter rule group name...' %}">
+                        <span class="logic-badge {% if rule_group and rule_group.logic_operator == 'OR' %}logic-or{% else %}logic-and{% endif %}" id="logic-badge">
+                            {{ rule_group.logic_operator|default:'AND' }}
+                        </span>
+                        {% if rule_group %}
+                        <span class="rule-count-badge" id="rule-count-badge">
+                            <i class="fas fa-filter"></i>
+                            <span id="rule-count">{{ rule_group.rules.count }}</span> {% trans "rules" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="rule-info-right">
+                        <label class="active-toggle">
+                            <input type="checkbox" id="group-active" {% if not rule_group or rule_group.is_active %}checked{% endif %}>
+                            <span>{% trans "Active" %}</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Rules Tree Container -->
+                <div class="rule-tree-container" id="rule-tree-container">
+                    <div class="rule-tree" id="rule-tree">
+                        <!-- Rules will be rendered here via JavaScript -->
+                        <div class="rule-tree-empty" id="rule-tree-empty" {% if rule_group and rule_group.rules.exists %}style="display: none;"{% endif %}>
+                            <i class="fas fa-filter"></i>
+                            <p>{% trans "No rules added yet" %}</p>
+                            <p class="hint">{% trans "Drag rules from the left panel to build your condition flow" %}</p>
+                            <button class="btn-primary" id="add-first-rule-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add First Rule" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Rule Button (shown when rules exist) -->
+                <div class="add-rule-footer" id="add-rule-footer" {% if not rule_group or not rule_group.rules.exists %}style="display: none;"{% endif %}>
+                    <button class="btn-add-rule" id="add-rule-btn">
+                        <i class="fas fa-plus"></i> {% trans "Add Rule" %}
+                    </button>
+                </div>
+
+                <!-- Evaluation Preview Toggle -->
+                <div class="preview-toggle">
+                    <button class="btn-preview-toggle" id="toggle-preview-btn">
+                        <i class="fas fa-play"></i> {% trans "Test Rules" %}
+                    </button>
+                </div>
+
+                <!-- Evaluation Preview Panel (hidden by default) -->
+                <div class="rule-preview-panel hidden" id="rule-preview-panel">
+                    <div class="preview-header">
+                        <h3>{% trans "Rule Evaluation Preview" %}</h3>
+                        <button class="btn-close-preview" id="close-preview-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preview-content" id="preview-content">
+                        <div class="preview-context-form">
+                            <h4>{% trans "Simulate Context" %}</h4>
+                            <div class="preview-form-row">
+                                <label>{% trans "User Logged In" %}</label>
+                                <select id="preview-logged-in">
+                                    <option value="true">{% trans "Yes" %}</option>
+                                    <option value="false">{% trans "No" %}</option>
+                                </select>
+                            </div>
+                            <div class="preview-form-row">
+                                <label>{% trans "Country" %}</label>
+                                <select id="preview-country">
+                                    <option value="">{% trans "Select..." %}</option>
+                                    <option value="US">{% trans "United States" %}</option>
+                                    <option value="GB">{% trans "United Kingdom" %}</option>
+                                    <option value="CA">{% trans "Canada" %}</option>
+                                    <option value="AU">{% trans "Australia" %}</option>
+                                    <option value="SG">{% trans "Singapore" %}</option>
+                                </select>
+                            </div>
+                            <div class="preview-form-row">
+                                <label>{% trans "Device Type" %}</label>
+                                <select id="preview-device">
+                                    <option value="desktop">{% trans "Desktop" %}</option>
+                                    <option value="mobile">{% trans "Mobile" %}</option>
+                                    <option value="tablet">{% trans "Tablet" %}</option>
+                                </select>
+                            </div>
+                            <div class="preview-form-row">
+                                <label>{% trans "Cart Value" %}</label>
+                                <input type="number" id="preview-cart-value" value="0" min="0" step="0.01">
+                            </div>
+                            <button class="btn-primary" id="run-preview-btn">
+                                <i class="fas fa-play"></i> {% trans "Evaluate" %}
+                            </button>
+                        </div>
+                        <div class="preview-result" id="preview-result">
+                            <!-- Result will show here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Properties Panel -->
+        <div class="rule-sidebar-right">
+            <div class="rule-sidebar-header">
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" data-tab="rule-props">
+                        <i class="fas fa-sliders-h"></i>
+                        {% trans "Properties" %}
+                    </button>
+                    <button class="admin-tab-btn" data-tab="group-info">
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Group Info" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rule Properties Tab -->
+            <div class="admin-tab-content active" id="rule-props-tab">
+                <div class="properties-panel" id="rule-properties-panel">
+                    <div class="properties-empty">
+                        <i class="fas fa-hand-pointer"></i>
+                        <p>{% trans "Select a rule to edit its properties" %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group Info Tab -->
+            <div class="admin-tab-content" id="group-info-tab">
+                <div class="properties-panel" id="group-info-panel">
+                    <div class="property-group">
+                        <label class="property-label">{% trans "Group Name" %}</label>
+                        <input type="text" id="info-group-name" class="property-input" value="{{ rule_group.name|default:'' }}">
+                    </div>
+
+                    <div class="property-group">
+                        <label class="property-label">{% trans "Description" %}</label>
+                        <textarea id="info-group-description" class="property-textarea" rows="3">{{ rule_group.description|default:'' }}</textarea>
+                    </div>
+
+                    <div class="property-group">
+                        <label class="property-label">{% trans "Logic Operator" %}</label>
+                        <select id="info-logic-operator" class="property-select">
+                            <option value="AND" {% if not rule_group or rule_group.logic_operator == 'AND' %}selected{% endif %}>
+                                {% trans "AND - All conditions must match" %}
+                            </option>
+                            <option value="OR" {% if rule_group and rule_group.logic_operator == 'OR' %}selected{% endif %}>
+                                {% trans "OR - Any condition matches" %}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="property-group">
+                        <label class="property-checkbox">
+                            <input type="checkbox" id="info-group-active" {% if not rule_group or rule_group.is_active %}checked{% endif %}>
+                            <span>{% trans "Group is active" %}</span>
+                        </label>
+                    </div>
+
+                    {% if rule_group %}
+                    <div class="property-group property-group-info">
+                        <div class="info-item">
+                            <span class="info-label">{% trans "Created" %}</span>
+                            <span class="info-value">{{ rule_group.created_at|date:"M d, Y H:i" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">{% trans "Updated" %}</span>
+                            <span class="info-value">{{ rule_group.updated_at|date:"M d, Y H:i" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">{% trans "Rules Count" %}</span>
+                            <span class="info-value">{{ rule_group.rules.count }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Rule Modal -->
+    <div class="modal-overlay hidden" id="add-rule-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> {% trans "Add Rule" %}</h2>
+                <button class="modal-close-btn" id="close-add-rule-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-rule-type">{% trans "Rule Type" %}</label>
+                    <select id="new-rule-type" class="form-control">
+                        <optgroup label="{% trans 'Geographic' %}">
+                            <option value="geo_country">{% trans "Country" %}</option>
+                            <option value="geo_region">{% trans "Region/State" %}</option>
+                            <option value="geo_city">{% trans "City" %}</option>
+                            <option value="geo_timezone">{% trans "Time Zone" %}</option>
+                        </optgroup>
+                        <optgroup label="{% trans 'User & Authentication' %}">
+                            <option value="user_logged_in">{% trans "Logged In Status" %}</option>
+                            <option value="user_group">{% trans "User Group" %}</option>
+                            <option value="user_segment">{% trans "Customer Segment" %}</option>
+                            <option value="user_lifetime_value">{% trans "Customer Lifetime Value" %}</option>
+                            <option value="user_order_count">{% trans "Order Count" %}</option>
+                        </optgroup>
+                        <optgroup label="{% trans 'Device & Technical' %}">
+                            <option value="device_type">{% trans "Device Type" %}</option>
+                            <option value="browser">{% trans "Browser" %}</option>
+                            <option value="operating_system">{% trans "Operating System" %}</option>
+                            <option value="screen_size">{% trans "Screen Size" %}</option>
+                            <option value="connection_speed">{% trans "Connection Speed" %}</option>
+                        </optgroup>
+                        <optgroup label="{% trans 'Time-Based' %}">
+                            <option value="date_range">{% trans "Date Range" %}</option>
+                            <option value="time_range">{% trans "Time of Day" %}</option>
+                            <option value="day_of_week">{% trans "Day of Week" %}</option>
+                            <option value="business_hours">{% trans "Business Hours" %}</option>
+                        </optgroup>
+                        <optgroup label="{% trans 'Behavioral' %}">
+                            <option value="first_visit">{% trans "First Time Visitor" %}</option>
+                            <option value="visit_count">{% trans "Visit Count" %}</option>
+                            <option value="page_views">{% trans "Page Views in Session" %}</option>
+                            <option value="time_on_site">{% trans "Time on Site" %}</option>
+                            <option value="referrer">{% trans "Referrer Source" %}</option>
+                            <option value="utm_campaign">{% trans "UTM Campaign" %}</option>
+                        </optgroup>
+                        <optgroup label="{% trans 'E-commerce' %}">
+                            <option value="cart_value">{% trans "Cart Value" %}</option>
+                            <option value="cart_items">{% trans "Cart Item Count" %}</option>
+                            <option value="has_purchased">{% trans "Has Purchased Before" %}</option>
+                            <option value="abandoned_cart">{% trans "Has Abandoned Cart" %}</option>
+                            <option value="wishlist_items">{% trans "Has Wishlist Items" %}</option>
+                        </optgroup>
+                        <optgroup label="{% trans 'Language & Localization' %}">
+                            <option value="browser_language">{% trans "Browser Language" %}</option>
+                            <option value="selected_language">{% trans "Selected Language" %}</option>
+                            <option value="selected_currency">{% trans "Selected Currency" %}</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="new-rule-name">{% trans "Rule Name" %}</label>
+                    <input type="text" id="new-rule-name" class="form-control" placeholder="{% trans 'e.g., US Visitors Only' %}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-add-rule-btn">{% trans "Cancel" %}</button>
+                <button class="btn-primary" id="confirm-add-rule-btn">{% trans "Add Rule" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Group Modal -->
+    <div class="modal-overlay hidden" id="new-group-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-layer-group"></i> {% trans "Create Rule Group" %}</h2>
+                <button class="modal-close-btn" id="close-new-group-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="create-group-name">{% trans "Group Name" %}</label>
+                    <input type="text" id="create-group-name" class="form-control" placeholder="{% trans 'e.g., VIP US Customers' %}">
+                </div>
+
+                <div class="form-group">
+                    <label for="create-group-logic">{% trans "Logic Operator" %}</label>
+                    <select id="create-group-logic" class="form-control">
+                        <option value="AND">{% trans "AND - All conditions must match" %}</option>
+                        <option value="OR">{% trans "OR - Any condition matches" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="create-group-description">{% trans "Description (optional)" %}</label>
+                    <textarea id="create-group-description" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-new-group-btn">{% trans "Cancel" %}</button>
+                <button class="btn-primary" id="confirm-new-group-btn">{% trans "Create Group" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay hidden" id="delete-confirm-modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h2><i class="fas fa-trash"></i> {% trans "Delete Rule" %}</h2>
+                <button class="modal-close-btn" id="close-delete-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="delete-confirm-message">{% trans "Are you sure you want to remove this rule from the group?" %}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-delete-btn">{% trans "Cancel" %}</button>
+                <button class="btn-danger" id="confirm-delete-btn">{% trans "Delete" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript Configuration (JSON data island - no executable code) -->
+    <script type="application/json" id="rule-builder-config">
+    {
+        "groupId": {% if rule_group %}{{ rule_group.id }}{% else %}null{% endif %},
+        "groupName": "{{ rule_group.name|default:""|escapejs }}",
+        "logicOperator": "{{ rule_group.logic_operator|default:"AND" }}",
+        "apiBaseUrl": "/api/page-builder/",
+        "apiGroupsUrl": "{% url "page_builder_api:rule_groups" %}",
+        "apiRulesUrl": "{% url "page_builder_api:rules" %}",
+        "csrfToken": "{{ csrf_token }}",
+        "initialRulesTree": {{ rules_tree_json|safe }},
+        "savedRules": {{ saved_rules_json|safe }},
+        "translations": {
+            "save": "{% trans "Save" %}",
+            "saving": "{% trans "Saving..." %}",
+            "saved": "{% trans "Saved!" %}",
+            "error": "{% trans "Error" %}",
+            "deleteConfirm": "{% trans "Are you sure you want to remove this rule?" %}",
+            "deleteGroupConfirm": "{% trans "Are you sure you want to delete this nested group and all its rules?" %}",
+            "selectRule": "{% trans "Select a rule to edit" %}",
+            "ruleAdded": "{% trans "Rule added" %}",
+            "ruleRemoved": "{% trans "Rule removed" %}",
+            "ruleUpdated": "{% trans "Rule updated" %}",
+            "groupCreated": "{% trans "Rule group created" %}",
+            "groupUpdated": "{% trans "Rule group updated" %}",
+            "dragHere": "{% trans "Drag rules here" %}",
+            "evaluating": "{% trans "Evaluating..." %}",
+            "ruleMatch": "{% trans "VISIBLE - All conditions met" %}",
+            "ruleNoMatch": "{% trans "HIDDEN - Conditions not met" %}"
+        },
+        "ruleTypeLabels": {
+            "geo_country": "{% trans "Country" %}",
+            "geo_region": "{% trans "Region/State" %}",
+            "geo_city": "{% trans "City" %}",
+            "geo_timezone": "{% trans "Time Zone" %}",
+            "user_logged_in": "{% trans "Logged In Status" %}",
+            "user_group": "{% trans "User Group" %}",
+            "user_segment": "{% trans "Customer Segment" %}",
+            "user_lifetime_value": "{% trans "Lifetime Value" %}",
+            "user_order_count": "{% trans "Order Count" %}",
+            "device_type": "{% trans "Device Type" %}",
+            "browser": "{% trans "Browser" %}",
+            "operating_system": "{% trans "Operating System" %}",
+            "screen_size": "{% trans "Screen Size" %}",
+            "connection_speed": "{% trans "Connection Speed" %}",
+            "date_range": "{% trans "Date Range" %}",
+            "time_range": "{% trans "Time of Day" %}",
+            "day_of_week": "{% trans "Day of Week" %}",
+            "business_hours": "{% trans "Business Hours" %}",
+            "first_visit": "{% trans "First Time Visitor" %}",
+            "visit_count": "{% trans "Visit Count" %}",
+            "page_views": "{% trans "Page Views" %}",
+            "time_on_site": "{% trans "Time on Site" %}",
+            "referrer": "{% trans "Referrer Source" %}",
+            "utm_campaign": "{% trans "UTM Campaign" %}",
+            "cart_value": "{% trans "Cart Value" %}",
+            "cart_items": "{% trans "Cart Item Count" %}",
+            "has_purchased": "{% trans "Has Purchased Before" %}",
+            "abandoned_cart": "{% trans "Abandoned Cart" %}",
+            "wishlist_items": "{% trans "Wishlist Items" %}",
+            "browser_language": "{% trans "Browser Language" %}",
+            "selected_language": "{% trans "Selected Language" %}",
+            "selected_currency": "{% trans "Selected Currency" %}"
+        },
+        "operatorLabels": {
+            "equals": "{% trans "Equals" %}",
+            "not_equals": "{% trans "Not Equals" %}",
+            "contains": "{% trans "Contains" %}",
+            "not_contains": "{% trans "Does Not Contain" %}",
+            "greater_than": "{% trans "Greater Than" %}",
+            "less_than": "{% trans "Less Than" %}",
+            "in_list": "{% trans "In List" %}",
+            "not_in_list": "{% trans "Not In List" %}",
+            "is_true": "{% trans "Is True" %}",
+            "is_false": "{% trans "Is False" %}",
+            "between": "{% trans "Between" %}",
+            "regex": "{% trans "Matches Regex" %}"
+        },
+        "currentTheme": "{{ admin_theme|default:"light" }}"
+    }
+    </script>
+
+    <!-- SortableJS for drag and drop with nested support -->
+    <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+
+    <!-- Rule Builder JavaScript -->
+    <script src="{% static 'page_builder/js/rule-builder.js' %}"></script>
+</body>
+</html>

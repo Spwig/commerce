@@ -1,0 +1,94 @@
+{% load i18n static merchant_trans %}
+{# Account Widget - Renders user account dropdown menu #}
+{# Integrates with Menu Builder for dynamic menu items #}
+
+<div class="widget-account {{ widget.css_classes }}" data-widget="account">
+    {% if user.is_authenticated %}
+    {# Authenticated user - show dropdown #}
+    <button type="button"
+            class="widget-account-button"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-label="{% mtrans 'Account menu' %}">
+        {% if config.show_avatar and user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}"
+                 alt="{{ user.get_full_name }}"
+                 class="widget-account-avatar">
+        {% else %}
+            <i class="fas fa-user-circle widget-account-icon"></i>
+        {% endif %}
+        {% if config.show_name %}
+            <span class="widget-account-name">{{ user.get_short_name|default:user.username }}</span>
+        {% endif %}
+        <i class="fas fa-chevron-down widget-account-chevron"></i>
+    </button>
+
+    <div class="widget-account-menu" role="menu" aria-label="{% mtrans 'Account options' %}">
+        {% for item in menu_items %}
+            {% if item.item_type == 'divider' %}
+                <div class="widget-account-divider" role="separator"></div>
+            {% else %}
+                <a href="{{ item.url }}"
+                   class="widget-account-link {{ item.css_classes }}"
+                   role="menuitem"
+                   {% if item.target == '_blank' %}target="_blank" rel="noopener noreferrer"{% endif %}>
+                    {% if item.icon %}<i class="{{ item.icon }}"></i>{% endif %}
+                    <span>{{ item.title }}</span>
+                </a>
+            {% endif %}
+        {% empty %}
+            {# Fallback if no menu items configured #}
+            <a href="{% url 'accounts:dashboard' %}" class="widget-account-link" role="menuitem">
+                <i class="fas fa-user"></i>
+                <span>{% mtrans "My Account" %}</span>
+            </a>
+            <div class="widget-account-divider" role="separator"></div>
+            <a href="{% url 'account_logout' %}" class="widget-account-link" role="menuitem">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>{% mtrans "Sign Out" %}</span>
+            </a>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    {# Anonymous user - show icon with dropdown (same pattern as authenticated) #}
+    <button type="button"
+            class="widget-account-button"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-label="{% mtrans 'Account menu' %}">
+        <i class="fas fa-user-circle widget-account-icon"></i>
+        <i class="fas fa-chevron-down widget-account-chevron"></i>
+    </button>
+
+    <div class="widget-account-menu" role="menu" aria-label="{% mtrans 'Account options' %}">
+        {% for item in menu_items %}
+            {% if item.item_type == 'divider' %}
+                <div class="widget-account-divider" role="separator"></div>
+            {% else %}
+                <a href="{{ item.url }}"
+                   class="widget-account-link {{ item.css_classes }}"
+                   role="menuitem"
+                   {% if item.target == '_blank' %}target="_blank" rel="noopener noreferrer"{% endif %}>
+                    {% if item.icon %}<i class="{{ item.icon }}"></i>{% endif %}
+                    <span>{{ item.title }}</span>
+                </a>
+            {% endif %}
+        {% empty %}
+            {# Fallback if no menu items configured #}
+            <a href="{% url 'account_login' %}" class="widget-account-link" role="menuitem">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>{% mtrans "Sign In" %}</span>
+            </a>
+            {% if config.show_register|default:True %}
+            <a href="{% url 'account_signup' %}" class="widget-account-link" role="menuitem">
+                <i class="fas fa-user-plus"></i>
+                <span>{% mtrans "Create Account" %}</span>
+            </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<script src="{% static 'design/js/widgets/account.js' %}"></script>

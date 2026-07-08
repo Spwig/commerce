@@ -1,0 +1,1430 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "POS API"
+msgstr "واجهة POS"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "يتطلب الوصول إلى هذا النقطة نهاية مصادقة POS."
+
+msgid "POS access requires a staff account."
+msgstr "يتطلب الوصول إلى POS حساب موظف."
+
+msgid "You are not assigned to this terminal."
+msgstr "ليس لديك تعيين لهذا المحطة."
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "ليس لديك إذن: %(label)s."
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "خيارات المتغيرات المجمعة: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "قائمة بأيدي BundleItem (العناصر المجمعة) الاختيارية لاستبعادها"
+
+msgid "Search by email, phone, or name"
+msgstr "ابحث عبر البريد الإلكتروني أو الهاتف أو الاسم"
+
+msgid "ID of the product to adjust stock for."
+msgstr "معرّف المنتج الذي سيتم تعديل مخزنه."
+
+msgid "ID of the variant (required for variable products)."
+msgstr "رقم معرف التباين (مطلوب للمنتجات القابلة للتغيير)."
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"نوع التأثير: \"receive\" يضيف المخزون (مثلاً: شحنة جديدة)، \"damage\" يحذف "
+"المخزون (مثلاً: عنصر مكسور)، \"recount\" يضبط العدد الفعلي لـ on_hand، "
+"\"return\" يعيد إضافة المخزون (مثلاً: إرجاع العميل)."
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"لـ receive/return: الوحدات المضافة. لـ damage: الوحدات المحذوفة. لـ recount:"
+" العدد الفعلي الجديد لـ on_hand."
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "التفسير المطلوب لهذه المراجعة (مسار التدقيق)."
+
+msgid "Optional UUID for offline deduplication."
+msgstr "UUID اختياري لتجنب التكرار عند العمل خارج الإنترنت."
+
+msgid "Signed quantity delta."
+msgstr "الفرق في الكمية الموقعة."
+
+msgid "Last four digits of card number (digits only)"
+msgstr "الرقم الأخير من أربعة أرقام لرقم البطاقة (أرقام فقط)"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr ""
+"المبلغ المطلوب للشحن. إذا لم يتم تقديمه، يتم شحن المبلغ المتبقي بالكامل."
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr "مُعرف الدفع من مزود الطرف النهائي (مثال: مُعرف Stripe PaymentIntent)"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr "مُعرف قارئ مُحدد للمزود (مثال: Adyen POIID، Square device_id)"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "معرّف المعاملة الخاص بالمزود لاستطلاع الحالة"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr ""
+"الحالة الأولية - عادة ما تكون \"معلقة\" للمزودين غير المتزامنين، و\"تمت\" "
+"للمزودين المتزامنين (Adyen)"
+
+msgid "Current payment status"
+msgstr "حالة الدفع الحالية"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "معرّف دفع مزود الخدمة (عند نجاح الدفع)"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "السبب في الإلغاء (عند إلغاء الدفع)"
+
+msgid "POS staff login"
+msgstr "تسجيل دخول موظف POS"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr ""
+"تُصادق على عضو من العاملين للحصول على وصول POS. ترجع رموز وصول وتحديث. "
+"تستخدم نفس نظام الرموز المستخدم في واجهة API المدارة "
+"(MobileTokenAuthentication)."
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "تسجيل الدخول ناجح، يرجع الرموز التأكيدية وتكوين المحطة"
+
+msgid "Invalid credentials"
+msgstr "بيانات الاعتماد غير صحيحة"
+
+msgid "User is not a staff member"
+msgstr "العضو ليس من موظفي الفريق"
+
+msgid "Refresh POS access token"
+msgstr "تحديث رمز وصول POS"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "استبدل رمز التحديث برمز الوصول الجديد."
+
+msgid "New access token"
+msgstr "رمز وصول جديد"
+
+msgid "Invalid or expired refresh token"
+msgstr "رمز التحديث غير صحيح أو منتهي الصلاحية"
+
+msgid "POS logout"
+msgstr "تسجيل خروج POS"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "إبطال رموز الوصول والتحديث الحالية."
+
+msgid "Logged out successfully"
+msgstr "تم تسجيل الخروج بنجاح"
+
+msgid "Get current POS cart"
+msgstr "احصل على سلة POS الحالية"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr ""
+"تُرجع السلة الحالية للمُصادق عليه من البائعين. تنشئ سلة جديدة إذا لم تكن "
+"موجودة. تتطلب صلاحية العامل وترخيص POS سارٍ."
+
+msgid "Add item to POS cart"
+msgstr "أضف عنصرًا إلى سلة POS"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"إضافة منتج إلى عربة الكاشير. يدعم الإضافة عبر معرف المنتج أو الشفرة. عندما "
+"يتم تقديم شفرة دون product_id، يتم تحديد المنتج تلقائيًا. يتطلب 인증 موظف "
+"ورخصة POS صالحة."
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "منتج غير صالح، أو نوع غير صالح، أو مخزون غير كافٍ"
+
+msgid "Update cart item quantity"
+msgstr "تحديث كمية عنصر السلة"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"تحديث كمية عنصر في العربة. ضع الكمية على 0 لإزالة العنصر. يتطلب إثبات هوية "
+"الموظف ورخصة POS صالحة."
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "كمية غير صحيحة أو مخزون غير كافٍ"
+
+msgid "Cart item not found"
+msgstr "لم يتم العثور على عنصر السلة"
+
+msgid "Remove item from cart"
+msgstr "إزالة المنتج من السلة"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr "إزالة عنصر معين من السلة. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Apply voucher to cart"
+msgstr "تطبيق كوبون على السلة"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr ""
+"تطبيق كود قسيمة/خصم على السلة. يمكن أن يكون فقط كود قسيمة واحد نشط في الوقت "
+"نفسه. يتطلب 인증 موظف وترخيص POS صالح."
+
+msgid "Invalid or expired voucher code"
+msgstr "كود كوبون غير صحيح أو منتهي الصلاحية"
+
+msgid "Remove voucher from cart"
+msgstr "إزالة كوبون من السلة"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"إزالة القيمة المُطبَّقة من السلة. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "No voucher applied"
+msgstr "لا يوجد كوبون مطبق"
+
+msgid "Apply gift card to cart"
+msgstr "تطبيق بطاقة هدية على السلة"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"تطبيق كود بطاقة هدية على السلة لتغطية جزء أو كل إجمالي الطلب. يتطلب إثبات "
+"هوية الموظف وترخيص POS صالح."
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "بطاقة هدية غير صحيحة أو رصيد غير كافٍ"
+
+msgid "Clear all items from cart"
+msgstr "حذف جميع العناصر من السلة"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"إزالة جميع العناصر والقسائم و بطاقات الهدايا من السلة. يتطلب 인증 الموظف و "
+"رخصة POS صالحة."
+
+msgid "Apply manual discount to cart item"
+msgstr "تطبيق خصم يدوي على عنصر سلة التسوق"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"تطبيق خصم يدوي من قبل الموظف على عنصر معين في السلة. يعود "
+"requires_approval=true إذا تجاوز الخصم حدود الموظف. يتطلب إثبات هوية الموظف "
+"ورخصة POS صالحة."
+
+msgid "Discount applied or requires approval"
+msgstr "تم تطبيق الخصم أو يحتاج إلى موافقة"
+
+msgid "Invalid discount or not authorized"
+msgstr "خصم غير صحيح أو غير مصرح به"
+
+msgid "Remove manual discount from cart item"
+msgstr "إزالة الخصم اليدوي من عنصر سلة التسوق"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"إزالة خصم يدوي من موظف من عنصر محدد في السلة. يتطلب مصادقة الموظف وترخيص POS"
+" действителен."
+
+msgid "Discount removed"
+msgstr "تم إزالة الخصم"
+
+msgid "Apply manual discount to cart"
+msgstr "تطبيق خصم يدوي على السلة"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"تطبيق خصم يدوي من موظف على السلة بأكملها. يرجع requires_approval=true إذا "
+"تجاوز الخصم حدود الموظفين. يتطلب مصادقة الموظف وترخيص POS действителен."
+
+msgid "Remove manual discount from cart"
+msgstr "إزالة الخصم اليدوي من السلة"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr "إزالة الخصم اليدوي للموظف من السلة. يتطلب 인증 الموظف ورخصة POS صالحة."
+
+msgid "Verify manager PIN"
+msgstr "التحقق من رمز PIN للمدير"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"التحقق من صحة رمز PIN لإدارة يمكنها الموافقة على الخصومات. يعود اسم المدير "
+"إذا كان PIN صحيحًا. يتطلب المصادقة على الموظف ورخصة POS صالحة."
+
+msgid "PIN verification result"
+msgstr "نتيجة التحقق من رمز PIN"
+
+msgid "Approve discount with manager PIN"
+msgstr "الموافقة على الخصم باستخدام رمز PIN للمدير"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"الموافقة على خصم يتجاوز حدود الموظفين مع موافقة المدير. يتطلب رمز PIN صحيحاً"
+" للمدير للمتابعة. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Discount approved and applied"
+msgstr "تمت الموافقة على الخصم وتطبيقه"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "رمز PIN غير صحيح أو معلمات خصم غير صحيحة"
+
+msgid "Park current cart"
+msgstr "تجميد السلة الحالية"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"احفظ حالة السلة الحالية لاستعادتها لاحقًا. يستخدم عندما يحتاج العميل إلى "
+"الابتعاد وتحتاج خدمة عميل آخر. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Cart parked successfully"
+msgstr "تم ركن السلة بنجاح"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "السلة فارغة أو لا يمكن إيقافها"
+
+msgid "List parked carts"
+msgstr "قائمة السلات المركنة"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr ""
+"احصل على جميع السلات الموقوفة للنهاية الحالية. يتطلب إثبات هوية الموظف ورخصة"
+" POS صالحة."
+
+msgid "List of parked carts"
+msgstr "قائمة السلات المركنة"
+
+msgid "Restore parked cart"
+msgstr "استعادة السلة المركنة"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr ""
+"استعد سلة مُوقفة، مع استبدال محتويات السلة الحالية. سيتم مسح السلة الحالية "
+"قبل الاستعادة. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Cart restored successfully"
+msgstr "تم استعادة السلة بنجاح"
+
+msgid "Current cart is not empty"
+msgstr "السلة الحالية ليست فارغة"
+
+msgid "Parked cart not found"
+msgstr "لم يتم العثور على عربة الموقف"
+
+msgid "Delete parked cart"
+msgstr "حذف عربة الموقف"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"حذف عربة التسوق المؤقتة بشكل دائم. لا يمكن التراجع عن هذا الإجراء. يتطلب "
+"تأكيدًا من موظف ورخصة POS صالحة."
+
+msgid "Parked cart deleted"
+msgstr "تم حذف عربة الموقف"
+
+msgid "List POS products"
+msgstr "عرض منتجات نقاط البيع"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"تُرجع المنتجات المتاحة للبيع داخل المتجر، مع فلترة حسب قناة المبيعات. تشمل "
+"مستويات المخزون الخاصة بالمستودن عند تحديد المحطة. تظهر المنتجات التي تحتوي "
+"على صور أولاً، مرتبة حسب شعبية كل مستودن."
+
+msgid "Search by name, SKU, or barcode"
+msgstr "البحث حسب الاسم أو SKU أو رمز الشريط"
+
+msgid "Filter by category ID"
+msgstr "الفلترة حسب معرف الفئة"
+
+msgid "Warehouse for stock levels"
+msgstr "مستودع لمستويات المخزون"
+
+msgid "Page number (default: 1)"
+msgstr "رقم الصفحة (القيمة الافتراضية: 1)"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "عدد العناصر في الصفحة (الافتراضي: 50، الأقصى: 200)"
+
+msgid "Get product detail"
+msgstr "الحصول على تفاصيل المنتج"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr "تُعيد تفاصيل المنتج الكاملة بما في ذلك المتغيرات ومخزون المستودع."
+
+msgid "Barcode lookup"
+msgstr "بحث الشفرة الشريطية"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr ""
+"ابحث عن منتج أو عنصر متنوع باستخدام رمز الشريط. بحث سريع ومرجع مفهرس للمسح."
+
+msgid "No product found with this barcode"
+msgstr "لم يتم العثور على منتج بهذا رمز الشريط"
+
+msgid "List categories"
+msgstr "قائمة التصنيفات"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "تُعيد شجرة الفئات لnavigation المنتجات POS."
+
+msgid "Process cash payment"
+msgstr "معالجة دفع النقود"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"إكمال عملية POS بالدفع النقدي. يتحقق من أن المبلغ المقدم يغطي إجمالي الطلب "
+"ويحسب الفلوس. ينشئ طلبًا بقناة 'pos' وتسجيلًا لدفع POS. يتطلب فتح دورية على "
+"المحطة. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "سلة شراء فارغة أو مبلغ نقد مقدم غير كافٍ"
+
+msgid "Process card payment"
+msgstr "معالجة دفع البطاقة"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"إكمال عملية POS بالدفع بالبطاقة. يفترض أن معالجة البطاقة يتم التعامل معها من"
+" قبل جهاز بطاقة خارجي. يسجل هذا النقطة مرجعاً للبطاقة وأربعة أرقام أخيرة. "
+"يتطلب فتح دورية على المحطة. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Empty cart"
+msgstr "عربة التسوق الفارغة"
+
+msgid "Check gift card balance"
+msgstr "التحقق من رصيد بطاقة الهدايا"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr ""
+"تحقق من رصيد بطاقة هدية للدفع عبر نقاط البيع (POS). يعيد الرصيد الحالي إذا "
+"كانت البطاقة صحيحة، أو رسالة خطأ إذا كانت غير صحيحة. يتطلب 인증 الموظف."
+
+msgid "Gift card balance info"
+msgstr "معلومات رصيد بطاقة الهدايا"
+
+msgid "Invalid gift card or missing code"
+msgstr "بطاقة هدية غير صالحة أو رمز مفقود"
+
+msgid "Process gift card payment"
+msgstr "معالجة دفع بطاقة الهدايا"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"أكمل معاملة نقاط البيع (POS) باستخدام بطاقة هدية. تحقق من أن رصيد بطاقة "
+"الهدايا كافٍ. إذا كان رصيد بطاقة الهدايا أقل من إجمالي الطلب، استخدم نقطة "
+"نهاية التقسيم بدلاً من ذلك. يتطلب نشاطًا مفتوحًا على المحطة. يتطلب إثبات "
+"هوية الموظف وترخيص POS действителен."
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "سلة شراء فارغة، بطاقة هدية غير صالحة، أو رصيد غير كافٍ"
+
+msgid "Process split tender payment"
+msgstr "معالجة دفع مُقسّم"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"إكمال عملية POS باستخدام طرق دفع متعددة (تender مجزأ). يجب أن يغطي إجمالي "
+"جميع الدفعات إجمالي الطلب. يتم حساب الفائض بناءً على الدفع النقدي الأخير إذا"
+" تجاوز الإجمالي مبلغ الطلب. يتطلب وجود نوبة عمل مفتوحة على المحطة. يتطلب 인증 "
+"الموظف ورخصة POS صالحة."
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "عربة شراء فارغة، دفعات غير صحيحة، أو إجمالي غير كافٍ"
+
+msgid "Process terminal card payment"
+msgstr "معالجة دفع بطاقة المحطة"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"إكمال عملية POS باستخدام دفع عبر مسحوق البطاقة المتكامل. يجب أن يكون الواجهة"
+" الأمامية قد جمعت الدفع مسبقًا عبر SDK للمحطة وحصلت على معرف الدفع من المزود"
+" (مثلاً: Stripe PaymentIntent). يقوم هذا النقطة بالتحقق من نجاح الدفع قبل "
+"إنشاء الطلب. يتطلب وجود نوبة عمل مفتوحة على المحطة. يتطلب 인증 الموظف ورخصة "
+"POS صالحة."
+
+msgid "Empty cart or payment verification failed"
+msgstr "عربة شراء فارغة أو فشل تحقق الدفع"
+
+msgid "Search customers"
+msgstr "البحث عن العملاء"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ابحث عن العملاء عبر البريد الإلكتروني أو الهاتف أو الاسم الأول أو الاسم "
+"الأخير. يعيد ما يصل إلى 20 نتيجة متطابقة. مطلوب الحد الأدنى من 2 أحرف. يتطلب"
+" المصادقة على العامل ورخصة POS الصالحة."
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr ""
+"استعلام البحث (البريد الإلكتروني، الهاتف، أو الاسم). الحد الأدنى 2 أحرف."
+
+msgid "Search query too short"
+msgstr "البحث قصير جداً"
+
+msgid "Create walk-in customer"
+msgstr "إنشاء عميل مجهول الهوية"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"أنشئ عميلاً جديداً لبيع المتسوقين الذين يأتون إلى المتجر. إذا كان هناك عميل "
+"بالبريد الإلكتروني المحدد موجوداً بالفعل، فسيتم عرض العميل الحالي بدلًا من "
+"إنشاء نسخة مكررة. البريد الإلكتروني اختياري للعملاء المجهولين الذين يأتون "
+"إلى المتجر. يتطلب المصادقة على العامل ورخصة POS الصالحة."
+
+msgid "Existing customer found with this email"
+msgstr "تم العثور على عميل قديم بهذا البريد الإلكتروني"
+
+msgid "Get customer details"
+msgstr "الحصول على تفاصيل العميل"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"استرداد تفاصيل العميل بما في ذلك معلومات الاتصال وتاريخ الطلب الأخير. يتطلب "
+"인증 الموظف ورخصة POS صالحة."
+
+msgid "List stock levels for warehouse"
+msgstr "عرض مستويات المخزون للمخزن"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"تُرجع مستويات المخزون المُصنَّفة لمستودن المحطة. تدعم البحث حسب اسم المنتج "
+"أو SKU وفلترة العناصر ذات المخزون المنخفض أو عدم وجود مخزون. يتطلب إثبات "
+"هوية الموظف ورخصة POS صالحة."
+
+msgid "Search by product name or SKU"
+msgstr "ابحث حسب اسم المنتج أو SKU"
+
+msgid "Only return items at or below low stock threshold"
+msgstr "العودة فقط بالعناصر التي تصل أو تقل عن عتبة المخزون المنخفض"
+
+msgid "Only return items with zero available stock"
+msgstr "العودة فقط بالعناصر التي يبلغ عدد الوحدات المتوفرة الخاصة بها صفرًا"
+
+msgid "Warehouse not determined"
+msgstr "لم يتم تحديد المخزن"
+
+msgid "Get product stock detail"
+msgstr "الحصول على تفاصيل مخزون المنتج"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr ""
+"تُعيد مستويات المخزون للمواد الخام لمنتج معين في مستودن الطرف النهائي، بما "
+"في ذلك تفاصيل المستوى المتغير. يتطلب 인증 الموظف وترخيص POS действительный."
+
+msgid "Check stock across all locations"
+msgstr "التحقق من المخزون عبر جميع المواقع"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"تُعيد مستويات المخزون لمنتج عبر جميع مواقع المستودن. مفيدة لفحص ما إذا كان "
+"عنصر نفkest من المخزون متاحًا في موقع آخر. يتم пометка مستودن الطرف الحالي "
+"بـ is_current=true. يتطلب 인증 الموظف وترخيص POS действительный."
+
+msgid "Adjust stock levels"
+msgstr "تعديل مستويات المخزون"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"تعديل المخزون لمنتج في مستودع المحطة. يدعم أربعة أنواع من التعديلات: "
+"'استلام' (إضافة مخزون من الشحن)، 'تالف' (إزالة المخزون التالف أو الضائع)، "
+"'حساب مجدد' (تحديد المخزون الفعلي المطلق من خلال العد الفيزيائي)، 'إرجاع' "
+"(إعادة المخزون من إرجاع العميل). ينشئ سجل مراجعة StockMovement غير القابل "
+"للتعديل. يتطلب مصادقة الموظف، رخصة POS صالحة، وصلاحية pos_stock_adjustment."
+
+msgid "Stock adjusted successfully"
+msgstr "تم تعديل المخزون بنجاح"
+
+msgid "Validation error or warehouse not determined"
+msgstr "خطأ في التحقق أو لم يتم تحديد المستودع"
+
+msgid "Permission denied or POS license required"
+msgstr "الوصول ممنوع أو يتطلب ترخيص POS"
+
+msgid "Product or stock item not found"
+msgstr "لم يتم العثور على منتج أو عنصر من المخزون"
+
+msgid "List stock movement history"
+msgstr "عرض سجل حركة المخزون"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"تُعيد سجلات حركة المخزون المُصنَّفة بشكل مُقاطع للمخزون التابع للمُنتهي. وهي"
+" مفيدة لتدقيق التغييرات الأخيرة في المخزون (التعديلات، الأضرار، إعادة العد، "
+"الإرجاعات). تدعم التصفية حسب المنتج ونوع الحركة. تتطلب 인증 الموظف ورخصة POS "
+"صالحة."
+
+msgid "Filter movements by product ID"
+msgstr "تصفية الحركات حسب معرف المنتج"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr "أنواع الحركات المفصولة بفواصل (مثال: 'تعدي، إعادة العد')"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "عدد العناصر في الصفحة (الافتراضي: 20، الأقصى: 100)"
+
+msgid "Get customer loyalty info"
+msgstr "احصل على معلومات الولاء للعميل"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"احصل على حالة عضوية الولاء، الدرجة، ورصيد النقاط للعميل. تُعيد `is_member: "
+"false` إذا لم يكن للعميل عضوية ولاء نشطة. تتطلب 인증 الموظف ورخصة POS صالحة."
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"معلومات العضوية الولائية. يشير `is_member` إلى ما إذا كان لدى العميل عضوية "
+"نشطة. عند أن يكون True، تشمل `tier_name`، `tier_color`، و`available_points`."
+
+msgid "Preview loyalty points for cart"
+msgstr "عرض نقاط الولاء للمقتصد"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"احسب نقاط الولاء التي سيحصل عليها العميل مقابل إجمالي سلة الشراء المعطاة. "
+"يعود 0 إذا لم يكن لدى العميل عضوية ولاء نشطة. يتطلب 인증 الموظف ورخصة POS "
+"صالحة."
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr "إجمالي السلة كسلسلة عددية (مثلاً '49.99'). الافتراضي هو '0'."
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr ""
+"معاينة النقاط. `points_preview` هو عدد النقاط التي سيكسبها العميل لقيمة "
+"السلة المحددة."
+
+msgid "List POS orders"
+msgstr "عرض طلبات نقاط البيع"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"تُرجع الطلبات مع فلاتر متقدمة حسب نطاق التاريخ، الأصل، العميل، الكاشير، "
+"والبحث. تدعم عرض الطلبات عبر الإنترنت في سيناريو الإرجاع. الافتراضي: الطلبات"
+" اليومية من هذه المحطة فقط. وضع البحث: عند تقديم 'بحث'، تتجاهل فلاتر "
+"التاريخ/الأصل/الكاشير للعثور على أي طلب حسب الرقم، اسم العميل، البريد "
+"الإلكتروني، أو الهاتف. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr ""
+"تاريخ البدء لفلتر المدى (بتنسيق ISO، الافتراضي: اليوم). يتم تجاهله عند توفير"
+" بحث."
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr ""
+"تاريخ الانتهاء لفلتر المدى (بتنسيق ISO، الافتراضي: اليوم). يتم تجاهله عند "
+"توفير بحث."
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr ""
+"фильтр источника заказа: this_terminal (по умолчанию), all_pos, all "
+"(включает веб). Игнорируется, когда предоставлен поиск."
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr "فلتر حسب معرف مستخدم العميل. يتم تجاهله عند تقديم بحث."
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr "فلتر حسب معرف موظف الخزينة. يتم تجاهله عند تقديم بحث."
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr ""
+"البحث في جميع الطلبات حسب رقم الطلب، اسم العميل، البريد الإلكتروني أو رقم "
+"الهاتف. يتجاهل فلاتر التاريخ / الأصل."
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "فلتر حسب حالة الطلب (يُطبَّق في الوضعين)"
+
+msgid "Get order details"
+msgstr "احصل على تفاصيل الطلب"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"تُرجع تفاصيل الطلب الكاملة بما في ذلك العناصر وتوزيع الدفع. تدعم الطلبات من "
+"نقاط البيع والطلبات عبر الإنترنت (للحالات المرتجعة). تتطلب مصادقة الموظفين "
+"ورخصة POS صالحة."
+
+msgid "Get receipt data for printing"
+msgstr "احصل على بيانات الفاتورة للطباعة"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"تُرجع بيانات الطلب من نقطة البيع بتنسيق سند مبيعات بما في ذلك معلومات "
+"المتجر، والبضائع، والدفعات، والنص في الجزء السفلي. تم تصميمها لطابعات حرارية"
+" ESC/POS. تتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Process order refund"
+msgstr "معالجة استرجاع الطلب"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"معالجة استرجاع كامل أو جزئي لطلب نقطة البيع. بالنسبة للاسترجاعات الجزئية، "
+"حدد البضائع والكميات المراد استرجاعها. تنشئ سجل استرجاع وت تحديث إجمالي "
+"الطلب ومحفظة التغيير. تتطلب فتح محفظة التغيير على المحطة. تتطلب مصادقة "
+"الموظف ورخصة POS صالحة."
+
+msgid "Refund processed successfully"
+msgstr "تم معالجة الاسترجاع بنجاح"
+
+msgid "Invalid refund request or order already refunded"
+msgstr "طلب استرجاع غير صحيح أو الطلب تم استرجاعه بالفعل"
+
+msgid "Void a POS order"
+msgstr "إلغاء طلب نقاط البيع"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"إلغاء طلب POS من الدفعة الحالية. يمكن فقط إلغاء الطلبات التي تم إنشاؤها خلال"
+" الدفعة المفتوحة الحالية. يؤدي هذا إلى إنشاء استرجاع كامل ويُعكّس جميع "
+"التغييرات في الدفع والمخزون. يتطلب وجود دفعة مفتوحة على المحطة. يتطلب 인증 "
+"الموظف وترخيص POS действителен."
+
+msgid "Order voided successfully"
+msgstr "تم إلغاء الطلب بنجاح"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "لا يمكن إلغاء الطلب (ليس من الدفعة الحالية)"
+
+msgid "List POS cashiers"
+msgstr "قائمة خزّافات نقاط البيع"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"يعرض قائمة الموظفين الذين قاموا بمعالجة طلبات POS. يستخدم لملء قائمة تصفية "
+"الخزينة. يتطلب إثبات هوية الموظف وترخيص POS действителен."
+
+msgid "List of cashiers"
+msgstr "قائمة الخزّافين"
+
+msgid "Send digital receipt"
+msgstr "إرسال وصل إلكتروني"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"إرسال استلام رقمي للعميل عبر البريد الإلكتروني أو الرسائل القصيرة (SMS) أو "
+"واتساب. يتم إرسال الاستلام بشكل غير متزامن عبر مهمة Celery. يتطلب 인증 موظف "
+"و执照 POS صالحة."
+
+msgid "Receipt queued for sending"
+msgstr "تم تqueuing إيصال للإرسال"
+
+msgid "Get receipt sending status"
+msgstr "الحصول على حالة إرسال الإيصال"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr ""
+"تحقق من أي استلامات رقمية تم إرسالها للطلب. ترجع توقيتات الإرسال عبر البريد "
+"الإلكتروني والرسائل القصيرة (SMS)/واتساب."
+
+msgid "Receipt status"
+msgstr "حالة الإيصال"
+
+msgid "Get current shift summary"
+msgstr "الحصول على ملخص الوردية الحالية"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"تُرجع ملخص الوردية المفتوحة للصرّاف الحالي على المحطة، بما في ذلك "
+"الإجماليات، عدد المعاملات، وتحليل طريقة الدفع. تُرجع وردية فارغة إذا لم تكن "
+"هناك وردية مفتوحة. يتطلب 인증 الموظف ورخصة POS صالحة."
+
+msgid "Open a new shift"
+msgstr "فتح وردية جديدة"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"ابدأ وردية جديدة على المحطة. تسمح فقط بوردية واحدة مفتوحة لكل محطة في أي "
+"وقت. تسجل مبلغ النقد عند البدء. يتطلب إثبات هوية الموظف ورخصة POS صالحة."
+
+msgid "Invalid opening cash amount"
+msgstr "مبلغ المال المفتوح غير صحيح"
+
+msgid "A shift is already open on this terminal"
+msgstr "هناك دفعة مفتوحة بالفعل على هذا المحطة"
+
+msgid "Close current shift"
+msgstr "إغلاق الوردية الحالية"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"إغلاق الوردية المفتوحة الحالية. تسجيل مبلغ النقد عند الإغلاق وحساب الفرق بين"
+" المبلغ المتوقع والمبلغ الفعلي. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Record cash movement"
+msgstr "تسجيل حركة النقد"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"تسجيل حركة إيداع أو سحب نقدية أثناء الوردية. مثال: إضافة نقود معدة، إزالة "
+"للوديعة، نقود صغيرة. يتطلب وردية مفتوحة على المحطة. يتطلب مصادقة الموظف "
+"ورخصة POS صالحة."
+
+msgid "Cash movement recorded"
+msgstr "تم تسجيل حركة النقد"
+
+msgid "Invalid movement data"
+msgstr "بيانات الحركة غير صحيحة"
+
+msgid "Get daily sales report"
+msgstr "احصل على تقرير المبيعات اليومية"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"تُرجع تقرير مبيعات يومي مجمّع للنقطة الطرفية بما في ذلك الإجماليات، عدد "
+"المعاملات، قيمة المعاملة المتوسطة، وتحليل وسائل الدفع. يتطلب 인증 الموظف ورخصة"
+" POS صالحة."
+
+msgid "Report date (ISO format, default: today)"
+msgstr "تاريخ التقرير (التنسيق ISO، الافتراضي: اليوم)"
+
+msgid "Get top selling products"
+msgstr "احصل على المنتجات الأكثر مبيعًا"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr ""
+"تُرجع المنتجات الأكثر مبيعًا للنقطة الطرفية في تاريخ معين، مرتبة حسب الكمية "
+"المباعة. يتطلب 인증 الموظف ورخصة POS صالحة."
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "عدد المنتجات المراد إرجاعها (الافتراضي: 10، الأقصى: 50)"
+
+msgid "Sync products since timestamp"
+msgstr "동기화 제품 이전 타임스탬프"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"تُعيد المنتجات التي تم إنشاؤها أو تحديثها منذ الموقت الزمني المحدد. تُستخدم "
+"لتناسق المنتجات تدريجيًا مع قاعدة بيانات POS المحلية. تُعيد مفتاح التزامن "
+"(sync_token) للمتطلبات التزامنية التالية. يتطلب المصادقة كموظف وترخيص POS "
+"ساري المفعول."
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr ""
+"مُ光阴 ISO لاسترجاع التغييرات منذ ذلك الحين. اتركه فارغًا للحصول على مزامنة "
+"كاملة."
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "عدد العناصر لكل صفحة (القيمة الافتراضية: 100، القصوى: 200)"
+
+msgid "Sync customers since timestamp"
+msgstr "동기화 고객 이전 타임스탬프"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"تُعيد العملاء الذين تم إنشاؤهم أو قاموا بإرسال طلبات منذ الموقت الزمني "
+"المحدد. تُستخدم للبحث عن العملاء بشكل غير متصل. يتطلب المصادقة كموظف وترخيص "
+"POS ساري المفعول."
+
+msgid "Customer sync data"
+msgstr "고객 동기화 데이터"
+
+msgid "Upload offline transactions"
+msgstr "오프라인 거래 업로드"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"تحميل دفعات دفعة واحدة تم معالجتها أثناء عدم توفر المحطة. ينشئ كل تبادل "
+"طلبًا مع العناصر والمدفوعات. يستخدم local_id لضمان عدم التكرار - يتم اكتشاف "
+"التحميلات المتكررة وإخطارها. يتطلب مصادقة الموظف ورخصة POS صالحة."
+
+msgid "Upload results with success/failure per transaction"
+msgstr "تحميل النتائج مع نتائج النجاح/الفشل لكل عملية"
+
+msgid "Get sync status"
+msgstr "동기화 상태 가져오기"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"يعيد وقت الخادم الحالي وعدد قواعد البيانات لخطط التزامن. يتطلب مصادقة الموظف"
+" ورخصة POS صالحة."
+
+msgid "Get sync version info"
+msgstr "동기화 버전 정보 가져오기"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr ""
+"تُرجع إصدار API ونسخة مخطط البيانات لإجراء فحوصات توافق العميل. يجب على "
+"العملاء مسح البيانات وإعادة التزامن عندما تزيد نسخة المخطط."
+
+msgid "Version information"
+msgstr "معلومات الإصدار"
+
+msgid "Upload offline stock adjustments"
+msgstr "تحميل تعديلات المخزون غير المتصلة"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"تحميل دفعة واحدة للتعديلات على المخزون التي تم تqueuingها أثناء عدم توفر "
+"المحطة. يستخدم كل تعديل مفتاحًا لإعادة التشغيل لمنع التكرار. يتطلب 인증 "
+"الموظفين ورخصة POS صالحة وتصريح تعديل المخزون."
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "تحميل النتائج مع نتائج النجاح/الفشل لكل تعديل"
+
+msgid "POS license or permission required"
+msgstr " требуется رخصة أو إذن POS"
+
+msgid "Sync orders for offline cache"
+msgstr "مزامنة الطلبات للمخزن المؤقت غير المتصل"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"تُرجع الطلبات لتخزينها مؤقتًا على جهاز نقاط البيع (POS). يتم أولوية الطلبات "
+"من نقاط البيع (POS) على الطلبات من الويب حتى حد التزامن لجهاز نقاط البيع. "
+"تدعم التزامن التفاضلي عبر معلمة 'since'. تتطلب 인증 الموظفين وترخيص POS صالح."
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr "مفتاح توقيت ISO للازامنة الجزئية. اتركه فارغًا للازامنة الكاملة."
+
+msgid "Register POS terminal"
+msgstr "تسجيل محطة POS"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr ""
+"سجّل جهازًا جديدًا كجهاز نقاط البيع (POS) باستخدام رمز الربط. يتم إنشاء رمز "
+"الربط في لوحة التحكم الإدارية عند إنشاء جهاز نقاط البيع."
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "تم تسجيل المحطة بنجاح، ترجع إعدادات المحطة"
+
+msgid "Invalid or expired pairing code"
+msgstr "كود التزاوج غير صحيح أو منتهي الصلاحية"
+
+msgid "Get terminal configuration"
+msgstr "احصل على إعدادات المحطة"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr "تُرجع إعدادات المحطة الحالية بما في ذلك إعدادات الأجهزة."
+
+msgid "Terminal heartbeat"
+msgstr "نبض المحطة"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr "تقرير أن المحطة متصلة بالإنترنت. يجب أن يتم استدعاؤه كل 60 ثانية."
+
+msgid "Heartbeat recorded"
+msgstr "تم تسجيل النبض"
+
+msgid "Get receipt template"
+msgstr "احصل على نموذج الفاتورة"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr ""
+"يعيد قوالب الفاتورة الخاصة بمستودع المحطة. وإذا لم يكن هناك قوالب محددة "
+"للمستودع، يتم الاعتماد على القالب الافتراضي (لا يوجد مستودع مخصص). وإذا لم "
+"يكن هناك أي قالب على الإطلاق، يتم إرجاع الافتراضات المناسبة."
+
+msgid "Receipt template data"
+msgstr "بيانات نموذج الفاتورة"
+
+msgid "Get promo slides"
+msgstr "احصل على شرائح الترويج"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr ""
+"يعيد شرائح الإعلانات الخاصة بمستودع المحطة. تُعرض الشرائح على الشاشة الخاصة "
+"بالعميل خلال فترات الانتظار."
+
+msgid "List of promo slides with image URLs"
+msgstr "قائمة بمقاطع الترويج مع عناوين URLs للصور"
+
+msgid "Generate display pairing code"
+msgstr "إنشاء رمز الاقتران للمشاهدة"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr ""
+"إنشاء كود توصيل مؤقت يحتوي على 6 أرقام لاعتماد شاشة العرض للعميل. ينتهي "
+"صلاحية الكود بعد 5 دقائق ويمكن استخدامه مرة واحدة فقط. إنشاء كود جديد يجعل "
+"أي كودات قديمة لم تستخدم بعد لهذا المحطة باطلة."
+
+msgid "Pairing code generated"
+msgstr "تم إنشاء رمز الاقتران"
+
+msgid "List managers for unlock override"
+msgstr "قائمة المدراء لتجاوز القفل"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr ""
+"العودة إلى قائمة المدراء (المعرف والاسم) لتدفق إلغاء قفل تجاوز المدير."
+
+msgid "List of managers"
+msgstr "قائمة المدراء"
+
+msgid "Verify unlock PIN"
+msgstr "تأكيد رمز PIN لفتح القفل"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr ""
+"التحقق من رمز PIN للخزّين أو المدير لفتح المحطة. بعد 3 محاولات فاشلة، سيتم "
+"قبول رمز PIN للمدير فقط. يتم تسجيل جميع المحاولات لأغراض المراجعة."
+
+msgid "PIN verified successfully"
+msgstr "تم تأكيد رمز PIN بنجاح"
+
+msgid "Invalid PIN"
+msgstr "PIN غير صالح"
+
+msgid "Log terminal lock event"
+msgstr "تسجيل حدث قفل المحطة"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr ""
+"تسجيل الوقت الذي يتم فيه قفل المحطة (بشكل يدوي أو عبر تimed-out للقفل "
+"التلقائي). هذا النقطة النهائية مخصصة فقط لتسجيل المراجعة ولا تغير حالة "
+"المحطة."
+
+msgid "Event logged successfully"
+msgstr "تم تسجيل الحدث بنجاح"
+
+msgid "Invalid event type"
+msgstr "نوع الحدث غير صالح"
+
+msgid "Verify unlock card"
+msgstr "تأكيد بطاقة الإلغاء"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr ""
+"التحقق من مسح بطاقة هوية الموظف لفتح المحطة. يتم تجزئة بيانات البطاقة "
+"ومقارنتها بالقيم المخزنة لبطاقات التجزئة. وبعد 3 محاولات فاشلة لرمز PIN، "
+"سيتم قبول بطاقة المدير فقط."
+
+msgid "Card verified successfully"
+msgstr "تم تأكيد البطاقة بنجاح"
+
+msgid "Card not recognized"
+msgstr "بطاقة غير معترف بها"
+
+msgid "Register staff unlock card"
+msgstr "تسجيل بطاقة فك قفل الموظف"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr "تسجيل مسح البطاقة لفتح مُحرّك المستخدم الحالي بسرعة."
+
+msgid "Card registered successfully"
+msgstr "تم تسجيل البطاقة بنجاح"
+
+msgid "Card already registered to another user"
+msgstr "البطاقة مسجلة بالفعل لمستخدم آخر"
+
+msgid "Remove staff unlock card"
+msgstr "إزالة بطاقة فك قفل الموظف"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "إزالة بطاقة فتح المستخدم الحالي المسجلة."
+
+msgid "Card removed successfully"
+msgstr "تم إزالة البطاقة بنجاح"
+
+msgid "Set cashier PIN"
+msgstr "تعيين رمز PIN لل kasir"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"تحديد أو تحديث رمز PIN للمستخدم الحالي لقفل / فتح المحطة. يجب أن يكون PIN من"
+" 4 إلى 6 أرقام. يجب أن يتطابق PIN وpin_confirm."
+
+msgid "PIN set successfully"
+msgstr "تم تعيين PIN بنجاح"
+
+msgid "Get terminal provider config"
+msgstr "احصل على تكوين مزود المحطة"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"تُرجع إعدادات مزود المحطة الخاصة بالمحطة الحالية، بما في ذلك وضع التكامل "
+"(sdk، أو سحابة، أو يدوي) وتفاصيل قارئ البطاقات المرتبط. تُستخدم بواسطة واجهة"
+" POS عند بدء التشغيل لتحديد ما إذا كان هناك قارئ بطاقة متكامل متاح وما هي "
+"طريقة الدفع التي يجب استخدامها."
+
+msgid "Create connection token"
+msgstr "أنشئ رمز الاتصال"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"إنشاء رمز اتصال قصير الأمد لتقديم مزودي المحطات في وضع SDK (مثلاً: Stripe "
+"Terminal JS SDK). يقوم الجانب الأمامي بهذا الطلب عند تهيئة SDK لإنشاء اتصال "
+"مباشر مع القارئ. ينطبق فقط على SDK. لا تستخدم مزودي السحابة رموز الاتصال. "
+"يعود 400 إذا لم يدعم المزود رموز SDK."
+
+msgid "List card readers"
+msgstr "قائمة قارئات البطاقات"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"قائمة القراءات البطاقية المتاحة من مزود المحطة. تعمل على كلا نمط SDK ونمط "
+"السحابة. يحتوي كل كائن قارئ على: id، وعلامة، ونوع، ورقم التسلسل، والحالة."
+
+msgid "Create payment intent for terminal"
+msgstr "أنشئ نية دفع للمحطة"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"تُنشئ دفعًا لل intent (意图) لجمع بطاقات متوفرة على قارئ المحطة. يستخدم "
+"الواجهة الأمامية السر الخاص بالعميل الذي تم إرجاعه لجمع الدفع عبر SDK. فقط "
+"SDK. يجب على مزودي السحابة استخدام initiate-cloud-payment. إذا تم تجاهل "
+"العملة، يُستخدم الافتراضي للمحطة المُكوَّن."
+
+msgid "Capture/verify terminal payment"
+msgstr "التقاط/التحقق من دفع المحطة"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr ""
+"يؤكد أن دفعة PaymentIntent تم معالجتها بنجاح على قارئ الطرف المضيف ويُرجع "
+"تفاصيل البطاقة (العلامة، آخر 4 أرقام) من المزود. فقط SDK."
+
+msgid "Cancel terminal payment"
+msgstr "إلغاء دفع المحطة"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"إلغاء دفعة PaymentIntent المعلقة على قارئ الطرف المضيف (مثلاً: عميل قام "
+"بإلغائها). فقط SDK. يجب على مزودي السحابة استخدام cancel-cloud-payment."
+
+msgid "Initiate cloud payment on reader"
+msgstr "بدء دفع السحابة على القارئ"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"إرسال طلب دفع إلى قارئ البطاقة عبر واجهة برمجة التطبيقات (API) السحابية "
+"التابعة للمزود. فقط للمزودين المعدات التي تعمل في الوضع السحابي (Adyen، "
+"Square، SumUp، Zettle). فقط في الوضع السحابي. يُرجع 400 إذا كان المزود "
+"يستخدم وضع SDK. إذا تم حذف العملة، فسيتم استخدام العملة المُكوّنة مسبقًا في "
+"الجهاز كافتراض."
+
+msgid "Check cloud payment status"
+msgstr "التحقق من حالة دفع السحابة"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"ابدأ تتبع حالة الدفع الذي تم تشغيله من السحابة. يعود الحالة الحالية: معلق، "
+"ناجح، فاشل، أو ملغى. عند أن تكون الحالة 'ناجح'، يشمل الرد على card_brand، "
+"last4، و payment_id الخاصة بالمزود. عند أن تكون 'ملغى'، يشمل السبب. يجب أن "
+"يقوم الجانب الأمامي بتتبع كل 2 ثانية حتى تصبح الحالة لم تعد 'معلقة'."
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr ""
+"معرّف المعاملة الخاص بالبائع الذي يتم إرجاعه بواسطة initiate-cloud-payment"
+
+msgid "Cancel cloud payment"
+msgstr "إلغاء دفع السحابة"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr ""
+"إلغاء دفع تم إنشاؤه من السحابة وقيد الانتظار على القارئ. السحابة فقط. يتغير "
+"السلوك حسب البائع."
+
+msgid "Begin WebAuthn registration"
+msgstr "ابدأ تسجيل WebAuthn"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr ""
+"إنشاء خيارات التسجيل لتسجيل بصمة الوجه. يُرجع تحديات وخيارات إنشاء المؤهلات."
+
+msgid "Registration options"
+msgstr "خيارات التسجيل"
+
+msgid "Complete WebAuthn registration"
+msgstr "إكمال تسجيل WebAuthn"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr "التحقق من الإقرار وتخزين المفتاح للمصادقة البيومترية."
+
+msgid "Credential registered"
+msgstr "تم تسجيل المصادقة"
+
+msgid "Verification failed"
+msgstr "فشل التحقق"
+
+msgid "Begin WebAuthn authentication"
+msgstr "ابدأ المصادقة عبر WebAuthn"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"إنشاء تحدي المصادقة لفتح القفل البيومترية. يعيد allowCredentials للمستخدم "
+"المُغلق والمسؤولين جميعًا. إذا كانت محاولات الفشل >= 3، يتم تضمين بيانات "
+"الاعتماد فقط للمدراء."
+
+msgid "Authentication options"
+msgstr "خيارات المصادقة"
+
+msgid "No credentials registered"
+msgstr "لم يتم تسجيل أي مصادقة"
+
+msgid "Complete WebAuthn authentication"
+msgstr "إكمال 인증 WebAuthn"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "التحقق من الإدعاء البيومترية وإلغاء قفل المحطة."
+
+msgid "Authentication successful"
+msgstr "تمت عملية المصادقة بنجاح"

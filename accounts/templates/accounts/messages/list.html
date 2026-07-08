@@ -1,0 +1,85 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans "My Messages" %} - {% mtrans "My Account" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/css/messages.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% mtrans 'My Account' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'My Messages' %}
+                </li>
+            </ol>
+        </nav>
+        <div class="messages-page-header">
+            <div>
+                <h1 class="page-header__title">{% mtrans "My Messages" %}</h1>
+                <p class="page-header__subtitle">{% mtrans "Your support conversations and inquiries" %}</p>
+            </div>
+            <a href="{% url 'accounts:message_new' %}" class="btn btn--primary">
+                <i class="fas fa-plus"></i> {% mtrans "New Message" %}
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Message List -->
+<section class="section">
+    <div class="container">
+        {% if messages_list %}
+            <div class="message-cards">
+                {% for msg in messages_list %}
+                <a href="{% url 'accounts:message_detail' msg.pk %}" class="message-card">
+                    <div class="message-card__status message-card__status--{{ msg.status }}"></div>
+                    <div class="message-card__content">
+                        <div class="message-card__header">
+                            <p class="message-card__subject">{{ msg.subject }}</p>
+                            <span class="message-badge message-badge--{{ msg.status }}">
+                                {{ msg.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="message-card__meta">
+                            <span class="message-type-tag">{{ msg.get_message_type_display }}</span>
+                            {% if msg.order %}
+                                <span class="message-order-ref">
+                                    <i class="fas fa-receipt"></i> {% mtrans "Order" %} #{{ msg.order.order_number }}
+                                </span>
+                            {% endif %}
+                            <span class="message-date">{{ msg.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        {% if msg.reply_text %}
+                            <p class="message-card__reply-preview">
+                                <i class="fas fa-reply"></i> {% mtrans "Reply received" %} — {{ msg.replied_at|date:"M d" }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <i class="fas fa-chevron-right message-card__arrow"></i>
+                </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="account-empty">
+                <i class="fas fa-comments account-empty__icon"></i>
+                <p class="account-empty__text">{% mtrans "You have not sent any messages yet." %}</p>
+                <a href="{% url 'accounts:message_new' %}" class="btn btn--primary">
+                    {% mtrans "Send a Message" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

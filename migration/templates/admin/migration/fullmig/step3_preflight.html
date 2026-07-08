@@ -1,0 +1,180 @@
+{% extends "admin/migration/sync/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-clipboard-check"></i>
+        {% trans "Pre-flight Check" %}
+    </h3>
+    <p>{% trans "Verifying compatibility between source and target instances before migration." %}</p>
+</div>
+
+{% if compatibility %}
+<!-- Version Compatibility -->
+<div class="content-box">
+    <h3><i class="fas fa-code-branch"></i> {% trans "Version Compatibility" %}</h3>
+    {% if compatibility.version.compatible %}
+    <div class="preflight-check passed">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong>{% trans "Versions Compatible" %}</strong>
+            <p>
+                {% trans "Local:" %} <code>{{ compatibility.version.local_version }}</code>
+                &mdash;
+                {% trans "Remote:" %} <code>{{ compatibility.version.remote_version }}</code>
+            </p>
+            {% if compatibility.version.warnings %}
+            <ul class="preflight-warnings">
+                {% for warning in compatibility.version.warnings %}
+                <li><i class="fas fa-exclamation-triangle"></i> {{ warning }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="preflight-check failed">
+        <i class="fas fa-times-circle"></i>
+        <div>
+            <strong>{% trans "Version Mismatch" %}</strong>
+            <p>{{ compatibility.version.message }}</p>
+            <p>
+                {% trans "Local:" %} <code>{{ compatibility.version.local_version }}</code>
+                &mdash;
+                {% trans "Remote:" %} <code>{{ compatibility.version.remote_version }}</code>
+            </p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Component Compatibility -->
+{% if compatibility.components %}
+<div class="content-box">
+    <h3><i class="fas fa-puzzle-piece"></i> {% trans "Component Compatibility" %}</h3>
+
+    {% if compatibility.components.missing_on_target %}
+    <div class="preflight-check warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% trans "Components Missing on Target" %}</strong>
+            <p>{% trans "These components are installed on the source but not on this instance. Install them via the Component Store before migrating." %}</p>
+            <ul>
+                {% for comp in compatibility.components.missing_on_target %}
+                <li><code>{{ comp.slug }}</code> v{{ comp.version }} ({{ comp.name }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if compatibility.components.version_mismatch %}
+    <div class="preflight-check warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% trans "Component Version Differences" %}</strong>
+            <ul>
+                {% for comp in compatibility.components.version_mismatch %}
+                <li>
+                    <code>{{ comp.slug }}</code>:
+                    {% trans "source" %} v{{ comp.source_version }} /
+                    {% trans "target" %} v{{ comp.target_version }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not compatibility.components.missing_on_target and not compatibility.components.version_mismatch %}
+    <div class="preflight-check passed">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong>{% trans "All Components Match" %}</strong>
+            <p>{% trans "Installed components are compatible between source and target." %}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Preflight Data -->
+{% if compatibility.preflight %}
+<div class="content-box">
+    <h3><i class="fas fa-database"></i> {% trans "Source Data Summary" %}</h3>
+    {% if compatibility.preflight.category_counts %}
+    <table class="import-summary-table">
+        <thead>
+            <tr>
+                <th>{% trans "Category" %}</th>
+                <th class="text-right">{% trans "Items" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat_key, count in compatibility.preflight.category_counts.items %}
+            <tr>
+                <td class="font-semibold">{{ cat_key }}</td>
+                <td class="text-right">{{ count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if compatibility.preflight.media_total_size %}
+    <div class="info-box">
+        <i class="fas fa-hdd"></i>
+        <div>
+            <strong>{% trans "Media Storage" %}</strong>
+            <p>{% trans "Total media size on source:" %} {{ compatibility.preflight.media_total_size_display }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="content-box">
+    <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <div>
+            <strong>{% trans "Pre-flight Check Failed" %}</strong>
+            <p>{% trans "Could not connect to the remote instance to perform compatibility checks. Please verify the connection and try again." %}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- License Reminder -->
+<div class="content-box">
+    <div class="info-box">
+        <i class="fas fa-certificate"></i>
+        <div>
+            <strong>{% trans "License Reminder" %}</strong>
+            <p>{% trans "This installation requires its own license. After migration, you will need to activate a separate license for this instance." %}</p>
+        </div>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="wizard-actions">
+        <a href="{% url 'admin:fullmig_wizard_step2' job.pk %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back" %}
+        </a>
+        {% if compatibility.version.compatible %}
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-play"></i>
+            {% trans "Start Migration" %}
+        </button>
+        {% else %}
+        <button type="submit" class="btn btn-secondary" disabled>
+            <i class="fas fa-ban"></i>
+            {% trans "Cannot Proceed (Version Incompatible)" %}
+        </button>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

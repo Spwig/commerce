@@ -1,0 +1,93 @@
+{% load i18n static element_tags merchant_trans %}
+<!-- Sale Products Element -->
+<section class="sale-products sale-products--{{ element.content.layout|default:'grid' }} sale-products--badge-{{ element.content.badge_style|default:'ribbon' }}"
+         {% hover_animation_attrs element %}
+         style="--badge-color: {{ element.content.badge_color|default:'#ef4444' }};
+                {% base_styles element %}">
+
+    {% if element.content.title %}
+    <div class="sale-products__header">
+        <div class="sale-products__header-text">
+            <h2 class="sale-products__title">{{ element.content.title }}</h2>
+            {% if element.content.subtitle %}
+            <p class="sale-products__subtitle">{{ element.content.subtitle }}</p>
+            {% endif %}
+        </div>
+        {% if element.content.layout == 'carousel' %}
+        <div class="sale-products__nav">
+            <button class="sale-products__arrow sale-products__arrow--prev" aria-label="{% mtrans 'Previous' %}">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="sale-products__arrow sale-products__arrow--next" aria-label="{% mtrans 'Next' %}">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="sale-products__container" style="{% if element.content.layout == 'grid' %}--sale-columns: {{ element.content.columns|default:'4' }};{% endif %}">
+        {% with products=element_context.products|default:element.content.products %}
+        {% for product in products %}
+        <article class="sale-products__item">
+            <a href="{{ product.url|default:product.get_absolute_url }}" class="sale-products__card">
+                <div class="sale-products__image-wrapper">
+                    {% if product.image or product.primary_image %}
+                    <img src="{% if product.image %}{{ product.image }}{% elif product.primary_image.file %}{{ product.primary_image.file.url }}{% endif %}"
+                         alt="{{ product.name|default:product.title }}"
+                         class="sale-products__image"
+                         loading="lazy">
+                    {% else %}
+                    <div class="sale-products__image-placeholder">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    {% endif %}
+
+                    {% if element.content.show_discount_badge|default:True %}
+                    <div class="sale-products__badge">
+                        {% if product.discount_percent %}
+                        -{{ product.discount_percent }}%
+                        {% else %}
+                        {% mtrans "Sale" %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="sale-products__content">
+                    <h3 class="sale-products__name">{{ product.name|default:product.title }}</h3>
+
+                    <div class="sale-products__pricing">
+                        {% if element.content.show_original_price|default:True %}
+                        <span class="sale-products__original-price">{{ product.original_price }}</span>
+                        {% endif %}
+                        <span class="sale-products__sale-price">{{ product.sale_price|default:product.price }}</span>
+                    </div>
+
+                    {% if element.content.show_savings and product.savings %}
+                    <span class="sale-products__savings">
+                        {% mtrans "You save:" %} {{ product.savings }}
+                    </span>
+                    {% endif %}
+
+                    {% if element.content.show_countdown and product.ends_at %}
+                    <div class="sale-products__countdown" data-ends="{{ product.ends_at }}">
+                        <i class="far fa-clock"></i>
+                        <span class="sale-products__countdown-text">{% mtrans "Ends in:" %}</span>
+                        <span class="sale-products__countdown-timer"></span>
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+        </article>
+        {% empty %}
+        <div class="sale-products__empty">
+            <i class="fas fa-tag"></i>
+            <p>{% mtrans "No sale products available" %}</p>
+        </div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+</section>
+
+{# Countdown + carousel JS loaded via config.json scripts — sale-products.js #}

@@ -1,0 +1,174 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static geoip_tags %}
+
+{% block title %}{% trans "Tax Rates" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'cart/css/admin_tax_rate.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header -->
+    <div class="change-list-header">
+        <div>
+            <h1><i class="fas fa-percentage"></i> {% trans "Tax Rates" %}</h1>
+            <p class="subtitle">{% trans "Configure tax rules for your store. Tax rates are matched to customer addresses during checkout." %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <button type="button" class="button secondary" data-action="show-presets-modal">
+                <i class="fas fa-magic"></i> {% trans "Load Presets" %}
+            </button>
+            {% if has_add_permission %}
+            <a href="{% url 'admin:cart_taxrate_add' %}" class="button change-list-action-button tax-rate-add-btn">
+                <i class="fas fa-plus"></i> {% trans "Add Tax Rate" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-list"></i></div>
+            <div class="value">{{ stats.total_rules }}</div>
+            <div class="label">{% trans "Total Rules" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon stat-icon-success"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ stats.active_rules }}</div>
+            <div class="label">{% trans "Active" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon stat-icon-primary"><i class="fas fa-globe"></i></div>
+            <div class="value">{{ stats.countries_covered }}</div>
+            <div class="label">{% trans "Countries" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon stat-icon-warning"><i class="fas fa-tags"></i></div>
+            <div class="value">{{ stats.tax_types_used }}</div>
+            <div class="label">{% trans "Tax Types" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title"><i class="fas fa-filter"></i> {% trans "Filters" %}</h3>
+        </div>
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label><i class="fas fa-search"></i> {% trans "Search" %}</label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Search by name, country, state...' %}">
+            </div>
+            <div class="filter-field">
+                <label><i class="fas fa-globe"></i> {% trans "Country" %}</label>
+                <select id="filter-country">
+                    <option value="">{% trans "All Countries" %}</option>
+                    {% for c in countries %}
+                    <option value="{{ c.country }}">{{ c.country|country_flag }} {{ c.country }} ({{ c.count }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-field">
+                <label><i class="fas fa-tags"></i> {% trans "Tax Type" %}</label>
+                <select id="filter-tax-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="sales_tax">{% trans "Sales Tax" %}</option>
+                    <option value="vat">VAT</option>
+                    <option value="gst">GST</option>
+                    <option value="custom">{% trans "Custom" %}</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label><i class="fas fa-toggle-on"></i> {% trans "Status" %}</label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+        </div>
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button data-action="clear-filters" class="button secondary">{% trans "Clear" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Tax Rules" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-percentage"></i>
+            <span id="tax-count">{{ tax_rates|length }}</span> {% trans "rules" %}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="tax-results">
+        {% include "admin/cart/taxrate/partials/tax_rate_cards.html" %}
+    </div>
+
+    <!-- Presets Modal -->
+    <div id="presets-modal" class="tax-modal-overlay">
+        <div class="tax-modal">
+            <div class="tax-modal-header">
+                <h2><i class="fas fa-magic"></i> {% trans "Load Tax Rate Presets" %}</h2>
+                <p class="subtitle">{% trans "Quickly add standard tax rates for your region. Existing rates will not be duplicated." %}</p>
+                <button type="button" class="tax-modal-close" data-action="hide-presets-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="tax-modal-body">
+                {% regroup preset_groups by get_region_display as region_list %}
+                {% for region in region_list %}
+                <div class="preset-region">
+                    <h3 class="preset-region-title">{{ region.grouper }}</h3>
+                    <div class="preset-cards">
+                        {% for group in region.list %}
+                        <div class="preset-card" data-key="{{ group.key }}">
+                            <div class="preset-card-icon">
+                                <i class="{{ group.icon }}"></i>
+                            </div>
+                            <div class="preset-card-info">
+                                <h4>{{ group.name }}</h4>
+                                <p>{{ group.description }}</p>
+                                <span class="preset-card-meta">
+                                    {{ group.rates.count }} {% trans "rates" %} &middot; v{{ group.version }}
+                                </span>
+                            </div>
+                            <div class="preset-card-action">
+                                <button type="button" class="button default preset-load-btn"
+                                        data-action="load-preset" data-group-key="{{ group.key }}">
+                                    <i class="fas fa-download"></i> {% trans "Load" %}
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="tax-modal-footer">
+                <button type="button" class="button secondary" data-action="hide-presets-modal">
+                    {% trans "Close" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="tax-notification" class="tax-notification">
+        <span id="tax-notification-text"></span>
+    </div>
+</div>
+
+<div id="tax-rate-config"
+     data-filter-url="{{ filter_url }}"
+     data-preset-url="{{ preset_api_url }}"></div>
+<script src="{% static 'cart/js/admin_tax_rate.js' %}"></script>
+{% endblock %}

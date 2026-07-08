@@ -1,0 +1,29 @@
+{# Visual Builder Element Partial - Renders element with proper wrapper #}
+{# This template recursively renders elements with their children for the visual builder #}
+{% load element_tags %}
+
+<div class="element-wrapper" data-element-id="{{ element.id }}" data-element-type="{{ element.element_type }}">
+    <div class="element-controls">
+        <button class="control-btn edit-btn" data-action="edit-element" data-element-id="{{ element.id }}">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button class="control-btn delete-btn" data-action="delete-element" data-element-id="{{ element.id }}">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+    <div class="element-content">
+        {# Resolve dynamic context for elements with context providers #}
+        {% resolve_element_context element as element_context %}
+        {# Use the actual element templates for proper rendering #}
+        {% if element.element_type == 'modal_popup' %}
+            {# Modal popups have a special visual_builder template with drop zones #}
+            {% include 'page_builder/elements/modal_popup/visual_builder.html' with element=element %}
+        {% else %}
+            {# Use the regular element template for all elements (including containers) #}
+            {# Container template.html has context detection for builder vs frontend #}
+            {% with template_name='page_builder/elements/'|add:element.element_type|add:'/template.html' %}
+                {% include template_name with element=element element_context=element_context is_visual_builder=True %}
+            {% endwith %}
+        {% endif %}
+    </div>
+</div>

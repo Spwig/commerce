@@ -1,0 +1,8 @@
+{% load i18n %}
+{% if show_always or available_count > 0 %}
+<span class="translation-indicator"
+      title="{% blocktrans count count=available_count total=total_languages %}{{ count }}/{{ total }} languages available{% endblocktrans %}">
+    <i class="fas fa-globe"></i>
+    <span class="translation-count">{{ available_count }}/{{ total_languages }}</span>
+</span>
+{% endif %}

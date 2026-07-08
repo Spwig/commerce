@@ -1,0 +1,685 @@
+{
+  "element_type": "modal_popup",
+  "name": "Modal Popup",
+  "version": "1.0.1",
+  "category": "layout",
+  "icon": "fas fa-window-restore",
+  "description": "Popup container for any content with configurable triggers",
+  "accepts_children": true,
+  "inherit_base": true,
+  "css_files": [
+    "page_builder/css/elements/modal-popup.css"
+  ],
+  "scripts": [
+    "/static/page_builder/js/elements/pb-modal.js"
+  ],
+  "disable_base_properties": [
+    "spacing"
+  ],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "name_group": {
+          "type": "property_group",
+          "label": "Modal Identity",
+          "columns": 1,
+          "properties": {
+            "name": {
+              "type": "string",
+              "label": "Modal Name",
+              "default": "Popup",
+              "placeholder": "e.g., Newsletter Signup, Special Offer"
+            }
+          }
+        }
+      }
+    },
+    "trigger": {
+      "label": "Trigger",
+      "icon": "fas fa-bolt",
+      "order": 2,
+      "properties": {
+        "trigger_group": {
+          "type": "property_group",
+          "label": "Trigger Settings",
+          "columns": 1,
+          "properties": {
+            "trigger_type": {
+              "type": "select",
+              "label": "Trigger Type",
+              "default": "time_delay",
+              "options": [
+                {
+                  "value": "button_click",
+                  "label": "Button Click"
+                },
+                {
+                  "value": "time_delay",
+                  "label": "Time Delay"
+                },
+                {
+                  "value": "exit_intent",
+                  "label": "Exit Intent"
+                },
+                {
+                  "value": "scroll_percent",
+                  "label": "Scroll Percentage"
+                },
+                {
+                  "value": "page_load",
+                  "label": "Page Load"
+                }
+              ]
+            },
+            "trigger_button_id": {
+              "type": "string",
+              "label": "Trigger Button Selector",
+              "default": "",
+              "placeholder": "#my-button or .trigger-btn",
+              "show_if": {
+                "trigger_type": "button_click"
+              },
+              "help_text": "CSS selector for the button/element that opens this modal"
+            },
+            "trigger_delay": {
+              "type": "number",
+              "label": "Delay (seconds)",
+              "default": 5,
+              "min": 0,
+              "max": 120,
+              "show_if": {
+                "trigger_type": "time_delay"
+              }
+            },
+            "trigger_scroll_percent": {
+              "type": "range",
+              "label": "Scroll Percentage",
+              "default": 50,
+              "min": 0,
+              "max": 100,
+              "unit": "%",
+              "show_if": {
+                "trigger_type": "scroll_percent"
+              }
+            }
+          }
+        },
+        "frequency_group": {
+          "type": "property_group",
+          "label": "Display Frequency",
+          "properties": {
+            "show_once_per_session": {
+              "type": "boolean",
+              "label": "Once Per Session",
+              "default": true,
+              "help_text": "Only show once during the visitor's browser session"
+            },
+            "show_once_per_visitor": {
+              "type": "boolean",
+              "label": "Once Per Visitor",
+              "default": false,
+              "help_text": "Only show once ever (remembered across sessions)"
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-desktop",
+      "order": 3,
+      "properties": {
+        "size_group": {
+          "type": "property_group",
+          "label": "Modal Size",
+          "properties": {
+            "size": {
+              "type": "select",
+              "label": "Modal Size",
+              "default": "medium",
+              "options": [
+                {
+                  "value": "small",
+                  "label": "Small (400px)"
+                },
+                {
+                  "value": "medium",
+                  "label": "Medium (600px)"
+                },
+                {
+                  "value": "large",
+                  "label": "Large (800px)"
+                },
+                {
+                  "value": "xlarge",
+                  "label": "Extra Large (1000px)"
+                },
+                {
+                  "value": "full",
+                  "label": "Full Screen"
+                },
+                {
+                  "value": "auto",
+                  "label": "Auto (fit content)"
+                }
+              ]
+            },
+            "max_width": {
+              "type": "string",
+              "label": "Custom Max Width",
+              "default": "",
+              "placeholder": "e.g., 550px or 80%",
+              "help_text": "Override the size preset with a custom width"
+            }
+          }
+        },
+        "position_group": {
+          "type": "property_group",
+          "label": "Position",
+          "columns": 1,
+          "properties": {
+            "position": {
+              "type": "select",
+              "label": "Position",
+              "default": "center",
+              "options": [
+                {
+                  "value": "center",
+                  "label": "Center"
+                },
+                {
+                  "value": "top",
+                  "label": "Top"
+                },
+                {
+                  "value": "bottom",
+                  "label": "Bottom"
+                },
+                {
+                  "value": "left",
+                  "label": "Left"
+                },
+                {
+                  "value": "right",
+                  "label": "Right"
+                },
+                {
+                  "value": "top-left",
+                  "label": "Top Left"
+                },
+                {
+                  "value": "top-right",
+                  "label": "Top Right"
+                },
+                {
+                  "value": "bottom-left",
+                  "label": "Bottom Left"
+                },
+                {
+                  "value": "bottom-right",
+                  "label": "Bottom Right"
+                }
+              ]
+            }
+          }
+        },
+        "animation_group": {
+          "type": "property_group",
+          "label": "Animation",
+          "properties": {
+            "animation": {
+              "type": "select",
+              "label": "Animation",
+              "default": "fade",
+              "options": [
+                {
+                  "value": "fade",
+                  "label": "Fade"
+                },
+                {
+                  "value": "slide_up",
+                  "label": "Slide Up"
+                },
+                {
+                  "value": "slide_down",
+                  "label": "Slide Down"
+                },
+                {
+                  "value": "scale",
+                  "label": "Scale"
+                },
+                {
+                  "value": "none",
+                  "label": "None"
+                }
+              ]
+            },
+            "animation_duration": {
+              "type": "number",
+              "label": "Duration (ms)",
+              "default": 300,
+              "min": 0,
+              "max": 1000,
+              "step": 50
+            }
+          }
+        }
+      }
+    },
+    "backdrop": {
+      "label": "Backdrop",
+      "icon": "fas fa-square",
+      "order": 4,
+      "properties": {
+        "backdrop_group": {
+          "type": "property_group",
+          "label": "Backdrop Settings",
+          "properties": {
+            "show_backdrop": {
+              "type": "boolean",
+              "label": "Show Backdrop",
+              "default": true
+            },
+            "close_on_backdrop_click": {
+              "type": "boolean",
+              "label": "Close on Click",
+              "default": true
+            }
+          }
+        },
+        "backdrop_style_group": {
+          "type": "property_group",
+          "label": "Backdrop Style",
+          "properties": {
+            "backdrop_color": {
+              "type": "color",
+              "label": "Color",
+              "default": "#000000"
+            },
+            "backdrop_opacity": {
+              "type": "range",
+              "label": "Opacity",
+              "default": 0.5,
+              "min": 0,
+              "max": 1,
+              "step": 0.05
+            }
+          }
+        }
+      }
+    },
+    "close_button": {
+      "label": "Close Button",
+      "icon": "fas fa-times-circle",
+      "order": 5,
+      "properties": {
+        "close_group": {
+          "type": "property_group",
+          "label": "Close Button Settings",
+          "properties": {
+            "show_close_button": {
+              "type": "boolean",
+              "label": "Show Close Button",
+              "default": true
+            },
+            "close_on_escape": {
+              "type": "boolean",
+              "label": "Close on Escape",
+              "default": true
+            }
+          }
+        },
+        "close_position_group": {
+          "type": "property_group",
+          "label": "Position",
+          "columns": 1,
+          "properties": {
+            "close_button_position": {
+              "type": "select",
+              "label": "Close Button Position",
+              "default": "inside_right",
+              "options": [
+                {
+                  "value": "inside_right",
+                  "label": "Inside Top Right"
+                },
+                {
+                  "value": "inside_left",
+                  "label": "Inside Top Left"
+                },
+                {
+                  "value": "outside_right",
+                  "label": "Outside Top Right"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "modal_style": {
+      "label": "Modal Style",
+      "icon": "fas fa-palette",
+      "order": 6,
+      "properties": {
+        "content_style_group": {
+          "type": "property_group",
+          "label": "Content Style",
+          "properties": {
+            "content_padding": {
+              "type": "spacing",
+              "label": "Padding",
+              "default": "24px"
+            },
+            "content_background": {
+              "type": "color",
+              "label": "Background",
+              "default": "#ffffff"
+            },
+            "border_radius": {
+              "type": "string",
+              "label": "Border Radius",
+              "default": "12px",
+              "placeholder": "e.g., 8px, 1rem"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "label": "Modal Name",
+      "default": "Popup",
+      "placeholder": "e.g., Newsletter Signup, Special Offer"
+    },
+    "trigger_type": {
+      "type": "select",
+      "label": "Trigger Type",
+      "default": "time_delay",
+      "options": [
+        {
+          "value": "button_click",
+          "label": "Button Click"
+        },
+        {
+          "value": "time_delay",
+          "label": "Time Delay"
+        },
+        {
+          "value": "exit_intent",
+          "label": "Exit Intent"
+        },
+        {
+          "value": "scroll_percent",
+          "label": "Scroll Percentage"
+        },
+        {
+          "value": "page_load",
+          "label": "Page Load"
+        }
+      ]
+    },
+    "trigger_button_id": {
+      "type": "string",
+      "label": "Trigger Button Selector",
+      "default": "",
+      "placeholder": "#my-button or .trigger-btn",
+      "show_if": {
+        "trigger_type": "button_click"
+      },
+      "help_text": "CSS selector for the button/element that opens this modal"
+    },
+    "trigger_delay": {
+      "type": "number",
+      "label": "Delay (seconds)",
+      "default": 5,
+      "min": 0,
+      "max": 120,
+      "show_if": {
+        "trigger_type": "time_delay"
+      }
+    },
+    "trigger_scroll_percent": {
+      "type": "range",
+      "label": "Scroll Percentage",
+      "default": 50,
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "show_if": {
+        "trigger_type": "scroll_percent"
+      }
+    },
+    "show_once_per_session": {
+      "type": "boolean",
+      "label": "Show Once Per Session",
+      "default": true,
+      "help_text": "Only show once during the visitor's browser session"
+    },
+    "show_once_per_visitor": {
+      "type": "boolean",
+      "label": "Show Once Per Visitor",
+      "default": false,
+      "help_text": "Only show once ever (remembered across sessions)"
+    },
+    "size": {
+      "type": "select",
+      "label": "Modal Size",
+      "default": "medium",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small (400px)"
+        },
+        {
+          "value": "medium",
+          "label": "Medium (600px)"
+        },
+        {
+          "value": "large",
+          "label": "Large (800px)"
+        },
+        {
+          "value": "xlarge",
+          "label": "Extra Large (1000px)"
+        },
+        {
+          "value": "full",
+          "label": "Full Screen"
+        },
+        {
+          "value": "auto",
+          "label": "Auto (fit content)"
+        }
+      ]
+    },
+    "max_width": {
+      "type": "string",
+      "label": "Custom Max Width",
+      "default": "",
+      "placeholder": "e.g., 550px or 80%",
+      "help_text": "Override the size preset with a custom width"
+    },
+    "position": {
+      "type": "select",
+      "label": "Position",
+      "default": "center",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "top-left",
+          "label": "Top Left"
+        },
+        {
+          "value": "top-right",
+          "label": "Top Right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom Left"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom Right"
+        }
+      ]
+    },
+    "animation": {
+      "type": "select",
+      "label": "Animation",
+      "default": "fade",
+      "options": [
+        {
+          "value": "fade",
+          "label": "Fade"
+        },
+        {
+          "value": "slide_up",
+          "label": "Slide Up"
+        },
+        {
+          "value": "slide_down",
+          "label": "Slide Down"
+        },
+        {
+          "value": "scale",
+          "label": "Scale"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ]
+    },
+    "animation_duration": {
+      "type": "number",
+      "label": "Animation Duration (ms)",
+      "default": 300,
+      "min": 0,
+      "max": 1000,
+      "step": 50
+    },
+    "show_backdrop": {
+      "type": "boolean",
+      "label": "Show Backdrop",
+      "default": true
+    },
+    "backdrop_color": {
+      "type": "color",
+      "label": "Backdrop Color",
+      "default": "#000000"
+    },
+    "backdrop_opacity": {
+      "type": "range",
+      "label": "Backdrop Opacity",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "close_on_backdrop_click": {
+      "type": "boolean",
+      "label": "Close on Backdrop Click",
+      "default": true
+    },
+    "show_close_button": {
+      "type": "boolean",
+      "label": "Show Close Button",
+      "default": true
+    },
+    "close_button_position": {
+      "type": "select",
+      "label": "Close Button Position",
+      "default": "inside_right",
+      "options": [
+        {
+          "value": "inside_right",
+          "label": "Inside Top Right"
+        },
+        {
+          "value": "inside_left",
+          "label": "Inside Top Left"
+        },
+        {
+          "value": "outside_right",
+          "label": "Outside Top Right"
+        }
+      ]
+    },
+    "close_on_escape": {
+      "type": "boolean",
+      "label": "Close on Escape Key",
+      "default": true
+    },
+    "content_padding": {
+      "type": "spacing",
+      "label": "Content Padding",
+      "default": "24px"
+    },
+    "content_background": {
+      "type": "color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    "border_radius": {
+      "type": "string",
+      "label": "Border Radius",
+      "default": "12px",
+      "placeholder": "e.g., 8px, 1rem"
+    }
+  },
+  "translations": {
+    "en": {
+      "name": "Modal Popup",
+      "description": "Popup container for any content with configurable triggers"
+    },
+    "es": {
+      "name": "Ventana Emergente",
+      "description": "Contenedor emergente para cualquier contenido con disparadores configurables"
+    },
+    "fr": {
+      "name": "Fen\u00eatre Modale",
+      "description": "Conteneur popup pour tout contenu avec d\u00e9clencheurs configurables"
+    },
+    "de": {
+      "name": "Modal-Popup",
+      "description": "Popup-Container f\u00fcr beliebige Inhalte mit konfigurierbaren Ausl\u00f6sern"
+    },
+    "pt": {
+      "name": "Popup Modal",
+      "description": "Cont\u00eainer popup para qualquer conte\u00fado com gatilhos configur\u00e1veis"
+    },
+    "zh-hans": {
+      "name": "\u5f39\u7a97",
+      "description": "\u53ef\u914d\u7f6e\u89e6\u53d1\u6761\u4ef6\u7684\u5f39\u51fa\u5f0f\u5185\u5bb9\u5bb9\u5668"
+    },
+    "ja": {
+      "name": "\u30e2\u30fc\u30c0\u30eb\u30dd\u30c3\u30d7\u30a2\u30c3\u30d7",
+      "description": "\u8a2d\u5b9a\u53ef\u80fd\u306a\u30c8\u30ea\u30ac\u30fc\u3092\u6301\u3064\u30dd\u30c3\u30d7\u30a2\u30c3\u30d7\u30b3\u30f3\u30c6\u30ca"
+    }
+  }
+}

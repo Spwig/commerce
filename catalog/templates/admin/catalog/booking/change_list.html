@@ -1,0 +1,515 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static unit_filters %}
+
+{% block title %}{% trans "Bookings" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/changelist-utilities.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+{% if view_mode != 'list' %}
+<link rel="stylesheet" href="{% static 'catalog/css/booking-changelist.css' %}">
+{% endif %}
+{% if view_mode == 'list' %}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="{% if view_mode != 'list' %}changelist-no-search changelist-no-filter{% endif %}">
+
+    {# ================================================================
+       Header with View Mode Buttons
+       ================================================================ #}
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-calendar-check"></i>
+                {% trans "Bookings" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage bookings, appointments, and reservations" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="?view=list"
+               class="change-list-action-button button {% if view_mode == 'list' %}default{% else %}secondary{% endif %}">
+                <i class="fas fa-list"></i> {% trans "List" %}
+            </a>
+            <a href="?view=calendar"
+               class="change-list-action-button button {% if view_mode == 'calendar' %}default{% else %}secondary{% endif %}">
+                <i class="fas fa-calendar-alt"></i> {% trans "Month" %}
+            </a>
+            <a href="?view=week"
+               class="change-list-action-button button {% if view_mode == 'week' %}default{% else %}secondary{% endif %}">
+                <i class="fas fa-calendar-week"></i> {% trans "Week" %}
+            </a>
+            <a href="?view=day"
+               class="change-list-action-button button {% if view_mode == 'day' %}default{% else %}secondary{% endif %}">
+                <i class="fas fa-calendar-day"></i> {% trans "Day" %}
+            </a>
+        </div>
+    </div>
+
+    {# ================================================================
+       LIST VIEW - Card-based with AJAX filters
+       ================================================================ #}
+    {% if view_mode == 'list' %}
+
+    {# Filters Panel #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text" id="filter-search"
+                       placeholder="{% trans 'Customer name, email, product...' %}">
+            </div>
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-product">
+                    <i class="fas fa-box-open"></i> {% trans "Product" %}
+                </label>
+                <select id="filter-product">
+                    <option value="">{% trans "All Products" %}</option>
+                    {% for pid, pname in booking_products %}
+                    <option value="{{ pid }}">{{ pname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Results Info #}
+    <div class="filter-results-summary">
+        <i class="fas fa-info-circle"></i>
+        {% trans "Showing" %} <span id="results-count">{{ total_bookings }}</span> {% trans "results" %}
+    </div>
+
+    {# Results Container #}
+    <div id="booking-results">
+        <div class="list-row-cards">
+            <div class="list-row-card loading-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>{% trans "Loading bookings..." %}</p>
+            </div>
+        </div>
+    </div>
+
+    {# Filter Config for admin-list-filters.js #}
+    <div id="list-filter-config"
+         data-filter-url="{% url 'catalog_admin:filter_bookings' %}"
+         data-results-container="booking-results"
+         data-results-count="results-count"
+         data-auto-load="true"
+         class="booking-hidden"></div>
+
+    {% endif %}
+
+    {# ================================================================
+       MONTH VIEW - Calendar Grid
+       ================================================================ #}
+    {% if view_mode == 'calendar' %}
+
+    {# Calendar Filters #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+        </div>
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status" data-action="calendar-filter">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status__exact == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-product">
+                    <i class="fas fa-box-open"></i> {% trans "Product" %}
+                </label>
+                <select id="filter-product" data-action="calendar-filter">
+                    <option value="">{% trans "All Products" %}</option>
+                    {% for pid, pname in booking_products %}
+                    <option value="{{ pid }}" {% if request.GET.product__id__exact == pid|stringformat:"d" %}selected{% endif %}>{{ pname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    {# Month Navigation #}
+    <div class="booking-calendar-nav">
+        <a href="?view=calendar&year={{ prev_year }}&month={{ prev_month }}"
+           class="changelist-action-button">
+            <i class="fas fa-chevron-left"></i> {% trans "Previous" %}
+        </a>
+        <h2 class="booking-calendar-nav__title">
+            {{ calendar_month_name }} {{ calendar_year }}
+        </h2>
+        <a href="?view=calendar&year={{ next_year }}&month={{ next_month }}"
+           class="changelist-action-button">
+            {% trans "Next" %} <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+
+    {# Calendar Grid #}
+    <div class="booking-calendar-grid">
+        <div class="booking-calendar-dayheaders">
+            <div class="booking-calendar-dayheader">{% trans "Mon" %}</div>
+            <div class="booking-calendar-dayheader">{% trans "Tue" %}</div>
+            <div class="booking-calendar-dayheader">{% trans "Wed" %}</div>
+            <div class="booking-calendar-dayheader">{% trans "Thu" %}</div>
+            <div class="booking-calendar-dayheader">{% trans "Fri" %}</div>
+            <div class="booking-calendar-dayheader booking-calendar-dayheader--weekend">{% trans "Sat" %}</div>
+            <div class="booking-calendar-dayheader booking-calendar-dayheader--weekend">{% trans "Sun" %}</div>
+        </div>
+
+        {% for week in calendar_weeks %}
+        <div class="booking-calendar-week">
+            {% for day in week %}
+            {% with day_str=day|date:"Y-m-d" %}
+            <div class="booking-calendar-cell{% if day.month != calendar_month %} booking-calendar-cell--other-month{% endif %}">
+                <div class="booking-calendar-cell__day">
+                    <a href="?view=day&year={{ day.year }}&month={{ day.month }}&day={{ day.day }}"
+                       title="{% trans 'View day' %}">{{ day.day }}</a>
+                </div>
+                {% with day_bookings=bookings_by_date|get_item:day_str %}
+                {% if day_bookings %}
+                <div class="booking-calendar-cell__events">
+                    {% for booking in day_bookings %}
+                    <a href="{% url 'admin:catalog_booking_change' booking.pk %}"
+                       class="booking-event booking-event--{{ booking.status }}"
+                       title="{{ booking.product.name }} - {{ booking.customer_name|default:booking.customer_email }} ({{ booking.start_datetime|date:'H:i' }}-{{ booking.end_datetime|date:'H:i' }})">
+                        {{ booking.start_datetime|date:"H:i" }} {{ booking.product.name|truncatechars:18 }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Legend #}
+    <div class="booking-legend">
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--pending"></span>
+            {% trans "Pending" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--confirmed"></span>
+            {% trans "Confirmed" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--completed"></span>
+            {% trans "Completed" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--cancelled"></span>
+            {% trans "Cancelled" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--no-show"></span>
+            {% trans "No Show" %}
+        </div>
+    </div>
+
+    {% endif %}
+
+    {# ================================================================
+       WEEK VIEW - Time Grid
+       ================================================================ #}
+    {% if view_mode == 'week' %}
+
+    {# Week Filters #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+        </div>
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status" data-action="calendar-filter">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status__exact == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-product">
+                    <i class="fas fa-box-open"></i> {% trans "Product" %}
+                </label>
+                <select id="filter-product" data-action="calendar-filter">
+                    <option value="">{% trans "All Products" %}</option>
+                    {% for pid, pname in booking_products %}
+                    <option value="{{ pid }}" {% if request.GET.product__id__exact == pid|stringformat:"d" %}selected{% endif %}>{{ pname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    {# Week Navigation #}
+    <div class="booking-calendar-nav">
+        <a href="?view=week&year={{ prev_week.year }}&month={{ prev_week.month }}&day={{ prev_week.day }}"
+           class="changelist-action-button">
+            <i class="fas fa-chevron-left"></i> {% trans "Previous Week" %}
+        </a>
+        <h2 class="booking-calendar-nav__title">
+            {{ week_start|date:"M d" }} &ndash; {{ week_end|date:"M d, Y" }}
+        </h2>
+        <a href="?view=week&year={{ next_week.year }}&month={{ next_week.month }}&day={{ next_week.day }}"
+           class="changelist-action-button">
+            {% trans "Next Week" %} <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+
+    {# Week Time Grid #}
+    <div class="booking-week-grid">
+        <div class="booking-week-header">
+            <div class="booking-week-time-gutter"></div>
+            {% for day in week_days %}
+            <div class="booking-week-day-header">
+                {{ day|date:"D" }}<br>{{ day|date:"M d" }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="booking-week-body">
+            {% for hour in hours %}
+            <div class="booking-week-row">
+                <div class="booking-week-time-gutter">
+                    {{ hour }}:00
+                </div>
+                {% for day in week_days %}
+                {% with day_str=day|date:"Y-m-d" %}
+                {% with day_bookings=bookings_by_day|get_item:day_str %}
+                <div class="booking-week-cell" data-hour="{{ hour }}" data-date="{{ day_str }}">
+                    {% if day_bookings %}
+                    {% for booking in day_bookings %}
+                    {% if booking.start_datetime.hour == hour %}
+                    <a href="{% url 'admin:catalog_booking_change' booking.pk %}"
+                       class="booking-week-event booking-event--{{ booking.status }}"
+                       title="{{ booking.product.name }} - {{ booking.customer_name|default:booking.customer_email }} ({{ booking.start_datetime|date:'H:i' }}-{{ booking.end_datetime|date:'H:i' }})">
+                        <span class="booking-week-event-time">
+                            {{ booking.start_datetime|date:"H:i" }}-{{ booking.end_datetime|date:"H:i" }}
+                        </span>
+                        <span class="booking-week-event-title">
+                            {{ booking.product.name|truncatechars:20 }}
+                        </span>
+                        <span class="booking-week-event-customer">
+                            {{ booking.customer_name|default:booking.customer_email|truncatechars:15 }}
+                        </span>
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% endwith %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# Legend #}
+    <div class="booking-legend">
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--pending"></span>
+            {% trans "Pending" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--confirmed"></span>
+            {% trans "Confirmed" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--completed"></span>
+            {% trans "Completed" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--cancelled"></span>
+            {% trans "Cancelled" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--no-show"></span>
+            {% trans "No Show" %}
+        </div>
+    </div>
+
+    {% endif %}
+
+    {# ================================================================
+       DAY VIEW - Detailed Time Grid
+       ================================================================ #}
+    {% if view_mode == 'day' %}
+
+    {# Day Filters #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+        </div>
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status" data-action="calendar-filter">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status__exact == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-product">
+                    <i class="fas fa-box-open"></i> {% trans "Product" %}
+                </label>
+                <select id="filter-product" data-action="calendar-filter">
+                    <option value="">{% trans "All Products" %}</option>
+                    {% for pid, pname in booking_products %}
+                    <option value="{{ pid }}" {% if request.GET.product__id__exact == pid|stringformat:"d" %}selected{% endif %}>{{ pname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    {# Day Navigation #}
+    <div class="booking-calendar-nav">
+        <a href="?view=day&year={{ prev_day.year }}&month={{ prev_day.month }}&day={{ prev_day.day }}"
+           class="changelist-action-button">
+            <i class="fas fa-chevron-left"></i> {% trans "Previous Day" %}
+        </a>
+        <h2 class="booking-calendar-nav__title">
+            {{ target_date|date:"l, M d, Y" }}
+        </h2>
+        <a href="?view=day&year={{ next_day.year }}&month={{ next_day.month }}&day={{ next_day.day }}"
+           class="changelist-action-button">
+            {% trans "Next Day" %} <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+
+    {# Day Time Grid #}
+    <div class="booking-day-grid">
+        {% for hour in hours %}
+        <div class="booking-day-row">
+            <div class="booking-day-time-gutter">{{ hour }}:00</div>
+            <div class="booking-day-cell" data-hour="{{ hour }}">
+                {% with hour_bookings=bookings_by_hour|get_item:hour %}
+                {% if hour_bookings %}
+                {% for booking in hour_bookings %}
+                <a href="{% url 'admin:catalog_booking_change' booking.pk %}"
+                   class="booking-day-event booking-event--{{ booking.status }}">
+                    <div class="booking-day-event-header">
+                        <span class="booking-day-event-time">
+                            {{ booking.start_datetime|date:"H:i" }} &ndash; {{ booking.end_datetime|date:"H:i" }}
+                        </span>
+                        <span class="booking-day-event-status">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="booking-day-event-title">
+                        {{ booking.product.name }}
+                    </div>
+                    <div class="booking-day-event-details">
+                        <i class="fas fa-user"></i> {{ booking.customer_name|default:booking.customer_email|default:"-" }}
+                        {% if booking.resource %}
+                        &middot; <i class="fas fa-cube"></i> {{ booking.resource.name }}
+                        {% endif %}
+                        {% if booking.total_cost %}
+                        &middot; <i class="fas fa-dollar-sign"></i> {{ booking.total_cost }}
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Legend #}
+    <div class="booking-legend">
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--pending"></span>
+            {% trans "Pending" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--confirmed"></span>
+            {% trans "Confirmed" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--completed"></span>
+            {% trans "Completed" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--cancelled"></span>
+            {% trans "Cancelled" %}
+        </div>
+        <div class="booking-legend__item">
+            <span class="booking-legend__dot booking-event--no-show"></span>
+            {% trans "No Show" %}
+        </div>
+    </div>
+
+    {% endif %}
+
+    {# ================================================================
+       JS Config & Scripts
+       ================================================================ #}
+    <script type="application/json" id="booking-calendar-config">
+    {"calendarYear": {{ calendar_year|default:"0" }}, "calendarMonth": {{ calendar_month|default:"0" }}, "calendarDay": {{ calendar_day|default:"0" }}, "viewMode": "{{ view_mode }}"}
+    </script>
+    {% if view_mode != 'list' %}
+    <script src="{% static 'catalog/admin/js/booking_change_list.js' %}"></script>
+    {% endif %}
+</div>
+{% endblock %}

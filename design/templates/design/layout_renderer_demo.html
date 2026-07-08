@@ -1,0 +1,260 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n %}
+
+{% block title %}LayoutRenderer Demo{% endblock %}
+
+{% block content %}
+<div class="layout-renderer-demo">
+    <h1>{% trans 'LayoutRenderer Integration Demo' %}</h1>
+
+    <div class="demo-info">
+        <h2>{% trans 'Current Configuration' %}</h2>
+        <table>
+            <tr>
+                <th>{% trans 'Page Type' %}:</th>
+                <td>{{ page_type }}</td>
+            </tr>
+            <tr>
+                <th>{% trans 'Tier' %}:</th>
+                <td>{{ tier }}</td>
+            </tr>
+            <tr>
+                <th>{% trans 'Preview Mode' %}:</th>
+                <td>{{ preview_mode }}</td>
+            </tr>
+            <tr>
+                <th>{% trans 'Isolation Type' %}:</th>
+                <td>{{ isolation_type }}</td>
+            </tr>
+            <tr>
+                <th>{% trans 'Isolation Class' %}:</th>
+                <td><code>{{ isolation_class }}</code></td>
+            </tr>
+            <tr>
+                <th>{% trans 'Cache Enabled' %}:</th>
+                <td>{{ renderer_info.cache_enabled }}</td>
+            </tr>
+            <tr>
+                <th>{% trans 'Regions Rendered' %}:</th>
+                <td>{{ renderer_info.regions_rendered }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="demo-controls">
+        <h2>{% trans 'Test Different Configurations' %}</h2>
+        <form method="get">
+            <label>
+                {% trans 'Page Type' %}:
+                <select name="page_type">
+                    <option value="home" {% if page_type == 'home' %}selected{% endif %}>Home (Tier C)</option>
+                    <option value="landing" {% if page_type == 'landing' %}selected{% endif %}>Landing (Tier C)</option>
+                    <option value="product" {% if page_type == 'product' %}selected{% endif %}>Product (Tier B)</option>
+                    <option value="collection" {% if page_type == 'collection' %}selected{% endif %}>Collection (Tier B)</option>
+                    <option value="cart" {% if page_type == 'cart' %}selected{% endif %}>Cart (Tier A)</option>
+                    <option value="checkout" {% if page_type == 'checkout' %}selected{% endif %}>Checkout (Tier A)</option>
+                </select>
+            </label>
+
+            <label>
+                {% trans 'Isolation Type' %}:
+                <select name="isolation">
+                    <option value="page_editor" {% if isolation_type == 'page_editor' %}selected{% endif %}>Page Editor (pb-content-preview)</option>
+                    <option value="brand_builder" {% if isolation_type == 'brand_builder' %}selected{% endif %}>Brand Builder (hf-content-preview)</option>
+                </select>
+            </label>
+
+            <label>
+                <input type="checkbox" name="preview" value="true" {% if preview_mode %}checked{% endif %}>
+                {% trans 'Preview Mode (enables CSS isolation)' %}
+            </label>
+
+            <button type="submit">{% trans 'Update' %}</button>
+        </form>
+    </div>
+
+    <div class="demo-schema">
+        <h2>{% trans 'Page Schema' %}</h2>
+        <pre>{{ renderer_info.schema|pprint }}</pre>
+    </div>
+
+    <div class="demo-output">
+        <h2>{% trans 'Rendered Output' %}</h2>
+        <p class="note">
+            {% trans 'The content below shows the LayoutRenderer output.' %}
+            {% if preview_mode %}
+                {% trans 'CSS isolation is enabled - content is wrapped in' %} <code>{{ isolation_class }}</code>.
+            {% else %}
+                {% trans 'CSS isolation is disabled - rendering production mode.' %}
+            {% endif %}
+        </p>
+
+        <div class="output-wrapper">
+            {{ html_content|safe }}
+        </div>
+    </div>
+
+    <div class="demo-css">
+        <h2>{% trans 'Branding CSS' %}</h2>
+        {% if css_content %}
+            <pre>{{ css_content }}</pre>
+        {% else %}
+            <p>{% trans 'No branding CSS available' %}</p>
+        {% endif %}
+    </div>
+
+    <div class="demo-notes">
+        <h2>{% trans 'Integration Notes' %}</h2>
+        <ul>
+            <li>{% trans 'LayoutRenderer wraps output in CSS isolation container when preview_mode=True' %}</li>
+            <li>{% trans 'Brand Builder uses isolation_type="brand_builder" → class "hf-content-preview"' %}</li>
+            <li>{% trans 'Page Editor uses isolation_type="page_editor" → class "pb-content-preview"' %}</li>
+            <li>{% trans 'CSS isolation prevents admin styles from affecting preview content' %}</li>
+            <li>{% trans 'Caching is disabled in preview mode for immediate updates' %}</li>
+            <li>{% trans 'Production mode (preview_mode=False) enables caching for performance' %}</li>
+        </ul>
+    </div>
+
+    <div class="demo-examples">
+        <h2>{% trans 'Integration Examples' %}</h2>
+        <h3>{% trans 'Brand Builder Integration' %}</h3>
+        <pre><code>from design.layout_renderer import LayoutRenderer
+
+# In BrandingPreviewFrameView
+renderer = LayoutRenderer(
+    page_type='home',
+    tier='C',
+    context={
+        'branding': branding,
+        'preview_mode': True,
+        'isolation_type': 'brand_builder',  # → hf-content-preview
+    }
+)
+html = renderer.render()
+css = branding.generate_css()
+
+# Template receives html_content and css_content
+# CSS isolation is already applied by LayoutRenderer</code></pre>
+
+        <h3>{% trans 'Page Editor Integration' %}</h3>
+        <pre><code>from design.layout_renderer import LayoutRenderer
+
+# In page editor preview view
+renderer = LayoutRenderer(
+    page_type=page.page_type,
+    tier=get_page_tier(page),
+    context={
+        'page': page,
+        'preview_mode': True,
+        'isolation_type': 'page_editor',  # → pb-content-preview
+    }
+)
+html = renderer.render()
+
+# Template receives html_content
+# CSS isolation is already applied by LayoutRenderer</code></pre>
+    </div>
+</div>
+
+<style>
+    .layout-renderer-demo {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .demo-info table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    .demo-info th,
+    .demo-info td {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .demo-info th {
+        background: #f5f5f5;
+        font-weight: 600;
+    }
+
+    .demo-controls form {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 20px 0;
+    }
+
+    .demo-controls label {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .demo-controls select,
+    .demo-controls button {
+        padding: 6px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .demo-output {
+        margin: 30px 0;
+    }
+
+    .output-wrapper {
+        border: 2px solid #3B82F6;
+        padding: 20px;
+        margin: 20px 0;
+        background: #f9fafb;
+        min-height: 200px;
+    }
+
+    .demo-schema pre,
+    .demo-css pre,
+    .demo-examples pre {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+
+    .demo-notes ul {
+        list-style: disc;
+        margin-left: 20px;
+    }
+
+    .demo-notes li {
+        margin: 10px 0;
+    }
+
+    .note {
+        padding: 10px;
+        background: #fffbeb;
+        border-left: 4px solid #f59e0b;
+        margin: 15px 0;
+    }
+
+    code {
+        background: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+    }
+
+    h2 {
+        margin-top: 30px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    h3 {
+        margin-top: 20px;
+        color: #3B82F6;
+    }
+</style>
+{% endblock %}

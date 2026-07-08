@@ -1,0 +1,87 @@
+{% load i18n static element_tags merchant_trans %}
+{% mtrans "View All Products" as default_view_all %}
+{# Product Grid Element - Master product display with multiple layouts #}
+<section class="product-grid-section section"
+         {% hover_animation_attrs element %}
+         style="{% base_styles element %}"
+         data-layout="{{ element.content.layout|default:'grid' }}"
+         data-element-type="product_grid">
+
+    <div class="product-grid-section__container">
+        {# Section Header #}
+        {% if element.content.title or element.content.subtitle %}
+        <div class="product-grid-section__header">
+            {% if element.content.title %}
+            <h2 class="product-grid-section__title">{{ element.content.title }}</h2>
+            {% endif %}
+            {% if element.content.subtitle %}
+            <p class="product-grid-section__subtitle">{{ element.content.subtitle }}</p>
+            {% endif %}
+
+            {# Carousel navigation arrows in header (when layout is carousel) #}
+            {% if element.content.layout == "carousel" and element.content.show_arrows|default:True %}
+            <div class="product-grid-section__nav">
+                <button class="product-grid-section__arrow product-grid-section__arrow--prev" aria-label="{% mtrans 'Previous' %}" type="button">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="product-grid-section__arrow product-grid-section__arrow--next" aria-label="{% mtrans 'Next' %}" type="button">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# Resolve products from context provider (handles both dynamic and static modes) #}
+        {% with products=element_context.products %}
+
+        {% if products %}
+            {# Dispatch to layout sub-template #}
+            {% with layout=element.content.layout|default:"grid" %}
+
+            {% if layout == "list" %}
+                {% include "page_builder/elements/product_grid/layouts/list.html" %}
+            {% elif layout == "carousel" %}
+                {% include "page_builder/elements/product_grid/layouts/carousel.html" %}
+            {% elif layout == "masonry" %}
+                {% include "page_builder/elements/product_grid/layouts/masonry.html" %}
+            {% elif layout == "featured" %}
+                {% include "page_builder/elements/product_grid/layouts/featured.html" %}
+            {% else %}
+                {% include "page_builder/elements/product_grid/layouts/grid.html" %}
+            {% endif %}
+
+            {% endwith %}
+        {% else %}
+            {# Empty state #}
+            <div class="product-grid-section__empty">
+                <i class="fas fa-th-large"></i>
+                <p>{% mtrans "No products to display" %}</p>
+                <small>{% mtrans "Configure the data source or select products manually." %}</small>
+            </div>
+        {% endif %}
+
+        {% endwith %}
+
+        {# View All Button — normalise bare relative slugs (e.g. "products" → "/products/") #}
+        {% if element.content.view_all_link %}
+        {% with raw_link=element.content.view_all_link %}
+        {% if raw_link|slice:':1' != '/' and raw_link|slice:':4' != 'http' %}
+        <div class="product-grid-section__footer">
+            <a href="/{{ raw_link }}" class="btn btn--secondary">
+                {{ element.content.view_all_text|default:default_view_all }}
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% else %}
+        <div class="product-grid-section__footer">
+            <a href="{{ raw_link }}" class="btn btn--secondary">
+                {{ element.content.view_all_text|default:default_view_all }}
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% endif %}
+    </div>
+</section>

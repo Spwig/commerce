@@ -1,0 +1,62 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" {% if LANGUAGE_CODE == 'ar' %}dir="rtl"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% trans "Under Maintenance" %} | {{ store_name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/css/maintenance.css' %}">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="container">
+        <div class="content">
+            {% if store_logo %}
+            <div class="logo">
+                <img src="{{ store_logo }}" alt="{{ store_name }}">
+            </div>
+            {% endif %}
+
+            {% if store_name and store_name != 'Our Store' %}
+            <div class="store-badge">
+                {{ store_name }}
+            </div>
+            {% endif %}
+
+            <div class="maintenance-icon">🔧</div>
+
+            <h1>{% trans "We'll Be Right Back" %}</h1>
+
+            {% if maintenance_message %}
+            <div class="custom-message">
+                {{ maintenance_message }}
+            </div>
+            {% else %}
+            <p class="subtitle">
+                {% trans "We're performing scheduled maintenance to improve your experience." %}<br>
+                {% trans "Please check back soon." %}
+            </p>
+            {% endif %}
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="footer">
+                <p class="powered-by">
+                    {% trans "Powered by" %} <a href="{{ spwig_url }}" target="_blank" rel="noopener">Spwig</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

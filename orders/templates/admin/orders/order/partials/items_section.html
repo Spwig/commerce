@@ -1,0 +1,165 @@
+{% load i18n %}
+<div class="order-items-content">
+    {% if order.top_level_items %}
+        <div class="items-list">
+            {% for item in order.top_level_items %}
+                <div class="order-item-row" data-item-id="{{ item.id }}">
+                    <div class="item-image">
+                        {% if item.product.images.first %}
+                            <img src="{{ item.product.images.first.thumbnail_small }}" alt="{{ item.product_name }}">
+                        {% else %}
+                            <div class="no-image"><i class="fas fa-box"></i></div>
+                        {% endif %}
+                    </div>
+
+                    <div class="item-details">
+                        <div class="item-name">
+                            {{ item.product_name }}
+                            {% if item.variant_name %}
+                                <span class="variant-name">{{ item.variant_name }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="item-sku">{% trans "SKU:" %} {{ item.sku }}</div>
+
+                        {% if item.customizations %}
+                            <div class="item-customizations">
+                                <small>
+                                    {% for key, value in item.customizations.items %}
+                                        <span class="customization-badge">{{ key }}: {{ value }}</span>
+                                    {% endfor %}
+                                </small>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="item-quantity">
+                        <span class="quantity-label">{% trans "Qty:" %}</span>
+                        <span class="quantity-display">
+                            <span class="quantity-value">{{ item.quantity }}</span>
+                        </span>
+                    </div>
+
+                    <div class="item-price">
+                        <div class="price-display">
+                            {% if item.has_discount %}
+                                <div class="price-with-discount">
+                                    <div class="original-price"><del>{{ item.base_price }} {% trans "each" %}</del></div>
+                                    <div class="unit-price">{{ item.unit_price }} {% trans "each" %}</div>
+                                    <span class="discount-badge">-{{ item.get_discount_percentage }}%</span>
+                                    {% if item.discount_reason %}
+                                        <div class="discount-reason">
+                                            <i class="fas fa-info-circle"></i> {{ item.discount_reason }}
+                                        </div>
+                                    {% endif %}
+                                    {% if item.exclude_from_vouchers %}
+                                        <span class="voucher-excluded-badge" title="{% trans 'Excluded from order-level vouchers' %}">
+                                            <i class="fas fa-ban"></i>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="unit-price">{{ item.unit_price }} {% trans "each" %}</div>
+                            {% endif %}
+                            <div class="total-price">{{ item.total_price }}</div>
+                        </div>
+                    </div>
+
+                    <div class="item-actions">
+                        <button type="button" class="btn-edit-item" data-item-id="{{ item.id }}" title="{% trans 'Edit item' %}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn-save-item d-none" data-item-id="{{ item.id }}" title="{% trans 'Save changes' %}">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button type="button" class="btn-cancel-item-edit d-none" data-item-id="{{ item.id }}" title="{% trans 'Cancel' %}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button type="button" class="btn-remove-item" data-item-id="{{ item.id }}" data-order-id="{{ order.id }}" title="{% trans 'Remove item' %}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+
+                    {# Full-width edit panel — hidden by default, shown when editing #}
+                    <div class="item-edit-panel d-none">
+                        <div class="edit-field edit-field-qty">
+                            <label>{% trans "Quantity:" %}</label>
+                            <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" data-item-id="{{ item.id }}" data-order-id="{{ order.id }}">
+                        </div>
+
+                        <div class="edit-field edit-field-list-price">
+                            <label>{% trans "List Price:" %}</label>
+                            <span class="list-price-value">{{ item.base_price|default:item.unit_price }}</span>
+                        </div>
+
+                        <div class="edit-field edit-field-selling-price">
+                            <label>{% trans "Selling Price:" %}</label>
+                            <input type="text" class="price-input" value="{{ item.unit_price.amount }}" data-item-id="{{ item.id }}" data-order-id="{{ order.id }}" data-base-price="{{ item.base_price.amount|default:item.unit_price.amount }}">
+                        </div>
+
+                        <div class="edit-field edit-field-discount">
+                            <label>{% trans "Discount:" %}</label>
+                            <select class="discount-type-select" data-item-id="{{ item.id }}">
+                                <option value="none" {% if item.discount_type == 'none' %}selected{% endif %}>{% trans "No Discount" %}</option>
+                                <option value="percentage" {% if item.discount_type == 'percentage' %}selected{% endif %}>{% trans "Percentage (%)" %}</option>
+                                <option value="fixed" {% if item.discount_type == 'fixed' %}selected{% endif %}>{% trans "Fixed Amount" %}</option>
+                            </select>
+                        </div>
+
+                        <div class="edit-field edit-field-discount-value{% if item.discount_type == 'none' %} d-none{% endif %}">
+                            <label>{% trans "Discount Value:" %}</label>
+                            <input type="number" class="discount-value-input" value="{{ item.discount_value }}" min="0" step="0.01" data-item-id="{{ item.id }}" placeholder="{% trans 'Discount value' %}">
+                        </div>
+
+                        <div class="edit-field edit-field-reason">
+                            <label>{% trans "Reason:" %}</label>
+                            <input type="text" class="discount-reason-input" value="{{ item.discount_reason }}" placeholder="{% trans 'Reason (optional)' %}" data-item-id="{{ item.id }}">
+                        </div>
+
+                        <div class="edit-field edit-field-vouchers">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="exclude-vouchers-checkbox" data-item-id="{{ item.id }}" {% if item.exclude_from_vouchers %}checked{% endif %}>
+                                {% trans "Exclude from order vouchers" %}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {% with components=item.component_items.all %}
+                {% if components %}
+                    <div class="order-item-components" data-parent-id="{{ item.id }}">
+                        {% for child in components %}
+                            <div class="order-item-component">
+                                <div class="component-image">
+                                    {% if child.product.images.first %}
+                                        <img src="{{ child.product.images.first.thumbnail_small }}" alt="{{ child.product_name }}">
+                                    {% else %}
+                                        <div class="no-image"><i class="fas fa-box"></i></div>
+                                    {% endif %}
+                                </div>
+                                <div class="component-details">
+                                    <span class="component-name">{{ child.product_name }}</span>
+                                    {% if child.variant_name %}
+                                        <span class="component-variant">{{ child.variant_name }}</span>
+                                    {% endif %}
+                                </div>
+                                <span class="component-qty">&times;{{ child.quantity }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% endwith %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-items-message">
+            <p>{% trans "No items in this order" %}</p>
+        </div>
+    {% endif %}
+
+    {# Add Item Button #}
+    <div class="add-item-section">
+        <button type="button" class="btn btn-primary" id="btn-add-item" data-order-id="{{ order.id }}">
+            <i class="fas fa-plus"></i> {% trans "Add Item" %}
+        </button>
+    </div>
+</div>

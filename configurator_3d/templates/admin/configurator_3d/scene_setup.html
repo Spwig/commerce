@@ -1,0 +1,523 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "3D Scene Manager" %} | {{ product.name }} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'configurator_3d/css/scene_setup.css' %}">
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+<link rel="stylesheet" href="{% static 'utilities/color_picker/current/color_picker.css' %}">
+<link rel="stylesheet" href="{% static 'utilities/gradient_creator/current/gradient_creator.css' %}">
+<script type="importmap" nonce="{{ request.csp_nonce }}">
+{ "imports": { "three": "{% static 'core/vendor/js/three.module.min.js' %}" } }
+</script>
+<script type="module" src="{% static 'core/vendor/js/model-viewer-module.min.js' %}"></script>
+<script type="module" src="{% static 'core/vendor/js/model-viewer-effects.min.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_changelist' %}">{% trans "Products" %}</a>
+    &rsaquo; <a href="{% url 'admin:catalog_product_change' product.pk %}">{{ product.name }}</a>
+    &rsaquo; {% trans "3D Scene Manager" %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="scene-setup-container">
+    <!-- Notification container -->
+    <div id="scene-setup-notifications" class="scene-setup-notifications" aria-live="polite"></div>
+
+    <!-- Header -->
+    <div class="scene-setup-header">
+        <div class="scene-setup-header__info">
+            <h1><i class="fas fa-cube"></i> {% trans "3D Scene Manager" %}</h1>
+            <span class="scene-setup-header__product">{{ product.name }}</span>
+        </div>
+        <div class="scene-setup-header__actions">
+            <label class="scene-setup-toggle">
+                <input type="checkbox" id="scene-enabled" {% if scene.is_enabled %}checked{% endif %}>
+                <span>{% trans "3D Viewer Enabled" %}</span>
+            </label>
+            <a href="{% url 'admin:catalog_product_change' product.pk %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Product" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Main layout: preview + controls -->
+    <div class="scene-setup-layout">
+        <!-- Left: 3D Preview -->
+        <div class="scene-setup-preview">
+            <div class="scene-setup-preview__viewer" id="viewer-container">
+                <model-viewer
+                    id="model-viewer"
+                    alt="{{ product.name }}"
+                    shadow-intensity="0.5"
+                    camera-controls
+                    touch-action="pan-y"
+                    auto-rotate
+                    data-bg="{{ scene.background_color }}"
+                >
+                </model-viewer>
+                <div class="scene-setup-preview__overlay" id="viewer-overlay">
+                    <div class="scene-setup-preview__placeholder">
+                        <i class="fas fa-cube"></i>
+                        <p>{% trans "Upload a GLB model to see 3D preview" %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="scene-setup-preview__toolbar">
+                <button type="button" class="button button-small" id="btn-capture-thumbnail" title="{% trans 'Capture Thumbnail' %}">
+                    <i class="fas fa-camera"></i> {% trans "Capture" %}
+                </button>
+                <button type="button" class="button button-small" id="btn-reset-camera" title="{% trans 'Reset Camera' %}">
+                    <i class="fas fa-sync-alt"></i> {% trans "Reset View" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Right: Controls -->
+        <div class="scene-setup-controls">
+            <!-- Section: Base Model -->
+            <div class="scene-setup-section" id="section-base-model">
+                <h3 class="scene-setup-section__title">
+                    <i class="fas fa-file-upload"></i> {% trans "Base 3D Model" %}
+                </h3>
+                <div class="scene-setup-section__body">
+                    <div class="scene-setup-model-picker">
+                        <div class="scene-setup-model-picker__current" id="current-model-display">
+                            <span id="current-model-name">
+                                {% if scene.base_model %}{{ scene.base_model.title }}{% else %}{% trans "No model selected" %}{% endif %}
+                            </span>
+                        </div>
+                        <button type="button" class="button button-primary button-small" id="btn-select-model">
+                            <i class="fas fa-upload"></i> {% trans "Select GLB File" %}
+                        </button>
+                    </div>
+                    <p class="scene-setup-section__help">
+                        {% trans "Upload a GLB file from the Media Library. The scene graph will be parsed automatically." %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section: Node Tree -->
+            <div class="scene-setup-section" id="section-node-tree">
+                <h3 class="scene-setup-section__title">
+                    <i class="fas fa-sitemap"></i> {% trans "Scene Graph" %}
+                    <span class="scene-setup-section__badge" id="node-count">0</span>
+                </h3>
+                <div class="scene-setup-section__body">
+                    <div class="scene-setup-tree" id="node-tree-container" role="tree">
+                        <p class="scene-setup-tree__empty">{% trans "Parse a GLB to see the scene graph." %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Viewer Settings -->
+            <div class="scene-setup-section" id="section-viewer-settings">
+                <h3 class="scene-setup-section__title">
+                    <i class="fas fa-sliders-h"></i> {% trans "Viewer Settings" %}
+                </h3>
+                <div class="scene-setup-section__body">
+                    <div class="scene-setup-settings-grid">
+                        <div class="scene-setup-field">
+                            <label for="setting-exposure">{% trans "Exposure" %}</label>
+                            <input type="range" id="setting-exposure" min="0" max="3" step="0.1" value="{{ scene.exposure }}">
+                            <span class="scene-setup-field__value" id="exposure-value">{{ scene.exposure }}</span>
+                        </div>
+                        <div class="scene-setup-field">
+                            <label for="setting-shadow">{% trans "Shadow Intensity" %}</label>
+                            <input type="range" id="setting-shadow" min="0" max="2" step="0.1" value="{{ scene.shadow_intensity }}">
+                            <span class="scene-setup-field__value" id="shadow-value">{{ scene.shadow_intensity }}</span>
+                        </div>
+                        <div class="scene-setup-field">
+                            <label for="setting-shadow-softness">{% trans "Shadow Softness" %}</label>
+                            <input type="range" id="setting-shadow-softness" min="0" max="1" step="0.05" value="{{ scene.shadow_softness }}">
+                            <span class="scene-setup-field__value" id="shadow-softness-value">{{ scene.shadow_softness }}</span>
+                        </div>
+                        <div class="scene-setup-field">
+                            <label for="setting-tone-mapping">{% trans "Tone Mapping" %}</label>
+                            <select id="setting-tone-mapping">
+                                <option value="commerce" {% if scene.tone_mapping == "commerce" %}selected{% endif %}>Commerce</option>
+                                <option value="neutral" {% if scene.tone_mapping == "neutral" %}selected{% endif %}>Neutral</option>
+                                <option value="aces" {% if scene.tone_mapping == "aces" %}selected{% endif %}>ACES (Cinematic)</option>
+                                <option value="agx" {% if scene.tone_mapping == "agx" %}selected{% endif %}>AgX</option>
+                            </select>
+                        </div>
+                        <div class="scene-setup-field">
+                            <label for="setting-bloom">{% trans "Bloom Strength" %}</label>
+                            <input type="range" id="setting-bloom" min="0" max="5" step="0.1" value="{{ scene.bloom_strength }}">
+                            <span class="scene-setup-field__value" id="bloom-value">{{ scene.bloom_strength }}</span>
+                        </div>
+                        <div class="scene-setup-field scene-setup-field--bg">
+                            <label>{% trans "Background" %}</label>
+                            <div class="scene-setup-bg-picker">
+                                <div class="scene-setup-bg-tabs">
+                                    <button type="button" class="scene-setup-bg-tab scene-setup-bg-tab--active" data-bg-mode="solid">{% trans "Solid" %}</button>
+                                    <button type="button" class="scene-setup-bg-tab" data-bg-mode="gradient">{% trans "Gradient" %}</button>
+                                </div>
+                                <div class="scene-setup-bg-panel scene-setup-bg-panel--solid scene-setup-bg-panel--active">
+                                    <input type="color" id="setting-bg-color" value="{{ scene.background_color|default:'#ffffff' }}">
+                                    <span class="scene-setup-bg-hex" id="bg-hex-value">{{ scene.background_color|default:'#ffffff' }}</span>
+                                </div>
+                                <div class="scene-setup-bg-panel scene-setup-bg-panel--gradient">
+                                    <input type="hidden" id="setting-bg-gradient" value="">
+                                    <div class="scene-setup-bg-gradient-preview" id="bg-gradient-preview">
+                                        <span class="scene-setup-bg-gradient-preview__label">{% trans "No gradient set" %}</span>
+                                    </div>
+                                    <button type="button" class="button button-small" id="btn-open-gradient">
+                                        <i class="fas fa-palette"></i> {% trans "Edit Gradient" %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scene-setup-field scene-setup-field--camera">
+                            <label>{% trans "Default Camera Position" %}</label>
+                            <p class="scene-setup-field__help">{% trans "Rotate and zoom the 3D preview to your preferred angle, then click Capture." %}</p>
+                            <div class="scene-setup-camera-row">
+                                <button type="button" class="button button-primary button-small" id="btn-capture-camera" title="{% trans 'Save the current camera angle as the default view' %}">
+                                    <i class="fas fa-crosshairs"></i> {% trans "Capture Current View" %}
+                                </button>
+                                <button type="button" class="button button-small" id="btn-reset-camera-default" title="{% trans 'Reset to saved default' %}">
+                                    <i class="fas fa-undo"></i> {% trans "Reset" %}
+                                </button>
+                            </div>
+                            <div class="scene-setup-camera-values">
+                                <span class="scene-setup-camera-values__label">{% trans "Orbit:" %}</span>
+                                <input type="text" id="setting-camera-orbit" value="{{ scene.camera_orbit }}" readonly class="scene-setup-camera-values__input">
+                                <span class="scene-setup-camera-values__label">{% trans "Target:" %}</span>
+                                <input type="text" id="setting-camera-target" value="{{ scene.camera_target }}" readonly class="scene-setup-camera-values__input">
+                            </div>
+                        </div>
+                        <div class="scene-setup-field">
+                            <label for="setting-environment">{% trans "Environment Image (HDR)" %}</label>
+                            <div class="scene-setup-model-picker">
+                                <span id="environment-name">{% if scene.environment_image %}{{ scene.environment_image.title }}{% else %}{% trans "None" %}{% endif %}</span>
+                                <button type="button" class="button button-small" id="btn-select-environment">
+                                    <i class="fas fa-image"></i> {% trans "Select" %}
+                                </button>
+                                <button type="button" class="button button-small" id="btn-clear-environment">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="scene-setup-field">
+                            <label>
+                                <input type="checkbox" id="setting-auto-rotate" {% if scene.auto_rotate %}checked{% endif %}>
+                                {% trans "Auto Rotate" %}
+                            </label>
+                        </div>
+                        <div class="scene-setup-field">
+                            <label>
+                                <input type="checkbox" id="setting-ar" {% if scene.ar_enabled %}checked{% endif %}>
+                                {% trans "AR Enabled" %}
+                            </label>
+                        </div>
+                    </div>
+                    <button type="button" class="button button-primary button-small" id="btn-save-settings">
+                        <i class="fas fa-save"></i> {% trans "Save Settings" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section: Geometry Assets -->
+            <div class="scene-setup-section" id="section-geometry">
+                <h3 class="scene-setup-section__title">
+                    <i class="fas fa-shapes"></i> {% trans "Geometry Assets" %}
+                    <span class="scene-setup-section__badge" id="geometry-count">0</span>
+                </h3>
+                <div class="scene-setup-section__body">
+                    <div id="geometry-list" class="scene-setup-items"></div>
+                    <button type="button" class="button button-small" id="btn-add-geometry">
+                        <i class="fas fa-plus"></i> {% trans "Add Geometry Asset" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section: Texture Assets -->
+            <div class="scene-setup-section" id="section-textures">
+                <h3 class="scene-setup-section__title">
+                    <i class="fas fa-palette"></i> {% trans "Texture Assets" %}
+                    <span class="scene-setup-section__badge" id="texture-count">0</span>
+                </h3>
+                <div class="scene-setup-section__body">
+                    <div id="texture-list" class="scene-setup-items"></div>
+                    <button type="button" class="button button-small" id="btn-add-texture">
+                        <i class="fas fa-plus"></i> {% trans "Add Texture Asset" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section: Visual Mappings -->
+            <div class="scene-setup-section" id="section-mappings">
+                <h3 class="scene-setup-section__title">
+                    <i class="fas fa-link"></i> {% trans "Visual Mappings" %}
+                    <span class="scene-setup-section__badge" id="mapping-count">0</span>
+                </h3>
+                <div class="scene-setup-section__body">
+                    <div id="mappings-by-slot" class="scene-setup-mappings"></div>
+                    <button type="button" class="button button-primary button-small" id="btn-add-mapping">
+                        <i class="fas fa-plus"></i> {% trans "Add Mapping" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mapping Form Modal -->
+<div class="scene-setup-modal" id="mapping-modal" role="dialog" aria-modal="true" aria-labelledby="mapping-modal-title">
+    <div class="scene-setup-modal__backdrop"></div>
+    <div class="scene-setup-modal__dialog">
+        <div class="scene-setup-modal__header">
+            <h3 id="mapping-modal-title">{% trans "Add Visual Mapping" %}</h3>
+            <button type="button" class="scene-setup-modal__close" id="mapping-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
+        </div>
+        <div class="scene-setup-modal__body">
+            <div class="scene-setup-field">
+                <label for="mapping-slot-option">{% trans "Slot Option" %}</label>
+                <select id="mapping-slot-option"></select>
+            </div>
+            <div class="scene-setup-field">
+                <label for="mapping-action-type">{% trans "Action Type" %}</label>
+                <select id="mapping-action-type">
+                    <option value="material_color">{% trans "Material Color" %}</option>
+                    <option value="material_texture">{% trans "Material Texture" %}</option>
+                    <option value="geometry_swap">{% trans "Geometry Swap" %}</option>
+                    <option value="visibility">{% trans "Visibility" %}</option>
+                </select>
+            </div>
+            <div class="scene-setup-field">
+                <label for="mapping-target-node">{% trans "Target Node" %}</label>
+                <select id="mapping-target-node"></select>
+            </div>
+
+            <!-- Action-specific fields -->
+            <div id="action-fields-color" class="scene-setup-action-fields scene-setup-action-fields--active">
+                <div class="scene-setup-field">
+                    <label for="action-material-name">{% trans "Material Name" %}</label>
+                    <select id="action-material-name"></select>
+                </div>
+                <div class="scene-setup-field">
+                    <label for="action-color">{% trans "Color" %}</label>
+                    <input type="color" id="action-color" value="#ffffff">
+                </div>
+                <div class="scene-setup-field">
+                    <label for="action-metalness">{% trans "Metalness" %}</label>
+                    <input type="range" id="action-metalness" min="0" max="1" step="0.05" value="0">
+                    <span class="scene-setup-field__value" id="metalness-value">0</span>
+                </div>
+                <div class="scene-setup-field">
+                    <label for="action-roughness">{% trans "Roughness" %}</label>
+                    <input type="range" id="action-roughness" min="0" max="1" step="0.05" value="0.8">
+                    <span class="scene-setup-field__value" id="roughness-value">0.8</span>
+                </div>
+                <div class="scene-setup-field">
+                    <label for="action-emissive-color">{% trans "Emissive Color" %}</label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="color" id="action-emissive-color" value="#000000">
+                        <button type="button" class="button button-small" id="btn-clear-emissive" title="{% trans 'Clear' %}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <span class="scene-setup-field__help">{% trans "Leave black for no emissive glow." %}</span>
+                </div>
+                <div class="scene-setup-field">
+                    <label for="action-emissive-strength">{% trans "Emissive Strength" %}</label>
+                    <input type="range" id="action-emissive-strength" min="0" max="10" step="0.5" value="0">
+                    <span class="scene-setup-field__value" id="emissive-strength-value">0</span>
+                    <span class="scene-setup-field__help">{% trans "Values above 1.0 create bloom glow when bloom is enabled." %}</span>
+                </div>
+            </div>
+
+            <div id="action-fields-texture" class="scene-setup-action-fields">
+                <div class="scene-setup-field">
+                    <label for="action-texture-material">{% trans "Material Name" %}</label>
+                    <select id="action-texture-material"></select>
+                </div>
+                <div class="scene-setup-field">
+                    <label>{% trans "Base Color Texture" %}</label>
+                    <button type="button" class="button button-small" id="btn-select-base-texture">
+                        <i class="fas fa-image"></i> {% trans "Select" %}
+                    </button>
+                    <span id="base-texture-name">{% trans "None" %}</span>
+                    <input type="hidden" id="action-base-texture-url" value="">
+                </div>
+                <div class="scene-setup-field">
+                    <label>{% trans "Normal Map" %}</label>
+                    <button type="button" class="button button-small" id="btn-select-normal-texture">
+                        <i class="fas fa-image"></i> {% trans "Select" %}
+                    </button>
+                    <span id="normal-texture-name">{% trans "None" %}</span>
+                    <input type="hidden" id="action-normal-texture-url" value="">
+                </div>
+            </div>
+
+            <div id="action-fields-geometry" class="scene-setup-action-fields">
+                <div class="scene-setup-field">
+                    <label for="action-geometry-asset">{% trans "Geometry Asset" %}</label>
+                    <select id="action-geometry-asset"></select>
+                </div>
+            </div>
+
+            <div id="action-fields-visibility" class="scene-setup-action-fields">
+                <div class="scene-setup-field">
+                    <label>
+                        <input type="checkbox" id="action-visible" checked>
+                        {% trans "Visible" %}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="scene-setup-modal__footer">
+            <button type="button" class="button" id="btn-mapping-cancel">{% trans "Cancel" %}</button>
+            <button type="button" class="button button-primary" id="btn-mapping-save">{% trans "Save Mapping" %}</button>
+        </div>
+    </div>
+</div>
+
+<!-- Geometry Asset Modal -->
+<div class="scene-setup-modal" id="geometry-modal" role="dialog" aria-modal="true" aria-labelledby="geometry-modal-title">
+    <div class="scene-setup-modal__backdrop"></div>
+    <div class="scene-setup-modal__dialog">
+        <div class="scene-setup-modal__header">
+            <h3 id="geometry-modal-title">{% trans "Add Geometry Asset" %}</h3>
+            <button type="button" class="scene-setup-modal__close" id="geometry-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
+        </div>
+        <div class="scene-setup-modal__body">
+            <div class="scene-setup-field">
+                <label for="geometry-label">{% trans "Label" %}</label>
+                <input type="text" id="geometry-label" placeholder="{% trans 'e.g. V-Neck Collar' %}">
+            </div>
+            <div class="scene-setup-field">
+                <label for="geometry-target-node">{% trans "Target Node" %}</label>
+                <input type="text" id="geometry-target-node" placeholder="{% trans 'Node name to replace' %}">
+            </div>
+            <div class="scene-setup-field">
+                <label>{% trans "GLB File" %}</label>
+                <div class="scene-setup-model-picker">
+                    <span id="geometry-file-name">{% trans "None" %}</span>
+                    <button type="button" class="button button-small" id="btn-geometry-select-file">
+                        <i class="fas fa-upload"></i> {% trans "Select" %}
+                    </button>
+                </div>
+                <input type="hidden" id="geometry-media-asset-id" value="">
+            </div>
+        </div>
+        <div class="scene-setup-modal__footer">
+            <button type="button" class="button" id="btn-geometry-cancel">{% trans "Cancel" %}</button>
+            <button type="button" class="button button-primary" id="btn-geometry-save">{% trans "Save Geometry" %}</button>
+        </div>
+    </div>
+</div>
+
+<!-- Texture Asset Modal -->
+<div class="scene-setup-modal" id="texture-modal" role="dialog" aria-modal="true" aria-labelledby="texture-modal-title">
+    <div class="scene-setup-modal__backdrop"></div>
+    <div class="scene-setup-modal__dialog">
+        <div class="scene-setup-modal__header">
+            <h3 id="texture-modal-title">{% trans "Add Texture Asset" %}</h3>
+            <button type="button" class="scene-setup-modal__close" id="texture-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
+        </div>
+        <div class="scene-setup-modal__body">
+            <div class="scene-setup-field">
+                <label for="texture-label">{% trans "Label" %}</label>
+                <input type="text" id="texture-label" placeholder="{% trans 'e.g. Red Leather' %}">
+            </div>
+            <div class="scene-setup-field">
+                <label for="texture-type">{% trans "Texture Type" %}</label>
+                <select id="texture-type">
+                    <option value="base_color">{% trans "Base Color" %}</option>
+                    <option value="normal">{% trans "Normal Map" %}</option>
+                    <option value="roughness">{% trans "Roughness Map" %}</option>
+                    <option value="metalness">{% trans "Metalness Map" %}</option>
+                    <option value="ao">{% trans "Ambient Occlusion" %}</option>
+                    <option value="emissive">{% trans "Emissive Map" %}</option>
+                </select>
+            </div>
+            <div class="scene-setup-field">
+                <label>{% trans "Texture Image" %}</label>
+                <div class="scene-setup-model-picker">
+                    <span id="texture-file-name">{% trans "None" %}</span>
+                    <button type="button" class="button button-small" id="btn-texture-select-file">
+                        <i class="fas fa-upload"></i> {% trans "Select" %}
+                    </button>
+                </div>
+                <input type="hidden" id="texture-media-asset-id" value="">
+            </div>
+        </div>
+        <div class="scene-setup-modal__footer">
+            <button type="button" class="button" id="btn-texture-cancel">{% trans "Cancel" %}</button>
+            <button type="button" class="button button-primary" id="btn-texture-save">{% trans "Save Texture" %}</button>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="scene-setup-data">
+{
+    "productId": {{ product.pk }},
+    "slots": {{ slots_json|safe }},
+    "mappings": {{ mappings_json|safe }},
+    "geometry": {{ geometry_json|safe }},
+    "textures": {{ texture_json|safe }},
+    "scene": {{ scene_json|safe }},
+    "urls": {
+        "parseGlb": "{% url 'configurator_3d:parse_glb' product.pk %}",
+        "saveScene": "{% url 'configurator_3d:save_scene_config' product.pk %}",
+        "listMappings": "{% url 'configurator_3d:list_mappings' product.pk %}",
+        "saveMappings": "{% url 'configurator_3d:save_mapping' product.pk %}",
+        "deleteMapping": "{% url 'configurator_3d:delete_mapping' product.pk 0 %}",
+        "saveGeometry": "{% url 'configurator_3d:save_geometry_asset' product.pk %}",
+        "deleteGeometry": "{% url 'configurator_3d:delete_geometry_asset' product.pk 0 %}",
+        "listTextures": "{% url 'configurator_3d:list_textures' product.pk %}",
+        "saveTexture": "{% url 'configurator_3d:save_texture_asset' product.pk %}",
+        "deleteTexture": "{% url 'configurator_3d:delete_texture_asset' product.pk 0 %}",
+        "captureThumbnail": "{% url 'configurator_3d:capture_thumbnail' product.pk %}"
+    },
+    "strings": {
+        "parseGlbEmpty": "{% trans 'Parse a GLB to see the scene graph.' %}",
+        "noMappings": "{% trans 'No mappings yet. Add one to link configurator options to 3D changes.' %}",
+        "noTarget": "{% trans 'No target' %}",
+        "editMapping": "{% trans 'Edit Visual Mapping' %}",
+        "addMapping": "{% trans 'Add Visual Mapping' %}",
+        "addGeometry": "{% trans 'Add Geometry Asset' %}",
+        "addTexture": "{% trans 'Add Texture Asset' %}",
+        "fillRequired": "{% trans 'Please fill in all required fields.' %}",
+        "mappingSaved": "{% trans 'Mapping saved' %}",
+        "mappingDeleted": "{% trans 'Mapping deleted' %}",
+        "geometrySaved": "{% trans 'Geometry asset saved' %}",
+        "geometryDeleted": "{% trans 'Geometry asset deleted' %}",
+        "textureSaved": "{% trans 'Texture asset saved' %}",
+        "textureDeleted": "{% trans 'Texture asset deleted' %}",
+        "settingsSaved": "{% trans 'Settings saved' %}",
+        "modelLoaded": "{% trans '3D model loaded and parsed' %}",
+        "thumbnailCaptured": "{% trans 'Thumbnail captured' %}",
+        "loadModelFirst": "{% trans 'Load a 3D model first.' %}",
+        "errorSaving": "{% trans 'Error saving mapping' %}",
+        "errorParsing": "{% trans 'Error parsing GLB' %}",
+        "errorCapturing": "{% trans 'Error capturing thumbnail' %}",
+        "selectNode": "{% trans '-- Select Node --' %}",
+        "selectMaterial": "{% trans '-- Select Material --' %}",
+        "selectGeometry": "{% trans '-- Select Geometry --' %}",
+        "selectedLabel": "{% trans 'Selected' %}",
+        "noneLabel": "{% trans 'None' %}",
+        "confirmDelete": "{% trans 'Are you sure?' %}",
+        "uploading": "{% trans 'Uploading...' %}",
+        "selectFile": "{% trans 'Please select a file.' %}",
+        "labelRequired": "{% trans 'A label is required.' %}"
+    },
+    "csrfToken": "{{ csrf_token }}",
+    "mediaLibraryUrl": "{% url 'admin:media_library_gallery' %}"
+}
+</script>
+<script src="{% static 'utilities/base/current/utilities-base.js' %}" defer></script>
+<script src="{% static 'media_library/js/upload-queue.js' %}" defer></script>
+<script src="{% static 'media_library/js/media-library.js' %}" defer></script>
+<script src="{% static 'utilities/color_picker/current/color_picker.js' %}" defer></script>
+<script src="{% static 'utilities/gradient_creator/current/gradient_creator.js' %}" defer></script>
+<script src="{% static 'configurator_3d/js/scene_setup.js' %}" defer></script>
+{% endblock %}

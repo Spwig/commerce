@@ -1,0 +1,37 @@
+{% load i18n static geoip_tags %}
+<div class="geoip-location-widget" data-country="{{ country }}" data-currency="{{ currency }}">
+    <div class="location-display">
+        {% if country %}
+            <span class="country-flag">{{ country|country_flag }}</span>
+            <span class="location-text">
+                {% if city %}{{ city }}, {% endif %}
+                {{ country }}
+            </span>
+        {% else %}
+            <span class="location-text">{% trans "Detecting location..." %}</span>
+        {% endif %}
+    </div>
+
+    <div class="location-preferences">
+        <select class="currency-selector">
+            <option value="USD" {% if currency == "USD" %}selected{% endif %}>USD $</option>
+            <option value="EUR" {% if currency == "EUR" %}selected{% endif %}>EUR €</option>
+            <option value="GBP" {% if currency == "GBP" %}selected{% endif %}>GBP £</option>
+            <option value="CAD" {% if currency == "CAD" %}selected{% endif %}>CAD $</option>
+            <option value="AUD" {% if currency == "AUD" %}selected{% endif %}>AUD $</option>
+        </select>
+
+        <select class="language-selector">
+            <option value="en" {% if language == "en" %}selected{% endif %}>English</option>
+            <option value="es" {% if language == "es" %}selected{% endif %}>Español</option>
+            <option value="fr" {% if language == "fr" %}selected{% endif %}>Français</option>
+            <option value="de" {% if language == "de" %}selected{% endif %}>Deutsch</option>
+            <option value="pt" {% if language == "pt" %}selected{% endif %}>Português</option>
+            <option value="zh-hans" {% if language == "zh-hans" %}selected{% endif %}>简体中文</option>
+            <option value="ja" {% if language == "ja" %}selected{% endif %}>日本語</option>
+        </select>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'geoip/css/location-widget.css' %}">
+<script src="{% static 'geoip/js/location-widget.js' %}"></script>

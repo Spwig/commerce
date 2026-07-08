@@ -1,0 +1,41 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% translate "Logged Out" %} | {% translate "Spwig Admin" %}</title>
+
+    <!-- Favicon -->
+    {% load core_extras %}
+    {% favicon_meta %}
+
+    <link rel="stylesheet" href="{% static 'core/css/logged-out.css' %}">
+</head>
+<body>
+    <div class="logout-container">
+        <div class="logo-container">
+            <img src="{% static 'images/spwig_logo.svg' %}" alt="Spwig">
+        </div>
+
+        <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+
+        <h1>{% translate "You've been logged out" %}</h1>
+
+        <p class="message">
+            {% translate "Thanks for spending some quality time with the web site today." %}
+        </p>
+
+        <a href="{% url 'admin:index' %}" class="login-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            {% translate "Log in again" %}
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ============================================
+   CustomerSubscription Change Form (Variant C)
+   Scoped under .customersubscription-change-form
+   ============================================ */
+
+/* --- Status Badges --- */
+.customersubscription-change-form .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.customersubscription-change-form .status-badge.trial {
+    background: rgba(52, 152, 219, 0.12);
+    color: var(--admin-info, #3498db);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.customersubscription-change-form .status-badge.active {
+    background: rgba(39, 174, 96, 0.12);
+    color: var(--admin-success, #27ae60);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.customersubscription-change-form .status-badge.past_due {
+    background: rgba(231, 76, 60, 0.12);
+    color: var(--admin-danger, #e74c3c);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.customersubscription-change-form .status-badge.paused {
+    background: rgba(243, 156, 18, 0.12);
+    color: var(--admin-warning, #f39c12);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.customersubscription-change-form .status-badge.canceled {
+    background: rgba(149, 165, 166, 0.12);
+    color: var(--admin-text-muted, #95a5a6);
+    border: 1px solid rgba(149, 165, 166, 0.3);
+}
+
+.customersubscription-change-form .status-badge.expired {
+    background: rgba(127, 140, 141, 0.12);
+    color: var(--admin-text-muted, #7f8c8d);
+    border: 1px solid rgba(127, 140, 141, 0.3);
+}
+
+/* --- Dashboard Stats --- */
+.customersubscription-change-form .dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.customersubscription-change-form .dashboard-stat-card .value-small {
+    font-size: 15px;
+}
+
+/* --- Form Cards — base .form-card styles provided by admin-base.css --- */
+
+/* --- Form Rows --- */
+.customersubscription-change-form .form-row {
+    margin-bottom: 16px;
+    padding: 0;
+}
+
+.customersubscription-change-form .form-row:last-child {
+    margin-bottom: 0;
+}
+
+.customersubscription-change-form .form-row label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--admin-text, #2d3748);
+}
+
+.customersubscription-change-form .form-row .readonly {
+    padding: 8px 12px;
+    background: var(--admin-card-bg, #f7fafc);
+    border: 1px solid var(--admin-border, #e2e8f0);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--admin-text-muted, #718096);
+}
+
+.customersubscription-change-form .form-row .help {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--admin-text-muted, #718096);
+}
+
+/* --- Inline Table (BillingCycleLog) --- */
+.customersubscription-change-form .inline-table-wrapper {
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+.customersubscription-change-form .inline-table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.customersubscription-change-form .inline-table-wrapper th {
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--admin-text, #2d3748);
+    background: var(--admin-card-bg, #f7fafc);
+    border-bottom: 2px solid var(--admin-border, #e2e8f0);
+    white-space: nowrap;
+}
+
+.customersubscription-change-form .inline-table-wrapper td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--admin-border, #e2e8f0);
+    color: var(--admin-text, #2d3748);
+}
+
+.customersubscription-change-form .inline-table-wrapper tbody tr:hover {
+    background: var(--admin-card-bg, #f7fafc);
+}
+
+.customersubscription-change-form .empty-message {
+    padding: 24px;
+    text-align: center;
+    color: var(--admin-text-muted, #718096);
+    font-size: 14px;
+    margin: 16px 0 0;
+    background: var(--admin-card-bg, #f7fafc);
+    border: 1px dashed var(--admin-border, #e2e8f0);
+    border-radius: 6px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .customersubscription-change-form .dashboard-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .customersubscription-change-form .form-card {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .customersubscription-change-form .dashboard-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

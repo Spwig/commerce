@@ -1,0 +1,24 @@
+{% comment %}
+Translation Editor Assets Include
+
+Include this template in admin change_form templates to load translation editor CSS and JavaScript.
+
+Usage in your admin change_form.html:
+    {% load static %}
+    {% include "admin/includes/translation_editor_assets.html" %}
+
+This will load:
+- Translation Editor CSS
+- Translation Editor JavaScript utility
+{% endcomment %}
+
+{% load static %}
+
+{# Utility Base CSS (required for utility-popup structure) #}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+
+{# Translation Editor CSS #}
+<link rel="stylesheet" href="{% static 'utilities/translation_editor/current/translation_editor.css' %}">
+
+{# Translation Editor JavaScript #}
+<script src="{% static 'utilities/translation_editor/current/translation_editor.js' %}"></script>

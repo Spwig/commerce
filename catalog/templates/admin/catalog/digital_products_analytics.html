@@ -1,0 +1,214 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Digital Products Analytics" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'catalog/admin/css/digital_products_analytics.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="analytics-dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1 class="dashboard-title">📊 {% trans "Digital Products Analytics" %}</h1>
+            <p class="dashboard-subtitle">{% trans "Comprehensive overview of digital product downloads, license keys, and revenue" %}</p>
+        </div>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="stats-grid">
+        <!-- Total Downloads -->
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-label">{% trans "Total Downloads" %}</span>
+                <span class="stat-icon">⬇️</span>
+            </div>
+            <div class="stat-value">{{ total_downloads|default:0 }}</div>
+            <div class="stat-subtext">
+                {{ completed_downloads|default:0 }} {% trans "completed" %} •
+                {{ failed_downloads|default:0 }} {% trans "failed" %}
+            </div>
+            <div class="stat-trend {% if download_growth >= 0 %}positive{% else %}negative{% endif %}">
+                {% if download_growth >= 0 %}📈{% else %}📉{% endif %}
+                {{ download_growth|floatformat:1 }}% {% trans "vs last week" %}
+            </div>
+        </div>
+
+        <!-- Success Rate -->
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-label">{% trans "Success Rate" %}</span>
+                <span class="stat-icon">✅</span>
+            </div>
+            <div class="stat-value">{{ download_success_rate|floatformat:1 }}%</div>
+            <div class="stat-subtext">{{ completed_downloads|default:0 }} {% trans "successful downloads" %}</div>
+        </div>
+
+        <!-- Active License Keys -->
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-label">{% trans "Active License Keys" %}</span>
+                <span class="stat-icon">🔑</span>
+            </div>
+            <div class="stat-value">{{ active_license_keys|default:0 }}</div>
+            <div class="stat-subtext">{{ total_license_keys|default:0 }} {% trans "total keys generated" %}</div>
+            <div class="stat-subtext" style="margin-top: 4px;">
+                {{ total_activations|default:0 }} {% trans "device activations" %}
+            </div>
+        </div>
+
+        <!-- Digital Products Revenue -->
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-label">{% trans "Revenue (30 Days)" %}</span>
+                <span class="stat-icon">💰</span>
+            </div>
+            <div class="stat-value">${{ digital_revenue|floatformat:2|default:"0.00" }}</div>
+            <div class="stat-subtext">{{ total_assets|default:0 }} {% trans "active digital products" %}</div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+        <!-- Download Trends -->
+        <div class="chart-card">
+            <h3 class="chart-title">{% trans "Download Trends (Last 30 Days)" %}</h3>
+            <div class="chart-container">
+                <canvas id="downloadTrendsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- License Key Status Distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">{% trans "License Key Status" %}</h3>
+            <div class="chart-container">
+                <canvas id="licenseStatsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Download Status Distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">{% trans "Download Status Distribution" %}</h3>
+            <div class="chart-container">
+                <canvas id="downloadStatsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Downloaded Products -->
+        <div class="chart-card">
+            <h3 class="chart-title">{% trans "Top Downloaded Products" %}</h3>
+            <div class="chart-container">
+                <canvas id="topProductsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Download Activity -->
+    <div class="data-table-card">
+        <h3 class="chart-title">{% trans "Recent Download Activity" %}</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Asset" %}</th>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Customer" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "IP Address" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for download in recent_download_activity %}
+                <tr>
+                    <td>{{ download.download_date|date:"Y-m-d H:i" }}</td>
+                    <td style="font-family: monospace; font-size: 12px;">{{ download.digital_asset.filename }}</td>
+                    <td>{{ download.digital_asset.product.name }}</td>
+                    <td>{{ download.user.email|default:"-" }}</td>
+                    <td>
+                        <span class="status-badge {{ download.status }}">
+                            {% if download.status == 'completed' %}✓{% elif download.status == 'failed' %}✗{% else %}⏳{% endif %}
+                            {{ download.get_status_display }}
+                        </span>
+                    </td>
+                    <td style="font-family: monospace; font-size: 12px;">{{ download.ip_address }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #999; padding: 40px;">
+                        {% trans "No download activity yet" %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Failed Downloads Analysis -->
+    {% if failed_downloads_by_asset %}
+    <div class="data-table-card">
+        <h3 class="chart-title">{% trans "Failed Downloads by Asset" %}</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Asset" %}</th>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Failed Count" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in failed_downloads_by_asset %}
+                <tr>
+                    <td style="font-family: monospace; font-size: 12px;">{{ item.digital_asset__filename }}</td>
+                    <td>{{ item.digital_asset__product__name }}</td>
+                    <td><strong style="color: #dc3545;">{{ item.failed_count }}</strong></td>
+                    <td>
+                        <a href="{% url 'admin:catalog_digitalasset_change' item.digital_asset_id %}" style="color: var(--link-fg, #447e9b); text-decoration: none;">
+                            {% trans "View Asset" %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+<script type="application/json" id="digital-analytics-config">
+{
+    "downloadTrendsLabels": {{ download_trends|safe|map:'date'|list }},
+    "downloadTrendsCounts": {{ download_trends|safe|map:'count'|list }},
+    "licenseStats": {
+        "active": {{ license_stats.active|default:0 }},
+        "expired": {{ license_stats.expired|default:0 }},
+        "revoked": {{ license_stats.revoked|default:0 }},
+        "suspended": {{ license_stats.suspended|default:0 }}
+    },
+    "downloadStats": {
+        "completed": {{ download_stats.completed|default:0 }},
+        "failed": {{ download_stats.failed|default:0 }},
+        "inProgress": {{ download_stats.in_progress|default:0 }},
+        "pending": {{ download_stats.pending|default:0 }}
+    },
+    "topProductsLabels": [{% for product in top_products %}"{{ product.product.name|truncatechars:20|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+    "topProductsCounts": [{% for product in top_products %}{{ product.download_count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+    "strings": {
+        "downloads": "{% trans 'Downloads' %}",
+        "active": "{% trans 'Active' %}",
+        "expired": "{% trans 'Expired' %}",
+        "revoked": "{% trans 'Revoked' %}",
+        "suspended": "{% trans 'Suspended' %}",
+        "completed": "{% trans 'Completed' %}",
+        "failed": "{% trans 'Failed' %}",
+        "inProgress": "{% trans 'In Progress' %}",
+        "pending": "{% trans 'Pending' %}"
+    }
+}
+</script>
+<script src="{% static 'catalog/admin/js/digital_products_analytics.js' %}"></script>
+{% endblock %}

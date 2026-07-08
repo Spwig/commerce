@@ -1,0 +1,141 @@
+{% extends "admin/payment_providers/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Select a Payment Provider" %}</h2>
+    <p class="step-description">{% trans "Choose the payment provider you want to connect to your store." %}</p>
+
+    {# Broken providers — registry row exists but files missing/unreadable.
+       Without this banner these used to silently disappear from the list,
+       making it look like Stripe (or whichever) wasn't installed at all. #}
+    {% if broken_providers %}
+    <div class="broken-providers-warning" role="alert">
+        <div class="broken-providers-warning__icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="broken-providers-warning__body">
+            <h3 class="broken-providers-warning__title">
+                {% blocktrans count counter=broken_providers|length %}
+                {{ counter }} payment provider needs repair
+                {% plural %}
+                {{ counter }} payment providers need repair
+                {% endblocktrans %}
+            </h3>
+            <p class="broken-providers-warning__copy">
+                {% trans "These providers are registered but their files are missing on disk. Click Reinstall to download a fresh copy from the update server." %}
+            </p>
+            <ul class="broken-providers-warning__list">
+                {% for entry in broken_providers %}
+                <li class="broken-providers-warning__item">
+                    <span class="broken-providers-warning__name">{{ entry.component.name }}</span>
+                    <span class="broken-providers-warning__reason">{{ entry.reason }}</span>
+                    <button type="button"
+                            class="btn btn-sm btn-warning"
+                            data-action="reinstall-provider"
+                            data-provider-slug="{{ entry.component.slug }}"
+                            data-install-url="{% url 'payment_providers:install_provider' entry.component.slug %}">
+                        <i class="fas fa-sync-alt"></i> {% trans "Reinstall" %}
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="provider-select-form">
+        {% csrf_token %}
+
+        {% if providers %}
+        <div class="providers-grid">
+            {% for provider in providers %}
+            <label class="provider-card" for="provider-{{ provider.component.id }}">
+                <input type="radio"
+                       name="component_id"
+                       id="provider-{{ provider.component.id }}"
+                       value="{{ provider.component.id }}"
+                       required>
+
+                <div class="provider-card-content">
+                    <div class="provider-logo">
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.component.icon|default:provider.component.thumbnail_url }}"
+                                 alt="{{ provider.component.name }}"
+                                 data-img-fallback-src="{% static 'core/admin/img/default-provider.svg' %}">
+                        </div>
+                    </div>
+
+                    <h3 class="provider-name">{{ provider.component.name }}</h3>
+                    <p class="provider-description">{{ provider.component.description|truncatewords:20 }}</p>
+
+                    <div class="provider-capabilities">
+                        {% if provider.capabilities.supports_recurring %}
+                        <span class="capability-badge">
+                            <i class="fas fa-repeat"></i> {% trans "Recurring" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.supports_refunds %}
+                        <span class="capability-badge">
+                            <i class="fas fa-undo"></i> {% trans "Refunds" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.supports_international %}
+                        <span class="capability-badge">
+                            <i class="fas fa-globe"></i> {% trans "International" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.supports_3ds %}
+                        <span class="capability-badge">
+                            <i class="fas fa-shield-alt"></i> {% trans "3D Secure" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.supports_wallets %}
+                        <span class="capability-badge">
+                            <i class="fas fa-wallet"></i> {% trans "Digital Wallets" %}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="provider-check">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h3>{% trans "No Payment Providers Available" %}</h3>
+            <p>{% trans "Install payment provider components from the Component Manager to get started." %}</p>
+            <a href="{% url 'admin:component_updates_componentregistry_changelist' %}" class="btn btn-primary">
+                <i class="fas fa-puzzle-piece"></i> {% trans "Browse Components" %}
+            </a>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+{% if providers %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="provider-select-form" class="btn btn-primary">
+        {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<script src="{% static 'payment_providers/js/wizard-step1.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "License Agreement" %} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/license_acceptance.css' %}">
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} spwig-license-acceptance{% endblock %}
+
+{% block header %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+
+{% block content %}
+<div class="license-page">
+    <!-- Gradient background -->
+    <div class="license-background"></div>
+
+    <!-- Centered license container -->
+    <div class="license-container">
+        <div class="license-card">
+            <!-- Logo & heading -->
+            <div class="license-card-header">
+                <img src="{% static 'images/spwig_logo.svg' %}" alt="Spwig" class="license-logo">
+                <h1 class="license-title">{% trans "Software License Agreement" %}</h1>
+                <p class="license-subtitle">{% trans "Please review and accept the license agreement to continue" %}</p>
+                {% if license_version %}
+                <span class="license-version-badge">{% trans "Version" %} {{ license_version }}</span>
+                {% endif %}
+            </div>
+
+            {% if is_reacceptance %}
+            <div class="license-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>{% trans "The license agreement has been updated. Please review the new terms and accept to continue using Spwig." %}</span>
+            </div>
+            {% endif %}
+
+            <!-- License text -->
+            <div class="license-text-container" id="license-text">{{ license_text }}</div>
+
+            <!-- Third-party notices link -->
+            <div class="license-third-party">
+                <i class="fas fa-file-alt"></i>
+                <a href="{% url 'third_party_notices' %}" target="_blank" rel="noopener">{% trans "View Third-Party Software Notices and Attributions" %}</a>
+            </div>
+
+            <!-- Acceptance form -->
+            <form method="post" class="license-form">
+                {% csrf_token %}
+
+                <div class="license-checkbox-wrapper">
+                    <input
+                        type="checkbox"
+                        id="accept-checkbox"
+                        name="accept_checkbox"
+                        required
+                    >
+                    <label for="accept-checkbox">
+                        {% blocktrans with version=license_version %}I have read and agree to the Spwig Software License Agreement version {{ version }}{% endblocktrans %}
+                    </label>
+                </div>
+
+                <div class="license-actions">
+                    <span class="license-scroll-hint" id="scroll-hint">
+                        <i class="fas fa-arrow-down"></i>
+                        {% trans "Please scroll to the bottom of the license" %}
+                    </span>
+                    <button
+                        type="submit"
+                        class="license-submit"
+                        id="accept-btn"
+                        disabled
+                    >
+                        <span>{% trans "Accept and Continue" %}</span>
+                        <i class="fas fa-arrow-right license-submit-icon"></i>
+                    </button>
+                </div>
+
+                <input type="hidden" name="accept" value="true">
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <footer class="license-footer">
+            <div class="license-footer-powered">
+                <img src="{% static 'core/images/favicon-16x16.png' %}" alt="" class="license-footer-favicon">
+                <a href="https://spwig.com" target="_blank" rel="noopener">{% trans "Powered by Spwig" %}</a>
+            </div>
+            <div class="license-footer-copyright">
+                &copy; {% now "Y" %} Spwig contributors
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="{% static 'core/admin/js/license_acceptance.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,495 @@
+{% extends "page_builder/product/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Booking Product Template - Appointments, rentals, classes, accommodation, events #}
+{# Calendar/date-picker selection, person types, resource selection, live pricing #}
+
+{% block product_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-booking.css' %}">
+{% endblock %}
+
+{% block product_layout %}
+<section class="product-section product-section--booking">
+    <div class="container">
+        <div class="product-layout product-layout--booking">
+            {# Gallery / Preview section #}
+            <div class="product-booking__preview">
+                {% include "page_builder/product/_gallery.html" %}
+            </div>
+
+            {# Product info with booking-specific sections #}
+            <div class="product-booking__info">
+                <div class="product-info" data-product-name="{{ product.name }}">
+                    {% if template_options.show_brand and product.brand %}
+                    <p class="product-info__brand">{{ product.brand.name }}</p>
+                    {% endif %}
+
+                    <h1 class="product-info__title">{{ product.name }}</h1>
+
+                    {% if review_stats %}
+                    <div class="product-info__rating">
+                        <div class="star-rating" aria-label="{% blocktrans with rating=review_stats.average %}Rated {{ rating }} out of 5{% endblocktrans %}">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star {% if forloop.counter <= review_stats.average %}star-rating__star--filled{% else %}star-rating__star--empty{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                        <a href="#reviews" class="product-info__review-link">
+                            {{ review_stats.average }} ({{ review_stats.total }} {% mtrans 'reviews' %})
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {# Base price display #}
+                    <div class="product-info__price" id="product-price">
+                        {% if product.is_on_sale %}
+                        <span class="price price--sale">{% if booking_config.booking_type == 'accommodation' %}{% mtrans 'From' %} {% endif %}{{ product.formatted_price }}</span>
+                        <span class="price price--compare">{{ product.formatted_compare_price }}</span>
+                        <span class="price__badge">{% mtrans 'Sale' %}</span>
+                        {% else %}
+                        <span class="price">{% if booking_config.booking_type == 'accommodation' %}{% mtrans 'From' %} {% endif %}{{ product.formatted_price }}</span>
+                        {% endif %}
+                        <span class="booking-price-label">
+                            {% if booking_config.duration_unit == 'night' %}/ {% mtrans 'night' %}
+                            {% elif booking_config.duration_unit == 'day' %}/ {% mtrans 'day' %}
+                            {% elif booking_config.duration_unit == 'hour' %}/ {% mtrans 'hour' %}
+                            {% else %}/ {% mtrans 'session' %}
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    {# Booking type badge #}
+                    <div class="booking-badge">
+                        <i class="fas {% if booking_config.booking_type == 'appointment' %}fa-calendar-check{% elif booking_config.booking_type == 'rental' %}fa-key{% elif booking_config.booking_type == 'class' %}fa-chalkboard-teacher{% elif booking_config.booking_type == 'accommodation' %}fa-bed{% elif booking_config.booking_type == 'event' %}fa-ticket-alt{% else %}fa-calendar{% endif %}"></i>
+                        <span>{{ booking_config.get_booking_type_display }}</span>
+                        {% if booking_config.duration_type == 'fixed' %}
+                        <span class="booking-badge__duration">
+                            &middot; {{ booking_config.duration }} {{ booking_config.get_duration_unit_display }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    {% if product.short_description %}
+                    <div class="product-info__description">{{ product.short_description|safe }}</div>
+                    {% endif %}
+
+                    {# ========== Booking Selection Form ========== #}
+                    <div class="booking-form" id="booking-form"
+                         data-product-slug="{{ product.slug }}"
+                         data-product-id="{{ product.id }}"
+                         data-calendar-display="{{ booking_config.calendar_display }}"
+                         data-booking-type="{{ booking_config.booking_type }}"
+                         data-duration-type="{{ booking_config.duration_type }}"
+                         data-duration="{{ booking_config.duration }}"
+                         data-duration-unit="{{ booking_config.duration_unit }}"
+                         data-min-duration="{{ booking_config.min_duration|default:'' }}"
+                         data-max-duration="{{ booking_config.max_duration|default:'' }}"
+                         data-timezone-enabled="{{ booking_config.customer_timezone_enabled|yesno:'true,false' }}"
+                         data-deposit-enabled="{{ booking_config.deposit_enabled|yesno:'true,false' }}"
+                         data-currency-code="{{ currency_code }}"
+                         data-currency-symbol="{{ currency_symbol }}">
+
+                        {# Step 1: Date Selection #}
+                        <div class="booking-step" id="booking-step-date">
+                            <h3 class="booking-step__title">
+                                <span class="booking-step__number">1</span>
+                                {% if booking_config.booking_type == 'accommodation' %}
+                                    {% mtrans 'Select Dates' %}
+                                {% else %}
+                                    {% mtrans 'Select a Date' %}
+                                {% endif %}
+                            </h3>
+
+                            {# Calendar View — also used for accommodation range selection #}
+                            {% if booking_config.calendar_display == 'calendar' or booking_config.booking_type == 'accommodation' %}
+                            <div class="booking-calendar" id="booking-calendar">
+                                <div class="booking-calendar__header">
+                                    <button type="button" class="booking-calendar__nav" id="cal-prev" aria-label="{% mtrans 'Previous month' %}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <span class="booking-calendar__month" id="cal-month-label"></span>
+                                    <button type="button" class="booking-calendar__nav" id="cal-next" aria-label="{% mtrans 'Next month' %}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                <div class="booking-calendar__grid">
+                                    <div class="booking-calendar__daynames">
+                                        <span>{% mtrans 'Mon' %}</span>
+                                        <span>{% mtrans 'Tue' %}</span>
+                                        <span>{% mtrans 'Wed' %}</span>
+                                        <span>{% mtrans 'Thu' %}</span>
+                                        <span>{% mtrans 'Fri' %}</span>
+                                        <span>{% mtrans 'Sat' %}</span>
+                                        <span>{% mtrans 'Sun' %}</span>
+                                    </div>
+                                    <div class="booking-calendar__days" id="cal-days"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {# Accommodation: check-in/check-out summary strip below calendar #}
+                            {% if booking_config.booking_type == 'accommodation' %}
+                            <div class="booking-daterange-summary" id="booking-daterange-summary">
+                                <div class="booking-daterange-summary__item">
+                                    <span class="booking-daterange-summary__label">{% mtrans 'Check-in' %}</span>
+                                    <span class="booking-daterange-summary__value" id="range-checkin-label">{% mtrans 'Select date' %}</span>
+                                </div>
+                                <div class="booking-daterange-summary__arrow"><i class="fas fa-arrow-right"></i></div>
+                                <div class="booking-daterange-summary__item">
+                                    <span class="booking-daterange-summary__label">{% mtrans 'Check-out' %}</span>
+                                    <span class="booking-daterange-summary__value" id="range-checkout-label">{% mtrans 'Select date' %}</span>
+                                </div>
+                                <div class="booking-daterange-summary__nights" id="range-nights-label" style="display: none;">
+                                    <span></span>
+                                </div>
+                            </div>
+                            {% if booking_config.check_in_time %}
+                            <p class="booking-daterange__info">
+                                <i class="fas fa-info-circle"></i>
+                                {% blocktrans with checkin=booking_config.check_in_time|time:"H:i" checkout=booking_config.check_out_time|time:"H:i" %}
+                                Check-in: {{ checkin }} &middot; Check-out: {{ checkout }}
+                                {% endblocktrans %}
+                            </p>
+                            {% endif %}
+                            {% endif %}
+
+                            {# Date Picker (native input) #}
+                            {% if booking_config.calendar_display == 'date_picker' %}
+                            <div class="booking-datepicker">
+                                <input type="date" id="booking-date-input" class="booking-datepicker__input"
+                                       aria-label="{% mtrans 'Select booking date' %}">
+                            </div>
+                            {% endif %}
+
+                            {# Dropdown - available dates #}
+                            {% if booking_config.calendar_display == 'dropdown' %}
+                            <div class="booking-dropdown">
+                                <select id="booking-date-select" class="booking-dropdown__select"
+                                        aria-label="{% mtrans 'Select booking date' %}">
+                                    <option value="">{% mtrans 'Choose a date...' %}</option>
+                                </select>
+                            </div>
+                            {% endif %}
+
+                            {# Native date range inputs — hidden for accommodation (calendar handles range selection) #}
+                            {% if booking_config.calendar_display == 'date_range' and booking_config.booking_type != 'accommodation' %}
+                            <div class="booking-daterange" id="booking-daterange">
+                                <div class="booking-daterange__fields">
+                                    <div class="booking-daterange__field">
+                                        <label>{% mtrans 'Check-in' %}</label>
+                                        <input type="date" id="booking-checkin" class="booking-daterange__input"
+                                               aria-label="{% mtrans 'Check-in date' %}">
+                                    </div>
+                                    <div class="booking-daterange__field">
+                                        <label>{% mtrans 'Check-out' %}</label>
+                                        <input type="date" id="booking-checkout" class="booking-daterange__input"
+                                               aria-label="{% mtrans 'Check-out date' %}">
+                                    </div>
+                                </div>
+                                {% if booking_config.check_in_time %}
+                                <p class="booking-daterange__info">
+                                    <i class="fas fa-info-circle"></i>
+                                    {% blocktrans with checkin=booking_config.check_in_time|time:"H:i" checkout=booking_config.check_out_time|time:"H:i" %}
+                                    Check-in: {{ checkin }} &middot; Check-out: {{ checkout }}
+                                    {% endblocktrans %}
+                                </p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {# Step 2: Time Slot Selection (not for accommodation/date_range) #}
+                        {% if booking_config.booking_type != 'accommodation' %}
+                        <div class="booking-step booking-step--disabled" id="booking-step-time">
+                            <h3 class="booking-step__title">
+                                <span class="booking-step__number">2</span>
+                                {% mtrans 'Select a Time' %}
+                            </h3>
+                            <div class="booking-slots" id="booking-slots">
+                                <p class="booking-slots__placeholder">{% mtrans 'Select a date first' %}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# Step 3: Resource Selection (when customer-selectable resources exist) #}
+                        {% if booking_resources %}
+                        <div class="booking-step booking-step--disabled" id="booking-step-resource">
+                            <h3 class="booking-step__title">
+                                <span class="booking-step__number">{% if booking_config.booking_type != 'accommodation' %}3{% else %}2{% endif %}</span>
+                                {% if booking_config.booking_type == 'appointment' %}
+                                    {% mtrans 'Choose a Provider' %}
+                                {% elif booking_config.booking_type == 'rental' %}
+                                    {% mtrans 'Choose an Item' %}
+                                {% elif booking_config.booking_type == 'accommodation' %}
+                                    {% mtrans 'Choose a Room' %}
+                                {% else %}
+                                    {% mtrans 'Choose a Resource' %}
+                                {% endif %}
+                            </h3>
+                            <div class="booking-resources" id="booking-resources">
+                                {% for resource in booking_resources %}
+                                <button type="button" class="booking-resource"
+                                        data-resource-id="{{ resource.id }}"
+                                        data-cost-adjustment="{{ resource.base_cost_adjustment }}"
+                                        data-has-detail="{{ resource.primary_image|yesno:'true,false' }}">
+                                    {% if resource.primary_image %}
+                                    <img class="booking-resource__thumb"
+                                         src="{{ resource.primary_image.thumbnail_small }}"
+                                         alt="{{ resource.name }}" loading="lazy">
+                                    {% endif %}
+                                    <div class="booking-resource__info">
+                                        <span class="booking-resource__name">{{ resource.name }}</span>
+                                        {% if resource.description %}
+                                        <span class="booking-resource__desc">{{ resource.description|truncatewords:15 }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if resource.base_cost_adjustment != 0 %}
+                                    <span class="booking-resource__price">
+                                        {% if resource.base_cost_adjustment > 0 %}+{% endif %}{{ currency_symbol }}{{ resource.base_cost_adjustment }}
+                                    </span>
+                                    {% endif %}
+                                    {% if resource.primary_image or resource.description %}
+                                    <span class="booking-resource__detail-btn" title="{% mtrans 'View details' %}" data-resource-detail="{{ resource.id }}">
+                                        <i class="fas fa-images"></i>
+                                    </span>
+                                    {% endif %}
+                                </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# Step N: Person Types (when defined) #}
+                        {% if booking_person_types %}
+                        <div class="booking-step booking-step--disabled" id="booking-step-persons">
+                            <h3 class="booking-step__title">
+                                <span class="booking-step__number">
+                                    {% if booking_config.booking_type != 'accommodation' and booking_resources %}4
+                                    {% elif booking_config.booking_type != 'accommodation' %}3
+                                    {% elif booking_resources %}3
+                                    {% else %}2{% endif %}
+                                </span>
+                                {% mtrans 'Number of Guests' %}
+                            </h3>
+                            <div class="booking-persons" id="booking-persons">
+                                {% for ptype in booking_person_types %}
+                                <div class="booking-person-type" data-person-type="{{ ptype.name }}"
+                                     data-cost="{{ ptype.cost_adjustment }}"
+                                     data-min="{{ ptype.min_persons }}"
+                                     data-max="{{ ptype.max_persons }}">
+                                    <div class="booking-person-type__info">
+                                        <span class="booking-person-type__name">{{ ptype.name }}</span>
+                                        {% if ptype.cost_adjustment != 0 %}
+                                        <span class="booking-person-type__cost">
+                                            {% if ptype.cost_adjustment > 0 %}+{% endif %}{{ currency_symbol }}{{ ptype.cost_adjustment }} / {% mtrans 'person' %}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="booking-person-type__controls">
+                                        <button type="button" class="booking-qty-btn booking-qty-btn--minus"
+                                                data-action="decrease" aria-label="{% mtrans 'Decrease' %}">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <span class="booking-qty-value" data-person-type="{{ ptype.name }}">{{ ptype.min_persons }}</span>
+                                        <button type="button" class="booking-qty-btn booking-qty-btn--plus"
+                                                data-action="increase" aria-label="{% mtrans 'Increase' %}">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# Customer Duration Selection (when customer-selected duration, not for accommodation where dates determine duration) #}
+                        {% if booking_config.duration_type == 'customer_selected' and booking_config.booking_type != 'accommodation' %}
+                        <div class="booking-step booking-step--disabled" id="booking-step-duration">
+                            <h3 class="booking-step__title">
+                                <span class="booking-step__number">&#8226;</span>
+                                {% mtrans 'Select Duration' %}
+                            </h3>
+                            <div class="booking-duration">
+                                <input type="range" id="booking-duration-slider"
+                                       class="booking-duration__slider"
+                                       min="{{ booking_config.min_duration }}"
+                                       max="{{ booking_config.max_duration }}"
+                                       value="{{ booking_config.duration }}"
+                                       step="1">
+                                <div class="booking-duration__labels">
+                                    <span>{{ booking_config.min_duration }} {{ booking_config.get_duration_unit_display }}</span>
+                                    <span class="booking-duration__current" id="duration-value">
+                                        {{ booking_config.duration }} {{ booking_config.get_duration_unit_display }}
+                                    </span>
+                                    <span>{{ booking_config.max_duration }} {{ booking_config.get_duration_unit_display }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# Timezone Selector #}
+                        {% if booking_config.customer_timezone_enabled %}
+                        <div class="booking-timezone" id="booking-timezone">
+                            <label for="booking-tz-select">
+                                <i class="fas fa-globe"></i> {% mtrans 'Your Timezone' %}
+                            </label>
+                            <select id="booking-tz-select" class="booking-timezone__select">
+                                {# Populated by JS with Intl.supportedValuesOf('timeZone') #}
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {# ========== Price Summary ========== #}
+                    <div class="booking-summary" id="booking-summary" style="display: none;">
+                        <div class="booking-summary__row">
+                            <span>{% mtrans 'Date' %}</span>
+                            <span id="summary-date">-</span>
+                        </div>
+                        <div class="booking-summary__row" id="summary-time-row" style="display: none;">
+                            <span>{% mtrans 'Time' %}</span>
+                            <span id="summary-time">-</span>
+                        </div>
+                        <div class="booking-summary__row" id="summary-resource-row" style="display: none;">
+                            <span>{% if booking_config.booking_type == 'appointment' %}{% mtrans 'Provider' %}{% else %}{% mtrans 'Resource' %}{% endif %}</span>
+                            <span id="summary-resource">-</span>
+                        </div>
+                        <div class="booking-summary__row" id="summary-persons-row" style="display: none;">
+                            <span>{% mtrans 'Guests' %}</span>
+                            <span id="summary-persons">-</span>
+                        </div>
+                        <div class="booking-summary__divider"></div>
+                        <div id="summary-breakdown"></div>
+                        <div class="booking-summary__row booking-summary__row--total">
+                            <span>{% mtrans 'Total' %}</span>
+                            <span id="summary-total">-</span>
+                        </div>
+                        {% if booking_config.deposit_enabled %}
+                        <div class="booking-summary__row booking-summary__row--deposit">
+                            <span>{% mtrans 'Deposit Due Now' %}</span>
+                            <span id="summary-deposit">-</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {# ========== Unavailable Notice ========== #}
+                    <div class="booking-unavailable" id="booking-unavailable" style="display: none;">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="booking-unavailable-reason"></span>
+                    </div>
+
+                    {# ========== Book Now / Add to Cart ========== #}
+                    <div class="product-actions product-actions--booking">
+                        <button type="button"
+                                class="btn btn--primary btn--lg btn--full-width"
+                                id="add-to-cart"
+                                data-product-id="{{ product.id }}"
+                                disabled>
+                            <i class="fas fa-calendar-check"></i>
+                            <span>{% mtrans 'Book Now' %}</span>
+                        </button>
+                    </div>
+
+                    {# Waitlist (shown by JS when slot is full) #}
+                    <div class="booking-waitlist" id="booking-waitlist" style="display: none;">
+                        <p class="booking-waitlist__msg">
+                            <i class="fas fa-clock"></i>
+                            {% mtrans 'This slot is fully booked. Join the waitlist to be notified if a spot opens.' %}
+                        </p>
+                        <div class="booking-waitlist__form">
+                            <input type="email" id="waitlist-email" class="booking-waitlist__input"
+                                   placeholder="{% mtrans 'Your email address' %}"
+                                   aria-label="{% mtrans 'Email for waitlist' %}">
+                            <button type="button" class="btn btn--secondary" id="waitlist-submit">
+                                {% mtrans 'Join Waitlist' %}
+                            </button>
+                        </div>
+                        <p class="booking-waitlist__status" id="waitlist-status" style="display: none;"></p>
+                    </div>
+
+                    {# Express Checkout #}
+                    {% if payments_enabled and express_checkout_methods %}
+                    <div class="express-checkout" id="express-checkout">
+                        <div class="express-checkout__divider">
+                            <span>{% mtrans 'or checkout with' %}</span>
+                        </div>
+                        <div class="express-checkout__buttons">
+                            {% for method in express_checkout_methods %}
+                            <button type="button"
+                                    class="express-btn {{ method.button_class }}"
+                                    id="pdp-{{ method.slug }}"
+                                    data-action="express-checkout"
+                                    data-provider="{{ method.provider_slug }}"
+                                    data-method="{{ method.slug }}"
+                                    {% if method.requires_js_check %}style="display: none;" data-js-check="{{ method.js_check }}"{% endif %}>
+                                <i class="{{ method.icon }}"></i>
+                                {% if method.slug == 'apple_pay' or method.slug == 'google_pay' %}Pay{% else %}{{ method.name }}{% endif %}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {# Trust Badges #}
+                    {% if product_trust_badges %}
+                    <div class="trust-badges trust-badges--booking">
+                        {% include "page_builder/includes/_trust_badges.html" with trust_badges=product_trust_badges %}
+                    </div>
+                    {% endif %}
+
+                    {# Product Meta #}
+                    <div class="product-meta">
+                        {% if template_options.show_sku and product.sku %}
+                        <p class="product-meta__item">
+                            <span class="product-meta__label">{% mtrans 'SKU' %}:</span>
+                            <span class="product-meta__value" id="product-sku">{{ product.sku }}</span>
+                        </p>
+                        {% endif %}
+                        {% if product.category %}
+                        <p class="product-meta__item">
+                            <span class="product-meta__label">{% mtrans 'Category' %}:</span>
+                            <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="product-meta__link">
+                                {{ product.category.name }}
+                            </a>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Resource Detail Modal (hotel-style room showcase) #}
+{% if booking_resources %}
+<div class="booking-resource-modal" id="booking-resource-modal" style="display:none" role="dialog" aria-modal="true" aria-label="{% mtrans 'Resource Details' %}">
+    <div class="booking-resource-modal__backdrop"></div>
+    <div class="booking-resource-modal__dialog">
+        <button class="booking-resource-modal__close" aria-label="{% mtrans 'Close' %}">&times;</button>
+        <div class="booking-resource-modal__loading" id="resource-modal-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="booking-resource-modal__body" id="resource-modal-body" style="display:none">
+            <div class="booking-resource-modal__gallery">
+                <div class="booking-resource-modal__main-image" id="resource-modal-main-image"></div>
+                <div class="booking-resource-modal__thumbs" id="resource-modal-thumbs"></div>
+            </div>
+            <div class="booking-resource-modal__info">
+                <h3 class="booking-resource-modal__title" id="resource-modal-title"></h3>
+                <div class="booking-resource-modal__price" id="resource-modal-price"></div>
+                <div class="booking-resource-modal__description" id="resource-modal-description"></div>
+                <button type="button" class="btn btn--primary btn--full-width" id="resource-modal-select">
+                    <i class="fas fa-check"></i>
+                    <span>{% mtrans 'Select This Room' %}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}
+
+{% block product_scripts %}
+<script src="{% static 'page_builder/js/product-booking.js' %}" defer></script>
+{% endblock %}

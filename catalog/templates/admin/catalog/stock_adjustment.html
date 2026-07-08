@@ -1,0 +1,100 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/stock_adjustment.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="stock-adjustment-container">
+    <div class="stock-adjustment-header">
+        <h1>
+            <i class="fas fa-boxes"></i>
+            {{ title }}
+        </h1>
+        <p>{% trans "Adjust stock levels for selected items" %}</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Selected Stock Items -->
+        <div class="form-card">
+            <h2>{% trans "Selected Stock Items" %} ({{ stock_items.count }})</h2>
+            <div class="stock-items-list">
+                {% for stock_item in stock_items %}
+                <div class="stock-item">
+                    <div>
+                        <div class="stock-item-product">{{ stock_item.product.name }}</div>
+                        <div class="stock-item-warehouse">
+                            <i class="fas fa-warehouse"></i> {{ stock_item.warehouse.name }}
+                        </div>
+                    </div>
+                    <div class="stock-item-current">
+                        Current: {{ stock_item.on_hand }} on hand, {{ stock_item.allocated }} allocated, {{ stock_item.available }} available
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Adjustment Form -->
+        <div class="form-card">
+            <h2>{% trans "Adjustment Details" %}</h2>
+
+            <div class="form-row">
+                <label>{{ form.adjustment_type.label }}</label>
+                <div class="radio-group">
+                    {% for choice in form.adjustment_type %}
+                    <div class="radio-option">
+                        {{ choice.tag }}
+                        {{ choice.choice_label }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if form.adjustment_type.help_text %}
+                <span class="helptext">{{ form.adjustment_type.help_text }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                {{ form.quantity.label_tag }}
+                {{ form.quantity }}
+                {% if form.quantity.help_text %}
+                <span class="helptext">{{ form.quantity.help_text }}</span>
+                {% endif %}
+                {% if form.quantity.errors %}
+                <div class="errorlist">{{ form.quantity.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                {{ form.reason.label_tag }}
+                {{ form.reason }}
+                {% if form.reason.help_text %}
+                <span class="helptext">{{ form.reason.help_text }}</span>
+                {% endif %}
+                {% if form.reason.errors %}
+                <div class="errorlist">{{ form.reason.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Submit Row -->
+        <div class="submit-row">
+            <button type="submit" name="apply">
+                <i class="fas fa-check"></i> {% trans "Apply Adjustment" %}
+            </button>
+            <a href="{% url 'admin:catalog_stockitem_changelist' %}" class="cancel">
+                <i class="fas fa-times"></i> {% trans "Cancel" %}
+            </a>
+        </div>
+
+        <!-- Hidden inputs for selected items -->
+        {% for item in stock_items %}
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ item.pk }}">
+        {% endfor %}
+    </form>
+</div>
+{% endblock %}

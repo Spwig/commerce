@@ -1,0 +1,73 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% if original %}{% trans "Edit Campaign" %}: {{ original }}{% else %}{% trans "Add Campaign" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'loyalty/css/campaign-builder.css' %}">
+{% endblock %}
+
+{% block after_field_sets %}
+    {{ block.super }}
+
+    {# Journey Step Builder - Only show for journey campaigns #}
+    {% if original.is_journey or not original %}
+        <div id="journey-builder-container" class="journey-builder-section" class="hidden">
+            <h2>{% trans "Journey Steps" %}</h2>
+            <p class="help">{% trans "Build your multi-step customer journey with actions, delays, and conditional branching." %}</p>
+
+            <div id="journey-steps-list" class="journey-steps-list">
+                {# Steps will be rendered here by JavaScript #}
+            </div>
+
+            <button type="button" id="add-journey-step" class="button">
+                <span class="icon">+</span> {% trans "Add Step" %}
+            </button>
+
+            {# Hidden field to store journey steps JSON #}
+            <textarea name="journey_steps" id="id_journey_steps" class="hidden">{{ original.journey_steps|default:"[]"|safe }}</textarea>
+        </div>
+    {% endif %}
+
+    {# Action Builder - For non-journey campaigns #}
+    <div id="action-builder-container" class="action-builder-section">
+        <h2>{% trans "Campaign Actions" %}</h2>
+        <p class="help">{% trans "Define what actions to perform when this campaign triggers." %}</p>
+
+        <div id="actions-list" class="actions-list">
+            {# Actions will be rendered here by JavaScript #}
+        </div>
+
+        <button type="button" id="add-action" class="button">
+            <span class="icon">+</span> {% trans "Add Action" %}
+        </button>
+
+        {# Hidden field to store actions JSON #}
+        <textarea name="actions" id="id_actions" class="hidden">{{ original.actions|default:"[]"|safe }}</textarea>
+    </div>
+
+    {# Trigger Conditions Builder #}
+    <div id="trigger-conditions-container" class="conditions-builder-section">
+        <h2>{% trans "Trigger Conditions" %}</h2>
+        <p class="help">{% trans "Optional conditions that must be met for this campaign to trigger." %}</p>
+
+        <div id="trigger-conditions-list" class="conditions-list">
+            {# Conditions will be rendered here by JavaScript #}
+        </div>
+
+        <button type="button" id="add-trigger-condition" class="button">
+            <span class="icon">+</span> {% trans "Add Condition" %}
+        </button>
+
+        {# Hidden field to store trigger conditions JSON #}
+        <textarea name="trigger_conditions" id="id_trigger_conditions" class="hidden">{{ original.trigger_conditions|default:"{}" }}</textarea>
+    </div>
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+    {{ block.super }}
+    <script src="{% static 'loyalty/js/campaign-builder.js' %}"></script>
+    <script src="{% static 'loyalty/admin/js/campaign_change_form.js' %}"></script>
+{% endblock %}

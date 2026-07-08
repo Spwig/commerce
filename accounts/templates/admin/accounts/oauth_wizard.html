@@ -1,0 +1,434 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "OAuth Setup" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/wizard-base.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <div class="wizard-header">
+        <a href="{% url 'accounts:oauth_dashboard' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Dashboard" %}
+        </a>
+        <h1>
+            <div class="provider-icon-large" data-color="{{ provider_config.color }}">
+                <i class="{{ provider_config.icon }}"></i>
+            </div>
+            {% trans "Setup" %} {{ provider_config.name }}
+        </h1>
+    </div>
+
+    <!-- Wizard Progress -->
+    <div class="wizard-progress">
+        <div class="progress-step {% if step == 1 %}active{% elif step > 1 %}completed{% endif %}" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Prerequisites" %}</div>
+        </div>
+        <div class="progress-step {% if step == 2 %}active{% elif step > 2 %}completed{% endif %}" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Create App" %}</div>
+        </div>
+        <div class="progress-step {% if step == 3 %}active{% elif step > 3 %}completed{% endif %}" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="progress-step {% if step == 4 %}active{% endif %}" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Verify" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <!-- Step 1: Prerequisites -->
+        <div class="wizard-step {% if step == 1 %}active{% endif %}" id="step-1">
+            <h2>{% trans "Prerequisites & Requirements" %}</h2>
+
+            {% if provider_type == 'google' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-user-plus"></i> {% trans "1. Create a Google Cloud Account" %}</h3>
+                <p>{% trans "You'll need a Google account (free) to access Google Cloud Console. If you don't have one, you can create it quickly." %}</p>
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button primary">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Go to Google Cloud Console" %}
+                </a>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-project-diagram"></i> {% trans "2. Understand the Requirements" %}</h3>
+                <p>{% trans "For Google OAuth, you'll need:" %}</p>
+                <ul>
+                    <li><strong>{% trans "Client ID" %}</strong> - {% trans "Your application's identifier" %}</li>
+                    <li><strong>{% trans "Client Secret" %}</strong> - {% trans "Your application's password (keep this secure!)" %}</li>
+                    <li><strong>{% trans "Authorized redirect URI" %}</strong> - {% trans "Where Google sends users after login" %}</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>{% trans "Why Google OAuth?" %}</strong>
+                    <p>{% trans "Google is the most popular social login option, trusted by billions of users worldwide. It's completely free with unlimited authentication requests and provides automatic email verification." %}</p>
+                </div>
+            </div>
+
+            {% elif provider_type == 'apple' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-id-card"></i> {% trans "1. Apple Developer Account Required" %}</h3>
+                <p>{% trans "Sign in with Apple requires an Apple Developer Account ($99/year). If you have an iOS app, you likely already have this." %}</p>
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button primary">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Apple Developer Portal" %}
+                </a>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-mobile-alt"></i> {% trans "2. When You Need Apple OAuth" %}</h3>
+                <p>{% trans "Sign in with Apple is:" %}</p>
+                <ul>
+                    <li><strong>{% trans "Required" %}</strong> - {% trans "If your store has an iOS application that uses other social logins" %}</li>
+                    <li><strong>{% trans "Recommended" %}</strong> - {% trans "For maximum trust with iOS users (30%+ conversion rate)" %}</li>
+                    <li><strong>{% trans "Optional" %}</strong> - {% trans "For web-only stores (but privacy-conscious users love it)" %}</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <strong>{% trans "Privacy-First Authentication" %}</strong>
+                    <p>{% trans "Apple's 'Hide My Email' feature lets users protect their privacy while still creating accounts. This builds trust and can increase conversion rates, especially among privacy-conscious customers." %}</p>
+                </div>
+            </div>
+
+            {% elif provider_type == 'microsoft' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-user-plus"></i> {% trans "1. Create a Microsoft Account" %}</h3>
+                <p>{% trans "You'll need a Microsoft account (free) to access Azure Portal. Any Outlook, Hotmail, or Microsoft account works." %}</p>
+                <a href="{{ provider_config.signup_url }}" target="_blank" class="button primary">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Go to Azure Portal" %}
+                </a>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-briefcase"></i> {% trans "2. Who Uses Microsoft OAuth?" %}</h3>
+                <p>{% trans "Microsoft OAuth is particularly popular with:" %}</p>
+                <ul>
+                    <li><strong>{% trans "Business customers" %}</strong> - {% trans "Office 365 and enterprise users" %}</li>
+                    <li><strong>{% trans "Professional services" %}</strong> - {% trans "B2B e-commerce platforms" %}</li>
+                    <li><strong>{% trans "Microsoft ecosystem users" %}</strong> - {% trans "Xbox, Windows, Outlook users" %}</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-building"></i>
+                <div>
+                    <strong>{% trans "Enterprise-Grade Authentication" %}</strong>
+                    <p>{% trans "Microsoft OAuth provides free unlimited authentication with access to both personal accounts (Outlook/Hotmail) and work/school accounts (Office 365). Perfect for B2B and B2C stores." %}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-clipboard-list"></i> {% trans "3. Information You'll Need" %}</h3>
+                <p>{% trans "Before starting, have this information ready:" %}</p>
+                <ul>
+                    <li>{% trans "Your store's domain name" %}: <strong>{{ site.domain }}</strong></li>
+                    <li>{% trans "Your store's callback URL (we'll show this in the next step)" %}</li>
+                    <li>{% trans "5-10 minutes to complete the setup" %}</li>
+                </ul>
+            </div>
+
+            <div class="wizard-nav">
+                <span></span>
+                <a href="?step=2" class="button primary">
+                    {% trans "Next: Create Application" %} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Step 2: Create App -->
+        <div class="wizard-step {% if step == 2 %}active{% endif %}" id="step-2">
+            <h2>{% trans "Create OAuth Application" %}</h2>
+
+            {% if provider_type == 'google' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-folder-plus"></i> {% trans "Step 2.1: Create a Project" %}</h3>
+                <ol>
+                    <li>{% trans "Go to" %} <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a></li>
+                    <li>{% trans "Click the project dropdown at the top" %}</li>
+                    <li>{% trans "Click 'New Project'" %}</li>
+                    <li>{% trans "Name it (e.g., 'My Store OAuth')" %}</li>
+                    <li>{% trans "Click 'Create'" %}</li>
+                </ol>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-toggle-on"></i> {% trans "Step 2.2: Enable Google+ API" %}</h3>
+                <ol>
+                    <li>{% trans "In the left sidebar, go to 'APIs & Services' → 'Library'" %}</li>
+                    <li>{% trans "Search for 'Google+ API'" %}</li>
+                    <li>{% trans "Click on it and press 'Enable'" %}</li>
+                </ol>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-shield-alt"></i> {% trans "Step 2.3: Configure OAuth Consent Screen" %}</h3>
+                <ol>
+                    <li>{% trans "Go to 'APIs & Services' → 'OAuth consent screen'" %}</li>
+                    <li>{% trans "Choose 'External' and click 'Create'" %}</li>
+                    <li>{% trans "Fill in the form:" %}
+                        <ul>
+                            <li><strong>{% trans "App name" %}</strong>: {% trans "Your store name" %}</li>
+                            <li><strong>{% trans "User support email" %}</strong>: {% trans "Your email" %}</li>
+                            <li><strong>{% trans "Developer contact" %}</strong>: {% trans "Your email" %}</li>
+                        </ul>
+                    </li>
+                    <li>{% trans "Click 'Save and Continue'" %}</li>
+                    <li>{% trans "Skip scopes (default is fine)" %}</li>
+                    <li>{% trans "Add yourself as a test user if in testing mode" %}</li>
+                </ol>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "Step 2.4: Create OAuth Credentials" %}</h3>
+                <ol>
+                    <li>{% trans "Go to 'APIs & Services' → 'Credentials'" %}</li>
+                    <li>{% trans "Click 'Create Credentials' → 'OAuth client ID'" %}</li>
+                    <li>{% trans "Choose 'Web application'" %}</li>
+                    <li>{% trans "Name it (e.g., 'Store Login')" %}</li>
+                    <li>{% trans "Under 'Authorized redirect URIs', add:" %}
+                        <div class="code-box">
+                            {{ callback_url }}
+                            <button class="util-btn" data-action="copy-to-clipboard" data-copy="{{ callback_url }}">
+                                <i class="fas fa-copy"></i> {% trans "Copy" %}
+                            </button>
+                        </div>
+                    </li>
+                    <li>{% trans "Click 'Create'" %}</li>
+                    <li><strong>{% trans "Save the Client ID and Client Secret - you'll need them in the next step!" %}</strong></li>
+                </ol>
+            </div>
+
+            {% elif provider_type == 'apple' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-id-badge"></i> {% trans "Step 2.1: Create an App ID" %}</h3>
+                <ol>
+                    <li>{% trans "Go to" %} <a href="https://developer.apple.com/account/resources/identifiers/list" target="_blank">{% trans "Apple Developer - Identifiers" %}</a></li>
+                    <li>{% trans "Click the '+' button" %}</li>
+                    <li>{% trans "Select 'App IDs' and continue" %}</li>
+                    <li>{% trans "Select 'App' and continue" %}</li>
+                    <li>{% trans "Fill in:" %}
+                        <ul>
+                            <li><strong>{% trans "Description" %}</strong>: {% trans "Your store name" %}</li>
+                            <li><strong>{% trans "Bundle ID" %}</strong>: {% trans "e.g., com.yourstore.oauth" %}</li>
+                        </ul>
+                    </li>
+                    <li>{% trans "Check 'Sign in with Apple' capability" %}</li>
+                    <li>{% trans "Click 'Continue' and 'Register'" %}</li>
+                </ol>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "Step 2.2: Create a Services ID" %}</h3>
+                <ol>
+                    <li>{% trans "Back at Identifiers, click '+' again" %}</li>
+                    <li>{% trans "Select 'Services IDs' and continue" %}</li>
+                    <li>{% trans "Fill in:" %}
+                        <ul>
+                            <li><strong>{% trans "Description" %}</strong>: {% trans "Store OAuth Service" %}</li>
+                            <li><strong>{% trans "Identifier" %}</strong>: {% trans "e.g., com.yourstore.oauth.service" %}</li>
+                        </ul>
+                    </li>
+                    <li>{% trans "Check 'Sign in with Apple'" %}</li>
+                    <li>{% trans "Click 'Configure'" %}</li>
+                    <li>{% trans "Set:" %}
+                        <ul>
+                            <li><strong>{% trans "Primary App ID" %}</strong>: {% trans "Select the App ID you just created" %}</li>
+                            <li><strong>{% trans "Domains" %}</strong>: {{ site.domain }}</li>
+                            <li><strong>{% trans "Return URLs" %}</strong>:
+                                <div class="code-box">
+                                    {{ callback_url }}
+                                    <button class="util-btn" data-action="copy-to-clipboard" data-copy="{{ callback_url }}">
+                                        <i class="fas fa-copy"></i> {% trans "Copy" %}
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>{% trans "Save and continue" %}</li>
+                </ol>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-certificate"></i> {% trans "Step 2.3: Create a Private Key" %}</h3>
+                <ol>
+                    <li>{% trans "Go to" %} <a href="https://developer.apple.com/account/resources/authkeys/list" target="_blank">{% trans "Apple Developer - Keys" %}</a></li>
+                    <li>{% trans "Click the '+' button" %}</li>
+                    <li>{% trans "Name it (e.g., 'OAuth Key')" %}</li>
+                    <li>{% trans "Check 'Sign in with Apple'" %}</li>
+                    <li>{% trans "Click 'Configure'" %}</li>
+                    <li>{% trans "Select your App ID" %}</li>
+                    <li>{% trans "Click 'Save' and 'Continue'" %}</li>
+                    <li>{% trans "Click 'Register'" %}</li>
+                    <li><strong>{% trans "Download the key file (.p8) - you cannot download it again!" %}</strong></li>
+                    <li>{% trans "Note the Key ID shown on the page" %}</li>
+                </ol>
+            </div>
+
+            {% elif provider_type == 'microsoft' %}
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-app-store-ios"></i> {% trans "Step 2.1: Register an Application" %}</h3>
+                <ol>
+                    <li>{% trans "Go to" %} <a href="https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank">Azure Portal - App registrations</a></li>
+                    <li>{% trans "Click 'New registration'" %}</li>
+                    <li>{% trans "Fill in the form:" %}
+                        <ul>
+                            <li><strong>{% trans "Name" %}</strong>: {% trans "Your store name" %}</li>
+                            <li><strong>{% trans "Supported account types" %}</strong>: {% trans "Choose 'Accounts in any organizational directory and personal Microsoft accounts'" %}</li>
+                            <li><strong>{% trans "Redirect URI" %}</strong>: {% trans "Select 'Web' and enter:" %}
+                                <div class="code-box">
+                                    {{ callback_url }}
+                                    <button class="util-btn" data-action="copy-to-clipboard" data-copy="{{ callback_url }}">
+                                        <i class="fas fa-copy"></i> {% trans "Copy" %}
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>{% trans "Click 'Register'" %}</li>
+                </ol>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-key"></i> {% trans "Step 2.2: Create a Client Secret" %}</h3>
+                <ol>
+                    <li>{% trans "In your app, go to 'Certificates & secrets'" %}</li>
+                    <li>{% trans "Under 'Client secrets', click 'New client secret'" %}</li>
+                    <li>{% trans "Add a description (e.g., 'Store OAuth')" %}</li>
+                    <li>{% trans "Choose expiry (recommend '24 months')" %}</li>
+                    <li>{% trans "Click 'Add'" %}</li>
+                    <li><strong>{% trans "Copy the 'Value' immediately - it won't be shown again!" %}</strong></li>
+                </ol>
+            </div>
+
+            <div class="prerequisite-box">
+                <h3><i class="fas fa-clipboard-list"></i> {% trans "Step 2.3: Get Your Application ID" %}</h3>
+                <ol>
+                    <li>{% trans "Go to your app's 'Overview' page" %}</li>
+                    <li>{% trans "Copy the 'Application (client) ID'" %}</li>
+                    <li>{% trans "This is your Client ID for the next step" %}</li>
+                </ol>
+            </div>
+            {% endif %}
+
+            <div class="alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>{% trans "Important!" %}</strong>
+                    {% trans "Keep your Client ID and Client Secret secure. You'll need them in the next step." %}
+                </div>
+            </div>
+
+            <div class="wizard-nav">
+                <a href="?step=1" class="button secondary">
+                    <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                </a>
+                <a href="?step=3" class="button primary">
+                    {% trans "Next: Configure Store" %} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Step 3: Configure -->
+        <div class="wizard-step {% if step == 3 %}active{% endif %}" id="step-3">
+            <h2>{% trans "Configure OAuth in Your Store" %}</h2>
+
+            <form method="post" id="config-form">
+                {% csrf_token %}
+                <input type="hidden" name="step" value="final">
+
+                <div class="prerequisite-box">
+                    <h3><i class="fas fa-key"></i> {% trans "Enter Your OAuth Credentials" %}</h3>
+
+                    <div class="form-row">
+                        <label for="client_id">{% trans "Client ID" %} <span class="required">*</span></label>
+                        <input type="text" name="client_id" id="client_id" required
+                               value="{% if social_app %}{{ social_app.client_id }}{% endif %}"
+                               placeholder="{% trans 'Paste your Client ID here' %}">
+                        <div class="help">
+                            {% if provider_type == 'google' %}
+                                {% trans "From Google Cloud Console → Credentials" %}
+                            {% elif provider_type == 'apple' %}
+                                {% trans "Your Services ID (e.g., com.yourstore.oauth.service)" %}
+                            {% elif provider_type == 'microsoft' %}
+                                {% trans "From Azure Portal → App registrations → Overview → Application (client) ID" %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="client_secret">{% trans "Client Secret" %} <span class="required">*</span></label>
+                        <input type="text" name="client_secret" id="client_secret" required
+                               value="{% if social_app %}{{ social_app.secret }}{% endif %}"
+                               placeholder="{% trans 'Paste your Client Secret here' %}">
+                        <div class="help">
+                            {% if provider_type == 'google' %}
+                                {% trans "From Google Cloud Console → Credentials (shown after creating OAuth client)" %}
+                            {% elif provider_type == 'apple' %}
+                                {% trans "Contents of your .p8 key file" %}
+                            {% elif provider_type == 'microsoft' %}
+                                {% trans "From Azure Portal → Certificates & secrets → Client secrets (Value column)" %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prerequisite-box">
+                    <h3><i class="fas fa-cog"></i> {% trans "Provider Settings" %}</h3>
+
+                    <div class="form-row">
+                        <label>
+                            <input type="checkbox" name="is_active" {% if provider_settings.enabled %}checked{% endif %}>
+                            {% trans "Enable this provider for customers" %}
+                        </label>
+                        <div class="help">{% trans "Customers will see this login option if enabled and configured correctly" %}</div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="button_order">{% trans "Button Order" %}</label>
+                        <input type="number" name="button_order" id="button_order" min="0" max="10"
+                               value="{{ provider_settings.button_order|default:0 }}">
+                        <div class="help">{% trans "Lower numbers appear first (0-10)" %}</div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="notes">{% trans "Configuration Notes (Optional)" %}</label>
+                        <textarea name="notes" id="notes" rows="3">{{ provider_settings.configuration_notes }}</textarea>
+                        <div class="help">{% trans "Optional notes about this configuration for your reference" %}</div>
+                    </div>
+                </div>
+
+                <div class="wizard-nav">
+                    <a href="?step=2" class="button secondary">
+                        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+                    </a>
+                    <button type="submit" class="button primary">
+                        <i class="fas fa-save"></i> {% trans "Save Configuration" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="oauth-wizard-data">
+{
+    "translations": {
+        "copied": "{% trans 'Copied!' %}"
+    }
+}
+</script>
+<script src="{% static 'accounts/admin/js/oauth_wizard.js' %}"></script>
+{% endblock %}

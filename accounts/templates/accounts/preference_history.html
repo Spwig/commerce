@@ -1,0 +1,180 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Preference History" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/css/preference-history.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% trans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% trans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% trans 'My Account' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:communication_preferences' %}" class="breadcrumb__link">{% trans 'Communication Preferences' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% trans 'History' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% trans "Preference History" %}</h1>
+        <p class="page-header__subtitle">{% trans "View all changes to your communication preferences" %}</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if not has_logs %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h2>{% trans "No History Yet" %}</h2>
+            <p>{% trans "Changes to your preferences will appear here" %}</p>
+            <a href="{% url 'accounts:communication_preferences' %}" class="empty-state-button">
+                {% trans "Manage Preferences" %}
+            </a>
+        </div>
+        {% else %}
+        <!-- Timeline -->
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+
+            {% for log in page_obj %}
+            <div class="timeline-item">
+                <!-- Marker colored by source -->
+                <div class="timeline-marker {{ log.source }}"></div>
+
+                <!-- Content Card -->
+                <div class="timeline-content">
+                    <div class="timeline-action">
+                        {% if "email_marketing" in log.action %}
+                            {% if "enable" in log.action %}
+                                ✅ {% trans "Enabled Marketing Emails" %}
+                            {% else %}
+                                ❌ {% trans "Disabled Marketing Emails" %}
+                            {% endif %}
+                        {% elif "email_verified" in log.action %}
+                            ✉️ {% trans "Email Verified" %}
+                        {% elif "sms_verified" in log.action %}
+                            📱 {% trans "SMS Verified" %}
+                        {% elif "blog" in log.action %}
+                            {% if "enable" in log.action %}
+                                ✅ {% trans "Enabled Blog Notifications" %}
+                            {% else %}
+                                ❌ {% trans "Disabled Blog Notifications" %}
+                            {% endif %}
+                        {% elif "loyalty" in log.action %}
+                            {% if "enable" in log.action %}
+                                ✅ {% trans "Enabled Loyalty Notifications" %}
+                            {% else %}
+                                ❌ {% trans "Disabled Loyalty Notifications" %}
+                            {% endif %}
+                        {% elif "referrals" in log.action %}
+                            {% if "enable" in log.action %}
+                                ✅ {% trans "Enabled Referral Notifications" %}
+                            {% else %}
+                                ❌ {% trans "Disabled Referral Notifications" %}
+                            {% endif %}
+                        {% elif "affiliate" in log.action %}
+                            {% if "enable" in log.action %}
+                                ✅ {% trans "Enabled Affiliate Notifications" %}
+                            {% else %}
+                                ❌ {% trans "Disabled Affiliate Notifications" %}
+                            {% endif %}
+                        {% elif "unsubscribe_all" in log.action %}
+                            🚫 {% trans "Unsubscribed from All Marketing" %}
+                        {% else %}
+                            📝 {{ log.action|title }}
+                        {% endif %}
+                    </div>
+
+                    <!-- Meta information -->
+                    <div class="timeline-meta">
+                        <!-- Timestamp -->
+                        <div class="timeline-meta-item">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {{ log.timestamp|date:"M d, Y g:i A" }}
+                        </div>
+
+                        <!-- Source -->
+                        <div class="timeline-meta-item">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                            {% if log.source == "user" %}
+                                {% trans "You updated this" %}
+                            {% elif log.source == "registration" %}
+                                {% trans "Account registration" %}
+                            {% elif log.source == "checkout" %}
+                                {% trans "During checkout" %}
+                            {% elif log.source == "admin" %}
+                                {% trans "Admin updated" %}
+                            {% elif log.source == "verification" %}
+                                {% trans "Email verification" %}
+                            {% elif log.source == "unsubscribe" %}
+                                {% trans "Unsubscribe link" %}
+                            {% elif log.source == "api" %}
+                                {% trans "API update" %}
+                            {% else %}
+                                {{ log.source|title }}
+                            {% endif %}
+                        </div>
+
+                        <!-- IP Address (only if present) -->
+                        {% if log.ip_address %}
+                        <div class="timeline-meta-item">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                            {{ log.ip_address }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination-container">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="pagination-button">{% trans "First" %}</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="pagination-button">{% trans "Previous" %}</a>
+            {% else %}
+                <span class="pagination-button disabled">{% trans "First" %}</span>
+                <span class="pagination-button disabled">{% trans "Previous" %}</span>
+            {% endif %}
+
+            <span class="pagination-info">
+                {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="pagination-button">{% trans "Next" %}</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-button">{% trans "Last" %}</a>
+            {% else %}
+                <span class="pagination-button disabled">{% trans "Next" %}</span>
+                <span class="pagination-button disabled">{% trans "Last" %}</span>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

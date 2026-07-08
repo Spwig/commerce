@@ -1,0 +1,237 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Design & Theme Dashboard | {{ site_title|default:_('Spwig Admin') }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/dashboard.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {% trans 'Design Dashboard' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1><i class="fas fa-paint-brush"></i> {% trans "Design & Theme Dashboard" %}</h1>
+        <p class="dashboard-subtitle">{% trans "Central hub for managing your site's design, themes, and visual components" %}</p>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class="fas fa-palette"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.themes_installed }}</div>
+                <div class="stat-label">{% trans "Themes" %}</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.active_widgets }}</div>
+                <div class="stat-label">{% trans "Active Widgets" %}</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.menu_items }}</div>
+                <div class="stat-label">{% trans "Menu Items" %}</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ stats.design_tokens }}</div>
+                <div class="stat-label">{% trans "Design Tokens" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Theme Section -->
+    {% if active_theme %}
+    <div class="active-theme-section">
+        <h2><i class="fas fa-brush"></i> {% trans "Active Theme" %}</h2>
+        <div class="theme-info-card">
+            <div class="theme-details">
+                <h3>{{ active_theme.name|default:active_theme.theme.name }}</h3>
+                <p class="theme-version">Version {{ active_theme.version|default:active_theme.theme.version }}</p>
+                <div class="theme-meta">
+                    <span><i class="fas fa-user"></i> {{ active_theme.author|default:active_theme.theme.author }}</span>
+                    <span><i class="fas fa-clock"></i> {% trans "Updated" %} {{ active_theme.last_update|timesince }} {% trans "ago" %}</span>
+                    <span><i class="fas fa-file-code"></i> CSS: {{ active_theme.css_size|filesizeformat }}</span>
+                </div>
+            </div>
+            <div class="theme-actions">
+                <a href="{{ urls.branding }}" class="button primary">
+                    <i class="fas fa-palette"></i> {% trans "Customize Branding" %}
+                </a>
+                <a href="{{ urls.preview_site }}" target="_blank" class="button default">
+                    <i class="fas fa-eye"></i> {% trans "Preview Site" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Workflow Sections -->
+    <div class="workflow-grid">
+        {% for section in workflow_sections %}
+        <div class="workflow-section" id="{{ section.id }}">
+            <div class="section-header bg-{{ section.color }}">
+                <i class="fas {{ section.icon }}"></i>
+                <div>
+                    <h3>{{ section.title }}</h3>
+                    <p>{{ section.description }}</p>
+                </div>
+            </div>
+            <div class="section-items">
+                {% for item in section.items %}
+                <a href="{{ item.url }}" class="section-item">
+                    <div class="item-icon">
+                        <i class="fas {{ item.icon }}"></i>
+                    </div>
+                    <div class="item-content">
+                        <div class="item-title">{{ item.title }}</div>
+                        <div class="item-description">{{ item.description }}</div>
+                    </div>
+                    {% if item.badge %}
+                    <div class="item-badge">{{ item.badge }}</div>
+                    {% endif %}
+                </a>
+                {% endfor %}
+
+                {% if section.id == 'theme_foundation' %}
+                <!-- Force Light Mode Toggle -->
+                <div class="force-mode-toggle-wrapper{% if not theme_supports_dark_mode %} force-mode-disabled{% endif %}">
+                    <div class="force-mode-toggle-header">
+                        <div class="force-mode-toggle-label">
+                            <label for="force-light-mode-toggle" class="force-mode-label">{% trans "Force Mode" %}</label>
+                            <i class="fas fa-info-circle force-mode-info"
+                               data-toggle="tooltip"
+                               title="{% if theme_supports_dark_mode %}{% trans 'When enabled, your site will always use light theme colors, even if a visitor\'s browser prefers dark mode. Turn off to automatically respect system preferences.' %}{% else %}{% trans 'This theme does not include dark mode tokens. Light mode is automatically enforced.' %}{% endif %}"></i>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox"
+                                   id="force-light-mode-toggle"
+                                   {% if force_light_mode %}checked{% endif %}
+                                   {% if not theme_supports_dark_mode %}disabled{% endif %}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="force-mode-status-text">
+                        <span id="force-mode-status">
+                            {% if not theme_supports_dark_mode %}
+                                {% trans "This theme does not support dark mode" %}
+                            {% elif force_light_mode %}
+                                {% trans "On - Dark mode disabled (light theme forced)" %}
+                            {% else %}
+                                {% trans "Off - Auto (respects system preference)" %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Quick Actions Bar -->
+    <div class="quick-actions">
+        <h2><i class="fas fa-bolt"></i> {% trans "Quick Actions" %}</h2>
+        <div class="action-buttons">
+            <form method="post" action="{% url 'design:regenerate_css' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-action">
+                    <i class="fas fa-sync"></i> {% trans "Regenerate CSS" %}
+                </button>
+            </form>
+            <form method="post" action="{% url 'design:clear_theme_cache' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-action">
+                    <i class="fas fa-broom"></i> {% trans "Clear Cache" %}
+                </button>
+            </form>
+            <a href="{{ urls.install_theme }}" class="btn btn-action">
+                <i class="fas fa-download"></i> {% trans "Install Theme" %}
+            </a>
+            <a href="#" class="btn btn-action" data-action="export-theme">
+                <i class="fas fa-upload"></i> {% trans "Export Theme" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    {% if recent_activity %}
+    <div class="recent-activity">
+        <h2><i class="fas fa-history"></i> {% trans "Recent Activity" %}</h2>
+        <div class="activity-timeline">
+            {% for activity in recent_activity %}
+            <div class="activity-item">
+                <div class="activity-icon text-{{ activity.color }}">
+                    <i class="fas {{ activity.icon }}"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">{{ activity.title }}</div>
+                    <div class="activity-meta">
+                        {% if activity.user %}
+                            <span>{% trans "by" %} {{ activity.user.get_full_name|default:activity.user.username }}</span>
+                        {% endif %}
+                        {% if activity.timestamp %}
+                            <span>{{ activity.timestamp|timesince }} {% trans "ago" %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Help Section -->
+    <div class="help-section">
+        <div class="help-card">
+            <i class="fas fa-question-circle"></i>
+            <div>
+                <h3>{% trans "Need Help?" %}</h3>
+                <p>{% trans "Check out our" %} <a href="#">{% trans "Theme Documentation" %}</a> {% trans "or" %}
+                   <a href="#">{% trans "Video Tutorials" %}</a> {% trans "to get started with theme customization." %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="design-dashboard-data">
+{
+    "urls": {
+        "toggleForceLightMode": "{% url 'design:toggle_force_light_mode' %}"
+    },
+    "translations": {
+        "modeOn": "{% trans 'On - Dark mode disabled (light theme forced)' %}",
+        "modeOff": "{% trans 'Off - Auto (respects system preference)' %}",
+        "modeUnsupported": "{% trans 'This theme does not support dark mode' %}"
+    },
+    "themeSupportsDarkMode": {% if theme_supports_dark_mode %}true{% else %}false{% endif %}
+}
+</script>
+<script src="{% static 'design/admin/js/design_dashboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% load i18n merchant_trans %}
+{# File Upload Field #}
+{% with config=field.file_config %}
+{% with max_size=config.max_size_mb|default:5 %}
+{% with max_files=config.max_files|default:1 %}
+{% with allowed_types=config.allowed_types %}
+
+<div class="file-upload-wrapper"
+     data-field-name="{{ field.field_name }}"
+     data-max-size="{{ max_size }}"
+     data-max-files="{{ max_files }}"
+     {% if allowed_types %}data-allowed-types="{{ allowed_types|join:',' }}"{% endif %}>
+
+    <div class="file-dropzone">
+        <input type="file"
+               id="field-{{ field.field_name }}"
+               name="{{ field.field_name }}"
+               {% if field.is_required %}required{% endif %}
+               {% if max_files > 1 %}multiple{% endif %}
+               {% if allowed_types %}accept=".{{ allowed_types|join:',.' }}"{% endif %}
+               class="file-input">
+
+        <div class="dropzone-content">
+            <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
+            <p class="dropzone-text">
+                {% mtrans "Drag and drop files here or" %}
+                <span class="browse-link">{% mtrans "browse" %}</span>
+            </p>
+            <p class="dropzone-hint">
+                {% if allowed_types %}
+                {% mtrans "Allowed:" %} {{ allowed_types|join:", " }}
+                {% endif %}
+                {% if max_size %}
+                &middot; {% mtrans "Max size:" %} {{ max_size }}MB
+                {% endif %}
+                {% if max_files > 1 %}
+                &middot; {% mtrans "Max files:" %} {{ max_files }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="file-list"></div>
+</div>
+
+{% endwith %}{% endwith %}{% endwith %}{% endwith %}

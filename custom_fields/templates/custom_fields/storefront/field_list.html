@@ -1,0 +1,33 @@
+{% load i18n %}
+{# Renders custom field groups and their values on the storefront.
+   Color swatches use data-color attribute instead of inline style for CSP compliance. #}
+{% for group_data in groups %}
+<div class="custom-fields-group">
+    <h4 class="custom-fields-group-title">{{ group_data.group.name }}</h4>
+    <dl class="custom-fields-list">
+        {% for field_data in group_data.fields %}
+        <div class="custom-field-item">
+            <dt class="custom-field-label">{{ field_data.definition.name }}</dt>
+            <dd class="custom-field-value">
+                {% if field_data.definition.field_type == 'url' %}
+                <a href="{{ field_data.display_value }}" target="_blank" rel="noopener">{{ field_data.display_value }}</a>
+                {% elif field_data.definition.field_type == 'email' %}
+                <a href="mailto:{{ field_data.display_value }}">{{ field_data.display_value }}</a>
+                {% elif field_data.definition.field_type == 'color' %}
+                <span class="custom-field-color" data-color="{{ field_data.value|escapejs }}" title="{{ field_data.value }}"></span>
+                {{ field_data.value }}
+                {% elif field_data.definition.field_type == 'multiselect' %}
+                {% for item in field_data.display_value %}
+                <span class="custom-field-tag">{{ item }}</span>
+                {% endfor %}
+                {% elif field_data.definition.field_type == 'boolean' %}
+                {{ field_data.display_value }}
+                {% else %}
+                {{ field_data.display_value }}
+                {% endif %}
+            </dd>
+        </div>
+        {% endfor %}
+    </dl>
+</div>
+{% endfor %}

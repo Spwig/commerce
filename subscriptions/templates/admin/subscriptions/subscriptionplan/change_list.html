@@ -1,0 +1,190 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Subscription Plans" %} | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'subscriptions/css/subscription-admin.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="subscription-admin-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-tag"></i>
+                {% trans "Subscription Plans" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage recurring billing plans, pricing tiers, and add-ons for your subscription services" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:subscriptions_subscriptionplan_wizard' %}" class="button change-list-action-button button-primary">
+                <i class="fas fa-magic"></i> {% trans "Create with Wizard" %}
+            </a>
+            <a href="{% url 'admin:subscriptions_subscriptionplan_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Plan" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    name="filter_search"
+                    placeholder="{% trans 'Search by plan name, slug, or description...' %}"
+                    value="">
+            </div>
+
+            <!-- Pricing Model -->
+            <div class="filter-field">
+                <label for="filter-pricing-model">
+                    <i class="fas fa-dollar-sign"></i> {% trans "Pricing Model" %}
+                </label>
+                <select id="filter-pricing-model" name="filter_pricing_model">
+                    <option value="">{% trans "All Models" %}</option>
+                    <option value="flat_rate">{% trans "Flat Rate" %}</option>
+                    <option value="tiered">{% trans "Tiered Pricing" %}</option>
+                    <option value="quantity_based">{% trans "Quantity Based" %}</option>
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status" name="filter_status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- Visibility -->
+            <div class="filter-field">
+                <label for="filter-visibility">
+                    <i class="fas fa-eye"></i> {% trans "Visibility" %}
+                </label>
+                <select id="filter-visibility" name="filter_visibility">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="public">{% trans "Public" %}</option>
+                    <option value="private">{% trans "Private" %}</option>
+                </select>
+            </div>
+
+            <!-- Cancellation Policy -->
+            <div class="filter-field">
+                <label for="filter-cancellation">
+                    <i class="fas fa-ban"></i> {% trans "Cancellation Policy" %}
+                </label>
+                <select id="filter-cancellation" name="filter_cancellation_policy">
+                    <option value="">{% trans "All Policies" %}</option>
+                    <option value="anytime">{% trans "Anytime" %}</option>
+                    <option value="end_of_period">{% trans "End of Period" %}</option>
+                    <option value="minimum_commitment">{% trans "Minimum Commitment" %}</option>
+                </select>
+            </div>
+
+            <!-- Trial Period -->
+            <div class="filter-field">
+                <label for="filter-trial">
+                    <i class="fas fa-gift"></i> {% trans "Trial Period" %}
+                </label>
+                <select id="filter-trial" name="filter_trial_period">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="with_trial">{% trans "Has Trial" %}</option>
+                    <option value="no_trial">{% trans "No Trial" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Plans" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-tag"></i>
+            <span id="plan-count">{{ cl.result_count }}</span> {% trans "plan" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="plan-results">
+        {% include "admin/subscriptions/partials/plan_cards.html" with plans=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 plan{% plural %}{{ counter }} plans{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'plans' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     class="hidden"
+     data-filter-url="{% url 'subscriptions:filter_subscription_plans' %}"
+     data-results-container="plan-results"
+     data-results-count="plan-count"></div>
+</div>
+{% endblock %}

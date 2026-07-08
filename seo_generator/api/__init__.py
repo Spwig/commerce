@@ -1,0 +1,3 @@
+"""
+SEO Generator API Package
+"""

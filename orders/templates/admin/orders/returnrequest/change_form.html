@@ -1,0 +1,443 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with order=original.order.order_number %}Return Request — Order #{{ order }}{% endblocktrans %}
+    {% else %}
+        {% trans "Create Return Request" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'orders/css/returnrequest_change_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="returnrequest-change-form" {% if original %}data-request-id="{{ original.pk }}"{% endif %}>
+
+{% if original %}
+    {%comment%}EDIT MODE — Dashboard + Tabs{%endcomment%}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-undo-alt"></i>
+                    {% blocktrans with order=original.order.order_number %}Return — Order #{{ order }}{% endblocktrans %}
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-user"></i>
+                        {{ original.user.get_full_name|default:original.user.username }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        {% blocktrans with date=original.requested_at|date:"N j, Y" %}Requested {{ date }}{% endblocktrans %}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        {{ original.get_reason_display }}
+                    </span>
+                    <span class="rr-status-badge {{ original.status }}">
+                        {% if original.status == 'pending' %}
+                            <i class="fas fa-clock"></i>
+                        {% elif original.status == 'approved' %}
+                            <i class="fas fa-check"></i>
+                        {% elif original.status == 'rejected' %}
+                            <i class="fas fa-times-circle"></i>
+                        {% elif original.status == 'label_sent' %}
+                            <i class="fas fa-shipping-fast"></i>
+                        {% elif original.status == 'in_transit' %}
+                            <i class="fas fa-truck"></i>
+                        {% elif original.status == 'received' %}
+                            <i class="fas fa-box-open"></i>
+                        {% elif original.status == 'inspected' %}
+                            <i class="fas fa-search"></i>
+                        {% elif original.status == 'completed' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif original.status == 'cancelled' %}
+                            <i class="fas fa-ban"></i>
+                        {% endif %}
+                        {{ original.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="rr-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="rr-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-boxes"></i></div>
+                <div class="value">{{ items_count }}</div>
+                <div class="label">{% trans "Items" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+                <div class="value">{{ suggested_refund }}</div>
+                <div class="label">{% trans "Suggested Refund" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-tasks"></i></div>
+                <div class="value">{{ workflow_step }}/7</div>
+                <div class="label">{% trans "Workflow Step" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <div class="value">{{ days_open }}</div>
+                <div class="label">{% trans "Days Open" %}</div>
+            </div>
+        </div>
+
+    <!-- Error Banner -->
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="returnrequest_form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="details" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Details" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="shipping" role="tab" aria-selected="false">
+                <i class="fas fa-shipping-fast"></i>
+                <span class="label">{% trans "Shipping" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="inspection" role="tab" aria-selected="false">
+                <i class="fas fa-search"></i>
+                <span class="label">{% trans "Inspection" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="notes" role="tab" aria-selected="false">
+                <i class="fas fa-comment-alt"></i>
+                <span class="label">{% trans "Notes" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="timestamps" role="tab" aria-selected="false">
+                <i class="fas fa-clock"></i>
+                <span class="label">{% trans "Timeline" %}</span>
+            </button>
+        </div>
+
+        <!-- Details Tab -->
+        <div class="admin-tab-content active" id="tab-details" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-details' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-undo-alt"></i> {% trans "Return Information" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-items' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-boxes"></i> {% trans "Items Being Returned" %}</h2>
+                    <p class="form-card-description">{% trans "JSON format detailing which order items are being returned." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Shipping Tab -->
+        <div class="admin-tab-content" id="tab-shipping" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-shipping' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-shipping-fast"></i> {% trans "Return Shipping" %}</h2>
+                    <p class="form-card-description">{% trans "Shipping label and tracking information for the return." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if not field.is_readonly and field.field.name == 'return_label_generated' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.label_tag }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% elif field.is_readonly %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                <div class="readonly">{{ field.contents }}</div>
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Inspection Tab -->
+        <div class="admin-tab-content" id="tab-inspection" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-inspection' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-search"></i> {% trans "Inspection Results" %}</h2>
+                    <p class="form-card-description">{% trans "Document the condition of returned items after inspection." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-refund' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-money-bill-wave"></i> {% trans "Refund Processing" %}</h2>
+                    <p class="form-card-description">{% trans "Refund is created after inspection when processing return." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Notes Tab -->
+        <div class="admin-tab-content" id="tab-notes" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-notes' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-comment-alt"></i> {% trans "Notes & Communication" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Timeline Tab -->
+        <div class="admin-tab-content" id="tab-timestamps" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-workflow' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-user-shield"></i> {% trans "Workflow Tracking" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-timestamps' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-clock"></i> {% trans "Timestamps" %}</h2>
+                    <p class="form-card-description">{% trans "Workflow milestone timestamps." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Hidden submit row -->
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% else %}
+    {%comment%}ADD MODE — Clean sequential form{%endcomment%}
+    <div class="add-mode-header">
+        <h1><i class="fas fa-plus"></i> {% trans "Create Return Request" %}</h1>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="rr-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="button" class="util-btn" id="rr-save-btn" title="{% trans 'Save and return to list' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="returnrequest_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for fieldset in adminform %}
+        <div class="form-card">
+            <h2>
+                {% if 'tab-details' in fieldset.classes %}
+                    <i class="fas fa-undo-alt"></i> {% trans "Return Information" %}
+                {% elif 'tab-items' in fieldset.classes %}
+                    <i class="fas fa-boxes"></i> {% trans "Items Being Returned" %}
+                {% elif 'tab-shipping' in fieldset.classes %}
+                    <i class="fas fa-shipping-fast"></i> {% trans "Shipping" %}
+                {% elif 'tab-notes' in fieldset.classes %}
+                    <i class="fas fa-comment-alt"></i> {% trans "Notes" %}
+                {% else %}
+                    <i class="fas fa-cog"></i> {{ fieldset.name }}
+                {% endif %}
+            </h2>
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {% if not field.is_readonly and field.field.name == 'return_label_generated' %}
+                    <div class="form-row field-{{ field.field.name }}">
+                        <label class="checkbox-label">
+                            {{ field.field }} {{ field.label_tag }}
+                        </label>
+                    </div>
+                    {% elif field.is_readonly %}
+                    <div class="form-row field-{{ field.field.name }}">
+                        {{ field.label_tag }}
+                        <div class="readonly">{{ field.contents }}</div>
+                    </div>
+                    {% else %}
+                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                        {{ field.errors }}
+                        {{ field.label_tag }}
+                        {{ field.field }}
+                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'orders/js/returnrequest_change_form.js' %}"></script>
+{% endblock %}

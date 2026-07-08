@@ -1,0 +1,39 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Sales Region" %}: {{ original.name }}{% else %}{% trans "Add Sales Region" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/salesregion_change_form.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if original %}
+<div class="salesregion-change-form-stats">
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-warehouse"></i></div>
+            <div class="value">{{ warehouse_count|default:"0" }}</div>
+            <div class="label">{% trans "Warehouses" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-globe"></i></div>
+            <div class="value">{{ country_count|default:"0" }}</div>
+            <div class="label">{% trans "Countries" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="value">{{ original.default_currency }}</div>
+            <div class="label">{% trans "Currency" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-sort-numeric-up"></i></div>
+            <div class="value">{{ original.priority }}</div>
+            <div class="label">{% trans "Priority" %}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Staff Roles" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'staff_roles/css/role_management.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-user-shield"></i>
+            {% trans "Staff Roles" %}
+        </h1>
+        <p class="subtitle">{% trans "Define roles to control what your staff can access. Assign roles to users from their profile." %}</p>
+    </div>
+
+    <!-- Add Role Button -->
+    {% if has_add_permission %}
+    <div class="role-add-bar">
+        <a href="{% url 'admin:staff_roles_staffrole_add' %}" class="button default">
+            <i class="fas fa-plus"></i> {% trans "Add Role" %}
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Role Cards -->
+    <div class="list-row-cards">
+        {% for role in cl.result_list %}
+        <div class="list-row-card">
+            <div class="list-row-card-icon" data-color="{{ role.color }}">
+                <i class="{{ role.icon }}"></i>
+            </div>
+            <div class="list-row-card-content">
+                <h3 class="list-row-card-title">
+                    <a href="{% url 'admin:staff_roles_staffrole_change' role.pk %}">{{ role.display_name }}</a>
+                </h3>
+                <p class="list-row-card-subtitle">
+                    {{ role.description|truncatewords:20|default:"&mdash;" }}
+                </p>
+                <div class="list-row-card-badges">
+                    {% if role.is_predefined %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-lock"></i> {% trans "System" %}
+                    </span>
+                    {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-user-edit"></i> {% trans "Custom" %}
+                    </span>
+                    {% endif %}
+
+                    {% if role.can_access_admin %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-desktop"></i> {% trans "Admin" %}
+                    </span>
+                    {% endif %}
+
+                    {% if role.can_access_pos %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-cash-register"></i> {% trans "POS" %}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="list-row-card-meta">
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-users"></i> {{ role.members_total }} {% trans "members" %}
+                    </span>
+                </div>
+            </div>
+            <div class="list-row-card-actions">
+                <a href="{% url 'admin:staff_roles_staffrole_change' role.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+                {% if not role.is_predefined %}
+                <a href="{% url 'admin:staff_roles_staffrole_delete' role.pk %}" class="list-row-card-action deletelink" title="{% trans 'Delete' %}">
+                    <i class="fas fa-trash"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="list-row-card role-empty-state">
+            <i class="fas fa-user-shield"></i>
+            <p>{% trans "No roles defined yet." %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

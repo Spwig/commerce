@@ -1,0 +1,494 @@
+{% extends "admin/migration/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+{% if job.status == 'completed' %}
+<!-- Success State -->
+<div class="alert-success success-alert-large">
+    <i class="fas fa-check-circle success-icon-large"></i>
+    <strong class="success-heading">{% trans "Migration Completed Successfully!" %}</strong>
+    <p class="success-message">{% trans "Your data has been successfully imported from" %} {{ job.get_platform_display }}.</p>
+</div>
+
+<!-- Summary Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number stat-number-success">{{ job.products_imported }}</div>
+        <div class="stat-label">{% trans "Products" %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number stat-number-success">{{ job.categories_imported }}</div>
+        <div class="stat-label">{% trans "Categories" %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number stat-number-success">{{ job.customers_imported }}</div>
+        <div class="stat-label">{% trans "Customers" %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number stat-number-success">{{ job.orders_imported }}</div>
+        <div class="stat-label">{% trans "Orders" %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number stat-number-success">{{ job.reviews_imported }}</div>
+        <div class="stat-label">{% trans "Reviews" %}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number stat-number-success">{{ job.coupons_imported }}</div>
+        <div class="stat-label">{% trans "Coupons" %}</div>
+    </div>
+    {% if job.affiliates_imported > 0 %}
+    <div class="stat-card stat-card-affiliate">
+        <div class="stat-number stat-number-success">{{ job.affiliates_imported }}</div>
+        <div class="stat-label">{% trans "Affiliates" %}</div>
+    </div>
+    {% endif %}
+    {% if job.commissions_imported > 0 %}
+    <div class="stat-card stat-card-affiliate">
+        <div class="stat-number stat-number-success">{{ job.commissions_imported }}</div>
+        <div class="stat-label">{% trans "Commissions" %}</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Detailed Results -->
+<div class="content-box">
+    <h3>
+        <i class="fas fa-chart-bar"></i>
+        {% trans "Import Summary" %}
+    </h3>
+
+    <table class="import-summary-table">
+        <thead>
+            <tr>
+                <th>{% trans "Data Type" %}</th>
+                <th class="text-right">{% trans "Imported" %}</th>
+                <th class="text-right">{% trans "Skipped" %}</th>
+                <th class="text-right">{% trans "Failed" %}</th>
+                <th class="text-right">{% trans "Total" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for step in steps %}
+            <tr>
+                <td>
+                    <i class="fas fa-{{ step.icon }}"></i>
+                    {{ step.get_step_type_display }}
+                </td>
+                <td class="text-right text-success">
+                    {{ step.imported }}
+                </td>
+                <td class="text-right text-muted">
+                    {{ step.skipped }}
+                </td>
+                <td class="text-right text-error">
+                    {{ step.failed }}
+                </td>
+                <td class="text-right font-semibold">
+                    {{ step.total }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>{% trans "Total" %}</td>
+                <td class="text-right text-success">
+                    {{ job.total_imported }}
+                </td>
+                <td class="text-right text-muted">
+                    {{ job.total_skipped }}
+                </td>
+                <td class="text-right text-error">
+                    {{ job.total_failed }}
+                </td>
+                <td class="text-right">
+                    {{ job.total_items }}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<!-- Link Rewriting -->
+{% if total_links > 0 %}
+<div class="content-box" id="link-rewriting-section">
+    <h3>
+        <i class="fas fa-link"></i>
+        {% trans "Link Rewriting" %}
+        <span class="link-section-heading">
+            {{ total_links }} {% trans "links found" %}
+            {% if pending_count > 0 %}
+                &middot; <span class="link-status-warning">{{ pending_count }} {% trans "pending review" %}</span>
+            {% endif %}
+            {% if applied_count > 0 %}
+                &middot; <span class="link-status-success">{{ applied_count }} {% trans "applied" %}</span>
+            {% endif %}
+        </span>
+    </h3>
+
+    <div class="alert-info link-replacement-info">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <p class="success-message">{% trans "We found internal links in your imported content pointing to your old site. Review the suggestions below and approve the replacements." %}</p>
+            {% if high_confidence_count > 0 %}
+            <p>
+                <strong>{{ high_confidence_count }}</strong> {% trans "links have high-confidence matches and can be auto-approved." %}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="link-actions-toolbar">
+        {% if high_confidence_count > 0 %}
+        <button type="button" class="button primary" data-action="bulk-approve-high-confidence">
+            <i class="fas fa-check-double"></i>
+            {% trans "Auto-approve high confidence" %} ({{ high_confidence_count }})
+        </button>
+        {% endif %}
+        {% if pending_count > 0 %}
+        <button type="button" class="button button-success" data-action="apply-approved-links" id="apply-links-btn" disabled>
+            <i class="fas fa-play"></i>
+            {% trans "Apply Approved Links" %} (<span id="approved-count">0</span>)
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Status Messages -->
+    <div id="link-status-msg" class="link-status-message"></div>
+
+    <!-- Grouped Links -->
+    {% for group in grouped_links %}
+    <div class="link-group">
+        <div class="link-group-header" data-action="toggle-group">
+            <i class="fas fa-chevron-down chevron-icon"></i>
+            <i class="fas fa-{{ group.icon }} group-icon"></i>
+            <span class="group-title">{{ group.source_type_display }}</span>
+            <span class="group-subtitle">&mdash; {{ group.source_title }}</span>
+            <span class="link-count">{{ group.links|length }} {% trans "links" %}</span>
+            {% if group.admin_url %}
+            <a href="{{ group.admin_url }}" class="viewlink edit-link" target="_blank">
+                <i class="fas fa-external-link-alt"></i> {% trans "Edit" %}
+            </a>
+            {% endif %}
+        </div>
+        <div class="link-group-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>{% trans "Original URL" %}</th>
+                        <th>{% trans "Anchor Text" %}</th>
+                        <th>{% trans "Suggested URL" %}</th>
+                        <th class="text-center">{% trans "Match" %}</th>
+                        <th class="text-right">{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for link in group.links %}
+                    <tr class="link-row" data-link-id="{{ link.id }}" data-status="{{ link.status }}">
+                        <td class="url-cell">
+                            <code>{{ link.original_url }}</code>
+                        </td>
+                        <td class="context-cell">
+                            {{ link.anchor_text|truncatechars:50 }}
+                        </td>
+                        <td class="url-cell">
+                            {% if link.status == 'applied' %}
+                                <code class="text-success">{{ link.get_effective_url }}</code>
+                            {% elif link.suggested_url %}
+                                <code>{{ link.suggested_url }}</code>
+                            {% else %}
+                                <input class="url-replacement-input">
+                            {% endif %}
+                        </td>
+                        <td class="match-cell">
+                            {% if link.status == 'applied' %}
+                                <span class="status-badge status-badge-applied">{% trans "Applied" %}</span>
+                            {% elif link.status == 'skipped' %}
+                                <span class="status-badge status-badge-skipped">{% trans "Skipped" %}</span>
+                            {% elif link.status == 'approved' %}
+                                <span class="status-badge status-badge-approved">{% trans "Approved" %}</span>
+                            {% elif link.confidence >= 0.85 %}
+                                <span class="status-badge status-badge-high">{{ link.confidence_percent }}%</span>
+                            {% elif link.confidence >= 0.5 %}
+                                <span class="status-badge status-badge-medium">{{ link.confidence_percent }}%</span>
+                            {% elif link.confidence > 0 %}
+                                <span class="status-badge status-badge-low">{{ link.confidence_percent }}%</span>
+                            {% else %}
+                                <span class="status-badge status-badge-skipped">{% trans "None" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-cell">
+                            {% if link.status == 'pending' %}
+                            <div class="action-button-group">
+                                {% if link.suggested_url %}
+                                <button type="button" class="btn-link-action action-button-approve" data-action="approve" data-link-id="{{ link.id }}"
+                                        title="{% trans 'Approve' %}">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                {% endif %}
+                                <button type="button" class="btn-link-action action-button-skip" data-action="skip" data-link-id="{{ link.id }}"
+                                        title="{% trans 'Skip' %}">
+                                    <i class="fas fa-forward"></i>
+                                </button>
+                            </div>
+                            {% elif link.status == 'approved' %}
+                                <span class="status-icon-success"><i class="fas fa-check"></i></span>
+                            {% elif link.status == 'applied' %}
+                                <span class="status-icon-success"><i class="fas fa-check-double"></i></span>
+                            {% elif link.status == 'skipped' %}
+                                <span class="status-icon-muted"><i class="fas fa-forward"></i></span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Rollback Information -->
+{% if job.is_rollbackable %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-undo"></i>
+        {% trans "Rollback Available" %}
+    </h3>
+    <p>{% trans "You can rollback this migration until" %} <strong>{{ job.rollback_deadline|date:"Y-m-d H:i:s" }}</strong>.</p>
+
+    <div class="alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% trans "Important" %}</strong>
+            <p>{% trans "Rolling back will remove all imported data. This action cannot be undone. Make sure to backup any changes you've made since the migration." %}</p>
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'admin:migration_job_rollback' job.id %}" id="rollback-form" class="mt-16">
+        {% csrf_token %}
+        <button type="submit" class="button danger"
+                data-action="confirm-rollback"
+                data-confirm-msg="{% trans 'Are you sure you want to rollback this migration? This will remove all imported data and cannot be undone.' %}">
+            <i class="fas fa-undo"></i>
+            {% trans "Rollback Migration" %}
+        </button>
+    </form>
+</div>
+{% endif %}
+
+{% elif job.status == 'failed' %}
+<!-- Failure State -->
+<div class="alert-error error-alert-large">
+    <i class="fas fa-exclamation-circle error-icon-large"></i>
+    <strong class="success-heading">{% trans "Migration Failed" %}</strong>
+    <p class="success-message">{% trans "There was an error during the import process. The migration has been rolled back automatically." %}</p>
+</div>
+
+<!-- Error Details -->
+<div class="content-box">
+    <h3>
+        <i class="fas fa-bug"></i>
+        {% trans "Error Details" %}
+    </h3>
+
+    {% if error_logs %}
+    <div class="mt-16">
+        {% for log in error_logs %}
+        <div class="error-detail-block">
+            <div class="text-error font-semibold mb-4">
+                {{ log.created_at|date:"Y-m-d H:i:s" }}
+            </div>
+            <div class="error-detail-message">
+                {{ log.message }}
+            </div>
+            {% if log.context %}
+            <details class="mt-8">
+                <summary class="text-muted text-sm error-detail-summary">
+                    {% trans "Show technical details" %}
+                </summary>
+                <pre class="error-detail-context">{{ log.context|safe }}</pre>
+            </details>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted no-error-text">{% trans "No detailed error information available." %}</p>
+    {% endif %}
+</div>
+
+<!-- Partial Results (if any) -->
+{% if job.total_imported > 0 %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-info-circle"></i>
+        {% trans "Partial Import Results" %}
+    </h3>
+    <p>{% trans "The following data was imported before the error occurred (all rolled back):" %}</p>
+
+    <div class="stats-grid">
+        {% if job.products_imported > 0 %}
+        <div class="stat-card">
+            <div class="stat-number text-muted">{{ job.products_imported }}</div>
+            <div class="stat-label">{% trans "Products" %}</div>
+        </div>
+        {% endif %}
+        {% if job.categories_imported > 0 %}
+        <div class="stat-card">
+            <div class="stat-number text-muted">{{ job.categories_imported }}</div>
+            <div class="stat-label">{% trans "Categories" %}</div>
+        </div>
+        {% endif %}
+        {% if job.customers_imported > 0 %}
+        <div class="stat-card">
+            <div class="stat-number text-muted">{{ job.customers_imported }}</div>
+            <div class="stat-label">{% trans "Customers" %}</div>
+        </div>
+        {% endif %}
+        {% if job.orders_imported > 0 %}
+        <div class="stat-card">
+            <div class="stat-number text-muted">{{ job.orders_imported }}</div>
+            <div class="stat-label">{% trans "Orders" %}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Retry Option -->
+<div class="content-box">
+    <h3>
+        <i class="fas fa-redo"></i>
+        {% trans "Try Again" %}
+    </h3>
+    <p>{% trans "You can start a new migration with the same settings or adjust your configuration." %}</p>
+
+    <div class="wizard-button-group">
+        <a href="{% url 'admin:migration_wizard_step2' job.id %}" class="button secondary">
+            <i class="fas fa-edit"></i>
+            {% trans "Adjust Settings" %}
+        </a>
+        <a href="{% url 'admin:migration_wizard_start' %}" class="button primary">
+            <i class="fas fa-redo"></i>
+            {% trans "Start New Migration" %}
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Next Steps -->
+<div class="content-box">
+    <h3>
+        <i class="fas fa-list-check"></i>
+        {% trans "Next Steps" %}
+    </h3>
+
+    {% if job.status == 'completed' %}
+    <ol>
+        <li class="my-8">
+            <strong>{% trans "Review your imported data" %}</strong><br>
+            <span class="text-muted text-sm">
+                {% trans "Check your products, customers, and orders to ensure everything imported correctly." %}
+            </span>
+            <div class="wizard-next-step-actions">
+                <a href="/admin/catalog/product/" class="button secondary small">
+                    <i class="fas fa-box"></i> {% trans "View Products" %}
+                </a>
+                <a href="/admin/customers/customer/" class="button secondary small">
+                    <i class="fas fa-users"></i> {% trans "View Customers" %}
+                </a>
+                <a href="/admin/orders/order/" class="button secondary small">
+                    <i class="fas fa-shopping-cart"></i> {% trans "View Orders" %}
+                </a>
+            </div>
+        </li>
+
+        <li class="my-8">
+            <strong>{% trans "Configure your store settings" %}</strong><br>
+            <span class="text-muted text-sm">
+                {% trans "Review and adjust shipping, tax, and payment settings for your store." %}
+            </span>
+        </li>
+
+        <li class="my-8">
+            <strong>{% trans "Test your checkout process" %}</strong><br>
+            <span class="text-muted text-sm">
+                {% trans "Place a test order to ensure everything works correctly." %}
+            </span>
+        </li>
+
+        <li class="my-8">
+            <strong>{% trans "Update your DNS settings" %}</strong><br>
+            <span class="text-muted text-sm">
+                {% trans "When you're ready to go live, point your domain to this platform." %}
+            </span>
+        </li>
+    </ol>
+    {% else %}
+    <ul>
+        <li class="my-8">
+            <strong>{% trans "Review the error logs" %}</strong> - {% trans "Understand what went wrong during the migration" %}
+        </li>
+        <li class="my-8">
+            <strong>{% trans "Check your source data" %}</strong> - {% trans "Ensure your data is valid and accessible" %}
+        </li>
+        <li class="my-8">
+            <strong>{% trans "Contact support" %}</strong> - {% trans "If you need help, our team is here to assist" %}
+        </li>
+    </ul>
+    {% endif %}
+</div>
+
+<div class="content-box">
+    <h3>
+        <i class="fas fa-download"></i>
+        {% trans "Download Report" %}
+    </h3>
+    <p>{% trans "Download a detailed report of this migration for your records." %}</p>
+
+    <div class="wizard-button-group">
+        <a href="{% url 'admin:migration_download_report' job.id %}?format=pdf" class="button secondary">
+            <i class="fas fa-file-pdf"></i>
+            {% trans "Download PDF" %}
+        </a>
+        <a href="{% url 'admin:migration_download_report' job.id %}?format=csv" class="button secondary">
+            <i class="fas fa-file-csv"></i>
+            {% trans "Download CSV" %}
+        </a>
+        <a href="{% url 'admin:migration_download_logs' job.id %}" class="button secondary">
+            <i class="fas fa-file-alt"></i>
+            {% trans "Download Logs" %}
+        </a>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div class="wizard-nav">
+    <a href="{% url 'admin:migration_migrationjob_changelist' %}" class="button secondary">
+        <i class="fas fa-list"></i>
+        {% trans "View All Migrations" %}
+    </a>
+    {% if job.status == 'completed' %}
+    <a href="{% url 'admin:migration_wizard_start' %}" class="button primary">
+        <i class="fas fa-plus"></i>
+        {% trans "Start Another Migration" %}
+    </a>
+    {% else %}
+    <a href="{% url 'admin:migration_wizard_start' %}" class="button primary">
+        <i class="fas fa-redo"></i>
+        {% trans "Try Again" %}
+    </a>
+    {% endif %}
+</div>
+
+<script type="application/json" id="step6-data">
+{
+    "csrfToken": "{{ csrf_token }}",
+    "jobId": "{{ job.id }}"
+}
+</script>
+<script src="{% static 'migration/js/wizard_step6.js' %}"></script>
+{% endblock %}

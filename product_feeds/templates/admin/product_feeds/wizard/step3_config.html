@@ -1,0 +1,191 @@
+{% extends "admin/product_feeds/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Configure Feed Settings" %}</h2>
+    <p class="step-description">
+        {% blocktrans with provider=component.name %}
+        Enter your API credentials and configure feed settings for {{ provider }}.
+        {% endblocktrans %}
+    </p>
+
+    {% if signup_url %}
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>{% trans "Don't have an account yet?" %}</strong>
+            <p>
+                {% trans "You'll need an account to get API credentials." %}
+                <a href="{{ signup_url }}" target="_blank" rel="noopener">
+                    {% trans "Sign up here" %} <i class="fas fa-external-link-alt"></i>
+                </a>
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="config-form" class="credentials-form">
+        {% csrf_token %}
+
+        <!-- Account Name -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-tag"></i> {% trans "Account Name" %}
+            </h3>
+            <div class="form-group">
+                <label for="id_account_name">
+                    {% trans "Feed Name" %}
+                    <span class="required">*</span>
+                </label>
+                <input type="text"
+                       name="account_name"
+                       id="id_account_name"
+                       class="form-control"
+                       required
+                       placeholder="{% trans "e.g., Google Shopping - US, Meta Catalog - Main" %}">
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "Give this feed a descriptive name to identify it in your dashboard." %}
+                </p>
+            </div>
+        </div>
+
+        <!-- API Credentials -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-key"></i> {% trans "API Credentials" %}
+            </h3>
+
+            {% if credential_schema %}
+                {% for field_name, field_config in credential_schema.items %}
+                <div class="form-group">
+                    <label for="id_{{ field_name }}">
+                        {{ field_config.label }}
+                        {% if field_config.required %}<span class="required">*</span>{% endif %}
+                    </label>
+
+                    {% if field_config.type == 'password' %}
+                        <input type="password"
+                               name="{{ field_name }}"
+                               id="id_{{ field_name }}"
+                               class="form-control"
+                               {% if field_config.required %}required{% endif %}
+                               {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>
+                    {% elif field_config.type == 'text' %}
+                        <input type="text"
+                               name="{{ field_name }}"
+                               id="id_{{ field_name }}"
+                               class="form-control"
+                               {% if field_config.required %}required{% endif %}
+                               {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>
+                    {% elif field_config.type == 'select' %}
+                        <select name="{{ field_name }}"
+                                id="id_{{ field_name }}"
+                                class="form-control"
+                                {% if field_config.required %}required{% endif %}>
+                            <option value="">{% trans "Select..." %}</option>
+                            {% for choice in field_config.choices %}
+                                {% if choice.value %}
+                                <option value="{{ choice.value }}" {% if field_config.default == choice.value %}selected{% endif %}>{{ choice.label }}</option>
+                                {% else %}
+                                <option value="{{ choice }}" {% if field_config.default == choice %}selected{% endif %}>{{ choice }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    {% elif field_config.type == 'textarea' %}
+                        <textarea name="{{ field_name }}"
+                                  id="id_{{ field_name }}"
+                                  class="form-control"
+                                  rows="4"
+                                  {% if field_config.required %}required{% endif %}
+                                  {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}></textarea>
+                    {% else %}
+                        <input type="text"
+                               name="{{ field_name }}"
+                               id="id_{{ field_name }}"
+                               class="form-control"
+                               {% if field_config.required %}required{% endif %}>
+                    {% endif %}
+
+                    {% if field_config.help_text %}
+                    <p class="help-text">
+                        <i class="fas fa-question-circle"></i> {{ field_config.help_text }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>{% trans "No credential fields configured for this provider." %}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Feed Configuration -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-cog"></i> {% trans "Feed Settings" %}
+            </h3>
+
+            <div class="form-group">
+                <label for="id_sync_interval">{% trans "Sync Interval" %}</label>
+                <select name="sync_interval" id="id_sync_interval" class="form-control">
+                    <option value="hourly">{% trans "Hourly" %}</option>
+                    <option value="daily" selected>{% trans "Daily" %}</option>
+                    <option value="weekly">{% trans "Weekly" %}</option>
+                    <option value="manual">{% trans "Manual Only" %}</option>
+                </select>
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "How often to automatically sync your product feed to this provider." %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="id_feed_format">{% trans "Feed Format" %}</label>
+                <select name="feed_format" id="id_feed_format" class="form-control">
+                    {% for format_code, format_label in feed_formats %}
+                    <option value="{{ format_code }}" {% if format_code == default_format %}selected{% endif %}>{{ format_label }}</option>
+                    {% empty %}
+                    <option value="xml">XML</option>
+                    <option value="csv">CSV</option>
+                    <option value="json">JSON</option>
+                    {% endfor %}
+                </select>
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "The format to generate your product feed in." %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_active" checked>
+                    {% trans "Enable this feed" %}
+                </label>
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i>
+                    {% trans "Uncheck to disable automatic syncing for this feed." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="security-notice">
+            <i class="fas fa-lock"></i>
+            <span>{% trans "Your credentials will be encrypted using AES-256 encryption before being stored in the database." %}</span>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'product_feeds:wizard_step2' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="config-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

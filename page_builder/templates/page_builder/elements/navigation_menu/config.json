@@ -1,0 +1,460 @@
+{
+  "element_type": "navigation_menu",
+  "name": "Navigation Menu",
+  "description": "Embed a navigation menu into the page with customizable display options",
+  "version": "1.0.1",
+  "category": "layout",
+  "icon": "fas fa-bars",
+  "author": "Spwig",
+  "tags": [
+    "navigation",
+    "menu",
+    "links",
+    "header",
+    "footer"
+  ],
+  "supports_translation": true,
+  "translation_domain": "navigation_menu_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/navigation-menu.css"],
+  "context_provider": "get_navigation_menu_context",
+  "tabs": {
+    "content": {
+      "label": "Content",
+      "icon": "fas fa-bars",
+      "order": 1,
+      "properties": {
+        "menu_group": {
+          "type": "property_group",
+          "label": "Menu Selection",
+          "columns": 1,
+          "properties": {
+            "menu_id": {
+              "type": "select",
+              "label": "Select Menu",
+              "dynamic_options_source": "menus",
+              "placeholder": "-- Select a menu --"
+            },
+            "fallback_text": {
+              "type": "string",
+              "label": "Fallback Text",
+              "default": "Menu not available",
+              "translatable": true,
+              "help": "Text shown when menu is not selected or not found"
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "label": "Appearance",
+      "icon": "fas fa-palette",
+      "order": 2,
+      "properties": {
+        "style_group": {
+          "type": "property_group",
+          "label": "Display Style",
+          "properties": {
+            "display_type_override": {
+              "type": "select",
+              "label": "Display Type",
+              "options": [
+                {
+                  "value": "",
+                  "label": "Use Menu Default"
+                },
+                {
+                  "value": "horizontal",
+                  "label": "Horizontal"
+                },
+                {
+                  "value": "vertical",
+                  "label": "Vertical"
+                },
+                {
+                  "value": "dropdown",
+                  "label": "Dropdown"
+                }
+              ],
+              "default": ""
+            },
+            "style_preset": {
+              "type": "select",
+              "label": "Style Preset",
+              "options": [
+                {
+                  "value": "default",
+                  "label": "Default"
+                },
+                {
+                  "value": "minimal",
+                  "label": "Minimal"
+                },
+                {
+                  "value": "pills",
+                  "label": "Pills"
+                },
+                {
+                  "value": "underline",
+                  "label": "Underline"
+                },
+                {
+                  "value": "bordered",
+                  "label": "Bordered"
+                }
+              ],
+              "default": "default"
+            }
+          }
+        },
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout",
+          "properties": {
+            "alignment": {
+              "type": "select",
+              "label": "Alignment",
+              "options": [
+                {
+                  "value": "left",
+                  "label": "Left"
+                },
+                {
+                  "value": "center",
+                  "label": "Center"
+                },
+                {
+                  "value": "right",
+                  "label": "Right"
+                },
+                {
+                  "value": "space-between",
+                  "label": "Space Between"
+                }
+              ],
+              "default": "left"
+            },
+            "item_spacing": {
+              "type": "select",
+              "label": "Item Spacing",
+              "options": [
+                {
+                  "value": "tight",
+                  "label": "Tight"
+                },
+                {
+                  "value": "normal",
+                  "label": "Normal"
+                },
+                {
+                  "value": "loose",
+                  "label": "Loose"
+                }
+              ],
+              "default": "normal"
+            }
+          }
+        }
+      }
+    },
+    "mobile": {
+      "label": "Mobile",
+      "icon": "fas fa-mobile-alt",
+      "order": 3,
+      "properties": {
+        "mobile_group": {
+          "type": "property_group",
+          "label": "Mobile Settings",
+          "properties": {
+            "mobile_toggle": {
+              "type": "boolean",
+              "label": "Show Mobile Toggle",
+              "default": true,
+              "help": "Show hamburger menu toggle on mobile devices"
+            },
+            "mobile_behavior": {
+              "type": "select",
+              "label": "Mobile Behavior",
+              "options": [
+                {
+                  "value": "accordion",
+                  "label": "Accordion"
+                },
+                {
+                  "value": "slide",
+                  "label": "Slide In"
+                },
+                {
+                  "value": "fullscreen",
+                  "label": "Fullscreen Overlay"
+                }
+              ],
+              "default": "accordion"
+            },
+            "mobile_breakpoint": {
+              "type": "select",
+              "label": "Mobile Breakpoint",
+              "options": [
+                {
+                  "value": "768",
+                  "label": "768px (Tablet)"
+                },
+                {
+                  "value": "992",
+                  "label": "992px (Desktop Small)"
+                },
+                {
+                  "value": "1024",
+                  "label": "1024px"
+                }
+              ],
+              "default": "768"
+            }
+          }
+        }
+      }
+    },
+    "icons": {
+      "label": "Icons",
+      "icon": "fas fa-icons",
+      "order": 4,
+      "properties": {
+        "icons_group": {
+          "type": "property_group",
+          "label": "Icon Settings",
+          "properties": {
+            "show_icons": {
+              "type": "boolean",
+              "label": "Show Item Icons",
+              "default": true
+            },
+            "icon_position": {
+              "type": "select",
+              "label": "Icon Position",
+              "options": [
+                {
+                  "value": "left",
+                  "label": "Left of Text"
+                },
+                {
+                  "value": "right",
+                  "label": "Right of Text"
+                },
+                {
+                  "value": "above",
+                  "label": "Above Text"
+                }
+              ],
+              "default": "left"
+            },
+            "dropdown_icon": {
+              "type": "icon_picker",
+              "label": "Dropdown Arrow Icon",
+              "default": "fa-chevron-down"
+            },
+            "dropdown_icon_style": {
+              "type": "select",
+              "label": "Dropdown Icon Style",
+              "options": [
+                {"value": "solid", "label": "Solid (fas)"},
+                {"value": "regular", "label": "Regular (far)"},
+                {"value": "light", "label": "Light (fal)"},
+                {"value": "duotone", "label": "Duotone (fad)"},
+                {"value": "brands", "label": "Brands (fab)"}
+              ],
+              "default": "solid"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "menu_id": {
+      "type": "select",
+      "label": "Select Menu",
+      "dynamic_options_source": "menus",
+      "placeholder": "-- Select a menu --"
+    },
+    "display_type_override": {
+      "type": "select",
+      "label": "Display Type",
+      "options": [
+        {
+          "value": "",
+          "label": "Use Menu Default"
+        },
+        {
+          "value": "horizontal",
+          "label": "Horizontal"
+        },
+        {
+          "value": "vertical",
+          "label": "Vertical"
+        },
+        {
+          "value": "dropdown",
+          "label": "Dropdown"
+        }
+      ],
+      "default": ""
+    },
+    "style_preset": {
+      "type": "select",
+      "label": "Style Preset",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "minimal",
+          "label": "Minimal"
+        },
+        {
+          "value": "pills",
+          "label": "Pills"
+        },
+        {
+          "value": "underline",
+          "label": "Underline"
+        },
+        {
+          "value": "bordered",
+          "label": "Bordered"
+        }
+      ],
+      "default": "default"
+    },
+    "alignment": {
+      "type": "select",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "space-between",
+          "label": "Space Between"
+        }
+      ],
+      "default": "left"
+    },
+    "item_spacing": {
+      "type": "select",
+      "label": "Item Spacing",
+      "options": [
+        {
+          "value": "tight",
+          "label": "Tight"
+        },
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "loose",
+          "label": "Loose"
+        }
+      ],
+      "default": "normal"
+    },
+    "mobile_toggle": {
+      "type": "boolean",
+      "label": "Show Mobile Toggle",
+      "default": true
+    },
+    "mobile_behavior": {
+      "type": "select",
+      "label": "Mobile Behavior",
+      "options": [
+        {
+          "value": "accordion",
+          "label": "Accordion"
+        },
+        {
+          "value": "slide",
+          "label": "Slide In"
+        },
+        {
+          "value": "fullscreen",
+          "label": "Fullscreen Overlay"
+        }
+      ],
+      "default": "accordion"
+    },
+    "show_icons": {
+      "type": "boolean",
+      "label": "Show Item Icons",
+      "default": true
+    },
+    "icon_position": {
+      "type": "select",
+      "label": "Icon Position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left of Text"
+        },
+        {
+          "value": "right",
+          "label": "Right of Text"
+        },
+        {
+          "value": "above",
+          "label": "Above Text"
+        }
+      ],
+      "default": "left"
+    },
+    "dropdown_icon": {"type": "icon_picker", "default": "fa-chevron-down"},
+    "dropdown_icon_style": {"type": "select", "default": "solid"}
+  },
+  "scripts": [
+    "/static/page_builder/js/elements/navigation-menu.js"
+  ],
+  "translations": {
+    "en": {
+      "name": "Navigation Menu",
+      "description": "Embed a navigation menu into the page"
+    },
+    "es": {
+      "name": "Men\u00fa de Navegaci\u00f3n",
+      "description": "Incrustar un men\u00fa de navegaci\u00f3n en la p\u00e1gina"
+    },
+    "fr": {
+      "name": "Menu de Navigation",
+      "description": "Int\u00e9grer un menu de navigation dans la page"
+    },
+    "de": {
+      "name": "Navigationsmen\u00fc",
+      "description": "Ein Navigationsmen\u00fc in die Seite einbetten"
+    },
+    "pt": {
+      "name": "Menu de Navega\u00e7\u00e3o",
+      "description": "Incorporar um menu de navega\u00e7\u00e3o na p\u00e1gina"
+    },
+    "zh-hans": {
+      "name": "\u5bfc\u822a\u83dc\u5355",
+      "description": "\u5728\u9875\u9762\u4e2d\u5d4c\u5165\u5bfc\u822a\u83dc\u5355"
+    },
+    "ja": {
+      "name": "\u30ca\u30d3\u30b2\u30fc\u30b7\u30e7\u30f3\u30e1\u30cb\u30e5\u30fc",
+      "description": "\u30da\u30fc\u30b8\u306b\u30ca\u30d3\u30b2\u30fc\u30b7\u30e7\u30f3\u30e1\u30cb\u30e5\u30fc\u3092\u57cb\u3081\u8fbc\u3080"
+    },
+    "ar": {
+      "name": "\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u062a\u0646\u0642\u0644",
+      "description": "\u062a\u0636\u0645\u064a\u0646 \u0642\u0627\u0626\u0645\u0629 \u062a\u0646\u0642\u0644 \u0641\u064a \u0627\u0644\u0635\u0641\u062d\u0629"
+    }
+  }
+}

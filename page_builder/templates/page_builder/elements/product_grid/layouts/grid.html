@@ -1,0 +1,13 @@
+{% load i18n merchant_trans %}
+{# Product Grid Layout - matches category/grid.html structure #}
+<div class="product-grid{% if element.content.columns %} product-grid--cols-{{ element.content.columns }}{% endif %}"
+     style="{% if element.content.spacing == 'tight' %}--grid-gap: 0.75rem;{% elif element.content.spacing == 'loose' %}--grid-gap: 2rem;{% endif %}">
+    {% for product in products %}
+        {% include 'page_builder/partials/product_card.html' with product=product show_badge=element.content.show_badges show_quick_actions=element.content.show_quick_actions %}
+    {% empty %}
+    <div class="product-grid__empty">
+        <i class="fas fa-box-open"></i>
+        <p>{% mtrans 'No products to display.' %}</p>
+    </div>
+    {% endfor %}
+</div>

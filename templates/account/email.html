@@ -1,0 +1,130 @@
+{% extends "allauth/layouts/base.html" %}
+{% load i18n static %}
+
+{% block head_title %}{% trans "Email Addresses" %}{% endblock %}
+
+{% block allauth_content %}
+<div class="allauth-email-management">
+    <div class="allauth-section-intro">
+        <p>{% trans "Manage your email addresses. Your primary email is used for account notifications and community access." %}</p>
+    </div>
+
+    {% if emailaddresses %}
+        <div class="allauth-email-list">
+            <h2>
+                <i class="fas fa-envelope-open-text"></i>
+                {% trans "Your Email Addresses" %}
+            </h2>
+
+            <form method="post" action="{% url 'account_email' %}">
+                {% csrf_token %}
+
+                <div class="allauth-email-addresses">
+                    {% for radio in emailaddress_radios %}
+                        {% with emailaddress=radio.emailaddress %}
+                            <div class="allauth-email-item {% if radio.checked %}selected{% endif %}">
+                                <div class="allauth-email-radio">
+                                    <input type="radio"
+                                           name="email"
+                                           value="{{ emailaddress.email }}"
+                                           id="{{ radio.id }}"
+                                           {% if radio.checked %}checked{% endif %}>
+                                </div>
+                                <label for="{{ radio.id }}" class="allauth-email-info">
+                                    <span class="allauth-email-address">{{ emailaddress.email }}</span>
+                                    <div class="allauth-email-badges">
+                                        {% if emailaddress.verified %}
+                                            <span class="allauth-badge allauth-badge-success">
+                                                <i class="fas fa-check-circle"></i>
+                                                {% trans "Verified" %}
+                                            </span>
+                                        {% else %}
+                                            <span class="allauth-badge allauth-badge-warning">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                                {% trans "Unverified" %}
+                                            </span>
+                                        {% endif %}
+                                        {% if emailaddress.primary %}
+                                            <span class="allauth-badge allauth-badge-primary">
+                                                <i class="fas fa-star"></i>
+                                                {% trans "Primary" %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </label>
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+
+                <div class="allauth-button-group">
+                    <button type="submit" name="action_primary" class="allauth-btn allauth-btn-primary">
+                        <i class="fas fa-star"></i>
+                        {% trans "Make Primary" %}
+                    </button>
+                    <button type="submit" name="action_send" class="allauth-btn allauth-btn-secondary">
+                        <i class="fas fa-paper-plane"></i>
+                        {% trans "Re-send Verification" %}
+                    </button>
+                    <button type="submit" name="action_remove" class="allauth-btn allauth-btn-danger" id="remove-email-btn" data-confirm="{% trans 'Do you really want to remove the selected email address?' %}">
+                        <i class="fas fa-trash-alt"></i>
+                        {% trans "Remove" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    {% else %}
+        <div class="allauth-warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{% trans "No Email Addresses" %}</strong>
+                <p>{% trans "You don't have any email addresses associated with your account. Please add one below." %}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if can_add_email %}
+        <div class="allauth-add-email">
+            <h2>
+                <i class="fas fa-plus-circle"></i>
+                {% trans "Add Email Address" %}
+            </h2>
+
+            <form method="post" action="{% url 'account_email' %}">
+                {% csrf_token %}
+
+                <div class="allauth-form-group">
+                    {% for field in form %}
+                        <div class="allauth-field">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <span class="allauth-helptext">{{ field.help_text }}</span>
+                            {% endif %}
+                            {% if field.errors %}
+                                <ul class="errorlist">
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="allauth-button-group">
+                    <button type="submit" name="action_add" class="allauth-btn allauth-btn-primary">
+                        <i class="fas fa-plus"></i>
+                        {% trans "Add Email" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_body %}
+{% load static %}
+<script src="{% static 'accounts/js/email-confirm.js' %}"></script>
+{% endblock %}

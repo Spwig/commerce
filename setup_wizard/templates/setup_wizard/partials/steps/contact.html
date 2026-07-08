@@ -1,0 +1,71 @@
+{% load i18n %}
+<div class="wizard-step-header">
+    <div class="wizard-step-icon">
+        <i class="fas fa-envelope"></i>
+    </div>
+    <h3 class="wizard-step-title">{% trans "Contact & Location" %}</h3>
+    <p class="wizard-step-description">{% trans "How can customers reach you? Where is your business located?" %}</p>
+</div>
+
+<form id="wizard-form-contact" novalidate>
+    {% csrf_token %}
+
+    <div class="wizard-form-section">
+        <h4 class="wizard-form-section-title">{% trans "Contact Details" %}</h4>
+
+        <div class="form-group">
+            <label for="id_admin_email">{% trans "Admin Email" %} <span style="color: var(--error-fg)">*</span></label>
+            {{ form.admin_email }}
+            {% if form.admin_email.help_text %}
+            <p class="help-text">{{ form.admin_email.help_text }}</p>
+            {% endif %}
+        </div>
+
+        <div class="wizard-form-row">
+            <div class="form-group">
+                <label for="id_support_email">{% trans "Support Email" %}</label>
+                {{ form.support_email }}
+            </div>
+            <div class="form-group">
+                <label for="id_phone_number">{% trans "Phone Number" %}</label>
+                {{ form.phone_number }}
+            </div>
+        </div>
+    </div>
+
+    <div class="wizard-form-section">
+        <h4 class="wizard-form-section-title">{% trans "Business Address" %} <span style="font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.75rem;">({% trans "optional" %})</span></h4>
+
+        <div class="form-group">
+            <label for="id_address_line_1">{% trans "Street Address" %}</label>
+            {{ form.address_line_1 }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_address_line_2">{% trans "Address Line 2" %}</label>
+            {{ form.address_line_2 }}
+        </div>
+
+        <div class="wizard-form-row">
+            <div class="form-group">
+                <label for="id_city">{% trans "City" %}</label>
+                {{ form.city }}
+            </div>
+            <div class="form-group">
+                <label for="id_state_province">{% trans "State / Province" %}</label>
+                {{ form.state_province }}
+            </div>
+        </div>
+
+        <div class="wizard-form-row">
+            <div class="form-group">
+                <label for="id_postal_code">{% trans "Postal Code" %}</label>
+                {{ form.postal_code }}
+            </div>
+            <div class="form-group">
+                <label for="id_country">{% trans "Country" %}</label>
+                {{ form.country }}
+            </div>
+        </div>
+    </div>
+</form>

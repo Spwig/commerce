@@ -1,0 +1,19 @@
+{% load i18n widget_tags %}
+{# Trust Badges Widget - Displays trust indicators #}
+{# Supports: 'badges' array [{type, icon?, title?, description?, image?}] and legacy show_X booleans #}
+
+{% get_trust_badges config as badges %}
+<div class="widget-trust-badges {{ widget.css_classes }}">
+    <div class="trust-badges-list">
+        {% for badge in badges %}
+        <div class="trust-badge" {% if badge.description %}title="{{ badge.description }}"{% endif %}>
+            {% if badge.image %}
+                <img src="{{ badge.image }}" alt="{{ badge.title }}" class="trust-badge-image" loading="lazy">
+            {% elif badge.icon %}
+                <i class="{{ badge.icon }}"></i>
+            {% endif %}
+            {% if badge.title %}<span>{{ badge.title }}</span>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>

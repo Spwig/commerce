@@ -1,0 +1,262 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ==========================================================================
+   Category Page - Carousel Template
+   Horizontal product slider with snap scrolling, navigation arrows, and dots.
+   Uses --theme-element-category-* design tokens from the token system.
+   Fallbacks use hardcoded values for graceful degradation.
+   ========================================================================== */
+
+/* ==========================================================================
+   Row Wrapper (Netflix-style row slices)
+   ========================================================================== */
+
+.cat-carousel-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--theme-element-category-carousel-row-gap, 2.5rem);
+}
+
+/* ==========================================================================
+   Carousel Container
+   ========================================================================== */
+
+.cat-carousel {
+    position: relative;
+    overflow: hidden;
+    padding: var(--theme-element-category-carousel-padding-y, 0.5rem) 0;
+}
+
+/* ==========================================================================
+   Carousel Track (scrollable row)
+   ========================================================================== */
+
+.cat-carousel__track {
+    display: flex;
+    gap: var(--theme-element-category-carousel-gap, 1.5rem);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: var(--theme-element-category-carousel-scroll-behavior, smooth);
+    padding: var(--theme-element-category-carousel-track-padding, 0.25rem);
+}
+
+.cat-carousel__track::-webkit-scrollbar {
+    display: none;
+}
+
+/* ==========================================================================
+   Carousel Slide
+   ========================================================================== */
+
+.cat-carousel__slide {
+    flex: 0 0 calc(25% - var(--theme-element-category-carousel-gap, 1.5rem) * 3 / 4);
+    scroll-snap-align: start;
+    min-width: 0;
+}
+
+/* Configurable slides per view */
+.cat-carousel__slide--1 {
+    flex: 0 0 100%;
+}
+
+.cat-carousel__slide--2 {
+    flex: 0 0 calc(50% - var(--theme-element-category-carousel-gap, 1.5rem) / 2);
+}
+
+.cat-carousel__slide--3 {
+    flex: 0 0 calc(33.3333% - var(--theme-element-category-carousel-gap, 1.5rem) * 2 / 3);
+}
+
+.cat-carousel__slide--4 {
+    flex: 0 0 calc(25% - var(--theme-element-category-carousel-gap, 1.5rem) * 3 / 4);
+}
+
+.cat-carousel__slide--5 {
+    flex: 0 0 calc(20% - var(--theme-element-category-carousel-gap, 1.5rem) * 4 / 5);
+}
+
+/* ==========================================================================
+   Navigation Arrows
+   ========================================================================== */
+
+.cat-carousel__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    pointer-events: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 var(--theme-element-category-carousel-nav-inset, 0.5rem);
+    box-sizing: border-box;
+}
+
+.cat-carousel__arrow {
+    width: var(--theme-element-category-carousel-arrow-size, 2.5rem);
+    height: var(--theme-element-category-carousel-arrow-size, 2.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--theme-element-category-carousel-arrow-bg, rgba(255, 255, 255, 0.95));
+    color: var(--theme-element-category-carousel-arrow-color, #1f2937);
+    border: var(--theme-element-category-carousel-arrow-border-width, 1px) solid var(--theme-element-category-carousel-arrow-border-color, #e5e7eb);
+    border-radius: var(--theme-element-category-carousel-arrow-radius, 9999px);
+    box-shadow: var(--theme-element-category-carousel-arrow-shadow, 0 2px 8px rgba(0, 0, 0, 0.1));
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background var(--theme-element-category-carousel-arrow-transition-duration, 150ms) var(--theme-element-category-carousel-arrow-transition-easing, ease),
+                color var(--theme-element-category-carousel-arrow-transition-duration, 150ms) var(--theme-element-category-carousel-arrow-transition-easing, ease),
+                box-shadow var(--theme-element-category-carousel-arrow-transition-duration, 150ms) var(--theme-element-category-carousel-arrow-transition-easing, ease);
+    font-size: var(--theme-element-category-carousel-arrow-icon-size, 1rem);
+    line-height: 1;
+    padding: 0;
+}
+
+.cat-carousel__arrow:hover {
+    background: var(--theme-element-category-carousel-arrow-hover-bg, #2563eb);
+    color: var(--theme-element-category-carousel-arrow-hover-color, #ffffff);
+    border-color: var(--theme-element-category-carousel-arrow-hover-border-color, #2563eb);
+    box-shadow: var(--theme-element-category-carousel-arrow-hover-shadow, 0 4px 12px rgba(37, 99, 235, 0.3));
+}
+
+.cat-carousel__arrow:disabled {
+    opacity: var(--theme-element-category-carousel-arrow-disabled-opacity, 0.3);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.cat-carousel__arrow--prev {
+    margin-right: auto;
+}
+
+.cat-carousel__arrow--next {
+    margin-left: auto;
+}
+
+/* ==========================================================================
+   Dot Indicators
+   ========================================================================== */
+
+.cat-carousel__dots {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: var(--theme-element-category-carousel-dot-gap, 0.5rem);
+    padding-top: var(--theme-element-category-carousel-dots-padding-top, 1.25rem);
+}
+
+.cat-carousel__dot {
+    width: var(--theme-element-category-carousel-dot-size, 0.5rem);
+    height: var(--theme-element-category-carousel-dot-size, 0.5rem);
+    border-radius: var(--theme-element-category-carousel-dot-radius, 9999px);
+    background: var(--theme-element-category-carousel-dot-color, #d1d5db);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background var(--theme-element-category-carousel-dot-transition-duration, 200ms) var(--theme-element-category-carousel-dot-transition-easing, ease),
+                transform var(--theme-element-category-carousel-dot-transition-duration, 200ms) var(--theme-element-category-carousel-dot-transition-easing, ease);
+}
+
+.cat-carousel__dot:hover {
+    background: var(--theme-element-category-carousel-dot-hover-color, #9ca3af);
+}
+
+.cat-carousel__dot--active {
+    background: var(--theme-element-category-carousel-dot-active-color, #2563eb);
+    transform: scale(var(--theme-element-category-carousel-dot-active-scale, 1.2));
+}
+
+/* ==========================================================================
+   Progress Indicator (page position bar + label, shown below track)
+   ========================================================================== */
+
+.cat-carousel__progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: var(--theme-element-category-carousel-dots-padding-top, 1.25rem);
+}
+
+.cat-carousel__progress-track {
+    flex: 1;
+    height: var(--theme-element-category-carousel-progress-height, 2px);
+    background: var(--theme-element-category-carousel-progress-track-bg, rgba(0, 0, 0, 0.1));
+    border-radius: 1px;
+    overflow: hidden;
+}
+
+.cat-carousel__progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--theme-element-category-carousel-dot-active-color, #2563eb);
+    border-radius: 1px;
+    transition: width var(--theme-element-category-carousel-arrow-transition-duration, 300ms) var(--theme-element-category-carousel-arrow-transition-easing, ease);
+}
+
+.cat-carousel__progress-label {
+    font-size: 0.75rem;
+    color: var(--theme-element-category-carousel-dot-color, #9ca3af);
+    white-space: nowrap;
+    min-width: 2.5rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Tablet: 2 slides */
+@media (max-width: 1024px) {
+    .cat-carousel__slide,
+    .cat-carousel__slide--3,
+    .cat-carousel__slide--4,
+    .cat-carousel__slide--5 {
+        flex: 0 0 calc(50% - var(--theme-element-category-carousel-gap, 1.5rem) / 2);
+    }
+}
+
+/* Mobile: 1 slide */
+@media (max-width: 640px) {
+    .cat-carousel__slide,
+    .cat-carousel__slide--1,
+    .cat-carousel__slide--2,
+    .cat-carousel__slide--3,
+    .cat-carousel__slide--4,
+    .cat-carousel__slide--5 {
+        flex: 0 0 100%;
+    }
+
+    .cat-carousel__arrow {
+        width: var(--theme-element-category-carousel-arrow-mobile-size, 2rem);
+        height: var(--theme-element-category-carousel-arrow-mobile-size, 2rem);
+        font-size: var(--theme-element-category-carousel-arrow-mobile-icon-size, 0.875rem);
+    }
+
+    .cat-carousel__dots {
+        padding-top: var(--theme-element-category-carousel-dots-mobile-padding-top, 1rem);
+    }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .cat-carousel__track {
+        scroll-behavior: auto;
+    }
+
+    .cat-carousel__arrow,
+    .cat-carousel__dot {
+        transition: none;
+    }
+
+    .cat-carousel__progress-fill {
+        transition: none;
+    }
+}

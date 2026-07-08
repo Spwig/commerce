@@ -1,0 +1,177 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for request in requests %}
+    <div class="list-row-card return-request-card {% if request.status == 'rejected' or request.status == 'cancelled' %}disabled{% endif %}">
+        <div class="list-row-card-icon">
+            <div class="return-status-icon {{ request.status }}">
+                {% if request.status == 'pending' %}
+                    <i class="fas fa-clock"></i>
+                {% elif request.status == 'approved' %}
+                    <i class="fas fa-check"></i>
+                {% elif request.status == 'rejected' %}
+                    <i class="fas fa-times"></i>
+                {% elif request.status == 'label_sent' %}
+                    <i class="fas fa-tag"></i>
+                {% elif request.status == 'in_transit' %}
+                    <i class="fas fa-shipping-fast"></i>
+                {% elif request.status == 'received' %}
+                    <i class="fas fa-warehouse"></i>
+                {% elif request.status == 'inspected' %}
+                    <i class="fas fa-search"></i>
+                {% elif request.status == 'completed' %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif request.status == 'cancelled' %}
+                    <i class="fas fa-ban"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:orders_returnrequest_change' request.pk %}">
+                    {% trans "Return" %} #{{ request.pk }}
+                </a>
+                <span class="order-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <a href="{% url 'admin:orders_order_change' request.order.pk %}">
+                        {% trans "Order" %} #{{ request.order.order_number }}
+                    </a>
+                </span>
+            </h3>
+
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-user"></i>
+                {{ request.user.get_full_name|default:request.user.email }}
+                {% if request.return_tracking_number %}
+                    <span class="tracking-number">
+                        <i class="fas fa-barcode"></i>
+                        {{ request.return_tracking_number }}
+                    </span>
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                <span class="list-row-card-badge list-row-card-badge-{{ request.status }}">
+                    {% if request.status == 'pending' %}
+                        <i class="fas fa-clock"></i>
+                    {% elif request.status == 'approved' %}
+                        <i class="fas fa-check"></i>
+                    {% elif request.status == 'rejected' %}
+                        <i class="fas fa-times"></i>
+                    {% elif request.status == 'label_sent' %}
+                        <i class="fas fa-tag"></i>
+                    {% elif request.status == 'in_transit' %}
+                        <i class="fas fa-shipping-fast"></i>
+                    {% elif request.status == 'received' %}
+                        <i class="fas fa-warehouse"></i>
+                    {% elif request.status == 'inspected' %}
+                        <i class="fas fa-search"></i>
+                    {% elif request.status == 'completed' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif request.status == 'cancelled' %}
+                        <i class="fas fa-ban"></i>
+                    {% endif %}
+                    {{ request.get_status_display }}
+                </span>
+
+                <!-- Reason Badge -->
+                <span class="list-row-card-badge list-row-card-badge-reason">
+                    {% if request.reason == 'defective' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% elif request.reason == 'wrong_item' %}
+                        <i class="fas fa-exchange-alt"></i>
+                    {% elif request.reason == 'not_as_described' %}
+                        <i class="fas fa-info-circle"></i>
+                    {% elif request.reason == 'changed_mind' %}
+                        <i class="fas fa-undo"></i>
+                    {% elif request.reason == 'sizing' %}
+                        <i class="fas fa-ruler"></i>
+                    {% elif request.reason == 'damaged_shipping' %}
+                        <i class="fas fa-box-open"></i>
+                    {% else %}
+                        <i class="fas fa-question-circle"></i>
+                    {% endif %}
+                    {{ request.get_reason_display }}
+                </span>
+
+                <!-- Return Label Badge -->
+                {% if request.return_label_generated %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-tag"></i> {% trans "Label Generated" %}
+                    </span>
+                {% endif %}
+
+                <!-- Refund Badge -->
+                {% if request.refund %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-money-bill-wave"></i> {% trans "Refund" %}: {{ request.refund.get_status_display }}
+                    </span>
+                {% endif %}
+
+                <!-- Items Count -->
+                {% if request.items_json %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-box"></i> {{ request.items_json|length }} {% trans "item" %}{{ request.items_json|length|pluralize }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Requested" %}: {{ request.requested_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if request.approved_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-check"></i>
+                    <span>{% trans "Approved" %}: {{ request.approved_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if request.received_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-warehouse"></i>
+                    <span>{% trans "Received" %}: {{ request.received_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if request.completed_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-check-double"></i>
+                    <span>{% trans "Completed" %}: {{ request.completed_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:orders_returnrequest_change' request.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'admin:orders_order_change' request.order.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View order' %}">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            {% if request.return_label_url %}
+            <a href="{{ request.return_label_url }}"
+               class="list-row-card-action"
+               title="{% trans 'Download return label' %}"
+               target="_blank">
+                <i class="fas fa-download"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-undo-alt"></i>
+        </div>
+        <h2>{% trans "No return requests found" %}</h2>
+        <p>{% trans "Return requests from customers will appear here." %}</p>
+    </div>
+    {% endfor %}
+</div>

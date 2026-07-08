@@ -1,0 +1,115 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Loyalty Tiers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltytier_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if cl.formset and cl.formset.errors %}
+        <p class="errornote">
+            {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+        {{ cl.formset.management_form }}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-layer-group"></i>
+            {% trans "Loyalty Tiers" %}
+        </h1>
+        <p class="subtitle">{% trans "Membership tier levels and benefits" %}</p>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filters-panel"
+         class="filters-panel"
+         data-filter-endpoint="{% url 'loyalty:filter_tiers' %}"
+         data-error-message="{% trans 'An error occurred while filtering. Please try again.' %}">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filter Tiers" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+                <span class="filters-toggle-text">{% trans "Toggle Filters" %}</span>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <div class="admin-search-input">
+                    <input type="text"
+                           id="filter-search"
+                           placeholder="{% trans 'Tier name or description...' %}"
+                           autocomplete="off">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-order">
+                    <i class="fas fa-sort"></i> {% trans "Order By" %}
+                </label>
+                <select id="filter-order" data-default="rank">
+                    <option value="rank">{% trans "Rank (Ascending)" %}</option>
+                    <option value="-rank">{% trans "Rank (Descending)" %}</option>
+                    <option value="name">{% trans "Name (A-Z)" %}</option>
+                    <option value="-name">{% trans "Name (Z-A)" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button button-secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="filter-results-summary">
+        <span id="results-count">{{ cl.result_count }}</span>
+        {% blocktranslate count counter=cl.result_count %}tier found{% plural %}tiers found{% endblocktranslate %}
+    </div>
+
+    <!-- Card-Based Results Container -->
+    <div id="results-container">
+        {% include "admin/loyalty/partials/tier_cards.html" with tiers=cl.result_list %}
+    </div>
+
+    {% block pagination %}{% pagination cl %}{% endblock %}
+</div>
+
+<div id="list-filter-config"
+     data-filter-url="{% url 'loyalty:filter_tiers' %}"
+     data-results-container="results-container"
+     data-results-count="results-count"
+     class="hidden"></div>
+{% endblock %}

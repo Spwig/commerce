@@ -1,0 +1,371 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Core Admin - Changelist Utilities
+ *
+ * Description: Shared utility classes for Django admin changelist templates
+ * Usage: Include in change_list.html templates that customize the default Django changelist UI
+ * Created: 2026-02-13
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Provides common patterns for hiding/styling Django's default changelist elements
+ * - Used across multiple apps to maintain consistency
+ * - All styles use theme CSS variables for proper theming support
+ */
+
+/* ============================================================================
+   Hide Django Default Elements
+   ============================================================================ */
+
+/* Hide default Django search box */
+.changelist-no-search #changelist-search {
+    display: none !important;
+}
+
+/* Hide default Django filter sidebar */
+.changelist-no-filter #changelist-filter {
+    display: none !important;
+}
+
+/* Remove right margin when filter is hidden */
+.changelist-no-filter #changelist.filtered {
+    margin-right: 0 !important;
+}
+
+/* ============================================================================
+   Editable Table Styles
+   ============================================================================ */
+
+/* Base editable table container */
+.changelist-editable-table table#result_list {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+/* Table header styling */
+.changelist-editable-table table#result_list thead th {
+    background: var(--darkened-bg) !important;
+    background-image: none !important;
+    color: var(--body-fg) !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 10px 12px !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+}
+
+/* Table header links */
+.changelist-editable-table table#result_list thead th a:link,
+.changelist-editable-table table#result_list thead th a:visited {
+    color: var(--body-fg) !important;
+}
+
+/* Table cell styling */
+.changelist-editable-table table#result_list tbody td {
+    padding: 8px 12px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    vertical-align: middle !important;
+}
+
+/* Table row hover */
+.changelist-editable-table table#result_list tbody tr:hover {
+    background: var(--selected-bg) !important;
+}
+
+/* Inline form inputs */
+.changelist-editable-table table#result_list tbody td input[type="text"],
+.changelist-editable-table table#result_list tbody td input[type="number"],
+.changelist-editable-table table#result_list tbody td select {
+    width: 100%;
+    max-width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 13px;
+}
+
+/* Input focus states */
+.changelist-editable-table table#result_list tbody td input[type="text"]:focus,
+.changelist-editable-table table#result_list tbody td input[type="number"]:focus,
+.changelist-editable-table table#result_list tbody td select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-bg);
+}
+
+/* Checkboxes */
+.changelist-editable-table table#result_list tbody td input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* ============================================================================
+   Filter Results Summary
+   ============================================================================ */
+
+.filter-results-summary {
+    padding: 12px 0;
+    font-size: 14px;
+    color: var(--body-quiet-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.filter-results-summary #results-count {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 16px;
+}
+
+/* ============================================================================
+   Changelist Container Overrides
+   ============================================================================ */
+
+#changelist {
+    padding: 0;
+}
+
+#changelist-form {
+    padding: 0;
+}
+
+.results {
+    overflow-x: visible;
+}
+
+/* ============================================================================
+   Action Buttons
+   ============================================================================ */
+
+.changelist-action-buttons {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+.changelist-action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--body-fg);
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.changelist-action-button:hover {
+    background: var(--selected-bg);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.changelist-action-button-primary {
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-color: var(--primary);
+}
+
+.changelist-action-button-primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: var(--primary-fg);
+}
+
+/* ============================================================================
+   Bulk Actions Bar
+   ============================================================================ */
+
+.changelist-bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-5) var(--space-6);
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-7);
+}
+
+.changelist-bulk-actions-label {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    font-weight: 600;
+}
+
+.changelist-bulk-actions-select {
+    padding: var(--space-2) var(--space-5);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 13px;
+    min-width: 200px;
+}
+
+.changelist-bulk-actions-button {
+    padding: var(--space-2) var(--space-6);
+    background: var(--primary);
+    color: var(--primary-fg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.changelist-bulk-actions-button:hover {
+    background: var(--primary-hover);
+}
+
+.changelist-bulk-actions-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   Common Stat Display Patterns
+   ============================================================================ */
+
+.changelist-stats {
+    display: flex;
+    gap: var(--space-6);
+    padding: var(--space-7) 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: var(--space-7);
+}
+
+.changelist-stat {
+    flex: 1;
+    padding: var(--space-6);
+    background: var(--darkened-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.changelist-stat-label {
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+}
+
+.changelist-stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.changelist-stat-change {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 12px;
+    margin-top: var(--space-2);
+}
+
+.changelist-stat-change-positive {
+    color: var(--success-fg);
+}
+
+.changelist-stat-change-negative {
+    color: var(--error-fg);
+}
+
+/* ============================================================================
+   Filter Summary Enhancements
+   ============================================================================ */
+
+.filter-summary-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-5) 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: var(--space-7);
+}
+
+.filter-summary-count {
+    font-size: 14px;
+    color: var(--body-quiet-color);
+}
+
+.filter-summary-count strong {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.filter-summary-actions {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.filter-summary-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--body-quiet-color);
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.filter-summary-clear:hover {
+    border-color: var(--error-fg);
+    color: var(--error-fg);
+}
+
+/* ============================================================================
+   Responsive Behavior
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .changelist-stats {
+        flex-direction: column;
+        gap: var(--space-5);
+    }
+
+    .changelist-bulk-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-5);
+    }
+
+    .changelist-bulk-actions-select {
+        width: 100%;
+    }
+
+    .filter-summary-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-5);
+    }
+
+    .changelist-action-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

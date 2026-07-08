@@ -1,0 +1,443 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Affiliate Program Wizard Styles
+ * Extends wizard-base.css with affiliate-specific styling
+ */
+
+/* Commission Type Cards */
+.commission-type-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.commission-type-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: var(--body-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.commission-type-card:hover {
+    border-color: var(--primary);
+    background: var(--darkened-bg);
+}
+
+.commission-type-card.selected {
+    border-color: var(--primary);
+    background: var(--blue-subtle);
+}
+
+.commission-type-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.commission-type-card .card-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--darkened-bg);
+    border-radius: 10px;
+    font-size: 20px;
+    color: var(--body-quiet-color);
+    transition: all 0.2s ease;
+}
+
+.commission-type-card.selected .card-icon {
+    background: var(--primary);
+    color: var(--button-fg);
+}
+
+.commission-type-card .card-content h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.commission-type-card .card-content p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--body-quiet-color);
+}
+
+.commission-type-card .card-check {
+    margin-left: auto;
+    font-size: 20px;
+    color: var(--primary);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+}
+
+.commission-type-card.selected .card-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Commission Value Input */
+.commission-value-group {
+    margin-top: 24px;
+}
+
+.input-with-addon {
+    display: flex;
+    align-items: stretch;
+}
+
+.input-with-addon .form-control {
+    border-radius: 0;
+    flex: 1;
+}
+
+.input-with-addon .form-control:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.input-with-addon .form-control:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.input-addon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    color: var(--body-quiet-color);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.input-addon:first-child {
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.input-addon:last-child {
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+}
+
+/* Commission Preview Box */
+.commission-preview {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.commission-preview .preview-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.commission-preview .preview-title i {
+    color: var(--primary);
+}
+
+.commission-preview .preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.commission-preview .preview-example {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--body-bg);
+    border-radius: 8px;
+}
+
+.commission-preview .preview-example.highlight {
+    background: var(--message-success-bg);
+    border: 1px solid var(--success-fg);
+}
+
+.commission-preview .preview-label {
+    color: var(--body-quiet-color);
+    font-size: 14px;
+}
+
+.commission-preview .preview-value {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--body-fg);
+}
+
+.commission-preview .preview-example.highlight .preview-value {
+    color: var(--success-fg);
+}
+
+/* Slider Group */
+.slider-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.form-slider {
+    flex: 1;
+    height: 8px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border-color);
+    border-radius: 4px;
+    outline: none;
+}
+
+.form-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: 3px solid var(--body-bg);
+    box-shadow: 0 2px 6px var(--shadow-dark);
+    transition: transform 0.2s ease;
+}
+
+.form-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.form-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: 3px solid var(--body-bg);
+    box-shadow: 0 2px 6px var(--shadow-dark);
+}
+
+.slider-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--body-fg);
+    white-space: nowrap;
+}
+
+.slider-value .form-control.small {
+    width: 80px;
+    text-align: center;
+}
+
+/* Info Box */
+.info-box {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: var(--message-info-bg);
+    border: 1px solid var(--message-info-border);
+    border-radius: 12px;
+    margin-top: 24px;
+}
+
+.info-box-icon {
+    font-size: 24px;
+    color: var(--info-color);
+    flex-shrink: 0;
+}
+
+.info-box-content h4 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.info-box-content p {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: var(--body-fg);
+    line-height: 1.5;
+}
+
+.info-box-content ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.info-box-content li {
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+/* Checkbox styling */
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    padding: 16px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label:hover {
+    border-color: var(--primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-custom {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--button-fg);
+    font-size: 14px;
+}
+
+.checkbox-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkbox-text strong {
+    font-size: 15px;
+    color: var(--body-fg);
+    margin-bottom: 4px;
+}
+
+.checkbox-description {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+/* Review Summary */
+.review-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.review-section {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.review-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.review-section h3 i {
+    color: var(--primary);
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.review-label {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.review-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+/* Error states */
+.form-control.error {
+    border-color: var(--error-fg);
+}
+
+.error-message {
+    color: var(--error-fg);
+    font-size: 13px;
+    margin-top: 6px;
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .commission-type-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .commission-type-card {
+        padding: 16px;
+    }
+
+    .slider-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .slider-value {
+        justify-content: center;
+    }
+
+    .review-grid {
+        grid-template-columns: 1fr;
+    }
+}

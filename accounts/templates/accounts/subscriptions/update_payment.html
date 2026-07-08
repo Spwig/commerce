@@ -1,0 +1,171 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Update Payment Method" %} - {{ subscription.plan.name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'accounts:subscription_list' %}" class="text-gray-700 hover:text-blue-600">
+                    {% trans "My Subscriptions" %}
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <a href="{% url 'accounts:subscription_detail' subscription.subscription_id %}" class="text-gray-700 hover:text-blue-600">
+                        {{ subscription.plan.name }}
+                    </a>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-gray-500">{% trans "Update Payment" %}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Update Payment Card -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <svg class="h-12 w-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-2xl font-bold text-gray-900">{% trans "Update Payment Method" %}</h1>
+                    <p class="mt-1 text-gray-600">{{ subscription.plan.name }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <!-- Current Payment Method -->
+            {% if subscription.payment_token %}
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                <p class="text-sm font-medium text-gray-700 mb-2">{% trans "Current Payment Method" %}</p>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        {% if subscription.payment_token.card_brand == 'visa' %}
+                        <svg class="h-8 w-12" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="14" font-weight="bold">VISA</text></svg>
+                        {% elif subscription.payment_token.card_brand == 'mastercard' %}
+                        <svg class="h-8 w-12" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#EB001B"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="12" font-weight="bold">MC</text></svg>
+                        {% else %}
+                        <svg class="h-8 w-12" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#6B7280"/></svg>
+                        {% endif %}
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-900">
+                            {% if subscription.payment_token.card_brand %}
+                            {{ subscription.payment_token.card_brand|capfirst }}
+                            {% endif %}
+                            •••• {{ subscription.payment_token.card_last4 }}
+                        </p>
+                        {% if subscription.payment_token.card_exp_month and subscription.payment_token.card_exp_year %}
+                        <p class="text-sm text-gray-500">
+                            {% trans "Expires" %} {{ subscription.payment_token.card_exp_month }}/{{ subscription.payment_token.card_exp_year }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Payment Method Selection -->
+            {% if payment_tokens %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="space-y-4 mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        {% trans "Select a saved payment method" %}
+                    </label>
+
+                    {% for token in payment_tokens %}
+                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="payment_token_id" value="{{ token.token_id }}" required
+                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                                   {% if subscription.payment_token and token.token_id == subscription.payment_token.token_id %}checked{% endif %} />
+                            <div class="ml-3 flex items-center flex-1">
+                                <div class="flex-shrink-0">
+                                    {% if token.card_brand == 'visa' %}
+                                    <svg class="h-8 w-12" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="14" font-weight="bold">VISA</text></svg>
+                                    {% elif token.card_brand == 'mastercard' %}
+                                    <svg class="h-8 w-12" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#EB001B"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="12" font-weight="bold">MC</text></svg>
+                                    {% else %}
+                                    <svg class="h-8 w-12" viewBox="0 0 48 32" fill="none"><rect width="48" height="32" rx="4" fill="#6B7280"/></svg>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900">
+                                        {% if token.card_brand %}
+                                        {{ token.card_brand|capfirst }}
+                                        {% endif %}
+                                        •••• {{ token.card_last4 }}
+                                    </p>
+                                    {% if token.card_exp_month and token.card_exp_year %}
+                                    <p class="text-sm text-gray-500">
+                                        {% trans "Expires" %} {{ token.card_exp_month }}/{{ token.card_exp_year }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                                {% if token.is_default %}
+                                <span class="ml-auto px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                                    {% trans "Default" %}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-blue-800">
+                        <strong>{% trans "Note:" %}</strong>
+                        {% trans "Your payment method will be updated immediately. The new method will be used for all future billing cycles." %}
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <a href="{% url 'accounts:subscription_detail' subscription.subscription_id %}"
+                       class="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        {% trans "Cancel" %}
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        {% trans "Update Payment Method" %}
+                    </button>
+                </div>
+            </form>
+            {% else %}
+            <!-- No Payment Methods Available -->
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                <p class="mt-2 text-sm text-gray-600">{% trans "No payment methods available" %}</p>
+                <p class="mt-1 text-sm text-gray-500">{% trans "Please add a payment method to your account first" %}</p>
+                <div class="mt-6">
+                    <a href="{% url 'accounts:payment_token_list' %}"
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        {% trans "Manage Payment Methods" %}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

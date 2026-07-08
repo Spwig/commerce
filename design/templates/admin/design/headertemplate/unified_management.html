@@ -1,0 +1,296 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Header Management" %} | {{ site_title|default:_('Spwig Admin') }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'design/css/unified_header_footer.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' 'design' %}">{% trans 'Design' %}</a>
+    &rsaquo; {% trans 'Header Management' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="unified-hf-container">
+    <!-- Header -->
+    <div class="unified-hf-header">
+        <div class="header-title">
+            <h1><i class="fas fa-window-maximize"></i> {% trans "Header Management" %}</h1>
+            <p class="header-subtitle">
+                {% trans "Manage header templates for your storefront" %}
+            </p>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'admin:design_headertemplate_add' %}" class="hf-btn primary">
+                <i class="fas fa-plus"></i> {% trans "Add Header" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Default Header Banner -->
+    {% if default_header %}
+    <div class="default-hf-banner">
+        <div class="banner-icon">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="banner-info">
+            <h3>{% trans "Default Header" %}: {{ default_header.name }}</h3>
+            <p>{% trans "This header is used as the default across your site" %}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filter and Search Bar -->
+    <div class="hf-toolbar">
+        <div class="filter-tabs">
+            <a href="?filter=all{% if search_query %}&q={{ search_query }}{% endif %}"
+               class="filter-tab {% if filter_type == 'all' %}active{% endif %}">
+                <i class="fas fa-th"></i> {% trans "All" %} ({{ all_count }})
+            </a>
+            <a href="?filter=active{% if search_query %}&q={{ search_query }}{% endif %}"
+               class="filter-tab {% if filter_type == 'active' %}active{% endif %}">
+                <i class="fas fa-check-circle"></i> {% trans "Active" %} ({{ active_count }})
+            </a>
+            <a href="?filter=inactive{% if search_query %}&q={{ search_query }}{% endif %}"
+               class="filter-tab {% if filter_type == 'inactive' %}active{% endif %}">
+                <i class="fas fa-times-circle"></i> {% trans "Inactive" %} ({{ inactive_count }})
+            </a>
+        </div>
+
+        <div class="search-bar">
+            <form method="get" action="">
+                {% if filter_type != 'all' %}<input type="hidden" name="filter" value="{{ filter_type }}">{% endif %}
+                <input type="text"
+                       name="q"
+                       value="{{ search_query }}"
+                       placeholder="{% trans 'Search headers...' %}"
+                       class="search-input">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Headers List -->
+    {% if headers %}
+        <div class="hf-list">
+            {% for header in headers %}
+                <div class="hf-row {% if header.is_default %}default{% endif %} {% if not header.is_active %}inactive{% endif %}">
+                    <!-- Left: Info -->
+                    <div class="hf-info">
+                        <div class="hf-header-row">
+                            <h3 class="hf-name">{{ header.name }}</h3>
+
+                            {% if header.is_default %}
+                                <span class="hf-badge site-default-badge">
+                                    <i class="fas fa-globe"></i> {% trans "Site Default" %}
+                                </span>
+                            {% endif %}
+
+                            {% if header.is_active %}
+                                <span class="hf-badge active-badge">
+                                    <i class="fas fa-check"></i> {% trans "Active" %}
+                                </span>
+                            {% else %}
+                                <span class="hf-badge inactive-badge">
+                                    <i class="fas fa-times"></i> {% trans "Inactive" %}
+                                </span>
+                            {% endif %}
+
+                            <span class="hf-badge layout-badge">
+                                <i class="fas fa-columns"></i> {{ header.layout_type_display }}
+                            </span>
+
+                            {% if header.is_sticky %}
+                                <span class="hf-badge sticky-badge">
+                                    <i class="fas fa-thumbtack"></i> {% trans "Sticky" %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        {% if header.description %}
+                        <p class="hf-description">
+                            {{ header.description }}
+                        </p>
+                        {% endif %}
+
+                        <div class="hf-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-puzzle-piece"></i>
+                                <strong>{% trans "Widgets:" %}</strong> {{ header.widget_count }}
+                            </span>
+
+                            {% if header.has_top_bar %}
+                            <span class="meta-item">
+                                <i class="fas fa-bars"></i>
+                                <strong>{% trans "Top Bar:" %}</strong> {% trans "Yes" %}
+                            </span>
+                            {% endif %}
+
+                            <span class="meta-item">
+                                <i class="fas fa-code"></i>
+                                <strong>{% trans "Slug:" %}</strong> {{ header.slug }}
+                            </span>
+
+                            <span class="meta-item">
+                                <i class="fas fa-user"></i>
+                                <strong>{% trans "Created by:" %}</strong> {{ header.created_by }}
+                            </span>
+
+                            <span class="meta-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <strong>{% trans "Mobile:" %}</strong> {{ header.mobile_layout|default:"Responsive" }}
+                            </span>
+
+                            <span class="meta-item {% if header.page_count > 0 %}in-use{% endif %}">
+                                <i class="fas fa-file-alt"></i>
+                                <strong>{% trans "Pages:" %}</strong>
+                                {% if header.page_count > 0 %}
+                                    {{ header.page_count }}
+                                {% else %}
+                                    <span class="not-assigned">{% trans "Not assigned" %}</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Actions -->
+                    <div class="list-row-card-actions">
+                        <a href="{% url 'design:header_builder' header.id %}"
+                           class="list-row-card-action"
+                           title="{% trans 'Open Builder' %}">
+                            <i class="fas fa-paint-brush"></i>
+                        </a>
+                        <a href="{% url 'admin:design_headertemplate_change' header.id %}"
+                           class="list-row-card-action"
+                           title="{% trans 'Settings' %}">
+                            <i class="fas fa-cog"></i>
+                        </a>
+                        <a href="{% url 'design:preview_header' header.id %}"
+                           target="_blank"
+                           class="list-row-card-action"
+                           title="{% trans 'Preview' %}">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        {% if not header.is_default %}
+                        <button type="button"
+                                class="list-row-card-action"
+                                title="{% trans 'Set as Default' %}"
+                                data-action="set-default"
+                                data-header-id="{{ header.id }}"
+                                data-header-name="{{ header.name|escapejs }}">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        {% endif %}
+                        <button type="button"
+                                class="list-row-card-action"
+                                title="{% trans 'Duplicate' %}"
+                                data-action="duplicate-header"
+                                data-header-id="{{ header.id }}"
+                                data-header-name="{{ header.name|escapejs }}">
+                            <i class="fas fa-clone"></i>
+                        </button>
+                        <button type="button"
+                                class="list-row-card-action"
+                                title="{% trans 'Delete' %}"
+                                data-action="show-delete-modal"
+                                data-header-id="{{ header.id }}"
+                                data-header-name="{{ header.name|escapejs }}"
+                                data-is-default="{{ header.is_default|yesno:'true,false' }}"
+                                data-page-count="{{ header.page_count }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="hf-empty-state">
+            <i class="fas fa-inbox"></i>
+            <h2>{% trans "No Headers Found" %}</h2>
+            <p>
+                {% if search_query %}
+                    {% trans "No headers match your search query." %}
+                {% else %}
+                    {% trans "No headers available. Create your first header to get started." %}
+                {% endif %}
+            </p>
+            {% if not search_query %}
+            <a href="{% url 'admin:design_headertemplate_add' %}" class="hf-btn primary">
+                <i class="fas fa-plus"></i> {% trans "Create Header" %}
+            </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="hf-modal" style="display: none;">
+    <div class="hf-modal-backdrop" data-action="hide-delete-modal"></div>
+    <div class="hf-modal-content">
+        <div class="hf-modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> {% trans "Confirm Delete" %}</h3>
+            <button type="button" class="hf-modal-close" data-action="hide-delete-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="hf-modal-body">
+            <p id="deleteModalMessage"></p>
+            <div id="deleteModalWarning" class="hf-modal-warning" style="display: none;"></div>
+        </div>
+        <div class="hf-modal-footer">
+            <button type="button" class="hf-btn secondary" data-action="hide-delete-modal">
+                <i class="fas fa-times"></i> {% trans "Cancel" %}
+            </button>
+            <button type="button" id="confirmDeleteBtn" class="hf-btn danger" data-action="confirm-delete">
+                <i class="fas fa-trash"></i> {% trans "Delete Header" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="headertemplate-management-data">
+{
+    "urls": {
+        "duplicateHeader": "{% url 'hf_api:duplicate_header' header_id=0 %}",
+        "setDefaultHeader": "{% url 'hf_api:set_default_header' header_id=0 %}",
+        "deleteHeader": "{% url 'hf_api:delete_header' header_id=0 %}"
+    },
+    "csrfToken": "{{ csrf_token }}",
+    "translations": {
+        "createCopyOf": "{% trans 'Create a copy of' %}",
+        "setWith": "{% trans 'Set' %}",
+        "setAsDefaultConfirm": "{% trans 'as the default header for your site?' %}",
+        "errorDuplicating": "{% trans 'Error duplicating header:' %}",
+        "errorSettingDefault": "{% trans 'Error setting default:' %}",
+        "areYouSureDelete": "{% trans 'Are you sure you want to delete the header' %}",
+        "cannotDeleteDefault": "{% trans 'Cannot delete default header' %}",
+        "defaultHeaderWarning": "{% trans 'This is the default header for your site. Please set another header as default before deleting this one.' %}",
+        "headerInUse": "{% trans 'Header in use' %}",
+        "headerUsedBy": "{% trans 'This header is used by' %}",
+        "pagesPleaseAssign": "{% trans 'page(s). Please assign a different header to these pages before deleting.' %}",
+        "deleting": "{% trans 'Deleting...' %}",
+        "deleteFailed": "{% trans 'Delete failed' %}",
+        "deleteHeader": "{% trans 'Delete Header' %}"
+    }
+}
+</script>
+<script src="{% static 'design/admin/js/headertemplate_management.js' %}"></script>
+{% endblock %}

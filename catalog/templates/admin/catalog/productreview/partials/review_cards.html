@@ -1,0 +1,96 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for review in reviews %}
+    <div class="list-row-card">
+        <div class="list-row-card-icon">
+            {% with img=review.product.primary_image %}
+            {% if img %}
+                <img src="{{ img.thumbnail_small }}" alt="{{ review.product.name }}">
+            {% else %}
+                <i class="fas fa-star"></i>
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_productreview_change' review.pk %}">
+                    {{ review.title|default:_("Untitled Review") }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-box"></i> {{ review.product.name }}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Star rating badge -->
+                <span class="list-row-card-badge primary">
+                    {% for i in "12345" %}{% if forloop.counter <= review.rating %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}{% endfor %}
+                </span>
+
+                <!-- Approval status -->
+                {% if review.is_approved %}
+                <span class="list-row-card-badge success">
+                    <i class="fas fa-check-circle"></i> {% trans "Approved" %}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge warning">
+                    <i class="fas fa-clock"></i> {% trans "Pending" %}
+                </span>
+                {% endif %}
+
+                <!-- Verified purchase -->
+                {% if review.is_verified_purchase %}
+                <span class="list-row-card-badge primary">
+                    <i class="fas fa-shield-alt"></i> {% trans "Verified Purchase" %}
+                </span>
+                {% endif %}
+            </div>
+
+            {% if review.comment %}
+            <div class="list-row-card-description">
+                {{ review.comment|striptags|truncatewords:30 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{{ review.user.username }}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ review.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if review.helpful_count > 0 %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>{{ review.helpful_count }} {% trans "helpful" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_productreview_change' review.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit review' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:catalog_product_change' review.product.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View product' %}">
+                <i class="fas fa-box-open"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-star-half-alt"></i>
+        </div>
+        <p>{% trans "No reviews match your filters." %}</p>
+    </div>
+    {% endfor %}
+</div>

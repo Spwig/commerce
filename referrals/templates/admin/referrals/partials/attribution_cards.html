@@ -1,0 +1,120 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for attribution in attributions %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ attribution.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if attribution.status == 'approved' %}
+                <i class="fas fa-check-circle text-success"></i>
+            {% elif attribution.status == 'rejected' %}
+                <i class="fas fa-times-circle text-error"></i>
+            {% else %}
+                <i class="fas fa-clock text-warning"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:referrals_referralattribution_change' attribution.pk %}">
+                    {{ attribution.referee_customer.get_full_name|default:attribution.referee_customer.username }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-envelope"></i> {{ attribution.referee_customer.email }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if attribution.status == 'pending' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif attribution.status == 'approved' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check"></i> {% trans "Approved" %}
+                    </span>
+                {% elif attribution.status == 'rejected' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times"></i> {% trans "Rejected" %}
+                    </span>
+                {% endif %}
+
+                {% if attribution.first_order %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-shopping-cart"></i> {% trans "Has Order" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Referred By" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if attribution.referrer_identity %}
+                            {{ attribution.referrer_identity.customer.get_full_name|default:attribution.referrer_identity.customer.email }}
+                        {% else %}
+                            <span class="text-muted">{% trans "Unknown" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% if attribution.first_order %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Order" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <a href="{% url 'admin:orders_order_change' attribution.first_order.id %}" class="text-link">
+                            #{{ attribution.first_order.order_number }}
+                        </a>
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Attributed" %}: {{ attribution.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if attribution.ip_address %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-network-wired"></i>
+                    <code class="text-size-11">{{ attribution.ip_address }}</code>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:referrals_referralattribution_change' attribution.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit attribution' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if attribution.status == 'pending' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="approve-attribution" data-pk="{{ attribution.pk }}"
+                    title="{% trans 'Approve attribution' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="reject-attribution" data-pk="{{ attribution.pk }}"
+                    title="{% trans 'Reject attribution' %}">
+                <i class="fas fa-times"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-link"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No attributions found matching your criteria." %}</p>
+    </div>
+    {% endfor %}
+</div>

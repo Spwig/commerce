@@ -1,0 +1,603 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+    <style>
+        /* Theme-aware CSS using standard admin theme variables */
+        .dns-requirements-container {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--body-fg);
+            line-height: 1.6;
+            max-width: 100%;
+        }
+
+        /* Compact Header */
+        .dns-header {
+            background: linear-gradient(135deg, var(--primary), var(--button-hover-bg));
+            color: var(--primary-fg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .dns-header h2 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .dns-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.875rem;
+        }
+
+        /* DNS Section */
+        .dns-section {
+            background: var(--accent-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dns-section h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Compact Validation One-Liners */
+        .validation-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .validation-line {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--darkened-bg);
+            border-radius: 6px;
+            border-left: 4px solid transparent;
+        }
+
+        .validation-line.pass {
+            border-left-color: var(--success-color);
+        }
+
+        .validation-line.fail {
+            border-left-color: var(--error-color);
+        }
+
+        .validation-line.warn {
+            border-left-color: var(--warning-color);
+        }
+
+        .validation-line.pending {
+            border-left-color: var(--info-color);
+        }
+
+        .validation-icon {
+            font-size: 1.25rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .validation-icon.pass { color: var(--success-color); }
+        .validation-icon.fail { color: var(--error-color); }
+        .validation-icon.warn { color: var(--warning-color); }
+        .validation-icon.pending { color: var(--info-color); }
+
+        .validation-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .validation-label strong {
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .validation-message {
+            flex: 2;
+            font-size: 0.875rem;
+            color: var(--body-quiet-color);
+        }
+
+        .validation-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .validation-toggle:hover {
+            background: var(--accent-bg);
+        }
+
+        .validation-details {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .validation-details.show {
+            display: block;
+        }
+
+        /* DNS Record Display */
+        .dns-record {
+            background: var(--darkened-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .record-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--body-quiet-color);
+        }
+
+        .record-type {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .record-value {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--body-fg);
+            word-break: break-all;
+            line-height: 1.6;
+            padding: 0.5rem 0;
+        }
+
+        .record-hostname {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--button-hover-bg);
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: var(--success-color);
+        }
+
+        /* Tabs for DNS Registrars */
+        .registrar-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .registrar-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--body-quiet-color);
+            transition: all 0.2s;
+            margin-bottom: -2px;
+        }
+
+        .registrar-tab:hover {
+            color: var(--primary);
+        }
+
+        .registrar-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .registrar-content {
+            display: none;
+            padding: 1.5rem;
+            background: var(--darkened-bg);
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .registrar-content.active {
+            display: block;
+        }
+
+        .registrar-step {
+            margin-bottom: 1.5rem;
+        }
+
+        .registrar-step h5 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--body-fg);
+        }
+
+        .registrar-step p {
+            margin: 0.5rem 0;
+            color: var(--body-quiet-color);
+            font-size: 0.875rem;
+        }
+
+        .registrar-step code {
+            background: var(--accent-bg);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.875rem;
+            color: var(--primary);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: var(--blue-subtle);
+            border-left: 4px solid var(--info-color);
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+
+        .info-box.success {
+            background: var(--message-success-bg);
+            border-left-color: var(--success-color);
+        }
+
+        .info-box.warning {
+            background: var(--message-warning-bg);
+            border-left-color: var(--warning-color);
+        }
+
+        .info-box h4, .info-box h5 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Collapsible Details */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 0.75rem;
+            background: var(--accent-bg);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background: var(--darkened-bg);
+        }
+
+        .collapsible-header i {
+            transition: transform 0.2s;
+        }
+
+        .collapsible-header.open i {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 1rem;
+            border-left: 3px solid var(--border-color);
+            margin-left: 0.5rem;
+        }
+
+        .collapsible-content.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="dns-requirements-container">
+        <!-- Compact Header -->
+        <div class="dns-header">
+            <h2>{% trans "DNS Configuration" %}</h2>
+            <p>{% trans "Configure your domain's DNS records to enable email sending" %}</p>
+        </div>
+
+        <!-- SECTION 1: DNS Provider Instructions (MOVED TO TOP) -->
+        <div class="dns-section">
+            <h3><i class="fas fa-server"></i> {% trans "Step 1: Add DNS Records" %}</h3>
+
+            {% if dns_provider != 'unknown' and dns_confidence != 'unknown' %}
+            <div class="info-box success">
+                <h4><i class="fas fa-check-circle"></i> {% trans "Detected DNS Provider:" %} {{ dns_provider_display }}</h4>
+                <p>{% trans "Nameservers:" %}
+                    {% for ns in dns_nameservers %}{{ ns }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                </p>
+            </div>
+            {% endif %}
+
+            {% if dkim_keys_exist %}
+            <div class="info-box success">
+                <p><i class="fas fa-check-circle"></i> <strong>{% trans "DKIM Keys Generated" %}</strong> - {% trans "Your DKIM keys have been automatically generated and are ready to use." %}</p>
+            </div>
+            {% endif %}
+
+            <p>{% trans "Select your DNS provider for step-by-step instructions:" %}</p>
+
+            <div class="registrar-tabs">
+                <button class="registrar-tab" id="tab-cloudflare" data-action="show-registrar" data-registrar="cloudflare">
+                    <i class="fab fa-cloudflare"></i> Cloudflare {% if dns_provider == 'cloudflare' %}<i class="fas fa-check" style="color: var(--success-color);"></i>{% endif %}
+                </button>
+                <button class="registrar-tab" id="tab-godaddy" data-action="show-registrar" data-registrar="godaddy">
+                    GoDaddy {% if dns_provider == 'godaddy' %}<i class="fas fa-check" style="color: var(--success-color);"></i>{% endif %}
+                </button>
+                <button class="registrar-tab" id="tab-namecheap" data-action="show-registrar" data-registrar="namecheap">
+                    Namecheap {% if dns_provider == 'namecheap' %}<i class="fas fa-check" style="color: var(--success-color);"></i>{% endif %}
+                </button>
+                <button class="registrar-tab" id="tab-route53" data-action="show-registrar" data-registrar="route53">
+                    <i class="fab fa-aws"></i> AWS Route 53 {% if dns_provider == 'route53' %}<i class="fas fa-check" style="color: var(--success-color);"></i>{% endif %}
+                </button>
+                <button class="registrar-tab" id="tab-generic" data-action="show-registrar" data-registrar="generic">
+                    <i class="fas fa-globe"></i> {% trans "Other" %}
+                </button>
+            </div>
+
+            <!-- Tab Contents will go here (keeping existing content) -->
+            {% include "admin/email_system/wizard/dns_provider_tabs.html" %}
+        </div>
+
+        <!-- SECTION 2: DNS Validation Status (COMPACT ONE-LINERS) -->
+        <div class="dns-section">
+            <h3><i class="fas fa-clipboard-check"></i> {% trans "Step 2: Verify DNS Records" %}</h3>
+
+            <div class="validation-summary">
+                <!-- SPF Validation -->
+                <div class="validation-line {{ dns_results.spf.status }}">
+                    <div class="validation-icon {{ dns_results.spf.status }}">
+                        {% if dns_results.spf.status == 'pass' %}<i class="fas fa-check-circle"></i>
+                        {% elif dns_results.spf.status == 'fail' %}<i class="fas fa-times-circle"></i>
+                        {% elif dns_results.spf.status == 'warn' %}<i class="fas fa-exclamation-triangle"></i>
+                        {% else %}<i class="fas fa-clock"></i>{% endif %}
+                    </div>
+                    <div class="validation-label">
+                        <strong>SPF</strong>
+                        <span>{% trans "Sender Policy Framework" %}</span>
+                    </div>
+                    <div class="validation-message">
+                        {{ dns_results.spf.message }}
+                    </div>
+                    {% if dns_results.spf.record or dns_results.spf.errors %}
+                    <button class="validation-toggle" data-action="toggle-details">
+                        <i class="fas fa-chevron-down"></i> {% trans "Details" %}
+                    </button>
+                    {% endif %}
+                    {% if dns_results.spf.record or dns_results.spf.errors %}
+                    <div class="validation-details">
+                        {% if dns_results.spf.errors %}
+                        <p><strong>⚠ {% trans "Issue:" %}</strong> {{ dns_results.spf.errors }}</p>
+                        {% endif %}
+                        {% if dns_results.spf.record %}
+                        <p><strong>{% trans "Current:" %}</strong> <code>{{ dns_results.spf.record }}</code></p>
+                        <p><strong>{% trans "Updated:" %}</strong> <code>{{ spf_recommendation }}</code></p>
+                        {% else %}
+                        <p><strong>{% trans "Add this record:" %}</strong> <code>{{ spf_recommendation }}</code></p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- DKIM Validation -->
+                <div class="validation-line {{ dns_results.dkim.status }}">
+                    <div class="validation-icon {{ dns_results.dkim.status }}">
+                        {% if dns_results.dkim.status == 'pass' %}<i class="fas fa-check-circle"></i>
+                        {% elif dns_results.dkim.status == 'fail' %}<i class="fas fa-times-circle"></i>
+                        {% elif dns_results.dkim.status == 'warn' %}<i class="fas fa-exclamation-triangle"></i>
+                        {% else %}<i class="fas fa-clock"></i>{% endif %}
+                    </div>
+                    <div class="validation-label">
+                        <strong>DKIM</strong>
+                        <span>{% trans "DomainKeys Identified Mail" %}</span>
+                    </div>
+                    <div class="validation-message">
+                        {{ dns_results.dkim.message }}
+                    </div>
+                    {% if dkim_keys_exist %}
+                    <button class="validation-toggle" data-action="toggle-details">
+                        <i class="fas fa-chevron-down"></i> {% trans "Details" %}
+                    </button>
+                    {% endif %}
+                    {% if dkim_keys_exist %}
+                    <div class="validation-details">
+                        <p><strong>{% trans "Add this record:" %}</strong></p>
+                        <div class="dns-record">
+                            <button class="copy-btn" data-action="copy-to-clipboard" data-copy-value="{{ dkim_dns_record|escapejs }}" data-copied-text="{% trans 'Copied!' %}" data-copy-text="{% trans 'Copy' %}">{% trans "Copy" %}</button>
+                            <div class="record-label">
+                                <span class="record-type">TXT</span>
+                                <span>{% trans "Hostname:" %} <span class="record-hostname">{{ dkim_dns_hostname }}</span></span>
+                            </div>
+                            <div class="record-value">{{ dkim_dns_record }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- DMARC Validation -->
+                <div class="validation-line {{ dns_results.dmarc.status }}">
+                    <div class="validation-icon {{ dns_results.dmarc.status }}">
+                        {% if dns_results.dmarc.status == 'pass' %}<i class="fas fa-check-circle"></i>
+                        {% elif dns_results.dmarc.status == 'fail' %}<i class="fas fa-times-circle"></i>
+                        {% elif dns_results.dmarc.status == 'warn' %}<i class="fas fa-exclamation-triangle"></i>
+                        {% else %}<i class="fas fa-clock"></i>{% endif %}
+                    </div>
+                    <div class="validation-label">
+                        <strong>DMARC</strong>
+                        <span>{% trans "Domain-based Message Authentication" %}</span>
+                    </div>
+                    <div class="validation-message">
+                        {{ dns_results.dmarc.message }}
+                    </div>
+                    {% if dns_results.dmarc.record or dns_results.dmarc.errors %}
+                    <button class="validation-toggle" data-action="toggle-details">
+                        <i class="fas fa-chevron-down"></i> {% trans "Details" %}
+                    </button>
+                    {% endif %}
+                    {% if dns_results.dmarc.record or dns_results.dmarc.errors %}
+                    <div class="validation-details">
+                        {% if dns_results.dmarc.errors %}
+                        <p><strong>⚠ {% trans "Issue:" %}</strong> {{ dns_results.dmarc.errors }}</p>
+                        {% endif %}
+                        {% if dns_results.dmarc.record %}
+                        <p><strong>{% trans "Current:" %}</strong> <code>{{ dns_results.dmarc.record }}</code></p>
+                        <p><strong>{% trans "Updated:" %}</strong> <code>{{ dmarc_recommendation }}</code></p>
+                        {% else %}
+                        <p><strong>{% trans "Add this record:" %}</strong> <code>{{ dmarc_recommendation }}</code></p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- MX Validation -->
+                {% if dns_results.mx.status %}
+                <div class="validation-line {{ dns_results.mx.status }}">
+                    <div class="validation-icon {{ dns_results.mx.status }}">
+                        {% if dns_results.mx.status == 'pass' %}<i class="fas fa-check-circle"></i>
+                        {% elif dns_results.mx.status == 'fail' %}<i class="fas fa-times-circle"></i>
+                        {% elif dns_results.mx.status == 'warn' %}<i class="fas fa-exclamation-triangle"></i>
+                        {% else %}<i class="fas fa-clock"></i>{% endif %}
+                    </div>
+                    <div class="validation-label">
+                        <strong>MX</strong>
+                        <span>{% trans "Mail Exchange Record" %}</span>
+                    </div>
+                    <div class="validation-message">
+                        {{ dns_results.mx.message }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- SECTION 3: DNS Records to Add (Collapsible) -->
+        <div class="dns-section">
+            <h3><i class="fas fa-list"></i> {% trans "DNS Records Reference" %}</h3>
+
+            <!-- SPF Record -->
+            <div class="collapsible-header" data-action="toggle-collapsible">
+                <div>
+                    <strong>SPF Record</strong>
+                    <span style="color: var(--body-quiet-color); margin-left: 0.5rem; font-size: 0.875rem;">{% trans "Sender Policy Framework" %}</span>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="collapsible-content">
+                <div class="dns-record">
+                    <button class="copy-btn" data-action="copy-to-clipboard" data-copy-value="{{ spf_recommendation|escapejs }}" data-copied-text="{% trans 'Copied!' %}" data-copy-text="{% trans 'Copy' %}">{% trans "Copy" %}</button>
+                    <div class="record-label">
+                        <span class="record-type">TXT</span>
+                        <span>{% trans "Hostname:" %} <span class="record-hostname">{{ domain }}</span></span>
+                    </div>
+                    <div class="record-value">{{ spf_recommendation }}</div>
+                </div>
+            </div>
+
+            <!-- DKIM Record -->
+            {% if dkim_keys_exist %}
+            <div class="collapsible-header" data-action="toggle-collapsible">
+                <div>
+                    <strong>DKIM Record</strong>
+                    <span style="color: var(--body-quiet-color); margin-left: 0.5rem; font-size: 0.875rem;">{% trans "DomainKeys Identified Mail" %}</span>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="collapsible-content">
+                <div class="dns-record">
+                    <button class="copy-btn" data-action="copy-to-clipboard" data-copy-value="{{ dkim_dns_record|escapejs }}" data-copied-text="{% trans 'Copied!' %}" data-copy-text="{% trans 'Copy' %}">{% trans "Copy" %}</button>
+                    <div class="record-label">
+                        <span class="record-type">TXT</span>
+                        <span>{% trans "Hostname:" %} <span class="record-hostname">{{ dkim_dns_hostname }}</span></span>
+                    </div>
+                    <div class="record-value">{{ dkim_dns_record }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- DMARC Record -->
+            <div class="collapsible-header" data-action="toggle-collapsible">
+                <div>
+                    <strong>DMARC Record</strong>
+                    <span style="color: var(--body-quiet-color); margin-left: 0.5rem; font-size: 0.875rem;">{% trans "Domain-based Message Authentication" %}</span>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="collapsible-content">
+                <div class="dns-record">
+                    <button class="copy-btn" data-action="copy-to-clipboard" data-copy-value="{{ dmarc_recommendation|escapejs }}" data-copied-text="{% trans 'Copied!' %}" data-copy-text="{% trans 'Copy' %}">{% trans "Copy" %}</button>
+                    <div class="record-label">
+                        <span class="record-type">TXT</span>
+                        <span>{% trans "Hostname:" %} <span class="record-hostname">_dmarc.{{ domain }}</span></span>
+                    </div>
+                    <div class="record-value">{{ dmarc_recommendation }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/json" id="dns-requirements-config">
+    {"detectedProvider": "{{ dns_provider|escapejs }}"}
+    </script>
+    {% load static %}
+    <script src="{% static 'email_system/js/dns_requirements.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+{% extends "affiliate/base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "My Links" context "affiliate" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate/links.css' %}">
+{% endblock %}
+
+{% block page_title %}{% trans "Tracking Links" context "affiliate" %}{% endblock %}
+
+{% block page_description %}
+<p>{% trans "Manage your affiliate tracking links" context "affiliate" %}</p>
+{% endblock %}
+
+{% block content %}
+{# Create Link Modal #}
+<div id="createLinkModal" class="affiliate-modal hidden">
+    <div class="affiliate-modal-backdrop" data-action="close-create-link-modal"></div>
+    <div class="affiliate-modal-content">
+        <div class="affiliate-modal-header">
+            <h2>{% trans "Create Tracking Link" context "modal" %}</h2>
+            <button type="button" class="affiliate-modal-close" data-action="close-create-link-modal">&times;</button>
+        </div>
+        <form id="createLinkForm">
+            <div class="affiliate-form-group">
+                <label for="linkProgram">{% trans "Program" context "form" %}</label>
+                <select id="linkProgram" name="program" required>
+                    <option value="">{% trans "Select a program" context "form" %}</option>
+                    {% for program in enrolled_programs %}
+                        <option value="{{ program.id }}">{{ program.name }}</option>
+                    {% endfor %}
+                </select>
+                {% if not enrolled_programs %}
+                    <span class="affiliate-form-help">{% trans "You must join a program before creating links." context "form" %}</span>
+                {% endif %}
+            </div>
+            <div class="affiliate-form-group">
+                <label for="linkLabel">{% trans "Label" context "form" %}</label>
+                <input type="text" id="linkLabel" name="label" placeholder="{% trans 'e.g. Homepage Banner, Email Campaign' context 'form' %}">
+                <span class="affiliate-form-help">{% trans "Optional label to help you identify this link" context "form" %}</span>
+            </div>
+            <div class="affiliate-form-group">
+                <label for="linkDestination">{% trans "Destination URL" context "form" %}</label>
+                <input type="url" id="linkDestination" name="destination_url" placeholder="{% trans 'https://example.com/product' context 'form' %}">
+                <span class="affiliate-form-help">{% trans "Leave blank to use the store homepage" context "form" %}</span>
+            </div>
+            <div id="createLinkError" class="affiliate-alert affiliate-alert-danger hidden"></div>
+            <div class="affiliate-modal-actions">
+                <button type="button" class="btn-affiliate btn-affiliate-secondary" data-action="close-create-link-modal">{% trans "Cancel" %}</button>
+                <button type="submit" class="btn-affiliate btn-affiliate-primary">
+                    <i class="fas fa-plus"></i> {% trans "Create Link" context "action" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Link Statistics Modal #}
+<div id="linkStatsModal" class="affiliate-modal hidden">
+    <div class="affiliate-modal-backdrop" data-action="close-link-stats-modal"></div>
+    <div class="affiliate-modal-content">
+        <div class="affiliate-modal-header">
+            <h2><i class="fas fa-chart-bar"></i> {% trans "Link Statistics" context "modal" %}</h2>
+            <button type="button" class="affiliate-modal-close" data-action="close-link-stats-modal">&times;</button>
+        </div>
+        <div id="linkStatsBody">
+            <div class="loading-spinner"></div>
+        </div>
+        <div class="affiliate-modal-actions">
+            <button type="button" class="btn-affiliate btn-affiliate-secondary" data-action="close-link-stats-modal">
+                {% trans "Close" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+{# Edit Link Modal #}
+<div id="editLinkModal" class="affiliate-modal hidden">
+    <div class="affiliate-modal-backdrop" data-action="close-edit-link-modal"></div>
+    <div class="affiliate-modal-content">
+        <div class="affiliate-modal-header">
+            <h2><i class="fas fa-edit"></i> {% trans "Edit Link" context "modal" %}</h2>
+            <button type="button" class="affiliate-modal-close" data-action="close-edit-link-modal">&times;</button>
+        </div>
+        <form id="editLinkForm">
+            <input type="hidden" id="editLinkId" name="link_id">
+            <div class="affiliate-form-group">
+                <label for="editLinkLabel">{% trans "Label" context "form" %}</label>
+                <input type="text" id="editLinkLabel" name="label" placeholder="{% trans 'e.g. Homepage Banner, Email Campaign' context 'form' %}">
+            </div>
+            <div class="affiliate-form-group">
+                <label for="editLinkDestination">{% trans "Destination URL" context "form" %}</label>
+                <input type="url" id="editLinkDestination" name="destination_url" placeholder="{% trans 'https://example.com/product' context 'form' %}">
+            </div>
+            <div class="affiliate-form-group">
+                <label class="toggle-label">
+                    <input type="checkbox" id="editLinkActive" name="is_active">
+                    <span>{% trans "Link is active" context "form" %}</span>
+                </label>
+            </div>
+            <div id="editLinkError" class="affiliate-alert affiliate-alert-danger hidden"></div>
+            <div id="editLinkSuccess" class="affiliate-alert affiliate-alert-success hidden"></div>
+            <div class="affiliate-modal-actions">
+                <button type="button" class="btn-affiliate btn-affiliate-secondary" data-action="close-edit-link-modal">{% trans "Cancel" %}</button>
+                <button type="submit" class="btn-affiliate btn-affiliate-primary">
+                    <i class="fas fa-save"></i> {% trans "Save Changes" context "action" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="links-container">
+    <div class="links-header">
+        <button type="button" class="btn-affiliate btn-affiliate-primary" data-action="show-create-link-modal">
+            <i class="fas fa-plus"></i> {% trans "Create New Link" context "action" %}
+        </button>
+    </div>
+
+    {% if links %}
+        <div class="affiliate-table-container">
+            <table class="affiliate-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Link" context "table" %}</th>
+                        <th>{% trans "Program" context "table" %}</th>
+                        <th>{% trans "Clicks" context "table" %}</th>
+                        <th>{% trans "Created" context "table" %}</th>
+                        <th>{% trans "Actions" context "table" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for link in links %}
+                    <tr>
+                        <td>
+                            <div class="link-cell">
+                                <strong>{{ link.label|default:link.link_code }}</strong>
+                                <div class="link-url">
+                                    <code>{{ link.get_full_url }}</code>
+                                    <button type="button" class="copy-btn" data-action="copy-link" data-link-url="{{ link.get_full_url|escapejs }}" title="{% trans 'Copy link' %}">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ link.program.name }}</td>
+                        <td>
+                            <span class="clicks-count">{{ link.clicks_count|intcomma }}</span>
+                        </td>
+                        <td>{{ link.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button type="button" class="action-btn" title="{% trans 'View Stats' %}" data-action="show-link-stats" data-link-id="{{ link.id }}">
+                                    <i class="fas fa-chart-bar"></i>
+                                </button>
+                                <button type="button" class="action-btn" title="{% trans 'Edit' %}" data-action="edit-link" data-link-id="{{ link.id }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+        <nav class="pagination-nav">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a></li>
+                {% endif %}
+                <li class="current">{% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}</li>
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-link"></i>
+            <h3>{% trans "No Tracking Links Yet" context "empty" %}</h3>
+            <p>{% trans "Create your first tracking link to start earning commissions!" context "empty" %}</p>
+            <button type="button" class="btn-affiliate btn-affiliate-primary mt-2" data-action="show-create-link-modal">
+                <i class="fas fa-plus"></i> {% trans "Create Link" context "action" %}
+            </button>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% load i18n static %}
+
+<div class="list-row-cards compact">
+    {% for member in members %}
+    <div class="list-row-card member-card {% if member.status == 'rejected' %}inactive{% endif %}">
+        <!-- Member Icon -->
+        <div class="list-row-card-icon member {{ member.status }}">
+            <i class="fas fa-user"></i>
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:affiliate_affiliate_change' member.affiliate.pk %}"
+                   title="{% trans 'View affiliate' %}">
+                    {{ member.affiliate.user.get_full_name|default:member.affiliate.user.username }}
+                </a>
+                <span class="member-code">{{ member.affiliate.affiliate_code }}</span>
+            </h3>
+
+            <!-- Subtitle with email -->
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-envelope"></i> {{ member.affiliate.user.email }}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Membership Status -->
+                {% if member.status == 'approved' %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'Approved member' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Approved" %}
+                    </span>
+                {% elif member.status == 'pending' %}
+                    <span class="list-row-card-badge warning"
+                          title="{% trans 'Pending approval' %}">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif member.status == 'rejected' %}
+                    <span class="list-row-card-badge error"
+                          title="{% trans 'Rejected' %}">
+                        <i class="fas fa-times-circle"></i> {% trans "Rejected" %}
+                    </span>
+                {% endif %}
+
+                <!-- Affiliate Status -->
+                {% if member.affiliate.status != 'active' %}
+                    <span class="list-row-card-badge {% if member.affiliate.status == 'suspended' %}error{% endif %}"
+                          title="{% trans 'Affiliate status' %}">
+                        <i class="fas fa-user-{% if member.affiliate.status == 'suspended' %}slash{% else %}clock{% endif %}"></i>
+                        {{ member.affiliate.get_status_display }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Stats (for approved members) -->
+            {% if member.status == 'approved' %}
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Clicks" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <i class="fas fa-mouse-pointer"></i> {{ member.member_clicks|default:0 }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Conversions" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <i class="fas fa-shopping-cart"></i> {{ member.member_commissions|default:0 }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Earned" %}</span>
+                    <span class="list-row-card-stat-value member-earned">
+                        ${{ member.member_earned|floatformat:2|default:"0.00" }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Meta -->
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Application date' %}">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{{ member.applied_at|date:"M d, Y" }}</span>
+                </div>
+                {% if member.approved_at %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Approval date' %}">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>{{ member.approved_at|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:affiliate_affiliateprogrammembership_change' member.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit membership' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% if member.status == 'pending' %}
+            <button type="button"
+                    class="list-row-card-action success"
+                    data-action="toggle-membership-status"
+                    data-pk="{{ member.pk }}"
+                    data-status="approve"
+                    data-confirm="{% trans 'Are you sure you want to approve this member?' %}"
+                    title="{% trans 'Approve' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="button"
+                    class="list-row-card-action danger"
+                    data-action="toggle-membership-status"
+                    data-pk="{{ member.pk }}"
+                    data-status="reject"
+                    data-confirm="{% trans 'Are you sure you want to reject this member?' %}"
+                    title="{% trans 'Reject' %}">
+                <i class="fas fa-times"></i>
+            </button>
+            {% endif %}
+
+            <a href="{% url 'admin:affiliate_affiliate_change' member.affiliate.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View affiliate' %}">
+                <i class="fas fa-user"></i>
+            </a>
+
+            {% if member.status == 'approved' %}
+            <a href="{% url 'admin:affiliate_link_changelist' %}?affiliate__id__exact={{ member.affiliate.pk }}&program__id__exact={{ member.program.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View links' %}">
+                <i class="fas fa-link"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <!-- Empty State -->
+    <div class="members-empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3 class="empty-state-title">{% trans "No Members Yet" %}</h3>
+        <p class="empty-state-subtitle">
+            {% trans "Affiliates will appear here when they apply to join this program." %}
+        </p>
+        <a href="{% url 'admin:affiliate_affiliateprogrammembership_add' %}{% if program %}?program={{ program.pk }}{% endif %}"
+           class="button primary">
+            <i class="fas fa-plus"></i>
+            {% trans "Add Member Manually" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

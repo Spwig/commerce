@@ -1,0 +1,20 @@
+{% load i18n %}
+<div class="order-header-content">
+    <div class="order-meta">
+        <h2>{% trans "Order" %} #{{ order.order_number }}</h2>
+        <span class="order-date">{{ order.created_at|date:"F d, Y H:i" }}</span>
+    </div>
+
+    <div class="order-status-container">
+        <select name="status" id="order-status-select" class="status-select" data-order-id="{{ order.id }}">
+            {% for value, label in order.STATUS_CHOICES %}
+                <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <label class="status-notification-label">
+            <input type="checkbox" id="status-send-notification" checked>
+            {% trans "Notify customer" %}
+        </label>
+    </div>
+</div>

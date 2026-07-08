@@ -1,0 +1,231 @@
+{% extends "admin/shipping/zone_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-globe-americas"></i> {% trans "Geographic Coverage" %}
+</div>
+<p class="step-description">
+    {% trans "Select countries and states/provinces that should be included in this shipping zone." %}
+</p>
+
+<!-- Logic Explanation Banner -->
+<div class="info-box zone-logic-banner">
+    <i class="fas fa-info-circle"></i>
+    <div>
+        <h3>{% trans "Zone Matching Logic (OR)" %}</h3>
+        <p>{% trans "A shipping zone applies to a customer's address if it matches ANY of these conditions:" %}</p>
+        <ul>
+            <li><i class="fas fa-check-circle"></i> {% trans "Address country is in the selected countries, OR" %}</li>
+            <li><i class="fas fa-check-circle"></i> {% trans "Address state/province is in the selected states, OR" %}</li>
+            <li><i class="fas fa-check-circle"></i> {% trans "Address postal code matches any of the patterns" %}</li>
+        </ul>
+        <p class="help-note">
+            {% trans "You can use just countries, just states, just postal codes, or any combination." %}
+            {% trans "Leave all fields empty to match all locations." %}
+        </p>
+    </div>
+</div>
+
+<form method="post" id="zone-coverage-form" class="credentials-form">
+    {% csrf_token %}
+
+    <!-- Countries Section -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-flag"></i> {% trans "Countries" %}
+        </h3>
+
+        <div class="zone-dual-listbox">
+            <!-- Available Countries -->
+            <div class="listbox-column">
+                <h4>
+                    <i class="fas fa-globe"></i>
+                    {% trans "Available Countries" %}
+                    <span class="count" id="available-countries-count">({{ available_countries|length }})</span>
+                </h4>
+                <div class="admin-search-input">
+                    <input type="text" id="country-search" placeholder="{% trans 'Search countries...' %}">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="listbox" id="available-countries">
+                    {% for country in available_countries %}
+                        <div class="listbox-item" data-code="{{ country.code }}" data-name="{{ country.name }}">
+                            <span class="drag-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </span>
+                            <span class="country-flag-img">
+                                <img src="{% static 'flags/' %}{{ country.code|lower }}.gif" alt="{{ country.code }}" class="country-flag">
+                            </span>
+                            <span class="item-info">
+                                <span class="item-name">{{ country.name }}</span>
+                                <span class="item-code">({{ country.code }})</span>
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Selected Countries -->
+            <div class="listbox-column">
+                <h4>
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Selected Countries" %}
+                    <span class="count" id="selected-countries-count">({{ selected_countries|length }})</span>
+                </h4>
+                <div class="listbox listbox-selected" id="selected-countries">
+                    {% for country in selected_countries %}
+                        <div class="listbox-item" data-code="{{ country.code }}" data-name="{{ country.name }}">
+                            <span class="drag-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </span>
+                            <span class="country-flag-img">
+                                <img src="{% static 'flags/' %}{{ country.code|lower }}.gif" alt="{{ country.code }}" class="country-flag">
+                            </span>
+                            <span class="item-info">
+                                <span class="item-name">{{ country.name }}</span>
+                                <span class="item-code">({{ country.code }})</span>
+                            </span>
+                            <input type="hidden" name="selected_countries[]" value="{{ country.code }}">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- States/Provinces Section -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-map"></i> {% trans "States/Provinces" %}
+        </h3>
+        <p class="help-text">
+            <i class="fas fa-info-circle"></i>
+            {% trans "This list automatically updates based on selected countries. Select specific states/provinces to narrow zone coverage." %}
+        </p>
+
+        <div class="zone-dual-listbox">
+            <!-- Available States -->
+            <div class="listbox-column">
+                <h4>
+                    <i class="fas fa-map"></i>
+                    {% trans "Available States" %}
+                    <span class="count" id="available-states-count">({{ available_states|length }})</span>
+                </h4>
+                <div class="admin-search-input">
+                    <input type="text" id="state-search" placeholder="{% trans 'Search states...' %}">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div id="states-loading-indicator" class="loading-indicator zone-wizard-loading-hidden">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    {% trans "Loading states..." %}
+                </div>
+                <div class="listbox" id="available-states">
+                    {% for state in available_states %}
+                        <div class="listbox-item" data-code="{{ state.code }}" data-name="{{ state.name }}" data-country="{{ state.country }}">
+                            <span class="drag-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </span>
+                            <span class="item-info">
+                                <span class="item-name">{{ state.name }}</span>
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Selected States -->
+            <div class="listbox-column">
+                <h4>
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Selected States" %}
+                    <span class="count" id="selected-states-count">({{ selected_states|length }})</span>
+                </h4>
+                <div class="listbox listbox-selected" id="selected-states">
+                    {% for state in selected_states %}
+                        <div class="listbox-item" data-code="{{ state.code }}" data-name="{{ state.name }}" data-country="{{ state.country }}">
+                            <span class="drag-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </span>
+                            <span class="item-info">
+                                <span class="item-name">{{ state.name }}</span>
+                            </span>
+                            <input type="hidden" name="selected_states[]" value="{{ state.code }}">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Postal Code Patterns Section -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-envelope"></i> {% trans "Postal Code Patterns" %}
+        </h3>
+        <p class="help-text">
+            <i class="fas fa-info-circle"></i>
+            {% trans "Enter regex patterns to match specific postal/zip codes. One pattern per line." %}
+        </p>
+
+        <div class="form-group">
+            <label for="id_postal_patterns">{% trans "Postal Code Patterns" %}</label>
+            <textarea id="id_postal_patterns"
+                      name="postal_patterns"
+                      class="form-control postal-patterns-input"
+                      rows="5"
+                      placeholder="{% trans 'Enter one regex pattern per line...' %}">{% if zone_data.postal_code_patterns %}{{ zone_data.postal_code_patterns|join:'\n' }}{% endif %}</textarea>
+        </div>
+
+        <!-- Pattern Examples -->
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Common Pattern Examples:" %}</strong>
+                <div class="pattern-examples">
+                    <div class="pattern-example">
+                        <code>^90[0-9]{3}$</code>
+                        <span>{% trans "Los Angeles area (90000-90999)" %}</span>
+                        <button type="button" class="copy-pattern-btn" data-pattern="^90[0-9]{3}$">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="pattern-example">
+                        <code>^1[0-2][0-9]{3}$</code>
+                        <span>{% trans "New York area (10000-12999)" %}</span>
+                        <button type="button" class="copy-pattern-btn" data-pattern="^1[0-2][0-9]{3}$">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="pattern-example">
+                        <code>^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] [0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$</code>
+                        <span>{% trans "Canadian postal codes" %}</span>
+                        <button type="button" class="copy-pattern-btn" data-pattern="^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] [0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:zone_wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="zone-coverage-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script type="application/json" id="zone-wizard-config">
+{"getStatesUrl": "{% url 'shipping:get_states_for_countries' %}"}
+</script>
+<script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+<script src="{% static 'shipping/js/zone-wizard-step2.js' %}"></script>
+{% endblock %}

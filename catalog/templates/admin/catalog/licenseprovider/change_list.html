@@ -1,0 +1,182 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "License Providers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_license_provider.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="provider-admin-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-key"></i>
+                {% trans "License Providers" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage external license management system integrations" %}</p>
+            <p class="change-list-stats-subtitle">
+                {{ cl.result_count }} {% trans "provider" %}{% if cl.result_count != 1 %}s{% endif %}
+                {% if active_count %}<span class="stat-separator">·</span>{{ active_count }} {% trans "active" %}{% endif %}
+            </p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'catalog_admin:license_provider_wizard_step1' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plug"></i> {% trans "Connect Provider" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Toolbar -->
+    <div class="provider-toolbar">
+        <div class="toolbar-left">
+            <!-- Bulk Actions -->
+            <div class="bulk-actions">
+                <select id="bulk-action-select" class="bulk-action-dropdown" form="changelist-form" name="action">
+                    <option value="">{% trans "Bulk Actions" %}</option>
+                    <option value="test_provider_connections">{% trans "Test Connection" %}</option>
+                    <option value="enable_providers">{% trans "Enable Selected" %}</option>
+                    <option value="disable_providers">{% trans "Disable Selected" %}</option>
+                    <option value="delete_selected">{% trans "Delete Selected" %}</option>
+                </select>
+                <button type="submit" form="changelist-form" name="index" value="0" class="button" id="apply-bulk-action">{% trans "Apply" %}</button>
+                <span id="selected-count" class="selected-count" style="display:none;">
+                    <span id="selected-number">0</span> {% trans "selected" %}
+                </span>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- Filters -->
+            <div class="filter-group">
+                <!-- Connection Status Filter -->
+                <select id="connection-status-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Connection Status" %}</option>
+                    <option value="connected" {% if request.GET.connection_status == 'connected' %}selected{% endif %}>
+                        {% trans "Connected" %} ({{ connected_count }})
+                    </option>
+                    <option value="error" {% if request.GET.connection_status == 'error' %}selected{% endif %}>
+                        {% trans "Error" %} ({{ error_count }})
+                    </option>
+                    <option value="not_tested" {% if request.GET.connection_status == 'not_tested' %}selected{% endif %}>
+                        {% trans "Not Tested" %} ({{ not_tested_count }})
+                    </option>
+                </select>
+
+                <!-- Active Filter -->
+                <select id="active-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Active Status" %}</option>
+                    <option value="active" {% if request.GET.is_active == '1' %}selected{% endif %}>
+                        {% trans "Active" %} ({{ active_count }})
+                    </option>
+                    <option value="inactive" {% if request.GET.is_active == '0' %}selected{% endif %}>
+                        {% trans "Inactive" %} ({{ inactive_count }})
+                    </option>
+                </select>
+
+                <!-- Provider Type Filter -->
+                <select id="provider-type-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Provider Types" %}</option>
+                    <option value="spwig_server" {% if request.GET.provider_type == 'spwig_server' %}selected{% endif %}>Spwig Built-in License Server</option>
+                    <option value="keygen" {% if request.GET.provider_type == 'keygen' %}selected{% endif %}>Keygen.sh</option>
+                    <option value="licensespring" {% if request.GET.provider_type == 'licensespring' %}selected{% endif %}>License Spring</option>
+                    <option value="cryptlex" {% if request.GET.provider_type == 'cryptlex' %}selected{% endif %}>Cryptlex</option>
+                    <option value="custom" {% if request.GET.provider_type == 'custom' %}selected{% endif %}>Custom API</option>
+                </select>
+            </div>
+
+            <!-- Search -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text"
+                       id="provider-search"
+                       placeholder="{% trans 'Search providers...' %}"
+                       value="{{ request.GET.q|default:'' }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Form for bulk actions -->
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="">
+        <input type="hidden" name="select_across" value="0">
+
+        <!-- Select All -->
+        <div class="select-all-bar">
+            <label>
+                <input type="checkbox" id="select-all-providers">
+                {% trans "Select All" %}
+            </label>
+        </div>
+
+        <!-- Providers Grid -->
+        <div class="providers-container">
+            {% if cl.result_list %}
+                <div class="providers-grid">
+                    {% for provider in cl.result_list %}
+                        {% include "admin/catalog/licenseprovider/provider_card.html" %}
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if cl.result_count > 20 %}
+                    <div class="pagination-container">
+                        {% if cl.result_count %}
+                            <p class="pagination-info">
+                                {% blocktrans count counter=cl.result_count %}{{ counter }} provider{% plural %}{{ counter }} providers{% endblocktrans %}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <i class="fas fa-key"></i>
+                    <h2>{% trans "No license providers found" %}</h2>
+                    <p>
+                        {% if request.GET.q or request.GET.connection_status or request.GET.is_active or request.GET.provider_type %}
+                            {% trans "Try adjusting your filters or search query." %}
+                        {% else %}
+                            {% trans "Get started by connecting your first license provider." %}
+                        {% endif %}
+                    </p>
+                    {% if not request.GET.q and not request.GET.connection_status %}
+                        <a href="{% url 'admin:catalog_licenseprovider_add' %}" class="button primary">
+                            <i class="fas fa-plus"></i> {% trans "Add License Provider" %}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display:none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading..." %}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="notification-container" class="notification-container"></div>
+
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'catalog/js/admin_license_provider.js' %}" defer></script>
+{% endblock %}

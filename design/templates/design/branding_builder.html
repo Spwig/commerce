@@ -1,0 +1,2494 @@
+<!DOCTYPE html>
+{% load i18n static core_extras %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="{{ admin_theme|default:'light' }}">
+<!-- Debug: admin_theme = {{ admin_theme }} -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans 'Branding Builder' %} - {{ branding }}</title>
+
+    <!-- Favicon -->
+    {% favicon_meta %}
+
+    <!-- Core Admin Theme Styles (loaded first as base styles) -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+
+    <!-- Admin Base Styles (contains tab component and other shared styles) -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- Branding Builder Styles (overrides theme styles where needed) -->
+    <link rel="stylesheet" href="{% static 'design/css/branding_builder.css' %}">
+
+    <!-- Media Library Upload Queue Styles (required for background editor) -->
+    <link rel="stylesheet" href="{% static 'media_library/css/upload-queue.css' %}">
+
+    <!-- Utility Component Styles (dynamically loaded from installed utilities) -->
+    {% for css_file in utility_css_files %}
+    <link rel="stylesheet" href="{% static css_file %}">
+    {% endfor %}
+
+    <!-- Preview Layout Styles (structural only) -->
+    <link rel="stylesheet" href="{% static 'design/css/branding-preview.css' %}">
+
+    <!-- Dynamic Theme Styles (for preview, scoped to #preview-frame) -->
+    <style id="preview-theme-styles">
+        /* Active front-end theme styles will be loaded here */
+    </style>
+
+    <!-- Dynamic Branding Overrides (for preview, scoped to #preview-frame) -->
+    <style id="branding-preview-styles">
+        /* Branding overrides will be dynamically added here */
+    </style>
+</head>
+<body class="branding-builder-body">
+
+    <!-- Desktop-only overlay for small screens -->
+    <div class="desktop-only-overlay">
+        <div class="desktop-only-card">
+            <i class="fas fa-desktop desktop-only-icon"></i>
+            <h2>{% trans 'Desktop Required' %}</h2>
+            <p>{% trans 'The Branding Builder requires a larger screen. Please switch to a desktop or laptop computer for the best experience.' %}</p>
+            <a href="{% url 'design:dashboard' %}" class="button primary">
+                <i class="fas fa-arrow-left"></i> {% trans 'Back to Dashboard' %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Top Toolbar -->
+    <div class="branding-toolbar">
+        <div class="toolbar-left">
+            <a href="{% url 'design:dashboard' %}" class="back-btn" title="{% trans 'Back to Dashboard' %}">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="builder-title">
+                <i class="fas fa-palette"></i>
+                {% trans 'Branding Builder' %}
+            </h1>
+            <span class="branding-name">{{ branding }}</span>
+        </div>
+
+        <div class="toolbar-center">
+            <div class="device-preview-controls">
+                <button class="util-btn round active" data-device="desktop" title="{% trans 'Desktop' %}">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button class="util-btn round" data-device="tablet" title="{% trans 'Tablet' %}">
+                    <i class="fas fa-tablet-alt"></i>
+                </button>
+                <button class="util-btn round" data-device="mobile" title="{% trans 'Mobile' %}">
+                    <i class="fas fa-mobile-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <span id="auto-save-indicator" class="auto-save-indicator" style="display: none;">
+                <i class="fas fa-sync fa-spin"></i>
+                <span>{% trans 'Saving...' %}</span>
+            </span>
+
+            <button class="btn btn-outline" data-action="export-branding" title="{% trans 'Export' %}">
+                <i class="fas fa-download"></i>
+                <span>{% trans 'Export' %}</span>
+            </button>
+
+            <button class="btn btn-outline" data-action="import-branding" title="{% trans 'Import' %}">
+                <i class="fas fa-upload"></i>
+                <span>{% trans 'Import' %}</span>
+            </button>
+
+            <button class="btn btn-primary" data-action="save-branding" title="{% trans 'Save' %}">
+                <i class="fas fa-save"></i>
+                <span>{% trans 'Save' %}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Builder Container -->
+    <div class="builder-container">
+
+        <!-- Left Panel: Controls -->
+        <div class="control-panel">
+
+            <!-- Section Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" data-section="colors">
+                    <i class="fas fa-palette"></i>
+                    <span class="label">{% trans 'Colors' %}</span>
+                </button>
+                <button class="admin-tab-btn" data-section="typography">
+                    <i class="fas fa-font"></i>
+                    <span class="label">{% trans 'Typography' %}</span>
+                </button>
+                <button class="admin-tab-btn" data-section="layout">
+                    <i class="fas fa-columns"></i>
+                    <span class="label">{% trans 'Layout' %}</span>
+                </button>
+                <button class="admin-tab-btn" data-section="components">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span class="label">{% trans 'Components' %}</span>
+                </button>
+                <button class="admin-tab-btn" data-section="advanced">
+                    <i class="fas fa-sliders-h"></i>
+                    <span class="label">{% trans 'Advanced' %}</span>
+                </button>
+            </div>
+
+            <!-- Section Content -->
+            <div class="section-content">
+
+                <!-- Colors Section -->
+                <div id="colors-section" class="section-panel active">
+                    <h2>{% trans 'Brand Colors' %}</h2>
+
+                    <!-- Color Sub-tabs -->
+                    <div class="admin-tabs color-sub-tabs">
+                        <button class="admin-tab-btn active" data-color-tab="basic">
+                            <span class="label">{% trans 'Basic' %}</span>
+                        </button>
+                        <button class="admin-tab-btn" data-color-tab="advanced">
+                            <span class="label">{% trans 'Advanced' %}</span>
+                        </button>
+                    </div>
+
+                    <!-- Basic Colors Tab -->
+                    <div id="basic-colors-tab" class="color-tab-content active">
+                        <!-- Primary Colors Group -->
+                        <div class="bb-property-group" id="primary-colors-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Primary Colors' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="primary">
+                                    <label>{% trans 'Primary' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-primary" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="primary"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="primary"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="secondary">
+                                    <label>{% trans 'Secondary' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-secondary" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="secondary"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="secondary"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="accent">
+                                    <label>{% trans 'Accent' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-accent" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="accent"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="accent"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Semantic Colors Group -->
+                        <div class="bb-property-group collapsed" id="semantic-colors-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Semantic Colors' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="success">
+                                    <label>{% trans 'Success' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-success" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="success"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="success"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="warning">
+                                    <label>{% trans 'Warning' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-warning" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="warning"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="warning"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="error">
+                                    <label>{% trans 'Error' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-error" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="error"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="error"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Neutral Colors Group -->
+                        <div class="bb-property-group collapsed" id="neutral-colors-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Neutral Colors' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="text">
+                                    <label>{% trans 'Text' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-text" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="text"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="text"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="background" data-use-background-editor="true">
+                                    <label>{% trans 'Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-background" value="">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="background"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="border">
+                                    <label>{% trans 'Border' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-border" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="border"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="border"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Basic Colors Tab -->
+
+                    <!-- Advanced Colors Tab -->
+                    <div id="advanced-colors-tab" class="color-tab-content">
+                        <!-- Color Variants Group -->
+                        <div class="bb-property-group" id="color-variants-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Color Variants' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="primary-light">
+                                    <label>{% trans 'Primary Light' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-primary-light" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="primary-light"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="primary-light"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="primary-dark">
+                                    <label>{% trans 'Primary Dark' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-primary-dark" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="primary-dark"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="primary-dark"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Background Variants Group -->
+                        <div class="bb-property-group collapsed" id="background-variants-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Background Variants' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="background-secondary">
+                                    <label>{% trans 'Background Secondary' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-background-secondary" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="background-secondary"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="background-secondary"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="background-tertiary">
+                                    <label>{% trans 'Background Tertiary' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-background-tertiary" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="background-tertiary"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="background-tertiary"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Surface Variants Group -->
+                        <div class="bb-property-group collapsed" id="surface-variants-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Surface Variants' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="surface">
+                                    <label>{% trans 'Surface' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-surface" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="surface"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="surface"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="surface-secondary">
+                                    <label>{% trans 'Surface Secondary' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-surface-secondary" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="surface-secondary"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="surface-secondary"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="surface-hover">
+                                    <label>{% trans 'Surface Hover' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-surface-hover" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="surface-hover"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="surface-hover"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="surface-dark">
+                                    <label>{% trans 'Surface Dark' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-surface-dark" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="surface-dark"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="surface-dark"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Border Variants Group -->
+                        <div class="bb-property-group collapsed" id="border-variants-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Border Variants' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="border-light">
+                                    <label>{% trans 'Border Light' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-border-light" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="border-light"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="border-light"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="border-dark">
+                                    <label>{% trans 'Border Dark' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-border-dark" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="border-dark"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="border-dark"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Effects Group -->
+                        <div class="bb-property-group collapsed" id="effects-group">
+                            <div class="bb-property-group-header">
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                                <h4 class="bb-property-group-title">{% trans 'Effects' %}</h4>
+                            </div>
+                            <div class="bb-property-group-content">
+                                <div class="bb-property-field" data-color-key="shadow">
+                                    <label>{% trans 'Shadow' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-shadow" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="shadow"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="shadow"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field" data-color-key="overlay">
+                                    <label>{% trans 'Overlay' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="color-overlay" value="">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="overlay"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="overlay"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Advanced Colors Tab -->
+
+                </div>
+                <!-- End Colors Section -->
+
+            <!-- Typography Section -->
+            <div id="typography-section" class="section-panel">
+                    <h2>{% trans 'Typography Settings' %}</h2>
+
+                    <!-- Body Typography Group -->
+                    <div class="bb-property-group" id="body-typography-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Body Typography' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content single-column">
+                            <div class="bb-property-field full-width">
+                                <label>
+                                    {% trans 'Font & Style' %}
+                                    <span class="bb-typography-info" data-typography-type="body" title="{% trans 'View full style declaration' %}">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="bb-typography-tooltip"></span>
+                                    </span>
+                                </label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="font-body" placeholder="{% trans 'Controls body text appearance' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="font_family_body"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width" data-color-key="text">
+                                <label>{% trans 'Text Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="typography-color-body" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="typography-color-body"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="color_body"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Heading Styles Group -->
+                    <div class="bb-property-group" id="heading-styles-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Heading Styles' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content single-column">
+                            <div class="bb-property-field full-width">
+                                <label>
+                                    {% trans 'H1 - Font & Style' %}
+                                    <span class="bb-typography-info" data-typography-type="h1" title="{% trans 'View full style declaration' %}">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="bb-typography-tooltip"></span>
+                                    </span>
+                                </label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="font-h1" placeholder="{% trans 'Largest heading style' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="font_family_h1"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width" data-color-key="h1-color">
+                                <label>{% trans 'H1 - Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="typography-color-h1" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="typography-color-h1"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="color_h1"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>
+                                    {% trans 'H2 - Font & Style' %}
+                                    <span class="bb-typography-info" data-typography-type="h2" title="{% trans 'View full style declaration' %}">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="bb-typography-tooltip"></span>
+                                    </span>
+                                </label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="font-h2" placeholder="{% trans 'Secondary heading style' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="font_family_h2"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width" data-color-key="h2-color">
+                                <label>{% trans 'H2 - Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="typography-color-h2" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="typography-color-h2"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="color_h2"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>
+                                    {% trans 'H3 - Font & Style' %}
+                                    <span class="bb-typography-info" data-typography-type="h3" title="{% trans 'View full style declaration' %}">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="bb-typography-tooltip"></span>
+                                    </span>
+                                </label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="font-h3" placeholder="{% trans 'Tertiary heading style' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="font_family_h3"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width" data-color-key="h3-color">
+                                <label>{% trans 'H3 - Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="typography-color-h3" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="typography-color-h3"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="color_h3"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>
+                                    {% trans 'H4 - Font & Style' %}
+                                    <span class="bb-typography-info" data-typography-type="h4" title="{% trans 'View full style declaration' %}">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="bb-typography-tooltip"></span>
+                                    </span>
+                                </label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="font-h4" placeholder="{% trans 'Fourth-level heading' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="font_family_h4"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width" data-color-key="h4-color">
+                                <label>{% trans 'H4 - Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="typography-color-h4" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="typography-color-h4"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="color_h4"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>
+                                    {% trans 'H5 - Font & Style' %}
+                                    <span class="bb-typography-info" data-typography-type="h5" title="{% trans 'View full style declaration' %}">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="bb-typography-tooltip"></span>
+                                    </span>
+                                </label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="font-h5" placeholder="{% trans 'Fifth-level heading' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="font_family_h5"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width" data-color-key="h5-color">
+                                <label>{% trans 'H5 - Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="typography-color-h5" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="typography-color-h5"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="color_h5"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>
+                                    {% trans 'H6 - Font & Style' %}
+                                    <span class="bb-typography-info" data-typography-type="h6" title="{% trans 'View full style declaration' %}">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="bb-typography-tooltip"></span>
+                                    </span>
+                                </label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="font-h6" placeholder="{% trans 'Smallest heading style' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="font_family_h6"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width" data-color-key="h6-color">
+                                <label>{% trans 'H6 - Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="typography-color-h6" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="typography-color-h6"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="typography" data-property="color_h6"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Colors Group (moved from Colors tab) -->
+                    <div class="bb-property-group collapsed" id="text-colors-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Text Color Variants' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field" data-color-key="text-light">
+                                <label>{% trans 'Text Light' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="color-text-light" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="text-light"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="text-light"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field" data-color-key="text-muted">
+                                <label>{% trans 'Text Muted' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="color-text-muted" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="text-muted"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="text-muted"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field" data-color-key="text-inverse">
+                                <label>{% trans 'Text Inverse' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="color-text-inverse" value="">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="text-inverse"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="colors" data-property="text-inverse"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layout Section -->
+                <div id="layout-section" class="section-panel">
+                    <h2>{% trans 'Layout Settings' %}</h2>
+                    <p class="section-description">{% trans 'Customize header, footer, and menu appearance' %}</p>
+
+                    <!-- Header Property Group -->
+                    <div class="bb-property-group" id="header-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Header' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <!-- Header content will be dynamically rendered -->
+                            <div class="bb-property-field">
+                                <label>{% trans 'Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="header-background" data-token="header.background">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="header-background"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="header" data-property="background"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Text Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="header-text-color" data-token="header.text-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="header-text-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="header" data-property="text-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Border Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="header-border-color" data-token="header.border-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="header-border-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="header" data-property="border-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Link Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="header-link-color" data-token="header.link-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="header-link-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="header" data-property="link-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Link Hover Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="header-link-hover-color" data-token="header.link-hover-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="header-link-hover-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="header" data-property="link-hover-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Padding' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="header-padding" data-token="header.padding" readonly placeholder="{% trans 'Click to edit' %}">
+                                    <button class="util-btn util-btn-primary" id="header-padding-btn" title="{% trans 'Edit padding' %}">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="header" data-property="padding"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Property Group -->
+                    <div class="bb-property-group collapsed" id="footer-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Footer' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field">
+                                <label>{% trans 'Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="footer-background" data-token="footer.background">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="footer-background"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="footer" data-property="background"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Text Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="footer-text-color" data-token="footer.text-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="footer-text-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="footer" data-property="text-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Border Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="footer-border-color" data-token="footer.border-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="footer-border-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="footer" data-property="border-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Link Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="footer-link-color" data-token="footer.link-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="footer-link-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="footer" data-property="link-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Link Hover Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="footer-link-hover-color" data-token="footer.link-hover-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="footer-link-hover-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="footer" data-property="link-hover-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Heading Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="footer-heading-color" data-token="footer.heading-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="footer-heading-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="footer" data-property="heading-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Padding' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="footer-padding" data-token="footer.padding" readonly placeholder="{% trans 'Click to edit' %}">
+                                    <button class="util-btn util-btn-primary" id="footer-padding-btn" title="{% trans 'Edit padding' %}">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="footer" data-property="padding"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menu Property Group -->
+                    <div class="bb-property-group collapsed" id="menu-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Menu' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field">
+                                <label>{% trans 'Text Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="menu-text-color" data-token="menu.text-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="menu-text-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="menu" data-property="text-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Text Hover Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="menu-text-hover-color" data-token="menu.text-hover-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="menu-text-hover-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="menu" data-property="text-hover-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="menu-background" data-token="menu.background">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="menu-background"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="menu" data-property="background"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Hover Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="menu-background-hover" data-token="menu.background-hover">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="menu-background-hover"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="menu" data-property="background-hover"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Dropdown Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="menu-dropdown-background" data-token="menu.dropdown-background">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="menu-dropdown-background"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="menu" data-property="dropdown-background"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Dropdown Shadow' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="menu-dropdown-shadow" data-token="menu.dropdown-shadow">
+                                    <!-- ShadowEditor will add its own trigger button via attach() -->
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="menu" data-property="dropdown-shadow"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Typography' %}</label>
+                                <div class="bb-property-input-wrapper bb-typography-input-wrapper">
+                                    <input type="text" id="font-menu" class="typography-summary-input" readonly
+                                           placeholder="{% trans 'Click to customize' %}">
+                                    <!-- TypographyEditor will add its trigger button -->
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="menu" data-property="typography"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Components Section -->
+                <div id="components-section" class="section-panel">
+                    <h2>{% trans 'Component Styles' %}</h2>
+                    <p class="section-description">{% trans 'Customize buttons, cards, forms, and other UI components' %}</p>
+
+                    <!-- Buttons Property Group -->
+                    <div class="bb-property-group collapsed" id="buttons-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Buttons' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content single-column">
+                            <!-- Border (using BorderEditorUtility) -->
+                            <div class="bb-property-field">
+                                <label>{% trans 'Border' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-border" data-border-context="button" readonly placeholder="{% trans 'Click to edit...' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-button-border-defaults" title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Typography (using TypographyEditor) -->
+                            <div class="bb-property-field">
+                                <label>{% trans 'Typography' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-typography" data-typography-context="button" readonly placeholder="{% trans 'Click to edit...' %}">
+                                    <button class="util-btn util-btn-warning" data-action="reset-button-typography-defaults" title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Font Size (SM/MD/LG tabs) -->
+                            <div class="bb-property-field bb-size-variant-field" id="button-font-size-field">
+                                <label>{% trans 'Font Size' %}</label>
+                                <div class="bb-size-tabs" data-field="button-font-size">
+                                    <button class="bb-size-tab active" data-size="sm">SM</button>
+                                    <button class="bb-size-tab" data-size="md">MD</button>
+                                    <button class="bb-size-tab" data-size="lg">LG</button>
+                                </div>
+                                <div class="bb-size-content active" data-size="sm">
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="button-font-size-sm" data-token="elements.button.font-size-sm" placeholder="e.g., 0.875rem">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="font-size-sm"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-size-content" data-size="md">
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="button-font-size-md" data-token="elements.button.font-size-md" placeholder="e.g., 1rem">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="font-size-md"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-size-content" data-size="lg">
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="button-font-size-lg" data-token="elements.button.font-size-lg" placeholder="e.g., 1.125rem">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="font-size-lg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Padding (SM/MD/LG tabs with X/Y) -->
+                            <div class="bb-property-field bb-size-variant-field" id="button-padding-field">
+                                <label>{% trans 'Padding' %}</label>
+                                <div class="bb-size-tabs" data-field="button-padding">
+                                    <button class="bb-size-tab active" data-size="sm">SM</button>
+                                    <button class="bb-size-tab" data-size="md">MD</button>
+                                    <button class="bb-size-tab" data-size="lg">LG</button>
+                                </div>
+                                <div class="bb-size-content active" data-size="sm">
+                                    <div class="bb-inline-inputs">
+                                        <div class="bb-inline-input-group">
+                                            <label>{% trans 'X (Horizontal)' %}</label>
+                                            <input type="text" id="button-padding-x-sm" data-token="elements.button.padding-x-sm" placeholder="e.g., 0.75rem">
+                                        </div>
+                                        <div class="bb-inline-input-group">
+                                            <label>{% trans 'Y (Vertical)' %}</label>
+                                            <input type="text" id="button-padding-y-sm" data-token="elements.button.padding-y-sm" placeholder="e.g., 0.25rem">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bb-size-content" data-size="md">
+                                    <div class="bb-inline-inputs">
+                                        <div class="bb-inline-input-group">
+                                            <label>{% trans 'X (Horizontal)' %}</label>
+                                            <input type="text" id="button-padding-x-md" data-token="elements.button.padding-x-md" placeholder="e.g., 1rem">
+                                        </div>
+                                        <div class="bb-inline-input-group">
+                                            <label>{% trans 'Y (Vertical)' %}</label>
+                                            <input type="text" id="button-padding-y-md" data-token="elements.button.padding-y-md" placeholder="e.g., 0.5rem">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bb-size-content" data-size="lg">
+                                    <div class="bb-inline-inputs">
+                                        <div class="bb-inline-input-group">
+                                            <label>{% trans 'X (Horizontal)' %}</label>
+                                            <input type="text" id="button-padding-x-lg" data-token="elements.button.padding-x-lg" placeholder="e.g., 1.5rem">
+                                        </div>
+                                        <div class="bb-inline-input-group">
+                                            <label>{% trans 'Y (Vertical)' %}</label>
+                                            <input type="text" id="button-padding-y-lg" data-token="elements.button.padding-y-lg" placeholder="e.g., 0.75rem">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bb-property-divider"></div>
+
+                            <!-- Pill Radius -->
+                            <div class="bb-property-field">
+                                <label>{% trans 'Pill Radius' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-radius-pill" data-token="elements.button.radius-pill" placeholder="e.g., 9999px">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="radius-pill"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Transitions -->
+                            <div class="bb-property-field">
+                                <label>{% trans 'Transition Duration' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-transition-duration" data-token="elements.button.transition-duration" placeholder="e.g., 150ms">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="transition-duration"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bb-property-field">
+                                <label>{% trans 'Transition Easing' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <select id="button-transition-easing" data-token="elements.button.transition-easing">
+                                        <option value="var(--theme-transition-easing-default)">{% trans 'Default' %}</option>
+                                        <option value="var(--theme-transition-easing-in)">{% trans 'Ease In' %}</option>
+                                        <option value="var(--theme-transition-easing-out)">{% trans 'Ease Out' %}</option>
+                                        <option value="ease-in-out">{% trans 'Ease In-Out' %}</option>
+                                        <option value="linear">{% trans 'Linear' %}</option>
+                                    </select>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="transition-easing"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bb-property-divider"></div>
+
+                            <!-- Accessibility -->
+                            <div class="bb-property-field">
+                                <label>{% trans 'Focus Ring Width' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-focus-ring-width" data-token="elements.button.focus-ring-width" placeholder="e.g., 3px">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="focus-ring-width"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bb-property-field">
+                                <label>{% trans 'Focus Ring Offset' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-focus-ring-offset" data-token="elements.button.focus-ring-offset" placeholder="e.g., 2px">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="focus-ring-offset"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bb-property-field">
+                                <label>{% trans 'Disabled Opacity' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-disabled-opacity" data-token="elements.button.disabled-opacity" placeholder="e.g., 0.5">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="disabled-opacity"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Layout -->
+                            <div class="bb-property-field">
+                                <label>{% trans 'Icon Gap' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="button-icon-gap" data-token="elements.button.icon-gap" placeholder="e.g., 0.5rem">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.button" data-property="icon-gap"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cards Property Group -->
+                    <div class="bb-property-group collapsed" id="cards-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Cards' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content single-column">
+                            <!-- Card Type Tabs -->
+                            <div class="bb-card-type-tabs">
+                                <button class="bb-card-type-tab active" data-card-type="default">{% trans 'Default' %}</button>
+                                <button class="bb-card-type-tab" data-card-type="elevated">{% trans 'Elevated' %}</button>
+                                <button class="bb-card-type-tab" data-card-type="bordered">{% trans 'Bordered' %}</button>
+                                <button class="bb-card-type-tab" data-card-type="minimal">{% trans 'Minimal' %}</button>
+                            </div>
+
+                            <!-- Default Card Type -->
+                            <div class="bb-card-type-content active" data-card-type="default">
+                                <div class="bb-card-properties">
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Background' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-default-bg" data-card-token="card-default.bg" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-default" data-card-type="default" data-property="bg"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Border' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-default-border" data-card-border="default" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-border" data-card-type="default"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-default-shadow" data-card-shadow="default" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="default" data-property="shadow"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow (Hover)' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-default-shadow-hover" data-card-shadow-hover="default" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="default" data-property="shadow-hover"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Elevated Card Type -->
+                            <div class="bb-card-type-content" data-card-type="elevated">
+                                <div class="bb-card-properties">
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Background' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-elevated-bg" data-card-token="card-elevated.bg" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-default" data-card-type="elevated" data-property="bg"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Border' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-elevated-border" data-card-border="elevated" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-border" data-card-type="elevated"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-elevated-shadow" data-card-shadow="elevated" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="elevated" data-property="shadow"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow (Hover)' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-elevated-shadow-hover" data-card-shadow-hover="elevated" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="elevated" data-property="shadow-hover"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bordered Card Type -->
+                            <div class="bb-card-type-content" data-card-type="bordered">
+                                <div class="bb-card-properties">
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Background' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-bordered-bg" data-card-token="card-bordered.bg" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-default" data-card-type="bordered" data-property="bg"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Border' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-bordered-border" data-card-border="bordered" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-border" data-card-type="bordered"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-bordered-shadow" data-card-shadow="bordered" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="bordered" data-property="shadow"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow (Hover)' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-bordered-shadow-hover" data-card-shadow-hover="bordered" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="bordered" data-property="shadow-hover"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Minimal Card Type -->
+                            <div class="bb-card-type-content" data-card-type="minimal">
+                                <div class="bb-card-properties">
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Background' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-minimal-bg" data-card-token="card-minimal.bg" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-default" data-card-type="minimal" data-property="bg"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Border' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-minimal-border" data-card-border="minimal" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-border" data-card-type="minimal"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-minimal-shadow" data-card-shadow="minimal" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="minimal" data-property="shadow"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bb-property-field">
+                                        <label>{% trans 'Shadow (Hover)' %}</label>
+                                        <div class="bb-property-input-wrapper">
+                                            <input type="text" id="card-minimal-shadow-hover" data-card-shadow-hover="minimal" readonly placeholder="{% trans 'Click to edit...' %}">
+                                            <button class="util-btn util-btn-warning" data-action="reset-card-shadow" data-card-type="minimal" data-property="shadow-hover"title="{% trans 'Reset' %}">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Forms Property Group -->
+                    <div class="bb-property-group collapsed" id="forms-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Forms' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+
+                            <!-- Input Styling Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Input Styling' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-input-bg" data-token="elements.form.input-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-input-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="input-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Border Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-input-border" data-token="elements.form.input-border">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-input-border"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="input-border"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Focus Border' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-input-focus-border" data-token="elements.form.input-focus-border">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-input-focus-border"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="input-focus-border"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Radius' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-input-radius" data-token="elements.form.input-radius">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="input-radius"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Padding' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-input-padding" data-token="elements.form.input-padding">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="input-padding"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Disabled Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-input-disabled-bg" data-token="elements.form.input-disabled-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-input-disabled-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="input-disabled-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Placeholder Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-input-placeholder-color" data-token="elements.form.input-placeholder-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-input-placeholder-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="input-placeholder-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Focus Shadow' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-focus-shadow" data-token="elements.form.focus-shadow" readonly>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="focus-shadow"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Labels & Text Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Labels & Text' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Label Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-label-color" data-token="elements.form.label-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-label-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="label-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Label Size' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-label-size" data-token="elements.form.label-size">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="label-size"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Text Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-text-color" data-token="elements.form.text-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-text-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="text-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Help Text Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-help-color" data-token="elements.form.help-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-help-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="help-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Colors Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Status Colors' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Error Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-error-color" data-token="elements.form.error-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-error-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="error-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Success Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-success-color" data-token="elements.form.success-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-success-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="success-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Warning Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-warning-color" data-token="elements.form.warning-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-warning-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="warning-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Primary Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-primary-color" data-token="elements.form.primary-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-primary-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="primary-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Primary Hover' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="form-primary-hover" data-token="elements.form.primary-hover">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="form-primary-hover"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="primary-hover"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Typography Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Typography' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Title Size' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-title-size" data-token="elements.form.title-size">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="title-size"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Heading Size' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-heading-size" data-token="elements.form.heading-size">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="heading-size"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Base Size' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-base-size" data-token="elements.form.base-size">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="base-size"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Small Size' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-small-size" data-token="elements.form.small-size">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="small-size"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Font Weight Bold' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-font-weight-bold" data-token="elements.form.font-weight-bold">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="font-weight-bold"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Line Height' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-line-height-relaxed" data-token="elements.form.line-height-relaxed">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="line-height-relaxed"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Spacing Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Spacing' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Spacing Large' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-spacing-lg" data-token="elements.form.spacing-lg">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="spacing-lg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Spacing Medium' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-spacing-md" data-token="elements.form.spacing-md">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="spacing-md"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Spacing Small' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-spacing-sm" data-token="elements.form.spacing-sm">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="spacing-sm"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Container Max Width' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-container-max-width" data-token="elements.form.container-max-width">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="container-max-width"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Container Padding' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-container-padding" data-token="elements.form.container-padding">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="container-padding"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Checkbox & Radio Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Checkbox & Radio' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Checkbox Size' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-checkbox-size" data-token="elements.form.checkbox-size">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="checkbox-size"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Checkbox Radius' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-checkbox-radius" data-token="elements.form.checkbox-radius">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="checkbox-radius"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Radio Size' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-radio-size" data-token="elements.form.radio-size">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="radio-size"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Button Styling Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Form Buttons' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Button Padding X' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-button-padding-x" data-token="elements.form.button-padding-x">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="button-padding-x"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Button Padding Y' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-button-padding-y" data-token="elements.form.button-padding-y">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="button-padding-y"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Button Radius' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-button-radius" data-token="elements.form.button-radius">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="button-radius"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Effects Sub-section -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Effects' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Shadow' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-shadow" data-token="elements.form.shadow" readonly>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="shadow"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Transition' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="form-transition" data-token="elements.form.transition">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.form" data-property="transition"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Alerts Property Group -->
+                    <div class="bb-property-group collapsed" id="alerts-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Alerts' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field">
+                                <label>{% trans 'Border Radius' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="alert-radius" data-token="elements.alert.radius">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.alert" data-property="radius"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Padding' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="alert-padding" data-token="elements.alert.padding">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.alert" data-property="padding"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Success Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="alert-success-bg" data-token="elements.alert.success-bg">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="alert-success-bg"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.alert" data-property="success-bg"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Warning Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="alert-warning-bg" data-token="elements.alert.warning-bg">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="alert-warning-bg"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.alert" data-property="warning-bg"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Error Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="alert-error-bg" data-token="elements.alert.error-bg">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="alert-error-bg"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.alert" data-property="error-bg"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Info Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="alert-info-bg" data-token="elements.alert.info-bg">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="alert-info-bg"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.alert" data-property="info-bg"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Property Group -->
+                    <div class="bb-property-group collapsed" id="modal-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Modal' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field">
+                                <label>{% trans 'Background' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="modal-background" data-token="elements.modal.bg">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="modal-background"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.modal" data-property="bg"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Border Radius' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="modal-radius" data-token="elements.modal.radius">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.modal" data-property="radius"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Shadow' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="modal-shadow" data-token="elements.modal.shadow" data-shadow-key="modal" readonly>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.modal" data-property="shadow"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Padding' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="modal-padding" data-token="elements.modal.padding">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.modal" data-property="padding"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Backdrop Color' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" class="color-input" id="modal-backdrop-color" data-token="elements.modal.backdrop-color">
+                                    <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="modal-backdrop-color"title="{% trans 'Pick color' %}">
+                                        <i class="fas fa-eye-dropper"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="elements.modal" data-property="backdrop-color"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Property Group -->
+                    <div class="bb-property-group collapsed" id="search-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Search' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <!-- Input Styling Subsection -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Input Styling' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-input-bg" data-token="search.input-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-input-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Border Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-input-border" data-token="search.input-border">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-input-border"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-border"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Text Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-input-color" data-token="search.input-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-input-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Placeholder Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-input-placeholder-color" data-token="search.input-placeholder-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-input-placeholder-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-placeholder-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Focus Border' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-input-focus-border" data-token="search.input-focus-border">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-input-focus-border"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-focus-border"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Focus Shadow' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-input-focus-shadow" data-token="search.input-focus-shadow" readonly>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-focus-shadow"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Border Radius' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-input-radius" data-token="search.input-radius">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-radius"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Padding X' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-input-padding-x" data-token="search.input-padding-x">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-padding-x"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Padding Y' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-input-padding-y" data-token="search.input-padding-y">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="input-padding-y"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Button Styling Subsection -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Button Styling' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-btn-bg" data-token="search.btn-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-btn-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="btn-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Text Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-btn-color" data-token="search.btn-color">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-btn-color"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="btn-color"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Hover Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-btn-hover-bg" data-token="search.btn-hover-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-btn-hover-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="btn-hover-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Border Radius' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-btn-radius" data-token="search.btn-radius">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="btn-radius"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dropdown Styling Subsection -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Dropdown Styling' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-dropdown-bg" data-token="search.dropdown-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-dropdown-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="dropdown-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Border Color' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-dropdown-border" data-token="search.dropdown-border">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-dropdown-border"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="dropdown-border"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Shadow' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-dropdown-shadow" data-token="search.dropdown-shadow" readonly>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="dropdown-shadow"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Border Radius' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-dropdown-radius" data-token="search.dropdown-radius">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="dropdown-radius"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Results Styling Subsection -->
+                            <div class="bb-property-subsection">
+                                <h5 class="bb-property-subsection-title">{% trans 'Results Styling' %}</h5>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-results-bg" data-token="search.results-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-results-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="results-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Item Hover Background' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" class="color-input" id="search-results-item-hover-bg" data-token="search.results-item-hover-bg">
+                                        <button class="util-btn util-btn-primary" data-action="open-color-picker" data-key="search-results-item-hover-bg"title="{% trans 'Pick color' %}">
+                                            <i class="fas fa-eye-dropper"></i>
+                                        </button>
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="results-item-hover-bg"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="bb-property-field">
+                                    <label>{% trans 'Item Padding' %}</label>
+                                    <div class="bb-property-input-wrapper">
+                                        <input type="text" id="search-results-item-padding" data-token="search.results-item-padding">
+                                        <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="search" data-property="results-item-padding"title="{% trans 'Reset' %}">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Section -->
+                <div id="advanced-section" class="section-panel">
+                    <h2>{% trans 'Advanced Settings' %}</h2>
+                    <p class="section-description">{% trans 'Fine-tune spacing, shadows, borders, and transitions' %}</p>
+
+                    <!-- Spacing Property Group -->
+                    <div class="bb-property-group" id="spacing-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Spacing' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Base Spacing Unit' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="spacing-base" value="0.25rem">
+                                    <button class="util-btn util-btn-primary" data-action="open-spacing-editor">
+                                        <i class="fas fa-ruler"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="spacing" data-property="spacing-base"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <div class="spacing-scale-preview">
+                                    <div class="scale-item" data-scale="1">xs: <span>0.25rem</span></div>
+                                    <div class="scale-item" data-scale="2">sm: <span>0.5rem</span></div>
+                                    <div class="scale-item" data-scale="3">md: <span>0.75rem</span></div>
+                                    <div class="scale-item" data-scale="4">lg: <span>1rem</span></div>
+                                    <div class="scale-item" data-scale="6">xl: <span>1.5rem</span></div>
+                                    <div class="scale-item" data-scale="8">2xl: <span>2rem</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shadows Property Group -->
+                    <div class="bb-property-group collapsed" id="shadows-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Shadows' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Small Shadow' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="shadow-sm" value="0 1px 2px rgba(0,0,0,0.05)">
+                                    <button class="util-btn util-btn-primary" data-action="open-shadow-editor" data-key="sm">
+                                        <i class="fas fa-adjust"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="shadows" data-property="shadow-sm"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Medium Shadow' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="shadow-md" value="0 4px 6px rgba(0,0,0,0.1)">
+                                    <button class="util-btn util-btn-primary" data-action="open-shadow-editor" data-key="md">
+                                        <i class="fas fa-adjust"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="shadows" data-property="shadow-md"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Large Shadow' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="shadow-lg" value="0 10px 15px rgba(0,0,0,0.1)">
+                                    <button class="util-btn util-btn-primary" data-action="open-shadow-editor" data-key="lg">
+                                        <i class="fas fa-adjust"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="shadows" data-property="shadow-lg"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'XL Shadow' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="shadow-xl" value="0 20px 25px rgba(0,0,0,0.1)">
+                                    <button class="util-btn util-btn-primary" data-action="open-shadow-editor" data-key="xl">
+                                        <i class="fas fa-adjust"></i>
+                                    </button>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="shadows" data-property="shadow-xl"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Borders Property Group -->
+                    <div class="bb-property-group collapsed" id="borders-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Borders' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field">
+                                <label>{% trans 'Small Radius' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="border-radius-sm" placeholder="0.125rem">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="borders" data-property="radius-sm"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Medium Radius' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="border-radius-md" placeholder="0.375rem">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="borders" data-property="radius-md"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Large Radius' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="border-radius-lg" placeholder="0.5rem">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="borders" data-property="radius-lg"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'XL Radius' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="border-radius-xl" placeholder="0.75rem">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="borders" data-property="radius-xl"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Border Width' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="border-width-default" placeholder="1px">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="borders" data-property="width-default"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transitions Property Group -->
+                    <div class="bb-property-group collapsed" id="transitions-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Transitions' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content">
+                            <div class="bb-property-field">
+                                <label>{% trans 'Fast Duration' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="transition-fast" placeholder="150ms" data-token="transitions.duration-fast">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="transitions" data-property="duration-fast"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Base Duration' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="transition-base" placeholder="200ms" data-token="transitions.duration-base">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="transitions" data-property="duration-base"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field">
+                                <label>{% trans 'Slow Duration' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <input type="text" id="transition-slow" placeholder="300ms" data-token="transitions.duration-slow">
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="transitions" data-property="duration-slow"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bb-property-field full-width">
+                                <label>{% trans 'Easing Function' %}</label>
+                                <div class="bb-property-input-wrapper">
+                                    <select id="transition-easing" data-token="transitions.easing-default">
+                                        <option value="ease">{% trans 'Ease' %}</option>
+                                        <option value="ease-in">{% trans 'Ease In' %}</option>
+                                        <option value="ease-out">{% trans 'Ease Out' %}</option>
+                                        <option value="ease-in-out">{% trans 'Ease In Out' %}</option>
+                                        <option value="linear">{% trans 'Linear' %}</option>
+                                    </select>
+                                    <button class="util-btn util-btn-warning" data-action="reset-to-default" data-section="transitions" data-property="easing-default"title="{% trans 'Reset' %}">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom CSS Property Group -->
+                    <div class="bb-property-group collapsed" id="custom-css-group">
+                        <div class="bb-property-group-header">
+                            <i class="fas fa-chevron-down toggle-icon"></i>
+                            <h4 class="bb-property-group-title">{% trans 'Custom CSS' %}</h4>
+                        </div>
+                        <div class="bb-property-group-content single-column">
+                            <div class="bb-property-field full-width">
+                                <div class="custom-css-wrapper">
+                                    <textarea id="custom-css" class="custom-css-editor" placeholder="/* {% trans 'Add custom CSS here' %} */">{{ branding.custom_css }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right Panel: Preview -->
+        <div class="preview-panel">
+            <div class="preview-header">
+                <span class="preview-title">{% trans 'Live Preview' %}</span>
+                <button class="util-btn" data-action="refresh-preview" title="{% trans 'Refresh' %}">
+                    <i class="fas fa-sync"></i>
+                </button>
+            </div>
+            <div class="preview-container" id="preview-container">
+                <div id="preview-frame" class="preview-frame desktop-frame">
+                    <!-- Dynamic preview content will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Hidden import input -->
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+
+    <!-- Media Library Upload Queue (required for background editor) -->
+    <script src="{% static 'media_library/js/upload-queue.js' %}"></script>
+
+    <!-- Utility JavaScript (dynamically loaded from installed utilities) -->
+    {% for js_file in utility_js_files %}
+    <script src="{% static js_file %}"></script>
+    {% endfor %}
+
+    <!-- Branding Builder JavaScript -->
+    <script type="application/json" id="branding-builder-config">
+{
+    "themeData": {{ theme_data|safe }},
+    "brandingData": {{ branding_data|safe }},
+    "brandingId": {{ branding.id }},
+    "csrfToken": "{{ csrf_token }}",
+    "themeCssUrl": "{{ theme_css_url|default:""|escapejs }}",
+    "urls": {
+        "update": "{% url 'design:branding_update' branding.id %}",
+        "save": "{% url 'design:branding_save' branding.id %}",
+        "export": "{% url 'design:branding_export' branding.id %}",
+        "import": "{% url 'design:branding_import' branding.id %}"
+    },
+    "i18n": {
+        "saving": "{% trans 'Saving...' %}",
+        "saved": "{% trans 'Saved' %}",
+        "error": "{% trans 'Error' %}",
+        "confirmImport": "{% trans 'This will replace all current settings. Continue?' %}",
+        "exportSuccess": "{% trans 'Branding exported successfully' %}",
+        "importSuccess": "{% trans 'Branding imported successfully' %}",
+        "statusCustom": "{% trans 'Custom value' %}",
+        "statusDefault": "{% trans 'Theme default' %}",
+        "statusNone": "{% trans 'No value' %}"
+    }
+}
+</script>
+    <script src="{% static 'design/js/branding_builder.js' %}"></script>
+
+</body>
+</html>

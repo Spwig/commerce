@@ -1,0 +1,44 @@
+services:
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: shop_test_runner
+    working_dir: /app
+    volumes:
+      - .:/app  # Mount shop code (read-write for Django cache files)
+      - test_reports:/test-results  # Writable test output
+    environment:
+      # Connect to existing shop PostgreSQL
+      DB_HOST: shop-db-1
+      DB_PORT: 5432
+      DB_NAME: shop_db
+      DB_USER: shop_user
+      DB_PASSWORD: shoppass123
+
+      # pytest-django will create test_shop_db automatically
+
+      # Connect to existing shop Redis
+      REDIS_HOST: shop-redis-1
+      REDIS_PORT: 6379
+      REDIS_DB: 15  # Use different DB index for tests
+
+      # Django settings
+      DJANGO_SETTINGS_MODULE: core.settings
+      DJANGO_SECRET_KEY: test-secret-key-for-ci
+      DEBUG: "True"  # Enable debug mode for tests (disables SSL redirect, etc.)
+
+      # Pytest settings
+      PYTEST_ADDOPTS: "--color=yes -v --tb=short"
+    networks:
+      - shop_network  # Join existing shop network
+    restart: unless-stopped
+    command: sleep infinity  # Keep container running
+
+networks:
+  shop_network:
+    external: true  # Use existing shop network
+
+volumes:
+  test_reports:
+    name: shop_test_reports

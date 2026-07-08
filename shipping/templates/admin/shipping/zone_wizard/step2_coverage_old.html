@@ -1,0 +1,144 @@
+{% extends "admin/shipping/zone_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-globe-americas"></i> {% trans "Geographic Coverage" %}
+</div>
+<p class="step-description">
+    {% trans "Define which countries, states, and postal codes are included in this zone. Leave all fields empty to include all locations." %}
+</p>
+
+<form method="post" id="zone-coverage-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-flag"></i> {% trans "Countries" %}
+        </h3>
+
+        <div class="form-group">
+            <label for="id_countries">{% trans "Country Codes" %}</label>
+            <textarea id="id_countries"
+                      name="countries"
+                      class="form-control"
+                      rows="3"
+                      placeholder="{% trans 'US, CA, MX (comma-separated ISO 3166-1 alpha-2 codes)' %}">{% if zone_data.countries %}{{ zone_data.countries|join:', ' }}{% endif %}</textarea>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Comma-separated ISO 3166-1 alpha-2 country codes (e.g., US, CA, MX). Leave empty for all countries." %}
+            </p>
+        </div>
+
+        <div class="zone-wizard-country-helper">
+            <div class="helper-section">
+                <strong>{% trans "Common Country Codes:" %}</strong>
+                <div class="country-code-chips">
+                    <button type="button" class="chip-btn" data-code="US" data-name="United States">
+                        <i class="fas fa-plus-circle"></i> US
+                    </button>
+                    <button type="button" class="chip-btn" data-code="CA" data-name="Canada">
+                        <i class="fas fa-plus-circle"></i> CA
+                    </button>
+                    <button type="button" class="chip-btn" data-code="MX" data-name="Mexico">
+                        <i class="fas fa-plus-circle"></i> MX
+                    </button>
+                    <button type="button" class="chip-btn" data-code="GB" data-name="United Kingdom">
+                        <i class="fas fa-plus-circle"></i> GB
+                    </button>
+                    <button type="button" class="chip-btn" data-code="DE" data-name="Germany">
+                        <i class="fas fa-plus-circle"></i> DE
+                    </button>
+                    <button type="button" class="chip-btn" data-code="FR" data-name="France">
+                        <i class="fas fa-plus-circle"></i> FR
+                    </button>
+                    <button type="button" class="chip-btn" data-code="AU" data-name="Australia">
+                        <i class="fas fa-plus-circle"></i> AU
+                    </button>
+                    <button type="button" class="chip-btn" data-code="JP" data-name="Japan">
+                        <i class="fas fa-plus-circle"></i> JP
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-map"></i> {% trans "States/Provinces" %}
+        </h3>
+
+        <div class="form-group">
+            <label for="id_states">{% trans "States by Country" %}</label>
+            <textarea id="id_states"
+                      name="states"
+                      class="form-control"
+                      rows="4"
+                      placeholder='{% trans '{"US": ["CA", "NY", "TX"], "CA": ["ON", "BC"]} (JSON format)' %}'>{% if zone_data.states %}{{ zone_data.states|safe }}{% endif %}</textarea>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "JSON object mapping country codes to arrays of state/province codes. Leave empty to include all states." %}
+            </p>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-code"></i>
+            <div>
+                <strong>{% trans "JSON Format Example:" %}</strong>
+                <pre class="zone-wizard-code-block">
+{
+  "US": ["CA", "NY", "TX", "FL"],
+  "CA": ["ON", "BC", "QC"],
+  "AU": ["NSW", "VIC"]
+}</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-envelope"></i> {% trans "Postal Code Patterns" %}
+        </h3>
+
+        <div class="form-group">
+            <label for="id_postal_patterns">{% trans "Postal Code Regex Patterns" %}</label>
+            <textarea id="id_postal_patterns"
+                      name="postal_patterns"
+                      class="form-control"
+                      rows="3"
+                      placeholder="{% trans '^90[0-9]{3}$, ^91[0-9]{3}$ (comma-separated regex patterns)' %}">{% if zone_data.postal_code_patterns %}{{ zone_data.postal_code_patterns|join:', ' }}{% endif %}</textarea>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Comma-separated regex patterns to match postal/zip codes. Leave empty to include all postal codes." %}
+            </p>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Pattern Examples:" %}</strong>
+                <ul class="zone-wizard-info-list">
+                    <li><code>^90[0-9]{3}$</code> - {% trans "Los Angeles area (90000-90999)" %}</li>
+                    <li><code>^1[0-2][0-9]{3}$</code> - {% trans "New York area (10000-12999)" %}</li>
+                    <li><code>^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] [0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$</code> - {% trans "Canadian postal codes" %}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:zone_wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="zone-coverage-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script src="{% static 'shipping/js/zone-wizard.js' %}"></script>
+{% endblock %}

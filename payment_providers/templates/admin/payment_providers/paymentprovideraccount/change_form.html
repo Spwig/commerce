@@ -1,0 +1,424 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static humanize admin_urls %}
+
+{% block title %}
+{% if original %}
+    {{ original.display_name|truncatechars:50 }} | {% trans "Payment Providers" %}
+{% else %}
+    {% trans "Add Payment Provider" %} | {% trans "Payment Providers" %}
+{% endif %} | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'payment_providers/css/admin_provider_form.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if original %}
+    {# Dashboard Header - Using admin-base.css .dashboard-header class #}
+    <div class="dashboard-header">
+        <div class="provider-header-content">
+            {% if original.component.icon %}
+            <div class="provider-logo">
+                <img src="{{ original.component.icon }}" alt="{{ original.component.name }}">
+            </div>
+            {% endif %}
+
+            <div>
+                <h1>
+                    <i class="fas fa-credit-card"></i>
+                    {{ original.display_name }}
+                </h1>
+
+                <div class="provider-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-plug"></i>
+                        {{ original.component.name }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}
+                    </span>
+                    {% if original.last_tested_at %}
+                    <span class="meta-item">
+                        <i class="fas fa-heartbeat"></i>
+                        {% trans "Last Tested" %}: {{ original.last_tested_at|naturaltime }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="provider-badges">
+            {# Connection Status - Using admin-base.css .status-badge class #}
+            {% if original.connection_status == 'connected' %}
+            <span class="status-badge active">
+                <i class="fas fa-check-circle"></i> {% trans "Connected" %}
+            </span>
+            {% elif original.connection_status == 'failed' %}
+            <span class="status-badge inactive">
+                <i class="fas fa-exclamation-circle"></i> {% trans "Failed" %}
+            </span>
+            {% endif %}
+
+            {# Active/Inactive Status #}
+            {% if original.is_active %}
+            <span class="status-badge active">
+                <i class="fas fa-power-off"></i> {% trans "Active" %}
+            </span>
+            {% else %}
+            <span class="status-badge inactive">
+                <i class="fas fa-pause-circle"></i> {% trans "Inactive" %}
+            </span>
+            {% endif %}
+
+            {# Default Provider (needs custom color) #}
+            {% if original.is_default %}
+            <span class="status-badge default-provider-badge">
+                <i class="fas fa-star"></i> {% trans "Default" %}
+            </span>
+            {% endif %}
+
+            {# Test / Live Mode Badge #}
+            {% if original.test_mode %}
+            <span class="status-badge pp-badge-test">
+                <i class="fas fa-flask"></i> {% trans "Test Mode" %}
+            </span>
+            {% else %}
+            <span class="status-badge pp-badge-live">
+                <i class="fas fa-broadcast-tower"></i> {% trans "Live" %}
+            </span>
+            {% endif %}
+
+            {# Checkout Mode Badge #}
+            <span class="status-badge">
+                {% if original.checkout_mode == 'hosted' %}
+                <i class="fas fa-external-link-alt"></i> {% trans "Hosted" %}
+                {% elif original.checkout_mode == 'embedded' %}
+                <i class="fas fa-code"></i> {% trans "Embedded" %}
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    {# Tab Navigation - Using admin-base.css .admin-tab-btn class #}
+    <div class="admin-tabs pp-admin-tabs">
+        <button type="button" class="admin-tab-btn active" data-tab="settings">
+            <i class="fas fa-cog"></i>
+            <span class="label">{% trans "Settings" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="status">
+            <i class="fas fa-heartbeat"></i>
+            <span class="label">{% trans "Status & Health" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="advanced">
+            <i class="fas fa-sliders-h"></i>
+            <span class="label">{% trans "Advanced" %}</span>
+        </button>
+    </div>
+
+    {# Main Form #}
+    <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+    {% csrf_token %}
+
+    {# Tab Content Panels - Using admin-base.css .admin-tab-content class #}
+
+    {# Tab 1: Settings #}
+    <div class="admin-tab-content active" id="tab-settings">
+        {# Webhook Endpoint URL - Info card for merchants #}
+        <div class="pp-info-card">
+            <div class="pp-info-card-header">
+                <i class="fas fa-link"></i>
+                <strong>{% trans "Webhook Endpoint" %}</strong>
+            </div>
+            <p class="pp-info-card-description">{% trans "Configure this URL in your payment provider's dashboard to receive payment notifications." %}</p>
+            <div class="pp-copyable-url">
+                <code id="pp-webhook-url">{{ request.scheme }}://{{ request.get_host }}{% url 'payment_webhook' provider_slug=original.component.slug %}</code>
+                <button type="button" class="pp-copy-btn" data-copy-target="pp-webhook-url" title="{% trans 'Copy to clipboard' %}">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>
+
+        {% if original.signup_url %}
+        {# Provider Dashboard Link #}
+        <div class="pp-info-card pp-info-card-subtle">
+            <div class="pp-info-card-header">
+                <i class="fas fa-external-link-alt"></i>
+                <strong>{% trans "Provider Dashboard" %}</strong>
+            </div>
+            <p class="pp-info-card-description">
+                <a href="{{ original.signup_url }}" target="_blank" rel="noopener noreferrer">
+                    {{ original.signup_url }}
+                    <i class="fas fa-external-link-alt pp-external-link-icon"></i>
+                </a>
+            </p>
+        </div>
+        {% endif %}
+
+        {# Readonly: Component #}
+        <div class="form-row field-component pp-form-row">
+            <div>
+                <label>{% trans "Component" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {% if original.component.icon %}
+                    <img src="{{ original.component.icon }}" alt="" class="pp-component-icon-inline">
+                    {% endif %}
+                    {{ original.component.name }}
+                </div>
+                <p class="help">{% trans "Installed payment provider component" %}</p>
+            </div>
+        </div>
+
+        {# Readonly: User #}
+        <div class="form-row field-user pp-form-row">
+            <div>
+                <label>{% trans "User" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {{ original.user.username }}
+                    {% if original.user.email %}
+                    <span class="pp-user-email">({{ original.user.email }})</span>
+                    {% endif %}
+                </div>
+                <p class="help">{% trans "User who owns this provider account" %}</p>
+            </div>
+        </div>
+
+        {# Editable form fields #}
+        {% for fieldset in adminform %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {% if field.field.name == "display_name" or field.field.name == "checkout_mode" %}
+                        <div class="form-row {% if field.field.name %}field-{{ field.field.name }}{% endif %}{% if field.field.errors %} errors{% endif %}{% if field.field.field.required %} required{% endif %} pp-form-row">
+                            {{ field.errors }}
+                            <div>
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}
+                                    <p class="help">{{ field.field.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+        {# Payment Methods Configuration Card #}
+        <div class="pp-info-card">
+            <div class="pp-info-card-header">
+                <i class="fas fa-credit-card"></i>
+                <strong>{% trans "Payment Methods" %}</strong>
+            </div>
+            <p class="pp-info-card-description">
+                {% trans "Configure which payment methods are shown to customers at checkout, organized by country." %}
+            </p>
+            <div class="pp-payment-methods-summary">
+                {% if original.last_method_sync_at %}
+                <span class="meta-item">
+                    <i class="fas fa-sync-alt"></i>
+                    {% trans "Last synced:" %} {{ original.last_method_sync_at|date:"M d, Y H:i" }}
+                </span>
+                {% endif %}
+                {% if original.has_global_config %}
+                <span class="meta-item">
+                    <i class="fas fa-globe"></i>
+                    {% trans "Global configuration active" %}
+                </span>
+                {% elif original.enabled_payment_methods %}
+                <span class="meta-item">
+                    <i class="fas fa-flag"></i>
+                    {% widthratio original.enabled_payment_methods|length 1 1 %} {% trans "countries configured" %}
+                </span>
+                {% else %}
+                <span class="meta-item">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Not configured — all available methods will be shown" %}
+                </span>
+                {% endif %}
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="{% url 'admin:payment_providers_paymentprovideraccount_configure_methods' original.id %}" class="button default">
+                    <i class="fas fa-sliders-h"></i> {% trans "Configure Payment Methods" %}
+                </a>
+                <button type="button" class="button pp-sync-methods-btn" data-account-id="{{ original.id }}">
+                    <i class="fas fa-sync-alt"></i> {% trans "Sync from Provider" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Tab 2: Status & Health #}
+    <div class="admin-tab-content" id="tab-status">
+        {# Editable boolean fields #}
+        {% for fieldset in adminform %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {% if field.field.name == "is_active" or field.field.name == "is_default" %}
+                        <div class="form-row {% if field.field.name %}field-{{ field.field.name }}{% endif %}{% if field.field.errors %} errors{% endif %} pp-form-row">
+                            {{ field.errors }}
+                            <div>
+                                {{ field.field }}
+                                {{ field.label_tag }}
+                                {% if field.field.help_text %}
+                                    <p class="help">{{ field.field.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+        {# Readonly: Connection Status #}
+        <div class="form-row field-connection_status pp-form-row">
+            <div>
+                <label>{% trans "Connection Status" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {{ original.get_connection_status_display }}
+                </div>
+            </div>
+        </div>
+
+        {# Readonly: Connection Error (if exists) #}
+        {% if original.connection_error %}
+        <div class="form-row field-connection_error pp-form-row">
+            <div>
+                <label>{% trans "Connection Error" %}:</label>
+                <div class="readonly pp-readonly-field-warning">
+                    {{ original.connection_error }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Readonly: Last Tested At #}
+        {% if original.last_tested_at %}
+        <div class="form-row field-last_tested_at pp-form-row">
+            <div>
+                <label>{% trans "Last Tested At" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {{ original.last_tested_at|date:"Y-m-d H:i:s" }} ({{ original.last_tested_at|naturaltime }})
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Readonly: Payment Method Sync Status #}
+        <div class="form-row field-method_sync_status pp-form-row">
+            <div>
+                <label>{% trans "Payment Method Sync Status" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {{ original.get_method_sync_status_display }}
+                </div>
+            </div>
+        </div>
+
+        {# Readonly: Last Method Sync At #}
+        {% if original.last_method_sync_at %}
+        <div class="form-row field-last_method_sync_at pp-form-row">
+            <div>
+                <label>{% trans "Last Method Sync At" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {{ original.last_method_sync_at|date:"Y-m-d H:i:s" }} ({{ original.last_method_sync_at|naturaltime }})
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Readonly: Method Sync Error (if exists) #}
+        {% if original.method_sync_error %}
+        <div class="form-row field-method_sync_error pp-form-row">
+            <div>
+                <label>{% trans "Method Sync Error" %}:</label>
+                <div class="readonly pp-readonly-field-warning">
+                    {{ original.method_sync_error }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Tab 3: Advanced #}
+    <div class="admin-tab-content" id="tab-advanced">
+        {# Editable field - sort_order #}
+        {% for fieldset in adminform %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {% if field.field.name == "sort_order" %}
+                        <div class="form-row {% if field.field.name %}field-{{ field.field.name }}{% endif %}{% if field.field.errors %} errors{% endif %}{% if field.field.field.required %} required{% endif %} pp-form-row">
+                            {{ field.errors }}
+                            <div>
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}
+                                    <p class="help">{{ field.field.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+        {# API Credentials #}
+        <div class="pp-info-card pp-info-card-subtle">
+            <div class="pp-info-card-header">
+                <i class="fas fa-key"></i>
+                <strong>{% trans "API Credentials" %}</strong>
+            </div>
+            <p class="pp-info-card-description">{% trans "API credentials are encrypted and managed through the setup wizard for security. To update your API keys or secrets, use the wizard to reconfigure this provider." %}</p>
+            <a href="{% url 'payment_providers:wizard_step1' %}" class="button">
+                <i class="fas fa-redo"></i> {% trans "Reconfigure Credentials" %}
+            </a>
+        </div>
+
+        {# Readonly: Created At #}
+        <div class="form-row field-created_at pp-form-row">
+            <div>
+                <label>{% trans "Created At" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {{ original.created_at|date:"Y-m-d H:i:s" }} ({{ original.created_at|naturaltime }})
+                </div>
+            </div>
+        </div>
+
+        {# Readonly: Updated At #}
+        <div class="form-row field-updated_at pp-form-row">
+            <div>
+                <label>{% trans "Updated At" %}:</label>
+                <div class="readonly pp-readonly-field">
+                    {{ original.updated_at|date:"Y-m-d H:i:s" }} ({{ original.updated_at|naturaltime }})
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Submit Buttons #}
+    <div class="submit-row pp-submit-row">
+        <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+        <input type="submit" value="{% trans 'Save and continue editing' %}" class="default" name="_continue">
+        {% if show_delete_link %}
+            <p class="deletelink-box"><a href="{% url opts|admin_urlname:'delete' original.pk %}" class="deletelink">{% trans "Delete" %}</a></p>
+        {% endif %}
+    </div>
+    </form>
+{% else %}
+    {# New provider - use wizard #}
+    {{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script type="application/json" id="pp-form-config">
+{
+    "i18n": {
+        "selectAll": "{% trans 'Select All' %}",
+        "clearAll": "{% trans 'Clear All' %}"
+    }
+}
+</script>
+<script src="{% static 'payment_providers/js/admin_provider_form.js' %}"></script>
+{% endblock %}

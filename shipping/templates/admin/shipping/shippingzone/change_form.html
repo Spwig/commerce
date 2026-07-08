@@ -1,0 +1,283 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with name=original.name %}Edit Zone: {{ name }}{% endblocktrans %}
+    {% else %}
+        {% trans "Add Shipping Zone" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'shipping/css/zone-edit-form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="shipping-zone-change-form">
+
+{% if original %}
+    <!-- Header with Save Actions -->
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-map-marked-alt"></i>
+                    {% trans "Edit Zone" %}: {{ original.name }}
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        {% if original.is_active %}
+                            <span class="zone-status-active"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+                        {% else %}
+                            <span class="zone-status-inactive"><i class="fas fa-times-circle"></i> {% trans "Inactive" %}</span>
+                        {% endif %}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-sort-numeric-down"></i> {% trans "Priority" %}: {{ original.priority }}
+                    </span>
+                    {% if original.created_at %}
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="submit" form="shippingzone-form" class="util-btn" name="_save" title="{% trans 'Save' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="zone-dashboard">
+        <!-- Basic Info Card -->
+        <div class="zone-card">
+            <h3><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h3>
+            <div class="zone-card-content">
+                <div class="zone-stat">
+                    <span class="stat-label">{% trans "Zone Name" %}</span>
+                    <span class="stat-value">{{ original.name }}</span>
+                </div>
+                <div class="zone-stat">
+                    <span class="stat-label">{% trans "Priority" %}</span>
+                    <span class="stat-value">
+                        {% if original.priority == 0 %}
+                            <span class="priority-badge highest">P0 - {% trans "HIGHEST" %}</span>
+                        {% elif original.priority <= 5 %}
+                            <span class="priority-badge high">P{{ original.priority }}</span>
+                        {% elif original.priority <= 10 %}
+                            <span class="priority-badge medium">P{{ original.priority }}</span>
+                        {% else %}
+                            <span class="priority-badge low">P{{ original.priority }}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="zone-stat">
+                    <span class="stat-label">{% trans "Status" %}</span>
+                    <span class="stat-value">
+                        {% if original.is_active %}
+                            <span class="status-badge active">{% trans "ACTIVE" %}</span>
+                        {% else %}
+                            <span class="status-badge inactive">{% trans "INACTIVE" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coverage Card -->
+        <div class="zone-card">
+            <h3><i class="fas fa-globe-americas"></i> {% trans "Geographic Coverage" %}</h3>
+            <div class="zone-card-content">
+                <div class="zone-stat">
+                    <span class="stat-label">{% trans "Countries" %}</span>
+                    <span class="stat-value">
+                        {% if original.countries %}
+                            <span class="count-badge">{{ original.countries|length }}</span>
+                        {% else %}
+                            <span class="text-muted">{% trans "All countries" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="zone-stat">
+                    <span class="stat-label">{% trans "States/Provinces" %}</span>
+                    <span class="stat-value">
+                        {% if original.states %}
+                            <span class="count-badge">{{ original.get_state_count }}</span>
+                        {% else %}
+                            <span class="text-muted">{% trans "None" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="zone-stat">
+                    <span class="stat-label">{% trans "Postal Patterns" %}</span>
+                    <span class="stat-value">
+                        {% if original.postal_code_patterns %}
+                            <span class="count-badge">{{ original.postal_code_patterns|length }}</span>
+                        {% else %}
+                            <span class="text-muted">{% trans "None" %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Methods Card -->
+        <div class="zone-card">
+            <h3><i class="fas fa-shipping-fast"></i> {% trans "Shipping Methods" %}</h3>
+            <div class="zone-card-content">
+                <div class="zone-stat">
+                    <span class="stat-label">{% trans "Methods Assigned" %}</span>
+                    <span class="stat-value">
+                        {% with count=original.shipping_methods.count %}
+                            {% if count > 0 %}
+                                <span class="count-badge active">{{ count }}</span>
+                            {% else %}
+                                <span class="text-muted">{% trans "No methods" %}</span>
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+                </div>
+                {% if original.shipping_methods.count > 0 %}
+                    <div class="zone-stat">
+                        <span class="stat-label">{% trans "Methods" %}</span>
+                        <div class="stat-value">
+                            {% for method in original.shipping_methods.all %}
+                                <span class="method-tag">{{ method.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Banner -->
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Zone Settings Form -->
+    <form method="post" id="shippingzone-form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-card">
+            <h2><i class="fas fa-cog"></i> {% trans "Zone Information" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-name{% if adminform.form.name.errors %} errors{% endif %}">
+                        {{ adminform.form.name.errors }}
+                        {{ adminform.form.name.label_tag }}
+                        {{ adminform.form.name }}
+                        {% if adminform.form.name.help_text %}<p class="help">{{ adminform.form.name.help_text }}</p>{% endif %}
+                    </div>
+                    <div class="form-row field-priority{% if adminform.form.priority.errors %} errors{% endif %}">
+                        {{ adminform.form.priority.errors }}
+                        {{ adminform.form.priority.label_tag }}
+                        {{ adminform.form.priority }}
+                        {% if adminform.form.priority.help_text %}<p class="help">{{ adminform.form.priority.help_text }}</p>{% endif %}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-description{% if adminform.form.description.errors %} errors{% endif %}">
+                        {{ adminform.form.description.errors }}
+                        {{ adminform.form.description.label_tag }}
+                        {{ adminform.form.description }}
+                        {% if adminform.form.description.help_text %}<p class="help">{{ adminform.form.description.help_text }}</p>{% endif %}
+                    </div>
+                    <div class="form-row field-is_active">
+                        <label class="checkbox-label">
+                            {{ adminform.form.is_active }} {{ adminform.form.is_active.label }}
+                        </label>
+                        {% if adminform.form.is_active.help_text %}<p class="help">{{ adminform.form.is_active.help_text }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-globe-americas"></i> {% trans "Geographic Coverage" %}</h2>
+            <p class="form-card-description">{% trans "Define the geographic areas covered by this shipping zone using the interactive editors below." %}</p>
+
+            <div class="form-row field-countries{% if adminform.form.countries.errors %} errors{% endif %}">
+                {{ adminform.form.countries.errors }}
+                {{ adminform.form.countries.label_tag }}
+                {{ adminform.form.countries }}
+                {% if adminform.form.countries.help_text %}<p class="help">{{ adminform.form.countries.help_text }}</p>{% endif %}
+            </div>
+
+            <div class="form-row field-states{% if adminform.form.states.errors %} errors{% endif %}">
+                {{ adminform.form.states.errors }}
+                {{ adminform.form.states.label_tag }}
+                {{ adminform.form.states }}
+                {% if adminform.form.states.help_text %}<p class="help">{{ adminform.form.states.help_text }}</p>{% endif %}
+            </div>
+
+            <div class="form-row field-postal_code_patterns{% if adminform.form.postal_code_patterns.errors %} errors{% endif %}">
+                {{ adminform.form.postal_code_patterns.errors }}
+                {{ adminform.form.postal_code_patterns.label_tag }}
+                {{ adminform.form.postal_code_patterns }}
+                {% if adminform.form.postal_code_patterns.help_text %}<p class="help">{{ adminform.form.postal_code_patterns.help_text }}</p>{% endif %}
+            </div>
+        </div>
+
+        <!-- Hidden fields container — ensures all form fields are in POST data -->
+        <div class="hidden">
+            {% for fieldset in adminform %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                        {{ field.field }}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <!-- Hidden submit row -->
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+    <!-- Data island for JS (proper JSON serialization) -->
+    {{ zone_edit_config|json_script:"zone-edit-config" }}
+
+{% else %}
+    {# Add mode — redirects to wizard, fallback to Django default #}
+    {{ block.super }}
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+{% if original %}
+<script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+<script src="{% static 'shipping/js/zone-edit-form.js' %}"></script>
+{% endif %}
+{% endblock %}

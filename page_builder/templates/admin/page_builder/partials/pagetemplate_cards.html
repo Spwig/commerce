@@ -1,0 +1,144 @@
+{% load i18n static %}
+
+<div class="list-row-cards">
+    {% for template in templates %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ template.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if template.preview_image %}
+                <img src="{{ template.preview_image.url }}" alt="{{ template.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+            {% else %}
+                {% if template.category == 'ecommerce' %}
+                    <i class="fas fa-shopping-bag" style="color: var(--primary); font-size: 32px;"></i>
+                {% elif template.category == 'blog' %}
+                    <i class="fas fa-blog" style="color: var(--primary); font-size: 32px;"></i>
+                {% elif template.category == 'portfolio' %}
+                    <i class="fas fa-images" style="color: var(--primary); font-size: 32px;"></i>
+                {% elif template.category == 'business' %}
+                    <i class="fas fa-briefcase" style="color: var(--primary); font-size: 32px;"></i>
+                {% elif template.category == 'landing' %}
+                    <i class="fas fa-rocket" style="color: var(--primary); font-size: 32px;"></i>
+                {% else %}
+                    <i class="fas fa-layer-group" style="color: var(--primary); font-size: 32px;"></i>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:page_builder_pagetemplate_change' template.pk %}">
+                    {{ template.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-code-branch"></i> v{{ template.version }}
+                {% if template.created_by %}
+                    &nbsp;&bull;&nbsp;
+                    <i class="fas fa-user"></i> {{ template.created_by.username }}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if template.is_public %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-globe"></i> {% trans "Public" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-lock"></i> {% trans "Private" %}
+                    </span>
+                {% endif %}
+
+                {% if template.is_premium %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-crown"></i> {% trans "Premium" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-gift"></i> {% trans "Free" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-th-large"></i> {{ template.get_page_type_display }}
+                </span>
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-folder"></i> {{ template.category|title }}
+                </span>
+
+                {% if template.usage_count > 0 %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-chart-line"></i> {{ template.usage_count }} {% trans "use" %}{{ template.usage_count|pluralize }}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if template.description %}
+            <div class="list-row-card-description">
+                {{ template.description|truncatewords:25 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Usage" %}</span>
+                    <span class="list-row-card-stat-value" style="color: var(--primary); font-weight: 600;">
+                        {{ template.usage_count }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Version" %}</span>
+                    <span class="list-row-card-stat-value">{{ template.version }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Type" %}</span>
+                    <span class="list-row-card-stat-value">{{ template.get_page_type_display }}</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ template.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ template.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:page_builder_pagetemplate_change' template.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit template' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:page_builder_page_add' %}?template={{ template.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'Create page from template' %}">
+                <i class="fas fa-file-export"></i>
+            </a>
+            <a href="{% url 'admin:page_builder_pagetemplate_delete' template.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete template' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card" style="text-align: center; padding: 40px; color: var(--body-quiet-color);">
+        <div style="font-size: 48px; margin-bottom: 16px;">
+            <i class="fas fa-layer-group"></i>
+        </div>
+        <p style="font-size: 16px; margin: 0;">{% trans "No templates found matching your criteria." %}</p>
+        <p style="font-size: 14px; margin-top: 10px; color: var(--body-quiet-color);">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

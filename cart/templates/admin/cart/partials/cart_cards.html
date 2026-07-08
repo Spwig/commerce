@@ -1,0 +1,160 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for cart in carts %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ cart.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if cart.user %}
+                <i class="fas fa-user-circle text-primary"></i>
+            {% else %}
+                <i class="fas fa-user-secret text-muted"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:cart_cart_change' cart.pk %}">
+                    {{ cart }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if cart.user %}
+                    <i class="fas fa-envelope"></i> {{ cart.user.email }}
+                {% else %}
+                    <i class="fas fa-key"></i> {% trans "Session" %}: {{ cart.session_key|truncatechars:12 }}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if cart.user %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-user"></i> {% trans "Registered" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-user-secret"></i> {% trans "Guest" %}
+                    </span>
+                {% endif %}
+
+                {% if cart.total_items > 0 %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {{ cart.total_items }} {% trans "item" %}{{ cart.total_items|pluralize }}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-inbox"></i> {% trans "Empty" %}
+                    </span>
+                {% endif %}
+
+                {% if cart.shipping_method %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-truck"></i> {% trans "Shipping Set" %}
+                    </span>
+                {% endif %}
+
+                {% if cart.cart_layout != 'default' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-palette"></i> {{ cart.get_cart_layout_display }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Cart Total" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        {{ cart.total_amount }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Items" %}</span>
+                    <span class="list-row-card-stat-value">{{ cart.total_items }}</span>
+                </div>
+                {% if cart.total_savings %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Savings" %}</span>
+                    <span class="list-row-card-stat-value text-success">
+                        {{ cart.total_savings }}
+                    </span>
+                </div>
+                {% endif %}
+                {% if cart.shipping_cost %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Shipping" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ cart.shipping_cost }}
+                    </span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Grand Total" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        {{ cart.grand_total }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ cart.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ cart.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if cart.shipping_method %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>{{ cart.shipping_method.name }}</span>
+                </div>
+                {% endif %}
+                {% if cart.estimated_delivery_date %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>{% trans "Est. Delivery" %}: {{ cart.estimated_delivery_date|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:cart_cart_change' cart.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View cart details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'admin:cart_cart_change' cart.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit cart' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if cart.total_items > 0 %}
+            <button type="button"
+                    class="list-row-card-action"
+                    title="{% trans 'Delete cart' %}"
+                    data-action="confirm-navigate"
+                    data-url="{% url 'admin:cart_cart_delete' cart.pk %}"
+                    data-confirm="{% trans 'Are you sure you want to clear this cart?' %}">
+                <i class="fas fa-trash"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No shopping carts found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,172 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Log Viewer Settings" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/logviewer_settings.css' %}">
+{% endblock %}
+
+{% block object-tools %}{% endblock %}
+
+{% block content %}
+<div class="lvs-page">
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <a href="{% url 'admin:management_logentry_log_viewer' %}" class="lvs-back-link">
+        <i class="fas fa-arrow-left"></i> {% trans "Back to Log Viewer" %}
+    </a>
+    <h1>
+        <i class="fas fa-sliders-h"></i>
+        {% trans "Log Viewer Settings" %}
+    </h1>
+    <p class="subtitle">{% trans "Configure log retention, streaming, security, and display preferences for the system log viewer." %}</p>
+</div>
+
+<!-- Render the Django form (hidden by CSS, fields moved by JS) -->
+{{ block.super }}
+
+<!-- Translated strings for JS -->
+<div id="lvs-config" hidden
+    data-help-redis="{% trans "In-memory cache duration" %}"
+    data-help-db="{% trans "Archived log retention" %}"
+    data-help-batch="{% trans "Logs per archive batch" %}"
+    data-help-interval="{% trans "Time between archive runs" %}"
+    data-help-stream="{% trans "Collect logs from Docker containers in real-time" %}"
+    data-help-max-logs="{% trans "Maximum entries kept in Redis per container" %}"
+    data-help-patterns="{% trans "Enter as a JSON array, e.g." %} [&quot;password.*&quot;, &quot;token.*&quot;]"
+    data-help-page-size="{% trans "Logs shown per page" %}"
+    data-help-refresh="{% trans "Auto-refresh in seconds" %}"
+    data-label-stream-enabled="{% trans "Stream Enabled" %}"
+    data-cancel-url="{% url 'admin:management_logentry_log_viewer' %}"
+></div>
+
+<!-- Card layout container (JS will populate) -->
+<div class="lvs-content" id="lvs-layout">
+    <div class="lvs-grid">
+        <!-- Left Column -->
+        <div class="lvs-col">
+            <!-- Retention Card -->
+            <div class="lvs-card">
+                <div class="lvs-card-header">
+                    <div class="card-icon icon-retention"><i class="fas fa-clock"></i></div>
+                    <div>
+                        <h3>{% trans "Retention" %}</h3>
+                        <p>{% trans "How long logs are kept" %}</p>
+                    </div>
+                </div>
+                <div class="lvs-card-body">
+                    <div class="lvs-field-row">
+                        <div class="lvs-field-group" id="slot-redis_retention_minutes">
+                            <label>{% trans "Redis TTL (minutes)" %}</label>
+                        </div>
+                        <div class="lvs-field-group" id="slot-db_retention_days">
+                            <label>{% trans "Database (days)" %}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Archive Card -->
+            <div class="lvs-card">
+                <div class="lvs-card-header">
+                    <div class="card-icon icon-archive"><i class="fas fa-archive"></i></div>
+                    <div>
+                        <h3>{% trans "Archiving" %}</h3>
+                        <p>{% trans "Redis to database archival" %}</p>
+                    </div>
+                </div>
+                <div class="lvs-card-body">
+                    <div class="lvs-field-row">
+                        <div class="lvs-field-group" id="slot-archive_batch_size">
+                            <label>{% trans "Batch Size" %}</label>
+                        </div>
+                        <div class="lvs-field-group" id="slot-archive_interval_seconds">
+                            <label>{% trans "Interval (seconds)" %}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streaming Card -->
+            <div class="lvs-card">
+                <div class="lvs-card-header">
+                    <div class="card-icon icon-streaming"><i class="fas fa-broadcast-tower"></i></div>
+                    <div>
+                        <h3>{% trans "Streaming" %}</h3>
+                        <p>{% trans "Real-time Docker log collection" %}</p>
+                    </div>
+                </div>
+                <div class="lvs-card-body">
+                    <div id="slot-stream_enabled"></div>
+                    <div class="lvs-field-group" id="slot-max_logs_per_container">
+                        <label>{% trans "Max Logs per Container" %}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="lvs-col">
+            <!-- Security Card -->
+            <div class="lvs-card">
+                <div class="lvs-card-header">
+                    <div class="card-icon icon-security"><i class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <h3>{% trans "Security" %}</h3>
+                        <p>{% trans "Sensitive data redaction patterns" %}</p>
+                    </div>
+                </div>
+                <div class="lvs-card-body">
+                    <div class="lvs-field-group" id="slot-sensitive_patterns">
+                        <label>{% trans "Regex Patterns (JSON)" %}</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Card -->
+            <div class="lvs-card">
+                <div class="lvs-card-header">
+                    <div class="card-icon icon-display"><i class="fas fa-desktop"></i></div>
+                    <div>
+                        <h3>{% trans "Display" %}</h3>
+                        <p>{% trans "Log viewer UI preferences" %}</p>
+                    </div>
+                </div>
+                <div class="lvs-card-body">
+                    <div class="lvs-field-row">
+                        <div class="lvs-field-group" id="slot-default_page_size">
+                            <label>{% trans "Page Size" %}</label>
+                        </div>
+                        <div class="lvs-field-group" id="slot-auto_refresh_interval">
+                            <label>{% trans "Refresh Interval (s)" %}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Actions -->
+    <div class="lvs-actions">
+        <button type="button" id="lvs-cancel-btn" class="lvs-btn-secondary">
+            <i class="fas fa-times"></i> {% trans "Cancel" %}
+        </button>
+        <button type="submit" name="_continue" class="lvs-btn-secondary" form="logviewersettings_form">
+            <i class="fas fa-save"></i> {% trans "Save & Continue" %}
+        </button>
+        <button type="submit" name="_save" class="lvs-btn-primary" form="logviewersettings_form">
+            <i class="fas fa-check"></i> {% trans "Save" %}
+        </button>
+    </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'management/js/logviewer_settings.js' %}"></script>
+{% endblock %}

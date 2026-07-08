@@ -1,0 +1,143 @@
+{% extends "setup_wizard/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Setup Complete" %} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'setup_wizard/admin/css/complete_wizard.css' %}">
+{% endblock %}
+
+{% block wizard_content %}
+<!-- Success Header -->
+<div class="setup-wizard-header">
+    <h1 class="wizard-title"><i class="fas fa-check-circle"></i> {% trans "Congratulations!" %}</h1>
+    <p class="wizard-subtitle">{% trans "Your store setup is" %} {% if all_complete %}{% trans "complete" %}{% else %}{% trans "ready to go" %}{% endif %}!</p>
+
+    <!-- Progress Container -->
+    <div class="setup-progress-container">
+        <div class="setup-progress-bar">
+            <div class="setup-progress-fill" data-progress="{{ progress.get_completion_percentage }}"></div>
+        </div>
+        <p class="setup-progress-text">{{ progress.get_completion_percentage }}% {% trans "Complete" %}</p>
+    </div>
+</div>
+
+<!-- Completion Body -->
+<div class="setup-wizard-body">
+    {% if essential_complete %}
+        <div class="alert alert-success setup-complete-alert">
+            <i class="fas fa-check-circle"></i>
+            <div>
+                <h3>{% trans "Essential Setup Complete!" %}</h3>
+                <p>{% trans "Your store has all the essential configuration needed to start selling. You can begin adding products and processing orders right away!" %}</p>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning setup-complete-alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <h3>{% trans "Setup In Progress" %}</h3>
+                <p>{% trans "You've made great progress! Complete the remaining essential items when you're ready." %}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Next Steps -->
+    <div class="setup-next-steps">
+        <h3 class="setup-next-steps-title"><i class="fas fa-rocket"></i> {% trans "What's Next?" %}</h3>
+
+        <div class="setup-next-steps-grid">
+            <div class="setup-next-step-card card-products">
+                <h4><i class="fas fa-box"></i> {% trans "Add Your First Products" %}</h4>
+                <p>{% trans "Start building your catalog by adding products with images, descriptions, and pricing." %}</p>
+                <a href="{% url 'admin:catalog_product_add' %}" class="btn btn-primary">{% trans "Add Product" %}</a>
+            </div>
+
+            <div class="setup-next-step-card card-payments">
+                <h4><i class="fas fa-credit-card"></i> {% trans "Configure Payment Providers" %}</h4>
+                <p>{% trans "Connect payment providers to start accepting payments from customers." %}</p>
+                <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}" class="btn btn-primary">{% trans "Manage Payment Providers" %}</a>
+            </div>
+
+            <div class="setup-next-step-card card-customize">
+                <h4><i class="fas fa-palette"></i> {% trans "Customize Your Store" %}</h4>
+                <p>{% trans "Upload your logo, customize colors, and make your store look professional." %}</p>
+                <a href="{% url 'admin:core_sitesettings_changelist' %}" class="btn btn-primary">{% trans "Site Settings" %}</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional Items -->
+    {% if incomplete_items %}
+        <div class="setup-optional-section">
+            <h3 class="setup-optional-title"><i class="fas fa-clipboard-list"></i> {% trans "Optional Setup Items" %}</h3>
+            <p class="setup-optional-desc">{% trans "Complete these when you have time to enhance your store:" %}</p>
+
+            <div class="setup-optional-grid">
+                {% for item in incomplete_items %}
+                    <div class="setup-optional-item">
+                        <span class="setup-optional-item-icon"><i class="{{ item.icon }}"></i></span>
+                        <div class="setup-optional-item-content">
+                            <strong class="setup-optional-item-label">{{ item.label }}</strong>
+                            <div class="setup-optional-item-desc">{{ item.description }}</div>
+                        </div>
+                        <a href="{% url 'setup_wizard:step' step_key=item.step_key %}" class="btn btn-outline">
+                            {% trans "Complete" %}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Store Information Summary -->
+    <div class="setup-store-summary">
+        <h4><i class="fas fa-chart-bar"></i> {% trans "Your Store Summary" %}</h4>
+        <div class="setup-store-summary-grid">
+            <div>
+                <strong>{% trans "Setup Progress:" %}</strong><br>
+                <span class="setup-summary-value-complete">{{ progress.get_completion_percentage }}% {% trans "Complete" %}</span>
+            </div>
+            <div>
+                <strong>{% trans "Essential Items:" %}</strong><br>
+                {% if essential_complete %}
+                    <span class="setup-summary-value-complete"><i class="fas fa-check-circle"></i> {% trans "Complete" %}</span>
+                {% else %}
+                    <span class="setup-summary-value-partial">{{ progress.get_essential_completion_percentage }}% {% trans "Done" %}</span>
+                {% endif %}
+            </div>
+            <div>
+                <strong>{% trans "Setup Started:" %}</strong><br>
+                {% if progress.setup_started_at %}
+                    {{ progress.setup_started_at|date:"M d, Y" }}
+                {% else %}
+                    {% trans "Not started" %}
+                {% endif %}
+            </div>
+            <div>
+                <strong>{% trans "Last Updated:" %}</strong><br>
+                {{ progress.updated_at|date:"M d, Y g:i A" }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Footer -->
+<div class="setup-complete-actions">
+    <div class="setup-complete-actions-left">
+        <a href="{% url 'setup_wizard:start' %}?force=1" class="btn btn-outline">
+            <i class="fas fa-redo"></i> {% trans "Run Setup Again" %}
+        </a>
+    </div>
+
+    <div class="setup-complete-actions-right">
+        <a href="{% url 'admin:index' %}" class="btn btn-success">
+            <i class="fas fa-tachometer-alt"></i> {% trans "Go to Dashboard" %}
+        </a>
+        <a href="{% url 'admin:catalog_product_add' %}" class="btn btn-primary">
+            <i class="fas fa-box"></i> {% trans "Add First Product" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

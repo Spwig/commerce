@@ -1,0 +1,103 @@
+{% extends "page_builder/category/_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block template_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/category-accordion.css' %}">
+{% endblock %}
+
+{% block category_browse %}
+<section class="cat-section">
+    <div class="container">
+        {% if accordion_rows %}
+        <div class="cat-accordion-rows">
+            {% for row in accordion_rows %}
+            <div class="cat-accordion"
+                 data-height="{{ template_options.height|default:'lg' }}"
+                 data-expand-ratio="{{ template_options.expand_ratio|default:'3' }}"
+                 data-transition-speed="{{ template_options.transition_speed|default:'400' }}">
+                {% for cat in row %}
+                <a href="{% url 'page_builder:category_detail' category_slug=cat.slug %}"
+                   class="cat-accordion__panel{% if forloop.first %} cat-accordion__panel--active{% endif %}">
+                    <div class="cat-accordion__image-wrapper">
+                        {% with cat.get_image_thumbnail as img_url %}
+                        {% if img_url %}
+                        <img src="{{ img_url }}" alt="{{ cat.name }}" class="cat-accordion__image" loading="lazy">
+                        {% else %}
+                        <div class="cat-accordion__placeholder">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="cat-accordion__overlay"></div>
+                    <div class="cat-accordion__content">
+                        <h3 class="cat-accordion__title">{{ cat.name }}</h3>
+                        {% if template_options.show_product_count_per_category and cat.product_count is not None %}
+                        <span class="cat-accordion__badge">
+                            {{ cat.product_count }} {% if cat.product_count == 1 %}{% mtrans 'product' %}{% else %}{% mtrans 'products' %}{% endif %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        {# Fallback: single accordion (no rows context) #}
+        <div class="cat-accordion"
+             data-height="{{ template_options.height|default:'lg' }}"
+             data-expand-ratio="{{ template_options.expand_ratio|default:'3' }}"
+             data-transition-speed="{{ template_options.transition_speed|default:'400' }}">
+            {% for cat in categories %}
+            <a href="{% url 'page_builder:category_detail' category_slug=cat.slug %}"
+               class="cat-accordion__panel{% if forloop.first %} cat-accordion__panel--active{% endif %}">
+                <div class="cat-accordion__image-wrapper">
+                    {% with cat.get_image_thumbnail as img_url %}
+                    {% if img_url %}
+                    <img src="{{ img_url }}" alt="{{ cat.name }}" class="cat-accordion__image" loading="lazy">
+                    {% else %}
+                    <div class="cat-accordion__placeholder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="cat-accordion__overlay"></div>
+                <div class="cat-accordion__content">
+                    <h3 class="cat-accordion__title">{{ cat.name }}</h3>
+                    {% if template_options.show_product_count_per_category and cat.product_count is not None %}
+                    <span class="cat-accordion__badge">
+                        {{ cat.product_count }} {% if cat.product_count == 1 %}{% mtrans 'product' %}{% else %}{% mtrans 'products' %}{% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <div class="cat-accordion__empty">
+                <i class="fas fa-folder-open"></i>
+                <p>{% mtrans 'No categories available yet.' %}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block product_display %}
+<div class="product-grid">
+    {% for product in products %}
+        {% include 'page_builder/partials/product_card.html' with product=product %}
+    {% empty %}
+    <div class="product-grid__empty">
+        <i class="fas fa-box-open"></i>
+        <p>{% mtrans 'No products in this category yet.' %}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block template_scripts %}
+<script src="{% static 'page_builder/js/category-accordion.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/database-browser.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>{{ title }}</h1>
+    
+    <!-- Database Information -->
+    <div class="db-info">
+        <h3>📊 Database Information</h3>
+        <div class="db-stats">
+            <div class="db-stat">
+                <strong>Database:</strong> {{ db_info.database_name }}
+            </div>
+            <div class="db-stat">
+                <strong>Size:</strong> {{ db_info.database_size }}
+            </div>
+            <div class="db-stat">
+                <strong>Active Connections:</strong> {{ db_info.active_connections }}
+            </div>
+            <div class="db-stat">
+                <strong>Total Tables:</strong> <span class="table-count">{{ tables|length }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search Box -->
+    <div class="search-box">
+        <input type="text" id="tableSearch" placeholder="🔍 Search tables...">
+    </div>
+    
+    <!-- Tables Grid -->
+    <div class="tables-container">
+        <h2>📋 Database Tables</h2>
+        <div class="tables-grid" id="tablesGrid">
+            {% for table_name, row_count in tables %}
+            <div class="table-card" data-table-name="{{ table_name|lower }}">
+                <div class="table-name">
+                    <a href="{% url 'admin:management_browse_table' table_name %}">{{ table_name }}</a>
+                </div>
+                <div class="table-stats">
+                    <div><strong>Rows:</strong> {{ row_count|default:"0" }}</div>
+                    <div><strong>Type:</strong> Table</div>
+                </div>
+                <a href="{% url 'admin:management_browse_table' table_name %}" class="browse-btn">Browse Data</a>
+            </div>
+            {% empty %}
+            <div class="table-card">
+                <div class="table-name">No tables found</div>
+                <div class="table-stats">The database appears to be empty or inaccessible.</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="db-quick-actions">
+        <h3>🔧 Quick Actions</h3>
+        <div class="db-quick-actions-row">
+            <a href="{% url 'admin:management_query_runner' %}" class="browse-btn">🔍 SQL Query Runner</a>
+            <a href="{% url 'admin:management_backup_create' %}" class="browse-btn">💾 Create Backup</a>
+            <a href="{% url 'admin:management_system_dashboard' %}" class="browse-btn">📊 System Dashboard</a>
+        </div>
+    </div>
+
+<script src="{% static 'management/js/database-browser.js' %}"></script>
+</div>
+{% endblock %}

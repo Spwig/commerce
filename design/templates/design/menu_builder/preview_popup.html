@@ -1,0 +1,96 @@
+{% load i18n static core_extras %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Menu Preview" %} - {{ menu.name }}</title>
+    {% favicon_meta %}
+
+    <!-- Admin Theme Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- Popup-specific styles (device frames, toolbar) -->
+    <link rel="stylesheet" href="{% static 'design/css/menu-preview-popup.css' %}">
+
+    <!-- Menu preview styles (menu layout rendering) -->
+    <link rel="stylesheet" href="{% static 'design/css/menu-builder.css' %}">
+
+    <!-- Base CSS (storefront foundation styles) -->
+    {% if base_css_url %}<link rel="stylesheet" href="{{ base_css_url }}">{% endif %}
+
+    <!-- Theme CSS (if available) -->
+    {% if theme_css_url %}<link rel="stylesheet" href="{{ theme_css_url }}">{% endif %}
+    {% if brand_css_url %}<link rel="stylesheet" href="{{ brand_css_url }}">{% endif %}
+
+    <!-- Menu Widget CSS (actual frontend styles for accurate preview) -->
+    <link rel="stylesheet" href="{% static 'design/css/widgets/menu.css' %}">
+</head>
+<body data-initial-device="{{ device|default:'desktop' }}">
+    <div class="preview-toolbar">
+        <div class="preview-toolbar-section">
+            <span class="menu-title">{{ menu.name }}</span>
+        </div>
+
+        <div class="preview-toolbar-section">
+            <div class="zoom-control">
+                <i class="fas fa-search"></i>
+                <input id="zoom" type="range" min="25" max="100" value="75">
+                <span class="zoom-value">75%</span>
+            </div>
+        </div>
+
+        <div class="preview-toolbar-section">
+            <div class="device-buttons">
+                <button data-device="desktop" class="{% if device == 'desktop' %}active{% endif %}" title="{% trans 'Desktop' %} (1)">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button data-device="tablet" class="{% if device == 'tablet' %}active{% endif %}" title="{% trans 'Tablet' %} (2)">
+                    <i class="fas fa-tablet-alt"></i>
+                </button>
+                <button data-device="mobile" class="{% if device == 'mobile' %}active{% endif %}" title="{% trans 'Mobile' %} (3)">
+                    <i class="fas fa-mobile-alt"></i>
+                </button>
+                <button class="orientation-toggle {% if device != 'desktop' %}visible{% endif %}" title="{% trans 'Rotate' %} (R)">
+                    <i class="fas fa-rotate"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="preview-toolbar-section">
+            <button class="close-preview" data-action="close-popup" title="{% trans 'Close' %} (Esc)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="frame-wrapper">
+        <div class="device-frame {{ device|default:'desktop' }}" id="device-frame">
+            <div class="loading-indicator" id="loading">
+                <div class="loading-spinner"></div>
+            </div>
+
+            <div class="preview-content" id="menu-content">
+                {% include 'design/menu_builder/partials/menu_preview.html' %}
+            </div>
+
+            <div class="glass-sheen"></div>
+            <div class="device-label"></div>
+            <div class="monitor-stand"></div>
+            <div class="monitor-base"></div>
+            <div class="volume-buttons"><div class="volume-up"></div><div class="volume-down"></div></div>
+            <div class="notch"></div>
+            <div class="mute-switch"></div>
+            <div class="power-button"></div>
+        </div>
+    </div>
+
+    {% load static %}
+    <script src="{% static 'design/js/menu-preview-popup.js' %}"></script>
+</body>
+</html>

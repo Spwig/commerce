@@ -1,0 +1,35 @@
+{% load i18n %}
+{% if has_rules %}
+<div class="visibility-rules">
+    <h5 class="visibility-rules__title">
+        <i class="fas fa-eye"></i> {% trans "Visibility Rules" %}
+    </h5>
+
+    {% for group in rules_summary %}
+    <div class="visibility-rules__group">
+        <h6 class="visibility-rules__group-title">
+            {{ group.name }}
+            <span class="badge badge--info">{{ group.logic }}</span>
+        </h6>
+
+        <ul class="visibility-rules__list">
+            {% for rule in group.rules %}
+            <li class="visibility-rules__item">
+                <i class="fas fa-check-circle visibility-rules__icon"></i>
+                <strong>{{ rule.name }}</strong>:
+                {{ rule.type }}
+                <code>{{ rule.operator }}</code>
+                {% if rule.value %}
+                    <code>{{ rule.value }}</code>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="visibility-rules visibility-rules--empty">
+    <i class="fas fa-info-circle"></i> {% trans "No visibility rules configured for this element." %}
+</div>
+{% endif %}

@@ -1,0 +1,277 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{{ original.subject|truncatewords:8 }}{% else %}{% trans "Customer Message" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin_api/css/admin_message_detail.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'admin_api/js/message_reply.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+{% if original %}
+<div id="content-main">
+    <!-- Back link -->
+    <a href="{% url 'admin:admin_api_customermessage_changelist' %}" class="message-back-link">
+        <i class="fas fa-arrow-left"></i>
+        {% trans "Back to Messages" %}
+    </a>
+
+    <!-- Message header -->
+    <div class="message-header">
+        <div class="message-header-top">
+            <h1 class="message-header-subject">{{ original.subject }}</h1>
+            <div class="message-header-badges">
+                <span class="message-status-badge {{ original.status }}">
+                    {% if original.status == 'unread' %}
+                        <i class="fas fa-circle"></i>
+                    {% elif original.status == 'read' %}
+                        <i class="fas fa-eye"></i>
+                    {% elif original.status == 'replied' %}
+                        <i class="fas fa-reply"></i>
+                    {% elif original.status == 'archived' %}
+                        <i class="fas fa-archive"></i>
+                    {% endif %}
+                    {{ original.get_status_display }}
+                </span>
+                <span class="message-type-badge">
+                    <i class="fas fa-tag"></i> {{ original.get_message_type_display }}
+                </span>
+            </div>
+        </div>
+        <div class="message-sender-info">
+            <span class="sender-detail">
+                <i class="fas fa-user"></i>
+                <span class="sender-name">{{ original.name }}</span>
+            </span>
+            <span class="sender-detail">
+                <i class="fas fa-envelope"></i> {{ original.email }}
+            </span>
+            {% if original.phone %}
+            <span class="sender-detail">
+                <i class="fas fa-phone"></i> {{ original.phone }}
+            </span>
+            {% endif %}
+            <span class="sender-detail">
+                <i class="fas fa-clock"></i> {{ original.created_at|date:"M d, Y H:i" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Two column layout -->
+    <div class="message-detail-container">
+        <!-- Left: Message thread -->
+        <div class="message-thread">
+            <div class="message-thread-section">
+                <!-- Customer message (inbound) -->
+                <div class="message-bubble inbound">
+                    <div class="message-bubble-header">
+                        <div class="message-bubble-author">
+                            <div class="message-bubble-avatar inbound">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="message-bubble-name">{{ original.name }}</div>
+                                <div class="message-bubble-label">{% trans "Customer" %}</div>
+                            </div>
+                        </div>
+                        <div class="message-bubble-time">
+                            {{ original.created_at|date:"M d, Y H:i" }}
+                        </div>
+                    </div>
+                    <div class="message-bubble-body">{{ original.message }}</div>
+                </div>
+
+                <!-- Staff reply (outbound) — only if replied -->
+                {% if original.reply_text %}
+                <div class="message-bubble outbound">
+                    <div class="message-bubble-header">
+                        <div class="message-bubble-author">
+                            <div class="message-bubble-avatar outbound">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div>
+                                <div class="message-bubble-name">
+                                    {% if original.replied_by %}
+                                        {{ original.replied_by.get_full_name|default:original.replied_by.email }}
+                                    {% else %}
+                                        {% trans "Staff" %}
+                                    {% endif %}
+                                </div>
+                                <div class="message-bubble-label">{% trans "Staff Reply" %}</div>
+                            </div>
+                        </div>
+                        <div class="message-bubble-time">
+                            {% if original.replied_at %}
+                                {{ original.replied_at|date:"M d, Y H:i" }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="message-bubble-body">{{ original.reply_text }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Reply composer — only if not yet replied or archived -->
+            {% if can_reply %}
+            <div class="reply-composer">
+                <div class="reply-composer-header">
+                    <i class="fas fa-reply"></i>
+                    {% trans "Reply to" %} {{ original.name }}
+                </div>
+                <form id="reply-composer-form" data-message-id="{{ original.pk }}">
+                    {% csrf_token %}
+                    <textarea
+                        id="reply-text"
+                        class="reply-composer-textarea"
+                        placeholder="{% trans 'Type your reply here...' %}"
+                        required></textarea>
+                    <div class="reply-composer-footer">
+                        <div class="reply-composer-options">
+                            <label>
+                                <input type="checkbox" id="send-email" checked>
+                                <i class="fas fa-paper-plane"></i>
+                                {% trans "Send email to customer" %}
+                            </label>
+                        </div>
+                        <div class="reply-composer-actions">
+                            <button type="button" class="button default" data-action="submit-reply">
+                                <i class="fas fa-paper-plane"></i>
+                                {% trans "Send Reply" %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <div id="reply-status" class="reply-status"></div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: Sidebar -->
+        <div class="message-sidebar">
+            <!-- Quick actions -->
+            <div class="message-sidebar-card">
+                <div class="message-sidebar-card-header">
+                    <i class="fas fa-bolt"></i> {% trans "Actions" %}
+                </div>
+                <div class="message-sidebar-actions">
+                    {% if original.status != 'archived' %}
+                    <form method="post" action="{% url 'admin:admin_api_customermessage_change' original.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="archived">
+                        <input type="hidden" name="_continue" value="1">
+                        <button type="submit" class="button">
+                            <i class="fas fa-archive"></i> {% trans "Archive Message" %}
+                        </button>
+                    </form>
+                    {% endif %}
+                    <a href="{% url 'admin:admin_api_customermessage_changelist' %}" class="button">
+                        <i class="fas fa-list"></i> {% trans "All Messages" %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Message details -->
+            <div class="message-sidebar-card">
+                <div class="message-sidebar-card-header">
+                    <i class="fas fa-info-circle"></i> {% trans "Details" %}
+                </div>
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Type" %}</span>
+                    <span class="message-detail-value">{{ original.get_message_type_display }}</span>
+                </div>
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Status" %}</span>
+                    <span class="message-detail-value">{{ original.get_status_display }}</span>
+                </div>
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Received" %}</span>
+                    <span class="message-detail-value">{{ original.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if original.read_by %}
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Read by" %}</span>
+                    <span class="message-detail-value">{{ original.read_by.get_short_name }}</span>
+                </div>
+                {% endif %}
+                {% if original.read_at %}
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Read at" %}</span>
+                    <span class="message-detail-value">{{ original.read_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if original.replied_by %}
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Replied by" %}</span>
+                    <span class="message-detail-value">{{ original.replied_by.get_short_name }}</span>
+                </div>
+                {% endif %}
+                {% if original.replied_at %}
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Replied at" %}</span>
+                    <span class="message-detail-value">{{ original.replied_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if original.ip_address %}
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "IP Address" %}</span>
+                    <span class="message-detail-value">{{ original.ip_address }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Linked order -->
+            {% if original.order %}
+            <div class="message-sidebar-card">
+                <div class="message-sidebar-card-header">
+                    <i class="fas fa-shopping-bag"></i> {% trans "Related Order" %}
+                </div>
+                <a href="{% url 'admin:orders_order_change' original.order.pk %}" class="message-order-link">
+                    <i class="fas fa-receipt"></i>
+                    <div class="message-order-link-text">
+                        <strong>{% trans "Order" %} #{{ original.order.id }}</strong>
+                        {% trans "View order details" %}
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Sender contact -->
+            <div class="message-sidebar-card">
+                <div class="message-sidebar-card-header">
+                    <i class="fas fa-address-card"></i> {% trans "Contact" %}
+                </div>
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Name" %}</span>
+                    <span class="message-detail-value">{{ original.name }}</span>
+                </div>
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Email" %}</span>
+                    <span class="message-detail-value">
+                        <a href="mailto:{{ original.email }}">{{ original.email }}</a>
+                    </span>
+                </div>
+                {% if original.phone %}
+                <div class="message-detail-row">
+                    <span class="message-detail-label">{% trans "Phone" %}</span>
+                    <span class="message-detail-value">{{ original.phone }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Keep the original Django form hidden for form processing -->
+<div class="message-django-form-hidden">
+    {{ block.super }}
+</div>
+{% else %}
+{{ block.super }}
+{% endif %}
+{% endblock %}

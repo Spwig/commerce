@@ -1,0 +1,13 @@
+<div class="checkbox-wrapper">
+    <input type="checkbox"
+           id="field-{{ field.field_name }}"
+           name="{{ field.field_name }}"
+           value="1"
+           {% if field.is_required %}required{% endif %}
+           {% if field.default_value == '1' or field.default_value == 'true' %}checked{% endif %}
+           class="form-checkbox">
+    <label for="field-{{ field.field_name }}" class="checkbox-label">
+        {{ field.translated_label }}
+        {% if field.is_required %}<span class="required-indicator">*</span>{% endif %}
+    </label>
+</div>

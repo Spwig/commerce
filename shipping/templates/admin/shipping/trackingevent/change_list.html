@@ -1,0 +1,160 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Tracking Events" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'shipping/css/admin_tracking_event.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-route"></i>
+                {% trans "Tracking Events" %}
+            </h1>
+            <p class="subtitle">{% trans "Shipment tracking checkpoints and status updates from carriers" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <button type="button" class="button secondary" data-action="reload-page">
+                <i class="fas fa-sync-alt"></i> {% trans "Refresh" %}
+            </button>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats Summary -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-file-alt"></i></div>
+            <div class="value">{{ info_received_count }}</div>
+            <div class="label">{% trans "Info Received" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-info"><i class="fas fa-shipping-fast"></i></div>
+            <div class="value">{{ in_transit_count }}</div>
+            <div class="label">{% trans "In Transit" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-warning"><i class="fas fa-truck"></i></div>
+            <div class="value">{{ out_for_delivery_count }}</div>
+            <div class="label">{% trans "Out for Delivery" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-success"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ delivered_count }}</div>
+            <div class="label">{% trans "Delivered" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon text-error"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="value">{{ exception_count }}</div>
+            <div class="label">{% trans "Exception" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Tracking ID, order number, location...' %}"
+                    value="{{ request.GET.q|default:'' }}">
+            </div>
+
+            <!-- Status Filter -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-tasks"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="info_received" {% if request.GET.status__exact == 'info_received' %}selected{% endif %}>{% trans "Info Received" %}</option>
+                    <option value="in_transit" {% if request.GET.status__exact == 'in_transit' %}selected{% endif %}>{% trans "In Transit" %}</option>
+                    <option value="out_for_delivery" {% if request.GET.status__exact == 'out_for_delivery' %}selected{% endif %}>{% trans "Out for Delivery" %}</option>
+                    <option value="delivered" {% if request.GET.status__exact == 'delivered' %}selected{% endif %}>{% trans "Delivered" %}</option>
+                    <option value="exception" {% if request.GET.status__exact == 'exception' %}selected{% endif %}>{% trans "Exception" %}</option>
+                    <option value="returned" {% if request.GET.status__exact == 'returned' %}selected{% endif %}>{% trans "Returned" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+                <button type="button" class="button default" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-route"></i>
+            <span id="event-count">{{ cl.result_count }}</span> {% trans "event" %}{{ cl.result_count|pluralize:"s" }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="event-results">
+        {% include "admin/shipping/trackingevent/event_cards.html" with events=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 event{% plural %}{{ counter }} events{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'events' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url %}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url "shipping_admin:filter_tracking_events" %}"
+     data-results-container="event-results"
+     data-results-count="event-count"
+     class="tracking-event-hidden"></div>
+</div>
+{% endblock %}

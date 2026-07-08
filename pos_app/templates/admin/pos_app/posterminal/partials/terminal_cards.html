@@ -1,0 +1,124 @@
+{% load i18n %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards" id="results-container">
+    {% for terminal in terminals %}
+    <div class="list-row-card{% if not terminal.is_active %} disabled{% endif %}">
+        <div class="list-row-card-icon">
+            <i class="fas fa-cash-register text-primary icon-medium"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:pos_app_posterminal_change' terminal.pk %}">
+                    {{ terminal.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-store"></i>
+                {{ terminal.warehouse.pos_display_name|default:terminal.warehouse.name }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if terminal.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if terminal.is_online %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <span class="terminal-status-dot online"></span> {% trans "Online" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <span class="terminal-status-dot offline"></span> {% trans "Offline" %}
+                    </span>
+                {% endif %}
+
+                {% if terminal.staff_count %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-users"></i> {{ terminal.staff_count }} {% trans "staff" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-key"></i>
+                    <span class="pairing-code">{{ terminal.pairing_code }}</span>
+                </span>
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Staff" %}</span>
+                    <span class="list-row-card-stat-value">{{ terminal.staff_count|default:"0" }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Shifts" %}</span>
+                    <span class="list-row-card-stat-value">{{ terminal.shift_count|default:"0" }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Last Seen" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if terminal.last_heartbeat %}
+                            {{ terminal.last_heartbeat|timesince }}
+                        {% else %}
+                            {% trans "Never" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ terminal.created_at|date:"M d, Y" }}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ terminal.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:pos_app_posterminal_change' terminal.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit terminal' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <button type="button"
+                    class="list-row-card-action terminal-unlock-btn"
+                    data-terminal-id="{{ terminal.pk }}"
+                    title="{% trans 'Unlock terminal' %}">
+                <i class="fas fa-unlock"></i>
+            </button>
+            <a href="{% url 'admin:pos_app_posshift_changelist' %}?terminal__id__exact={{ terminal.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View shifts' %}">
+                <i class="fas fa-clock"></i>
+            </a>
+            <a href="{% url 'admin:pos_app_posterminal_delete' terminal.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete terminal' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-cash-register"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No terminals found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

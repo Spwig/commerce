@@ -1,0 +1,64 @@
+{% load i18n announcements_tags %}
+
+<div class="list-row-card {% if not announcement.is_enabled %}disabled{% endif %}" data-announcement-id="{{ announcement.pk }}">
+    <div class="list-row-card-icon">
+        <i class="fas fa-bullhorn"></i>
+    </div>
+    <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+            <a href="{% url 'admin:announcements_announcement_change' announcement.pk %}">
+                {{ announcement }}
+            </a>
+        </h3>
+        <div class="list-row-card-meta">
+            <span title="{% trans 'Priority' %}">
+                <i class="fas fa-sort-numeric-down"></i> {{ announcement.priority }}
+            </span>
+            <span title="{% trans 'Link Type' %}">
+                <i class="fas fa-link"></i> {{ announcement.get_link_type_display }}
+            </span>
+            {% if announcement.show_modal %}
+            <span title="{% trans 'Opens modal on click' %}">
+                <i class="fas fa-window-restore"></i> {% trans "Modal" %}
+            </span>
+            {% else %}
+            <span title="{% trans 'Direct link on click' %}">
+                <i class="fas fa-external-link-alt"></i> {% trans "Direct Link" %}
+            </span>
+            {% endif %}
+            <span title="{% trans 'Last updated' %}">
+                <i class="fas fa-clock"></i> {{ announcement.updated_at|timesince }} {% trans "ago" %}
+            </span>
+        </div>
+        <div class="list-row-card-badges">
+            {% if announcement.is_enabled %}
+                <span class="badge success">{% trans "Enabled" %}</span>
+            {% else %}
+                <span class="badge">{% trans "Disabled" %}</span>
+            {% endif %}
+
+            {% if announcement.expires_at %}
+                {% if announcement.is_expired %}
+                    <span class="badge error">{% trans "Expired" %}</span>
+                {% else %}
+                    <span class="badge primary" title="{{ announcement.expires_at|date:'N j, Y g:i A' }}">
+                        <i class="fas fa-hourglass-half"></i> {% trans "Expires" %} {{ announcement.expires_at|timesince }}
+                    </span>
+                {% endif %}
+            {% else %}
+                <span class="badge">{% trans "No expiry" %}</span>
+            {% endif %}
+
+            {% if announcement.image %}
+                <span class="badge primary">
+                    <i class="fas fa-image"></i> {% trans "Has Image" %}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="list-row-card-actions">
+        <a href="{% url 'admin:announcements_announcement_change' announcement.pk %}" class="button default" title="{% trans 'Edit' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+    </div>
+</div>

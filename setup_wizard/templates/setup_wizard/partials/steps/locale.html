@@ -1,0 +1,42 @@
+{% load i18n %}
+<div class="wizard-step-header">
+    <div class="wizard-step-icon">
+        <i class="fas fa-coins"></i>
+    </div>
+    <h3 class="wizard-step-title">{% trans "Currency & Locale" %}</h3>
+    <p class="wizard-step-description">{% trans "Set your store's default currency, language, and timezone." %}</p>
+</div>
+
+<form id="wizard-form-locale" novalidate>
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="id_default_currency">{% trans "Default Currency" %} <span style="color: var(--error-fg)">*</span></label>
+        {{ form.default_currency }}
+        {% if form.default_currency.help_text %}
+        <p class="help-text">{{ form.default_currency.help_text }}</p>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="id_default_language">{% trans "Default Language" %} <span style="color: var(--error-fg)">*</span></label>
+        {{ form.default_language }}
+        {% if form.default_language.help_text %}
+        <p class="help-text">{{ form.default_language.help_text }}</p>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="id_default_timezone">{% trans "Timezone" %} <span style="color: var(--error-fg)">*</span></label>
+        {{ form.default_timezone }}
+        {% if form.default_timezone.help_text %}
+        <p class="help-text">{{ form.default_timezone.help_text }}</p>
+        {% endif %}
+        <div class="timezone-info" id="timezone-info" style="margin-top: var(--space-4); padding: var(--space-4) var(--space-5); background: var(--darkened-bg); border-radius: var(--radius-md); font-size: 0.8rem; color: var(--body-quiet-color);">
+            <i class="fas fa-clock" style="margin-right: var(--space-2);"></i>
+            <span>{% trans "Server time" %}: <strong id="tz-server-time">{{ server_time }}</strong></span>
+            <span style="margin: 0 var(--space-3);">&middot;</span>
+            <span>{% trans "Your time" %}: <strong id="tz-user-time"></strong></span>
+        </div>
+    </div>
+</form>

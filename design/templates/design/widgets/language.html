@@ -1,0 +1,73 @@
+{% load i18n static translation_filters merchant_trans %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_site_languages as site_languages %}
+
+{# Only show language selector if merchant has configured multiple frontend languages #}
+{% if site_languages|length > 1 %}
+<div class="widget-language {{ widget.css_classes }}">
+    {# Desktop: native select with auto-submit (hidden on mobile via CSS) #}
+    <form action="{% url 'set_language' %}" method="post" class="language-form">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+        <select name="language" class="language-select" data-auto-submit>
+            {% for language in site_languages %}
+            <option value="{{ language.code }}"
+                    {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                {% if config.show_flags and language.flag %}
+                    {{ language.flag }}
+                {% endif %}
+                {% if config.display_type == 'code' %}
+                    {{ language.code|upper }}
+                {% elif config.display_type == 'native' %}
+                    {{ language.native_name }}
+                {% else %}
+                    {{ language.name }}
+                {% endif %}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {# Mobile: globe icon trigger + dropdown (hidden on desktop via CSS) #}
+    <button type="button" class="language-mobile-trigger" aria-label="{% mtrans 'Change language' %}" aria-haspopup="true" aria-expanded="false">
+        <svg class="language-globe-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span class="language-mobile-code">{{ LANGUAGE_CODE|upper }}</span>
+    </button>
+
+    <div class="language-mobile-backdrop" aria-hidden="true"></div>
+
+    <div class="language-mobile-dropdown" hidden>
+        <div class="language-mobile-dropdown-inner">
+            {% for language in site_languages %}
+            <button type="button"
+                    class="language-mobile-option {% if language.code == LANGUAGE_CODE %}language-mobile-option-active{% endif %}"
+                    data-lang-code="{{ language.code }}">
+                {% if config.show_flags and language.flag %}
+                    <span class="language-mobile-flag">{{ language.flag }}</span>
+                {% endif %}
+                <span class="language-mobile-name">
+                    {% if config.display_type == 'code' %}
+                        {{ language.code|upper }}
+                    {% elif config.display_type == 'native' %}
+                        {{ language.native_name }}
+                    {% else %}
+                        {{ language.name }}
+                    {% endif %}
+                </span>
+                {% if language.code == LANGUAGE_CODE %}
+                    <svg class="language-mobile-check" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M3 8L6.5 11.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                {% endif %}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'design/js/widgets/language.js' %}"></script>
+{% endif %}

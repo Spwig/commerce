@@ -1,0 +1,57 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* GeoIP Location Widget Styles */
+
+.geoip-location-widget {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.location-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.country-flag {
+    font-size: 20px;
+}
+
+.location-preferences {
+    display: flex;
+    gap: 10px;
+}
+
+.currency-selector,
+.language-selector {
+    padding: 5px 10px;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 4px;
+    background: var(--body-bg, white);
+    cursor: pointer;
+}
+
+.currency-selector:hover,
+.language-selector:hover {
+    border-color: var(--body-quiet-color, #999);
+}
+
+@media (max-width: 768px) {
+    .geoip-location-widget {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .location-preferences {
+        flex-direction: column;
+        width: 100%;
+        gap: 6px;
+    }
+
+    .currency-selector,
+    .language-selector {
+        width: 100%;
+    }
+}

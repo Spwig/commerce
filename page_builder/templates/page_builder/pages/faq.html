@@ -1,0 +1,246 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{% mtrans 'Frequently Asked Questions' %} - {% mtrans 'Shop' %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/pages/faq.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% mtrans 'FAQ' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% mtrans 'Frequently Asked Questions' %}</h1>
+        <p class="page-header__subtitle">{% mtrans 'Find answers to common questions about our products and services' %}</p>
+    </div>
+</section>
+
+<!-- FAQ Content -->
+<section class="section">
+    <div class="container">
+        <div class="faq-layout">
+            <!-- FAQ Categories Navigation -->
+            <aside class="faq-sidebar">
+                <nav class="faq-nav">
+                    <h2 class="faq-nav__title">{% mtrans 'Categories' %}</h2>
+                    <ul class="faq-nav__list">
+                        <li><a href="#ordering" class="faq-nav__link faq-nav__link--active">{% mtrans 'Ordering' %}</a></li>
+                        <li><a href="#shipping" class="faq-nav__link">{% mtrans 'Shipping' %}</a></li>
+                        <li><a href="#returns" class="faq-nav__link">{% mtrans 'Returns & Refunds' %}</a></li>
+                        <li><a href="#payment" class="faq-nav__link">{% mtrans 'Payment' %}</a></li>
+                        <li><a href="#account" class="faq-nav__link">{% mtrans 'Account' %}</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- FAQ Questions -->
+            <main class="faq-content">
+                <!-- Ordering -->
+                <section id="ordering" class="faq-section">
+                    <h2 class="faq-section__title">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% mtrans 'Ordering' %}
+                    </h2>
+
+                    <div class="accordion" data-accordion>
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'How do I place an order?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'Simply browse our products, add items to your cart, and proceed to checkout. You can create an account or checkout as a guest.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'Can I modify my order after placing it?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'You can modify your order within 1 hour of placing it. After that, please contact our customer service team for assistance.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'How do I track my order?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans "Once your order ships, you'll receive an email with tracking information. You can also track your order in your account dashboard." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Shipping -->
+                <section id="shipping" class="faq-section">
+                    <h2 class="faq-section__title">
+                        <i class="fas fa-truck"></i>
+                        {% mtrans 'Shipping' %}
+                    </h2>
+
+                    <div class="accordion" data-accordion>
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'What are your shipping options?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'We offer standard shipping (5-7 business days), express shipping (2-3 business days), and overnight shipping where available.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'Do you ship internationally?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'Yes, we ship to most countries worldwide. International shipping times and costs vary by destination.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'Is there free shipping?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'We offer free standard shipping on orders over a certain amount. Check the cart for current free shipping thresholds.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Returns & Refunds -->
+                <section id="returns" class="faq-section">
+                    <h2 class="faq-section__title">
+                        <i class="fas fa-undo"></i>
+                        {% mtrans 'Returns & Refunds' %}
+                    </h2>
+
+                    <div class="accordion" data-accordion>
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'What is your return policy?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'We accept returns within 30 days of purchase. Items must be unused and in original packaging. See our Returns Policy for full details.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'How do I return an item?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'Log into your account, go to Order History, select the order, and click "Request Return". Follow the instructions to print your return label.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'When will I receive my refund?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'Refunds are processed within 5-7 business days after we receive your return. The refund will be credited to your original payment method.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payment -->
+                <section id="payment" class="faq-section">
+                    <h2 class="faq-section__title">
+                        <i class="fas fa-credit-card"></i>
+                        {% mtrans 'Payment' %}
+                    </h2>
+
+                    <div class="accordion" data-accordion>
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'What payment methods do you accept?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and Apple Pay.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'Is my payment information secure?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'Yes, we use industry-standard SSL encryption to protect your payment information. We never store your full credit card details.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Account -->
+                <section id="account" class="faq-section">
+                    <h2 class="faq-section__title">
+                        <i class="fas fa-user"></i>
+                        {% mtrans 'Account' %}
+                    </h2>
+
+                    <div class="accordion" data-accordion>
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'How do I create an account?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'Click "Sign Up" in the header, enter your email and create a password. You can also create an account during checkout.' %}</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion__item">
+                            <button class="accordion__trigger" aria-expanded="false">
+                                <span>{% mtrans 'I forgot my password. How do I reset it?' %}</span>
+                                <i class="fas fa-chevron-down accordion__icon"></i>
+                            </button>
+                            <div class="accordion__content">
+                                <p>{% mtrans 'Click "Log In", then "Forgot Password". Enter your email address and we\'ll send you a link to reset your password.' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Contact CTA -->
+        <div class="faq-contact">
+            <h2 class="faq-contact__title">{% mtrans "Still have questions?" %}</h2>
+            <p class="faq-contact__text">{% mtrans "Our customer support team is here to help." %}</p>
+            <a href="/page/contact/" class="btn btn--primary">
+                <i class="fas fa-envelope"></i>
+                {% mtrans 'Contact Us' %}
+            </a>
+        </div>
+    </div>
+</section>
+
+{% block extra_scripts %}
+<script src="{% static 'page_builder/js/faq-page.js' %}" defer></script>
+{% endblock %}
+{% endblock %}

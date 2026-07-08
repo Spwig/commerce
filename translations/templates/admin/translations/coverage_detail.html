@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Translation Coverage" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'translations/admin/css/translations.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="coverage-detail">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1><i class="fas fa-chart-pie"></i> {% trans "Translation Coverage" %}</h1>
+            <p class="subtitle">{% trans "Track translation progress across all content types and languages." %}</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="coverage-actions-bar">
+            <a href="{% url 'translations:dashboard' %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Dashboard" %}
+            </a>
+            <button type="button" class="button default" data-action="translate-all">
+                <i class="fas fa-language"></i> {% trans "Translate All Missing" %}
+            </button>
+        </div>
+
+        {% if coverage.has_languages %}
+        <!-- Overall -->
+        <div class="coverage-detail-overall">
+            <div class="coverage-detail-overall__ring">
+                <svg class="coverage-ring" viewBox="0 0 120 120">
+                    <circle class="coverage-ring__bg" cx="60" cy="60" r="52" />
+                    <circle class="coverage-ring__fill" cx="60" cy="60" r="52"
+                            stroke-dasharray="326.73"
+                            data-percentage="{{ coverage.overall_percentage|default:0 }}" />
+                </svg>
+                <div class="coverage-ring__label">
+                    <span class="coverage-ring__pct">{{ coverage.overall_percentage|floatformat:0 }}%</span>
+                </div>
+            </div>
+            <div class="coverage-detail-overall__info">
+                <h3>{{ coverage.overall_percentage|floatformat:0 }}% {% trans "of your site is translated" %}</h3>
+                <p>{{ coverage.translated_fields }} {% trans "of" %} {{ coverage.total_fields }} {% trans "fields translated across" %} {{ coverage.languages|length }} {% trans "languages" %}</p>
+            </div>
+        </div>
+
+        <!-- Language breakdown (top-level) -->
+        <div class="coverage-hero-section coverage-by-language-section">
+            <h3 class="coverage-by-language-title">{% trans "By Language" %}</h3>
+            <div class="coverage-lang-bars">
+                {% for lang in coverage.languages %}
+                <div class="coverage-lang-row">
+                    <span class="coverage-lang-row__flag">{{ lang.flag }}</span>
+                    <span class="coverage-lang-row__name">{{ lang.name }}</span>
+                    <div class="coverage-lang-row__bar">
+                        <div class="coverage-lang-row__fill" data-width="{{ lang.percentage }}"></div>
+                    </div>
+                    <span class="coverage-lang-row__pct">{{ lang.percentage|floatformat:0 }}%</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Content type cards grouped by priority -->
+        {% for group in groups %}
+        <div class="coverage-cards-group">
+            <h4 class="coverage-cards-group__title">{{ group.label }}</h4>
+            {% for ct in group.items %}
+            <div class="coverage-card coverage-card--collapsed" data-key="{{ ct.key }}">
+                <div class="coverage-card__header" data-action="toggle-card">
+                    <div class="coverage-card__icon"><i class="{{ ct.icon }}"></i></div>
+                    <div class="coverage-card__info">
+                        <div class="coverage-card__name">{{ ct.label }}</div>
+                        <div class="coverage-card__meta">
+                            {{ ct.item_count }} {% trans "items" %} &middot;
+                            {{ ct.translated_fields }} / {{ ct.total_fields }} {% trans "fields translated" %}
+                        </div>
+                    </div>
+                    <div class="coverage-card__bar-wrap">
+                        <div class="coverage-card__bar">
+                            <div class="coverage-card__bar-fill" data-width="{{ ct.percentage }}"></div>
+                        </div>
+                        <span class="coverage-card__pct">{{ ct.percentage|floatformat:0 }}%</span>
+                    </div>
+                    <span class="coverage-card__toggle"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="coverage-card__body">
+                    {% for lang in coverage.languages %}
+                    {% with bl=ct.by_language %}
+                    <div class="coverage-card__lang-row">
+                        <span class="coverage-card__lang-flag">{{ lang.flag }}</span>
+                        <span class="coverage-card__lang-name">{{ lang.name }}</span>
+                        <div class="coverage-card__lang-bar">
+                            <div class="coverage-card__lang-fill" data-ct="{{ ct.key }}" data-lang="{{ lang.code }}"></div>
+                        </div>
+                        <span class="coverage-card__lang-stats" data-ct="{{ ct.key }}" data-lang="{{ lang.code }}-stats"></span>
+                        <button type="button" class="coverage-card__lang-btn"
+                                data-action="translate-content-type" data-ct-key="{{ ct.key }}" data-lang-code="{{ lang.code }}"
+                                title="{% trans 'Translate missing' %}">
+                            <i class="fas fa-language"></i> {% trans "Translate" %}
+                        </button>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <div class="coverage-hero-section coverage-hero-section--empty">
+            <p class="coverage-empty-msg">
+                {% trans "Activate languages in" %}
+                <a href="{% url 'translations:language_management' %}">{% trans "Language Management" %}</a>
+                {% trans "to see translation coverage." %}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Translate All Modal -->
+    <div class="admin-modal-overlay" id="translate-all-modal">
+        <div class="admin-modal admin-modal--md">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title"><i class="fas fa-language"></i> {% trans "Translate All Missing Content" %}</h3>
+                <button type="button" class="admin-modal-close" data-action="close-translate-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal-body" id="translate-all-body">
+                <div class="translate-all-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>{% trans "Calculating..." %}</p>
+                </div>
+            </div>
+            <div class="admin-modal-footer" id="translate-all-footer" hidden>
+                <button type="button" class="button" data-action="close-translate-modal">
+                    {% trans "Cancel" %}
+                </button>
+                <button type="button" class="button default" id="translate-all-confirm" data-action="confirm-translate">
+                    <i class="fas fa-play"></i> {% trans "Start Translation" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{{ coverage_json|json_script:"translations-coverage-data" }}
+<div id="translations-config"
+     data-jobs-url="{% url 'translations:translation_jobs' %}"
+     hidden></div>
+<script src="{% static 'translations/admin/js/coverage-detail.js' %}" defer></script>
+{% endblock %}

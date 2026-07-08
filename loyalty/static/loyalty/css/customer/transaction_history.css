@@ -1,0 +1,210 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty Frontend - Transaction History
+ *
+ * Description: Frontend styles for transaction_history.html
+ * Template: loyalty/templates/loyalty/customer/transaction_history.html
+ * Extracted: 2026-02-20
+ *
+ * Dependencies:
+ * - Theme CSS variables (loaded via page_builder/base.html or admin base)
+ * - loyalty/css/customer.css (base loyalty styles)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Page header */
+.txn-page-header {
+    margin-bottom: var(--theme-spacing-6, 1.5rem);
+}
+
+.txn-page-header h1 {
+    font-size: 2rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    margin-bottom: var(--theme-spacing-2, 0.5rem);
+}
+
+.txn-page-header p {
+    color: var(--theme-text-muted, #9CA3AF);
+    margin: 0;
+}
+
+/* Filter form */
+.txn-filter-form {
+    display: flex;
+    gap: var(--theme-spacing-4, 1rem);
+    flex-wrap: wrap;
+    align-items: end;
+}
+
+.txn-filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.txn-filter-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: var(--theme-font-weight-medium, 500);
+    margin-bottom: var(--theme-spacing-2, 0.5rem);
+    color: var(--theme-text, #1F2937);
+}
+
+.txn-filter-group select {
+    width: 100%;
+    padding: var(--theme-spacing-2, 0.5rem) var(--theme-spacing-4, 1rem);
+    border: 1px solid var(--theme-border, #E5E7EB);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    background: var(--theme-surface, #FFFFFF);
+    color: var(--theme-text, #1F2937);
+}
+
+.txn-filter-btn {
+    padding: var(--theme-spacing-2, 0.5rem) var(--theme-spacing-6, 1.5rem);
+    background: var(--theme-primary, #2563EB);
+    color: var(--theme-text-inverse, #FFFFFF);
+    border: none;
+    border-radius: var(--theme-radius-base, 0.375rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    cursor: pointer;
+}
+
+.txn-filter-clear {
+    padding: var(--theme-spacing-2, 0.5rem) var(--theme-spacing-6, 1.5rem);
+    background: var(--theme-background-secondary, #F9FAFB);
+    color: var(--theme-text, #1F2937);
+    border: 1px solid var(--theme-border, #E5E7EB);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    text-decoration: none;
+    display: inline-block;
+    font-weight: var(--theme-font-weight-medium, 500);
+}
+
+/* Table */
+.txn-table-wrapper {
+    overflow-x: auto;
+}
+
+.txn-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.txn-table thead tr {
+    border-bottom: 2px solid var(--theme-border, #E5E7EB);
+}
+
+.txn-table th {
+    text-align: left;
+    padding: var(--theme-spacing-4, 1rem);
+    font-weight: var(--theme-font-weight-bold, 700);
+    color: var(--theme-text, #1F2937);
+}
+
+.txn-table th.text-right {
+    text-align: right;
+}
+
+.txn-table tbody tr {
+    border-bottom: 1px solid var(--theme-border, #E5E7EB);
+}
+
+.txn-table td {
+    padding: var(--theme-spacing-4, 1rem);
+}
+
+/* Date cell */
+.txn-date-cell {
+    font-size: 0.875rem;
+    color: var(--theme-text-muted, #9CA3AF);
+}
+
+/* Type badge */
+.txn-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-spacing-2, 0.5rem);
+    padding: 0.25rem var(--theme-spacing-2, 0.5rem);
+    background: var(--theme-background-secondary, #F9FAFB);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    font-size: 0.75rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+}
+
+.txn-type-icon-earn {
+    color: var(--theme-success, #10B981);
+}
+
+.txn-type-icon-redeem {
+    color: var(--theme-error, #EF4444);
+}
+
+/* Description cell */
+.txn-description-cell {
+    font-size: 0.875rem;
+    color: var(--theme-text, #1F2937);
+}
+
+/* Points cell */
+.txn-points-cell {
+    text-align: right;
+    font-weight: var(--theme-font-weight-bold, 700);
+    font-size: 1rem;
+}
+
+.txn-points-positive {
+    color: var(--theme-success, #10B981);
+}
+
+.txn-points-negative {
+    color: var(--theme-error, #EF4444);
+}
+
+/* Balance cell */
+.txn-balance-cell {
+    text-align: right;
+    font-size: 0.875rem;
+    color: var(--theme-text-muted, #9CA3AF);
+}
+
+/* Pagination */
+.txn-pagination {
+    margin-top: var(--theme-spacing-6, 1.5rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--theme-spacing-2, 0.5rem);
+}
+
+.txn-pagination a {
+    padding: var(--theme-spacing-2, 0.5rem) var(--theme-spacing-4, 1rem);
+    background: var(--theme-surface, #FFFFFF);
+    border: 1px solid var(--theme-border, #E5E7EB);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    text-decoration: none;
+    color: var(--theme-text, #1F2937);
+}
+
+.txn-pagination a:hover {
+    border-color: var(--theme-primary, #2563EB);
+}
+
+.txn-pagination-info {
+    padding: var(--theme-spacing-2, 0.5rem) var(--theme-spacing-4, 1rem);
+    color: var(--theme-text-muted, #9CA3AF);
+}
+
+/* Empty state action */
+.txn-empty-action {
+    display: inline-block;
+    margin-top: var(--theme-spacing-4, 1rem);
+    padding: var(--theme-spacing-2, 0.5rem) var(--theme-spacing-6, 1.5rem);
+    background: var(--theme-primary, #2563EB);
+    color: var(--theme-text-inverse, #FFFFFF);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    text-decoration: none;
+    font-weight: var(--theme-font-weight-medium, 500);
+}

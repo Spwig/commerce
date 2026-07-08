@@ -1,0 +1,74 @@
+{% extends "mfa/totp/base.html" %}
+{% load i18n static %}
+
+{% block head_title %}{% trans "Deactivate Authenticator App" %}{% endblock %}
+
+{% block allauth_content %}
+<div class="allauth-deactivate-mfa">
+    <div class="allauth-warning-box">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% trans "Warning: You are about to disable two-factor authentication" %}</strong>
+            <p>{% trans "This will remove the additional security layer from your account. You can always re-enable it later." %}</p>
+        </div>
+    </div>
+
+    <div class="allauth-deactivate-section">
+        <h2>
+            <i class="fas fa-shield-alt"></i>
+            {% trans "Deactivate Authenticator App" %}
+        </h2>
+
+        <p class="allauth-deactivate-message">
+            {% blocktrans %}You are about to deactivate authenticator app based authentication. Are you sure?{% endblocktrans %}
+        </p>
+
+        <form method="post" action="{% url 'mfa_deactivate_totp' %}">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="allauth-form-errors">
+                    {% for error in form.non_field_errors %}
+                        <div class="allauth-error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                {% if not field.is_hidden %}
+                    <div class="allauth-field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <span class="allauth-helptext">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+
+            <div class="allauth-button-group">
+                <button type="submit" class="allauth-btn allauth-btn-danger">
+                    <i class="fas fa-shield-alt"></i>
+                    {% trans "Deactivate" %}
+                </button>
+                <a href="{% url 'mfa_index' %}" class="allauth-btn allauth-btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

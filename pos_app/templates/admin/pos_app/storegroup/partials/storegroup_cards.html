@@ -1,0 +1,76 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for group in store_groups %}
+    <div class="list-row-card">
+        <div class="card-header">
+            <div>
+                <h3>
+                    <a href="{% url 'admin:pos_app_storegroup_change' group.pk %}">
+                        <i class="fas fa-store"></i> {{ group.name }}
+                    </a>
+                </h3>
+                <div class="card-meta">
+                    <span class="badge">{{ group.code }}</span>
+                    {% if group.is_active %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% else %}
+                    <span class="badge badge-secondary">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="info-grid">
+                {% if group.currency %}
+                <div class="info-item">
+                    <strong>{% trans "Currency" %}:</strong>
+                    {{ group.currency }}
+                </div>
+                {% endif %}
+
+                {% if group.language %}
+                <div class="info-item">
+                    <strong>{% trans "Language" %}:</strong>
+                    {{ group.language }}
+                </div>
+                {% endif %}
+
+                {% if group.timezone %}
+                <div class="info-item">
+                    <strong>{% trans "Timezone" %}:</strong>
+                    {{ group.timezone }}
+                </div>
+                {% endif %}
+
+                <div class="info-item">
+                    <strong>{% trans "Stores" %}:</strong>
+                    {% if group.store_count %}
+                    <span class="badge badge-info">{{ group.store_count }}</span>
+                    {% else %}
+                    <span class="text-muted">{% trans "None" %}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <a href="{% url 'admin:pos_app_storegroup_change' group.pk %}" class="button small">
+                <i class="fas fa-edit"></i> {% trans "Edit" %}
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-store"></i>
+        </div>
+        <p>{% trans "No store groups match your filters." %}</p>
+    </div>
+    {% endfor %}
+</div>

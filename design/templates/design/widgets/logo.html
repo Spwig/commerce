@@ -1,0 +1,37 @@
+{% load static core_extras merchant_trans %}
+{% get_site_settings as site_settings %}
+{% mtrans "Logo" as default_logo_text %}
+{% comment %}
+Logo URL priority:
+1. If use_site_logo is True (default) and site logo exists, use site logo
+2. Otherwise use config.logo_url if set
+3. Fallback to text
+{% endcomment %}
+<div class="widget-logo {{ widget.css_classes }}" data-scroll-compact="{{ config.show_on_scroll|default:False }}">
+    <a href="{{ config.link_url|default:'/' }}" class="logo-link">
+        <div class="logo-container">
+            {% if config.use_site_logo|default:True and site_settings and site_settings.site_logo %}
+                {# Use site logo from settings #}
+                <img src="{{ site_settings|get_site_logo_url:'header' }}"
+                     alt="{{ config.alt_text|default:site_settings.site_name|default:default_logo_text }}"
+                     class="logo-image"
+                     loading="lazy"
+                     style="{% if config.width %}max-width: {{ config.width }};{% endif %}{% if config.height %} max-height: {{ config.height }};{% endif %}">
+            {% elif config.logo_url %}
+                {# Use custom logo from widget config #}
+                <img src="{{ config.logo_url }}"
+                     alt="{{ config.alt_text|default:site_settings.site_name|default:default_logo_text }}"
+                     class="logo-image"
+                     loading="lazy"
+                     style="{% if config.width %}max-width: {{ config.width }};{% endif %}{% if config.height %} max-height: {{ config.height }};{% endif %}">
+            {% else %}
+                {# Fallback to text #}
+                <span class="logo-text">{{ config.text|default:site_settings.site_name|default:default_logo_text }}</span>
+            {% endif %}
+
+            {% if config.tagline %}
+            <span class="logo-tagline">{{ config.tagline }}</span>
+            {% endif %}
+        </div>
+    </a>
+</div>

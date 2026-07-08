@@ -1,0 +1,119 @@
+{% load i18n %}
+
+<!-- Fraud Policy Modal -->
+<div class="admin-modal-overlay" id="fraud-modal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title"><i class="fas fa-shield-alt"></i> {% trans "Configure Fraud Detection" %}</h2>
+            <button type="button" class="admin-modal-close" data-modal="fraud-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="admin-modal-section">
+                <h3>{% trans "Detection Policy" %}</h3>
+
+                <div class="form-row">
+                    <label for="fraud-policy-level">{% trans "Fraud Detection Level" %}</label>
+                    <select id="fraud-policy-level">
+                        <option value="lenient">{% trans "Lenient (minimal checks)" %}</option>
+                        <option value="balanced" selected>{% trans "Balanced (recommended)" %}</option>
+                        <option value="strict">{% trans "Strict (thorough verification)" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-auto-reject-threshold">{% trans "Auto-Reject Risk Score Threshold" %}</label>
+                    <input type="number" id="fraud-auto-reject-threshold" min="0" max="100" placeholder="80">
+                    <p class="help">{% trans "Risk scores above this are auto-rejected (0-100, higher = more risky)" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-manual-review-threshold">{% trans "Manual Review Threshold" %}</label>
+                    <input type="number" id="fraud-manual-review-threshold" min="0" max="100" placeholder="50">
+                    <p class="help">{% trans "Risk scores above this require manual review" %}</p>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Detection Rules" %}</h3>
+
+                <div class="form-row">
+                    <label for="fraud-check-same-ip">
+                        <input type="checkbox" id="fraud-check-same-ip" checked>
+                        {% trans "Flag if referrer and referee use same IP" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-check-same-device">
+                        <input type="checkbox" id="fraud-check-same-device" checked>
+                        {% trans "Flag if referrer and referee use same device/browser" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-check-rapid-signups">
+                        <input type="checkbox" id="fraud-check-rapid-signups" checked>
+                        {% trans "Flag rapid signups from same referrer" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-rapid-signup-threshold">{% trans "Rapid Signup Threshold (Hours)" %}</label>
+                    <input type="number" id="fraud-rapid-signup-threshold" min="1" placeholder="24">
+                    <p class="help">{% trans "Time window for rapid signup detection" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-check-similar-emails">
+                        <input type="checkbox" id="fraud-check-similar-emails">
+                        {% trans "Flag similar email addresses (referrer/referee)" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-check-disposable-emails">
+                        <input type="checkbox" id="fraud-check-disposable-emails" checked>
+                        {% trans "Flag disposable/temporary email addresses" %}
+                    </label>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Actions" %}</h3>
+
+                <div class="form-row">
+                    <label for="fraud-require-verification">
+                        <input type="checkbox" id="fraud-require-verification">
+                        {% trans "Require ID verification for high-risk referrals" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-delay-rewards">
+                        <input type="checkbox" id="fraud-delay-rewards" checked>
+                        {% trans "Delay reward issuance for flagged referrals" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-delay-days">{% trans "Delay Period (Days)" %}</label>
+                    <input type="number" id="fraud-delay-days" min="0" placeholder="7">
+                    <p class="help">{% trans "Additional delay for suspicious referrals" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="fraud-ban-repeat-offenders">
+                        <input type="checkbox" id="fraud-ban-repeat-offenders">
+                        {% trans "Auto-ban repeat fraud offenders" %}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="referral-modal-btn-secondary" data-modal="fraud-modal">{% trans "Cancel" %}</button>
+            <button type="button" class="referral-modal-btn-primary" id="save-fraud-config">{% trans "Save Configuration" %}</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Send Newsletter" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/admin/css/newsletter_send.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="application/json" id="newsletter-send-config">
+{
+    "i18n": {
+        "confirmSendPrefix": "{% trans 'Send newsletter to ' %}",
+        "confirmSendSuffix": "{% trans ' recipients?' %}"
+    }
+}
+</script>
+<script src="{% static 'email_system/js/newsletter-send.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="newsletter-header">
+    <h1>
+        <i class="fas fa-paper-plane"></i>
+        {% trans "Send Newsletter" %}
+    </h1>
+    <p class="subtitle">
+        {% trans "Select recipients and send your newsletter" %}
+    </p>
+</div>
+
+<div class="send-container">
+    <div class="newsletter-preview">
+        <h3>{% trans "Newsletter to Send:" %}</h3>
+        <div class="subject">{{ newsletter.subject }}</div>
+        <div class="meta">
+            {{ newsletter.language_code|upper }} •
+            {% trans "Created" %} {{ newsletter.created_at|date:"M d, Y" }}
+        </div>
+    </div>
+
+    <form id="sendForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="send">
+
+        <div class="recipient-count-card" id="recipientCountCard">
+            <div class="count" id="recipientCountNumber">0</div>
+            <div class="label">{% trans "Recipients Selected" %}</div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">{% trans "Select Recipients" %}</h2>
+
+            <div class="recipient-options">
+                <div class="option-group">
+                    <label>{% trans "Customer Segments" %}</label>
+                    {% if segments %}
+                    <div class="checkbox-list">
+                        {% for segment in segments %}
+                        <div class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                id="segment_{{ segment.id }}"
+                                name="segments[]"
+                                value="{{ segment.id }}"
+                            >
+                            <label for="segment_{{ segment.id }}">
+                                {{ segment.name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="help-text">
+                        {% trans "No customer segments available. Newsletter will be sent to all customers." %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="option-group">
+                    <label>{% trans "Customer Status" %}</label>
+                    <div class="radio-list">
+                        <div class="radio-item">
+                            <input
+                                type="radio"
+                                id="status_all"
+                                name="customer_status"
+                                value="all"
+                                checked
+                            >
+                            <label for="status_all">
+                                {% trans "All Customers" %} ({{ total_subscribers }})
+                            </label>
+                        </div>
+                        <div class="radio-item">
+                            <input
+                                type="radio"
+                                id="status_has_orders"
+                                name="customer_status"
+                                value="has_orders"
+                            >
+                            <label for="status_has_orders">
+                                {% trans "Customers with Orders" %}
+                            </label>
+                        </div>
+                        <div class="radio-item">
+                            <input
+                                type="radio"
+                                id="status_no_orders"
+                                name="customer_status"
+                                value="no_orders"
+                            >
+                            <label for="status_no_orders">
+                                {% trans "Customers without Orders" %}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">{% trans "Or Upload Custom List" %}</h2>
+
+            <div class="recipient-options">
+                <div class="option-group">
+                    <label for="csv_file">{% trans "CSV File" %}</label>
+                    <div class="file-upload">
+                        <input
+                            type="file"
+                            id="csv_file"
+                            name="csv_file"
+                            accept=".csv"
+                        >
+                        <div class="help-text">
+                            {% trans "Upload a CSV file with custom recipient list. This will override segment filters." %}
+                        </div>
+                    </div>
+                    <div class="csv-format-info">
+                        <strong>{% trans "CSV Format:" %}</strong><br>
+                        {% trans "Required columns:" %} <code>email</code><br>
+                        {% trans "Optional columns:" %} <code>name</code><br>
+                        {% trans "Example:" %} <code>email,name</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary" id="sendButton">
+                <i class="fas fa-paper-plane"></i>
+                {% trans "Send Newsletter" %}
+            </button>
+            <a href="{% url 'email_system:newsletter_list' %}" class="btn-secondary">
+                <i class="fas fa-times"></i>
+                {% trans "Cancel" %}
+            </a>
+        </div>
+
+        <div class="info-box">
+            <p>
+                <i class="fas fa-info-circle"></i>
+                {% trans "Newsletters will be queued for sending and processed by the email system. You can monitor delivery status in the Email Outbox. Orders placed within 7 days of opening this newsletter will be attributed for ROI tracking." %}
+            </p>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

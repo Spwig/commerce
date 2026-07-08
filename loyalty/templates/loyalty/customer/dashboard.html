@@ -1,0 +1,306 @@
+{% extends "themes/base.html" %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% mtrans "Loyalty Dashboard" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'loyalty/css/customer.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-dashboard">
+    <div class="container">
+        {# Hero Card - Points Overview #}
+        <div class="points-hero-card">
+            <div class="hero-content">
+                <div class="hero-header">
+                    <h1 class="hero-title">{% mtrans "Your Loyalty Points" %}</h1>
+                    {% if member.current_tier %}
+                    <div class="tier-badge" data-color="{{ member.current_tier.color|default:'' }}">
+                        <i class="fas fa-crown"></i>
+                        <span>{{ member.current_tier.name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="points-display">
+                    <div class="big-number">
+                        <span class="points-value">{{ balance.available_points|default:0 }}</span>
+                        <span class="points-label">{% mtrans "Points Available" %}</span>
+                    </div>
+
+                    {% if balance.pending_points > 0 %}
+                    <div class="pending-points">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ balance.pending_points }} {% mtrans "points pending" %}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {# Tier Progress Bar #}
+                {% if next_tier %}
+                <div class="tier-progress-section">
+                    <div class="progress-header">
+                        <span class="progress-label">
+                            {% blocktrans with tier=next_tier.name %}Progress to {{ tier }}{% endblocktrans %}
+                        </span>
+                        <span class="progress-value">
+                            {% blocktrans count counter=points_to_next_tier %}
+                                {{ counter }} point needed
+                            {% plural %}
+                                {{ counter }} points needed
+                            {% endblocktrans %}
+                        </span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" data-progress="{{ tier_progress }}"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Lifetime Stats #}
+                <div class="lifetime-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ balance.lifetime_earned|default:0 }}</span>
+                        <span class="stat-label">{% mtrans "Earned" %}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ balance.lifetime_redeemed|default:0 }}</span>
+                        <span class="stat-label">{% mtrans "Redeemed" %}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ member.badges_earned.count }}</span>
+                        <span class="stat-label">{% mtrans "Badges" %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Points Expiration Warning #}
+        {% if expiring_points_total > 0 %}
+        <div class="expiration-warning-card">
+            <div class="expiration-warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="expiration-warning-content">
+                <h3>{% mtrans "Points Expiring Soon" %}</h3>
+                <p>{{ expiring_points_total }} {% mtrans "points expiring within 30 days" %}</p>
+            </div>
+            <a href="{% url 'loyalty:customer_rewards' %}" class="expiration-warning-action">
+                {% mtrans "Redeem Now" %} <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+
+        {# Quick Actions #}
+        <div class="quick-actions-grid">
+            <a href="{% url 'loyalty:customer_rewards' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="action-content">
+                    <h3>{% mtrans "Browse Rewards" %}</h3>
+                    <p>{% mtrans "Redeem your points for exclusive rewards" %}</p>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+            </a>
+
+            <a href="{% url 'loyalty:customer_history' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="action-content">
+                    <h3>{% mtrans "Transaction History" %}</h3>
+                    <p>{% mtrans "View your points activity" %}</p>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+            </a>
+
+            <a href="{% url 'loyalty:customer_tiers' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="action-content">
+                    <h3>{% mtrans "Tier Benefits" %}</h3>
+                    <p>{% mtrans "Unlock exclusive perks" %}</p>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+            </a>
+
+            <a href="{% url 'loyalty:customer_badges' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <div class="action-content">
+                    <h3>{% mtrans "My Badges" %}</h3>
+                    <p>{% mtrans "Your achievements and milestones" %}</p>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+            </a>
+        </div>
+
+        {# Two Column Layout #}
+        <div class="dashboard-grid">
+            {# Left Column #}
+            <div class="dashboard-column">
+                {# Featured Rewards #}
+                {% if available_rewards %}
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>{% mtrans "Featured Rewards" %}</h2>
+                        <a href="{% url 'loyalty:customer_rewards' %}" class="view-all-link">
+                            {% mtrans "View All" %} <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="rewards-grid">
+                        {% for reward in available_rewards %}
+                        <div class="reward-card">
+                            {% if reward.image %}
+                            <div class="reward-image">
+                                <img src="{{ reward.image.url }}" alt="{{ reward.name }}">
+                            </div>
+                            {% endif %}
+
+                            <div class="reward-content">
+                                <h3>{{ reward.name }}</h3>
+                                <div class="reward-cost">
+                                    <i class="fas fa-star"></i>
+                                    <span>{{ reward.points_cost }} {% mtrans "points" %}</span>
+                                </div>
+
+                                {% if reward.points_cost <= balance.available_points %}
+                                <a href="{% url 'loyalty:customer_redeem' reward.id %}" class="btn-redeem">
+                                    {% mtrans "Redeem" %}
+                                </a>
+                                {% else %}
+                                <div class="insufficient-points">
+                                    {% mtrans "Need" %} {{ reward.points_cost|add:"-"|add:balance.available_points }} {% mtrans "more points" %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Recent Activity #}
+                {% if recent_transactions %}
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>{% mtrans "Recent Activity" %}</h2>
+                        <a href="{% url 'loyalty:customer_history' %}" class="view-all-link">
+                            {% mtrans "View All" %} <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="transactions-list">
+                        {% for txn in recent_transactions %}
+                        <div class="transaction-item">
+                            <div class="txn-icon">
+                                {% if txn.transaction_type == 'earn' or txn.transaction_type == 'bonus' %}
+                                <i class="fas fa-plus-circle txn-icon-earn"></i>
+                                {% elif txn.transaction_type == 'redeem' %}
+                                <i class="fas fa-minus-circle txn-icon-redeem"></i>
+                                {% else %}
+                                <i class="fas fa-circle txn-icon-other"></i>
+                                {% endif %}
+                            </div>
+
+                            <div class="txn-details">
+                                <div class="txn-type">{{ txn.get_transaction_type_display }}</div>
+                                <div class="txn-date">{{ txn.created_at|date:"M d, Y" }}</div>
+                            </div>
+
+                            <div class="txn-points {% if txn.points > 0 %}points-positive{% else %}points-negative{% endif %}">
+                                {% if txn.points > 0 %}+{% endif %}{{ txn.points }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            {# Right Column #}
+            <div class="dashboard-column">
+                {# Pending Redemptions #}
+                {% if pending_redemptions %}
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>{% mtrans "Pending Redemptions" %}</h2>
+                    </div>
+
+                    <div class="redemptions-list">
+                        {% for redemption in pending_redemptions %}
+                        <div class="redemption-card">
+                            <div class="redemption-header">
+                                <h4>{{ redemption.reward.name }}</h4>
+                                <span class="status-badge status-{{ redemption.status }}">
+                                    {{ redemption.get_status_display }}
+                                </span>
+                            </div>
+
+                            <div class="redemption-details">
+                                <div class="redemption-code">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    <code>{{ redemption.redemption_code }}</code>
+                                </div>
+                                <div class="redemption-date">
+                                    {{ redemption.created_at|date:"M d, Y" }}
+                                </div>
+                            </div>
+
+                            <a href="{% url 'loyalty:customer_redemption_detail' redemption.id %}" class="view-details-link">
+                                {% mtrans "View Details" %} <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Recent Badges #}
+                {% if recent_badges %}
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>{% mtrans "Recent Badges" %}</h2>
+                    </div>
+
+                    <div class="badges-grid">
+                        {% for member_badge in recent_badges %}
+                        <div class="badge-card">
+                            <div class="badge-icon" data-color="{{ member_badge.badge.color|default:'' }}">
+                                <i class="fas {{ member_badge.badge.icon|default:'fa-star' }}"></i>
+                            </div>
+                            <div class="badge-info">
+                                <h4>{{ member_badge.badge.name }}</h4>
+                                <p>{{ member_badge.earned_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Empty State Encouragement #}
+                {% if not recent_transactions and not pending_redemptions %}
+                <div class="dashboard-section empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>{% mtrans "Start Your Journey!" %}</h3>
+                    <p>{% mtrans "Make purchases, engage with us, and start earning points today." %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'loyalty/js/customer.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,257 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ==========================================================================
+   Digital Product Template Styles
+   Template-specific overrides for software, ebooks, courses, digital downloads.
+   Shared base styles live in product-base.css -- do not duplicate them here.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Section & Layout
+   -------------------------------------------------------------------------- */
+.product-section--digital {
+    padding: var(--theme-space-10, 2.5rem) 0;
+    background: var(--theme-color-background, #ffffff);
+}
+
+.product-layout--digital {
+    grid-template-columns: 45% 1fr;
+    gap: var(--theme-space-12, 3rem);
+}
+
+/* --------------------------------------------------------------------------
+   Preview Column (Gallery / Cover Art)
+   -------------------------------------------------------------------------- */
+.product-digital__preview {
+    position: sticky;
+    top: var(--theme-space-6, 1.5rem);
+}
+
+.product-digital__preview .product-gallery__zoom-container {
+    border-radius: var(--theme-radius-xl, 1rem);
+    background: var(--theme-color-background-secondary, #f9fafb);
+    box-shadow: var(--theme-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.07));
+}
+
+.product-digital__preview .product-gallery__placeholder {
+    font-size: 5rem;
+    color: var(--theme-color-primary, #2563eb);
+    opacity: 0.4;
+}
+
+/* --------------------------------------------------------------------------
+   Info Column
+   -------------------------------------------------------------------------- */
+.product-digital__info {
+    min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Digital Badge
+   -------------------------------------------------------------------------- */
+.digital-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: var(--theme-space-2, 0.5rem) var(--theme-space-4, 1rem);
+    border-radius: var(--theme-radius-full, 9999px);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    line-height: 1;
+    margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.digital-badge i {
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+.digital-badge--delivery {
+    background: var(--theme-color-primary-light, #dbeafe);
+    color: var(--theme-color-primary, #2563eb);
+}
+
+.digital-badge--delivery i {
+    color: var(--theme-color-primary, #2563eb);
+}
+
+/* --------------------------------------------------------------------------
+   Features List  ("What's Included")
+   -------------------------------------------------------------------------- */
+.digital-features {
+    background: var(--theme-color-background-secondary, #f9fafb);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-lg, 0.75rem);
+    padding: var(--theme-space-5, 1.25rem) var(--theme-space-6, 1.5rem);
+    margin-bottom: var(--theme-space-6, 1.5rem);
+}
+
+.digital-features__title {
+    font-size: var(--theme-font-size-base, 1rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin: 0 0 var(--theme-space-4, 1rem);
+}
+
+.digital-features__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--theme-space-3, 0.75rem);
+}
+
+.digital-features__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--theme-space-3, 0.75rem);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    line-height: 1.5;
+}
+
+.digital-features__item i {
+    flex-shrink: 0;
+    margin-top: 0.15em;
+    font-size: var(--theme-font-size-base, 1rem);
+    color: var(--theme-color-success, #10b981);
+}
+
+.digital-features__item strong {
+    color: var(--theme-color-text, #1f2937);
+}
+
+/* --------------------------------------------------------------------------
+   License Info
+   -------------------------------------------------------------------------- */
+.digital-license {
+    margin-bottom: var(--theme-space-6, 1.5rem);
+}
+
+.digital-license__title {
+    font-size: var(--theme-font-size-base, 1rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin: 0 0 var(--theme-space-3, 0.75rem);
+}
+
+.digital-license__info {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: var(--theme-space-2, 0.5rem) var(--theme-space-4, 1rem);
+    background: var(--theme-color-background-secondary, #f9fafb);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-md, 0.5rem);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text, #1f2937);
+}
+
+.digital-license__info i {
+    color: var(--theme-color-primary, #2563eb);
+    font-size: var(--theme-font-size-base, 1rem);
+}
+
+/* --------------------------------------------------------------------------
+   Add-to-Cart (Digital)
+   -------------------------------------------------------------------------- */
+.product-actions--digital {
+    flex-direction: column;
+    margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.product-actions--digital .btn--full-width {
+    width: 100%;
+    padding: var(--theme-space-4, 1rem) var(--theme-space-6, 1.5rem);
+    font-size: var(--theme-font-size-lg, 1.125rem);
+    border-radius: var(--theme-radius-lg, 0.75rem);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.product-actions--digital .btn--full-width:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--theme-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.07));
+}
+
+.product-actions--digital .btn--full-width:active {
+    transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   Trust Badges (Digital-specific)
+   -------------------------------------------------------------------------- */
+.trust-badges--digital {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--theme-space-3, 0.75rem);
+    padding: var(--theme-space-5, 1.25rem) 0;
+    border-top: 1px solid var(--theme-color-border, #e5e7eb);
+    margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.trust-badges--digital .trust-badge {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: var(--theme-space-3, 0.75rem) var(--theme-space-2, 0.5rem);
+    background: var(--theme-color-background-secondary, #f9fafb);
+    border-radius: var(--theme-radius-md, 0.5rem);
+    transition: background-color 0.2s ease;
+}
+
+.trust-badges--digital .trust-badge:hover {
+    background: var(--theme-color-border, #e5e7eb);
+}
+
+.trust-badges--digital .trust-badge i {
+    font-size: var(--theme-font-size-xl, 1.25rem);
+    color: var(--theme-color-primary, #2563eb);
+}
+
+.trust-badges--digital .trust-badge span {
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    color: var(--theme-color-text, #1f2937);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive -- Stack to single column on mobile
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .product-layout--digital {
+        grid-template-columns: 1fr;
+        gap: var(--theme-space-6, 1.5rem);
+    }
+
+    .product-digital__preview {
+        position: static;
+    }
+
+    .trust-badges--digital {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--theme-space-2, 0.5rem);
+    }
+
+    .trust-badges--digital .trust-badge {
+        padding: var(--theme-space-2, 0.5rem);
+    }
+
+    .trust-badges--digital .trust-badge i {
+        font-size: var(--theme-font-size-base, 1rem);
+    }
+
+    .digital-features {
+        padding: var(--theme-space-4, 1rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .trust-badges--digital {
+        grid-template-columns: 1fr;
+    }
+
+    .trust-badges--digital .trust-badge {
+        flex-direction: row;
+        text-align: left;
+    }
+}

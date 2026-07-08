@@ -1,0 +1,39 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Brand" %}: {{ original.name }}{% else %}{% trans "Add Brand" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/brand_change_form.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if original %}
+<div class="brand-change-form-stats">
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-box"></i></div>
+            <div class="value">{{ product_count|default:"0" }}</div>
+            <div class="label">{% trans "Products" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-toggle-on"></i></div>
+            <div class="value">{% if original.is_active %}<span class="text-success">{% trans "Active" %}</span>{% else %}<span class="text-muted">{% trans "Inactive" %}</span>{% endif %}</div>
+            <div class="label">{% trans "Status" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-star"></i></div>
+            <div class="value">{% if original.is_featured %}<span class="text-success">{% trans "Yes" %}</span>{% else %}<span class="text-muted">{% trans "No" %}</span>{% endif %}</div>
+            <div class="label">{% trans "Featured" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-calendar"></i></div>
+            <div class="value">{{ original.created_at|date:"M d, Y" }}</div>
+            <div class="label">{% trans "Created" %}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}

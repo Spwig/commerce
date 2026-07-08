@@ -1,0 +1,88 @@
+{% extends "themes/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% block head_title %}{% trans "Account" %}{% endblock %} | {{ site_settings.site_name }}{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'accounts/css/allauth.css' %}">
+{% block extra_head %}{% endblock %}
+{% endblock %}
+
+{% block main_class %}account-content{% endblock %}
+
+{% block breadcrumb %}
+<nav class="breadcrumb">
+    <a href="/">{% trans "Home" %}</a>
+    <span class="breadcrumb-separator">›</span>
+    <span>{% block breadcrumb_title %}{% trans "Account" %}{% endblock %}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="account-page">
+    <div class="account-container">
+        <div class="account-header">
+            <h1>
+                <i class="fas fa-user-circle"></i>
+                {% block page_title %}{% trans "My Account" %}{% endblock %}
+            </h1>
+        </div>
+
+        {% if messages %}
+        <div class="account-messages">
+            {% for message in messages %}
+            <div class="account-message account-message-{{ message.tags }}" role="alert">
+                <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="account-card">
+            {% block body %}
+                {% block allauth_content %}
+                {% endblock %}
+            {% endblock %}
+        </div>
+
+        <!-- Quick Navigation -->
+        {% if user.is_authenticated %}
+        <div class="account-quick-nav">
+            <h3><i class="fas fa-link"></i> {% trans "Quick Links" %}</h3>
+            <div class="account-quick-nav-grid">
+                {% url 'mfa_index' as mfa_url %}
+                {% if mfa_url %}
+                <a href="{{ mfa_url }}" class="account-quick-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>{% trans "Two-Factor Authentication" %}</span>
+                </a>
+                {% endif %}
+
+                {% url 'account_change_password' as change_password_url %}
+                {% if change_password_url %}
+                <a href="{{ change_password_url }}" class="account-quick-link">
+                    <i class="fas fa-key"></i>
+                    <span>{% trans "Change Password" %}</span>
+                </a>
+                {% endif %}
+
+                {% url 'account_email' as email_url %}
+                {% if email_url %}
+                <a href="{{ email_url }}" class="account-quick-link">
+                    <i class="fas fa-envelope"></i>
+                    <span>{% trans "Change Email" %}</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+{{ block.super }}
+{% block extra_js %}{% endblock %}
+{% endblock %}

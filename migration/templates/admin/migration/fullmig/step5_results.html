@@ -1,0 +1,182 @@
+{% extends "admin/migration/sync/base.html" %}
+{% load i18n static core_extras %}
+
+{% block wizard_content %}
+{% if job.status == 'completed' and job.items_failed == 0 %}
+<div class="content-box">
+    <div class="alert alert-success success-alert-large">
+        <i class="fas fa-check-circle success-icon-large"></i>
+        <div>
+            <strong class="success-heading">{% trans "Migration Complete" %}</strong>
+            <p class="success-message">{% trans "All selected data has been successfully migrated to this installation." %}</p>
+        </div>
+    </div>
+</div>
+{% elif job.status == 'completed' %}
+<div class="content-box">
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% trans "Migration Completed with Errors" %}</strong>
+            <p>{% trans "Some items could not be migrated. Review the details below." %}</p>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="content-box">
+    <div class="alert alert-error">
+        <i class="fas fa-times-circle"></i>
+        <div>
+            <strong>{% trans "Migration Failed" %}</strong>
+            <p>{{ job.error_summary }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Summary Statistics -->
+<div class="content-box">
+    <h3><i class="fas fa-chart-bar"></i> {% trans "Migration Summary" %}</h3>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number stat-number-success">{{ job.items_synced }}</div>
+            <div class="stat-label">{% trans "Migrated" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ job.items_skipped }}</div>
+            <div class="stat-label">{% trans "Skipped" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number stat-number-error">{{ job.items_failed }}</div>
+            <div class="stat-label">{% trans "Failed" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ job.items_total }}</div>
+            <div class="stat-label">{% trans "Total" %}</div>
+        </div>
+    </div>
+
+    {% if job.duration_seconds %}
+    <p class="migration-duration">
+        <i class="fas fa-clock"></i>
+        {% trans "Duration:" %} {{ job.duration_seconds|format_duration }}
+    </p>
+    {% endif %}
+</div>
+
+<!-- Per-Category Results -->
+<div class="content-box">
+    <h3><i class="fas fa-list"></i> {% trans "Category Results" %}</h3>
+    <table class="import-summary-table">
+        <thead>
+            <tr>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th class="text-right">{% trans "Migrated" %}</th>
+                <th class="text-right">{% trans "Failed" %}</th>
+                <th class="text-right">{% trans "Total" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for step in steps %}
+            <tr>
+                <td class="font-semibold">{{ step.category }}</td>
+                <td>
+                    {% if step.status == 'completed' %}
+                        <span class="status-badge status-badge-applied">
+                            <i class="fas fa-check"></i> {% trans "Done" %}
+                        </span>
+                    {% elif step.status == 'failed' %}
+                        <span class="status-badge status-badge-failed">
+                            <i class="fas fa-times"></i> {% trans "Failed" %}
+                        </span>
+                    {% elif step.status == 'skipped' %}
+                        <span class="status-badge status-badge-skipped">
+                            <i class="fas fa-forward"></i> {% trans "Skipped" %}
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-badge-skipped">{{ step.get_status_display }}</span>
+                    {% endif %}
+                </td>
+                <td class="text-right text-success">{{ step.items_synced }}</td>
+                <td class="text-right text-error">{{ step.items_failed }}</td>
+                <td class="text-right">{{ step.items_total }}</td>
+            </tr>
+            {% if step.error_message %}
+            <tr>
+                <td colspan="5">
+                    <div class="error-detail-block">
+                        <div class="error-detail-message">{{ step.error_message }}</div>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Next Steps -->
+<div class="content-box">
+    <h3><i class="fas fa-clipboard-list"></i> {% trans "Next Steps" %}</h3>
+    <div class="checklist-box">
+        <ul class="checklist">
+            <li>
+                <i class="fas fa-certificate"></i>
+                {% trans "Activate your license on this installation" %}
+            </li>
+            <li>
+                <i class="fas fa-key"></i>
+                {% trans "Re-enter any payment provider credentials that were skipped" %}
+            </li>
+            <li>
+                <i class="fas fa-globe"></i>
+                {% trans "Configure DNS to point your domain to this server" %}
+            </li>
+            <li>
+                <i class="fas fa-shopping-cart"></i>
+                {% trans "Test the checkout flow with a test order" %}
+            </li>
+            <li>
+                <i class="fas fa-envelope"></i>
+                {% trans "Verify email sending works correctly" %}
+            </li>
+            <li>
+                <i class="fas fa-image"></i>
+                {% trans "Check that media files and images are loading correctly" %}
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="wizard-actions">
+    <a href="{% url 'admin:migration_syncjob_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        {% trans "Back to Dashboard" %}
+    </a>
+    {% if job.is_rollbackable %}
+    <button type="button" class="btn btn-secondary js-rollback-btn"
+            data-rollback-url="{% url 'admin:sync_api_rollback' job.pk %}"
+            data-csrf-token="{{ csrf_token }}"
+            data-confirm-msg="{% trans 'Are you sure? This will delete all migrated data.' as t %}{{ t|escapejs }}">
+        <i class="fas fa-undo"></i>
+        {% trans "Rollback Migration" %}
+    </button>
+    {% if job.rollback_deadline %}
+    <span class="rollback-deadline-notice">
+        <i class="fas fa-clock"></i>
+        {% trans "Rollback available until" %} {{ job.rollback_deadline|date:"M d, Y g:i A" }}
+    </span>
+    {% endif %}
+    {% endif %}
+    <a href="{% url 'admin:index' %}" class="btn btn-primary">
+        <i class="fas fa-home"></i>
+        {% trans "Go to Dashboard" %}
+    </a>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'migration/js/sync-rollback.js' %}" defer></script>
+{% endblock %}

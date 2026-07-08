@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_urls %}
+
+{% block extrastyle %}
+{{ block.super }}
+<meta http-equiv="refresh" content="0; url={% url 'admin:management_shop_dashboard' %}">
+{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+        <div style="text-align: center; padding: 4rem 2rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--primary, #417690);"></i>
+            <p style="margin-top: 1rem; font-size: 18px; color: var(--body-fg, #333);">
+                {% trans "Redirecting to Shop Dashboard..." %}
+            </p>
+        </div>
+
+        <!-- Fallback content if JavaScript redirect doesn't work -->
+        <noscript>
+            <div style="text-align: center; padding: 2rem;">
+                <p>{% trans "JavaScript is disabled. Please enable JavaScript or" %}
+                   <a href="{% url 'admin:management_shop_dashboard' %}">{% trans "click here to go to Shop Dashboard" %}</a>
+                </p>
+            </div>
+        </noscript>
+
+        <!-- Keep original System Dashboard below (hidden, for fallback) -->
+{% endblock %}

@@ -1,0 +1,130 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for form in forms %}
+    <div class="list-row-card{% if not form.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ form.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-wpforms icon-size-28"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:form_builder_form_change' form.pk %}">
+                    {{ form.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {{ form.title }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if form.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                {% if form.is_multi_step %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-layer-group"></i> {% trans "Multi-step" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-file-alt"></i> {% trans "Single Page" %}
+                    </span>
+                {% endif %}
+
+                {% if form.require_login %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-lock"></i> {% trans "Login Required" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-list"></i> {{ form.field_count }} {% trans "field" %}{{ form.field_count|pluralize }}
+                </span>
+            </div>
+
+            {% if form.description %}
+            <div class="list-row-card-description">
+                {{ form.description|truncatewords:15 }}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Fields" %}</span>
+                    <span class="list-row-card-stat-value">{{ form.field_count }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Steps" %}</span>
+                    <span class="list-row-card-stat-value">{{ form.step_count }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Responses" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        {{ form.response_count }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ form.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-link"></i>
+                    <span>{{ form.slug }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'form_builder:visual_builder' form.pk %}"
+               class="list-row-card-action list-row-card-action-primary"
+               title="{% trans 'Edit Form Design' %}">
+                <i class="fas fa-paint-brush"></i>
+            </a>
+            <a href="{% url 'admin:form_builder_form_change' form.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit settings' %}">
+                <i class="fas fa-cog"></i>
+            </a>
+            {% if form.response_count > 0 %}
+            <a href="{% url 'admin:form_builder_formresponse_changelist' %}?form__id__exact={{ form.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View responses' %}">
+                <i class="fas fa-inbox"></i>
+            </a>
+            {% endif %}
+            <a href="{% url 'admin:form_builder_form_delete' form.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete form' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-wpforms"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No forms found." %}</p>
+        <p class="card-empty-state-subtitle">
+            <a href="{% url 'form_builder:create_form' %}" class="button button-with-icon">
+                <i class="fas fa-plus"></i> {% trans "Create your first form" %}
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+</div>

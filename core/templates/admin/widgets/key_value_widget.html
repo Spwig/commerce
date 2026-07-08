@@ -1,0 +1,21 @@
+<div class="kv-editor" data-field-name="{{ widget.name }}">
+    <div class="kv-editor__header">
+        <span class="kv-editor__col-label">{{ widget.key_label }}</span>
+        <span class="kv-editor__col-label">{{ widget.value_label }}</span>
+        <span class="kv-editor__col-spacer"></span>
+    </div>
+    <div class="kv-editor__rows">
+        {% for key, val in widget.pairs %}
+        <div class="kv-editor__row">
+            <input type="text" name="{{ widget.name }}_keys" value="{{ key }}" class="kv-editor__key" placeholder="{{ widget.key_label }}">
+            <input type="text" name="{{ widget.name }}_values" value="{{ val }}" class="kv-editor__value" placeholder="{{ widget.value_label }}">
+            <button type="button" class="kv-editor__remove" title="Remove">&times;</button>
+        </div>
+        {% empty %}
+        <div class="kv-editor__empty">No entries yet. Click "Add Row" to begin.</div>
+        {% endfor %}
+    </div>
+    <button type="button" class="kv-editor__add" data-key-label="{{ widget.key_label }}" data-value-label="{{ widget.value_label }}" data-field-name="{{ widget.name }}">
+        <i class="fas fa-plus"></i> Add Row
+    </button>
+</div>

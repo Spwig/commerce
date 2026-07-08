@@ -1,0 +1,539 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Zone Wizard - Minimal Zone-Specific Styles
+ * Leverages wizard-base.css and admin-base.css for most styling
+ * Only zone-specific classes defined here
+ */
+
+/* ==========================================================================
+   Country Helper Section (Step 2)
+   ========================================================================== */
+
+.zone-wizard-country-helper {
+    background: var(--darkened-bg);
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+.zone-wizard-country-helper .helper-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.country-code-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--body-fg);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chip-btn:hover {
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-color: var(--primary);
+}
+
+.chip-btn i {
+    font-size: 12px;
+}
+
+/* ==========================================================================
+   Zone Logic Banner (Step 2)
+   ========================================================================== */
+
+.zone-logic-banner {
+    margin-bottom: 30px;
+    background: var(--message-info-bg);
+    border-color: var(--link-fg);
+}
+
+.zone-logic-banner h3 {
+    margin: 0 0 12px 0;
+    color: var(--link-fg);
+    font-size: 16px;
+}
+
+.zone-logic-banner ul {
+    margin: 12px 0;
+    padding-left: 25px;
+}
+
+.zone-logic-banner li {
+    margin: 8px 0;
+    color: var(--body-fg);
+}
+
+.zone-logic-banner .help-note {
+    margin: 12px 0 0 0;
+    color: var(--body-quiet-color);
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   Dual-Listbox Styles (Step 2)
+   ========================================================================== */
+
+.zone-dual-listbox {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.listbox-column {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.listbox-column h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.listbox-column .count {
+    color: var(--body-quiet-color);
+    font-size: 14px;
+    font-weight: normal;
+}
+
+/* Search Input Spacing */
+.listbox-column .admin-search-input {
+    margin-bottom: 15px;
+    flex-shrink: 0;
+}
+
+/* Listbox Container */
+.listbox {
+    min-height: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    background: var(--darkened-bg);
+    flex: 1;
+}
+
+.listbox.drag-over {
+    background: var(--selected-bg);
+    border-color: var(--primary);
+}
+
+.listbox-selected {
+    border-style: solid;
+    border-color: var(--primary);
+}
+
+/* Listbox Items */
+.listbox-item {
+    padding: 10px 12px;
+    margin: 5px 0;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.listbox-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.listbox-item:active {
+    cursor: grabbing;
+}
+
+.listbox-item.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+}
+
+.listbox-item.hidden {
+    display: none;
+}
+
+/* Drag Handle */
+.drag-handle {
+    color: var(--body-quiet-color);
+    flex-shrink: 0;
+}
+
+/* Country Flag */
+.country-flag-img {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.country-flag {
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Item Info */
+.item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item-name {
+    font-weight: 500;
+    color: var(--body-fg);
+}
+
+.item-code {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    color: var(--body-quiet-color);
+    text-align: center;
+    min-height: 200px;
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    color: var(--body-quiet-color);
+}
+
+.loading-indicator i {
+    font-size: 18px;
+}
+
+/* ==========================================================================
+   Postal Code Patterns (Step 2)
+   ========================================================================== */
+
+.postal-patterns-input {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.pattern-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.pattern-example {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background: var(--darkened-bg);
+    border-radius: 4px;
+}
+
+.pattern-example code {
+    flex: 0 1 auto;
+    padding: 4px 8px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    min-width: 0;
+}
+
+.pattern-example span {
+    flex: 1;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+.copy-pattern-btn {
+    flex-shrink: 0;
+    background: none;
+    border: 1px solid var(--border-color);
+    padding: 4px 8px;
+    border-radius: 3px;
+    color: var(--body-quiet-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.copy-pattern-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* ==========================================================================
+   Review Page Styles (Step 3)
+   ========================================================================== */
+
+.zone-wizard-review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.review-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.review-label {
+    font-weight: 600;
+    color: var(--body-quiet-color);
+    font-size: 13px;
+}
+
+.review-value {
+    color: var(--body-fg);
+    font-size: 15px;
+}
+
+/* Priority Badge */
+.zone-wizard-priority-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.zone-wizard-priority-badge.priority-0 {
+    background: var(--error-fg);
+    color: white;
+}
+
+.zone-wizard-priority-badge.priority-1,
+.zone-wizard-priority-badge.priority-2,
+.zone-wizard-priority-badge.priority-3,
+.zone-wizard-priority-badge.priority-4,
+.zone-wizard-priority-badge.priority-5 {
+    background: var(--message-warning-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--message-warning-border);
+}
+
+.zone-wizard-priority-badge {
+    background: var(--darkened-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--border-color);
+}
+
+/* Status Badge */
+.zone-wizard-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.zone-wizard-status-badge.active {
+    background: var(--message-success-bg);
+    color: var(--success-fg);
+    border: 1px solid var(--message-success-border);
+}
+
+.zone-wizard-status-badge.inactive {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+    border: 1px solid var(--border-color);
+}
+
+/* Country List */
+.zone-wizard-country-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.zone-wizard-country-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--primary);
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.zone-wizard-all-locations {
+    color: var(--body-quiet-color);
+    font-style: italic;
+}
+
+/* States List */
+.zone-wizard-states-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.zone-wizard-state-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.zone-wizard-state-chip {
+    display: inline-block;
+    padding: 3px 8px;
+    background: var(--link-fg);
+    color: white;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Pattern List */
+.zone-wizard-pattern-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.zone-wizard-pattern-code {
+    display: inline-block;
+    padding: 6px 10px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--body-fg);
+}
+
+/* ==========================================================================
+   Code Block (JSON/Pattern Examples)
+   ========================================================================== */
+
+.zone-wizard-code-block {
+    margin: 8px 0;
+    padding: 10px;
+    background: var(--darkened-bg);
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+/* ==========================================================================
+   Info Box List
+   ========================================================================== */
+
+.zone-wizard-info-list {
+    margin: 8px 0 0 20px;
+}
+
+/* ==========================================================================
+   Info Box Paragraph
+   ========================================================================== */
+
+.zone-wizard-info-text {
+    margin: 8px 0 0 0;
+}
+
+/* ==========================================================================
+   Loading Indicator (hidden by default)
+   ========================================================================== */
+
+.zone-wizard-loading-hidden {
+    display: none;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .zone-wizard-review-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .country-code-chips {
+        gap: 6px;
+    }
+
+    .chip-btn {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .zone-dual-listbox {
+        grid-template-columns: 1fr;
+    }
+
+    .pattern-example {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pattern-example code {
+        width: 100%;
+        font-size: 11px;
+    }
+}

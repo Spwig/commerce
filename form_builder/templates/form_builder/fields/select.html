@@ -1,0 +1,13 @@
+{% load merchant_trans %}
+<select id="field-{{ field.field_name }}"
+        name="{{ field.field_name }}"
+        {% if field.is_required %}required{% endif %}
+        class="form-select">
+    <option value="">{% if field.translated_placeholder %}{{ field.translated_placeholder }}{% else %}{% mtrans "Select an option" %}{% endif %}</option>
+    {% for option in field.options %}
+    <option value="{{ option.value }}"
+            {% if field.default_value == option.value %}selected{% endif %}>
+        {{ option.label }}
+    </option>
+    {% endfor %}
+</select>

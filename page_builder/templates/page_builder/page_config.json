@@ -1,0 +1,414 @@
+{
+  "config_type": "page",
+  "name": "Page Settings",
+  "description": "Configure page-level settings including header, footer, design, SEO, and advanced options",
+  "version": "1.0.0",
+  "icon": "fas fa-file-alt",
+  "author": "Spwig",
+  "supports_translation": true,
+  "tabs": {
+    "details": {
+      "label": "Details",
+      "icon": "fas fa-file-alt",
+      "order": 1,
+      "properties": {
+        "basic_group": {
+          "type": "property_group",
+          "label": "Basic Information",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Page Title",
+              "required": true,
+              "translatable": true,
+              "help_text": "The title of this page"
+            },
+            "slug": {
+              "type": "string",
+              "label": "URL Slug",
+              "help_text": "URL-friendly identifier (auto-generated from title if left empty)"
+            },
+            "status": {
+              "type": "select",
+              "label": "Status",
+              "options": [
+                {"value": "draft", "label": "Draft"},
+                {"value": "published", "label": "Published"},
+                {"value": "archived", "label": "Archived"}
+              ],
+              "default": "draft"
+            }
+          }
+        },
+        "type_group": {
+          "type": "property_group",
+          "label": "Page Type",
+          "properties": {
+            "page_type": {
+              "type": "select",
+              "label": "Page Type",
+              "options": [
+                {"value": "home", "label": "Home Page"},
+                {"value": "category", "label": "Category Page"},
+                {"value": "product", "label": "Product Page"},
+                {"value": "cart", "label": "Shopping Cart"},
+                {"value": "checkout", "label": "Checkout"},
+                {"value": "about", "label": "About Page"},
+                {"value": "contact", "label": "Contact Page"},
+                {"value": "blog", "label": "Blog Post"},
+                {"value": "custom", "label": "Custom Page"}
+              ],
+              "default": "custom"
+            },
+            "is_default_for_type": {
+              "type": "boolean",
+              "label": "Default for Page Type",
+              "help_text": "Use as the default page for this page type",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "header_footer": {
+      "label": "Header & Footer",
+      "icon": "fas fa-window-maximize",
+      "order": 2,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Header Settings",
+          "columns": 1,
+          "properties": {
+            "hide_header": {
+              "type": "boolean",
+              "label": "Hide Header",
+              "default": false,
+              "help_text": "Hide the header on this page"
+            },
+            "header_template_id": {
+              "type": "select",
+              "label": "Header Template",
+              "options_source": "header_templates",
+              "show_when": {"property": "hide_header", "value": false},
+              "help_text": "Select a header template or leave empty to use the site default"
+            }
+          }
+        },
+        "footer_group": {
+          "type": "property_group",
+          "label": "Footer Settings",
+          "columns": 1,
+          "properties": {
+            "hide_footer": {
+              "type": "boolean",
+              "label": "Hide Footer",
+              "default": false,
+              "help_text": "Hide the footer on this page"
+            },
+            "footer_template_id": {
+              "type": "select",
+              "label": "Footer Template",
+              "options_source": "footer_templates",
+              "show_when": {"property": "hide_footer", "value": false},
+              "help_text": "Select a footer template or leave empty to use the site default"
+            }
+          }
+        }
+      }
+    },
+    "design": {
+      "label": "Design",
+      "icon": "fas fa-palette",
+      "order": 3,
+      "properties": {
+        "layout_group": {
+          "type": "property_group",
+          "label": "Page Layout",
+          "columns": 1,
+          "properties": {
+            "layout_preset": {
+              "type": "select",
+              "label": "Content Width",
+              "options_source": "layout_presets",
+              "default": "theme-default",
+              "help_text": "Choose the maximum width for page content"
+            },
+            "custom_width": {
+              "type": "string",
+              "label": "Custom Width",
+              "show_when": {"property": "layout_preset", "value": "custom"},
+              "placeholder": "e.g., 1100px or 90%",
+              "help_text": "Enter a custom content width"
+            }
+          }
+        },
+        "background_group": {
+          "type": "property_group",
+          "label": "Background",
+          "columns": 1,
+          "properties": {
+            "background": {
+              "type": "background",
+              "label": "Page Background",
+              "utility": "background_editor",
+              "help_text": "Set the background for the entire page",
+              "default": ""
+            }
+          }
+        },
+        "typography_group": {
+          "type": "property_group",
+          "label": "Typography",
+          "columns": 1,
+          "properties": {
+            "typography": {
+              "type": "typography",
+              "label": "Base Typography",
+              "utility": "typography_editor",
+              "help_text": "Default typography settings for page content (inherited by elements)",
+              "default": ""
+            },
+            "text_color": {
+              "type": "color_advanced",
+              "label": "Text Color",
+              "utility": "color_picker",
+              "help_text": "Default text color for page content"
+            }
+          }
+        }
+      }
+    },
+    "seo": {
+      "label": "SEO",
+      "icon": "fas fa-search",
+      "order": 4,
+      "properties": {
+        "meta_group": {
+          "type": "property_group",
+          "label": "Meta Tags",
+          "columns": 1,
+          "properties": {
+            "meta_title": {
+              "type": "string",
+              "label": "Meta Title",
+              "translatable": true,
+              "help_text": "Title displayed in search results (50-60 characters recommended)",
+              "maxlength": 70
+            },
+            "meta_description": {
+              "type": "textarea",
+              "label": "Meta Description",
+              "translatable": true,
+              "help_text": "Description displayed in search results (150-160 characters recommended)",
+              "rows": 3,
+              "maxlength": 320
+            },
+            "meta_keywords": {
+              "type": "string",
+              "label": "Meta Keywords",
+              "translatable": true,
+              "help_text": "Comma-separated keywords for search engines"
+            }
+          }
+        },
+        "og_group": {
+          "type": "property_group",
+          "label": "Social Sharing",
+          "columns": 1,
+          "properties": {
+            "og_image_id": {
+              "type": "media_library",
+              "label": "Social Share Image",
+              "help_text": "Image displayed when page is shared on social media (1200x630px recommended)"
+            }
+          }
+        },
+        "auto_seo_group": {
+          "type": "property_group",
+          "label": "Automation",
+          "properties": {
+            "seo_auto_generated": {
+              "type": "boolean",
+              "label": "Auto-generate SEO",
+              "default": false,
+              "help_text": "Automatically generate SEO content using AI when page is saved"
+            }
+          }
+        }
+      }
+    },
+    "advanced": {
+      "label": "Advanced",
+      "icon": "fas fa-cog",
+      "order": 5,
+      "properties": {
+        "access_group": {
+          "type": "property_group",
+          "label": "Access Control",
+          "properties": {
+            "requires_auth": {
+              "type": "boolean",
+              "label": "Require Login",
+              "default": false,
+              "help_text": "Users must be logged in to view this page"
+            }
+          }
+        },
+        "cache_group": {
+          "type": "property_group",
+          "label": "Performance",
+          "properties": {
+            "cache_timeout": {
+              "type": "number",
+              "label": "Cache Duration (seconds)",
+              "help_text": "How long to cache this page (0 = no cache)",
+              "default": 300,
+              "min": 0
+            }
+          }
+        },
+        "theme_group": {
+          "type": "property_group",
+          "label": "Theme",
+          "properties": {
+            "theme_id": {
+              "type": "select",
+              "label": "Page Theme",
+              "options_source": "themes",
+              "help_text": "Override the site theme for this page only"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {
+      "type": "string",
+      "label": "Page Title",
+      "required": true,
+      "translatable": true
+    },
+    "slug": {
+      "type": "string",
+      "label": "URL Slug"
+    },
+    "status": {
+      "type": "select",
+      "label": "Status",
+      "default": "draft"
+    },
+    "page_type": {
+      "type": "select",
+      "label": "Page Type",
+      "default": "custom"
+    },
+    "is_default_for_type": {
+      "type": "boolean",
+      "label": "Default for Page Type",
+      "default": false
+    },
+    "hide_header": {
+      "type": "boolean",
+      "label": "Hide Header",
+      "default": false
+    },
+    "header_template_id": {
+      "type": "select",
+      "label": "Header Template"
+    },
+    "hide_footer": {
+      "type": "boolean",
+      "label": "Hide Footer",
+      "default": false
+    },
+    "footer_template_id": {
+      "type": "select",
+      "label": "Footer Template"
+    },
+    "layout_preset": {
+      "type": "select",
+      "label": "Content Width",
+      "default": "theme-default"
+    },
+    "custom_width": {
+      "type": "string",
+      "label": "Custom Width"
+    },
+    "background": {
+      "type": "background",
+      "label": "Page Background",
+      "utility": "background_editor",
+      "default": ""
+    },
+    "typography": {
+      "type": "typography",
+      "label": "Base Typography",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "text_color": {
+      "type": "color_advanced",
+      "label": "Text Color",
+      "utility": "color_picker"
+    },
+    "meta_title": {
+      "type": "string",
+      "label": "Meta Title",
+      "translatable": true
+    },
+    "meta_description": {
+      "type": "textarea",
+      "label": "Meta Description",
+      "translatable": true
+    },
+    "meta_keywords": {
+      "type": "string",
+      "label": "Meta Keywords",
+      "translatable": true
+    },
+    "og_image_id": {
+      "type": "media_library",
+      "label": "Social Share Image"
+    },
+    "seo_auto_generated": {
+      "type": "boolean",
+      "label": "Auto-generate SEO",
+      "default": false
+    },
+    "requires_auth": {
+      "type": "boolean",
+      "label": "Require Login",
+      "default": false
+    },
+    "cache_timeout": {
+      "type": "number",
+      "label": "Cache Duration",
+      "default": 300
+    },
+    "theme_id": {
+      "type": "select",
+      "label": "Page Theme"
+    }
+  },
+  "translations": {
+    "en": {
+      "name": "Page Settings",
+      "description": "Configure page-level settings"
+    },
+    "es": {
+      "name": "Configuracion de Pagina",
+      "description": "Configurar ajustes a nivel de pagina"
+    },
+    "fr": {
+      "name": "Parametres de Page",
+      "description": "Configurer les parametres au niveau de la page"
+    },
+    "de": {
+      "name": "Seiteneinstellungen",
+      "description": "Einstellungen auf Seitenebene konfigurieren"
+    }
+  }
+}

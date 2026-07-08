@@ -1,0 +1,78 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n static core_extras %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/css/entrance.css' %}">
+{% endblock %}
+
+{% block content %}
+{% get_site_settings as site_settings %}
+<div class="entrance-page">
+    <div class="entrance-background"></div>
+
+    <div class="entrance-container">
+        <div class="entrance-card">
+            <!-- Header -->
+            <div class="entrance-header">
+                {% with logo_url=site_settings|get_site_logo_url %}
+                {% if logo_url %}
+                <img src="{{ logo_url }}" alt="{% trans 'Logo' %}" class="entrance-logo">
+                {% endif %}
+                {% endwith %}
+                <h1 class="entrance-title">{% trans "Sign Out" %}</h1>
+                <p class="entrance-subtitle">{% trans "Come back soon!" %}</p>
+            </div>
+
+            <!-- Confirmation Message -->
+            <div class="entrance-form">
+                <p style="color: rgba(255, 255, 255, 0.9); text-align: center; margin-bottom: var(--theme-space-6); font-size: var(--theme-font-size-base);">
+                    {% trans "Are you sure you want to sign out?" %}
+                </p>
+
+                <!-- Logout Form -->
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                    {% endif %}
+
+                    <!-- Sign Out Button -->
+                    <button type="submit"
+                            class="entrance-submit"
+                            data-loading-text="{% trans 'Signing out...' %}">
+                        <span class="entrance-submit-text">{% trans "Sign Out" %}</span>
+                        <i class="fas fa-sign-out-alt entrance-submit-icon" aria-hidden="true"></i>
+                        <i class="fas fa-spinner entrance-submit-spinner" aria-hidden="true" style="display: none;"></i>
+                    </button>
+                </form>
+
+                <!-- Cancel Link -->
+                <div style="text-align: center; margin-top: var(--theme-space-4);">
+                    <a href="{% url 'page_builder:home' %}" class="entrance-link" style="font-size: var(--theme-font-size-base); font-weight: var(--theme-font-weight-medium);">
+                        {% trans "Never mind, stay signed in" %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="entrance-footer">
+                <div class="entrance-footer-powered">
+                    <span class="entrance-footer-powered-text">{% trans "Powered by" %}</span>
+                    <a href="https://spwig.com" class="entrance-link" target="_blank" rel="noopener">
+                        Spwig
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+{{ block.super }}
+<script src="{% static 'accounts/js/entrance.js' %}"></script>
+{% endblock %}

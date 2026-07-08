@@ -1,0 +1,289 @@
+{% load i18n static %}
+
+<div class="rule-card"
+     data-rule-id="{{ rule.id }}"
+     data-name="{{ rule.name }}"
+     data-type="{{ rule.promotion_type }}"
+     data-priority="{{ rule.priority }}"
+     data-is-active="{{ rule.is_active|yesno:'true,false' }}">
+    <!-- Checkbox for bulk select -->
+    <div class="rule-checkbox">
+        <input type="checkbox" class="rule-select" value="{{ rule.id }}" id="rule-{{ rule.id }}">
+    </div>
+
+    <!-- Rule Type Icon & Priority -->
+    <div class="rule-icon">
+        <a href="{% url 'admin:shipping_shippingpromotion_change' rule.id %}">
+            <div class="rule-icon-container {% if rule.promotion_type == 'free_shipping' %}free-shipping{% elif rule.promotion_type in 'discount_percentage,discount_fixed' %}discount{% elif rule.promotion_type == 'override_cost' %}set-cost{% else %}surcharge{% endif %}">
+                {% if rule.promotion_type == 'free_shipping' %}
+                    <i class="fas fa-gift"></i>
+                {% elif 'discount' in rule.promotion_type %}
+                    <i class="fas fa-percentage"></i>
+                {% elif rule.promotion_type == 'override_cost' %}
+                    <i class="fas fa-dollar-sign"></i>
+                {% else %}
+                    <i class="fas fa-plus-circle"></i>
+                {% endif %}
+                <div class="rule-priority-badge">
+                    {% if rule.priority >= 100 %}
+                        <span class="priority-value highest" title="{% trans 'Highest Priority' %}">P{{ rule.priority }}</span>
+                    {% elif rule.priority >= 50 %}
+                        <span class="priority-value high" title="{% trans 'High Priority' %}">P{{ rule.priority }}</span>
+                    {% elif rule.priority >= 0 %}
+                        <span class="priority-value medium" title="{% trans 'Medium Priority' %}">P{{ rule.priority }}</span>
+                    {% else %}
+                        <span class="priority-value low" title="{% trans 'Low Priority' %}">P{{ rule.priority }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Rule Info -->
+    <div class="rule-info">
+        <h3 class="rule-name">
+            <a href="{% url 'admin:shipping_shippingpromotion_change' rule.id %}">{{ rule.name }}</a>
+        </h3>
+
+        {% if rule.description %}
+            <p class="rule-description">{{ rule.description|truncatewords:20 }}</p>
+        {% endif %}
+
+        <!-- Rule Type and Value -->
+        <div class="rule-type-section">
+            <div class="rule-type-badge {% if rule.promotion_type == 'free_shipping' %}free-shipping{% elif rule.promotion_type in 'discount_percentage,discount_fixed' %}discount{% elif rule.promotion_type == 'override_cost' %}set-cost{% else %}surcharge{% endif %}">
+                <i class="fas fa-tag"></i>
+                <span>{{ rule.get_promotion_type_display }}</span>
+            </div>
+            {% if rule.promotion_value and rule.promotion_type != 'free_shipping' %}
+                <div class="rule-value">
+                    {% if 'percentage' in rule.promotion_type %}
+                        <strong>{{ rule.promotion_value }}%</strong>
+                    {% else %}
+                        <strong>{{ rule.promotion_value }}</strong>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Conditions Summary -->
+        {% with cart_conditions=0 geo_conditions=0 product_conditions=0 customer_conditions=0 time_conditions=0 %}
+            {% if rule.min_cart_value or rule.max_cart_value or rule.min_cart_weight or rule.max_cart_weight or rule.min_item_count or rule.max_item_count %}
+                {% with cart_conditions=1 %}{% endwith %}
+            {% endif %}
+            {% if rule.zones.exists or rule.shipping_methods.exists %}
+                {% with geo_conditions=1 %}{% endwith %}
+            {% endif %}
+            {% if rule.requires_products.exists or rule.requires_categories.exists or rule.excludes_products.exists or rule.excludes_categories.exists %}
+                {% with product_conditions=1 %}{% endwith %}
+            {% endif %}
+            {% if rule.customer_groups.exists or rule.first_time_customers_only %}
+                {% with customer_conditions=1 %}{% endwith %}
+            {% endif %}
+            {% if rule.start_date or rule.end_date %}
+                {% with time_conditions=1 %}{% endwith %}
+            {% endif %}
+
+            <div class="rule-conditions">
+                <!-- Cart Conditions -->
+                {% if rule.min_cart_value or rule.max_cart_value %}
+                    <div class="condition-item">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="condition-label">{% trans "Cart Value:" %}</span>
+                        <span class="condition-value">
+                            {% if rule.min_cart_value and rule.max_cart_value %}
+                                {{ rule.min_cart_value }} - {{ rule.max_cart_value }}
+                            {% elif rule.min_cart_value %}
+                                ≥ {{ rule.min_cart_value }}
+                            {% else %}
+                                ≤ {{ rule.max_cart_value }}
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+
+                {% if rule.min_cart_weight or rule.max_cart_weight %}
+                    <div class="condition-item">
+                        <i class="fas fa-weight-hanging"></i>
+                        <span class="condition-label">{% trans "Weight:" %}</span>
+                        <span class="condition-value">
+                            {% if rule.min_cart_weight and rule.max_cart_weight %}
+                                {{ rule.min_cart_weight }}kg - {{ rule.max_cart_weight }}kg
+                            {% elif rule.min_cart_weight %}
+                                ≥ {{ rule.min_cart_weight }}kg
+                            {% else %}
+                                ≤ {{ rule.max_cart_weight }}kg
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+
+                {% if rule.min_item_count or rule.max_item_count %}
+                    <div class="condition-item">
+                        <i class="fas fa-boxes"></i>
+                        <span class="condition-label">{% trans "Items:" %}</span>
+                        <span class="condition-value">
+                            {% if rule.min_item_count and rule.max_item_count %}
+                                {{ rule.min_item_count }} - {{ rule.max_item_count }}
+                            {% elif rule.min_item_count %}
+                                ≥ {{ rule.min_item_count }}
+                            {% else %}
+                                ≤ {{ rule.max_item_count }}
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+
+                <!-- Geographic Conditions -->
+                {% if rule.zones.count > 0 %}
+                    <div class="condition-item">
+                        <i class="fas fa-globe-americas"></i>
+                        <span class="condition-label">{% trans "Zones:" %}</span>
+                        <span class="condition-value">{{ rule.zones.count }} zone{% if rule.zones.count != 1 %}s{% endif %}</span>
+                    </div>
+                {% endif %}
+
+                {% if rule.shipping_methods.count > 0 %}
+                    <div class="condition-item">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span class="condition-label">{% trans "Methods:" %}</span>
+                        <span class="condition-value">{{ rule.shipping_methods.count }} method{% if rule.shipping_methods.count != 1 %}s{% endif %}</span>
+                    </div>
+                {% endif %}
+
+                <!-- Product/Category Conditions -->
+                {% if rule.requires_products.count > 0 %}
+                    <div class="condition-item">
+                        <i class="fas fa-box"></i>
+                        <span class="condition-label">{% trans "Requires:" %}</span>
+                        <span class="condition-value">{{ rule.requires_products.count }} product{% if rule.requires_products.count != 1 %}s{% endif %}</span>
+                    </div>
+                {% endif %}
+
+                {% if rule.requires_categories.count > 0 %}
+                    <div class="condition-item">
+                        <i class="fas fa-folder"></i>
+                        <span class="condition-label">{% trans "Requires:" %}</span>
+                        <span class="condition-value">{{ rule.requires_categories.count }} categor{% if rule.requires_categories.count != 1 %}ies{% else %}y{% endif %}</span>
+                    </div>
+                {% endif %}
+
+                {% if rule.excludes_products.count > 0 or rule.excludes_categories.count > 0 %}
+                    <div class="condition-item">
+                        <i class="fas fa-ban"></i>
+                        <span class="condition-label">{% trans "Excludes:" %}</span>
+                        <span class="condition-value">
+                            {% if rule.excludes_products.count > 0 %}{{ rule.excludes_products.count }} product{% if rule.excludes_products.count != 1 %}s{% endif %}{% endif %}
+                            {% if rule.excludes_products.count > 0 and rule.excludes_categories.count > 0 %}, {% endif %}
+                            {% if rule.excludes_categories.count > 0 %}{{ rule.excludes_categories.count }} categor{% if rule.excludes_categories.count != 1 %}ies{% else %}y{% endif %}{% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+
+                <!-- Customer Conditions -->
+                {% if rule.customer_groups.count > 0 %}
+                    <div class="condition-item">
+                        <i class="fas fa-users"></i>
+                        <span class="condition-label">{% trans "Customer Groups:" %}</span>
+                        <span class="condition-value">{{ rule.customer_groups.count }} group{% if rule.customer_groups.count != 1 %}s{% endif %}</span>
+                    </div>
+                {% endif %}
+
+                {% if rule.first_time_customers_only %}
+                    <div class="condition-item">
+                        <i class="fas fa-user-plus"></i>
+                        <span class="condition-label">{% trans "First-time customers only" %}</span>
+                    </div>
+                {% endif %}
+
+                <!-- Time Conditions -->
+                {% if rule.start_date or rule.end_date %}
+                    <div class="condition-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="condition-label">{% trans "Time:" %}</span>
+                        <span class="condition-value">
+                            {% if rule.start_date and rule.end_date %}
+                                {{ rule.start_date|date:"M d, Y" }} - {{ rule.end_date|date:"M d, Y" }}
+                            {% elif rule.start_date %}
+                                {% trans "From" %} {{ rule.start_date|date:"M d, Y" }}
+                            {% else %}
+                                {% trans "Until" %} {{ rule.end_date|date:"M d, Y" }}
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- No Conditions Message -->
+            {% if not rule.min_cart_value and not rule.max_cart_value and not rule.min_cart_weight and not rule.max_cart_weight and not rule.min_item_count and not rule.max_item_count and not rule.zones.exists and not rule.shipping_methods.exists and not rule.requires_products.exists and not rule.requires_categories.exists and not rule.excludes_products.exists and not rule.excludes_categories.exists and not rule.customer_groups.exists and not rule.first_time_customers_only and not rule.start_date and not rule.end_date %}
+                <div class="no-conditions">
+                    <i class="fas fa-infinity"></i>
+                    <span>{% trans "Applies to all orders" %}</span>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Rule Badges -->
+        <div class="rule-badges">
+            <!-- Active/Inactive Badge -->
+            {% if rule.is_active %}
+                <span class="badge badge-status badge-active">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+            {% else %}
+                <span class="badge badge-status badge-inactive">
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                </span>
+            {% endif %}
+
+            <!-- Time Validity Badge -->
+            {% if rule.start_date or rule.end_date %}
+                {% if rule.is_time_valid %}
+                    <span class="badge badge-time badge-valid">
+                        <i class="fas fa-check"></i> {% trans "Time Valid" %}
+                    </span>
+                {% else %}
+                    <span class="badge badge-time badge-invalid">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Time Invalid" %}
+                    </span>
+                {% endif %}
+            {% endif %}
+
+            <!-- Stop Further Promotions Badge -->
+            {% if rule.stop_further_promotions %}
+                <span class="badge badge-stop">
+                    <i class="fas fa-hand-paper"></i> {% trans "Stops Promotions" %}
+                </span>
+            {% endif %}
+
+            <!-- Created Date -->
+            <span class="badge badge-date">
+                <i class="fas fa-calendar"></i> {{ rule.created_at|date:"M d, Y" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="rule-actions">
+        <a href="{% url 'admin:shipping_shippingpromotion_change' rule.id %}"
+           class="action-btn edit-btn"
+           title="{% trans 'Edit' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <button class="action-btn rule-toggle-btn {% if rule.is_active %}active{% else %}inactive{% endif %}"
+                data-rule-id="{{ rule.id }}"
+                data-is-active="{{ rule.is_active|yesno:'true,false' }}"
+                title="{% if rule.is_active %}{% trans 'Disable' %}{% else %}{% trans 'Enable' %}{% endif %}">
+            {% if rule.is_active %}
+                <i class="fas fa-toggle-on"></i>
+            {% else %}
+                <i class="fas fa-toggle-off"></i>
+            {% endif %}
+        </button>
+        <button class="action-btn delete-btn"
+                data-rule-id="{{ rule.id }}"
+                title="{% trans 'Delete' %}">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</div>

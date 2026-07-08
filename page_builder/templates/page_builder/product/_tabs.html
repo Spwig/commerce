@@ -1,0 +1,220 @@
+{% load i18n merchant_trans %}
+{# Product Tabs/Accordion/Stacked Partial #}
+{# Context: product, reviews, review_stats, template_options #}
+{# template_options.tab_style: 'tabs' (default), 'accordion', 'stacked' #}
+
+{% with tab_style=template_options.tab_style|default:'tabs' %}
+
+<section class="product-tabs-section product-tabs-section--{{ tab_style }}">
+    <div class="container">
+        <div class="product-tabs" data-tab-style="{{ tab_style }}">
+
+            {% if tab_style == 'tabs' %}
+            {# === Tab Navigation === #}
+            <div class="product-tabs__nav" role="tablist">
+                <button class="product-tabs__tab product-tabs__tab--active"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="tab-description"
+                        data-tab="description">
+                    {% mtrans 'Description' %}
+                </button>
+                {% if product.show_specifications and product.specifications %}
+                <button class="product-tabs__tab"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-specifications"
+                        data-tab="specifications">
+                    {% mtrans 'Specifications' %}
+                </button>
+                {% endif %}
+                {% if product.show_reviews %}
+                <button class="product-tabs__tab"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="tab-reviews"
+                        data-tab="reviews">
+                    {% mtrans 'Reviews' %}
+                    {% if review_stats %}({{ review_stats.total }}){% endif %}
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="product-tabs__content">
+
+                {# === Description === #}
+                {% if tab_style == 'accordion' %}
+                <div class="product-accordion__item product-accordion__item--open">
+                    <button class="product-accordion__header" aria-expanded="true" data-accordion="description">
+                        <span>{% mtrans 'Description' %}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="product-accordion__body">
+                {% elif tab_style == 'stacked' %}
+                <div class="product-stacked__section">
+                    <h2 class="product-stacked__title">{% mtrans 'Description' %}</h2>
+                {% endif %}
+
+                <div class="product-tabs__panel {% if tab_style == 'tabs' %}product-tabs__panel--active{% endif %}"
+                     id="tab-description"
+                     role="tabpanel"
+                     {% if tab_style == 'tabs' %}{% endif %}>
+                    <div class="product-description">
+                        {{ product.full_description|safe }}
+                    </div>
+                </div>
+
+                {% if tab_style == 'accordion' %}
+                    </div>
+                </div>
+                {% elif tab_style == 'stacked' %}
+                </div>
+                {% endif %}
+
+                {# === Specifications === #}
+                {% if product.show_specifications and product.specifications %}
+                {% if tab_style == 'accordion' %}
+                <div class="product-accordion__item">
+                    <button class="product-accordion__header" aria-expanded="false" data-accordion="specifications">
+                        <span>{% mtrans 'Specifications' %}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="product-accordion__body" hidden>
+                {% elif tab_style == 'stacked' %}
+                <div class="product-stacked__section">
+                    <h2 class="product-stacked__title">{% mtrans 'Specifications' %}</h2>
+                {% endif %}
+
+                <div class="product-tabs__panel"
+                     id="tab-specifications"
+                     role="tabpanel"
+                     {% if tab_style == 'tabs' %}hidden{% endif %}>
+                    <table class="specs-table">
+                        <tbody>
+                            {% for key, value in product.specifications.items %}
+                            <tr>
+                                <th>{{ key }}</th>
+                                <td>{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if tab_style == 'accordion' %}
+                    </div>
+                </div>
+                {% elif tab_style == 'stacked' %}
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {# === Reviews === #}
+                {% if product.show_reviews %}
+                {% if tab_style == 'accordion' %}
+                <div class="product-accordion__item">
+                    <button class="product-accordion__header" aria-expanded="false" data-accordion="reviews">
+                        <span>{% mtrans 'Reviews' %} {% if review_stats %}({{ review_stats.total }}){% endif %}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="product-accordion__body" hidden>
+                {% elif tab_style == 'stacked' %}
+                <div class="product-stacked__section">
+                    <h2 class="product-stacked__title">{% mtrans 'Reviews' %} {% if review_stats %}({{ review_stats.total }}){% endif %}</h2>
+                {% endif %}
+
+                <div class="product-tabs__panel"
+                     id="tab-reviews"
+                     role="tabpanel"
+                     {% if tab_style == 'tabs' %}hidden{% endif %}>
+                    <div class="reviews-section" id="reviews">
+                        {% if review_stats %}
+                        <div class="reviews-summary">
+                            <div class="reviews-summary__score">
+                                <span class="reviews-summary__number">{{ review_stats.average }}</span>
+                                <div class="reviews-summary__stars">
+                                    {% for i in "12345" %}
+                                    <i class="fas fa-star {% if forloop.counter <= review_stats.average %}star--filled{% else %}star--empty{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <span class="reviews-summary__count">{{ review_stats.total }} {% mtrans 'reviews' %}</span>
+                            </div>
+                            <div class="reviews-summary__breakdown">
+                                {% for star, data in review_stats.breakdown.items reversed %}
+                                <div class="rating-bar">
+                                    <span class="rating-bar__label">{{ star }} <i class="fas fa-star"></i></span>
+                                    <div class="rating-bar__track">
+                                        <div class="rating-bar__fill" style="width: {{ data.percent }}%"></div>
+                                    </div>
+                                    <span class="rating-bar__count">{{ data.count }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="reviews-list">
+                            {% for review in reviews %}
+                            <article class="review-card">
+                                <div class="review-card__header">
+                                    <div class="review-card__author">
+                                        <div class="review-card__avatar">
+                                            {{ review.user.first_name|slice:":1"|default:review.user.username|slice:":1"|upper }}
+                                        </div>
+                                        <div>
+                                            <span class="review-card__name">
+                                                {{ review.user.get_full_name|default:review.user.username }}
+                                            </span>
+                                            {% if review.verified_purchase %}
+                                            <span class="review-card__verified">
+                                                <i class="fas fa-check-circle"></i> {% mtrans 'Verified Purchase' %}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="review-card__rating">
+                                        {% for i in "12345" %}
+                                        <i class="fas fa-star {% if forloop.counter <= review.rating %}star--filled{% else %}star--empty{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% if review.title %}
+                                <h4 class="review-card__title">{{ review.title }}</h4>
+                                {% endif %}
+                                <div class="review-card__content">{{ review.comment|safe }}</div>
+                                <div class="review-card__footer">
+                                    <time class="review-card__date" datetime="{{ review.created_at|date:'c' }}">
+                                        {{ review.created_at|date:"M d, Y" }}
+                                    </time>
+                                    {% if review.helpful_count > 0 %}
+                                    <span class="review-card__helpful">
+                                        {{ review.helpful_count }} {% mtrans 'found this helpful' %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </article>
+                            {% empty %}
+                            <div class="reviews-empty">
+                                <i class="fas fa-comment-alt"></i>
+                                <p>{% mtrans 'No reviews yet. Be the first to review this product!' %}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if tab_style == 'accordion' %}
+                    </div>
+                </div>
+                {% elif tab_style == 'stacked' %}
+                </div>
+                {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endwith %}

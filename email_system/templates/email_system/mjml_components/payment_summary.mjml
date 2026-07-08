@@ -1,0 +1,42 @@
+{# Payment Summary Component #}
+{# Usage: {% include 'email_system/mjml_components/payment_summary.mjml' with subtotal=subtotal shipping=shipping tax=tax total=total %} #}
+{# Theme tokens: Uses theme.color.text, theme.color.text_muted, theme.color.border, theme.color.primary #}
+
+<mj-section padding="20px 0">
+  <mj-column>
+    <mj-table>
+      <tr style="border-bottom: 1px solid {{ theme.color.border|default:'#e5e7eb' }};">
+        <td style="padding: 10px 0; font-size: 14px; color: {{ theme.color.text_muted|default:'#6b7280' }};">
+          Subtotal
+        </td>
+        <td align="right" style="padding: 10px 0; font-size: 14px; color: {{ theme.color.text|default:'#1f2937' }};">
+          {{ subtotal }}
+        </td>
+      </tr>
+      <tr style="border-bottom: 1px solid {{ theme.color.border|default:'#e5e7eb' }};">
+        <td style="padding: 10px 0; font-size: 14px; color: {{ theme.color.text_muted|default:'#6b7280' }};">
+          Shipping
+        </td>
+        <td align="right" style="padding: 10px 0; font-size: 14px; color: {{ theme.color.text|default:'#1f2937' }};">
+          {{ shipping }}
+        </td>
+      </tr>
+      <tr style="border-bottom: 1px solid {{ theme.color.border|default:'#e5e7eb' }};">
+        <td style="padding: 10px 0; font-size: 14px; color: {{ theme.color.text_muted|default:'#6b7280' }};">
+          Tax
+        </td>
+        <td align="right" style="padding: 10px 0; font-size: 14px; color: {{ theme.color.text|default:'#1f2937' }};">
+          {{ tax }}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 15px 0 0 0; font-size: 18px; font-weight: 600; color: {{ theme.color.text|default:'#1f2937' }};">
+          Total
+        </td>
+        <td align="right" style="padding: 15px 0 0 0; font-size: 18px; font-weight: 600; color: {{ theme.color.primary|default:'#2563eb' }};">
+          {{ total }}
+        </td>
+      </tr>
+    </mj-table>
+  </mj-column>
+</mj-section>

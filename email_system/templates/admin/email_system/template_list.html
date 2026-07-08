@@ -1,0 +1,351 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Email Templates" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/css/email-templates.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <!-- Dashboard Header with Stats -->
+        <div class="dashboard-header">
+            <h1>
+                <i class="fas fa-envelope"></i>
+                {% trans "Email Templates" %}
+            </h1>
+            <p class="subtitle">
+                {% trans "Manage email templates for your store. Clone system templates to customize them." %}
+            </p>
+
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-envelope"></i></div>
+                <div class="value">{{ statistics.total }}</div>
+                <div class="label">{% trans "Total Templates" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-box"></i></div>
+                <div class="value">{{ statistics.system }}</div>
+                <div class="label">{% trans "System Templates" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-edit"></i></div>
+                <div class="value">{{ statistics.custom }}</div>
+                <div class="label">{% trans "Custom Templates" %}</div>
+            </div>
+
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="value">{{ statistics.active }}</div>
+                <div class="label">{% trans "Active Templates" %}</div>
+            </div>
+        </div>
+        <!-- Dashboard Content Area -->
+        <div class="dashboard-content">
+
+            <!-- Quick Actions -->
+            <div class="dashboard-actions-section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-bolt"></i>
+                    {% trans "Quick Actions" %}
+                </h2>
+                <div class="dashboard-actions-grid">
+                    <div class="dashboard-action-card">
+                        <div class="card-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <h3>{% trans "Create Template" %}</h3>
+                        <p class="description">{% trans "Create a new custom email template" %}</p>
+                        <a href="{% url 'admin:email_system_emailtemplate_add' %}" class="button">
+                            <i class="fas fa-arrow-right"></i> {% trans "Create" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Filters Bar (Horizontal) -->
+        <div class="filters-bar">
+            <form method="get" class="filter-form" id="filter-form">
+                <!-- Row 1: Search and Dropdowns -->
+                <div class="filter-row filter-row-main">
+                    <!-- Search -->
+                    <div class="filter-group filter-group-search">
+                        <label for="search-input">
+                            <i class="fas fa-search"></i> {% trans "Search" %}
+                        </label>
+                        <input
+                            type="text"
+                            id="search-input"
+                            name="search"
+                            placeholder="{% trans 'Search templates...' %}"
+                            value="{{ filters.search }}"
+                        >
+                    </div>
+
+                    <!-- Template Type -->
+                    <div class="filter-group">
+                        <label for="type-select">
+                            <i class="fas fa-envelope-open-text"></i> {% trans "Type" %}
+                        </label>
+                        <select name="type" id="type-select" data-action="auto-submit">
+                            <option value="">{% trans "All Types" %}</option>
+                            {% for type_code, type_name in template_types %}
+                            <option value="{{ type_code }}" {% if filters.type == type_code %}selected{% endif %}>
+                                {{ type_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="filter-group">
+                        <label for="status-select">
+                            <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                        </label>
+                        <select name="status" id="status-select" data-action="auto-submit">
+                            <option value="">{% trans "All Templates" %}</option>
+                            <option value="system" {% if filters.status == 'system' %}selected{% endif %}>
+                                {% trans "System" %}
+                            </option>
+                            <option value="custom" {% if filters.status == 'custom' %}selected{% endif %}>
+                                {% trans "Custom" %}
+                            </option>
+                            <option value="active" {% if filters.status == 'active' %}selected{% endif %}>
+                                {% trans "Active Only" %}
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Search Button -->
+                    <button type="submit" class="btn btn-primary btn-sm btn-search">
+                        <i class="fas fa-search"></i>
+                        {% trans "Search" %}
+                    </button>
+
+                    {% if filters.type or filters.language or filters.status or filters.search %}
+                    <a href="{% url 'email_system:template_list' %}" class="btn btn-outline btn-sm">
+                        <i class="fas fa-times"></i>
+                        {% trans "Clear" %}
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Row 2: Toggles/Options -->
+                <div class="filter-row filter-row-toggles">
+                    <!-- Show All Admin Languages Toggle -->
+                    <div class="filter-group filter-group-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox"
+                                name="show_all_languages"
+                                value="true"
+                                {% if show_all_languages %}checked{% endif %}
+                                data-action="auto-submit">
+                            <span>{% trans "Show All Admin Languages" %}</span>
+                        </label>
+                    </div>
+
+                    <!-- Show Inactive Templates -->
+                    <div class="filter-group filter-group-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox"
+                                name="show_inactive"
+                                value="true"
+                                {% if show_inactive %}checked{% endif %}
+                                data-action="auto-submit">
+                            <span>{% trans "Show Inactive Templates" %}</span>
+                        </label>
+                    </div>
+
+                    <!-- Show Deleted (Recycle Bin) -->
+                    <div class="filter-group filter-group-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox"
+                                name="show_deleted"
+                                value="true"
+                                {% if show_deleted %}checked{% endif %}
+                                data-action="auto-submit">
+                            <span>
+                                <i class="fas fa-trash-restore"></i>
+                                {% trans "Recycle Bin" %}
+                                {% if statistics.deleted > 0 %}
+                                    <span class="badge-count">{{ statistics.deleted }}</span>
+                                {% endif %}
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Templates List -->
+        <div class="templates-content">
+                {% if not templates %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h3>{% trans "No templates found" %}</h3>
+                    <p>{% trans "Try adjusting your filters or create a new template." %}</p>
+                    <a href="{% url 'admin:email_system_emailtemplate_add' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        {% trans "Create Template" %}
+                    </a>
+                </div>
+                {% else %}
+
+                <div class="templates-list">
+                    {% for template in templates %}
+                    <div class="template-card {% if template.is_active %}active{% endif %} {% if template.is_system %}system{% else %}custom{% endif %}">
+                        <!-- Icon -->
+                        <div class="template-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+
+                        <!-- Template Info -->
+                        <div class="template-info">
+                            <h3 class="template-name">
+                                <a href="{% url 'email_system:template_edit' template.id %}">
+                                    {{ template.get_template_type_display }}
+                                </a>
+                            </h3>
+                            <div class="template-subject">{{ template.subject|truncatechars:80 }}</div>
+                        </div>
+
+                        <!-- Badges -->
+                        <div class="template-badges">
+                            {% if template.is_active %}
+                            <span class="badge badge-active">
+                                <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                            </span>
+                            {% endif %}
+                            {% if template.is_system %}
+                            <span class="badge badge-system">
+                                <i class="fas fa-box"></i> {% trans "System" %}
+                            </span>
+                            {% else %}
+                            <span class="badge badge-custom">
+                                <i class="fas fa-edit"></i> {% trans "Custom" %}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Meta -->
+                        <div class="template-meta">
+                            <span class="meta-item meta-language {% if template.language_code == default_language %}language-current{% endif %}">
+                                <i class="fas fa-language"></i>
+                                <strong>{{ template.language_code|upper }}</strong>
+                                {% if template.language_code == default_language %}
+                                    <span class="badge badge-current-lang">{% trans "Default" %}</span>
+                                {% endif %}
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-code-branch"></i>
+                                v{{ template.version }}
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                {{ template.updated_at|date:"M d, Y" }}
+                            </span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="template-actions">
+                            {% if show_deleted %}
+                                <!-- Deleted template actions - only show restore -->
+                                <form method="post" action="{% url 'email_system:restore_template' template.id %}" class="inline-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn action-restore" title="{% trans 'Restore from Recycle Bin' %}">
+                                        <i class="fas fa-trash-restore"></i>
+                                        {% trans 'Restore' %}
+                                    </button>
+                                </form>
+                                <div class="deleted-info">
+                                    <small>
+                                        {% trans "Deleted" %} {{ template.deleted_at|timesince }} {% trans "ago" %}
+                                        {% if template.deleted_by %}
+                                            {% trans "by" %} {{ template.deleted_by.get_full_name|default:template.deleted_by.username }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            {% else %}
+                                <!-- Active template actions -->
+                                <a href="{% url 'email_system:template_preview' template.id %}"
+                                class="action-btn"
+                                title="{% trans 'Preview' %}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'email_system:template_edit' template.id %}"
+                                class="action-btn"
+                                title="{% trans 'Edit' %}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if template.is_system %}
+                                <form method="post" action="{% url 'email_system:clone_template' template.id %}" class="inline-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn" title="{% trans 'Clone' %}">
+                                        <i class="fas fa-clone"></i>
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form method="post" action="{% url 'email_system:toggle_template_active' template.id %}" class="inline-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn" title="{% if template.is_active %}{% trans 'Deactivate' %}{% else %}{% trans 'Activate' %}{% endif %}">
+                                        <i class="fas fa-toggle-{% if template.is_active %}on{% else %}off{% endif %}"></i>
+                                    </button>
+                                </form>
+                                <button type="button"
+                                        class="action-btn action-delete"
+                                        data-action="confirm-delete"
+                                        data-template-id="{{ template.id }}"
+                                        data-template-name="{{ template.get_template_type_display|escapejs }}"
+                                        title="{% trans 'Delete' %}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% endif %}
+            </div> <!-- /templates-content -->
+        </div> <!-- /dashboard-content -->
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% trans "Confirm Deletion" %}
+                </h2>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-action="hide-delete-modal">
+                    {% trans "Cancel" %}
+                </button>
+                <form id="deleteForm" method="post" class="inline-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i>
+                        {% trans "Delete Template" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'email_system/js/template-list.js' %}" defer></script>
+{% endblock %}

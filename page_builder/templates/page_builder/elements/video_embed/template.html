@@ -1,0 +1,73 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Video Embed Element -->
+<section class="video-embed video-embed--{{ element.content.rounded|default:'' }}"
+         data-video-embed
+         data-source="{{ element.content.source_type|default:'youtube' }}"
+         data-lazy="{{ element.content.lazy_load|default:'true' }}"
+         data-consent="{{ element.content.show_consent|default:'false' }}"
+         {% hover_animation_attrs element %}
+         style="{% if element.content.alignment == 'center' %}margin-left: auto; margin-right: auto;{% elif element.content.alignment == 'right' %}margin-left: auto;{% endif %}
+                max-width: {{ element.content.max_width|default:'100%' }};
+                {% base_styles element %}">
+
+    {% if element.content.show_consent %}
+    <div class="video-embed__consent">
+        <div class="video-embed__consent-content">
+            <i class="fas fa-video video-embed__consent-icon"></i>
+            <p class="video-embed__consent-message">{{ element.content.consent_message|default:"Click to load video. This will connect to third-party servers." }}</p>
+            <button type="button" class="video-embed__consent-button">
+                <i class="fas fa-play"></i>
+                {% mtrans "Load Video" %}
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="video-embed__wrapper {% if element.content.shadow %}video-embed__wrapper--shadow{% endif %}"
+         style="aspect-ratio: {{ element.content.aspect_ratio|default:'16/9' }};"
+         {% if element.content.show_consent %}hidden{% endif %}>
+
+        {% if element.content.source_type == 'youtube' and element.content.youtube_url %}
+        <iframe class="video-embed__iframe"
+                data-src="{% if element.content.use_nocookie|default:True %}https://www.youtube-nocookie.com{% else %}https://www.youtube.com{% endif %}/embed/{{ element.content.youtube_url|cut:'https://www.youtube.com/watch?v='|cut:'https://youtu.be/'|cut:'https://youtube.com/watch?v=' }}?{% if element.content.autoplay %}autoplay=1&{% endif %}{% if element.content.muted or element.content.autoplay %}mute=1&{% endif %}{% if element.content.loop %}loop=1&{% endif %}{% if not element.content.controls %}controls=0&{% endif %}{% if element.content.start_time %}start={{ element.content.start_time }}&{% endif %}rel=0{% if element.content.play_inline %}&playsinline=1{% endif %}"
+                {% if not element.content.lazy_load %}src="{% if element.content.use_nocookie|default:True %}https://www.youtube-nocookie.com{% else %}https://www.youtube.com{% endif %}/embed/{{ element.content.youtube_url|cut:'https://www.youtube.com/watch?v='|cut:'https://youtu.be/'|cut:'https://youtube.com/watch?v=' }}?{% if element.content.autoplay %}autoplay=1&{% endif %}{% if element.content.muted or element.content.autoplay %}mute=1&{% endif %}{% if element.content.loop %}loop=1&{% endif %}{% if not element.content.controls %}controls=0&{% endif %}{% if element.content.start_time %}start={{ element.content.start_time }}&{% endif %}rel=0{% if element.content.play_inline %}&playsinline=1{% endif %}"{% endif %}
+                title="{{ element.content.title|default:'Video' }}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+
+        {% elif element.content.source_type == 'vimeo' and element.content.vimeo_url %}
+        <iframe class="video-embed__iframe"
+                data-src="https://player.vimeo.com/video/{{ element.content.vimeo_url|cut:'https://vimeo.com/'|cut:'https://www.vimeo.com/' }}?{% if element.content.autoplay %}autoplay=1&{% endif %}{% if element.content.muted or element.content.autoplay %}muted=1&{% endif %}{% if element.content.loop %}loop=1&{% endif %}{% if not element.content.controls %}controls=0&{% endif %}"
+                {% if not element.content.lazy_load %}src="https://player.vimeo.com/video/{{ element.content.vimeo_url|cut:'https://vimeo.com/'|cut:'https://www.vimeo.com/' }}?{% if element.content.autoplay %}autoplay=1&{% endif %}{% if element.content.muted or element.content.autoplay %}muted=1&{% endif %}{% if element.content.loop %}loop=1&{% endif %}{% if not element.content.controls %}controls=0&{% endif %}"{% endif %}
+                title="{{ element.content.title|default:'Video' }}"
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                allowfullscreen
+                loading="lazy">
+        </iframe>
+
+        {% elif element.content.source_type == 'self_hosted' and element.content.video_url %}
+        <video class="video-embed__video"
+               {% if element.content.autoplay %}autoplay{% endif %}
+               {% if element.content.muted or element.content.autoplay %}muted{% endif %}
+               {% if element.content.loop %}loop{% endif %}
+               {% if element.content.controls|default:True %}controls{% endif %}
+               {% if element.content.play_inline %}playsinline{% endif %}
+               {% if element.content.poster_image %}poster="{{ element.content.poster_image }}"{% endif %}
+               {% if element.content.lazy_load %}preload="none"{% else %}preload="metadata"{% endif %}>
+            <source src="{{ element.content.video_url }}" type="video/mp4">
+            {% mtrans "Your browser does not support the video tag." %}
+        </video>
+
+        {% else %}
+        <div class="video-embed__placeholder">
+            <i class="fas fa-video video-embed__placeholder-icon"></i>
+            <p class="video-embed__placeholder-text">{% mtrans "Add a video URL to display" %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>

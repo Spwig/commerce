@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Coming Soon | Powered by Spwig</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/css/coming_soon.css' %}">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="container">
+        <div class="content">
+            <!-- Spwig Logo -->
+            <div class="logo">
+                <svg viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6366f1"/>
+                            <stop offset="100%" style="stop-color:#a855f7"/>
+                        </linearGradient>
+                    </defs>
+                    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+                          fill="url(#logoGradient)" font-family="Inter, sans-serif"
+                          font-weight="700" font-size="36">
+                        SPWIG
+                    </text>
+                </svg>
+            </div>
+
+            {% if store_name and store_name != 'Our Store' %}
+            <div class="store-badge">
+                {{ store_name }}
+            </div>
+            {% endif %}
+
+            <div class="sparkle">&#10024;</div>
+
+            <h1>Coming Soon</h1>
+
+            <p class="subtitle">
+                We're setting up something amazing.<br>
+                Check back shortly!
+            </p>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <p class="progress-text">Setting up your store...</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="footer">
+                <p class="powered-by">
+                    Powered by <a href="{{ spwig_url }}" target="_blank" rel="noopener">Spwig</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

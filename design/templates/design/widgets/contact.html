@@ -1,0 +1,39 @@
+{% load i18n widget_tags %}
+<div class="widget-contact {{ widget.css_classes }}">
+    {% if config.title %}
+    <h3 class="contact-title">{{ config.title }}</h3>
+    {% endif %}
+    <ul class="contact-list">
+        {% if config.phone %}
+        <li class="contact-item">
+            <i class="fas fa-phone"></i>
+            <a href="tel:{{ config.phone|phone_href }}">{{ config.phone }}</a>
+        </li>
+        {% endif %}
+        {% if config.email %}
+        <li class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <a href="mailto:{{ config.email }}">{{ config.email }}</a>
+        </li>
+        {% endif %}
+        {% if config.address %}
+        <li class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <address>{{ config.address|linebreaks }}</address>
+        </li>
+        {% endif %}
+        {% if config.hours %}
+        <li class="contact-item">
+            <i class="fas fa-clock"></i>
+            <div class="contact-hours">
+                {{ config.hours|linebreaks }}
+            </div>
+        </li>
+        {% endif %}
+    </ul>
+    {% if config.show_map and config.map_embed %}
+    <div class="contact-map">
+        {{ config.map_embed|safe }}
+    </div>
+    {% endif %}
+</div>

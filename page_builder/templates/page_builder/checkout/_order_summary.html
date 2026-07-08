@@ -1,0 +1,43 @@
+{% load i18n merchant_trans %}
+{# Order Summary Sidebar - shared across all checkout templates #}
+{# Populated by JS from cart data #}
+
+<aside class="checkout-summary" id="checkout-summary">
+    <div class="checkout-summary__card">
+        <h2 class="checkout-summary__title">{% mtrans 'Order Summary' %}</h2>
+
+        <div class="checkout-summary__items" id="summary-items">
+            <!-- Populated by JS -->
+        </div>
+
+        <div class="checkout-summary__row" id="summary-subtotal-row">
+            <span>{% mtrans 'Subtotal' %}</span>
+            <span id="summary-subtotal"></span>
+        </div>
+
+        <div class="checkout-summary__row" id="summary-shipping-row">
+            <span>{% mtrans 'Shipping' %}</span>
+            <span id="summary-shipping">{% mtrans 'Calculated next' %}</span>
+        </div>
+
+        <div class="checkout-summary__row checkout-summary__row--discount" id="summary-discount-row" hidden>
+            <span>{% mtrans 'Discount' %}</span>
+            <span id="summary-discount"></span>
+        </div>
+
+        <div class="checkout-summary__row" id="summary-tax-row" hidden>
+            <span>{% mtrans 'Tax' %}</span>
+            <span id="summary-tax"></span>
+        </div>
+
+        <div class="checkout-summary__row checkout-summary__row--total">
+            <span>{% mtrans 'Total' %}</span>
+            <span id="summary-total"></span>
+        </div>
+
+        <div id="conversion-notice" class="checkout-conversion-notice" hidden>
+            <i class="fas fa-info-circle"></i>
+            <span id="conversion-notice-text"></span>
+        </div>
+    </div>
+</aside>

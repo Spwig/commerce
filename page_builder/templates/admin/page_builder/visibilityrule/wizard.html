@@ -1,0 +1,860 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Visibility Rule" %} | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'page_builder/admin/css/visibility-wizard.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:page_builder_visibilityrule_changelist' %}">{% trans 'Visibility Rules' %}</a>
+    &rsaquo; {% trans 'Create Rule' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Header -->
+    <div class="wizard-header">
+        <h1>
+            <i class="fas fa-eye"></i>
+            {% trans "Create Visibility Rule" %}
+        </h1>
+        <p class="wizard-subtitle">
+            {% trans "Set up conditions to control when content is shown to visitors" %}
+        </p>
+    </div>
+
+    <!-- Step Indicators -->
+    <div class="wizard-steps" id="wizard-steps">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Rule Type" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Details" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Review" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <form id="wizard-form" method="post">
+            {% csrf_token %}
+
+            <!-- Step 1: Choose Rule Type -->
+            <div class="wizard-step" id="step-1">
+                <h2 class="step-title">
+                    <i class="fas fa-list"></i>
+                    {% trans "Choose Rule Type" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Select what condition you want to check. Rules determine when content should be visible to visitors." %}
+                </p>
+
+                <div class="rule-type-grid">
+                    <!-- Geographic -->
+                    <div class="rule-category">
+                        <div class="category-header">
+                            <i class="fas fa-globe"></i>
+                            <h3>{% trans "Geographic" %}</h3>
+                        </div>
+                        <ul class="rule-type-list">
+                            <li class="rule-type-item" data-type="geo_country">
+                                <input type="radio" name="rule_type" value="geo_country" id="type-geo_country">
+                                <div>
+                                    <label for="type-geo_country">{% trans "Country" %}</label>
+                                    <div class="type-help">{% trans "Target visitors from specific countries" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="geo_region">
+                                <input type="radio" name="rule_type" value="geo_region" id="type-geo_region">
+                                <div>
+                                    <label for="type-geo_region">{% trans "Region/State" %}</label>
+                                    <div class="type-help">{% trans "Target visitors from specific regions" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="geo_city">
+                                <input type="radio" name="rule_type" value="geo_city" id="type-geo_city">
+                                <div>
+                                    <label for="type-geo_city">{% trans "City" %}</label>
+                                    <div class="type-help">{% trans "Target visitors from specific cities" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="geo_timezone">
+                                <input type="radio" name="rule_type" value="geo_timezone" id="type-geo_timezone">
+                                <div>
+                                    <label for="type-geo_timezone">{% trans "Time Zone" %}</label>
+                                    <div class="type-help">{% trans "Target visitors in specific time zones" %}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- User & Authentication -->
+                    <div class="rule-category">
+                        <div class="category-header">
+                            <i class="fas fa-user"></i>
+                            <h3>{% trans "User" %}</h3>
+                        </div>
+                        <ul class="rule-type-list">
+                            <li class="rule-type-item" data-type="user_logged_in">
+                                <input type="radio" name="rule_type" value="user_logged_in" id="type-user_logged_in">
+                                <div>
+                                    <label for="type-user_logged_in">{% trans "Logged In Status" %}</label>
+                                    <div class="type-help">{% trans "Show to logged in or guest users" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="user_group">
+                                <input type="radio" name="rule_type" value="user_group" id="type-user_group">
+                                <div>
+                                    <label for="type-user_group">{% trans "User Group" %}</label>
+                                    <div class="type-help">{% trans "Target specific user groups" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="user_segment">
+                                <input type="radio" name="rule_type" value="user_segment" id="type-user_segment">
+                                <div>
+                                    <label for="type-user_segment">{% trans "Customer Segment" %}</label>
+                                    <div class="type-help">{% trans "Target customer segments" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="user_lifetime_value">
+                                <input type="radio" name="rule_type" value="user_lifetime_value" id="type-user_lifetime_value">
+                                <div>
+                                    <label for="type-user_lifetime_value">{% trans "Lifetime Value" %}</label>
+                                    <div class="type-help">{% trans "Target by customer spend" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="user_order_count">
+                                <input type="radio" name="rule_type" value="user_order_count" id="type-user_order_count">
+                                <div>
+                                    <label for="type-user_order_count">{% trans "Order Count" %}</label>
+                                    <div class="type-help">{% trans "Target by number of orders" %}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Device & Technical -->
+                    <div class="rule-category">
+                        <div class="category-header">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h3>{% trans "Device" %}</h3>
+                        </div>
+                        <ul class="rule-type-list">
+                            <li class="rule-type-item" data-type="device_type">
+                                <input type="radio" name="rule_type" value="device_type" id="type-device_type">
+                                <div>
+                                    <label for="type-device_type">{% trans "Device Type" %}</label>
+                                    <div class="type-help">{% trans "Mobile, tablet, or desktop" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="browser">
+                                <input type="radio" name="rule_type" value="browser" id="type-browser">
+                                <div>
+                                    <label for="type-browser">{% trans "Browser" %}</label>
+                                    <div class="type-help">{% trans "Chrome, Firefox, Safari, etc." %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="operating_system">
+                                <input type="radio" name="rule_type" value="operating_system" id="type-operating_system">
+                                <div>
+                                    <label for="type-operating_system">{% trans "Operating System" %}</label>
+                                    <div class="type-help">{% trans "Windows, macOS, iOS, Android" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="screen_size">
+                                <input type="radio" name="rule_type" value="screen_size" id="type-screen_size">
+                                <div>
+                                    <label for="type-screen_size">{% trans "Screen Size" %}</label>
+                                    <div class="type-help">{% trans "Target by screen dimensions" %}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Time-Based -->
+                    <div class="rule-category">
+                        <div class="category-header">
+                            <i class="fas fa-clock"></i>
+                            <h3>{% trans "Time" %}</h3>
+                        </div>
+                        <ul class="rule-type-list">
+                            <li class="rule-type-item" data-type="date_range">
+                                <input type="radio" name="rule_type" value="date_range" id="type-date_range">
+                                <div>
+                                    <label for="type-date_range">{% trans "Date Range" %}</label>
+                                    <div class="type-help">{% trans "Show during specific dates" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="time_range">
+                                <input type="radio" name="rule_type" value="time_range" id="type-time_range">
+                                <div>
+                                    <label for="type-time_range">{% trans "Time of Day" %}</label>
+                                    <div class="type-help">{% trans "Show during specific hours" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="day_of_week">
+                                <input type="radio" name="rule_type" value="day_of_week" id="type-day_of_week">
+                                <div>
+                                    <label for="type-day_of_week">{% trans "Day of Week" %}</label>
+                                    <div class="type-help">{% trans "Show on specific days" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="business_hours">
+                                <input type="radio" name="rule_type" value="business_hours" id="type-business_hours">
+                                <div>
+                                    <label for="type-business_hours">{% trans "Business Hours" %}</label>
+                                    <div class="type-help">{% trans "Show during business hours" %}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Behavioral -->
+                    <div class="rule-category">
+                        <div class="category-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>{% trans "Behavioral" %}</h3>
+                        </div>
+                        <ul class="rule-type-list">
+                            <li class="rule-type-item" data-type="first_visit">
+                                <input type="radio" name="rule_type" value="first_visit" id="type-first_visit">
+                                <div>
+                                    <label for="type-first_visit">{% trans "First Time Visitor" %}</label>
+                                    <div class="type-help">{% trans "New vs returning visitors" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="visit_count">
+                                <input type="radio" name="rule_type" value="visit_count" id="type-visit_count">
+                                <div>
+                                    <label for="type-visit_count">{% trans "Visit Count" %}</label>
+                                    <div class="type-help">{% trans "Number of site visits" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="referrer">
+                                <input type="radio" name="rule_type" value="referrer" id="type-referrer">
+                                <div>
+                                    <label for="type-referrer">{% trans "Referrer Source" %}</label>
+                                    <div class="type-help">{% trans "Where visitors came from" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="utm_campaign">
+                                <input type="radio" name="rule_type" value="utm_campaign" id="type-utm_campaign">
+                                <div>
+                                    <label for="type-utm_campaign">{% trans "UTM Campaign" %}</label>
+                                    <div class="type-help">{% trans "Target by campaign tags" %}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- E-commerce -->
+                    <div class="rule-category">
+                        <div class="category-header">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>{% trans "E-commerce" %}</h3>
+                        </div>
+                        <ul class="rule-type-list">
+                            <li class="rule-type-item" data-type="cart_value">
+                                <input type="radio" name="rule_type" value="cart_value" id="type-cart_value">
+                                <div>
+                                    <label for="type-cart_value">{% trans "Cart Value" %}</label>
+                                    <div class="type-help">{% trans "Current cart total" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="cart_items">
+                                <input type="radio" name="rule_type" value="cart_items" id="type-cart_items">
+                                <div>
+                                    <label for="type-cart_items">{% trans "Cart Item Count" %}</label>
+                                    <div class="type-help">{% trans "Number of items in cart" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="has_purchased">
+                                <input type="radio" name="rule_type" value="has_purchased" id="type-has_purchased">
+                                <div>
+                                    <label for="type-has_purchased">{% trans "Has Purchased" %}</label>
+                                    <div class="type-help">{% trans "Previous purchase status" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="abandoned_cart">
+                                <input type="radio" name="rule_type" value="abandoned_cart" id="type-abandoned_cart">
+                                <div>
+                                    <label for="type-abandoned_cart">{% trans "Abandoned Cart" %}</label>
+                                    <div class="type-help">{% trans "Has abandoned a cart" %}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Language & Localization -->
+                    <div class="rule-category">
+                        <div class="category-header">
+                            <i class="fas fa-language"></i>
+                            <h3>{% trans "Language" %}</h3>
+                        </div>
+                        <ul class="rule-type-list">
+                            <li class="rule-type-item" data-type="browser_language">
+                                <input type="radio" name="rule_type" value="browser_language" id="type-browser_language">
+                                <div>
+                                    <label for="type-browser_language">{% trans "Browser Language" %}</label>
+                                    <div class="type-help">{% trans "Visitor's browser language" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="selected_language">
+                                <input type="radio" name="rule_type" value="selected_language" id="type-selected_language">
+                                <div>
+                                    <label for="type-selected_language">{% trans "Selected Language" %}</label>
+                                    <div class="type-help">{% trans "Language chosen on site" %}</div>
+                                </div>
+                            </li>
+                            <li class="rule-type-item" data-type="selected_currency">
+                                <input type="radio" name="rule_type" value="selected_currency" id="type-selected_currency">
+                                <div>
+                                    <label for="type-selected_currency">{% trans "Selected Currency" %}</label>
+                                    <div class="type-help">{% trans "Currency chosen on site" %}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Configure Operator & Value -->
+            <div class="wizard-step hidden" id="step-2">
+                <h2 class="step-title">
+                    <i class="fas fa-sliders-h"></i>
+                    {% trans "Configure Rule" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Set the condition and value for your rule." %}
+                </p>
+
+                <div class="info-box" id="rule-help-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong id="rule-help-title">{% trans "Help:" %}</strong>
+                        <span id="rule-help-text">{% trans "Select how you want to compare the value." %}</span>
+                    </div>
+                </div>
+
+                <!-- GeoIP Warning (shown for geo rules) -->
+                <div class="alert alert-warning hidden" id="geoip-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>{% trans "GeoIP Configuration Required" %}</strong>
+                        <p style="margin: 5px 0 0 0;">
+                            {% trans "Geographic rules require GeoIP to be configured." %}
+                            <span id="geoip-warning-detail"></span>
+                        </p>
+                        <a href="{% url 'admin:geoip_geolocation_changelist' %}" target="_blank" class="alert-link" style="display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;">
+                            <i class="fas fa-cog"></i> {% trans "Configure GeoIP Providers" %}
+                            <i class="fas fa-external-link-alt" style="font-size: 11px;"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Operator Selection -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-balance-scale"></i>
+                        {% trans "Comparison Operator" %}
+                    </h3>
+
+                    <div class="operator-grid" id="operator-grid">
+                        <!-- Operators will be dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Value Configuration -->
+                <div class="value-config" id="value-config">
+                    <div class="value-config-title">
+                        <i class="fas fa-edit"></i>
+                        <span id="value-config-label">{% trans "Value" %}</span>
+                    </div>
+
+                    <!-- Dynamic value input will be inserted here -->
+                    <div id="value-input-container">
+                        <!-- Default text input -->
+                        <div class="form-group" id="text-value-group">
+                            <input type="text" id="rule-value" name="value" class="form-control"
+                                   placeholder="{% trans 'Enter value...' %}">
+                            <p class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                <span id="value-help-text">{% trans "Enter the value to compare against" %}</span>
+                            </p>
+                        </div>
+
+                        <!-- Boolean toggle (hidden by default) -->
+                        <div class="boolean-toggle hidden" id="boolean-value-group">
+                            <label class="boolean-option true-option" data-value="true">
+                                <input type="radio" name="boolean_value" value="true">
+                                <label>{% trans "True" %}</label>
+                            </label>
+                            <label class="boolean-option false-option" data-value="false">
+                                <input type="radio" name="boolean_value" value="false">
+                                <label>{% trans "False" %}</label>
+                            </label>
+                        </div>
+
+                        <!-- Number input (hidden by default) -->
+                        <div class="form-group hidden" id="number-value-group">
+                            <input type="number" id="rule-value-number" name="value_number" class="form-control"
+                                   placeholder="{% trans 'Enter number...' %}">
+                            <p class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                <span id="number-help-text">{% trans "Enter a numeric value" %}</span>
+                            </p>
+                        </div>
+
+                        <!-- Range inputs (hidden by default) -->
+                        <div class="range-inputs hidden" id="range-value-group">
+                            <div class="form-group">
+                                <label>{% trans "From" %}</label>
+                                <input type="text" id="range-from" name="range_from" class="form-control">
+                            </div>
+                            <div class="range-separator">{% trans "to" %}</div>
+                            <div class="form-group">
+                                <label>{% trans "To" %}</label>
+                                <input type="text" id="range-to" name="range_to" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Date range (hidden by default) -->
+                        <div class="range-inputs hidden" id="date-range-group">
+                            <div class="form-group">
+                                <label>{% trans "Start Date" %}</label>
+                                <input type="date" id="date-from" name="date_from" class="form-control">
+                            </div>
+                            <div class="range-separator">{% trans "to" %}</div>
+                            <div class="form-group">
+                                <label>{% trans "End Date" %}</label>
+                                <input type="date" id="date-to" name="date_to" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Time range (hidden by default) -->
+                        <div class="range-inputs hidden" id="time-range-group">
+                            <div class="form-group">
+                                <label>{% trans "Start Time" %}</label>
+                                <input type="time" id="time-from" name="time_from" class="form-control">
+                            </div>
+                            <div class="range-separator">{% trans "to" %}</div>
+                            <div class="form-group">
+                                <label>{% trans "End Time" %}</label>
+                                <input type="time" id="time-to" name="time_to" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Day of week selector (hidden by default) -->
+                        <div class="hidden" id="day-selector-group">
+                            <div class="day-selector">
+                                <label class="day-option" data-day="0"><input type="checkbox" name="days" value="0">{% trans "Mon" %}</label>
+                                <label class="day-option" data-day="1"><input type="checkbox" name="days" value="1">{% trans "Tue" %}</label>
+                                <label class="day-option" data-day="2"><input type="checkbox" name="days" value="2">{% trans "Wed" %}</label>
+                                <label class="day-option" data-day="3"><input type="checkbox" name="days" value="3">{% trans "Thu" %}</label>
+                                <label class="day-option" data-day="4"><input type="checkbox" name="days" value="4">{% trans "Fri" %}</label>
+                                <label class="day-option" data-day="5"><input type="checkbox" name="days" value="5">{% trans "Sat" %}</label>
+                                <label class="day-option" data-day="6"><input type="checkbox" name="days" value="6">{% trans "Sun" %}</label>
+                            </div>
+                            <p class="help-text" style="margin-top: 15px;">
+                                <i class="fas fa-info-circle"></i>
+                                {% trans "Select the days when this rule should apply" %}
+                            </p>
+                        </div>
+
+                        <!-- Multi-select dropdown (hidden by default) -->
+                        <div class="form-group hidden" id="select-value-group">
+                            <select id="rule-value-select" name="value_select" class="form-control" multiple>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                            <p class="help-text">
+                                <i class="fas fa-info-circle"></i>
+                                {% trans "Hold Ctrl/Cmd to select multiple values" %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Rule Details -->
+            <div class="wizard-step hidden" id="step-3">
+                <h2 class="step-title">
+                    <i class="fas fa-tag"></i>
+                    {% trans "Rule Details" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Give your rule a name and configure additional settings." %}
+                </p>
+
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="rule-name">
+                            {% trans "Rule Name" %} <span class="required">*</span>
+                        </label>
+                        <input type="text" id="rule-name" name="name" class="form-control" required
+                               placeholder="{% trans 'e.g., US Visitors Only, VIP Customers' %}">
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "A descriptive name to identify this rule" %}
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rule-description">
+                            {% trans "Description" %}
+                        </label>
+                        <textarea id="rule-description" name="description" class="form-control" rows="3"
+                                  placeholder="{% trans 'Optional: Describe what this rule does and when to use it...' %}"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-toggle-on"></i>
+                        {% trans "Status" %}
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rule-active" name="is_active" checked>
+                            <span>{% trans "Active" %}</span>
+                        </label>
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            {% trans "Inactive rules will not be evaluated. You can toggle this later." %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Hidden fields with default values -->
+                <input type="hidden" id="rule-priority" name="priority" value="5">
+                <input type="hidden" id="rule-cache" name="cache_duration" value="300">
+            </div>
+
+            <!-- Step 4: Review & Create -->
+            <div class="wizard-step hidden" id="step-4">
+                <h2 class="step-title">
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Review & Create" %}
+                </h2>
+                <p class="step-description">
+                    {% trans "Review your visibility rule before creating it." %}
+                </p>
+
+                <div class="rule-summary-card">
+                    <div class="rule-summary-header">
+                        <i class="fas fa-eye"></i>
+                        <h3 id="review-rule-name">-</h3>
+                    </div>
+                    <div class="rule-summary-details">
+                        <div class="summary-item">
+                            <div class="label">{% trans "Rule Type" %}</div>
+                            <div class="value" id="review-rule-type">-</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="label">{% trans "Operator" %}</div>
+                            <div class="value" id="review-operator">-</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="label">{% trans "Value" %}</div>
+                            <div class="value code" id="review-value">-</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="label">{% trans "Status" %}</div>
+                            <div class="value" id="review-status">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="review-description-group">
+                    <label>{% trans "Description" %}</label>
+                    <p id="review-description" class="help-text" style="margin-top: 5px;">-</p>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong>{% trans "Next Steps:" %}</strong>
+                        {% trans "After creating this rule, you can add it to a Rule Group to combine it with other rules using AND/OR logic." %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden field for JSON value -->
+            <input type="hidden" id="rule-value-json" name="value_json" value="{}">
+
+            <!-- Navigation Buttons -->
+            <div class="wizard-navigation">
+                <div class="nav-buttons">
+                    <a href="{% url 'admin:page_builder_visibilityrule_changelist' %}" class="btn btn-secondary" id="cancel-btn">
+                        <i class="fas fa-times"></i>
+                        {% trans "Cancel" %}
+                    </a>
+                    <button type="button" class="btn btn-secondary" id="prev-btn" style="display: none;">
+                        <i class="fas fa-arrow-left"></i>
+                        {% trans "Previous" %}
+                    </button>
+                    <button type="button" class="btn btn-primary" id="next-btn">
+                        {% trans "Next" %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submit-btn" style="display: none;">
+                        <i class="fas fa-check"></i>
+                        {% trans "Create Rule" %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="application/json" id="visibility-rule-wizard-i18n">
+{
+    "ruleTypeConfig": {
+        "geo_country": {
+            "label": "{% trans \"Country\" %}",
+            "operators": ["equals", "not_equals", "in_list", "not_in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., US, CA, GB\" %}",
+            "help": "{% trans \"Enter country codes (ISO 3166-1 alpha-2). Use commas for multiple countries with in_list operator.\" %}"
+        },
+        "geo_region": {
+            "label": "{% trans \"Region/State\" %}",
+            "operators": ["equals", "not_equals", "contains", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., California, New York\" %}",
+            "help": "{% trans \"Enter region or state names.\" %}"
+        },
+        "geo_city": {
+            "label": "{% trans \"City\" %}",
+            "operators": ["equals", "not_equals", "contains", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., London, Paris, Tokyo\" %}",
+            "help": "{% trans \"Enter city names.\" %}"
+        },
+        "geo_timezone": {
+            "label": "{% trans \"Time Zone\" %}",
+            "operators": ["equals", "not_equals", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., America/New_York, Europe/London\" %}",
+            "help": "{% trans \"Enter IANA timezone identifiers.\" %}"
+        },
+        "user_logged_in": {
+            "label": "{% trans \"Logged In Status\" %}",
+            "operators": ["is_true", "is_false"],
+            "valueType": "boolean",
+            "help": "{% trans \"Check if the visitor is logged in to their account.\" %}"
+        },
+        "user_group": {
+            "label": "{% trans \"User Group\" %}",
+            "operators": ["equals", "not_equals", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., VIP, Wholesale, Staff\" %}",
+            "help": "{% trans \"Enter user group names.\" %}"
+        },
+        "user_segment": {
+            "label": "{% trans \"Customer Segment\" %}",
+            "operators": ["equals", "not_equals", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., High Value, New Customer\" %}",
+            "help": "{% trans \"Enter customer segment names.\" %}"
+        },
+        "user_lifetime_value": {
+            "label": "{% trans \"Lifetime Value\" %}",
+            "operators": ["equals", "not_equals", "greater_than", "less_than", "between"],
+            "valueType": "number",
+            "valuePlaceholder": "{% trans \"e.g., 1000\" %}",
+            "help": "{% trans \"Enter the customer lifetime value amount.\" %}"
+        },
+        "user_order_count": {
+            "label": "{% trans \"Order Count\" %}",
+            "operators": ["equals", "not_equals", "greater_than", "less_than", "between"],
+            "valueType": "number",
+            "valuePlaceholder": "{% trans \"e.g., 5\" %}",
+            "help": "{% trans \"Enter the number of orders.\" %}"
+        },
+        "device_type": {
+            "label": "{% trans \"Device Type\" %}",
+            "operators": ["equals", "not_equals", "in_list"],
+            "valueType": "select",
+            "options": [],
+            "help": "{% trans \"Select the device type(s) to target.\" %}"
+        },
+        "browser": {
+            "label": "{% trans \"Browser\" %}",
+            "operators": ["equals", "not_equals", "in_list", "contains"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., Chrome, Firefox, Safari\" %}",
+            "help": "{% trans \"Enter browser names.\" %}"
+        },
+        "operating_system": {
+            "label": "{% trans \"Operating System\" %}",
+            "operators": ["equals", "not_equals", "in_list", "contains"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., Windows, macOS, iOS, Android\" %}",
+            "help": "{% trans \"Enter operating system names.\" %}"
+        },
+        "screen_size": {
+            "label": "{% trans \"Screen Size\" %}",
+            "operators": ["equals", "greater_than", "less_than", "between"],
+            "valueType": "number",
+            "valuePlaceholder": "{% trans \"e.g., 1920 (width in pixels)\" %}",
+            "help": "{% trans \"Enter screen width in pixels.\" %}"
+        },
+        "date_range": {
+            "label": "{% trans \"Date Range\" %}",
+            "operators": ["between"],
+            "valueType": "date_range",
+            "help": "{% trans \"Select the date range when this rule should apply.\" %}"
+        },
+        "time_range": {
+            "label": "{% trans \"Time of Day\" %}",
+            "operators": ["between"],
+            "valueType": "time_range",
+            "help": "{% trans \"Select the time range when this rule should apply.\" %}"
+        },
+        "day_of_week": {
+            "label": "{% trans \"Day of Week\" %}",
+            "operators": ["in_list"],
+            "valueType": "day_selector",
+            "help": "{% trans \"Select the days when this rule should apply.\" %}"
+        },
+        "business_hours": {
+            "label": "{% trans \"Business Hours\" %}",
+            "operators": ["is_true", "is_false"],
+            "valueType": "boolean",
+            "help": "{% trans \"Check if currently within business hours (9am-5pm Mon-Fri).\" %}"
+        },
+        "first_visit": {
+            "label": "{% trans \"First Time Visitor\" %}",
+            "operators": ["is_true", "is_false"],
+            "valueType": "boolean",
+            "help": "{% trans \"Check if this is the visitor's first time on the site.\" %}"
+        },
+        "visit_count": {
+            "label": "{% trans \"Visit Count\" %}",
+            "operators": ["equals", "greater_than", "less_than", "between"],
+            "valueType": "number",
+            "valuePlaceholder": "{% trans \"e.g., 3\" %}",
+            "help": "{% trans \"Enter the number of visits.\" %}"
+        },
+        "referrer": {
+            "label": "{% trans \"Referrer Source\" %}",
+            "operators": ["equals", "not_equals", "contains", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., google.com, facebook.com\" %}",
+            "help": "{% trans \"Enter the referring domain or URL pattern.\" %}"
+        },
+        "utm_campaign": {
+            "label": "{% trans \"UTM Campaign\" %}",
+            "operators": ["equals", "not_equals", "contains", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., summer_sale, black_friday\" %}",
+            "help": "{% trans \"Enter the UTM campaign name.\" %}"
+        },
+        "cart_value": {
+            "label": "{% trans \"Cart Value\" %}",
+            "operators": ["equals", "greater_than", "less_than", "between"],
+            "valueType": "number",
+            "valuePlaceholder": "{% trans \"e.g., 100\" %}",
+            "help": "{% trans \"Enter the cart value amount.\" %}"
+        },
+        "cart_items": {
+            "label": "{% trans \"Cart Item Count\" %}",
+            "operators": ["equals", "greater_than", "less_than", "between"],
+            "valueType": "number",
+            "valuePlaceholder": "{% trans \"e.g., 3\" %}",
+            "help": "{% trans \"Enter the number of items in cart.\" %}"
+        },
+        "has_purchased": {
+            "label": "{% trans \"Has Purchased\" %}",
+            "operators": ["is_true", "is_false"],
+            "valueType": "boolean",
+            "help": "{% trans \"Check if the customer has made a purchase before.\" %}"
+        },
+        "abandoned_cart": {
+            "label": "{% trans \"Abandoned Cart\" %}",
+            "operators": ["is_true", "is_false"],
+            "valueType": "boolean",
+            "help": "{% trans \"Check if the customer has an abandoned cart.\" %}"
+        },
+        "browser_language": {
+            "label": "{% trans \"Browser Language\" %}",
+            "operators": ["equals", "not_equals", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., en, fr, de, es\" %}",
+            "help": "{% trans \"Enter language codes (ISO 639-1).\" %}"
+        },
+        "selected_language": {
+            "label": "{% trans \"Selected Language\" %}",
+            "operators": ["equals", "not_equals", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., en, fr, de, es\" %}",
+            "help": "{% trans \"Enter the language code selected on the site.\" %}"
+        },
+        "selected_currency": {
+            "label": "{% trans \"Selected Currency\" %}",
+            "operators": ["equals", "not_equals", "in_list"],
+            "valueType": "text",
+            "valuePlaceholder": "{% trans \"e.g., USD, EUR, GBP\" %}",
+            "help": "{% trans \"Enter currency codes (ISO 4217).\" %}"
+        }
+    },
+    "operatorLabels": {
+        "equals":       { "label": "{% trans \"Equals\" %}",           "symbol": "=" },
+        "not_equals":   { "label": "{% trans \"Not Equals\" %}",       "symbol": "\u2260" },
+        "contains":     { "label": "{% trans \"Contains\" %}",         "symbol": "\u2283" },
+        "not_contains": { "label": "{% trans \"Does Not Contain\" %}", "symbol": "\u2285" },
+        "greater_than": { "label": "{% trans \"Greater Than\" %}",     "symbol": ">" },
+        "less_than":    { "label": "{% trans \"Less Than\" %}",        "symbol": "<" },
+        "in_list":      { "label": "{% trans \"In List\" %}",          "symbol": "\u2208" },
+        "not_in_list":  { "label": "{% trans \"Not In List\" %}",      "symbol": "\u2209" },
+        "is_true":      { "label": "{% trans \"Is True\" %}",          "symbol": "\u2713" },
+        "is_false":     { "label": "{% trans \"Is False\" %}",         "symbol": "\u2717" },
+        "between":      { "label": "{% trans \"Between\" %}",          "symbol": "\u2194" }
+    },
+    "geoipWarnings": {
+        "country":    "{% trans \"Country detection works with the built-in GeoIP, but for best accuracy consider configuring a third-party provider.\" %}",
+        "regionCity": "{% trans \"Region and city detection requires a third-party GeoIP provider. The built-in GeoIP may not provide this level of detail.\" %}",
+        "timezone":   "{% trans \"Time zone detection may require a third-party GeoIP provider for accurate results.\" %}"
+    },
+    "deviceOptions": {
+        "mobile":  "{% trans \"Mobile\" %}",
+        "tablet":  "{% trans \"Tablet\" %}",
+        "desktop": "{% trans \"Desktop\" %}"
+    },
+    "ui": {
+        "valueSuffix":    "{% trans \"Value\" %}",
+        "enterValue":     "{% trans \"Enter value...\" %}",
+        "unnamedRule":    "{% trans \"Unnamed Rule\" %}",
+        "trueLabel":      "{% trans \"True\" %}",
+        "falseLabel":     "{% trans \"False\" %}",
+        "activeStatus":   "{% trans \"Active\" %}",
+        "inactiveStatus": "{% trans \"Inactive\" %}",
+        "selectRuleType": "{% trans \"Please select a rule type\" %}",
+        "selectOperator": "{% trans \"Please select an operator\" %}",
+        "enterValueError":"{% trans \"Please enter a value\" %}",
+        "enterRuleName":  "{% trans \"Please enter a rule name\" %}"
+    }
+}
+</script>
+<script src="{% static 'page_builder/js/visibility-rule-wizard.js' %}"></script>
+{% endblock %}

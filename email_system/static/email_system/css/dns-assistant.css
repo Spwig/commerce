@@ -1,0 +1,495 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * DNS Assistant Styles
+ * Theme-aware CSS for DNS validation UI in email provider wizard
+ * Follows rules.md: uses CSS variables, scoped class names, responsive design
+ */
+
+/* Domain Configuration Section */
+.dns-domain-section {
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.dns-domain-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--body-fg, #333);
+    font-size: 1.1em;
+}
+
+.domain-override-form {
+    margin-top: 15px;
+}
+
+.domain-override-form .form-group {
+    margin-bottom: 15px;
+}
+
+.domain-override-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--body-fg, #333);
+}
+
+.domain-override-form input.form-control {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 4px;
+    font-size: 0.95em;
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+}
+
+.domain-override-form input.form-control:focus {
+    outline: none;
+    border-color: var(--primary, #4F46E5);
+    box-shadow: 0 0 0 3px var(--primary-fg, rgba(79, 70, 229, 0.1));
+}
+
+.domain-override-form .help-text {
+    font-size: 0.85em;
+    color: var(--body-quiet-color, #666);
+    margin-top: 5px;
+}
+
+/* DNS Validation Section */
+.dns-validation-section {
+    margin-bottom: 30px;
+}
+
+.dns-validation-section h3 {
+    margin-bottom: 20px;
+    color: var(--body-fg, #333);
+    font-size: 1.2em;
+}
+
+/* DNS Validation Grid */
+.dns-validation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* DNS Check Card */
+.dns-check-card {
+    background: var(--body-bg, #fff);
+    border: 2px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.dns-check-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Status-specific card borders */
+.dns-check-card.dns-check-pass {
+    border-color: var(--success-fg, #28a745);
+    background: var(--body-bg, #fff);
+}
+
+.dns-check-card.dns-check-warn {
+    border-color: var(--warning-fg, #ffc107);
+    background: var(--body-bg, #fff);
+}
+
+.dns-check-card.dns-check-fail {
+    border-color: var(--error-fg-light, #dc3545);
+    background: var(--body-bg, #fff);
+}
+
+.dns-check-card.dns-check-error {
+    border-color: var(--body-quiet-color, #6c757d);
+    background: var(--body-bg, #fff);
+}
+
+/* DNS Check Header */
+.dns-check-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.dns-check-header h4 {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--body-fg, #333);
+    display: flex;
+    align-items: center;
+}
+
+.dns-check-header h4 i {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+/* Status Badges */
+.dns-status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dns-status-badge.status-pass {
+    background: var(--success-fg, #28a745);
+    color: var(--button-fg, #fff);
+}
+
+.dns-status-badge.status-warn {
+    background: var(--warning-fg, #ffc107);
+    color: var(--body-fg, #000);
+}
+
+.dns-status-badge.status-fail {
+    background: var(--error-fg-light, #dc3545);
+    color: var(--button-fg, #fff);
+}
+
+.dns-status-badge.status-error {
+    background: var(--body-quiet-color, #6c757d);
+    color: var(--button-fg, #fff);
+}
+
+/* DNS Check Message */
+.dns-check-message {
+    margin: 10px 0;
+    color: var(--body-quiet-color, #666);
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* DNS Record Found */
+.dns-record-found {
+    background: var(--darkened-bg, #f8f9fa);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 0.9em;
+}
+
+.dns-record-found strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--body-fg, #333);
+}
+
+.dns-record-found code {
+    display: block;
+    background: var(--body-bg, #fff);
+    padding: 8px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.85em;
+    color: var(--primary, #4F46E5);
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.dkim-record-truncate {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+/* DNS Selector Info */
+.dns-selector-info {
+    margin: 10px 0;
+    font-size: 0.9em;
+}
+
+.dns-selector-info strong {
+    color: var(--body-fg, #333);
+}
+
+.dns-selector-info code {
+    background: var(--darkened-bg, #f8f9fa);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+    color: var(--primary, #4F46E5);
+}
+
+/* DNS Check Errors */
+.dns-check-errors {
+    background: var(--message-warning-bg, #fff3cd);
+    border-left: 4px solid var(--warning-fg, #ffc107);
+    padding: 10px 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--body-fg, #856404);
+}
+
+.dns-check-errors i {
+    margin-right: 5px;
+}
+
+/* DNS Propagation Status */
+.dns-propagation {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color, #dee2e6);
+}
+
+.dns-propagation small {
+    font-size: 0.85em;
+    color: var(--body-quiet-color, #666);
+}
+
+.dns-propagation .text-success {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.dns-propagation .text-warning {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.dns-propagation .text-danger {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* Overall Status Alert */
+.dns-overall-status {
+    margin-top: 20px;
+    padding: 15px 20px;
+    border-radius: 6px;
+    border-left: 4px solid;
+}
+
+.alert-pass {
+    background: #d4edda;
+    border-left-color: #28a745;
+    color: #155724;
+}
+
+.alert-warn {
+    background: #fff3cd;
+    border-left-color: #ffc107;
+    color: #856404;
+}
+
+.alert-fail {
+    background: #f8d7da;
+    border-left-color: #dc3545;
+    color: #721c24;
+}
+
+.dns-overall-status strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 1.05em;
+}
+
+.dns-overall-status p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* DNS Requirements Section */
+.dns-requirements-section {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.dns-requirements-section h3 {
+    margin-bottom: 15px;
+    color: var(--body-fg, #333);
+    font-size: 1.2em;
+}
+
+.dns-requirements-iframe-container {
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 15px 20px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border-left: 4px solid;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    border-left-color: #17a2b8;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    border-left-color: #ffc107;
+    color: #856404;
+}
+
+.alert strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.alert i {
+    margin-right: 8px;
+}
+
+/* Buttons */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.9em;
+}
+
+.btn i {
+    margin-right: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dns-validation-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .domain-override-form input.form-control {
+        max-width: 100%;
+    }
+
+    .dns-check-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .dns-status-badge {
+        align-self: flex-start;
+    }
+}
+
+/* Loading State (for future AJAX refresh) */
+.dns-check-card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.dns-check-card.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--border-color, #dee2e6);
+    border-top-color: var(--primary, #4F46E5);
+    border-radius: 50%;
+    animation: dns-spinner 0.8s linear infinite;
+}
+
+@keyframes dns-spinner {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Compact One-Liner DNS Validation */
+.dns-validation-oneliner-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dns-oneliner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--body-bg, #fff);
+    border-left: 4px solid var(--border-color, #dee2e6);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.dns-oneliner:hover {
+    background: var(--accent-bg, #f8f9fa);
+}
+
+/* Status Colors */
+.dns-oneliner-pass {
+    border-left-color: var(--success-color, #28a745);
+}
+
+.dns-oneliner-warn {
+    border-left-color: var(--warning-color, #ffc107);
+}
+
+.dns-oneliner-fail {
+    border-left-color: var(--error-color, #dc3545);
+}
+
+.dns-oneliner-error {
+    border-left-color: var(--info-color, #17a2b8);
+}
+
+/* One-Liner Components */
+.dns-oneliner-icon {
+    font-size: 1.25rem;
+    min-width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dns-oneliner-pass .dns-oneliner-icon {
+    color: var(--success-color, #28a745);
+}
+
+.dns-oneliner-warn .dns-oneliner-icon {
+    color: var(--warning-color, #ffc107);
+}
+
+.dns-oneliner-fail .dns-oneliner-icon {
+    color: var(--error-color, #dc3545);
+}
+
+.dns-oneliner-error .dns-oneliner-icon {
+    color: var(--info-color, #17a2b8);
+}
+
+.dns-oneliner-label {
+    font-weight: 600;
+    min-width: 80px;
+    color: var(--body-fg, #333);
+    font-size: 0.95rem;
+}
+
+.dns-oneliner-message {
+    flex: 1;
+    color: var(--body-quiet-color, #666);
+    font-size: 0.9rem;
+}

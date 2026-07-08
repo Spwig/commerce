@@ -1,0 +1,5 @@
+{% load static %}
+{% if manifest_translations %}
+{{ manifest_translations|json_script:"manifest-translations" }}
+<script src="{% static 'providers_common/js/manifest-i18n.js' %}"></script>
+{% endif %}

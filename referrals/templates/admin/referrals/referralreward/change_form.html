@@ -1,0 +1,442 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Referral Reward" %}{% else %}{% trans "Add Referral Reward" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'referrals/admin/css/referralreward_form.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if original %}
+    {# Editing existing reward #}
+    <div id="content-main">
+        <div class="reward-admin-header">
+            <div class="header-title">
+                <h1>
+                    <i class="fas fa-gifts"></i>
+                    {% trans "Issued Reward" %} #{{ original.id }}
+                </h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-user"></i>
+                        {{ original.customer.get_full_name|default:original.customer.email }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        {{ original.get_kind_display }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-{{ original.status|yesno:'check-circle,clock,times-circle' }}"></i>
+                        {{ original.get_status_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {# Tab Navigation #}
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="details">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Reward Details" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="configuration">
+                <i class="fas fa-cog"></i>
+                {% trans "Configuration" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="status">
+                <i class="fas fa-flag"></i>
+                {% trans "Status" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="integration">
+                <i class="fas fa-link"></i>
+                {% trans "Integration" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="lifecycle">
+                <i class="fas fa-history"></i>
+                {% trans "Lifecycle" %}
+            </button>
+        </div>
+
+        {# Form Start #}
+        <form method="post" id="referralreward_form" novalidate>
+            {% csrf_token %}
+
+            {# Include hidden fields #}
+            {% for hidden in adminform.form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {# Error Display #}
+            {% if adminform.form.errors %}
+                <div class="form-errors-banner">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>{% trans "Please correct the errors below" %}</h3>
+                        {{ adminform.form.errors }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="tab-content">
+                {# Tab 1: Reward Details #}
+                <div class="tab-panel active" data-panel="details">
+                    <div class="form-card">
+                        <h2><i class="fas fa-info-circle"></i> {% trans "Reward Details" %}</h2>
+
+                        <div class="form-row">
+                            {{ adminform.form.program.label_tag }}
+                            {{ adminform.form.program }}
+                            {% if adminform.form.program.help_text %}<p class="help">{{ adminform.form.program.help_text }}</p>{% endif %}
+                            {% if adminform.form.program.errors %}<p class="error">{{ adminform.form.program.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.attribution.label_tag }}
+                            {{ adminform.form.attribution }}
+                            {% if adminform.form.attribution.help_text %}<p class="help">{{ adminform.form.attribution.help_text }}</p>{% endif %}
+                            {% if adminform.form.attribution.errors %}<p class="error">{{ adminform.form.attribution.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.referrer_identity.label_tag }}
+                            {{ adminform.form.referrer_identity }}
+                            {% if adminform.form.referrer_identity.help_text %}<p class="help">{{ adminform.form.referrer_identity.help_text }}</p>{% endif %}
+                            {% if adminform.form.referrer_identity.errors %}<p class="error">{{ adminform.form.referrer_identity.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.customer.label_tag }}
+                            {{ adminform.form.customer }}
+                            {% if adminform.form.customer.help_text %}<p class="help">{{ adminform.form.customer.help_text }}</p>{% endif %}
+                            {% if adminform.form.customer.errors %}<p class="error">{{ adminform.form.customer.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.recipient_type.label_tag }}
+                            {{ adminform.form.recipient_type }}
+                            {% if adminform.form.recipient_type.help_text %}<p class="help">{{ adminform.form.recipient_type.help_text }}</p>{% endif %}
+                            {% if adminform.form.recipient_type.errors %}<p class="error">{{ adminform.form.recipient_type.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 2: Reward Configuration #}
+                <div class="tab-panel" data-panel="configuration">
+                    <div class="form-card">
+                        <h2><i class="fas fa-cog"></i> {% trans "Reward Configuration" %}</h2>
+                        <p class="form-card-description">{% trans "Define the reward type, value, and description" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.kind.label_tag }}
+                            {{ adminform.form.kind }}
+                            {% if adminform.form.kind.help_text %}<p class="help">{{ adminform.form.kind.help_text }}</p>{% endif %}
+                            {% if adminform.form.kind.errors %}<p class="error">{{ adminform.form.kind.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.amount.label_tag }}
+                                    {{ adminform.form.amount }}
+                                    {% if adminform.form.amount.help_text %}<p class="help">{{ adminform.form.amount.help_text }}</p>{% endif %}
+                                    {% if adminform.form.amount.errors %}<p class="error">{{ adminform.form.amount.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.percentage.label_tag }}
+                                    {{ adminform.form.percentage }}
+                                    {% if adminform.form.percentage.help_text %}<p class="help">{{ adminform.form.percentage.help_text }}</p>{% endif %}
+                                    {% if adminform.form.percentage.errors %}<p class="error">{{ adminform.form.percentage.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.description.label_tag }}
+                            {{ adminform.form.description }}
+                            {% if adminform.form.description.help_text %}<p class="help">{{ adminform.form.description.help_text }}</p>{% endif %}
+                            {% if adminform.form.description.errors %}<p class="error">{{ adminform.form.description.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 3: Status #}
+                <div class="tab-panel" data-panel="status">
+                    <div class="form-card">
+                        <h2><i class="fas fa-flag"></i> {% trans "Reward Status" %}</h2>
+                        <p class="form-card-description">{% trans "Current status and revocation information" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.status.label_tag }}
+                            {{ adminform.form.status }}
+                            {% if adminform.form.status.help_text %}<p class="help">{{ adminform.form.status.help_text }}</p>{% endif %}
+                            {% if adminform.form.status.errors %}<p class="error">{{ adminform.form.status.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.revocation_reason.label_tag }}
+                            {{ adminform.form.revocation_reason }}
+                            {% if adminform.form.revocation_reason.help_text %}<p class="help">{{ adminform.form.revocation_reason.help_text }}</p>{% endif %}
+                            {% if adminform.form.revocation_reason.errors %}<p class="error">{{ adminform.form.revocation_reason.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 4: Integration #}
+                <div class="tab-panel" data-panel="integration">
+                    <div class="form-card">
+                        <h2><i class="fas fa-link"></i> {% trans "Integration" %}</h2>
+                        <p class="form-card-description">{% trans "Links to wallet transactions or voucher codes (populated when issued)" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.wallet_transaction.label_tag }}
+                            {{ adminform.form.wallet_transaction }}
+                            {% if adminform.form.wallet_transaction.help_text %}<p class="help">{{ adminform.form.wallet_transaction.help_text }}</p>{% endif %}
+                            {% if adminform.form.wallet_transaction.errors %}<p class="error">{{ adminform.form.wallet_transaction.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.voucher_code_id.label_tag }}
+                            {{ adminform.form.voucher_code_id }}
+                            {% if adminform.form.voucher_code_id.help_text %}<p class="help">{{ adminform.form.voucher_code_id.help_text }}</p>{% endif %}
+                            {% if adminform.form.voucher_code_id.errors %}<p class="error">{{ adminform.form.voucher_code_id.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 5: Lifecycle #}
+                <div class="tab-panel" data-panel="lifecycle">
+                    <div class="form-card">
+                        <h2><i class="fas fa-history"></i> {% trans "Lifecycle Timestamps" %}</h2>
+                        <p class="form-card-description">{% trans "Automatically tracked timestamps for reward lifecycle events" %}</p>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.created_at.label_tag }}
+                                    {{ adminform.form.created_at }}
+                                    {% if adminform.form.created_at.help_text %}<p class="help">{{ adminform.form.created_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.created_at.errors %}<p class="error">{{ adminform.form.created_at.errors }}</p>{% endif %}
+                                </div>
+
+                                <div class="form-row">
+                                    {{ adminform.form.issued_at.label_tag }}
+                                    {{ adminform.form.issued_at }}
+                                    {% if adminform.form.issued_at.help_text %}<p class="help">{{ adminform.form.issued_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.issued_at.errors %}<p class="error">{{ adminform.form.issued_at.errors }}</p>{% endif %}
+                                </div>
+
+                                <div class="form-row">
+                                    {{ adminform.form.redeemed_at.label_tag }}
+                                    {{ adminform.form.redeemed_at }}
+                                    {% if adminform.form.redeemed_at.help_text %}<p class="help">{{ adminform.form.redeemed_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.redeemed_at.errors %}<p class="error">{{ adminform.form.redeemed_at.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.expires_at.label_tag }}
+                                    {{ adminform.form.expires_at }}
+                                    {% if adminform.form.expires_at.help_text %}<p class="help">{{ adminform.form.expires_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.expires_at.errors %}<p class="error">{{ adminform.form.expires_at.errors }}</p>{% endif %}
+                                </div>
+
+                                <div class="form-row">
+                                    {{ adminform.form.revoked_at.label_tag }}
+                                    {{ adminform.form.revoked_at }}
+                                    {% if adminform.form.revoked_at.help_text %}<p class="help">{{ adminform.form.revoked_at.help_text }}</p>{% endif %}
+                                    {% if adminform.form.revoked_at.errors %}<p class="error">{{ adminform.form.revoked_at.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Submit Buttons #}
+            <div class="submit-row">
+                {% if adminform.model_admin.show_save_and_add_another %}
+                    <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+                {% endif %}
+                {% if adminform.model_admin.show_save_and_continue %}
+                    <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+                {% endif %}
+                <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+            </div>
+        </form>
+    </div>
+{% else %}
+    {# Creating new reward #}
+    <div id="content-main">
+        <div class="reward-admin-header">
+            <div class="header-title">
+                <h1>
+                    <i class="fas fa-gifts"></i>
+                    {% trans "Issue New Reward" %}
+                </h1>
+                <p class="subtitle">{% trans "Manually create and issue a reward to a referrer or referee" %}</p>
+            </div>
+        </div>
+
+        {# Tab Navigation #}
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="details">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Reward Details" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="configuration">
+                <i class="fas fa-cog"></i>
+                {% trans "Configuration" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="status">
+                <i class="fas fa-flag"></i>
+                {% trans "Status" %}
+            </button>
+        </div>
+
+        {# Form Start #}
+        <form method="post" id="referralreward_form" novalidate>
+            {% csrf_token %}
+
+            {# Include hidden fields #}
+            {% for hidden in adminform.form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {# Error Display #}
+            {% if adminform.form.errors %}
+                <div class="form-errors-banner">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>{% trans "Please correct the errors below" %}</h3>
+                        {{ adminform.form.errors }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="tab-content">
+                {# Tab 1: Reward Details #}
+                <div class="tab-panel active" data-panel="details">
+                    <div class="form-card">
+                        <h2><i class="fas fa-info-circle"></i> {% trans "Reward Details" %}</h2>
+
+                        <div class="form-row">
+                            {{ adminform.form.program.label_tag }}
+                            {{ adminform.form.program }}
+                            {% if adminform.form.program.help_text %}<p class="help">{{ adminform.form.program.help_text }}</p>{% endif %}
+                            {% if adminform.form.program.errors %}<p class="error">{{ adminform.form.program.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.attribution.label_tag }}
+                            {{ adminform.form.attribution }}
+                            {% if adminform.form.attribution.help_text %}<p class="help">{{ adminform.form.attribution.help_text }}</p>{% endif %}
+                            {% if adminform.form.attribution.errors %}<p class="error">{{ adminform.form.attribution.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.referrer_identity.label_tag }}
+                            {{ adminform.form.referrer_identity }}
+                            {% if adminform.form.referrer_identity.help_text %}<p class="help">{{ adminform.form.referrer_identity.help_text }}</p>{% endif %}
+                            {% if adminform.form.referrer_identity.errors %}<p class="error">{{ adminform.form.referrer_identity.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.customer.label_tag }}
+                            {{ adminform.form.customer }}
+                            {% if adminform.form.customer.help_text %}<p class="help">{{ adminform.form.customer.help_text }}</p>{% endif %}
+                            {% if adminform.form.customer.errors %}<p class="error">{{ adminform.form.customer.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.recipient_type.label_tag }}
+                            {{ adminform.form.recipient_type }}
+                            {% if adminform.form.recipient_type.help_text %}<p class="help">{{ adminform.form.recipient_type.help_text }}</p>{% endif %}
+                            {% if adminform.form.recipient_type.errors %}<p class="error">{{ adminform.form.recipient_type.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 2: Reward Configuration #}
+                <div class="tab-panel" data-panel="configuration">
+                    <div class="form-card">
+                        <h2><i class="fas fa-cog"></i> {% trans "Reward Configuration" %}</h2>
+                        <p class="form-card-description">{% trans "Define the reward type, value, and description" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.kind.label_tag }}
+                            {{ adminform.form.kind }}
+                            {% if adminform.form.kind.help_text %}<p class="help">{{ adminform.form.kind.help_text }}</p>{% endif %}
+                            {% if adminform.form.kind.errors %}<p class="error">{{ adminform.form.kind.errors }}</p>{% endif %}
+                        </div>
+
+                        <div class="two-column-layout">
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.amount.label_tag }}
+                                    {{ adminform.form.amount }}
+                                    {% if adminform.form.amount.help_text %}<p class="help">{{ adminform.form.amount.help_text }}</p>{% endif %}
+                                    {% if adminform.form.amount.errors %}<p class="error">{{ adminform.form.amount.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+
+                            <div class="column">
+                                <div class="form-row">
+                                    {{ adminform.form.percentage.label_tag }}
+                                    {{ adminform.form.percentage }}
+                                    {% if adminform.form.percentage.help_text %}<p class="help">{{ adminform.form.percentage.help_text }}</p>{% endif %}
+                                    {% if adminform.form.percentage.errors %}<p class="error">{{ adminform.form.percentage.errors }}</p>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            {{ adminform.form.description.label_tag }}
+                            {{ adminform.form.description }}
+                            {% if adminform.form.description.help_text %}<p class="help">{{ adminform.form.description.help_text }}</p>{% endif %}
+                            {% if adminform.form.description.errors %}<p class="error">{{ adminform.form.description.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Tab 3: Status #}
+                <div class="tab-panel" data-panel="status">
+                    <div class="form-card">
+                        <h2><i class="fas fa-flag"></i> {% trans "Reward Status" %}</h2>
+                        <p class="form-card-description">{% trans "Initial status for the reward" %}</p>
+
+                        <div class="form-row">
+                            {{ adminform.form.status.label_tag }}
+                            {{ adminform.form.status }}
+                            {% if adminform.form.status.help_text %}<p class="help">{{ adminform.form.status.help_text }}</p>{% endif %}
+                            {% if adminform.form.status.errors %}<p class="error">{{ adminform.form.status.errors }}</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Submit Buttons #}
+            <div class="submit-row">
+                {% if adminform.model_admin.show_save_and_add_another %}
+                    <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+                {% endif %}
+                {% if adminform.model_admin.show_save_and_continue %}
+                    <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+                {% endif %}
+                <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+            </div>
+        </form>
+    </div>
+{% endif %}
+
+<!-- Tab switching handled by global AdminTabs utility -->
+{% endblock %}

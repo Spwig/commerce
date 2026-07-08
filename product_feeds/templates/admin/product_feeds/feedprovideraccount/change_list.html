@@ -1,0 +1,183 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Product Feed Providers" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'product_feeds/css/admin_provider_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="provider-admin-container">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-rss"></i>
+                {% trans "Product Feed Providers" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage product feed syndication to shopping platforms and marketplaces" %}</p>
+            <p class="change-list-stats-subtitle">
+                {{ cl.result_count }} {% trans "feed" %}{% if cl.result_count != 1 %}s{% endif %}
+                {% if active_count %}<span class="stat-separator">·</span>{{ active_count }} {% trans "active" %}{% endif %}
+                {% if total_products %}<span class="stat-separator">·</span>{{ total_products|floatformat:0 }} {% trans "products in feeds" %}{% endif %}
+            </p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'product_feeds:provider_browse' %}" class="button primary change-list-action-button">
+                <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Toolbar -->
+    <div class="provider-toolbar">
+        <div class="toolbar-left">
+            <!-- Bulk Actions -->
+            <div class="bulk-actions">
+                <select id="bulk-action-select" class="bulk-action-dropdown">
+                    <option value="">{% trans "Bulk Actions" %}</option>
+                    <option value="enable">{% trans "Enable Selected" %}</option>
+                    <option value="disable">{% trans "Disable Selected" %}</option>
+                    <option value="set_primary">{% trans "Set as Primary" %}</option>
+                    <option value="sync_feeds">{% trans "Sync Feeds" %}</option>
+                    <option value="delete">{% trans "Delete Selected" %}</option>
+                </select>
+                <button id="apply-bulk-action" class="button" disabled>{% trans "Apply" %}</button>
+                <span id="selected-count" class="selected-count hidden">
+                    <span id="selected-number">0</span> {% trans "selected" %}
+                </span>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- Filters -->
+            <div class="filter-group">
+                <!-- Sync Status Filter -->
+                <select id="sync-status-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Sync Statuses" %}</option>
+                    <option value="success" {% if request.GET.sync_status == 'success' %}selected{% endif %}>
+                        {% trans "Success" %} ({{ success_count }})
+                    </option>
+                    <option value="error" {% if request.GET.sync_status == 'error' %}selected{% endif %}>
+                        {% trans "Error" %} ({{ error_count }})
+                    </option>
+                    <option value="pending" {% if request.GET.sync_status == 'pending' %}selected{% endif %}>
+                        {% trans "Pending" %} ({{ pending_count }})
+                    </option>
+                    <option value="syncing" {% if request.GET.sync_status == 'syncing' %}selected{% endif %}>
+                        {% trans "Syncing" %} ({{ syncing_count }})
+                    </option>
+                </select>
+
+                <!-- Active Filter -->
+                <select id="active-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Active Status" %}</option>
+                    <option value="active" {% if request.GET.is_active == '1' %}selected{% endif %}>
+                        {% trans "Active" %} ({{ active_count }})
+                    </option>
+                    <option value="inactive" {% if request.GET.is_active == '0' %}selected{% endif %}>
+                        {% trans "Inactive" %} ({{ inactive_count }})
+                    </option>
+                </select>
+
+                <!-- Component Filter -->
+                {% if component_counts %}
+                <select id="component-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Providers" %}</option>
+                    {% for component_data in component_counts %}
+                        <option value="{{ component_data.slug }}"
+                                {% if request.GET.component == component_data.slug %}selected{% endif %}>
+                            {{ component_data.name }} ({{ component_data.count }})
+                        </option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+
+            <!-- Search -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text"
+                       id="provider-search"
+                       placeholder="{% trans 'Search feeds...' %}"
+                       value="{{ request.GET.q|default:'' }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Select All -->
+    <div class="select-all-bar">
+        <label>
+            <input type="checkbox" id="select-all-providers">
+            {% trans "Select All" %}
+        </label>
+    </div>
+
+    <!-- Providers Grid -->
+    <div class="providers-container">
+        {% if cl.result_list %}
+            <div class="providers-grid">
+                {% for provider in cl.result_list %}
+                    {% include "admin/product_feeds/feedprovideraccount/provider_card.html" %}
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if cl.result_count > 20 %}
+                <div class="pagination-container">
+                    {% if cl.result_count %}
+                        <p class="pagination-info">
+                            {% blocktrans count counter=cl.result_count %}{{ counter }} feed{% plural %}{{ counter }} feeds{% endblocktrans %}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <i class="fas fa-rss"></i>
+                <h2>{% trans "No feed accounts found" %}</h2>
+                <p>
+                    {% if request.GET.q or request.GET.sync_status or request.GET.is_active or request.GET.component %}
+                        {% trans "Try adjusting your filters or search query." %}
+                    {% else %}
+                        {% trans "Get started by connecting your first product feed provider." %}
+                    {% endif %}
+                </p>
+                {% if not request.GET.q and not request.GET.sync_status %}
+                    <a href="{% url 'product_feeds:provider_browse' %}" class="button primary">
+                        <i class="fas fa-store"></i> {% trans "Browse & Install Providers" %}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading..." %}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="notification-container" class="notification-container"></div>
+
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'product_feeds/js/admin_provider_list.js' %}" defer></script>
+{% endblock %}

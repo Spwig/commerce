@@ -1,0 +1,49 @@
+{% load i18n merchant_trans %}
+
+{# Only show for authenticated users #}
+{% if user.is_authenticated %}
+    {# Try to get loyalty member - widget will be hidden if not enrolled #}
+    {% with member=user.loyalty_member %}
+        {% if member and member.is_active %}
+            <div class="loyalty-balance-widget loyalty-balance-{{ config.display_style|default:'compact' }} loyalty-balance-{{ config.button_style|default:'outline' }} {{ widget.css_classes }}"
+                 data-widget-type="loyalty_balance"
+                 {% if not config.show_on_mobile %}data-hide-mobile="true"{% endif %}>
+
+                {% if config.link_to_dashboard %}
+                <a href="{% url 'loyalty:customer_dashboard' %}" class="loyalty-balance-link" aria-label="{% mtrans 'View loyalty dashboard' %}">
+                {% else %}
+                <div class="loyalty-balance-display">
+                {% endif %}
+
+                    {# Icon #}
+                    {% if config.display_style != 'minimal' %}
+                    <span class="loyalty-icon" aria-hidden="true">
+                        {% if config.icon_style == 'gift' %}
+                            <i class="fas fa-gift"></i>
+                        {% elif config.icon_style == 'trophy' %}
+                            <i class="fas fa-trophy"></i>
+                        {% elif config.icon_style == 'crown' %}
+                            <i class="fas fa-crown"></i>
+                        {% else %}
+                            <i class="fas fa-star"></i>
+                        {% endif %}
+                    </span>
+                    {% endif %}
+
+                    {# Points Value #}
+                    <span class="loyalty-points-value">{{ member.balance.available_points|default:0 }}</span>
+
+                    {# Label (hidden on mobile for compact style) #}
+                    {% if config.display_style == 'detailed' %}
+                    <span class="loyalty-points-label">{% mtrans "Points" %}</span>
+                    {% endif %}
+
+                {% if config.link_to_dashboard %}
+                </a>
+                {% else %}
+                </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endif %}

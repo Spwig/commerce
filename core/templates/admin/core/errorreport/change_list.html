@@ -1,0 +1,77 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/error_report_list.css' %}">
+{% endblock %}
+
+{% block result_list %}
+<div class="error-reports-header">
+    <div class="error-reports-info">
+        <h2><i class="fas fa-bug"></i> {% trans "Error Reports" %}</h2>
+        <p class="help">{% trans "Captured errors from this installation. Reports marked 'Held' are available for manual review before sending to Spwig." %}</p>
+    </div>
+</div>
+
+{% if cl.result_list %}
+<div class="error-reports-grid">
+    {% for result in cl.result_list %}
+    <div class="error-report-card error-report-status-{{ result.status }}">
+        <div class="error-report-card-header">
+            <div class="error-report-type">
+                {% if result.error_type == 'python' %}
+                <span class="error-type-badge error-type-python">Python</span>
+                {% else %}
+                <span class="error-type-badge error-type-js">JS</span>
+                {% endif %}
+                <span class="error-report-count" title="{% trans 'Occurrences' %}">{{ result.occurrence_count }}x</span>
+            </div>
+            <div class="error-report-status">
+                <span class="status-badge status-{{ result.status }}">{{ result.get_status_display }}</span>
+            </div>
+        </div>
+
+        <div class="error-report-card-body">
+            <div class="error-report-exception">
+                {% if result.error_data.exception_type %}
+                    <strong>{{ result.error_data.exception_type }}</strong>
+                {% elif result.error_data.message %}
+                    <strong>{{ result.error_data.message|truncatechars:120 }}</strong>
+                {% else %}
+                    <strong>{% trans "Unknown Error" %}</strong>
+                {% endif %}
+            </div>
+            {% if result.error_data.exception_message %}
+            <div class="error-report-message">{{ result.error_data.exception_message|truncatechars:200 }}</div>
+            {% endif %}
+            {% if result.error_data.request_url %}
+            <div class="error-report-url"><i class="fas fa-link"></i> {{ result.error_data.request_url|truncatechars:80 }}</div>
+            {% elif result.error_data.url %}
+            <div class="error-report-url"><i class="fas fa-link"></i> {{ result.error_data.url|truncatechars:80 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="error-report-card-footer">
+            <div class="error-report-times">
+                <span title="{% trans 'First seen' %}"><i class="fas fa-clock"></i> {{ result.first_seen|timesince }} {% trans "ago" %}</span>
+                {% if result.first_seen != result.last_seen %}
+                <span title="{% trans 'Last seen' %}"><i class="fas fa-redo"></i> {{ result.last_seen|timesince }} {% trans "ago" %}</span>
+                {% endif %}
+            </div>
+            <div class="error-report-actions">
+                <a href="{% url 'admin:core_errorreport_change' result.pk %}" class="button error-report-btn-view" title="{% trans 'View Details' %}">
+                    <i class="fas fa-eye"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="error-reports-empty">
+    <i class="fas fa-check-circle"></i>
+    <p>{% trans "No error reports." %}</p>
+</div>
+{% endif %}
+{% endblock %}

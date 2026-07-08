@@ -1,0 +1,286 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static humanize %}
+
+{% block title %}{% trans "Commissions" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate-dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'affiliate/css/affiliate-admin.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {# Page Header #}
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-wallet"></i>
+                {% trans "Commission Management" %}
+            </h1>
+            <p class="subtitle">{% trans "Process commissions, approve payments, and manage affiliate earnings" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'affiliate:merchant_dashboard' %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Dashboard" %}
+            </a>
+            <a href="{% url 'admin:affiliate_payout_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Create Payout" %}
+            </a>
+        </div>
+    </div>
+
+    {# Stats #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ pending_count|default:"0" }}</div>
+            <div class="label">{% trans "Pending" context "stats" %}</div>
+            <small class="stat-meta">{% trans "awaiting review" context "stats" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ approved_count|default:"0" }}</div>
+            <div class="label">{% trans "Approved" context "stats" %}</div>
+            <small class="stat-meta">{% trans "ready for payout" context "stats" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="value">{{ paid_count|default:"0" }}</div>
+            <div class="label">{% trans "Paid" context "stats" %}</div>
+            <small class="stat-meta">{% trans "completed" context "stats" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="value">${{ total_commissions|default:"0"|floatformat:2 }}</div>
+            <div class="label">{% trans "Total Value" context "stats" %}</div>
+            <small class="stat-meta">{% trans "all commissions" context "stats" %}</small>
+        </div>
+    </div>
+
+    {# Quick Actions #}
+    <div class="dashboard-actions-section">
+        <h2 class="dashboard-section-title">
+            <i class="fas fa-bolt"></i>
+            {% trans "Quick Actions" context "merchant" %}
+        </h2>
+        <div class="dashboard-actions-grid">
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3>{% trans "Review Pending" context "action" %}</h3>
+                <p class="description">{% trans "Review and approve commissions" context "action" %}</p>
+                <a href="?status__exact=pending" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Review" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3>{% trans "Create Payout" context "action" %}</h3>
+                <p class="description">{% trans "Generate payout for approved commissions" context "action" %}</p>
+                <a href="{% url 'admin:affiliate_payout_add' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Create" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>{% trans "View Payouts" context "action" %}</h3>
+                <p class="description">{% trans "Process pending payments" context "action" %}</p>
+                <a href="{% url 'admin:affiliate_payout_changelist' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Manage" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>{% trans "View Reports" context "action" %}</h3>
+                <p class="description">{% trans "Analyze commission performance" context "action" %}</p>
+                <a href="{% url 'affiliate:merchant_dashboard' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Analyze" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Filters Panel #}
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            {# Search #}
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Affiliate code, order number...' %}"
+                    value="{{ request.GET.search|default:'' }}">
+            </div>
+
+            {# Status Filter #}
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="pending"{% if request.GET.status__exact == 'pending' %} selected{% endif %}>{% trans "Pending" %}</option>
+                    <option value="approved"{% if request.GET.status__exact == 'approved' %} selected{% endif %}>{% trans "Approved" %}</option>
+                    <option value="paid"{% if request.GET.status__exact == 'paid' %} selected{% endif %}>{% trans "Paid" %}</option>
+                    <option value="rejected"{% if request.GET.status__exact == 'rejected' %} selected{% endif %}>{% trans "Rejected" %}</option>
+                    <option value="reversed"{% if request.GET.status__exact == 'reversed' %} selected{% endif %}>{% trans "Reversed" %}</option>
+                </select>
+            </div>
+
+            {# Affiliate Filter #}
+            <div class="filter-field">
+                <label for="filter-affiliate">
+                    <i class="fas fa-user"></i> {% trans "Affiliate" %}
+                </label>
+                <select id="filter-affiliate">
+                    <option value="">{% trans "All Affiliates" %}</option>
+                    {% for affiliate in affiliates %}
+                    <option value="{{ affiliate.id }}"{% if request.GET.affiliate__id__exact == affiliate.id|stringformat:'s' %} selected{% endif %}>
+                        {{ affiliate.user.get_full_name|default:affiliate.user.username }} ({{ affiliate.affiliate_code }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {# Program Filter #}
+            <div class="filter-field">
+                <label for="filter-program">
+                    <i class="fas fa-project-diagram"></i> {% trans "Program" %}
+                </label>
+                <select id="filter-program">
+                    <option value="">{% trans "All Programs" %}</option>
+                    {% for program in programs %}
+                    <option value="{{ program.id }}"{% if request.GET.program__id__exact == program.id|stringformat:'s' %} selected{% endif %}>
+                        {{ program.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Results Info #}
+    <div class="results-info">
+        <span class="results-count" id="results-count">
+            <i class="fas fa-wallet"></i>
+            <span id="commission-count">{{ cl.result_count|default:recent_commissions|length }}</span>
+            {% trans "commission" %}{{ cl.result_count|default:recent_commissions|length|pluralize }}
+        </span>
+    </div>
+
+    {# Actions bar for bulk operations #}
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-commission" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {# Commission Cards Results #}
+    <div id="commission-results">
+        {% include "admin/affiliate/partials/commission_cards.html" with commissions=recent_commissions %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    {# Pagination #}
+    {% if is_paginated %}
+    <p class="paginator">
+        <span class="showing-count">
+            {% blocktrans with start=page_obj.start_index end=page_obj.end_index total=paginator.count %}
+                Showing {{ start }} to {{ end }} of {{ total }}
+            {% endblocktrans %}
+        </span>
+
+        {% if page_obj.has_other_pages %}
+        <span class="pagination-links">
+            {% if page_obj.has_previous %}
+            <a href="?page=1" class="button pagination-button">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="button pagination-button">
+                <i class="fas fa-angle-left"></i>
+            </a>
+            {% endif %}
+
+            <span class="this-page">
+                {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="button pagination-button">
+                <i class="fas fa-angle-right"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="button pagination-button">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </p>
+    {% endif %}
+
+    {# Toggle to show Django's default table view #}
+    <a href="#show-table" data-action="show-admin-table" class="toggle-view-btn">
+        <i class="fas fa-table"></i>
+        {% trans "Show Full Admin Table View" %}
+    </a>
+</div>
+
+{# Django's default changelist (hidden by default, shown on request) #}
+<div id="admin-table-view" class="hidden">
+    {{ block.super }}
+</div>
+
+<div id="affiliate-list-config"
+     data-filter-path="/admin/affiliate/commission/filter/"
+     data-results-container="commission-results"
+     data-results-count="commission-count"
+     style="display:none;"></div>
+<script src="{% static 'affiliate/js/affiliate-admin.js' %}" defer></script>
+
+{% endblock %}

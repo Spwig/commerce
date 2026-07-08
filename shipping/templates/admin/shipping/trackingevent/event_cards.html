@@ -1,0 +1,95 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for event in events %}
+    <div class="list-row-card tracking-event-card status-{{ event.status }}">
+        <div class="list-row-card-icon">
+            <div class="event-status-icon {{ event.status }}">
+                {% if event.status == 'delivered' %}
+                    <i class="fas fa-check"></i>
+                {% elif event.status == 'in_transit' %}
+                    <i class="fas fa-shipping-fast"></i>
+                {% elif event.status == 'out_for_delivery' %}
+                    <i class="fas fa-truck"></i>
+                {% elif event.status == 'exception' %}
+                    <i class="fas fa-exclamation"></i>
+                {% elif event.status == 'returned' %}
+                    <i class="fas fa-undo"></i>
+                {% else %}
+                    <i class="fas fa-file-alt"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:shipping_trackingevent_change' event.pk %}">
+                    {{ event.get_status_display }}
+                </a>
+                <span class="event-id" title="{{ event.id }}">
+                    #{{ event.id|slice:":8" }}
+                </span>
+            </h3>
+
+            {% if event.description %}
+            <p class="list-row-card-subtitle">
+                {{ event.description }}
+            </p>
+            {% endif %}
+
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                <span class="list-row-card-badge tracking-status-badge {{ event.status }}">
+                    {{ event.get_status_display }}
+                </span>
+
+                {% if event.location %}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-map-marker-alt"></i> {{ event.location }}
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Occurred" %}: {{ event.occurred_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if event.shipment %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-box"></i>
+                    <span>{% trans "Shipment" %}:
+                        <a href="{% url 'admin:shipping_shipment_change' event.shipment.pk %}">
+                            {{ event.shipment.tracking_id|default:event.shipment.id|slice:":8" }}
+                        </a>
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:shipping_trackingevent_change' event.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            {% if event.shipment %}
+            <a href="{% url 'admin:shipping_shipment_change' event.shipment.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View shipment' %}">
+                <i class="fas fa-box"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-route"></i>
+        </div>
+        <h2>{% trans "No tracking events found" %}</h2>
+        <p>{% trans "Tracking events will appear here when shipments are tracked." %}</p>
+    </div>
+    {% endfor %}
+</div>

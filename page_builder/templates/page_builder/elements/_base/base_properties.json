@@ -1,0 +1,586 @@
+{
+  "version": "1.1.0",
+  "description": "Universal base properties inherited by all page builder elements",
+  "tabs": {
+    "style": {
+      "label": "Style",
+      "icon": "fas fa-paint-brush",
+      "order": 2,
+      "properties": {
+        "typography_group": {
+          "type": "property_group",
+          "label": "Typography",
+          "columns": 1,
+          "properties": {
+            "typography": {
+              "type": "typography",
+              "label": "Typography Settings",
+              "help_text": "Configure font family, size, weight, spacing, and style",
+              "utility": "typography_editor",
+              "default": ""
+            }
+          }
+        },
+        "colors_group": {
+          "type": "property_group",
+          "label": "Colors",
+          "columns": 1,
+          "properties": {
+            "text_color": {
+              "type": "color_advanced",
+              "label": "Text Color",
+              "help_text": "Set the text color using the advanced color picker",
+              "utility": "color_picker",
+              "default": ""
+            }
+          }
+        },
+        "background_group": {
+          "type": "property_group",
+          "label": "Background",
+          "columns": 1,
+          "properties": {
+            "background": {
+              "type": "background",
+              "label": "Background",
+              "help_text": "Configure background with color, gradient, image or video options including hover states",
+              "utility": "background_editor",
+              "placeholder": "Click button to configure",
+              "default": ""
+            }
+          }
+        },
+        "border_group": {
+          "type": "property_group",
+          "label": "Border",
+          "properties": {
+            "border": {
+              "type": "border_advanced",
+              "label": "Border",
+              "help_text": "Configure border width, style, color and radius",
+              "utility": "border_editor",
+              "default": ""
+            },
+            "rounded": {
+              "type": "select",
+              "label": "Border Radius",
+              "options": [
+                {"value": "", "label": "None"},
+                {"value": "sm", "label": "Small"},
+                {"value": "md", "label": "Medium"},
+                {"value": "lg", "label": "Large"},
+                {"value": "xl", "label": "Extra Large"},
+                {"value": "2xl", "label": "2X Large"},
+                {"value": "3xl", "label": "3X Large"},
+                {"value": "full", "label": "Full (Circle/Pill)"}
+              ],
+              "default": ""
+            }
+          }
+        },
+        "spacing_group": {
+          "type": "property_group",
+          "label": "Spacing",
+          "columns": 1,
+          "properties": {
+            "spacing": {
+              "type": "spacing",
+              "label": "Spacing",
+              "help_text": "Configure margin and padding with visual editor",
+              "utility": "spacing_editor",
+              "default": ""
+            }
+          }
+        },
+        "effects_group": {
+          "type": "property_group",
+          "label": "Effects",
+          "properties": {
+            "box_shadow": {
+              "type": "shadow",
+              "label": "Box Shadow",
+              "help_text": "Configure box shadow for the element container",
+              "utility": "shadow_editor",
+              "shadow_type": "box",
+              "default": ""
+            },
+            "opacity": {
+              "type": "range",
+              "label": "Opacity",
+              "min": 0,
+              "max": 1,
+              "step": 0.1,
+              "default": 1
+            }
+          }
+        }
+      }
+    },
+    "animations": {
+      "label": "Animations",
+      "icon": "fas fa-magic",
+      "order": 2.5,
+      "properties": {
+        "entrance_animation_settings": {
+          "type": "property_group",
+          "label": "Entrance Animations",
+          "help_text": "Configure animation effects when the element enters the viewport",
+          "columns": 1,
+          "properties": {
+            "animation_type": {
+              "type": "select",
+              "label": "Type",
+              "options": [
+                {"value": "", "label": "None"},
+                {"value": "fadeIn", "label": "Fade In"},
+                {"value": "slideInUp", "label": "Slide In Up"},
+                {"value": "slideInDown", "label": "Slide In Down"},
+                {"value": "slideInLeft", "label": "Slide In Left"},
+                {"value": "slideInRight", "label": "Slide In Right"},
+                {"value": "zoomIn", "label": "Zoom In"},
+                {"value": "bounceIn", "label": "Bounce In"},
+                {"value": "fadeOut", "label": "Fade Out"},
+                {"value": "slideOutUp", "label": "Slide Out Up"},
+                {"value": "slideOutDown", "label": "Slide Out Down"},
+                {"value": "slideOutLeft", "label": "Slide Out Left"},
+                {"value": "slideOutRight", "label": "Slide Out Right"},
+                {"value": "zoomOut", "label": "Zoom Out"},
+                {"value": "pulse", "label": "Pulse"},
+                {"value": "shake", "label": "Shake"},
+                {"value": "bounce", "label": "Bounce"},
+                {"value": "flash", "label": "Flash"},
+                {"value": "spin", "label": "Spin"}
+              ],
+              "default": "",
+              "help_text": "Choose an animation effect"
+            },
+            "animation_duration": {
+              "type": "select",
+              "label": "Duration",
+              "options": [
+                {"value": "0.3s", "label": "Fast (0.3s)"},
+                {"value": "0.5s", "label": "Normal (0.5s)"},
+                {"value": "0.8s", "label": "Slow (0.8s)"},
+                {"value": "1s", "label": "Very Slow (1s)"},
+                {"value": "1.5s", "label": "Extra Slow (1.5s)"}
+              ],
+              "default": "0.5s",
+              "help_text": "How long the animation takes"
+            },
+            "animation_delay": {
+              "type": "select",
+              "label": "Delay",
+              "options": [
+                {"value": "0s", "label": "None"},
+                {"value": "0.1s", "label": "0.1s"},
+                {"value": "0.2s", "label": "0.2s"},
+                {"value": "0.3s", "label": "0.3s"},
+                {"value": "0.5s", "label": "0.5s"},
+                {"value": "1s", "label": "1s"}
+              ],
+              "default": "0s",
+              "help_text": "Delay before animation starts"
+            },
+            "animation_timing": {
+              "type": "select",
+              "label": "Timing",
+              "options": [
+                {"value": "ease", "label": "Ease"},
+                {"value": "ease-in", "label": "Ease In"},
+                {"value": "ease-out", "label": "Ease Out"},
+                {"value": "ease-in-out", "label": "Ease In Out"},
+                {"value": "linear", "label": "Linear"}
+              ],
+              "default": "ease-out",
+              "help_text": "Animation easing function"
+            },
+            "animation_repeat": {
+              "type": "select",
+              "label": "Repeat",
+              "options": [
+                {"value": "1", "label": "Once"},
+                {"value": "infinite", "label": "Infinite"}
+              ],
+              "default": "1",
+              "help_text": "How many times to repeat"
+            }
+          }
+        },
+        "hover_animation_settings": {
+          "type": "property_group",
+          "label": "Hover Animations",
+          "help_text": "Configure animation effects when hovering over the element",
+          "columns": 1,
+          "properties": {
+            "hover_animation_type": {
+              "type": "select",
+              "label": "Effect",
+              "options": [
+                {"value": "", "label": "None"},
+                {"value": "scale-up", "label": "Scale Up"},
+                {"value": "scale-down", "label": "Scale Down"},
+                {"value": "lift", "label": "Lift (Float Up)"},
+                {"value": "rotate-cw", "label": "Rotate Clockwise"},
+                {"value": "rotate-ccw", "label": "Rotate Counter-Clockwise"},
+                {"value": "fade", "label": "Fade"},
+                {"value": "brighten", "label": "Brighten"},
+                {"value": "shadow-grow", "label": "Shadow Grow"},
+                {"value": "lift-shadow", "label": "Lift with Shadow"},
+                {"value": "zoom-brighten", "label": "Zoom with Brightness"},
+                {"value": "pulse-scale", "label": "Pulse Scale"},
+                {"value": "skew", "label": "Skew"},
+                {"value": "border-glow", "label": "Border Glow"}
+              ],
+              "default": "",
+              "help_text": "Choose a hover animation effect"
+            },
+            "hover_animation_duration": {
+              "type": "select",
+              "label": "Duration",
+              "options": [
+                {"value": "0.15s", "label": "Fast (0.15s)"},
+                {"value": "0.3s", "label": "Normal (0.3s)"},
+                {"value": "0.5s", "label": "Slow (0.5s)"},
+                {"value": "0.8s", "label": "Very Slow (0.8s)"}
+              ],
+              "default": "0.3s",
+              "help_text": "Transition duration for the hover effect"
+            },
+            "hover_animation_timing": {
+              "type": "select",
+              "label": "Timing",
+              "options": [
+                {"value": "ease", "label": "Ease"},
+                {"value": "ease-in", "label": "Ease In"},
+                {"value": "ease-out", "label": "Ease Out"},
+                {"value": "ease-in-out", "label": "Ease In Out"},
+                {"value": "linear", "label": "Linear"},
+                {"value": "cubic-bezier(0.4, 0, 0.2, 1)", "label": "Material Design"},
+                {"value": "cubic-bezier(0.68, -0.55, 0.265, 1.55)", "label": "Bounce"}
+              ],
+              "default": "ease-out",
+              "help_text": "Timing function for the transition"
+            },
+            "hover_animation_intensity": {
+              "type": "select",
+              "label": "Intensity",
+              "options": [
+                {"value": "subtle", "label": "Subtle"},
+                {"value": "normal", "label": "Normal"},
+                {"value": "strong", "label": "Strong"}
+              ],
+              "default": "normal",
+              "help_text": "How pronounced the effect should be",
+              "show_when": {
+                "property": "hover_animation_type",
+                "values": ["scale-up", "scale-down", "lift", "rotate-cw", "rotate-ccw", "shadow-grow", "lift-shadow", "zoom-brighten", "skew"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "advanced": {
+      "label": "Advanced",
+      "icon": "fas fa-cogs",
+      "order": 3,
+      "properties": {
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Visibility",
+          "columns": 1,
+          "properties": {
+            "visibility_rules": {
+              "type": "visibility_rules",
+              "label": "Visibility Rules",
+              "help_text": "Control when this element is shown based on conditions like user status, device, time, and more",
+              "utility": "visibility_rules_editor",
+              "default": []
+            }
+          }
+        },
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout",
+          "columns": 1,
+          "properties": {
+            "z_index": {
+              "type": "number",
+              "label": "Z-Index",
+              "help_text": "Stacking order (higher numbers appear on top)"
+            }
+          }
+        },
+        "css_group": {
+          "type": "property_group",
+          "label": "CSS & Attributes",
+          "columns": 1,
+          "properties": {
+            "id": {
+              "type": "string",
+              "label": "Element ID",
+              "help_text": "Unique identifier for this element"
+            },
+            "custom_class": {
+              "type": "string",
+              "label": "Custom CSS Classes",
+              "help_text": "Additional CSS classes to apply"
+            },
+            "custom_styles": {
+              "type": "textarea",
+              "label": "Custom CSS Styles",
+              "help_text": "Additional CSS styles",
+              "rows": 3,
+              "full_width": true
+            },
+            "data_attributes": {
+              "type": "object",
+              "label": "Data Attributes",
+              "help_text": "Custom data-* attributes as key-value pairs",
+              "full_width": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "typography": {
+      "type": "typography",
+      "label": "Typography Settings",
+      "help_text": "Configure font family, size, weight, spacing, and style",
+      "utility": "typography_editor",
+      "default": ""
+    },
+    "text_color": {
+      "type": "color_advanced",
+      "label": "Text Color",
+      "help_text": "Set the text color using the advanced color picker",
+      "utility": "color_picker",
+      "default": ""
+    },
+    "background": {
+      "type": "background",
+      "label": "Background",
+      "help_text": "Configure background with color, gradient, image or video options including hover states",
+      "utility": "background_editor",
+      "placeholder": "Click button to configure",
+      "default": ""
+    },
+    "border": {
+      "type": "border_advanced",
+      "label": "Border",
+      "help_text": "Configure border width, style, color and radius",
+      "utility": "border_editor",
+      "default": ""
+    },
+    "rounded": {
+      "type": "select",
+      "label": "Border Radius",
+      "options": [
+        {"value": "", "label": "None"},
+        {"value": "sm", "label": "Small"},
+        {"value": "md", "label": "Medium"},
+        {"value": "lg", "label": "Large"},
+        {"value": "xl", "label": "Extra Large"},
+        {"value": "2xl", "label": "2X Large"},
+        {"value": "3xl", "label": "3X Large"},
+        {"value": "full", "label": "Full (Circle/Pill)"}
+      ],
+      "default": ""
+    },
+    "spacing": {
+      "type": "spacing",
+      "label": "Spacing",
+      "help_text": "Configure margin and padding with visual editor",
+      "utility": "spacing_editor",
+      "default": ""
+    },
+    "box_shadow": {
+      "type": "shadow",
+      "label": "Box Shadow",
+      "help_text": "Configure box shadow for the element container",
+      "utility": "shadow_editor",
+      "shadow_type": "box",
+      "default": ""
+    },
+    "opacity": {
+      "type": "range",
+      "label": "Opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 1
+    },
+    "visibility_rules": {
+      "type": "visibility_rules",
+      "label": "Visibility Rules",
+      "help_text": "Control when this element is shown based on conditions like user status, device, time, and more",
+      "utility": "visibility_rules_editor",
+      "default": []
+    },
+    "z_index": {
+      "type": "number",
+      "label": "Z-Index",
+      "help_text": "Stacking order (higher numbers appear on top)"
+    },
+    "id": {
+      "type": "string",
+      "label": "Element ID",
+      "help_text": "Unique identifier for this element"
+    },
+    "custom_class": {
+      "type": "string",
+      "label": "Custom CSS Classes",
+      "help_text": "Additional CSS classes to apply"
+    },
+    "custom_styles": {
+      "type": "textarea",
+      "label": "Custom CSS Styles",
+      "help_text": "Additional CSS styles",
+      "rows": 3
+    },
+    "data_attributes": {
+      "type": "object",
+      "label": "Data Attributes",
+      "help_text": "Custom data-* attributes as key-value pairs"
+    },
+    "animation_type": {
+      "type": "select",
+      "label": "Entrance Animation",
+      "options": [
+        {"value": "", "label": "None"},
+        {"value": "fadeIn", "label": "Fade In"},
+        {"value": "slideInUp", "label": "Slide In Up"},
+        {"value": "slideInDown", "label": "Slide In Down"},
+        {"value": "slideInLeft", "label": "Slide In Left"},
+        {"value": "slideInRight", "label": "Slide In Right"},
+        {"value": "zoomIn", "label": "Zoom In"},
+        {"value": "bounceIn", "label": "Bounce In"},
+        {"value": "fadeOut", "label": "Fade Out"},
+        {"value": "slideOutUp", "label": "Slide Out Up"},
+        {"value": "slideOutDown", "label": "Slide Out Down"},
+        {"value": "slideOutLeft", "label": "Slide Out Left"},
+        {"value": "slideOutRight", "label": "Slide Out Right"},
+        {"value": "zoomOut", "label": "Zoom Out"},
+        {"value": "pulse", "label": "Pulse"},
+        {"value": "shake", "label": "Shake"},
+        {"value": "bounce", "label": "Bounce"},
+        {"value": "flash", "label": "Flash"},
+        {"value": "spin", "label": "Spin"}
+      ],
+      "default": "",
+      "help_text": "Choose an entrance animation effect"
+    },
+    "animation_duration": {
+      "type": "select",
+      "label": "Entrance Duration",
+      "options": [
+        {"value": "0.3s", "label": "Fast (0.3s)"},
+        {"value": "0.5s", "label": "Normal (0.5s)"},
+        {"value": "0.8s", "label": "Slow (0.8s)"},
+        {"value": "1s", "label": "Very Slow (1s)"},
+        {"value": "1.5s", "label": "Extra Slow (1.5s)"}
+      ],
+      "default": "0.5s",
+      "help_text": "How long the entrance animation takes"
+    },
+    "animation_delay": {
+      "type": "select",
+      "label": "Entrance Delay",
+      "options": [
+        {"value": "0s", "label": "None"},
+        {"value": "0.1s", "label": "0.1s"},
+        {"value": "0.2s", "label": "0.2s"},
+        {"value": "0.3s", "label": "0.3s"},
+        {"value": "0.5s", "label": "0.5s"},
+        {"value": "1s", "label": "1s"}
+      ],
+      "default": "0s",
+      "help_text": "Delay before entrance animation starts"
+    },
+    "animation_timing": {
+      "type": "select",
+      "label": "Entrance Timing",
+      "options": [
+        {"value": "ease", "label": "Ease"},
+        {"value": "ease-in", "label": "Ease In"},
+        {"value": "ease-out", "label": "Ease Out"},
+        {"value": "ease-in-out", "label": "Ease In Out"},
+        {"value": "linear", "label": "Linear"}
+      ],
+      "default": "ease-out",
+      "help_text": "Entrance animation easing function"
+    },
+    "animation_repeat": {
+      "type": "select",
+      "label": "Entrance Repeat",
+      "options": [
+        {"value": "1", "label": "Once"},
+        {"value": "infinite", "label": "Infinite"}
+      ],
+      "default": "1",
+      "help_text": "How many times to repeat entrance animation"
+    },
+    "hover_animation_type": {
+      "type": "select",
+      "label": "Hover Effect",
+      "options": [
+        {"value": "", "label": "None"},
+        {"value": "scale-up", "label": "Scale Up"},
+        {"value": "scale-down", "label": "Scale Down"},
+        {"value": "lift", "label": "Lift (Float Up)"},
+        {"value": "rotate-cw", "label": "Rotate Clockwise"},
+        {"value": "rotate-ccw", "label": "Rotate Counter-Clockwise"},
+        {"value": "fade", "label": "Fade"},
+        {"value": "brighten", "label": "Brighten"},
+        {"value": "shadow-grow", "label": "Shadow Grow"},
+        {"value": "lift-shadow", "label": "Lift with Shadow"},
+        {"value": "zoom-brighten", "label": "Zoom with Brightness"},
+        {"value": "pulse-scale", "label": "Pulse Scale"},
+        {"value": "skew", "label": "Skew"},
+        {"value": "border-glow", "label": "Border Glow"}
+      ],
+      "default": "",
+      "help_text": "Choose a hover animation effect"
+    },
+    "hover_animation_duration": {
+      "type": "select",
+      "label": "Hover Duration",
+      "options": [
+        {"value": "0.15s", "label": "Fast (0.15s)"},
+        {"value": "0.3s", "label": "Normal (0.3s)"},
+        {"value": "0.5s", "label": "Slow (0.5s)"},
+        {"value": "0.8s", "label": "Very Slow (0.8s)"}
+      ],
+      "default": "0.3s",
+      "help_text": "Transition duration for the hover effect"
+    },
+    "hover_animation_timing": {
+      "type": "select",
+      "label": "Hover Timing",
+      "options": [
+        {"value": "ease", "label": "Ease"},
+        {"value": "ease-in", "label": "Ease In"},
+        {"value": "ease-out", "label": "Ease Out"},
+        {"value": "ease-in-out", "label": "Ease In Out"},
+        {"value": "linear", "label": "Linear"},
+        {"value": "cubic-bezier(0.4, 0, 0.2, 1)", "label": "Material Design"},
+        {"value": "cubic-bezier(0.68, -0.55, 0.265, 1.55)", "label": "Bounce"}
+      ],
+      "default": "ease-out",
+      "help_text": "Timing function for the hover transition"
+    },
+    "hover_animation_intensity": {
+      "type": "select",
+      "label": "Hover Intensity",
+      "options": [
+        {"value": "subtle", "label": "Subtle"},
+        {"value": "normal", "label": "Normal"},
+        {"value": "strong", "label": "Strong"}
+      ],
+      "default": "normal",
+      "help_text": "How pronounced the hover effect should be"
+    }
+  }
+}

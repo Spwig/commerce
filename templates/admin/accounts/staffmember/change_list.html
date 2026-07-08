@@ -1,0 +1,142 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Staff Management" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/css/staff_management.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Stats Bar -->
+    <div class="staff-stats-bar">
+        <div class="staff-stat-card">
+            <div class="staff-stat-icon total">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="staff-stat-info">
+                <span class="staff-stat-value">{{ total_staff }}</span>
+                <span class="staff-stat-label">{% trans "Total Staff" %}</span>
+            </div>
+        </div>
+        <div class="staff-stat-card">
+            <div class="staff-stat-icon active">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="staff-stat-info">
+                <span class="staff-stat-value">{{ active_staff }}</span>
+                <span class="staff-stat-label">{% trans "Active" %}</span>
+            </div>
+        </div>
+        <div class="staff-stat-card">
+            <div class="staff-stat-icon pos">
+                <i class="fas fa-cash-register"></i>
+            </div>
+            <div class="staff-stat-info">
+                <span class="staff-stat-value">{{ pos_count }}</span>
+                <span class="staff-stat-label">{% trans "POS Access" %}</span>
+            </div>
+        </div>
+        <div class="staff-stat-card">
+            <div class="staff-stat-icon security">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="staff-stat-info">
+                <span class="staff-stat-value">{{ mfa_count }}</span>
+                <span class="staff-stat-label">{% trans "2FA Enabled" %}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="staff-action-bar">
+        <h2><i class="fas fa-user-shield"></i> {% trans "Staff Directory" %}</h2>
+        {% if has_add_permission %}
+        <a href="{% url 'admin:accounts_staffmember_add' %}" class="staff-btn staff-btn-primary">
+            <i class="fas fa-plus"></i> {% trans "Add Staff Member" %}
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i>
+                {% trans "Filters" %}
+            </h3>
+            <button class="filters-toggle" id="toggle-filters-btn" type="button">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="filters-panel-fields" id="filter-fields">
+            <div class="filter-field">
+                <label for="filter-search">{% trans "Search" %}</label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Name or email...' %}">
+            </div>
+            <div class="filter-field">
+                <label for="filter-role">{% trans "Role" %}</label>
+                <select id="filter-role">
+                    <option value="">{% trans "All Roles" %}</option>
+                    {% for role in all_roles %}
+                    <option value="{{ role.pk }}">{{ role.display_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-access">{% trans "Access" %}</label>
+                <select id="filter-access">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="admin_only">{% trans "Admin Only" %}</option>
+                    <option value="pos_only">{% trans "POS Only" %}</option>
+                    <option value="both">{% trans "Admin & POS" %}</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-status">{% trans "Status" %}</label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-mfa">{% trans "2FA" %}</label>
+                <select id="filter-mfa">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="enabled">{% trans "Enabled" %}</option>
+                    <option value="disabled">{% trans "Not Enabled" %}</option>
+                </select>
+            </div>
+        </div>
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters">
+                <span class="active-filters-label">{% trans "Active:" %}</span>
+            </div>
+            <div class="filters-panel-actions">
+                <button class="button secondary" type="button" id="clear-filters-btn">
+                    <i class="fas fa-times"></i>
+                    {% trans "Clear All" %}
+                </button>
+                <button class="button default" type="button" id="apply-filters-btn">
+                    <i class="fas fa-check"></i>
+                    {% trans "Apply Filters" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-results-summary" id="results-summary">
+        <i class="fas fa-info-circle"></i>
+        {% trans "Showing" %} <span class="filter-results-count" id="results-count">{{ staff_list|length }}</span> {% trans "staff members" %}
+    </div>
+
+    <!-- Staff Cards -->
+    <div class="list-row-cards" id="results-container">
+        {% include "admin/accounts/staffmember/partials/staff_cards.html" %}
+    </div>
+</div>
+{% endblock %}

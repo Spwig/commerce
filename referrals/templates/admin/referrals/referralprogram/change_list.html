@@ -1,0 +1,145 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Referral Program" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {# Dashboard Header #}
+    <div class="dashboard-header">
+        <div>
+            <h1>
+                <i class="fas fa-share-alt"></i>
+                {% trans "Referral Program Configuration" %}
+            </h1>
+            <p class="subtitle">{% trans "Configure rewards, eligibility rules, and fraud detection for your referral program" %}</p>
+        </div>
+    </div>
+
+    {# Statistics Dashboard #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon">
+                {% if program.status == 'active' %}
+                    <i class="fas fa-toggle-on icon-color-success"></i>
+                {% elif program.status == 'paused' %}
+                    <i class="fas fa-pause-circle icon-color-warning"></i>
+                {% else %}
+                    <i class="fas fa-toggle-off text-muted"></i>
+                {% endif %}
+            </div>
+            <div class="value">{{ program.get_status_display }}</div>
+            <div class="label">{% trans "Program Status" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <div class="value">{{ total_referrers|default:"0" }}</div>
+            <div class="label">{% trans "Active Referrers" %}</div>
+            <small class="stat-meta">{% trans "with successful conversions" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-gift"></i></div>
+            <div class="value">{{ total_rewards|default:"0" }}</div>
+            <div class="label">{% trans "Rewards Issued" %}</div>
+            <small class="stat-meta">{% trans "lifetime total" %}</small>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="value">${{ total_reward_value|default:"0"|floatformat:2 }}</div>
+            <div class="label">{% trans "Total Reward Value" %}</div>
+            <small class="stat-meta">{% trans "all time" %}</small>
+        </div>
+    </div>
+
+    {# Configuration Actions #}
+    <div class="dashboard-actions-section">
+        <h2 class="dashboard-section-title">
+            <i class="fas fa-cog"></i> {% trans "Configuration" %}
+        </h2>
+        <div class="dashboard-actions-grid">
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <h3>{% trans "Edit Program Settings" %}</h3>
+                <p class="description">{% trans "Configure rewards, eligibility rules, timing, caps, and fraud detection policies" %}</p>
+                <a href="{% url 'admin:referrals_referralprogram_change' program.pk %}" class="button default">
+                    <i class="fas fa-arrow-right"></i> {% trans "Configure" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>{% trans "View Referrers" %}</h3>
+                <p class="description">{% trans "Manage referral identities and track performance metrics" %}</p>
+                <a href="{% url 'admin:referrals_referralidentity_changelist' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <h3>{% trans "Manage Rewards" %}</h3>
+                <p class="description">{% trans "Review and process referral rewards for referrers and referees" %}</p>
+                <a href="{% url 'admin:referrals_referralreward_changelist' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>{% trans "Attribution Tracking" %}</h3>
+                <p class="description">{% trans "View attribution events and conversion tracking" %}</p>
+                <a href="{% url 'admin:referrals_referralattribution_changelist' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>{% trans "Referral Events" %}</h3>
+                <p class="description">{% trans "Monitor referral events and activity logs" %}</p>
+                <a href="{% url 'admin:referrals_referralevent_changelist' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                </a>
+            </div>
+
+            <div class="dashboard-action-card">
+                <div class="card-icon">
+                    <i class="fas fa-dashboard"></i>
+                </div>
+                <h3>{% trans "Referral Dashboard" %}</h3>
+                <p class="description">{% trans "View comprehensive analytics and performance insights" %}</p>
+                <a href="{% url 'referrals:dashboard' %}" class="button">
+                    <i class="fas fa-arrow-right"></i> {% trans "Dashboard" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Program Information #}
+    {% if program.terms_and_conditions %}
+    <div class="dashboard-actions-section">
+        <h2 class="dashboard-section-title">
+            <i class="fas fa-file-contract"></i> {% trans "Terms and Conditions" %}
+        </h2>
+        <div class="content-box">
+            {{ program.terms_and_conditions|linebreaksbr }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

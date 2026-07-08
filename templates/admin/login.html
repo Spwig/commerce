@@ -1,0 +1,216 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static core_extras %}
+
+{% block title %}{% trans "Sign In" %} | {{ site_settings.site_name|default:"Admin" }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/login.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% favicon_meta %}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} spwig-login{% endblock %}
+
+{% block header %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_subtitle %}{% endblock %}
+
+{% block content %}
+{% get_admin_sso_context as sso %}
+<div class="login-page">
+    <!-- Gradient background -->
+    <div class="login-background"></div>
+
+    <!-- Centered login container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo & heading -->
+            <div class="login-card-header">
+                <img src="{% static 'images/spwig_logo.svg' %}" alt="Spwig" class="login-logo">
+                <h1 class="login-title">{% trans "Welcome Back" %}</h1>
+                <p class="login-subtitle">{% trans "Sign in to your store admin" %}</p>
+            </div>
+
+            <!-- Error messages -->
+            {% if form.errors and not form.non_field_errors %}
+            <div class="login-alert login-alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{% blocktranslate count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}</span>
+            </div>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+            <div class="login-alert login-alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <div class="login-alert login-alert-warning">
+                <i class="fas fa-info-circle"></i>
+                <span>{% blocktranslate trimmed %}
+                    You are authenticated as {{ username }}, but are not authorized to
+                    access this page. Would you like to login to a different account?
+                {% endblocktranslate %}</span>
+            </div>
+            {% endif %}
+
+            {% if sso.admin_sso_enabled and sso.sso_configured %}
+            <!-- SSO Login Button -->
+            <a href="{{ sso.sso_login_url }}?next={{ next|default:'/en/admin/' }}" class="sso-btn">
+                <i class="fas fa-shield-alt"></i>
+                <span>{% blocktranslate with provider=sso.sso_provider_name %}Sign in with {{ provider }}{% endblocktranslate %}</span>
+                <i class="fas fa-arrow-right sso-btn-arrow"></i>
+            </a>
+
+            <!-- Divider + local login -->
+            <div class="login-divider">{% trans "or" %}</div>
+
+            {% if not sso.admin_password_login_enabled and not request.GET.password %}
+            <!-- SSO-only mode: local login behind toggle -->
+            <button type="button" class="local-toggle" id="local-toggle" onclick="toggleLocal()">
+                &#9654; {% trans "Sign in with local account" %}
+            </button>
+            <div class="local-form" id="local-form">
+            {% endif %}
+
+                <form action="{{ app_path }}" method="post" id="login-form" class="login-form">
+                    {% csrf_token %}
+
+                    <div class="login-field">
+                        <label for="id_username" class="login-label">
+                            <i class="fas fa-user"></i>
+                            {% trans "Username" %}
+                        </label>
+                        <div class="login-input-wrapper">
+                            {{ form.username }}
+                        </div>
+                        {% if form.username.errors %}
+                        <div class="login-field-error">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="login-field">
+                        <label for="id_password" class="login-label">
+                            <i class="fas fa-lock"></i>
+                            {% trans "Password" %}
+                        </label>
+                        <div class="login-input-wrapper">
+                            {{ form.password }}
+                            <button type="button" class="password-toggle" data-action="toggle-password" aria-label="{% trans 'Toggle password visibility' %}">
+                                <i class="fas fa-eye" id="password-toggle-icon"></i>
+                            </button>
+                        </div>
+                        {% if form.password.errors %}
+                        <div class="login-field-error">{{ form.password.errors }}</div>
+                        {% endif %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </div>
+
+                    {% url 'admin_password_reset' as password_reset_url %}
+                    {% if password_reset_url %}
+                    <div class="login-forgot">
+                        <a href="{{ password_reset_url }}">{% trans "Forgot your password?" %}</a>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="login-submit">
+                        <span class="login-submit-text">{% trans "Sign In" %}</span>
+                        <i class="fas fa-arrow-right login-submit-icon"></i>
+                    </button>
+                </form>
+
+            {% if not sso.admin_password_login_enabled and not request.GET.password %}
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- Standard login (no SSO configured) -->
+            <form action="{{ app_path }}" method="post" id="login-form" class="login-form">
+                {% csrf_token %}
+
+                <div class="login-field">
+                    <label for="id_username" class="login-label">
+                        <i class="fas fa-user"></i>
+                        {% trans "Username" %}
+                    </label>
+                    <div class="login-input-wrapper">
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                    <div class="login-field-error">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="login-field">
+                    <label for="id_password" class="login-label">
+                        <i class="fas fa-lock"></i>
+                        {% trans "Password" %}
+                    </label>
+                    <div class="login-input-wrapper">
+                        {{ form.password }}
+                        <button type="button" class="password-toggle" data-action="toggle-password" aria-label="{% trans 'Toggle password visibility' %}">
+                            <i class="fas fa-eye" id="password-toggle-icon"></i>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                    <div class="login-field-error">{{ form.password.errors }}</div>
+                    {% endif %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                </div>
+
+                {% url 'admin_password_reset' as password_reset_url %}
+                {% if password_reset_url %}
+                <div class="login-forgot">
+                    <a href="{{ password_reset_url }}">{% trans "Forgot your password?" %}</a>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="login-submit">
+                    <span class="login-submit-text">{% trans "Sign In" %}</span>
+                    <i class="fas fa-arrow-right login-submit-icon"></i>
+                </button>
+            </form>
+            {% endif %}{# end SSO check #}
+        </div>
+
+        <!-- Footer -->
+        <footer class="login-footer">
+            <div class="login-footer-site">
+                {{ site_settings.site_name|default:"My Store" }}
+            </div>
+            <div class="login-footer-powered">
+                <img src="{% static 'core/images/favicon-16x16.png' %}" alt="" class="login-footer-favicon">
+                <a href="https://spwig.com" target="_blank" rel="noopener">{% trans "Powered by Spwig" %}</a>
+            </div>
+            <div class="login-footer-copyright">
+                &copy; {% now "Y" %} Spwig contributors
+            </div>
+        </footer>
+    </div>
+</div>
+
+<script src="{% static 'core/admin/js/admin-login.js' %}" defer></script>
+{% if sso.admin_sso_enabled and sso.sso_configured and not sso.admin_password_login_enabled and not request.GET.password %}
+<script>
+function toggleLocal(){
+    var f=document.getElementById('local-form'),b=document.getElementById('local-toggle');
+    if(!f||!b)return;
+    f.classList.toggle('show');
+    b.innerHTML=f.classList.contains('show')
+        ?'&#9660; {% filter escapejs %}{% trans "Sign in with local account" %}{% endfilter %}'
+        :'&#9654; {% filter escapejs %}{% trans "Sign in with local account" %}{% endfilter %}';
+}
+{% if form.errors %}document.addEventListener('DOMContentLoaded',function(){toggleLocal();});{% endif %}
+</script>
+{% endif %}
+{% endblock %}

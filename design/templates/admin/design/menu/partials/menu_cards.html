@@ -1,0 +1,129 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for menu in menus %}
+    <div class="list-row-card{% if not menu.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ menu.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if menu.location == 'primary' %}
+                <i class="fas fa-compass icon-primary"></i>
+            {% elif menu.location == 'secondary' %}
+                <i class="fas fa-ellipsis-h icon-secondary"></i>
+            {% elif menu.location == 'footer' %}
+                <i class="fas fa-shoe-prints icon-footer"></i>
+            {% elif menu.location == 'mobile' %}
+                <i class="fas fa-mobile-alt icon-mobile"></i>
+            {% elif menu.location == 'account' %}
+                <i class="fas fa-user-circle icon-account"></i>
+            {% else %}
+                <i class="fas fa-bars icon-custom"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:design_menu_change' menu.pk %}">
+                    {{ menu.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-link"></i> {{ menu.slug }}
+                {% if menu.description %}
+                    &middot; {{ menu.description|truncatewords:10 }}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if menu.is_active %}
+                    <span class="list-row-card-badge success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge primary">
+                    <i class="fas fa-map-marker-alt"></i> {{ menu.get_location_display }}
+                </span>
+
+                <span class="list-row-card-badge">
+                    <i class="fas fa-th"></i> {{ menu.get_display_type_display }}
+                </span>
+
+                {% with item_count=menu.items.count %}
+                {% if item_count > 0 %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-list"></i> {{ item_count }} {% trans "item" %}{{ item_count|pluralize }}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge warning">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "No items" %}
+                    </span>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Items" %}</span>
+                    <span class="list-row-card-stat-value highlight">
+                        {{ menu.items.count }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Display" %}</span>
+                    <span class="list-row-card-stat-value">{{ menu.get_display_type_display }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Location" %}</span>
+                    <span class="list-row-card-stat-value">{{ menu.get_location_display }}</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ menu.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if menu.created_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{% trans "By" %}: {{ menu.created_by.get_short_name|default:menu.created_by.username }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'design:menu_builder' menu.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Open Visual Builder' %}">
+                <i class="fas fa-magic"></i>
+            </a>
+            <a href="{% url 'admin:design_menu_change' menu.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit menu settings' %}">
+                <i class="fas fa-cog"></i>
+            </a>
+            <a href="{% url 'admin:design_menu_delete' menu.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete menu' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-card">
+        <div class="empty-card-icon">
+            <i class="fas fa-bars"></i>
+        </div>
+        <p class="empty-card-text">{% trans "No menus found." %}</p>
+        <p class="empty-card-hint">{% trans "Create your first menu using the Visual Builder." %}</p>
+    </div>
+    {% endfor %}
+</div>

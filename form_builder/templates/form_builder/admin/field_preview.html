@@ -1,0 +1,180 @@
+{% load i18n %}
+{# Field Preview Template for Visual Builder #}
+{# Renders a preview of the field based on its type #}
+
+<label class="field-label-preview">
+    {{ field.label }}
+    {% if field.is_required %}<span class="required-star">*</span>{% endif %}
+</label>
+
+{% if field.field_type == 'text' %}
+<input type="text" class="field-input-preview" placeholder="{{ field.placeholder|default:'Enter text...' }}" disabled>
+
+{% elif field.field_type == 'textarea' %}
+<textarea class="field-input-preview" placeholder="{{ field.placeholder|default:'Enter text...' }}" rows="3" disabled></textarea>
+
+{% elif field.field_type == 'email' %}
+<input type="email" class="field-input-preview" placeholder="{{ field.placeholder|default:'email@example.com' }}" disabled>
+
+{% elif field.field_type == 'phone' %}
+<input type="tel" class="field-input-preview" placeholder="{{ field.placeholder|default:'+1 (555) 000-0000' }}" disabled>
+
+{% elif field.field_type == 'number' %}
+<input type="number" class="field-input-preview" placeholder="{{ field.placeholder|default:'0' }}" disabled>
+
+{% elif field.field_type == 'url' %}
+<input type="url" class="field-input-preview" placeholder="{{ field.placeholder|default:'https://example.com' }}" disabled>
+
+{% elif field.field_type == 'date' %}
+<input type="date" class="field-input-preview" disabled>
+
+{% elif field.field_type == 'time' %}
+<input type="time" class="field-input-preview" disabled>
+
+{% elif field.field_type == 'datetime' %}
+<input type="datetime-local" class="field-input-preview" disabled>
+
+{% elif field.field_type == 'select' %}
+<select class="field-input-preview" disabled>
+    <option value="">{{ field.placeholder|default:'Select an option...' }}</option>
+    {% for option in field.options %}
+    <option value="{{ option.value }}">{{ option.label }}</option>
+    {% empty %}
+    <option value="option1">{% trans 'Option 1' %}</option>
+    <option value="option2">{% trans 'Option 2' %}</option>
+    {% endfor %}
+</select>
+
+{% elif field.field_type == 'radio' %}
+<div class="radio-group-preview">
+    {% for option in field.options %}
+    <label class="radio-label-preview">
+        <input type="radio" name="preview_{{ field.id }}" disabled>
+        <span>{{ option.label }}</span>
+    </label>
+    {% empty %}
+    <label class="radio-label-preview">
+        <input type="radio" name="preview_{{ field.id }}" disabled>
+        <span>{% trans 'Option 1' %}</span>
+    </label>
+    <label class="radio-label-preview">
+        <input type="radio" name="preview_{{ field.id }}" disabled>
+        <span>{% trans 'Option 2' %}</span>
+    </label>
+    {% endfor %}
+</div>
+
+{% elif field.field_type == 'checkbox' %}
+<label class="checkbox-label-preview">
+    <input type="checkbox" disabled>
+    <span>{{ field.placeholder|default:field.label }}</span>
+</label>
+
+{% elif field.field_type == 'checkbox_group' %}
+<div class="checkbox-group-preview">
+    {% for option in field.options %}
+    <label class="checkbox-label-preview">
+        <input type="checkbox" disabled>
+        <span>{{ option.label }}</span>
+    </label>
+    {% empty %}
+    <label class="checkbox-label-preview">
+        <input type="checkbox" disabled>
+        <span>{% trans 'Option 1' %}</span>
+    </label>
+    <label class="checkbox-label-preview">
+        <input type="checkbox" disabled>
+        <span>{% trans 'Option 2' %}</span>
+    </label>
+    {% endfor %}
+</div>
+
+{% elif field.field_type == 'rating_stars' %}
+{% with max_stars=field.rating_config.max_stars|default:5 %}
+<div class="stars-preview">
+    {% for i in "12345"|make_list %}
+    {% if forloop.counter <= max_stars %}
+    <i class="fas fa-star star-preview"></i>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endwith %}
+
+{% elif field.field_type == 'rating_likert' %}
+<div class="likert-preview">
+    <div class="likert-scale">
+        <span class="likert-label">{% trans 'Strongly Disagree' %}</span>
+        <div class="likert-options">
+            <label class="likert-option"><input type="radio" disabled><span>1</span></label>
+            <label class="likert-option"><input type="radio" disabled><span>2</span></label>
+            <label class="likert-option"><input type="radio" disabled><span>3</span></label>
+            <label class="likert-option"><input type="radio" disabled><span>4</span></label>
+            <label class="likert-option"><input type="radio" disabled><span>5</span></label>
+        </div>
+        <span class="likert-label">{% trans 'Strongly Agree' %}</span>
+    </div>
+</div>
+
+{% elif field.field_type == 'rating_nps' %}
+<div class="nps-preview">
+    <div class="nps-scale">
+        <span class="nps-label">{% trans 'Not likely' %}</span>
+        <div class="nps-options">
+            {% for i in "0123456789X"|make_list %}
+            <button class="nps-btn {% if forloop.counter <= 7 %}detractor{% elif forloop.counter <= 9 %}passive{% else %}promoter{% endif %}" disabled>
+                {% if i == 'X' %}10{% else %}{{ i }}{% endif %}
+            </button>
+            {% endfor %}
+        </div>
+        <span class="nps-label">{% trans 'Very likely' %}</span>
+    </div>
+</div>
+
+{% elif field.field_type == 'file' %}
+<div class="file-upload-preview">
+    <i class="fas fa-cloud-upload-alt"></i>
+    <span>{% trans 'Click or drag files to upload' %}</span>
+    {% if field.file_config.max_size_mb %}
+    <small>{% trans 'Max size:' %} {{ field.file_config.max_size_mb }}MB</small>
+    {% endif %}
+</div>
+
+{% elif field.field_type == 'product_select' %}
+<div class="product-select-preview">
+    <div class="product-placeholder">
+        <i class="fas fa-shopping-bag"></i>
+        <span>{% trans 'Product selector will appear here' %}</span>
+    </div>
+</div>
+
+{% elif field.field_type == 'hidden' %}
+<div class="hidden-field-preview">
+    <i class="fas fa-eye-slash"></i>
+    <span>{% trans 'Hidden field' %} ({{ field.field_name }})</span>
+    {% if field.default_value %}
+    <small>{% trans 'Value:' %} {{ field.default_value }}</small>
+    {% endif %}
+</div>
+
+{% elif field.field_type == 'heading' %}
+<h3 class="heading-preview">{{ field.label }}</h3>
+{% if field.help_text %}
+<p class="heading-description-preview">{{ field.help_text }}</p>
+{% endif %}
+
+{% elif field.field_type == 'paragraph' %}
+<div class="paragraph-preview">
+    {{ field.label|safe }}
+</div>
+
+{% elif field.field_type == 'divider' %}
+<hr class="divider-preview">
+
+{% else %}
+{# Fallback for unknown field types #}
+<input type="text" class="field-input-preview" placeholder="{{ field.placeholder }}" disabled>
+{% endif %}
+
+{% if field.help_text and field.field_type not in 'heading,paragraph,divider' %}
+<span class="field-help-preview">{{ field.help_text }}</span>
+{% endif %}

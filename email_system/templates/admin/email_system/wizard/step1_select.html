@@ -1,0 +1,122 @@
+{% extends "admin/email_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Select an Email Provider" %}</h2>
+    <p class="step-description">{% trans "Choose the service you want to use for sending transactional emails." %}</p>
+
+    {% if providers %}
+    <form method="post" id="provider-select-form">
+        {% csrf_token %}
+
+        <div class="providers-grid">
+            {% for provider in providers %}
+            <label class="provider-card" for="provider-{{ provider.component.id }}">
+                <input type="radio"
+                       name="component_id"
+                       value="{{ provider.component.id }}"
+                       id="provider-{{ provider.component.id }}"
+                       required>
+
+                <div class="provider-card-content">
+                    {% if provider.component.thumbnail_url %}
+                    <div class="provider-logo">
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.component.thumbnail_url }}" alt="{{ provider.component.name }}" crossorigin="anonymous">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="provider-logo provider-logo-placeholder">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    {% endif %}
+
+                    <h3 class="provider-name">{{ provider.component.name }}</h3>
+
+                    {% if provider.component.description %}
+                    <p class="provider-description">{{ provider.component.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    <!-- Capability Badges -->
+                    {% if provider.capabilities %}
+                    <div class="provider-capabilities">
+                        {% if provider.requires_oauth %}
+                        <span class="capability-badge">
+                            <i class="fas fa-shield-alt"></i> {% trans "OAuth" %}
+                        </span>
+                        {% else %}
+                        <span class="capability-badge">
+                            <i class="fas fa-key"></i> {% trans "API Key" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.attachments %}
+                        <span class="capability-badge">
+                            <i class="fas fa-paperclip"></i> {% trans "Attachments" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.tracking %}
+                        <span class="capability-badge">
+                            <i class="fas fa-chart-line"></i> {% trans "Tracking" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.webhooks %}
+                        <span class="capability-badge">
+                            <i class="fas fa-webhook"></i> {% trans "Webhooks" %}
+                        </span>
+                        {% endif %}
+
+                        {% if provider.capabilities.batch_send %}
+                        <span class="capability-badge">
+                            <i class="fas fa-layer-group"></i> {% trans "Batch Send" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="provider-check">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>{% trans "No Providers Available" %}</h3>
+        <p>{% trans "No email provider components are currently installed." %}</p>
+        <p>{% trans "Please download and install email provider components from the component registry." %}</p>
+        <a href="{% url 'admin:component_updates_componentregistry_changelist' %}" class="btn btn-primary">
+            <i class="fas fa-download"></i> {% trans "Browse Components" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+{% if providers %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:email_system_emailaccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="provider-select-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script type="application/json" id="wizard-step1-config">
+{
+    "autoSelectMsg": "{% trans 'Using built-in SMTP server (only provider available)' %}"
+}
+</script>
+<script src="{% static 'email_system/js/wizard-step1.js' %}"></script>
+{% endblock %}

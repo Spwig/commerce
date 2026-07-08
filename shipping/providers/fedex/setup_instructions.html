@@ -1,0 +1,165 @@
+{% load i18n static %}
+
+<div class="setup-instructions-content">
+    <div class="instruction-header">
+        <i class="fas fa-graduation-cap"></i>
+        <h3>{% trans "Getting Your FedEx API Credentials" %}</h3>
+        <p class="header-subtitle">
+            {% trans "Follow these steps to set up your FedEx developer account and obtain API credentials" %}
+        </p>
+    </div>
+
+    <div class="instruction-steps">
+        <div class="instruction-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h4>{% trans "Create a FedEx Developer Account" %}</h4>
+                <p>{% trans "Visit the FedEx Developer Portal and sign up for a free developer account." %}</p>
+                <a href="https://developer.fedex.com/api/en-us/get-started.html"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn-external">
+                    <i class="fas fa-external-link-alt"></i>
+                    {% trans "Open FedEx Developer Portal" %}
+                </a>
+                <p class="step-note">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "You'll need a valid email address and basic business information." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="instruction-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h4>{% trans "Create a New Project" %}</h4>
+                <p>{% trans "After logging in to your developer account:" %}</p>
+                <ul>
+                    <li>{% trans "Click 'Create New Project' or navigate to 'My Projects'" %}</li>
+                    <li>{% trans "Give your project a descriptive name (e.g., 'My Store Shipping Integration')" %}</li>
+                    <li>{% trans "Select the APIs you need (at minimum: Ship, Track, Rates)" %}</li>
+                    <li>{% trans "Accept the terms of service" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="instruction-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h4>{% trans "Generate API Credentials" %}</h4>
+                <p>{% trans "In your project dashboard:" %}</p>
+                <ul>
+                    <li>{% trans "Navigate to 'API Credentials' or 'Keys & Secrets'" %}</li>
+                    <li>{% trans "Click 'Generate New Credentials' or 'Create API Key'" %}</li>
+                    <li>{% trans "You will receive an API Key (Client ID) and API Secret (Client Secret)" %}</li>
+                    <li>{% trans "Copy both values immediately - you'll need them in the next step" %}</li>
+                </ul>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>{% trans "Important!" %}</strong>
+                    {% trans "FedEx will only show your API Secret once. Make sure to save it securely before closing the page." %}
+                </div>
+            </div>
+        </div>
+
+        <div class="instruction-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h4>{% trans "Choose Your Environment" %}</h4>
+                <p>{% trans "FedEx provides two environments for API integration:" %}</p>
+                <ul>
+                    <li>
+                        <strong>{% trans "Test Environment" %}:</strong>
+                        {% trans "Use this for development and testing. It allows you to simulate shipments without creating real labels or charges. Recommended for initial setup." %}
+                    </li>
+                    <li>
+                        <strong>{% trans "Production Environment" %}:</strong>
+                        {% trans "Use this for live shipments with real tracking numbers and charges. Requires account approval from FedEx." %}
+                    </li>
+                </ul>
+                <p class="step-note">
+                    <i class="fas fa-lightbulb"></i>
+                    {% trans "Start with the Test environment to verify your integration works correctly before switching to Production." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="instruction-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <h4>{% trans "Gather Your Account Information" %}</h4>
+                <p>{% trans "You will also need your FedEx account number. This can be found:" %}</p>
+                <ul>
+                    <li>{% trans "On your FedEx invoices" %}</li>
+                    <li>{% trans "In your FedEx account dashboard (fedex.com)" %}</li>
+                    <li>{% trans "By contacting FedEx customer service" %}</li>
+                </ul>
+                <p class="step-note">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Your account number is required for generating shipping labels and accessing certain features." %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="instruction-footer">
+        <div class="help-box">
+            <i class="fas fa-question-circle"></i>
+            <div>
+                <strong>{% trans "Need Help?" %}</strong>
+                <p>
+                    {% trans "If you encounter any issues during setup:" %}
+                </p>
+                <ul>
+                    <li>
+                        {% trans "Visit the" %}
+                        <a href="https://developer.fedex.com/api/en-us/support.html" target="_blank" rel="noopener noreferrer">
+                            {% trans "FedEx Developer Support" %}
+                        </a>
+                        {% trans "for detailed documentation" %}
+                    </li>
+                    <li>
+                        {% trans "Check the" %}
+                        <a href="https://developer.fedex.com/api/en-us/guides/api-reference.html" target="_blank" rel="noopener noreferrer">
+                            {% trans "FedEx API Reference" %}
+                        </a>
+                    </li>
+                    <li>
+                        {% trans "Contact FedEx Developer Support at" %}
+                        <a href="mailto:FedExDevSupport@fedex.com">FedExDevSupport@fedex.com</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="checklist-box">
+            <strong>{% trans "Before Proceeding, Make Sure You Have:" %}</strong>
+            <ul class="checklist">
+                <li>
+                    <i class="fas fa-square"></i>
+                    {% trans "FedEx Developer account created" %}
+                </li>
+                <li>
+                    <i class="fas fa-square"></i>
+                    {% trans "Project created in the developer portal" %}
+                </li>
+                <li>
+                    <i class="fas fa-square"></i>
+                    {% trans "API Key (Client ID) copied and ready" %}
+                </li>
+                <li>
+                    <i class="fas fa-square"></i>
+                    {% trans "API Secret (Client Secret) copied and ready" %}
+                </li>
+                <li>
+                    <i class="fas fa-square"></i>
+                    {% trans "Decided on Test vs Production environment" %}
+                </li>
+                <li>
+                    <i class="fas fa-square"></i>
+                    {% trans "FedEx account number available (if applicable)" %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Catalog - Configurator Slot Options
+ *
+ * Description: Admin interface styles for slot_options.html
+ * Template: catalog/templates/admin/catalog/configurator/slot_options.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+.configurator-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.configurator-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.configurator-header h1 { font-size: 24px; margin: 0; display: flex; align-items: center; gap: 10px; }
+.configurator-header .breadcrumb { font-size: 13px; color: var(--body-quiet-color); margin-top: 4px; }
+.configurator-header .breadcrumb a { color: var(--link-fg); text-decoration: none; }
+.configurator-header .breadcrumb a:hover { text-decoration: underline; }
+
+.slot-info { background: var(--darkened-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+.slot-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.slot-info-item { display: flex; flex-direction: column; gap: 4px; }
+.slot-info-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--body-quiet-color); font-weight: 600; }
+.slot-info-value { font-size: 15px; font-weight: 500; }
+
+.search-section { background: var(--accent-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+.search-section h3 { margin: 0 0 12px 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.search-input-row { display: flex; gap: 8px; }
+.search-input-row input { flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--body-bg); color: var(--body-fg); }
+.search-input-row input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px var(--primary-bg); }
+.search-results { margin-top: 12px; }
+
+.results-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.results-info h2 { font-size: 18px; margin: 0; }
+.results-count { font-size: 13px; color: var(--body-quiet-color); display: flex; align-items: center; gap: 6px; }
+
+@media (max-width: 768px) {
+    .configurator-header { flex-direction: column; align-items: flex-start; }
+    .slot-info-grid { grid-template-columns: 1fr; }
+}

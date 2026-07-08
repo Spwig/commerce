@@ -1,0 +1,140 @@
+{% load i18n static %}
+
+<div class="product-card" data-product-id="{{ product.id }}">
+    <!-- Checkbox for bulk select -->
+    <div class="product-checkbox">
+        <input type="checkbox" class="product-select" value="{{ product.id }}" id="product-{{ product.id }}">
+    </div>
+
+    <!-- Product Image -->
+    <div class="product-image">
+        <a href="{% url 'admin:catalog_product_change' product.id %}">
+            {% if product.images.all.0 %}
+                <img src="{{ product.images.all.0.thumbnail_medium }}" alt="{{ product.name }}" loading="lazy">
+            {% else %}
+                <div class="product-placeholder">
+                    <i class="fas fa-image"></i>
+                </div>
+            {% endif %}
+        </a>
+        {% if product.is_featured %}
+            <span class="featured-badge" title="{% trans 'Featured Product' %}">
+                <i class="fas fa-star"></i>
+            </span>
+        {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info">
+        <h3 class="product-name">
+            <a href="{% url 'admin:catalog_product_change' product.id %}">{{ product.name }}</a>
+        </h3>
+
+        <div class="product-sku">
+            <span class="sku-label">{% trans "SKU:" %}</span>
+            <span class="sku-value">{{ product.sku }}</span>
+            <button class="copy-sku-btn" data-sku="{{ product.sku }}" title="{% trans 'Copy SKU' %}">
+                <i class="fas fa-copy"></i>
+            </button>
+        </div>
+
+        <div class="product-meta">
+            {% if product.category %}
+                <span class="meta-item">
+                    <i class="fas fa-folder"></i> {{ product.category.name }}
+                </span>
+            {% endif %}
+            {% if product.brand %}
+                <span class="meta-item">
+                    <i class="fas fa-tag"></i> {{ product.brand.name }}
+                </span>
+            {% endif %}
+        </div>
+
+        <div class="product-price">
+            {% if product.compare_at_price and product.compare_at_price > product.price %}
+                <span class="compare-price">{{ product.compare_at_price }}</span>
+            {% endif %}
+            <span class="current-price">{{ product.price }}</span>
+            {% if product.discount_percentage %}
+                <span class="discount-badge">-{{ product.discount_percentage }}%</span>
+            {% endif %}
+        </div>
+
+        <div class="product-badges">
+            <!-- Product Type Badge (hidden for simple - it's the default) -->
+            {% if product.product_type != 'simple' %}
+                <span class="badge badge-type badge-type-{{ product.product_type }}" title="{{ product.get_product_type_display }}">
+                    {% if product.product_type == 'variable' %}
+                        <i class="fas fa-layer-group"></i>
+                    {% elif product.product_type == 'bundle' %}
+                        <i class="fas fa-boxes"></i>
+                    {% elif product.product_type == 'configurable' %}
+                        <i class="fas fa-cogs"></i>
+                    {% elif product.product_type == 'digital' or product.product_type == 'downloadable' %}
+                        <i class="fas fa-cloud-download-alt"></i>
+                    {% elif product.product_type == 'gift_card' %}
+                        <i class="fas fa-gift"></i>
+                    {% elif product.product_type == 'customizable' %}
+                        <i class="fas fa-paint-brush"></i>
+                    {% endif %}
+                    <span class="badge-type-label">{{ product.get_product_type_display }}</span>
+                </span>
+            {% endif %}
+
+            <!-- Status Badge -->
+            <span class="badge badge-status badge-{{ product.status }}">
+                {% if product.status == 'published' %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif product.status == 'draft' %}
+                    <i class="fas fa-file-alt"></i>
+                {% else %}
+                    <i class="fas fa-ban"></i>
+                {% endif %}
+                {{ product.get_status_display }}
+            </span>
+
+            <!-- Stock Badge (Multi-Location Inventory) -->
+            {% if product.track_inventory %}
+                {% if product.available_stock == 0 %}
+                    <span class="badge badge-stock badge-out">
+                        <i class="fas fa-times-circle"></i> {% trans "Out of Stock" %}
+                    </span>
+                {% elif product.is_low_stock %}
+                    <span class="badge badge-stock badge-low">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Low Stock" %} ({{ product.available_stock|floatformat:0 }})
+                    </span>
+                {% else %}
+                    <span class="badge badge-stock badge-in">
+                        <i class="fas fa-check-circle"></i> {% trans "In Stock" %} ({{ product.available_stock|floatformat:0 }})
+                    </span>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="product-actions">
+        <a href="{% url 'admin:catalog_product_change' product.id %}"
+           class="action-btn edit-btn"
+           title="{% trans 'Edit' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <a href="{{ product.get_absolute_url }}"
+           class="action-btn view-btn"
+           title="{% trans 'View on Site' %}"
+           target="_blank">
+            <i class="fas fa-external-link-alt"></i>
+        </a>
+        <button class="action-btn duplicate-btn"
+                data-product-id="{{ product.id }}"
+                title="{% trans 'Duplicate' %}">
+            <i class="fas fa-copy"></i>
+        </button>
+        <button class="action-btn delete-btn"
+                data-product-id="{{ product.id }}"
+                title="{% trans 'Delete' %}">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,328 @@
+{
+  "element_type": "contact_form",
+  "name": "Contact Form",
+  "description": "Comprehensive contact form with customizable fields and validation",
+  "version": "1.0.2",
+  "category": "forms",
+  "icon": "fas fa-envelope",
+  "author": "Page Builder System",
+  "tags": ["form", "contact", "email", "communication"],
+  "supports_translation": true,
+  "translation_domain": "contact_form_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "scripts": [
+    "/static/page_builder/js/elements/contact-form.js"
+  ],
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "basic": {
+      "label": "Form",
+      "icon": "fas fa-envelope",
+      "order": 1,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Form Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Form Title",
+              "default": "",
+              "translatable": true,
+              "required": false
+            },
+            "description": {
+              "type": "text",
+              "label": "Form Description",
+              "default": "",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            }
+          }
+        }
+      }
+    },
+    "fields": {
+      "label": "Fields",
+      "icon": "fas fa-list",
+      "order": 2,
+      "properties": {
+        "first_name_group": {
+          "type": "property_group",
+          "label": "First Name Field",
+          "properties": {
+            "show_first_name": {
+              "type": "boolean",
+              "label": "Show Field",
+              "default": true
+            },
+            "required_first_name": {
+              "type": "boolean",
+              "label": "Required",
+              "default": false
+            },
+            "placeholder_first_name": {
+              "type": "string",
+              "label": "Placeholder",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            }
+          }
+        },
+        "last_name_group": {
+          "type": "property_group",
+          "label": "Last Name Field",
+          "properties": {
+            "show_last_name": {
+              "type": "boolean",
+              "label": "Show Field",
+              "default": true
+            },
+            "required_last_name": {
+              "type": "boolean",
+              "label": "Required",
+              "default": false
+            },
+            "placeholder_last_name": {
+              "type": "string",
+              "label": "Placeholder",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            }
+          }
+        },
+        "email_group": {
+          "type": "property_group",
+          "label": "Email Field",
+          "columns": 1,
+          "properties": {
+            "placeholder_email": {
+              "type": "string",
+              "label": "Email Placeholder",
+              "translatable": true,
+              "required": false
+            }
+          }
+        },
+        "phone_group": {
+          "type": "property_group",
+          "label": "Phone Field",
+          "properties": {
+            "show_phone": {
+              "type": "boolean",
+              "label": "Show Field",
+              "default": false
+            },
+            "required_phone": {
+              "type": "boolean",
+              "label": "Required",
+              "default": false
+            },
+            "placeholder_phone": {
+              "type": "string",
+              "label": "Placeholder",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            }
+          }
+        },
+        "subject_group": {
+          "type": "property_group",
+          "label": "Subject Field",
+          "properties": {
+            "show_subject": {
+              "type": "boolean",
+              "label": "Show Field",
+              "default": false
+            },
+            "required_subject": {
+              "type": "boolean",
+              "label": "Required",
+              "default": false
+            },
+            "placeholder_subject": {
+              "type": "string",
+              "label": "Placeholder",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            }
+          }
+        },
+        "message_group": {
+          "type": "property_group",
+          "label": "Message Field",
+          "properties": {
+            "message_rows": {
+              "type": "number",
+              "label": "Field Rows",
+              "default": 5,
+              "min": 3,
+              "max": 10
+            },
+            "placeholder_message": {
+              "type": "string",
+              "label": "Placeholder",
+              "translatable": true,
+              "required": false
+            }
+          }
+        }
+      }
+    },
+    "submission": {
+      "label": "Submission",
+      "icon": "fas fa-paper-plane",
+      "order": 3,
+      "properties": {
+        "submit_group": {
+          "type": "property_group",
+          "label": "Submit Button",
+          "columns": 1,
+          "properties": {
+            "submit_text": {
+              "type": "string",
+              "label": "Submit Button Text",
+              "translatable": true,
+              "required": false
+            }
+          }
+        },
+        "privacy_group": {
+          "type": "property_group",
+          "label": "Privacy Agreement",
+          "properties": {
+            "show_privacy_checkbox": {
+              "type": "boolean",
+              "label": "Show Privacy Agreement",
+              "default": false
+            },
+            "required_privacy": {
+              "type": "boolean",
+              "label": "Required",
+              "default": true
+            },
+            "privacy_text": {
+              "type": "text",
+              "label": "Agreement Text",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            },
+            "privacy_url": {
+              "type": "link_selector",
+              "label": "Privacy Policy URL",
+              "default": "/privacy",
+              "required": false
+            },
+            "terms_url": {
+              "type": "link_selector",
+              "label": "Terms URL",
+              "default": "/terms",
+              "required": false
+            }
+          }
+        },
+        "feedback_group": {
+          "type": "property_group",
+          "label": "Feedback Messages",
+          "properties": {
+            "show_success_message": {
+              "type": "boolean",
+              "label": "Show Success",
+              "default": true
+            },
+            "show_error_message": {
+              "type": "boolean",
+              "label": "Show Error",
+              "default": true
+            },
+            "success_message": {
+              "type": "text",
+              "label": "Success Message",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            },
+            "error_message": {
+              "type": "text",
+              "label": "Error Message",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            }
+          }
+        },
+        "advanced_group": {
+          "type": "property_group",
+          "label": "Advanced",
+          "properties": {
+            "action": {
+              "type": "url",
+              "label": "Submission URL",
+              "default": "/api/messages/contact/",
+              "required": false,
+              "help_text": "Defaults to built-in message inbox. Override to send submissions elsewhere."
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {"type": "string", "label": "Form Title", "default": "", "translatable": true, "required": false},
+    "description": {"type": "text", "label": "Form Description", "default": "", "translatable": true, "required": false},
+    "action": {"type": "url", "label": "Submission URL", "default": "/api/messages/contact/", "required": false, "help_text": "Defaults to built-in message inbox. Override to send submissions elsewhere."},
+    "show_first_name": {"type": "boolean", "label": "Show First Name Field", "default": true},
+    "required_first_name": {"type": "boolean", "label": "Required First Name", "default": false},
+    "placeholder_first_name": {"type": "string", "label": "First Name Placeholder", "translatable": true, "required": false},
+    "show_last_name": {"type": "boolean", "label": "Show Last Name Field", "default": true},
+    "required_last_name": {"type": "boolean", "label": "Required Last Name", "default": false},
+    "placeholder_last_name": {"type": "string", "label": "Last Name Placeholder", "translatable": true, "required": false},
+    "placeholder_email": {"type": "string", "label": "Email Placeholder", "translatable": true, "required": false},
+    "show_phone": {"type": "boolean", "label": "Show Phone Field", "default": false},
+    "required_phone": {"type": "boolean", "label": "Required Phone", "default": false},
+    "placeholder_phone": {"type": "string", "label": "Phone Placeholder", "translatable": true, "required": false},
+    "show_subject": {"type": "boolean", "label": "Show Subject Field", "default": false},
+    "required_subject": {"type": "boolean", "label": "Required Subject", "default": false},
+    "placeholder_subject": {"type": "string", "label": "Subject Placeholder", "translatable": true, "required": false},
+    "message_rows": {"type": "number", "label": "Message Field Rows", "default": 5, "min": 3, "max": 10},
+    "placeholder_message": {"type": "string", "label": "Message Placeholder", "translatable": true, "required": false},
+    "submit_text": {"type": "string", "label": "Submit Button Text", "translatable": true, "required": false},
+    "show_privacy_checkbox": {"type": "boolean", "label": "Show Privacy Agreement", "default": false},
+    "required_privacy": {"type": "boolean", "label": "Required Privacy Agreement", "default": true},
+    "privacy_text": {"type": "text", "label": "Privacy Agreement Text", "translatable": true, "required": false},
+    "privacy_url": {"type": "link_selector", "label": "Privacy Policy URL", "default": "/privacy", "required": false},
+    "terms_url": {"type": "link_selector", "label": "Terms of Service URL", "default": "/terms", "required": false},
+    "show_success_message": {"type": "boolean", "label": "Show Success Message", "default": true},
+    "success_message": {"type": "text", "label": "Success Message", "translatable": true, "required": false},
+    "show_error_message": {"type": "boolean", "label": "Show Error Message", "default": true},
+    "error_message": {"type": "text", "label": "Error Message", "translatable": true, "required": false}
+  },
+  "translations": {
+    "en": {"name": "Contact Form", "description": "Comprehensive contact form with customizable fields and validation"},
+    "es": {"name": "Formulario de Contacto", "description": "Formulario de contacto completo con campos personalizables y validación"},
+    "fr": {"name": "Formulaire de Contact", "description": "Formulaire de contact complet avec des champs personnalisables et validation"},
+    "de": {"name": "Kontaktformular", "description": "Umfassendes Kontaktformular mit anpassbaren Feldern und Validierung"},
+    "pt": {"name": "Formulário de Contato", "description": "Formulário de contato abrangente com campos personalizáveis e validação"},
+    "zh-hans": {"name": "联系表单", "description": "具有可自定义字段和验证的综合联系表单"},
+    "ja": {"name": "お問い合わせフォーム", "description": "カスタマイズ可能なフィールドと検証機能を備えた包括的なお問い合わせフォーム"}
+  },
+  "defaults": {
+    "title": "Contact Us",
+    "description": "Get in touch with us",
+    "submit_text": "Send Message",
+    "action": "/api/messages/contact/",
+    "show_first_name": true,
+    "show_last_name": true,
+    "show_phone": false,
+    "show_subject": false,
+    "message_rows": 5
+  }
+}

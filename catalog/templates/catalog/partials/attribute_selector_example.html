@@ -1,0 +1,158 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attribute Selector Example</title>
+
+    <!-- Tailwind CSS (required for styling) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Attribute Selector Styles -->
+    <link rel="stylesheet" href="{% static 'catalog/css/attribute_selector.css' %}">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
+            Attribute Selector Widget Example
+        </h1>
+
+        <!-- Product Info -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Product Image -->
+                <div>
+                    <div class="aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg mb-4">
+                        <img src="https://via.placeholder.com/600"
+                             alt="Product Image"
+                             class="w-full h-full object-cover rounded-lg">
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div>
+                    <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
+                        Example Product
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        SKU: PROD-001
+                    </p>
+                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">
+                        $99.99
+                    </div>
+
+                    <p class="text-gray-700 dark:text-gray-300 mb-6">
+                        This is an example product demonstrating the attribute selector widget.
+                        Select options below to choose a variant.
+                    </p>
+
+                    <!-- Attribute Selector Widget -->
+                    {% include 'catalog/partials/attribute_selector.html' with attributes=example_attributes %}
+
+                    <!-- Add to Cart Button -->
+                    <button id="add-to-cart-btn"
+                            class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Instructions -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+            <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+                Usage Instructions
+            </h3>
+
+            <div class="prose dark:prose-invert max-w-none">
+                <h4 class="text-lg font-semibold mb-2">1. Include Required Files</h4>
+                <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm"><code>{% templatetag openblock %} load static {% templatetag closeblock %}
+
+&lt;!-- CSS --&gt;
+&lt;link rel="stylesheet" href="{% templatetag openblock %} static 'catalog/css/attribute_selector.css' {% templatetag closeblock %}"&gt;
+
+&lt;!-- JavaScript --&gt;
+&lt;script src="{% templatetag openblock %} static 'catalog/js/attribute_selector.js' {% templatetag closeblock %}"&gt;&lt;/script&gt;</code></pre>
+
+                <h4 class="text-lg font-semibold mb-2 mt-6">2. Include the Widget Template</h4>
+                <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm"><code>{% templatetag openblock %} include 'catalog/partials/attribute_selector.html' with attributes=product.available_attributes {% templatetag closeblock %}</code></pre>
+
+                <h4 class="text-lg font-semibold mb-2 mt-6">3. Pass Variant Data to JavaScript</h4>
+                <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm"><code>&lt;div class="attribute-selector-widget"
+     data-product-id="{{ product.id }}"
+     data-product-type="{{ product.product_type }}"
+     data-variants='{{ product.variants|safe }}'&gt;
+    ...
+&lt;/div&gt;</code></pre>
+
+                <h4 class="text-lg font-semibold mb-2 mt-6">4. Listen to Events (Optional)</h4>
+                <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm"><code>// Listen for variant changes
+document.querySelector('.attribute-selector-widget')
+    .addEventListener('variantChange', function(e) {
+        const variant = e.detail.variant;
+        console.log('Selected variant:', variant);
+
+        // Update price, image, etc.
+        updateProductDisplay(variant);
+    });
+
+// Listen for attribute changes
+document.querySelector('.attribute-selector-widget')
+    .addEventListener('attributeChange', function(e) {
+        console.log('Attribute changed:', e.detail);
+    });</code></pre>
+
+                <h4 class="text-lg font-semibold mb-2 mt-6">5. API Views Setup</h4>
+                <p class="text-gray-700 dark:text-gray-300 mb-2">
+                    The widget expects product data from the API in this format:
+                </p>
+                <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm"><code>{
+    "id": 1,
+    "name": "Product Name",
+    "product_type": "variable",
+    "available_attributes": [
+        {
+            "id": 1,
+            "name": "Color",
+            "slug": "color",
+            "type": "color",
+            "is_required": true,
+            "values": [
+                {
+                    "id": 1,
+                    "value": "Red",
+                    "slug": "red",
+                    "color_hex": "#FF0000"
+                }
+            ]
+        }
+    ],
+    "variants": [
+        {
+            "id": 1,
+            "name": "Red - Small",
+            "sku": "PROD-001-RED-SM",
+            "attributes_structured": [
+                {"id": 1, "value": "Red"},
+                {"id": 3, "value": "Small"}
+            ],
+            "effective_price": {
+                "amount": "99.99",
+                "currency": "USD"
+            },
+            "stock_quantity": 10
+        }
+    ]
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attribute Selector JavaScript -->
+    <script src="{% static 'catalog/js/attribute_selector.js' %}"></script>
+
+    <!-- Example Integration Script -->
+    <script src="{% static 'catalog/js/attribute_selector_example.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+{% extends "admin/migration/sync/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-list-check"></i>
+        {% trans "Select Categories & Direction" %}
+    </h3>
+    <p>{% trans "Choose which settings to sync and the direction of data flow." %}</p>
+</div>
+
+<form method="post" id="categories-form">
+    {% csrf_token %}
+
+    <!-- Direction & Mode -->
+    <div class="content-box">
+        <h3><i class="fas fa-exchange-alt"></i> {% trans "Sync Configuration" %}</h3>
+
+        <div class="direction-toggle">
+            <div class="form-group">
+                <label>{% trans "Direction" %}</label>
+                <div class="toggle-group">
+                    <label class="toggle-option">
+                        <input type="radio" name="direction" value="pull"
+                               {% if job.direction == 'pull' or not job.direction %}checked{% endif %}>
+                        <div class="toggle-card">
+                            <i class="fas fa-arrow-down"></i>
+                            <strong>{% trans "Pull" %}</strong>
+                            <span>{% trans "From connected store to this store" %}</span>
+                        </div>
+                    </label>
+                    <label class="toggle-option">
+                        <input type="radio" name="direction" value="push"
+                               {% if job.direction == 'push' %}checked{% endif %}>
+                        <div class="toggle-card">
+                            <i class="fas fa-arrow-up"></i>
+                            <strong>{% trans "Push" %}</strong>
+                            <span>{% trans "From this store to connected store" %}</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>{% trans "Sync Mode" %}</label>
+            <div class="toggle-group">
+                <label class="toggle-option">
+                    <input type="radio" name="sync_mode" value="additive"
+                           {% if job.sync_mode == 'additive' or not job.sync_mode %}checked{% endif %}>
+                    <div class="toggle-card">
+                        <i class="fas fa-plus-circle"></i>
+                        <strong>{% trans "Add & Update" %}</strong>
+                        <span>{% trans "Never deletes existing items" %}</span>
+                    </div>
+                </label>
+                <label class="toggle-option">
+                    <input type="radio" name="sync_mode" value="mirror">
+                    <div class="toggle-card">
+                        <i class="fas fa-clone"></i>
+                        <strong>{% trans "Exact Copy" %}</strong>
+                        <span>{% trans "Adds, updates, and removes items to match the source" %}</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        {% if job.connection.is_production %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{% trans "Production Connection" %}</strong>
+                {% trans "This connection is marked as production. Pushing changes will modify your live store settings." %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Category Selection -->
+    <div class="content-box">
+        <h3><i class="fas fa-th-list"></i> {% trans "Categories" %}</h3>
+        <p>{% trans "Select which categories to include in this sync." %}</p>
+
+        <div class="category-select-all">
+            <label class="checkbox-label">
+                <input type="checkbox" id="select-all-categories">
+                <strong>{% trans "Select All" %}</strong>
+            </label>
+        </div>
+
+        {% for group_key, group in grouped_categories.items %}
+        <div class="category-group">
+            <div class="category-group-header">
+                <i class="{{ group.icon }}"></i>
+                <strong>{{ group.label }}</strong>
+                <span class="category-group-description">{{ group.description }}</span>
+            </div>
+            <div class="category-group-items">
+                {% for cat_key, cat in group.categories.items %}
+                <label class="category-item">
+                    <input type="checkbox" name="categories" value="{{ cat_key }}"
+                           {% if cat_key in job.selected_categories %}checked{% endif %}>
+                    <div class="category-item-info">
+                        <strong>{{ cat.label }}</strong>
+                        <span class="category-description">{{ cat.description }}</span>
+                        {% if cat.has_credentials %}
+                        <span class="category-badge credential-badge">
+                            <i class="fas fa-key"></i> {% trans "Has Credentials" %}
+                        </span>
+                        {% endif %}
+                        {% if cat.has_files %}
+                        <span class="category-badge file-badge">
+                            <i class="fas fa-file"></i> {% trans "Has Files" %}
+                        </span>
+                        {% endif %}
+                        {% if cat.production_warning %}
+                        <span class="category-badge warning-badge">
+                            <i class="fas fa-exclamation-triangle"></i> {{ cat.production_warning }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="wizard-actions">
+        <a href="{% url 'admin:sync_wizard_step1' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back" %}
+        </a>
+        <button type="submit" class="btn btn-primary" id="next-button">
+            {% trans "Next: Preview Changes" %}
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'migration/js/sync_categories.js' %}" defer></script>
+{% endblock %}

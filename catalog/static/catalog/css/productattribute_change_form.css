@@ -1,0 +1,72 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * ProductAttribute Change Form Styles
+ * Tabbed interface for attribute management.
+ * Uses shared styles from admin-base.css:
+ *   .admin-tabs, .admin-tab-btn, .admin-tab-content, .util-btn,
+ *   .dashboard-header, .form-card, .two-column-layout, .checkbox-label
+ * Existing admin_attribute.css handles inline/value-specific styles.
+ */
+
+/* =============================================
+   LAYOUT & CONTAINER
+   ============================================= */
+
+.attribute-change-form .submit-row {
+    display: none !important;
+}
+
+/* =============================================
+   FORM ROWS
+   ============================================= */
+
+.attribute-change-form .form-row {
+    margin-bottom: 16px;
+}
+
+.attribute-change-form .form-row label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: var(--body-fg);
+}
+
+.attribute-change-form .form-row .help {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin-top: 4px;
+}
+
+.attribute-change-form .form-row .error,
+.attribute-change-form .form-row .errorlist {
+    color: var(--error-fg);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.attribute-change-form .form-row input[type="text"],
+.attribute-change-form .form-row input[type="number"],
+.attribute-change-form .form-row select,
+.attribute-change-form .form-row textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* =============================================
+   INLINE OVERFLOW (values table)
+   ============================================= */
+
+.attribute-change-form .inline-related {
+    overflow-x: auto;
+}
+
+/* =============================================
+   HIDDEN UTILITY
+   ============================================= */
+
+.attribute-change-form .hidden {
+    display: none !important;
+}

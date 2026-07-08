@@ -1,0 +1,58 @@
+<!-- Checkout Form Address Autocomplete Integration -->
+{% load static address_tags %}
+{% get_address_config as ac_config %}
+
+{% if ac_config.enabled %}
+<div class="address-autocomplete-checkout">
+    <!-- Shipping Address -->
+    <div class="shipping-address-section">
+        <h3>Shipping Address</h3>
+        <div class="form-group">
+            <label for="{{ shipping_prefix }}search">Search Address</label>
+            <input
+                type="text"
+                id="{{ shipping_prefix }}search"
+                class="form-control address-autocomplete-input"
+                placeholder="Start typing your address..."
+                data-address-autocomplete
+            >
+        </div>
+
+        <!-- Hidden fields for structured data -->
+        <input type="hidden" id="{{ shipping_prefix }}latitude" name="{{ shipping_prefix }}latitude">
+        <input type="hidden" id="{{ shipping_prefix }}longitude" name="{{ shipping_prefix }}longitude">
+        <input type="hidden" id="{{ shipping_prefix }}normalized" name="{{ shipping_prefix }}normalized">
+    </div>
+
+    {% if separate_billing %}
+    <!-- Billing Address -->
+    <div class="billing-address-section" style="display:none;" id="billing-section">
+        <h3>Billing Address</h3>
+        <div class="form-group">
+            <label for="{{ billing_prefix }}search">Search Address</label>
+            <input
+                type="text"
+                id="{{ billing_prefix }}search"
+                class="form-control address-autocomplete-input"
+                placeholder="Start typing your address..."
+                data-address-autocomplete
+            >
+        </div>
+
+        <!-- Hidden fields for structured data -->
+        <input type="hidden" id="{{ billing_prefix }}latitude" name="{{ billing_prefix }}latitude">
+        <input type="hidden" id="{{ billing_prefix }}longitude" name="{{ billing_prefix }}longitude">
+        <input type="hidden" id="{{ billing_prefix }}normalized" name="{{ billing_prefix }}normalized">
+    </div>
+    {% endif %}
+</div>
+
+<script type="application/json" id="address-autocomplete-config">
+{
+    "shippingPrefix": "{{ shipping_prefix }}",
+    "billingPrefix": "{{ billing_prefix }}",
+    "separateBilling": {{ separate_billing|yesno:"true,false" }}
+}
+</script>
+<script src="{% static 'address_autocomplete/js/checkout-integration.js' %}"></script>
+{% endif %}

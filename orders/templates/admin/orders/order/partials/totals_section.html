@@ -1,0 +1,76 @@
+{% load i18n currency_tags %}
+<div class="order-totals">
+    <div class="total-row">
+        <span class="total-label">{% trans "Subtotal:" %}</span>
+        <span class="total-value">
+            {{ order.subtotal }}
+            {% if order.customer_currency and order.customer_currency != order.base_currency and order.subtotal_base %}
+                <span class="base-equivalent">({{ order.subtotal_base|format_currency:order.base_currency }})</span>
+            {% endif %}
+        </span>
+    </div>
+
+    {% if order.discount_amount and order.discount_amount.amount > 0 %}
+    <div class="total-row discount">
+        <span class="total-label">{% trans "Discount:" %}</span>
+        <span class="total-value">
+            -{{ order.discount_amount }}
+            {% if order.customer_currency and order.customer_currency != order.base_currency and order.discount_amount_base %}
+                <span class="base-equivalent">(-{{ order.discount_amount_base|format_currency:order.base_currency }})</span>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if order.gift_card_discount and order.gift_card_discount.amount > 0 %}
+    <div class="total-row gift-card">
+        <span class="total-label">{% trans "Gift Card:" %}</span>
+        <span class="total-value">
+            -{{ order.gift_card_discount }}
+            {% if order.customer_currency and order.customer_currency != order.base_currency and order.gift_card_discount_base %}
+                <span class="base-equivalent">(-{{ order.gift_card_discount_base|format_currency:order.base_currency }})</span>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
+    <div class="total-row">
+        <span class="total-label">{% trans "Tax:" %}</span>
+        <span class="total-value">
+            {{ order.tax_amount }}
+            {% if order.customer_currency and order.customer_currency != order.base_currency and order.tax_amount_base %}
+                <span class="base-equivalent">({{ order.tax_amount_base|format_currency:order.base_currency }})</span>
+            {% endif %}
+        </span>
+    </div>
+
+    <div class="total-row">
+        <span class="total-label">{% trans "Shipping:" %}</span>
+        <span class="total-value">
+            {{ order.shipping_cost }}
+            {% if order.customer_currency and order.customer_currency != order.base_currency and order.shipping_cost_base %}
+                <span class="base-equivalent">({{ order.shipping_cost_base|format_currency:order.base_currency }})</span>
+            {% endif %}
+        </span>
+    </div>
+
+    <div class="total-row total-final">
+        <span class="total-label"><strong>{% trans "Total:" %}</strong></span>
+        <span class="total-value">
+            <strong>{{ order.total_amount }}</strong>
+            {% if order.customer_currency and order.customer_currency != order.base_currency and order.total_amount_base %}
+                <span class="base-equivalent">({{ order.total_amount_base|format_currency:order.base_currency }} @ {{ order.exchange_rate_used }})</span>
+            {% endif %}
+        </span>
+    </div>
+
+    {% if order.customer_currency and order.customer_currency != order.base_currency %}
+    <div class="total-row fx-info">
+        <span class="total-label">{% trans "FX Rate:" %}</span>
+        <span class="total-value base-equivalent">
+            1 {{ order.base_currency }} = {{ order.exchange_rate_used }} {{ order.customer_currency }}
+            {% if order.fx_policy != 'none' %}({{ order.get_fx_policy_display }}){% endif %}
+        </span>
+    </div>
+    {% endif %}
+</div>

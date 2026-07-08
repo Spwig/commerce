@@ -1,0 +1,541 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Affiliate App Styles
+ * Uses --theme-* CSS variables from storefront design tokens
+ * Inherits merchant branding automatically via theme CSS
+ */
+
+/* ============================================
+   Base Layout
+   ============================================ */
+.affiliate-portal {
+    background-color: var(--theme-color-background, #ffffff);
+    color: var(--theme-color-text, #1f2937);
+    min-height: 100vh;
+    font-family: var(--theme-font-family-body, Inter, system-ui, sans-serif);
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+.affiliate-nav {
+    display: flex;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: var(--theme-space-4, 1rem) var(--theme-space-8, 2rem);
+    background-color: var(--theme-color-primary, #3b82f6);
+    border-bottom: 2px solid var(--theme-color-border, #e5e7eb);
+    box-shadow: var(--theme-shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+}
+
+.affiliate-nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--theme-radius-base, 0.375rem);
+    transition: all var(--theme-transition-duration-base, 200ms) ease;
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+}
+
+.affiliate-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.affiliate-nav a.active {
+    background-color: rgba(255, 255, 255, 0.25);
+    font-weight: var(--theme-font-weight-semibold, 600);
+}
+
+.affiliate-nav i {
+    font-size: 1.1em;
+}
+
+/* ============================================
+   Content Area
+   ============================================ */
+.affiliate-content {
+    padding: var(--theme-space-8, 2rem);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.affiliate-header {
+    margin-bottom: var(--theme-space-8, 2rem);
+}
+
+.affiliate-header h1 {
+    font-size: 2rem;
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin-bottom: var(--theme-space-2, 0.5rem);
+}
+
+.affiliate-header p {
+    color: var(--theme-color-text-muted, #9ca3af);
+    font-size: var(--theme-font-size-lg, 1.125rem);
+}
+
+/* ============================================
+   Stats Dashboard
+   ============================================ */
+.affiliate-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--theme-space-6, 1.5rem);
+    margin-bottom: var(--theme-space-8, 2rem);
+}
+
+.stat-card {
+    background: var(--theme-color-surface, #ffffff);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-xl, 0.75rem);
+    padding: var(--theme-space-6, 1.5rem);
+    box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+    transition: all var(--theme-transition-duration-slow, 300ms) ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+.stat-card h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--theme-color-text-muted, #9ca3af);
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+}
+
+.stat-card .value {
+    font-size: 2.5rem;
+    font-weight: var(--theme-font-weight-bold, 700);
+    color: var(--theme-color-primary, #3b82f6);
+    line-height: 1;
+    margin-bottom: var(--theme-space-2, 0.5rem);
+}
+
+.stat-card .change {
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-card .change.positive {
+    color: var(--theme-color-success, #10b981);
+}
+
+.stat-card .change.negative {
+    color: var(--theme-color-error, #ef4444);
+}
+
+.stat-card .change i {
+    font-size: 0.75rem;
+}
+
+/* ============================================
+   Tables
+   ============================================ */
+.affiliate-table-container {
+    background: var(--theme-color-surface, #ffffff);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-xl, 0.75rem);
+    overflow: hidden;
+    box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.affiliate-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.affiliate-table thead {
+    background-color: var(--theme-color-background-secondary, #f9fafb);
+}
+
+.affiliate-table th {
+    padding: var(--theme-space-4, 1rem);
+    text-align: left;
+    font-weight: var(--theme-font-weight-semibold, 600);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--theme-color-text-muted, #9ca3af);
+    border-bottom: 2px solid var(--theme-color-border, #e5e7eb);
+}
+
+.affiliate-table td {
+    padding: var(--theme-space-4, 1rem);
+    border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
+    color: var(--theme-color-text, #1f2937);
+}
+
+.affiliate-table tbody tr:hover {
+    background-color: var(--theme-color-background-secondary, #f9fafb);
+}
+
+.affiliate-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn-affiliate {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--theme-radius-base, 0.375rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    cursor: pointer;
+    transition: all var(--theme-transition-duration-base, 200ms) ease;
+    text-decoration: none;
+}
+
+.btn-affiliate-primary {
+    background-color: var(--theme-color-primary, #3b82f6);
+    color: white;
+}
+
+.btn-affiliate-primary:hover {
+    background-color: var(--theme-color-primary-dark, #1e40af);
+    transform: translateY(-1px);
+    box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.btn-affiliate-secondary {
+    background-color: var(--theme-color-text-muted, #9ca3af);
+    color: white;
+}
+
+.btn-affiliate-secondary:hover {
+    background-color: var(--theme-color-text-light, #6b7280);
+}
+
+.btn-affiliate-success {
+    background-color: var(--theme-color-success, #10b981);
+    color: white;
+}
+
+.btn-affiliate-danger {
+    background-color: var(--theme-color-error, #ef4444);
+    color: white;
+}
+
+/* ============================================
+   Forms
+   ============================================ */
+.affiliate-form {
+    background: var(--theme-color-surface, #ffffff);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-xl, 0.75rem);
+    padding: var(--theme-space-8, 2rem);
+    box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.affiliate-form-group {
+    margin-bottom: var(--theme-space-6, 1.5rem);
+}
+
+.affiliate-form-group label {
+    display: block;
+    margin-bottom: var(--theme-space-2, 0.5rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    color: var(--theme-color-text, #1f2937);
+}
+
+.affiliate-form-group input,
+.affiliate-form-group select,
+.affiliate-form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-base, 0.375rem);
+    background-color: var(--theme-color-background, #ffffff);
+    color: var(--theme-color-text, #1f2937);
+    font-size: var(--theme-font-size-base, 1rem);
+    transition: border-color var(--theme-transition-duration-base, 200ms) ease;
+}
+
+.affiliate-form-group input:focus,
+.affiliate-form-group select:focus,
+.affiliate-form-group textarea:focus {
+    outline: none;
+    border-color: var(--theme-color-primary, #3b82f6);
+    box-shadow: 0 0 0 3px var(--theme-color-primary-light, rgba(59, 130, 246, 0.15));
+}
+
+.affiliate-form-help {
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #9ca3af);
+    margin-top: 0.25rem;
+}
+
+/* ============================================
+   Badges
+   ============================================ */
+.badge-affiliate {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--theme-radius-full, 9999px);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+}
+
+.badge-pending {
+    background-color: var(--theme-color-warning, #f59e0b);
+    color: #000;
+}
+
+.badge-approved {
+    background-color: var(--theme-color-success, #10b981);
+    color: white;
+}
+
+.badge-rejected {
+    background-color: var(--theme-color-error, #ef4444);
+    color: white;
+}
+
+.badge-paid {
+    background-color: var(--theme-color-info, #3b82f6);
+    color: white;
+}
+
+/* ============================================
+   Messages/Alerts
+   ============================================ */
+.messages {
+    margin-bottom: var(--theme-space-8, 2rem);
+}
+
+.alert {
+    padding: var(--theme-space-4, 1rem) 1.25rem;
+    border-radius: var(--theme-radius-lg, 0.5rem);
+    margin-bottom: var(--theme-space-4, 1rem);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-left: 4px solid;
+}
+
+.alert i {
+    font-size: 1.25rem;
+}
+
+.alert-success {
+    background-color: var(--theme-color-success-light, #d1fae5);
+    border-left-color: var(--theme-color-success, #10b981);
+    color: var(--theme-color-success, #10b981);
+}
+
+.alert-error,
+.alert-danger {
+    background-color: var(--theme-color-error-light, #fee2e2);
+    border-left-color: var(--theme-color-error, #ef4444);
+    color: var(--theme-color-error, #ef4444);
+}
+
+.alert-warning {
+    background-color: var(--theme-color-warning-light, #fef3c7);
+    border-left-color: var(--theme-color-warning, #f59e0b);
+    color: var(--theme-color-warning-dark, #92400e);
+}
+
+.alert-info {
+    background-color: var(--theme-color-info-light, #dbeafe);
+    border-left-color: var(--theme-color-info, #3b82f6);
+    color: var(--theme-color-info, #3b82f6);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.affiliate-footer {
+    text-align: center;
+    padding: var(--theme-space-8, 2rem);
+    margin-top: var(--theme-space-16, 4rem);
+    border-top: 1px solid var(--theme-color-border, #e5e7eb);
+    color: var(--theme-color-text-muted, #9ca3af);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    .affiliate-nav {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .affiliate-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .affiliate-content {
+        padding: var(--theme-space-4, 1rem);
+    }
+
+    .affiliate-table-container {
+        overflow-x: auto;
+    }
+
+    .stat-card .value {
+        font-size: 2rem;
+    }
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--theme-color-border, #e5e7eb);
+    border-radius: 50%;
+    border-top-color: var(--theme-color-primary, #3b82f6);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-muted { color: var(--theme-color-text-muted, #9ca3af); }
+.text-success { color: var(--theme-color-success, #10b981); }
+.text-danger { color: var(--theme-color-error, #ef4444); }
+.text-warning { color: var(--theme-color-warning, #f59e0b); }
+.text-info { color: var(--theme-color-info, #3b82f6); }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.hidden { display: none !important; }
+.modal-open { overflow: hidden; }
+
+/* ============================================
+   Modal
+   ============================================ */
+.affiliate-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1050;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.affiliate-modal:not(.hidden) {
+    display: flex;
+}
+
+.affiliate-modal-backdrop,
+.affiliate-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background: var(--theme-color-overlay, rgba(0, 0, 0, 0.5));
+}
+
+.affiliate-modal-content {
+    position: relative;
+    z-index: 2;
+    background: var(--theme-color-surface, #ffffff);
+    border-radius: var(--theme-radius-xl, 0.75rem);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--theme-shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+    padding: var(--theme-space-6, 1.5rem);
+}
+
+.affiliate-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--theme-space-6, 1.5rem);
+    padding-bottom: var(--theme-space-4, 1rem);
+    border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.affiliate-modal-header h2 {
+    margin: 0;
+    font-size: var(--theme-font-size-xl, 1.25rem);
+}
+
+.affiliate-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--theme-color-text-muted, #9ca3af);
+    padding: 0;
+    line-height: 1;
+}
+
+.affiliate-modal-close:hover {
+    color: var(--theme-color-text, #1f2937);
+}
+
+.affiliate-modal-actions {
+    display: flex;
+    gap: var(--theme-space-4, 1rem);
+    justify-content: flex-end;
+    padding-top: var(--theme-space-4, 1rem);
+    margin-top: var(--theme-space-4, 1rem);
+    border-top: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.affiliate-alert {
+    padding: var(--theme-space-4, 1rem);
+    border-radius: var(--theme-radius-lg, 0.5rem);
+    margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.affiliate-alert-danger {
+    background-color: var(--theme-color-error-light, #fee2e2);
+    color: var(--theme-color-error, #ef4444);
+    border: 1px solid var(--theme-color-error, #ef4444);
+}
+
+.affiliate-alert-success {
+    background-color: var(--theme-color-success-light, #d1fae5);
+    color: var(--theme-color-success, #10b981);
+    border: 1px solid var(--theme-color-success, #10b981);
+}

@@ -1,0 +1,403 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Referral Program Form Styles
+ * Tabbed interface with stats cards for referral program management
+ * Uses shared tab and stats styles from admin-base.css
+ */
+
+/* Header Styling */
+.program-admin-header {
+    background: var(--primary);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid var(--border-color);
+}
+
+.program-admin-header .header-title h1 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.program-admin-header .header-title h1 i {
+    color: var(--body-fg);
+}
+
+.program-admin-header .header-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.program-admin-header .meta-item {
+    font-size: 13px;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.program-admin-header .meta-item i {
+    color: var(--body-fg);
+}
+
+.program-admin-header .header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Stats Grid - using styles from admin-base.css but add spacing */
+.dashboard-stats-grid {
+    margin-bottom: 20px;
+}
+
+/* Tab Content Panel - extending admin-base.css tabs */
+.tab-content {
+    background: var(--selected-bg);
+    border-radius: 0 0 8px 8px;
+    padding: 24px;
+    border: 1px solid var(--border-color);
+    border-top: none;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Cards — base .form-card styles provided by admin-base.css */
+
+/* Two Column Layout — base .two-column-layout styles provided by admin-base.css */
+
+/* Form Rows */
+.form-row {
+    margin-bottom: 16px;
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-row label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--body-fg);
+}
+
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="number"],
+.form-row select,
+.form-row textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 14px;
+}
+
+.form-row textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-row .help {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin: 4px 0 0 0;
+}
+
+.form-row .error {
+    font-size: 12px;
+    color: var(--error-fg);
+    margin: 4px 0 0 0;
+}
+
+/* Checkbox Labels — base .checkbox-label styles provided by admin-base.css */
+
+/* Config Preview Box */
+.config-preview-box {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.config-preview-box .preview-content {
+    min-height: 80px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: var(--darkened-bg);
+    border-radius: 4px;
+}
+
+.config-preview-box .empty-state {
+    color: var(--body-quiet-color);
+    font-style: italic;
+    margin: 0;
+    text-align: center;
+    padding: 24px;
+}
+
+.config-preview-box .config-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.config-preview-box .summary-item {
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.config-preview-box .summary-item:last-child {
+    border-bottom: none;
+}
+
+.config-btn {
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.config-btn:hover {
+    background: var(--primary-fg);
+    transform: translateY(-1px);
+}
+
+.config-btn i {
+    font-size: 16px;
+}
+
+/* Modal structural styles from admin-base.css (.admin-modal-*)
+   App-specific section styling below */
+
+.admin-modal-section h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.admin-modal-section h3 .hint {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--body-quiet-color);
+}
+
+.referral-modal-btn-primary,
+.referral-modal-btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.referral-modal-btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.referral-modal-btn-primary:hover {
+    background: var(--primary-fg);
+}
+
+.referral-modal-btn-secondary {
+    background: var(--darkened-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--border-color);
+}
+
+.referral-modal-btn-secondary:hover {
+    background: var(--selected-bg);
+}
+
+/* Input Groups (for currency symbols, etc.) */
+.input-group {
+    display: flex;
+    align-items: stretch;
+}
+
+.input-group input {
+    flex: 1;
+    border-right: none !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.input-addon {
+    padding: 8px 12px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-left: none;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    font-weight: 600;
+    color: var(--body-fg);
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .program-admin-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .program-admin-header .header-actions {
+        flex-direction: row;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .tab-content {
+        padding: 16px;
+    }
+
+    .form-card {
+        padding: 16px;
+    }
+
+    .modal-content {
+        max-width: calc(100% - 20px);
+        max-height: calc(100vh - 20px);
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-header {
+        padding: 16px;
+    }
+
+    .modal-footer {
+        padding: 12px 16px;
+    }
+}
+
+/* Utility: hidden element (CSP-compliant replacement for inline style="display: none;") */
+.referrals-hidden {
+    display: none;
+}
+
+/* Admin badge utilities (CSP-compliant replacement for inline format_html styles) */
+.referral-badge {
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #fff;
+    display: inline-block;
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.referral-badge-sm {
+    padding: 2px 8px;
+}
+
+.referral-badge-success {
+    background: var(--success-color, #28a745);
+}
+
+.referral-badge-warning {
+    background: var(--warning-color, #ffc107);
+}
+
+.referral-badge-danger {
+    background: var(--danger-color, #dc3545);
+}
+
+.referral-badge-info {
+    background: var(--info-color, #17a2b8);
+}
+
+.referral-badge-primary {
+    background: var(--primary, #007bff);
+}
+
+.referral-badge-secondary {
+    background: #6c757d;
+}
+
+.referral-badge-orange {
+    background: #ff6b6b;
+}
+
+.referral-badge-purple {
+    background: #6f42c1;
+}
+
+/* Referral link input (CSP-compliant) */
+.referral-link-input {
+    width: 100%;
+    font-family: monospace;
+    user-select: all;
+    -webkit-user-select: all;
+    cursor: text;
+}
+
+/* QR code preview */
+.referral-qr-code {
+    width: 200px;
+    height: 200px;
+}
+
+/* Expiry status text */
+.referral-text-muted {
+    color: #6c757d;
+}
+
+.referral-text-danger {
+    color: var(--danger-color, #dc3545);
+    font-weight: bold;
+}
+
+.referral-text-warning {
+    color: #ff6b6b;
+    font-weight: bold;
+}

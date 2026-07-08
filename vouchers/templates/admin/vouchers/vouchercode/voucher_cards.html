@@ -1,0 +1,182 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for voucher in vouchers %}
+    <div class="list-row-card voucher-card {% if not voucher.is_active %}disabled{% endif %}">
+        <div class="list-row-card-icon">
+            <div class="voucher-type-icon {{ voucher.discount_type }}">
+                {% if voucher.discount_type == 'percentage' %}
+                    <i class="fas fa-percent"></i>
+                {% elif voucher.discount_type == 'fixed' %}
+                    <i class="fas fa-dollar-sign"></i>
+                {% elif voucher.discount_type == 'gift_card' %}
+                    <i class="fas fa-gift"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:vouchers_vouchercode_change' voucher.pk %}">
+                    <span class="voucher-code">{{ voucher.code }}</span>
+                </a>
+                <span class="voucher-name">{{ voucher.name }}</span>
+            </h3>
+
+            <p class="list-row-card-subtitle">
+                {% if voucher.description %}
+                    {{ voucher.description|truncatewords:15 }}
+                {% else %}
+                    <em>{% trans "No description" %}</em>
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if voucher.is_active and voucher.is_valid %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% elif not voucher.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-clock"></i> {% trans "Expired" %}
+                    </span>
+                {% endif %}
+
+                <!-- Discount Type Badge -->
+                <span class="list-row-card-badge list-row-card-badge-{{ voucher.discount_type }}">
+                    {% if voucher.discount_type == 'percentage' %}
+                        <i class="fas fa-percent"></i> {{ voucher.discount_value }}%
+                        {% if voucher.max_discount_amount %}
+                            ({% trans "max" %} {{ voucher.max_discount_amount }})
+                        {% endif %}
+                    {% elif voucher.discount_type == 'fixed' %}
+                        <i class="fas fa-dollar-sign"></i> {{ voucher.discount_value }}
+                    {% elif voucher.discount_type == 'gift_card' %}
+                        <i class="fas fa-gift"></i> {% trans "Gift Card" %}
+                        {% if voucher.gift_card_balance %}
+                            {{ voucher.gift_card_balance }}
+                        {% endif %}
+                    {% endif %}
+                </span>
+
+                <!-- Scope Badge -->
+                <span class="list-row-card-badge list-row-card-badge-scope-{{ voucher.application_scope }}">
+                    {% if voucher.application_scope == 'cart' %}
+                        <i class="fas fa-shopping-cart"></i> {% trans "Entire Cart" %}
+                    {% elif voucher.application_scope == 'products' %}
+                        <i class="fas fa-box"></i> {% trans "Products" %}
+                    {% elif voucher.application_scope == 'categories' %}
+                        <i class="fas fa-folder"></i> {% trans "Categories" %}
+                    {% endif %}
+                </span>
+
+                <!-- Usage Badge -->
+                {% if voucher.max_uses_total %}
+                    <span class="list-row-card-badge {% if voucher.uses_remaining == 0 %}list-row-card-badge-error{% elif voucher.uses_remaining <= 5 %}list-row-card-badge-warning{% endif %}">
+                        <i class="fas fa-users"></i> {{ voucher.current_uses }}/{{ voucher.max_uses_total }}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-infinity"></i> {{ voucher.current_uses }} {% trans "uses" %}
+                    </span>
+                {% endif %}
+
+                <!-- Restrictions -->
+                {% if voucher.first_time_customers_only %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-user-plus"></i> {% trans "First Order" %}
+                    </span>
+                {% endif %}
+
+                {% if voucher.exclude_sale_items %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-ban"></i> {% trans "No Sale Items" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                {% if voucher.min_order_value %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Min Order" %}</span>
+                    <span class="list-row-card-stat-value">{{ voucher.min_order_value }}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Uses" %}</span>
+                    <span class="list-row-card-stat-value">{{ voucher.current_uses }}</span>
+                </div>
+                {% if voucher.uses_remaining is not None %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Remaining" %}</span>
+                    <span class="list-row-card-stat-value">{{ voucher.uses_remaining }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ voucher.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if voucher.end_date %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-times"></i>
+                    <span>{% trans "Expires" %}: {{ voucher.end_date|date:"M d, Y" }}</span>
+                </div>
+                {% elif voucher.days_valid %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>{{ voucher.days_valid }} {% trans "days from first use" %}</span>
+                </div>
+                {% else %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-infinity"></i>
+                    <span>{% trans "No expiry" %}</span>
+                </div>
+                {% endif %}
+                {% if voucher.created_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{% trans "By" %}: {{ voucher.created_by.get_full_name|default:voucher.created_by.username }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:vouchers_vouchercode_change' voucher.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit voucher' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:vouchers_voucherusage_changelist' %}?voucher__id__exact={{ voucher.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View usage history' %}">
+                <i class="fas fa-history"></i>
+            </a>
+            <a href="{% url 'admin:vouchers_vouchercode_delete' voucher.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete voucher' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-ticket-alt"></i>
+        </div>
+        <h2>{% trans "No vouchers found" %}</h2>
+        <p>{% trans "Create your first voucher code to offer discounts to customers." %}</p>
+        <a href="{% url 'admin:vouchers_vouchercode_add' %}" class="button default">
+            <i class="fas fa-plus"></i> {% trans "Add Voucher" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

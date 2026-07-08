@@ -1,0 +1,67 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+{% if redirects %}
+<div class="list-row-cards">
+    {% for redirect in redirects %}
+    <div class="list-row-card{% if not redirect.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ redirect.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-directions"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <div class="list-row-card-title">
+                <a href="{% url 'admin:search_searchredirect_change' redirect.pk %}">{{ redirect.term }}</a>
+            </div>
+            <div class="list-row-card-subtitle">
+                <i class="fas fa-arrow-right mx-8 text-muted"></i>
+                <span title="{{ redirect.redirect_url }}">{{ redirect.redirect_url|truncatechars:60 }}</span>
+            </div>
+            <div class="list-row-card-badges">
+                <span class="list-row-card-badge list-row-card-badge-{% if redirect.match_type == 'exact' %}primary{% elif redirect.match_type == 'contains' %}info{% elif redirect.match_type == 'starts_with' %}warning{% else %}secondary{% endif %}">
+                    {{ redirect.get_match_type_display }}
+                </span>
+                <span class="list-row-card-badge list-row-card-badge-{% if redirect.redirect_type == 'permanent' %}danger{% else %}warning{% endif %}">
+                    {% if redirect.redirect_type == 'permanent' %}301{% else %}302{% endif %}
+                </span>
+                {% if not redirect.is_active %}
+                <span class="list-row-card-badge list-row-card-badge-secondary">{% trans "Inactive" %}</span>
+                {% endif %}
+            </div>
+            <div class="list-row-card-meta">
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-chart-line"></i> {% trans "Hits:" %} {{ redirect.hit_count }}
+                </span>
+                {% if redirect.engine %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-server"></i> {{ redirect.engine.name }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:search_searchredirect_change' redirect.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:search_searchredirect_delete' redirect.pk %}" class="list-row-card-action danger" title="{% trans 'Delete' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="list-row-cards">
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon opacity-50">
+            <i class="fas fa-directions"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No redirects found matching your filters." %}</p>
+    </div>
+</div>
+{% endif %}

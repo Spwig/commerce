@@ -1,0 +1,343 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Booking Details" %} - {{ booking.product.name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'accounts:booking_list' %}" class="text-gray-700 hover:text-blue-600">
+                    {% trans "My Bookings" %}
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-gray-500">{% trans "Details" %}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Booking Overview Card -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                                {{ booking.product.name }}
+                            </h1>
+                            {% if booking.resource %}
+                            <p class="text-gray-600">{{ booking.resource.name }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Status Badge -->
+                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                            {% if booking.status == 'pending_confirmation' %}bg-yellow-100 text-yellow-800
+                            {% elif booking.status == 'confirmed' %}bg-green-100 text-green-800
+                            {% elif booking.status == 'completed' %}bg-blue-100 text-blue-800
+                            {% elif booking.status == 'cancelled' %}bg-red-100 text-red-800
+                            {% elif booking.status == 'no_show' %}bg-gray-100 text-gray-800
+                            {% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Date -->
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Date" %}</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-900">
+                                {{ booking.start_datetime|date:"l, M d, Y" }}
+                            </dd>
+                        </div>
+
+                        <!-- Time -->
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Time" %}</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-900">
+                                {{ booking.start_datetime|time:"g:i A" }} &ndash; {{ booking.end_datetime|time:"g:i A" }}
+                                <span class="text-sm text-gray-500 font-normal">
+                                    ({{ booking.duration_minutes }} {% trans "min" %})
+                                </span>
+                            </dd>
+                        </div>
+
+                        <!-- Persons -->
+                        {% if booking.persons %}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Guests" %}</dt>
+                            <dd class="mt-1 text-gray-900">
+                                {% for ptype, count in booking.persons.items %}
+                                    {{ count }} {{ ptype }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        <!-- Total Cost -->
+                        {% if booking.total_cost %}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Total Cost" %}</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-900">
+                                {{ booking.total_cost }}
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        <!-- Deposit -->
+                        {% if booking.deposit_amount %}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Deposit Paid" %}</dt>
+                            <dd class="mt-1 text-gray-900">{{ booking.deposit_amount }}</dd>
+                        </div>
+                        {% endif %}
+
+                        <!-- Booking ID -->
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Booking ID" %}</dt>
+                            <dd class="mt-1 text-gray-900">#{{ booking.pk }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Customer Notes -->
+            {% if booking.customer_notes %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">{% trans "Your Notes" %}</h2>
+                </div>
+                <div class="p-6 text-gray-700">
+                    {{ booking.customer_notes|linebreaksbr }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Cancellation Info -->
+            {% if booking.status == 'cancelled' and booking.cancellation_reason %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-red-800 mb-2">{% trans "Cancellation Reason" %}</h3>
+                <p class="text-red-700">{{ booking.cancellation_reason }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Activity Timeline (customer-visible notes) -->
+            {% if visible_notes %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">{% trans "Activity" %}</h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        {% for note in visible_notes %}
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
+                                {% if note.note_type == 'status_change' %}bg-yellow-100 text-yellow-700
+                                {% elif note.note_type == 'reschedule' %}bg-blue-100 text-blue-700
+                                {% elif note.note_type == 'email' %}bg-purple-100 text-purple-700
+                                {% else %}bg-gray-100 text-gray-500
+                                {% endif %}">
+                                {% if note.note_type == 'status_change' %}
+                                    <i class="fas fa-exchange-alt text-xs"></i>
+                                {% elif note.note_type == 'reschedule' %}
+                                    <i class="fas fa-calendar-alt text-xs"></i>
+                                {% elif note.note_type == 'email' %}
+                                    <i class="fas fa-envelope text-xs"></i>
+                                {% else %}
+                                    <i class="fas fa-info text-xs"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900">{{ note.note }}</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ note.created_at|date:"M d, Y g:i A" }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Actions Card -->
+            {% if can_cancel or can_reschedule or ical_url %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-900">{% trans "Actions" %}</h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    {% if ical_url %}
+                    <a href="{{ ical_url }}"
+                       class="block w-full text-center px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700">
+                        <i class="fas fa-calendar-plus mr-1"></i> {% trans "Add to Calendar" %}
+                    </a>
+                    {% endif %}
+
+                    {% if can_reschedule %}
+                    <button type="button" id="reschedule-toggle"
+                       class="block w-full text-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-clock mr-1"></i> {% trans "Reschedule" %}
+                    </button>
+                    {% endif %}
+
+                    {% if can_cancel %}
+                    <button type="button" id="cancel-toggle"
+                       class="block w-full text-center px-4 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 hover:bg-red-50">
+                        <i class="fas fa-times mr-1"></i> {% trans "Cancel Booking" %}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Cancel Form (hidden by default) -->
+            {% if can_cancel %}
+            <div id="cancel-form" class="bg-white rounded-lg shadow-md overflow-hidden" style="display: none;">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-red-700">{% trans "Cancel Booking" %}</h2>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-600 mb-4">{% trans "Are you sure you want to cancel this booking? This action cannot be undone." %}</p>
+                    <form method="post" action="{% url 'accounts:booking_cancel_action' booking.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="cancel-reason" class="block text-sm font-medium text-gray-700 mb-1">
+                                {% trans "Reason (optional)" %}
+                            </label>
+                            <textarea id="cancel-reason" name="reason" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="{% trans 'Let us know why you are cancelling...' %}"></textarea>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit"
+                                class="flex-1 px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700">
+                                {% trans "Confirm Cancellation" %}
+                            </button>
+                            <button type="button" id="cancel-back"
+                                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-50">
+                                {% trans "Back" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Reschedule Form (hidden by default) -->
+            {% if can_reschedule %}
+            <div id="reschedule-form" class="bg-white rounded-lg shadow-md overflow-hidden" style="display: none;">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-900">{% trans "Reschedule Booking" %}</h2>
+                </div>
+                <div class="p-6">
+                    <form method="post" action="{% url 'accounts:booking_reschedule_action' booking.pk %}">
+                        {% csrf_token %}
+                        <div class="space-y-4">
+                            <div>
+                                <label for="reschedule-date" class="block text-sm font-medium text-gray-700 mb-1">
+                                    {% trans "New Date" %}
+                                </label>
+                                <input type="date" id="reschedule-date" name="date" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    value="{{ booking.start_datetime|date:'Y-m-d' }}">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="reschedule-start" class="block text-sm font-medium text-gray-700 mb-1">
+                                        {% trans "Start Time" %}
+                                    </label>
+                                    <input type="time" id="reschedule-start" name="time_start" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        value="{{ booking.start_datetime|time:'H:i' }}">
+                                </div>
+                                <div>
+                                    <label for="reschedule-end" class="block text-sm font-medium text-gray-700 mb-1">
+                                        {% trans "End Time" %}
+                                    </label>
+                                    <input type="time" id="reschedule-end" name="time_end" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        value="{{ booking.end_datetime|time:'H:i' }}">
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit"
+                                    class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">
+                                    {% trans "Reschedule" %}
+                                </button>
+                                <button type="button" id="reschedule-back"
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-50">
+                                    {% trans "Back" %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Order Link -->
+            {% if booking.order %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-900">{% trans "Order" %}</h2>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-600 mb-2">{% trans "This booking is linked to order:" %}</p>
+                    <p class="font-semibold text-gray-900">#{{ booking.order.order_number }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Back Link -->
+    <div class="mt-8 text-center">
+        <a href="{% url 'accounts:booking_list' %}" class="text-blue-600 hover:text-blue-800">
+            {% trans "Back to My Bookings" %}
+        </a>
+    </div>
+</div>
+
+<script>
+(function() {
+    // Toggle cancel form
+    var cancelToggle = document.getElementById('cancel-toggle');
+    var cancelForm = document.getElementById('cancel-form');
+    var cancelBack = document.getElementById('cancel-back');
+    if (cancelToggle && cancelForm) {
+        cancelToggle.addEventListener('click', function() {
+            cancelForm.style.display = cancelForm.style.display === 'none' ? '' : 'none';
+        });
+        if (cancelBack) {
+            cancelBack.addEventListener('click', function() { cancelForm.style.display = 'none'; });
+        }
+    }
+    // Toggle reschedule form
+    var rescheduleToggle = document.getElementById('reschedule-toggle');
+    var rescheduleForm = document.getElementById('reschedule-form');
+    var rescheduleBack = document.getElementById('reschedule-back');
+    if (rescheduleToggle && rescheduleForm) {
+        rescheduleToggle.addEventListener('click', function() {
+            rescheduleForm.style.display = rescheduleForm.style.display === 'none' ? '' : 'none';
+        });
+        if (rescheduleBack) {
+            rescheduleBack.addEventListener('click', function() { rescheduleForm.style.display = 'none'; });
+        }
+    }
+})();
+</script>
+{% endblock %}

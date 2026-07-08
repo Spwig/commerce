@@ -1,0 +1,53 @@
+{% load i18n widget_tags %}
+{# Site Variable Widget - Displays dynamic site settings values #}
+
+{% with variable=config.variable|default:"site_name" %}
+{% with value=site_settings|get_site_variable:variable %}
+{% with enable_link=config.enable_link|default:True %}
+{% with link_target=config.link_target|default:True %}
+{% with is_linkable=variable|is_link_type %}
+
+{% if value %}
+<div class="widget-site-variable {{ widget.css_classes }}"
+     data-variable="{{ variable }}"
+     style="{% if config.text_color %}color: {{ config.text_color }};{% endif %} {{ config.typography|parse_typography }}">
+
+    {# Render as link if enabled and variable is linkable type #}
+    {% if enable_link and is_linkable %}
+    <a href="{{ value|get_link_href:variable }}"
+       {% if link_target and variable|is_external_link %}target="_blank" rel="noopener noreferrer"{% endif %}
+       class="site-variable-link">
+    {% endif %}
+
+    {# Icon before #}
+    {% if config.show_icon and config.icon and config.icon_position == "before" %}
+        <i class="fas {{ config.icon }} site-variable-icon site-variable-icon--before"></i>
+    {% endif %}
+
+    {# Value text #}
+    <span class="site-variable-text">{{ value }}</span>
+
+    {# Icon after #}
+    {% if config.show_icon and config.icon and config.icon_position == "after" %}
+        <i class="fas {{ config.icon }} site-variable-icon site-variable-icon--after"></i>
+    {% endif %}
+
+    {% if enable_link and is_linkable %}
+    </a>
+    {% endif %}
+
+</div>
+{% else %}
+{# Fallback for empty values - show placeholder in preview mode #}
+{% if is_preview %}
+<div class="widget-site-variable widget-site-variable--empty {{ widget.css_classes }}">
+    <span class="site-variable-placeholder">{% trans "No value set for" %} {{ variable }}</span>
+</div>
+{% endif %}
+{% endif %}
+
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}

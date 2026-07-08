@@ -1,0 +1,315 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Accounts Frontend - Communication Preferences
+ *
+ * Description: Styles for the communication preferences page
+ * Template: accounts/templates/accounts/preferences.html
+ */
+
+/* Preference cards styling */
+.preference-card {
+    background: var(--theme-color-surface, #fff);
+    border-radius: var(--theme-radius-lg, 8px);
+    box-shadow: var(--theme-shadow-base, 0 2px 4px rgba(0,0,0,0.1));
+    padding: var(--theme-space-6, 24px);
+    margin-bottom: var(--theme-space-6, 24px);
+}
+
+.preference-card h2 {
+    font-size: var(--theme-font-size-xl, 1.25rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    margin-bottom: var(--theme-space-2, 8px);
+    display: flex;
+    align-items: center;
+}
+
+.preference-card h2 svg {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--theme-space-2, 8px);
+}
+
+.card-description {
+    color: var(--theme-color-text-muted, #666);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    margin-bottom: var(--theme-space-5, 20px);
+}
+
+.preference-item {
+    padding: var(--theme-space-3, 12px) 0;
+    border-bottom: 1px solid var(--theme-color-border, #e5e7eb);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preference-item:last-child {
+    border-bottom: none;
+}
+
+.preference-item.locked {
+    opacity: 0.7;
+}
+
+/* Sub-items indented under a parent toggle */
+.preference-item--sub {
+    padding-left: 32px;
+}
+
+.preference-label {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.preference-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--theme-space-3, 12px);
+    cursor: pointer;
+}
+
+.preference-label input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+}
+
+.locked-badge {
+    background: var(--theme-color-border, #e5e7eb);
+    color: var(--theme-color-text-muted, #6b7280);
+    padding: 2px 8px;
+    border-radius: var(--theme-radius-sm, 4px);
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+}
+
+.verified-badge {
+    background: var(--theme-color-success, #10b981);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: var(--theme-radius-sm, 4px);
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    margin-left: var(--theme-space-2, 8px);
+}
+
+.unverified-badge {
+    background: var(--theme-color-warning, #f59e0b);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: var(--theme-radius-sm, 4px);
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    margin-left: var(--theme-space-2, 8px);
+}
+
+.frequency-select {
+    padding: 6px 12px;
+    border: 1px solid var(--theme-color-border, #d1d5db);
+    border-radius: var(--theme-radius-base, 6px);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    margin-left: var(--theme-space-3, 12px);
+}
+
+.quick-actions {
+    display: flex;
+    gap: var(--theme-space-3, 12px);
+    margin-bottom: var(--theme-space-6, 24px);
+}
+
+.quick-actions button {
+    padding: 10px 20px;
+    border-radius: var(--theme-radius-base, 6px);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+    cursor: pointer;
+    transition: all var(--theme-transition-duration-fast, 0.2s);
+}
+
+.btn-subscribe-all {
+    background: var(--theme-color-success, #10b981);
+    color: #fff;
+    border: none;
+}
+
+.btn-subscribe-all:hover {
+    background: var(--theme-color-success-dark, #059669);
+}
+
+.btn-unsubscribe-all {
+    background: var(--theme-color-error, #ef4444);
+    color: #fff;
+    border: none;
+}
+
+.btn-unsubscribe-all:hover {
+    background: var(--theme-color-error-dark, #dc2626);
+}
+
+.save-button {
+    background: var(--theme-color-primary, #3b82f6);
+    color: #fff;
+    padding: 12px 32px;
+    border-radius: var(--theme-radius-base, 6px);
+    font-weight: var(--theme-font-weight-medium, 500);
+    border: none;
+    cursor: pointer;
+    transition: all var(--theme-transition-duration-fast, 0.2s);
+}
+
+.save-button:hover {
+    background: var(--theme-color-primary-dark, #2563eb);
+}
+
+.save-button:disabled {
+    background: var(--theme-color-text-muted, #9ca3af);
+    cursor: not-allowed;
+}
+
+.info-box {
+    background: var(--theme-color-info-light, #eff6ff);
+    border: 1px solid var(--theme-color-info, #bfdbfe);
+    border-radius: var(--theme-radius-base, 6px);
+    padding: var(--theme-space-4, 16px);
+    margin-top: var(--theme-space-6, 24px);
+}
+
+.info-box h3 {
+    font-size: var(--theme-font-size-base, 1rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-info-dark, #1e40af);
+    margin-bottom: var(--theme-space-2, 8px);
+}
+
+.info-box p {
+    color: var(--theme-color-info-dark, #1e40af);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+/* ===== Smart Suggestions Card ===== */
+.smart-suggestions-card {
+    background: linear-gradient(135deg,
+        var(--theme-color-info-light, #eff6ff) 0%,
+        var(--theme-color-primary-light, #dbeafe) 100%);
+    border: 2px solid var(--theme-color-info, #60a5fa);
+}
+
+.smart-suggestions-card h2 {
+    color: var(--theme-color-info-dark, #1e40af);
+}
+
+.smart-suggestions-card h2 svg {
+    color: var(--theme-color-primary, #3b82f6);
+}
+
+.smart-suggestions-card .card-description {
+    color: var(--theme-color-info-dark, #1e40af);
+}
+
+.suggestion-item {
+    background: var(--theme-color-surface, #fff);
+    padding: var(--theme-space-4, 16px);
+    border-radius: var(--theme-radius-base, 6px);
+    margin-bottom: var(--theme-space-3, 12px);
+    border: none;
+}
+
+.suggestion-item__title {
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin-bottom: var(--theme-space-1, 4px);
+}
+
+.suggestion-item__highlight {
+    color: var(--theme-color-primary, #3b82f6);
+}
+
+.suggestion-item__description {
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #6b7280);
+}
+
+.suggestion-item__score {
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    color: var(--theme-color-text-light, #9ca3af);
+    margin-top: var(--theme-space-1, 4px);
+}
+
+/* App recommendations list */
+.suggestion-apps {
+    background: var(--theme-color-surface, #fff);
+    padding: var(--theme-space-4, 16px);
+    border-radius: var(--theme-radius-base, 6px);
+    border: none;
+}
+
+.suggestion-apps__title {
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin-bottom: var(--theme-space-3, 12px);
+}
+
+.suggestion-app {
+    padding: var(--theme-space-2, 8px) 0;
+    border-bottom: 1px solid var(--theme-color-bg-muted, #f3f4f6);
+}
+
+.suggestion-app:last-child {
+    border-bottom: none;
+}
+
+.suggestion-app__header {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-space-2, 8px);
+    margin-bottom: var(--theme-space-1, 4px);
+}
+
+.suggestion-app__icon--yes {
+    color: var(--theme-color-success, #10b981);
+}
+
+.suggestion-app__icon--no {
+    color: var(--theme-color-text-light, #9ca3af);
+}
+
+.suggestion-app__name {
+    font-weight: var(--theme-font-weight-medium, 500);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-secondary, #374151);
+}
+
+.suggestion-app__reason {
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    padding-left: 24px;
+}
+
+.suggestion-tip {
+    margin-top: var(--theme-space-3, 12px);
+    padding: var(--theme-space-2, 8px);
+    background: var(--theme-color-warning-light, #fef3c7);
+    border-radius: var(--theme-radius-sm, 4px);
+    font-size: var(--theme-font-size-xs, 0.75rem);
+    color: var(--theme-color-warning-dark, #92400e);
+}
+
+/* ===== Preference History Link ===== */
+.preference-history-link {
+    padding-bottom: 40px;
+}
+
+.preference-history-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-space-2, 8px);
+    color: var(--theme-color-primary, #3b82f6);
+    text-decoration: none;
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    font-weight: var(--theme-font-weight-medium, 500);
+}
+
+.preference-history-link a svg {
+    width: 18px;
+    height: 18px;
+}

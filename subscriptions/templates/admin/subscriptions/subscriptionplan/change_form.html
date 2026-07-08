@@ -1,0 +1,21 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Edit Subscription Plan" %}: {{ original.name }}{% else %}{% trans "Add Subscription Plan" %}{% endif %} | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'utilities/translation_editor/current/translation_editor.css' %}">
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+{# Translation Editor Initialization #}
+{% include "admin/includes/translation_editor_init.html" %}
+{% endblock %}

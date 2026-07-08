@@ -1,0 +1,174 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Stock Inventory" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/stockitem_list.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-boxes"></i>
+                {% trans "Stock Inventory" %}
+            </h1>
+            <p class="subtitle">{% trans "Track stock levels, allocations, and availability" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_stockitem_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Stock Item" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Stock Summary Dashboard -->
+    {% if stock_summary %}
+    <div class="stock-summary-dashboard" id="stock-summary-dashboard">
+        <div class="summary-card total-items">
+            <div class="card-label">{% trans "Total Items" %}</div>
+            <div class="card-value" id="summary-total-items">{{ stock_summary.total_items }}</div>
+        </div>
+
+        <div class="summary-card on-hand">
+            <div class="card-label">{% trans "On Hand" %}</div>
+            <div class="card-value" id="summary-on-hand">{{ stock_summary.total_on_hand|floatformat:0 }}</div>
+        </div>
+
+        <div class="summary-card allocated">
+            <div class="card-label">{% trans "Allocated" %}</div>
+            <div class="card-value" id="summary-allocated">{{ stock_summary.total_allocated|floatformat:0 }}</div>
+        </div>
+
+        <div class="summary-card available">
+            <div class="card-label">{% trans "Available" %}</div>
+            <div class="card-value" id="summary-available">{{ stock_summary.total_available|floatformat:0 }}</div>
+        </div>
+
+        <div class="summary-card low-stock">
+            <div class="card-label">⚠️ {% trans "Low Stock" %}</div>
+            <div class="card-value" id="summary-low-stock">{{ stock_summary.low_stock_count }}</div>
+        </div>
+
+        <div class="summary-card out-of-stock">
+            <div class="card-label">🔴 {% trans "Out of Stock" %}</div>
+            <div class="card-value" id="summary-out-of-stock">{{ stock_summary.out_of_stock_count }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by product name, SKU, warehouse...' %}"
+                    value="">
+            </div>
+
+            <!-- Warehouse Filter -->
+            <div class="filter-field">
+                <label for="filter-warehouse">
+                    <i class="fas fa-warehouse"></i> {% trans "Warehouse" %}
+                </label>
+                <select id="filter-warehouse">
+                    <option value="">{% trans "All Warehouses" %}</option>
+                    {% for warehouse in warehouses %}
+                    <option value="{{ warehouse.id }}">
+                        {{ warehouse.name }}
+                        {% if warehouse.code %}({{ warehouse.code }}){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Stock Status Filter -->
+            <div class="filter-field">
+                <label for="filter-stock-status">
+                    <i class="fas fa-chart-line"></i> {% trans "Stock Status" %}
+                </label>
+                <select id="filter-stock-status">
+                    <option value="">{% trans "All Status" %}</option>
+                    <option value="low">{% trans "Low Stock (At or below threshold)" %}</option>
+                    <option value="adequate">{% trans "Adequate Stock (Above threshold)" %}</option>
+                    <option value="out">{% trans "Out of Stock (0 available)" %}</option>
+                    <option value="allocated">{% trans "Has Allocated Stock" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Stock Items" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-box"></i>
+            <span id="stockitem-count">{{ cl.result_count }}</span> {% trans "item" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="stockitem-results">
+        {% include "admin/catalog/stockitem/partials/stockitem_cards.html" with stock_items=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 stock item{% plural %}{{ counter }} stock items{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'stock items' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+<div id="stockitem-list-config"
+     class="stockitem-list-hidden"
+     data-filter-url="{% url 'catalog_admin:filter_stock_items' %}"
+     data-results-container="stockitem-results"
+     data-results-count="stockitem-count"></div>
+<script src="{% static 'catalog/admin/js/stock-item-list.js' %}"></script>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "admin/email_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "DNS Configuration" %}</h2>
+    <p class="step-description">{% trans "Configure and validate DNS records for optimal email deliverability" %}</p>
+
+    {# Domain Configuration Section #}
+    <div class="dns-domain-section">
+        <h3>{% trans "Sending Domain" %}</h3>
+
+        <form method="post" id="domain-form" class="domain-override-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_domain">
+
+            <div class="form-group">
+                <label for="domain">{% trans "Domain for DNS Validation" %}</label>
+                <input type="text"
+                       name="domain"
+                       id="domain"
+                       value="{{ domain }}"
+                       class="form-control"
+                       placeholder="example.com">
+                <p class="help-text">
+                    {% trans "Automatically extracted from" %} <strong>{{ from_email }}</strong>
+                    {% if extracted_domain != domain %}
+                        <br><small class="text-muted">{% trans "(overridden)" %}</small>
+                    {% endif %}
+                </p>
+            </div>
+
+            <button type="submit" class="btn btn-sm btn-secondary">
+                <i class="fas fa-sync"></i> {% trans "Update & Re-validate" %}
+            </button>
+        </form>
+
+        {% if email_domain_differs %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>{% trans "Notice:" %}</strong>
+            {% blocktrans with email_domain=domain site_domain=site_domain %}
+            Your email domain ({{ email_domain }}) differs from your shop domain ({{ site_domain }}).
+            This is fine if intentional, but ensure DNS records are configured for {{ email_domain }}.
+            {% endblocktrans %}
+        </div>
+        {% endif %}
+    </div>
+
+    {# DNS Validation Results - Compact One-Liners #}
+    {% if dns_check_results %}
+    <div class="dns-validation-section">
+        <h3>{% trans "DNS Validation Status" %}</h3>
+
+        <div class="dns-validation-oneliner-list">
+            {# SPF One-Liner #}
+            <div class="dns-oneliner dns-oneliner-{{ dns_check_results.spf.status }}">
+                <span class="dns-oneliner-icon">
+                    {% if dns_check_results.spf.status == 'pass' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif dns_check_results.spf.status == 'warn' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% elif dns_check_results.spf.status == 'fail' %}
+                        <i class="fas fa-times-circle"></i>
+                    {% else %}
+                        <i class="fas fa-question-circle"></i>
+                    {% endif %}
+                </span>
+                <strong class="dns-oneliner-label">SPF:</strong>
+                <span class="dns-oneliner-message">{{ dns_check_results.spf.message }}</span>
+            </div>
+
+            {# DKIM One-Liner #}
+            <div class="dns-oneliner dns-oneliner-{{ dns_check_results.dkim.status }}">
+                <span class="dns-oneliner-icon">
+                    {% if dns_check_results.dkim.status == 'pass' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif dns_check_results.dkim.status == 'warn' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% elif dns_check_results.dkim.status == 'fail' %}
+                        <i class="fas fa-times-circle"></i>
+                    {% else %}
+                        <i class="fas fa-question-circle"></i>
+                    {% endif %}
+                </span>
+                <strong class="dns-oneliner-label">DKIM:</strong>
+                <span class="dns-oneliner-message">{{ dns_check_results.dkim.message }}</span>
+            </div>
+
+            {# DMARC One-Liner #}
+            <div class="dns-oneliner dns-oneliner-{{ dns_check_results.dmarc.status }}">
+                <span class="dns-oneliner-icon">
+                    {% if dns_check_results.dmarc.status == 'pass' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif dns_check_results.dmarc.status == 'warn' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% elif dns_check_results.dmarc.status == 'fail' %}
+                        <i class="fas fa-times-circle"></i>
+                    {% else %}
+                        <i class="fas fa-question-circle"></i>
+                    {% endif %}
+                </span>
+                <strong class="dns-oneliner-label">DMARC:</strong>
+                <span class="dns-oneliner-message">{{ dns_check_results.dmarc.message }}</span>
+            </div>
+
+            {# MX One-Liner (if present) #}
+            {% if dns_check_results.mx %}
+            <div class="dns-oneliner dns-oneliner-{{ dns_check_results.mx.status }}">
+                <span class="dns-oneliner-icon">
+                    {% if dns_check_results.mx.status == 'pass' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif dns_check_results.mx.status == 'warn' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                    {% elif dns_check_results.mx.status == 'fail' %}
+                        <i class="fas fa-times-circle"></i>
+                    {% else %}
+                        <i class="fas fa-question-circle"></i>
+                    {% endif %}
+                </span>
+                <strong class="dns-oneliner-label">MX:</strong>
+                <span class="dns-oneliner-message">
+                    {{ dns_check_results.mx.message }}
+                    {% if dns_check_results.mx.recommendation %}
+                        &mdash; <em>{% trans "Add:" %} Type: MX, Name: {{ dns_check_results.mx.recommendation.name }}, Priority: {{ dns_check_results.mx.recommendation.priority }}, Value: {{ dns_check_results.mx.recommendation.value }}</em>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Provider DNS Requirements Template #}
+    {% if has_dns_template %}
+    <div class="dns-requirements-section">
+        <h3>{% trans "DNS Setup Instructions" %}</h3>
+        <div class="dns-requirements-iframe-container setup-instructions">
+            {{ dns_requirements_html }}
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>{% trans "No DNS Setup Instructions Available" %}</strong>
+        <p>{% trans "The provider has not provided DNS configuration instructions. Please consult the provider's documentation for SPF, DKIM, and DMARC setup." %}</p>
+    </div>
+    {% endif %}
+
+    <form method="post" id="dns-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="next">
+        <input type="hidden" name="dns_status" value="{{ dns_check_results.overall.status|default:'unknown' }}">
+    </form>
+
+    <form method="post" id="skip-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="skip">
+        <input type="hidden" name="dns_status" value="{{ dns_check_results.overall.status|default:'unknown' }}">
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'email_system:wizard_step3' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+
+    {% if dns_check_results.overall.status != 'pass' %}
+    <button type="submit" form="skip-form" class="btn btn-warning">
+        <i class="fas fa-forward"></i> {% trans "Skip for Now" %}
+    </button>
+    {% endif %}
+
+    <button type="submit" form="dns-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/css/dns-assistant.css' %}">
+{% endblock %}

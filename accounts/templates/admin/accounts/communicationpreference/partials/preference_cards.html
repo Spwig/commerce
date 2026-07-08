@@ -1,0 +1,114 @@
+{% load i18n %}
+
+<div class="list-row-cards">
+    {% for pref in preferences %}
+    <div class="list-row-card">
+        <div class="list-row-card-icon">
+            <i class="fas fa-envelope-open-text"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:accounts_communicationpreference_change' pref.pk %}">
+                    {{ pref.user.email }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if pref.consent_source == 'registration' %}
+                    <i class="fas fa-clipboard-list"></i>
+                {% elif pref.consent_source == 'checkout' %}
+                    <i class="fas fa-shopping-cart"></i>
+                {% elif pref.consent_source == 'preference_center' %}
+                    <i class="fas fa-cog"></i>
+                {% elif pref.consent_source == 'api' %}
+                    <i class="fas fa-plug"></i>
+                {% elif pref.consent_source == 'admin' %}
+                    <i class="fas fa-user-shield"></i>
+                {% elif pref.consent_source == 'migration' %}
+                    <i class="fas fa-database"></i>
+                {% else %}
+                    <i class="fas fa-question-circle"></i>
+                {% endif %}
+                {{ pref.get_consent_source_display }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if pref.email_enabled %}
+                <span class="list-row-card-badge success">
+                    <i class="fas fa-envelope"></i> {% trans "Email On" %}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge error">
+                    <i class="fas fa-envelope"></i> {% trans "Email Off" %}
+                </span>
+                {% endif %}
+
+                {% if pref.sms_enabled %}
+                <span class="list-row-card-badge success">
+                    <i class="fas fa-sms"></i> {% trans "SMS On" %}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge error">
+                    <i class="fas fa-sms"></i> {% trans "SMS Off" %}
+                </span>
+                {% endif %}
+
+                {% if pref.email_marketing or pref.sms_marketing %}
+                <span class="list-row-card-badge success">
+                    <i class="fas fa-bullhorn"></i> {% trans "Marketing Opted In" %}
+                </span>
+                {% else %}
+                <span class="list-row-card-badge warning">
+                    <i class="fas fa-bullhorn"></i> {% trans "Marketing Opted Out" %}
+                </span>
+                {% endif %}
+
+                {% if pref.email_verified %}
+                <span class="list-row-card-badge primary">
+                    <i class="fas fa-check-circle"></i> {% trans "Email Verified" %}
+                </span>
+                {% endif %}
+
+                {% if pref.sms_verified %}
+                <span class="list-row-card-badge primary">
+                    <i class="fas fa-check-circle"></i> {% trans "SMS Verified" %}
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ pref.updated_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if pref.language_code %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-globe"></i>
+                    <span>{{ pref.language_code|upper }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:accounts_communicationpreference_change' pref.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit preferences' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:auth_user_change' pref.user.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View user' %}">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-envelope-open-text"></i>
+        </div>
+        <p>{% trans "No preferences match your filters." %}</p>
+    </div>
+    {% endfor %}
+</div>

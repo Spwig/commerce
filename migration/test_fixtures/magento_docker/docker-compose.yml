@@ -1,0 +1,83 @@
+# Bitnami Magento 2 for migration testing
+# Usage: docker compose up -d
+# Admin: http://localhost:8085/admin  (user/bitnami1)
+# Store: http://localhost:8085
+# API:   http://localhost:8085/rest/V1/
+
+services:
+  mariadb:
+    image: bitnami/mariadb:latest
+    container_name: magento-test-db
+    environment:
+      - MARIADB_USER=bn_magento
+      - MARIADB_PASSWORD=magento_password
+      - MARIADB_DATABASE=bitnami_magento
+      - MARIADB_ROOT_PASSWORD=root_password
+      - ALLOW_EMPTY_PASSWORD=no
+    volumes:
+      - mariadb_data:/bitnami/mariadb
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+
+  elasticsearch:
+    image: bitnami/elasticsearch:latest
+    container_name: magento-test-es
+    environment:
+      - ELASTICSEARCH_HEAP_SIZE=512m
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch_data:/bitnami/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+
+  magento:
+    image: bitnami/magento:2
+    container_name: magento-test
+    ports:
+      - "8085:8080"
+      - "8445:8443"
+    environment:
+      # Database
+      - MAGENTO_DATABASE_HOST=mariadb
+      - MAGENTO_DATABASE_PORT_NUMBER=3306
+      - MAGENTO_DATABASE_USER=bn_magento
+      - MAGENTO_DATABASE_PASSWORD=magento_password
+      - MAGENTO_DATABASE_NAME=bitnami_magento
+      # Elasticsearch
+      - MAGENTO_ELASTICSEARCH_HOST=elasticsearch
+      - MAGENTO_ELASTICSEARCH_PORT_NUMBER=9200
+      # Admin credentials
+      - MAGENTO_USERNAME=user
+      - MAGENTO_PASSWORD=bitnami1
+      - MAGENTO_EMAIL=admin@example.com
+      # Store config
+      - MAGENTO_HOST=localhost:8085
+      - MAGENTO_ENABLE_HTTPS=no
+      - MAGENTO_ENABLE_ADMIN_HTTPS=no
+      - MAGENTO_EXTRA_INSTALL_ARGS=--use-rewrites=1
+      # Skip sample data install (we'll seed via API)
+      - BITNAMI_DEBUG=true
+    volumes:
+      - magento_data:/bitnami/magento
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/rest/V1/store/storeConfigs || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+
+volumes:
+  mariadb_data:
+  elasticsearch_data:
+  magento_data:

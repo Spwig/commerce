@@ -1,0 +1,431 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Translation Jobs Management Styles */
+/* Following admin-base.css patterns - cards from .list-row-card */
+
+/* Service Status Styles */
+.service-status {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.service-status.online {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border-color: #10b981;
+}
+
+.service-status.degraded {
+    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+    border-color: #f97316;
+}
+
+.service-status.offline {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border-color: #ef4444;
+}
+
+.service-status h3 {
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--body-fg, #111827);
+}
+
+.service-status p {
+    margin: 0;
+    color: var(--body-quiet-color, #4b5563);
+}
+
+.service-status-details {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.service-status-degraded-reason {
+    margin-top: 10px;
+    color: #92400e;
+}
+
+.service-status-offline-action {
+    margin-top: 10px;
+}
+
+/* Dark mode service status */
+body.dark-mode .service-status {
+    background: var(--darkened-bg, #1f2937);
+    border-color: var(--border-color, #374151);
+    color: var(--body-fg, #f3f4f6);
+}
+
+body.dark-mode .service-status.online {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+}
+
+body.dark-mode .service-status.degraded {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+}
+
+body.dark-mode .service-status.offline {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+}
+
+/* Action Bar */
+.action-bar {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 8px;
+    align-items: center;
+}
+
+.action-bar .button {
+    white-space: nowrap;
+}
+
+.action-bar-right {
+    margin-left: auto;
+}
+
+.action-bar-select-all {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    cursor: pointer;
+}
+
+/* Tab Count Badge */
+.tab-count {
+    display: inline-block;
+    background: var(--primary, #3b82f6);
+    color: white;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 11px;
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+.tab-count.text-danger {
+    background: var(--delete-button-bg, #dc3545);
+}
+
+/* Job Card Progress (inline progress bar within card stats) */
+.job-card-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+}
+
+.job-card-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border-color, #dee2e6);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 60px;
+}
+
+.job-card-progress-fill {
+    width: 0;
+    height: 100%;
+    background: var(--primary, #3b82f6);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.job-card-progress-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--body-fg);
+    min-width: 35px;
+    text-align: right;
+}
+
+/* Status Badge (for detail modal) */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.status-pending {
+    background: var(--warning-bg, #fff3cd);
+    color: var(--warning-fg, #856404);
+}
+
+.status-badge.status-processing {
+    background: var(--primary-bg, #d1ecf1);
+    color: var(--primary, #0c5460);
+}
+
+.status-badge.status-completed {
+    background: var(--success-bg, #d4edda);
+    color: var(--success-fg, #155724);
+}
+
+.status-badge.status-failed {
+    background: var(--error-bg, #f8d7da);
+    color: var(--error-fg, #721c24);
+}
+
+.status-badge.status-cancelled {
+    background: var(--darkened-bg, #e2e3e5);
+    color: var(--body-quiet-color, #383d41);
+}
+
+/* Modal structural styles from admin-base.css (.admin-modal-*) */
+
+/* Form Styles */
+.form-row {
+    margin-bottom: 15px;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--body-fg, #212529);
+}
+
+.form-row label.required::after {
+    content: " *";
+    color: var(--error-fg, #dc3545);
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.15s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Checkbox List */
+.checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.checkbox-label {
+    display: block;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.checkbox-label:hover {
+    background: var(--selected-bg, #f8f9fa);
+    margin: 0 -10px;
+    padding: 5px 10px;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* Priority Slider */
+.priority-slider {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.priority-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--body-quiet-color, #6c757d);
+}
+
+#priority-value {
+    font-weight: bold;
+    color: var(--primary, #3b82f6);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-top: 16px;
+    border-top: 1px solid var(--border-color, #dee2e6);
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 0 0 8px 8px;
+}
+
+.pagination-info {
+    color: var(--body-quiet-color, #6c757d);
+    font-size: 14px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-info {
+    padding: 0 10px;
+    font-size: 14px;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    background: var(--body-bg, white);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 4px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    min-width: 150px;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--body-fg, #212529);
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background: var(--selected-bg, #f8f9fa);
+}
+
+.dropdown-item i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+/* Selection Checkbox */
+.selection input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--body-quiet-color, #6c757d);
+}
+
+.text-success {
+    color: var(--success-fg, #198754);
+}
+
+.text-danger {
+    color: var(--error-fg, #dc3545);
+}
+
+/* Job Details in Modal */
+.job-details {
+    padding: 0;
+}
+
+.job-details h3 {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+}
+
+.detail-row {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--hairline-color, #eee);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row.error {
+    color: var(--error-fg, #dc3545);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .action-bar {
+        flex-wrap: wrap;
+    }
+
+    .action-bar-right {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .admin-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .service-status-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .job-card-progress {
+        min-width: 80px;
+    }
+}
+
+/* Job status icon colors */
+.job-icon-pending { color: var(--warning-fg); }
+.job-icon-processing { color: var(--primary); }
+.job-icon-completed { color: var(--success-fg); }
+.job-icon-failed { color: var(--error-fg); }
+.job-icon-cancelled { color: var(--body-quiet-color); }
+
+/* Empty state */
+.jobs-empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--body-quiet-color);
+}
+
+.jobs-empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.jobs-empty-text {
+    font-size: 16px;
+    margin: 0;
+}
+
+.jobs-empty-subtext {
+    font-size: 14px;
+    margin-top: 10px;
+}

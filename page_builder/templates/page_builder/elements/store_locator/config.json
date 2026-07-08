@@ -1,0 +1,90 @@
+{
+  "element_type": "store_locator",
+  "name": "Store Locator",
+  "description": "Interactive map with store locations and search functionality",
+  "version": "1.0.1",
+  "category": "ecommerce",
+  "icon": "fas fa-map-marker-alt",
+  "author": "Page Builder System",
+  "tags": ["store", "locator", "map", "locations", "pickup", "find us"],
+  "supports_translation": true,
+  "translation_domain": "store_locator_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "scripts": [
+    "/static/page_builder/js/elements/store-locator.js"
+  ],
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-map-marker-alt",
+      "order": 1,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Find a Store",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "textarea",
+              "label": "Section Subtitle",
+              "default": "Locate our stores near you for pickup and in-person shopping",
+              "translatable": true,
+              "rows": 2,
+              "full_width": true
+            }
+          }
+        },
+        "map_settings_group": {
+          "type": "property_group",
+          "label": "Map Settings",
+          "properties": {
+            "default_zoom": {
+              "type": "number",
+              "label": "Default Zoom Level",
+              "default": 4,
+              "min": 1,
+              "max": 18,
+              "help_text": "Initial zoom level (1=world, 18=street)"
+            },
+            "default_latitude": {
+              "type": "string",
+              "label": "Default Latitude",
+              "default": "40.7128",
+              "help_text": "Center latitude when no stores are loaded"
+            },
+            "default_longitude": {
+              "type": "string",
+              "label": "Default Longitude",
+              "default": "-74.0060",
+              "help_text": "Center longitude when no stores are loaded"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {"type": "string", "label": "Section Title", "default": "Find a Store", "translatable": true},
+    "subtitle": {"type": "textarea", "label": "Section Subtitle", "default": "Locate our stores near you for pickup and in-person shopping", "translatable": true, "rows": 2},
+    "default_zoom": {"type": "number", "label": "Default Zoom Level", "default": 4, "min": 1, "max": 18},
+    "default_latitude": {"type": "string", "label": "Default Latitude", "default": "40.7128"},
+    "default_longitude": {"type": "string", "label": "Default Longitude", "default": "-74.0060"}
+  },
+  "translations": {
+    "en": {"name": "Store Locator", "description": "Interactive map with store locations and search functionality"},
+    "es": {"name": "Buscador de Tiendas", "description": "Mapa interactivo con ubicaciones de tiendas y búsqueda"},
+    "fr": {"name": "Localisateur de Magasins", "description": "Carte interactive avec emplacements des magasins et recherche"},
+    "de": {"name": "Filialfinder", "description": "Interaktive Karte mit Filialstandorten und Suchfunktion"},
+    "pt": {"name": "Localizador de Lojas", "description": "Mapa interativo com locais de lojas e funcionalidade de pesquisa"},
+    "zh-hans": {"name": "门店定位器", "description": "带有门店位置和搜索功能的交互式地图"},
+    "ja": {"name": "店舗検索", "description": "店舗の場所と検索機能を備えたインタラクティブマップ"}
+  }
+}

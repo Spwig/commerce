@@ -1,0 +1,127 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block title %}{% trans "Business Rules" %} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div class="change-list-header-row">
+            <div>
+                <h1>
+                    <i class="fas fa-gavel"></i>
+                    {% trans "Business Rules" %}
+                </h1>
+                <p class="subtitle">{% trans "Location-based rules for currency, redirects, and display logic" %}</p>
+            </div>
+            {% if has_add_permission %}
+            <a href="{% url 'admin:geoip_businessrule_add' %}" class="button default">
+                <i class="fas fa-plus"></i> {% trans "Add Rule" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-card">
+        <h3><i class="fas fa-chart-bar"></i> {% trans "Overview" %}</h3>
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-gavel"></i></div>
+                <div class="value">{{ total_rules|default:"0" }}</div>
+                <div class="label">{% trans "Total Rules" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="value">{{ active_rules|default:"0" }}</div>
+                <div class="label">{% trans "Active Rules" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules Cards -->
+    {% if rules %}
+    <div class="list-row-cards">
+        {% for rule in rules %}
+        <div class="list-row-card">
+            <div class="list-row-card-icon">
+                <i class="fas fa-gavel"></i>
+            </div>
+
+            <div class="list-row-card-content">
+                <h3 class="list-row-card-title">
+                    <a href="{% url 'admin:geoip_businessrule_change' rule.pk %}">{{ rule.name }}</a>
+                </h3>
+                <p class="list-row-card-subtitle">
+                    {{ rule.description|truncatechars:100|default:"-" }}
+                </p>
+
+                <div class="list-row-card-badges">
+                    {% if rule.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-sort-numeric-down"></i> {% trans "Priority" %}: {{ rule.priority }}
+                    </span>
+                </div>
+
+                <div class="list-row-card-meta">
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-bolt"></i>
+                        {{ rule.times_triggered|default:"0" }} {% trans "times triggered" %}
+                    </span>
+                    {% if rule.last_triggered %}
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-clock"></i>
+                        {% trans "Last triggered" %}: {{ rule.last_triggered|date:"M d, Y H:i" }}
+                    </span>
+                    {% endif %}
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-calendar"></i>
+                        {% trans "Created" %}: {{ rule.created_at|date:"M d, Y" }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-actions">
+                <a href="{% url 'admin:geoip_businessrule_change' rule.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{% url 'admin:geoip_businessrule_delete' rule.pk %}" class="list-row-card-action deletelink" title="{% trans 'Delete' %}">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="list-row-cards">
+        <div class="list-row-card geoip-empty-state">
+            <i class="fas fa-gavel geoip-empty-state-icon"></i>
+            <p class="geoip-empty-state-title">{% trans "No business rules configured." %}</p>
+            <p class="geoip-empty-state-description">
+                {% trans "Create rules to automate location-based decisions for currency, redirects, and more." %}
+            </p>
+            {% if has_add_permission %}
+            <a href="{% url 'admin:geoip_businessrule_add' %}" class="button default geoip-empty-state-action">
+                <i class="fas fa-plus"></i> {% trans "Add First Rule" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

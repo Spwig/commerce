@@ -1,0 +1,64 @@
+{% load i18n %}
+{% for item in staff_list %}
+<div class="list-row-card{% if not item.user.is_active %} disabled{% endif %}">
+    <div class="staff-card-avatar" style="background: {% if item.is_owner %}#7c3aed{% elif item.roles %}{% with role=item.roles.0 %}{% if role.color == 'primary' %}#7c3aed{% elif role.color == 'success' %}#22c55e{% elif role.color == 'warning' %}#f59e0b{% elif role.color == 'error' %}#ef4444{% elif role.color == 'info' %}#06b6d4{% else %}#6b7280{% endif %}{% endwith %}{% else %}#6b7280{% endif %};">
+        {{ item.user.first_name|default:"?" |truncatechars:1 }}{{ item.user.last_name|default:"" |truncatechars:1 }}
+    </div>
+    <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+            <a href="{% url 'admin:accounts_staffmember_change' item.user.pk %}">
+                {% if item.user.get_full_name %}{{ item.user.get_full_name }}{% else %}{{ item.user.email }}{% endif %}
+            </a>
+        </h3>
+        <p class="list-row-card-subtitle">{{ item.user.email }}</p>
+        <div class="list-row-card-badges">
+            {% if item.is_owner %}
+                <span class="list-row-card-badge" style="background: #7c3aed; color: #fff; border-color: #7c3aed;">
+                    <i class="fas fa-crown"></i> {% trans "Owner" %}
+                </span>
+            {% endif %}
+            {% for role in item.roles %}
+                <span class="list-row-card-badge {% if role.color == 'primary' %}primary{% elif role.color == 'success' %}success{% elif role.color == 'warning' %}warning{% elif role.color == 'error' %}error{% else %}{% endif %}">
+                    <i class="{{ role.icon }}"></i> {{ role.display_name }}
+                </span>
+            {% endfor %}
+            {% if item.has_admin %}
+                <span class="list-row-card-badge" style="background: var(--primary-bg); color: var(--primary); border-color: var(--primary);">
+                    <i class="fas fa-desktop"></i> {% trans "Admin" %}
+                </span>
+            {% endif %}
+            {% if item.has_pos %}
+                <span class="list-row-card-badge" style="background: var(--warning-bg); color: var(--warning-fg); border-color: var(--warning-fg);">
+                    <i class="fas fa-cash-register"></i> {% trans "POS" %}
+                </span>
+            {% endif %}
+        </div>
+        <div class="list-row-card-meta">
+            <span class="list-row-card-meta-item">
+                <i class="fas fa-clock"></i>
+                {% if item.user.last_login %}
+                    {% trans "Last login" %}: {{ item.user.last_login|timesince }} {% trans "ago" %}
+                {% else %}
+                    {% trans "Never logged in" %}
+                {% endif %}
+            </span>
+            {% if not item.user.is_active %}
+                <span class="list-row-card-meta-item" style="color: var(--error-fg);">
+                    <i class="fas fa-ban"></i> {% trans "Inactive" %}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="list-row-card-actions">
+        <a href="{% url 'admin:accounts_staffmember_change' item.user.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+    </div>
+</div>
+{% empty %}
+<div class="staff-empty-state">
+    <i class="fas fa-users"></i>
+    <h3>{% trans "No staff members found" %}</h3>
+    <p>{% trans "Adjust your filters or add a new staff member." %}</p>
+</div>
+{% endfor %}

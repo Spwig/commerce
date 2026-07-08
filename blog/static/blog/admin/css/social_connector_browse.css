@@ -1,0 +1,289 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Blog - Social Connector Browse
+ *
+ * Description: Styles for the social connector provider browse page
+ * Template: blog/templates/admin/blog/social_connectors/providers/browse.html
+ * Extracted: 2026-02-19
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/wizard-base.css (base wizard styles)
+ * - core/static/core/admin/css/provider-wizard.css (provider card styles)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* ==========================================================================
+   Browse Container
+   ========================================================================== */
+
+.browse-container {
+    max-width: 1200px;
+}
+
+/* ==========================================================================
+   Alert & Notice Spacing
+   ========================================================================== */
+
+.browse-alert--warning {
+    margin-top: 20px;
+}
+
+.browse-alert__text {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Content Sections
+   ========================================================================== */
+
+.browse-content-section {
+    margin-bottom: 30px;
+}
+
+.browse-help-box {
+    margin-top: 20px;
+}
+
+.browse-steps-list {
+    margin: 10px 0 0 45px;
+}
+
+.browse-security-notice {
+    margin-top: 20px;
+}
+
+/* ==========================================================================
+   Character Limit
+   ========================================================================== */
+
+.browse-char-limit {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+   Status Section
+   ========================================================================== */
+
+.browse-status-section {
+    margin-top: auto;
+    padding-top: 15px;
+}
+
+/* ==========================================================================
+   Status Badges
+   ========================================================================== */
+
+.browse-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.browse-badge--installed {
+    background: var(--message-success-bg);
+    color: var(--success-fg);
+}
+
+.browse-badge--available {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+/* ==========================================================================
+   Update Badge
+   ========================================================================== */
+
+.browse-update-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--primary);
+    color: var(--primary-fg);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Action Buttons Area
+   ========================================================================== */
+
+.browse-card-actions {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 10px;
+}
+
+.browse-card-actions .btn {
+    flex: 1;
+}
+
+.browse-card-actions .btn--configure {
+    text-align: center;
+}
+
+/* ==========================================================================
+   Loading Overlay
+   ========================================================================== */
+
+.browse-loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.browse-loading-overlay--active {
+    display: flex;
+}
+
+.browse-loading-panel {
+    background: var(--body-bg);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.browse-loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: browse-spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+.browse-loading-message {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   Spinner Animation
+   ========================================================================== */
+
+@keyframes browse-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Utility: Hidden
+   ========================================================================== */
+
+.blog-hidden {
+    display: none;
+}
+
+/* ==========================================================================
+   Select Account Wizard (Fallback Generic UI)
+   ========================================================================== */
+
+.account-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.account-card {
+    background: var(--body-bg, #fff);
+    border: 2px solid var(--border-color, #e0e0e0);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.account-card input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.account-info__name {
+    font-weight: 600;
+}
+
+.account-info__id {
+    font-size: 0.75rem;
+    color: var(--body-quiet-color, #999);
+}
+
+/* ==========================================================================
+   No Accounts Warning
+   ========================================================================== */
+
+.no-accounts-message {
+    text-align: center;
+    padding: 3rem;
+    background: var(--warning-bg, #fff8e1);
+    border-radius: 12px;
+    border: 1px solid var(--warning-border, #ffe082);
+}
+
+.no-accounts-message__icon {
+    font-size: 3rem;
+    color: var(--warning-color, #ffa000);
+    margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   Select Page/Organization Wizard - Inline Overrides
+   ========================================================================== */
+
+.page-image--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-image--placeholder .fab {
+    font-size: 2rem;
+    color: #1877f2;
+}
+
+.no-pages-list {
+    text-align: left;
+    display: inline-block;
+}
+
+/* ==========================================================================
+   Select Organization Wizard - Inline Overrides
+   ========================================================================== */
+
+.org-logo--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.org-logo--placeholder .fab {
+    font-size: 2rem;
+    color: #0077b5;
+}
+
+.no-orgs-list {
+    text-align: left;
+    display: inline-block;
+}

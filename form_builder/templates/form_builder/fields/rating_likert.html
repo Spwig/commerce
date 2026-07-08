@@ -1,0 +1,123 @@
+{% load i18n merchant_trans %}
+{# Likert Scale Rating Field #}
+{% with config=field.rating_config %}
+{% with scale_type=config.scale_type|default:"5_point" %}
+{% with style=config.style|default:"horizontal" %}
+{% with show_labels=config.show_labels|default:True %}
+
+<div class="rating-likert-wrapper layout-{{ style }}"
+     data-field-name="{{ field.field_name }}"
+     data-scale-type="{{ scale_type }}">
+
+    <div class="likert-scale">
+        {% if scale_type == "5_point" %}
+            {% with labels=config.labels %}
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-1" name="{{ field.field_name }}" value="1" {% if field.is_required %}required{% endif %}>
+                <label for="field-{{ field.field_name }}-1">
+                    <span class="likert-value">1</span>
+                    {% if show_labels %}<span class="likert-label">{{ labels.1|default:_("Strongly Disagree") }}</span>{% endif %}
+                </label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-2" name="{{ field.field_name }}" value="2">
+                <label for="field-{{ field.field_name }}-2">
+                    <span class="likert-value">2</span>
+                    {% if show_labels %}<span class="likert-label">{{ labels.2|default:_("Disagree") }}</span>{% endif %}
+                </label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-3" name="{{ field.field_name }}" value="3">
+                <label for="field-{{ field.field_name }}-3">
+                    <span class="likert-value">3</span>
+                    {% if show_labels %}<span class="likert-label">{{ labels.3|default:_("Neutral") }}</span>{% endif %}
+                </label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-4" name="{{ field.field_name }}" value="4">
+                <label for="field-{{ field.field_name }}-4">
+                    <span class="likert-value">4</span>
+                    {% if show_labels %}<span class="likert-label">{{ labels.4|default:_("Agree") }}</span>{% endif %}
+                </label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-5" name="{{ field.field_name }}" value="5">
+                <label for="field-{{ field.field_name }}-5">
+                    <span class="likert-value">5</span>
+                    {% if show_labels %}<span class="likert-label">{{ labels.5|default:_("Strongly Agree") }}</span>{% endif %}
+                </label>
+            </div>
+            {% endwith %}
+
+        {% elif scale_type == "7_point" %}
+            {% for i in "1234567" %}
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-{{ i }}" name="{{ field.field_name }}" value="{{ i }}" {% if forloop.first and field.is_required %}required{% endif %}>
+                <label for="field-{{ field.field_name }}-{{ i }}">
+                    <span class="likert-value">{{ i }}</span>
+                </label>
+            </div>
+            {% endfor %}
+
+        {% elif scale_type == "agreement" %}
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-1" name="{{ field.field_name }}" value="1" {% if field.is_required %}required{% endif %}>
+                <label for="field-{{ field.field_name }}-1">{% mtrans "Disagree" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-2" name="{{ field.field_name }}" value="2">
+                <label for="field-{{ field.field_name }}-2">{% mtrans "Neutral" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-3" name="{{ field.field_name }}" value="3">
+                <label for="field-{{ field.field_name }}-3">{% mtrans "Agree" %}</label>
+            </div>
+
+        {% elif scale_type == "frequency" %}
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-1" name="{{ field.field_name }}" value="1" {% if field.is_required %}required{% endif %}>
+                <label for="field-{{ field.field_name }}-1">{% mtrans "Never" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-2" name="{{ field.field_name }}" value="2">
+                <label for="field-{{ field.field_name }}-2">{% mtrans "Rarely" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-3" name="{{ field.field_name }}" value="3">
+                <label for="field-{{ field.field_name }}-3">{% mtrans "Sometimes" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-4" name="{{ field.field_name }}" value="4">
+                <label for="field-{{ field.field_name }}-4">{% mtrans "Often" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-5" name="{{ field.field_name }}" value="5">
+                <label for="field-{{ field.field_name }}-5">{% mtrans "Always" %}</label>
+            </div>
+
+        {% elif scale_type == "satisfaction" %}
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-1" name="{{ field.field_name }}" value="1" {% if field.is_required %}required{% endif %}>
+                <label for="field-{{ field.field_name }}-1">{% mtrans "Very Dissatisfied" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-2" name="{{ field.field_name }}" value="2">
+                <label for="field-{{ field.field_name }}-2">{% mtrans "Dissatisfied" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-3" name="{{ field.field_name }}" value="3">
+                <label for="field-{{ field.field_name }}-3">{% mtrans "Neutral" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-4" name="{{ field.field_name }}" value="4">
+                <label for="field-{{ field.field_name }}-4">{% mtrans "Satisfied" %}</label>
+            </div>
+            <div class="likert-option">
+                <input type="radio" id="field-{{ field.field_name }}-5" name="{{ field.field_name }}" value="5">
+                <label for="field-{{ field.field_name }}-5">{% mtrans "Very Satisfied" %}</label>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endwith %}{% endwith %}{% endwith %}

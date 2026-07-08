@@ -1,0 +1,129 @@
+{% extends "admin/migration/sync/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-search-plus"></i>
+        {% trans "Preview Changes" %}
+    </h3>
+    <p>{% trans "Review the changes that will be applied before confirming." %}</p>
+</div>
+
+{% if diff %}
+<!-- Diff Summary -->
+<div class="content-box">
+    <h3><i class="fas fa-chart-bar"></i> {% trans "Summary" %}</h3>
+
+    <div class="diff-summary-grid">
+        {% for cat_key, cat_diff in diff.items %}
+        {% if cat_diff.changes %}
+        <div class="diff-category">
+            <div class="diff-category-header">
+                <strong>{{ cat_diff.label|default:cat_key }}</strong>
+                <span class="diff-category-summary">{{ cat_diff.summary }}</span>
+            </div>
+
+            <div class="diff-items">
+                {% for change in cat_diff.changes %}
+                <div class="diff-item diff-{{ change.type }}">
+                    <span class="diff-badge diff-badge-{{ change.type }}">
+                        {% if change.type == 'add' %}
+                            <i class="fas fa-plus"></i> {% trans "Add" %}
+                        {% elif change.type == 'modify' %}
+                            <i class="fas fa-pen"></i> {% trans "Modify" %}
+                        {% elif change.type == 'remove' %}
+                            <i class="fas fa-minus"></i> {% trans "Remove" %}
+                        {% endif %}
+                    </span>
+                    <span class="diff-item-name">
+                        {{ change.model }}: {{ change.name }}
+                    </span>
+                    {% if change.changes %}
+                    <details class="diff-field-details">
+                        <summary>{% trans "Field changes" %} ({{ change.changes|length }})</summary>
+                        <table class="diff-fields-table">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Field" %}</th>
+                                    <th>{% trans "Current" %}</th>
+                                    <th>{% trans "New" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fc in change.changes %}
+                                <tr>
+                                    <td><code>{{ fc.field }}</code></td>
+                                    <td class="diff-old">{{ fc.current|truncatechars:60 }}</td>
+                                    <td class="diff-new">{{ fc.new|truncatechars:60 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </details>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if diff.warnings %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <strong>{% trans "Warnings" %}</strong>
+            <ul>
+                {% for warning in diff.warnings %}
+                <li>{{ warning }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="content-box">
+    <div class="empty-state">
+        <i class="fas fa-equals"></i>
+        <h3>{% trans "No Changes Detected" %}</h3>
+        <p>{% trans "The selected categories are already in sync. There is nothing to apply." %}</p>
+    </div>
+</div>
+{% endif %}
+
+<form method="post" id="preview-form">
+    {% csrf_token %}
+
+    {% if is_production %}
+    <div class="content-box">
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{% trans "Production Warning" %}</strong>
+                <p>{% trans "You are about to push changes to a production instance. This will modify live store settings." %}</p>
+                <label class="checkbox-label production-confirm">
+                    <input type="checkbox" name="production_confirmed" id="production-confirm" required>
+                    {% trans "I understand this will modify production settings and want to proceed." %}
+                </label>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="wizard-actions">
+        <a href="{% url 'admin:sync_wizard_step2' job.pk %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back" %}
+        </a>
+        {% if diff %}
+        <button type="submit" class="btn btn-primary" id="start-sync-btn">
+            <i class="fas fa-play"></i>
+            {% trans "Start Sync" %}
+        </button>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

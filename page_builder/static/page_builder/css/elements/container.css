@@ -1,0 +1,89 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Container Element Styles
+ *
+ * Base styles for the container element including builder indicators,
+ * mobile stack behavior, and print styles.
+ */
+
+/* Base container */
+.pb-container {
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Content wrapper (visual builder only) */
+.pb-container-content {
+    box-sizing: border-box;
+}
+
+/* Child wrapper (visual builder only) */
+.container-child-wrapper {
+    box-sizing: border-box;
+}
+
+/* Layout picker container (visual builder only) */
+.container-layout-picker {
+    box-sizing: border-box;
+}
+
+/* Layout option hover (extracted from _layout_picker.html) */
+.layout-option:hover {
+    border-color: var(--primary, #3b82f6) !important;
+    background: var(--selected-bg, rgba(59, 130, 246, 0.1)) !important;
+}
+
+.skip-layout-btn:hover {
+    border-color: var(--primary, #3b82f6) !important;
+    color: var(--body-fg, #e0e0e0) !important;
+}
+
+/* Builder hover indicators */
+.pb-container[data-builder]:hover {
+    outline: 1px dashed var(--primary, #3b82f6);
+    outline-offset: 2px;
+}
+
+.pb-container .pb-container[data-builder]:hover {
+    outline-color: var(--success, #10b981);
+}
+
+.pb-container[data-builder] .container-drop-zone:hover {
+    background: var(--selected-bg, rgba(59, 130, 246, 0.1)) !important;
+    border-color: var(--primary, #3b82f6) !important;
+    opacity: 1 !important;
+}
+
+/* Mobile stack behavior */
+@media (max-width: 767px) {
+    .pb-container[data-mobile-stack] {
+        flex-direction: column !important;
+        gap: var(--mobile-gap, 16px) !important;
+    }
+    .pb-container[data-mobile-stack] > .pb-container-content {
+        flex-direction: column !important;
+        gap: var(--mobile-gap, 16px) !important;
+    }
+    .pb-container[data-mobile-stack] .container-child-wrapper {
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+        width: 100% !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .pb-container {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    .pb-container[data-has-bg] {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .container-drop-zone,
+    .container-layout-picker {
+        display: none !important;
+    }
+}

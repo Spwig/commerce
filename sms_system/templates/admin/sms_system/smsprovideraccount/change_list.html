@@ -1,0 +1,139 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "SMS Provider Accounts" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+{% endblock %}
+
+{% block object-tools %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div class="change-list-header-top">
+            <div class="change-list-header-text">
+                <h1>
+                    <i class="fas fa-mobile-alt"></i>
+                    {% trans "SMS Provider Accounts" %}
+                </h1>
+                <p class="subtitle">{% trans "Manage your SMS and WhatsApp provider connections" %}</p>
+            </div>
+            <div class="change-list-header-actions">
+                {% if wizard_url %}
+                <a href="{{ wizard_url }}" class="button default">
+                    <i class="fas fa-magic"></i> {% trans "Setup Wizard" %}
+                </a>
+                {% endif %}
+                {% if browse_url %}
+                <a href="{{ browse_url }}" class="button">
+                    <i class="fas fa-store"></i> {% trans "Browse Providers" %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Provider Accounts" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-mobile-alt"></i>
+            {{ cl.result_list|length }} {% trans "accounts" %}
+        </span>
+    </div>
+
+    <!-- Provider Cards -->
+    {% if cl.result_list %}
+    <div class="list-row-cards">
+        {% for item in cl.result_list %}
+        <div class="list-row-card">
+            <div class="list-row-card-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+
+            <div class="list-row-card-content">
+                <h3 class="list-row-card-title">
+                    <a href="{% url 'admin:sms_system_smsprovideraccount_change' item.pk %}">{{ item.display_name }}</a>
+                </h3>
+                <p class="list-row-card-subtitle">
+                    {{ item.provider_display_name }}
+                </p>
+
+                <div class="list-row-card-badges">
+                    {% if item.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+
+                    {% if item.is_default_sms %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-sms"></i> {% trans "Default SMS" %}
+                    </span>
+                    {% endif %}
+
+                    {% if item.is_default_whatsapp %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fab fa-whatsapp"></i> {% trans "Default WhatsApp" %}
+                    </span>
+                    {% endif %}
+
+                    {% if item.connection_status == 'success' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-link"></i> {% trans "Connected" %}
+                    </span>
+                    {% elif item.connection_status == 'failed' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-unlink"></i> {% trans "Connection Failed" %}
+                    </span>
+                    {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-question-circle"></i> {% trans "Untested" %}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="list-row-card-meta">
+                    {% if item.last_checked %}
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-clock"></i>
+                        {% trans "Last checked" %} {{ item.last_checked|timesince }} {% trans "ago" %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="list-row-card-actions">
+                <a href="{% url 'admin:sms_system_smsprovideraccount_change' item.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="list-row-cards">
+        <div class="list-row-card empty-state">
+            <div class="list-row-card-content empty-state-content">
+                <i class="fas fa-mobile-alt empty-state-icon"></i>
+                <p class="empty-state-text">{% trans "No provider accounts configured." %}</p>
+                <p class="empty-state-hint">{% trans "Use the Setup Wizard to add one." %}</p>
+                {% if wizard_url %}
+                <a href="{{ wizard_url }}" class="button default">
+                    <i class="fas fa-magic"></i> {% trans "Setup Wizard" %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

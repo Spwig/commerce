@@ -1,0 +1,103 @@
+{% extends "admin/search/wizard/base.html" %}
+{% load i18n static search_filters %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Review & Create" %}</h2>
+    <p class="step-description">{% trans "Review your search engine configuration before creating it." %}</p>
+
+    <form method="post" id="wizard-form">
+        {% csrf_token %}
+
+        <!-- Basic Info Summary -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-info-circle"></i> {% trans "Basic Information" %}
+            </h3>
+            <div class="review-grid">
+                <span class="review-grid__label">{% trans "Name:" %}</span>
+                <strong>{{ wizard_data.name }}</strong>
+
+                <span class="review-grid__label">{% trans "Slug:" %}</span>
+                <code class="review-grid__code">{{ wizard_data.slug }}</code>
+
+                <span class="review-grid__label">{% trans "Status:" %}</span>
+                <span>
+                    {% if wizard_data.is_active %}
+                    <span class="review-grid__status--active"><i class="fas fa-check-circle"></i> {% trans "Active" %}</span>
+                    {% else %}
+                    <span class="review-grid__status--inactive"><i class="fas fa-pause-circle"></i> {% trans "Inactive" %}</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Content Types Summary -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-boxes"></i> {% trans "Content Types" %}
+            </h3>
+            <div class="review-content-types">
+                {% if wizard_data.content_types %}
+                    {% for type_id, type_name, type_icon, type_desc in content_type_choices %}
+                        {% if type_id in wizard_data.content_types %}
+                        <span class="review-type-badge">
+                            <i class="{{ type_icon }} review-type-badge__icon"></i>
+                            {{ type_name }}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span class="review-type-badge review-type-badge--all">
+                    <i class="fas fa-globe review-type-badge__icon"></i>
+                    {% trans "All Content Types" %}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Weight Overrides Summary -->
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-sliders-h"></i> {% trans "Relevance Weights" %}
+            </h3>
+            {% if wizard_data.use_custom_weights and wizard_data.weight_overrides %}
+            <div class="review-grid review-grid--wide">
+                {% for field_name, label, default, help_text in weight_fields %}
+                    {% if field_name in wizard_data.weight_overrides %}
+                    <span class="review-grid__label">{{ label }}:</span>
+                    <span>
+                        <strong>{{ wizard_data.weight_overrides|get_item:field_name }}</strong>
+                        <span class="review-grid__default">({% trans "default:" %} {{ default }})</span>
+                    </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="review-global-weights">
+                <i class="fas fa-check"></i> {% trans "Using global weight settings from Search Settings." %}
+            </p>
+            {% endif %}
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>{% trans "Ready to create" %}</strong>
+                <p class="review-alert-text">{% trans "Click 'Create Engine' to create this search engine. You can edit the configuration later, including adding category and brand exclusions." %}</p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'search_admin:engine_wizard_step3' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="wizard-form" class="btn btn-success btn-large">
+        <i class="fas fa-check"></i> {% trans "Create Engine" %}
+    </button>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Monthly Blog Digest" %}</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h1 style="color: #333; margin: 0; font-size: 24px;">{% trans "Your Monthly Blog Digest" %}</h1>
+        <p style="color: #666; margin: 10px 0 0 0;">{% trans "Here's what you missed this month" %}</p>
+    </div>
+
+    {% for post in posts %}
+    <div style="border-bottom: 1px solid #eee; padding: 20px 0;">
+        {% if post.featured_image %}
+        <img src="{{ post.featured_image.get_display_url }}" alt="{{ post.title }}"
+             style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;">
+        {% endif %}
+
+        <h2 style="margin: 0 0 10px 0; font-size: 20px;">
+            <a href="https://{{ site.domain }}{{ post.get_absolute_url }}" style="color: #333; text-decoration: none;">
+                {{ post.title }}
+            </a>
+        </h2>
+
+        <p style="color: #666; margin: 0 0 10px 0;">{{ post.excerpt|truncatewords:30 }}</p>
+
+        <a href="https://{{ site.domain }}{{ post.get_absolute_url }}" style="color: #007bff; text-decoration: none;">
+            {% trans "Read more" %} &rarr;
+        </a>
+    </div>
+    {% endfor %}
+
+    <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+
+    <div style="text-align: center; color: #999; font-size: 12px;">
+        <p>
+            {% trans "You received this email because you subscribed to our monthly blog digest." %}
+        </p>
+        <p>
+            <a href="{{ preferences_url }}" style="color: #007bff;">{% trans "Manage preferences" %}</a> |
+            <a href="{{ unsubscribe_url }}" style="color: #007bff;">{% trans "Unsubscribe" %}</a>
+        </p>
+    </div>
+</body>
+</html>

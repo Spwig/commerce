@@ -1,0 +1,176 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for group in groups %}
+    <div class="list-row-card{% if not group.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ group.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if group.logic_operator == 'AND' %}
+                <i class="fas fa-code-branch icon-color-blue icon-size-32"></i>
+            {% else %}
+                <i class="fas fa-random icon-color-green icon-size-32"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'page_builder_admin:rule_builder_edit' group.pk %}">
+                    {{ group.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-filter"></i> {{ group.rules.count }} {% trans "rule" %}{{ group.rules.count|pluralize }}
+                {% if group.child_groups.count %}
+                    &nbsp;&bull;&nbsp;
+                    <i class="fas fa-sitemap"></i> {{ group.child_groups.count }} {% trans "nested group" %}{{ group.child_groups.count|pluralize }}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <!-- Logic Operator Badge -->
+                {% if group.logic_operator == 'AND' %}
+                    <span class="list-row-card-badge badge-and-operator">
+                        <i class="fas fa-code-branch"></i> {% trans "AND" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge badge-or-operator">
+                        <i class="fas fa-random"></i> {% trans "OR" %}
+                    </span>
+                {% endif %}
+
+                <!-- Status Badge -->
+                {% if group.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <!-- Parent/Nested Badge -->
+                {% if group.parent_group %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-level-down-alt"></i> {% trans "Nested" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge badge-root-group">
+                        <i class="fas fa-layer-group"></i> {% trans "Root Group" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if group.description %}
+            <div class="list-row-card-description">
+                {{ group.description|truncatewords:25 }}
+            </div>
+            {% endif %}
+
+            <!-- Rules Preview -->
+            {% if group.rules.count %}
+            <div class="list-row-card-meta rules-preview-box">
+                <span class="rules-preview-label">{% trans "Rules:" %}</span>
+                <div class="rules-preview-items">
+                    {% for member in group.rulegroupmember_set.all|slice:":5" %}
+                        <span class="rules-preview-item">
+                            {{ member.rule.name }}
+                        </span>
+                    {% endfor %}
+                    {% if group.rules.count > 5 %}
+                        <span class="rules-preview-more">
+                            +{{ group.rules.count|add:"-5" }} {% trans "more" %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Rules" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        {{ group.rules.count }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Nested Groups" %}</span>
+                    <span class="list-row-card-stat-value">{{ group.child_groups.count }}</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ group.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ group.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if group.parent_group %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-folder"></i>
+                    <span>{% trans "Parent" %}: {{ group.parent_group.name }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'page_builder_admin:rule_builder_edit' group.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Open in Builder' %}">
+                <i class="fas fa-project-diagram"></i>
+            </a>
+            <a href="{% url 'admin:page_builder_rulegroup_change' group.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit details' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if group.is_active %}
+            <button type="button"
+               class="list-row-card-action"
+               data-action="toggle-group-status"
+               data-pk="{{ group.pk }}"
+               data-activate="false"
+               title="{% trans 'Deactivate group' %}">
+                <i class="fas fa-toggle-on"></i>
+            </button>
+            {% else %}
+            <button type="button"
+               class="list-row-card-action"
+               data-action="toggle-group-status"
+               data-pk="{{ group.pk }}"
+               data-activate="true"
+               title="{% trans 'Activate group' %}">
+                <i class="fas fa-toggle-off"></i>
+            </button>
+            {% endif %}
+            <a href="{% url 'admin:page_builder_rulegroup_delete' group.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete group' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-layer-group"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No rule groups found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or create a new rule group." %}
+        </p>
+        <a href="{% url 'page_builder_admin:rule_builder' %}" class="button mt-16">
+            <i class="fas fa-plus"></i> {% trans "Create Rule Group" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+

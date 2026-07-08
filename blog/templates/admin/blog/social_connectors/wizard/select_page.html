@@ -1,0 +1,111 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/provider-wizard.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'blog/admin/css/select_page_wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <h1>{% trans "Select Facebook Page" %}</h1>
+        <p class="wizard-subtitle">{% trans "Choose which Facebook Page you want to connect for posting" %}</p>
+    </div>
+
+    <!-- Step Indicator (OAuth flow has 5 steps) -->
+    <div class="wizard-steps">
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step completed">
+            <div class="step-number"><i class="fas fa-check"></i></div>
+            <div class="step-label">{% trans "Authorize" %}</div>
+        </div>
+        <div class="step-connector active"></div>
+        <div class="step active">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Select Page" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Test & Save" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        {% if pages %}
+        <form method="post" id="page-selection-form">
+            {% csrf_token %}
+            <p class="form-intro">{% trans "We found the following Facebook Pages you manage. Select the one you want to connect:" %}</p>
+
+            <div class="page-grid" data-card-selector-class="page-card">
+                {% for page in pages %}
+                <label class="page-card" data-page-id="{{ page.id }}">
+                    <input type="radio" name="page_id" value="{{ page.id }}" required>
+                    {% if page.picture.url %}
+                    <img src="{{ page.picture.url }}" alt="{{ page.name }}" class="page-image">
+                    {% else %}
+                    <div class="page-image page-image--placeholder">
+                        <i class="fab fa-facebook"></i>
+                    </div>
+                    {% endif %}
+                    <div class="page-info">
+                        <div class="page-name">{{ page.name }}</div>
+                        {% if page.category %}
+                        <div class="page-category">{{ page.category }}</div>
+                        {% endif %}
+                        <div class="page-id">ID: {{ page.id }}</div>
+                    </div>
+                    <div class="check-indicator">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </form>
+        {% else %}
+        <div class="no-pages-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>{% trans "No Pages Found" %}</h3>
+            <p>{% trans "We couldn't find any Facebook Pages that you manage." %}</p>
+            <p>{% trans "Make sure you:" %}</p>
+            <ul class="no-pages-list">
+                <li>{% trans "Have admin access to at least one Facebook Page" %}</li>
+                <li>{% trans "Granted all the requested permissions during authorization" %}</li>
+                <li>{% trans "Your Facebook app has the pages_show_list permission" %}</li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Wizard Navigation -->
+    <div class="wizard-navigation">
+        <a href="{% url 'blog_admin:wizard_step2' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+        {% if pages %}
+        <button type="submit" form="page-selection-form" class="btn btn-primary">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'blog/admin/js/social_connector_wizard.js' %}"></script>
+{% endblock %}

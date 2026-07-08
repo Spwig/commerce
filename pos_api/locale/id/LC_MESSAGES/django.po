@@ -1,0 +1,1504 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-14 14:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "POS API"
+msgstr "API POS"
+
+msgid "A valid POS license is required to access this endpoint."
+msgstr "Diperlukan lisensi POS yang valid untuk mengakses endpoint ini."
+
+msgid "POS access requires a staff account."
+msgstr "Akses POS memerlukan akun staf."
+
+msgid "You are not assigned to this terminal."
+msgstr "Anda tidak ditugaskan ke terminal ini."
+
+#, python-format
+msgid "You do not have permission: %(label)s."
+msgstr "Anda tidak memiliki izin: %(label)s."
+
+msgid "Bundle variant selections: {bundle_item_id: variant_id}"
+msgstr "Pemilihan variasi bundel: {bundle_item_id: variant_id}"
+
+msgid "List of optional BundleItem IDs to exclude"
+msgstr "Daftar ID BundleItem opsional yang akan dikecualikan"
+
+msgid "Search by email, phone, or name"
+msgstr "Cari berdasarkan email, telepon, atau nama"
+
+msgid "ID of the product to adjust stock for."
+msgstr "ID produk yang akan disesuaikan stoknya."
+
+msgid "ID of the variant (required for variable products)."
+msgstr "ID variasi (diperlukan untuk produk variabel)."
+
+msgid ""
+"Type of adjustment: \"receive\" adds stock (e.g. new shipment), \"damage\" "
+"removes stock (e.g. broken item), \"recount\" sets absolute on_hand count, "
+"\"return\" adds stock back (e.g. customer return)."
+msgstr ""
+"Jenis penyesuaian: \"receive\" menambahkan stok (misalnya, pengiriman baru),"
+" \"damage\" mengurangi stok (misalnya, barang rusak), \"recount\" mengatur "
+"jumlah on_hand secara absolut, \"return\" menambahkan kembali stok "
+"(misalnya, pengembalian pelanggan)."
+
+msgid ""
+"For receive/return: units to add. For damage: units to remove. For recount: "
+"new absolute on_hand count."
+msgstr ""
+"Untuk receive/return: unit yang ditambahkan. Untuk damage: unit yang "
+"dikurangi. Untuk recount: jumlah on_hand absolut baru."
+
+msgid "Required explanation for this adjustment (audit trail)."
+msgstr "Penjelasan yang diperlukan untuk penyesuaian ini (jejak audit)."
+
+msgid "Optional UUID for offline deduplication."
+msgstr "UUID opsional untuk deduplikasi offline."
+
+msgid "Signed quantity delta."
+msgstr "Delta kuantitas yang ditandatangani."
+
+msgid "Last four digits of card number (digits only)"
+msgstr "Empat digit terakhir nomor kartu (hanya digit)"
+
+msgid "Amount to charge. If not provided, charges the full remaining balance."
+msgstr ""
+"Jumlah yang akan dibebankan. Jika tidak diberikan, akan membebankan sisa "
+"saldo penuh."
+
+msgid "Payment ID from the terminal provider (e.g. Stripe PaymentIntent ID)"
+msgstr ""
+"ID pembayaran dari penyedia terminal (misalnya, Stripe PaymentIntent ID)"
+
+msgid "Provider-specific reader ID (e.g. Adyen POIID, Square device_id)"
+msgstr "ID pembaca khusus penyedia (misalnya, Adyen POIID, Square device_id)"
+
+msgid "Provider-specific transaction ID for status polling"
+msgstr "ID transaksi khusus penyedia untuk pemantauan status"
+
+msgid ""
+"Initial status -- typically \"pending\" for async providers, \"succeeded\" "
+"for sync (Adyen)"
+msgstr ""
+"Status awal -- biasanya \"menunggu\" untuk penyedia async, \"berhasil\" "
+"untuk sync (Adyen)"
+
+msgid "Current payment status"
+msgstr "Status pembayaran saat ini"
+
+msgid "Provider payment ID (when succeeded)"
+msgstr "ID pembayaran penyedia (ketika berhasil)"
+
+msgid "Reason for cancellation (when canceled)"
+msgstr "Alasan pembatalan (ketika dibatalkan)"
+
+msgid "POS staff login"
+msgstr "Login staf POS"
+
+msgid ""
+"Authenticate a staff member for POS access. Returns access and refresh "
+"tokens. Uses the same token system as the Admin API "
+"(MobileTokenAuthentication)."
+msgstr ""
+"Mengautentikasi anggota staf untuk akses POS. Mengembalikan token akses dan "
+"token refresh. Menggunakan sistem token yang sama dengan Admin API "
+"(MobileTokenAuthentication)."
+
+msgid "Login successful, returns tokens and terminal config"
+msgstr "Login berhasil, mengembalikan token dan konfigurasi terminal"
+
+msgid "Invalid credentials"
+msgstr "Kredensial tidak valid"
+
+msgid "User is not a staff member"
+msgstr "Pengguna bukan anggota staf"
+
+msgid "Refresh POS access token"
+msgstr "Perbarui token akses POS"
+
+msgid "Exchange a refresh token for a new access token."
+msgstr "Tukar token refresh untuk token akses baru."
+
+msgid "New access token"
+msgstr "Token akses baru"
+
+msgid "Invalid or expired refresh token"
+msgstr "Token perbaruan tidak valid atau sudah kedaluwarsa"
+
+msgid "POS logout"
+msgstr "Keluar dari POS"
+
+msgid "Invalidate the current access and refresh tokens."
+msgstr "Membatalkan token akses dan token refresh saat ini."
+
+msgid "Logged out successfully"
+msgstr "Keluar berhasil"
+
+msgid "Get current POS cart"
+msgstr "Dapatkan keranjang POS saat ini"
+
+msgid ""
+"Returns the current cart for the authenticated cashier. Creates a new cart "
+"if one does not exist. Requires staff authentication and valid POS license."
+msgstr ""
+"Mengembalikan keranjang saat ini untuk kasir yang terautentikasi. Membuat "
+"keranjang baru jika tidak ada. Memerlukan autentikasi staf dan lisensi POS "
+"yang valid."
+
+msgid "Add item to POS cart"
+msgstr "Tambahkan item ke keranjang POS"
+
+msgid ""
+"Add a product to the cashier's cart. Supports adding by product ID or "
+"barcode. When barcode is provided without product_id, it resolves the "
+"product automatically. Requires staff authentication and valid POS license."
+msgstr ""
+"Tambahkan produk ke keranjang kasir. Mendukung penambahan melalui ID produk "
+"atau kode batang. Ketika kode batang diberikan tanpa product_id, produk akan"
+" diselesaikan secara otomatis. Memerlukan autentikasi staf dan lisensi POS "
+"yang valid."
+
+msgid "Invalid product, variant, or insufficient stock"
+msgstr "Produk, variasi, atau stok tidak cukup tidak valid"
+
+msgid "Update cart item quantity"
+msgstr "Perbarui kuantitas item keranjang"
+
+msgid ""
+"Update the quantity of a cart item. Set quantity to 0 to remove the item. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Perbarui jumlah item keranjang. Setel jumlah menjadi 0 untuk menghapus item."
+" Memerlukan autentikasi staf dan lisensi POS yang valid."
+
+msgid "Invalid quantity or insufficient stock"
+msgstr "Kuantitas tidak valid atau stok tidak cukup"
+
+msgid "Cart item not found"
+msgstr "Item keranjang tidak ditemukan"
+
+msgid "Remove item from cart"
+msgstr "Hapus item dari keranjang"
+
+msgid ""
+"Remove a specific item from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Hapus item tertentu dari keranjang. Membutuhkan otentikasi staf dan lisensi "
+"POS yang valid."
+
+msgid "Apply voucher to cart"
+msgstr "Terapkan voucher ke keranjang"
+
+msgid ""
+"Apply a voucher/discount code to the cart. Only one voucher can be active at"
+" a time. Requires staff authentication and valid POS license."
+msgstr ""
+"Terapkan kode voucher/discount ke keranjang. Hanya satu voucher yang dapat "
+"aktif sekaligus. Membutuhkan autentikasi staf dan lisensi POS yang valid."
+
+msgid "Invalid or expired voucher code"
+msgstr "Kode voucher tidak valid atau telah kedaluwarsa"
+
+msgid "Remove voucher from cart"
+msgstr "Hapus voucher dari keranjang"
+
+msgid ""
+"Remove the applied voucher from the cart. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Hapus voucher yang diterapkan dari keranjang. Membutuhkan otentikasi staf "
+"dan lisensi POS yang valid."
+
+msgid "No voucher applied"
+msgstr "Tidak ada voucher yang diterapkan"
+
+msgid "Apply gift card to cart"
+msgstr "Terapkan kartu hadiah ke keranjang"
+
+msgid ""
+"Apply a gift card code to the cart to cover part or all of the total. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Terapkan kode kartu hadiah ke keranjang untuk menutupi sebagian atau seluruh"
+" total. Membutuhkan autentikasi staf dan lisensi POS yang valid."
+
+msgid "Invalid gift card or insufficient balance"
+msgstr "Kartu hadiah tidak valid atau saldo tidak cukup"
+
+msgid "Clear all items from cart"
+msgstr "Hapus semua item dari keranjang"
+
+msgid ""
+"Remove all items, vouchers, and gift cards from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Hapus semua item, voucher, dan kartu hadiah dari keranjang. Membutuhkan "
+"autentikasi staf dan lisensi POS yang valid."
+
+msgid "Apply manual discount to cart item"
+msgstr "Terapkan diskon manual ke item keranjang"
+
+msgid ""
+"Apply a staff manual discount to a specific cart item. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Terapkan diskon manual staf ke item keranjang tertentu. Mengembalikan "
+"requires_approval=true jika diskon melebihi batas staf. Memerlukan "
+"otentikasi staf dan lisensi POS yang valid."
+
+msgid "Discount applied or requires approval"
+msgstr "Diskon diterapkan atau memerlukan persetujuan"
+
+msgid "Invalid discount or not authorized"
+msgstr "Diskon tidak valid atau tidak diizinkan"
+
+msgid "Remove manual discount from cart item"
+msgstr "Hapus diskon manual dari item keranjang"
+
+msgid ""
+"Remove a staff manual discount from a specific cart item. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Hapus diskon manual staf dari item keranjang tertentu. Memerlukan otentikasi"
+" staf dan lisensi POS yang valid."
+
+msgid "Discount removed"
+msgstr "Diskon dihapus"
+
+msgid "Apply manual discount to cart"
+msgstr "Terapkan diskon manual ke keranjang"
+
+msgid ""
+"Apply a staff manual discount to the entire cart. Returns "
+"requires_approval=true if the discount exceeds staff limits. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Terapkan diskon manual staf ke seluruh keranjang. Mengembalikan "
+"requires_approval=true jika diskon melebihi batas staf. Memerlukan "
+"otentikasi staf dan lisensi POS yang valid."
+
+msgid "Remove manual discount from cart"
+msgstr "Hapus diskon manual dari keranjang"
+
+msgid ""
+"Remove the staff manual discount from the cart. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Hapus diskon manual staf dari keranjang. Memerlukan autentikasi staf dan "
+"lisensi POS yang valid."
+
+msgid "Verify manager PIN"
+msgstr "Verifikasi PIN manajer"
+
+msgid ""
+"Verify if a PIN is valid for a manager who can approve discounts. Returns "
+"the manager's name if valid. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Verifikasi apakah PIN valid untuk manajer yang dapat menyetujui diskon. "
+"Mengembalikan nama manajer jika valid. Memerlukan otentikasi staf dan "
+"lisensi POS yang valid."
+
+msgid "PIN verification result"
+msgstr "Hasil verifikasi PIN"
+
+msgid "Approve discount with manager PIN"
+msgstr "Setujui diskon dengan PIN manajer"
+
+msgid ""
+"Apply a discount that exceeds staff limits with manager approval. Requires a"
+" valid manager PIN to proceed. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Terapkan diskon yang melebihi batas staf dengan persetujuan manajer. "
+"Memerlukan PIN manajer yang valid untuk melanjutkan. Memerlukan otentikasi "
+"staf dan lisensi POS yang valid."
+
+msgid "Discount approved and applied"
+msgstr "Diskon disetujui dan diterapkan"
+
+msgid "Invalid PIN or discount parameters"
+msgstr "PIN tidak valid atau parameter diskon tidak valid"
+
+msgid "Park current cart"
+msgstr "Parkir keranjang saat ini"
+
+msgid ""
+"Save the current cart state for later restoration. Used when a customer "
+"needs to step away and another customer needs to be served. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Simpan status keranjang saat ini untuk pemulihan nanti. Digunakan ketika "
+"pelanggan perlu pergi dan pelanggan lain perlu dilayani. Memerlukan "
+"otentikasi staf dan lisensi POS yang valid."
+
+msgid "Cart parked successfully"
+msgstr "Keranjang berhasil diparkir"
+
+msgid "Cart is empty or cannot be parked"
+msgstr "Keranjang kosong atau tidak dapat diparkir"
+
+msgid "List parked carts"
+msgstr "Daftar keranjang yang diparkir"
+
+msgid ""
+"Get all parked carts for the current terminal. Requires staff authentication"
+" and valid POS license."
+msgstr ""
+"Dapatkan semua keranjang yang diparkir untuk terminal saat ini. Memerlukan "
+"autentikasi staf dan lisensi POS yang valid."
+
+msgid "List of parked carts"
+msgstr "Daftar keranjang yang diparkir"
+
+msgid "Restore parked cart"
+msgstr "Pulihkan keranjang yang diparkir"
+
+msgid ""
+"Restore a parked cart, replacing the current cart contents. The current cart"
+" will be cleared before restoration. Requires staff authentication and valid"
+" POS license."
+msgstr ""
+"Pulihkan keranjang yang ditahan, menggantikan isi keranjang saat ini. "
+"Keranjang saat ini akan dihapus sebelum pemulihan. Membutuhkan otentikasi "
+"staf dan lisensi POS yang valid."
+
+msgid "Cart restored successfully"
+msgstr "Keranjang berhasil dipulihkan"
+
+msgid "Current cart is not empty"
+msgstr "Keranjang saat ini tidak kosong"
+
+msgid "Parked cart not found"
+msgstr "Keranjang yang ditangguhkan tidak ditemukan"
+
+msgid "Delete parked cart"
+msgstr "Hapus keranjang yang ditangguhkan"
+
+msgid ""
+"Permanently delete a parked cart. This cannot be undone. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Hapus permanen keranjang yang ditahan. Tindakan ini tidak dapat dibatalkan. "
+"Membutuhkan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Parked cart deleted"
+msgstr "Keranjang yang ditangguhkan dihapus"
+
+msgid "List POS products"
+msgstr "Daftar Produk POS"
+
+msgid ""
+"Returns products available for in-store sale, filtered by sales channel. "
+"Includes warehouse-specific stock levels when a terminal is identified. "
+"Products with images appear first, ordered by per-warehouse popularity."
+msgstr ""
+"Mengembalikan produk yang tersedia untuk dijual di toko, disaring "
+"berdasarkan saluran penjualan. Termasuk tingkat stok khusus gudang ketika "
+"terminal diidentifikasi. Produk dengan gambar muncul lebih dahulu, diurutkan"
+" berdasarkan popularitas per gudang."
+
+msgid "Search by name, SKU, or barcode"
+msgstr "Cari berdasarkan nama, SKU, atau kode batang"
+
+msgid "Filter by category ID"
+msgstr "Saring berdasarkan ID kategori"
+
+msgid "Warehouse for stock levels"
+msgstr "Gudang untuk tingkat stok"
+
+msgid "Page number (default: 1)"
+msgstr "Nomor halaman (default: 1)"
+
+msgid "Items per page (default: 50, max: 200)"
+msgstr "Item per halaman (default: 50, maks: 200)"
+
+msgid "Get product detail"
+msgstr "Dapatkan detail produk"
+
+msgid "Returns full product details including variants and warehouse stock."
+msgstr "Mengembalikan detail produk lengkap termasuk variasi dan stok gudang."
+
+msgid "Barcode lookup"
+msgstr "Pencarian kode batang"
+
+msgid ""
+"Look up a product or variant by barcode. Fast, indexed lookup for scanning."
+msgstr ""
+"Cari produk atau variasi berdasarkan kode batang. Pencarian cepat dan "
+"terindeks untuk pemindaian."
+
+msgid "No product found with this barcode"
+msgstr "Tidak ada produk yang ditemukan dengan kode batang ini"
+
+msgid "List categories"
+msgstr "Daftar kategori"
+
+msgid "Returns the category tree for POS product navigation."
+msgstr "Mengembalikan pohon kategori untuk navigasi produk POS."
+
+msgid "Process cash payment"
+msgstr "Proses pembayaran tunai"
+
+msgid ""
+"Complete a POS transaction with cash payment. Validates that the amount "
+"tendered covers the order total and calculates change. Creates an Order with"
+" channel='pos' and a POSPayment record. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Lengkapi transaksi POS dengan pembayaran tunai. Memvalidasi bahwa jumlah "
+"uang yang diberikan mencakup total pemesanan dan menghitung kembalian. "
+"Membuat Pemesanan dengan channel='pos' dan catatan POSPayment. Memerlukan "
+"shift yang terbuka di terminal. Memerlukan otentikasi staf dan lisensi POS "
+"yang valid."
+
+msgid "Empty cart or insufficient cash tendered"
+msgstr "Keranjang kosong atau uang tunai yang diberikan tidak cukup"
+
+msgid "Process card payment"
+msgstr "Proses pembayaran kartu"
+
+msgid ""
+"Complete a POS transaction with card payment. Card processing is assumed to "
+"be handled by an external card terminal. This endpoint records the card "
+"reference and last four digits. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Lengkapi transaksi POS dengan pembayaran kartu. Pengolahan kartu diasumsikan"
+" ditangani oleh terminal kartu eksternal. Titik akhir ini mencatat referensi"
+" kartu dan empat digit terakhir. Memerlukan shift yang terbuka di terminal. "
+"Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Empty cart"
+msgstr "Kosongkan keranjang"
+
+msgid "Check gift card balance"
+msgstr "Periksa saldo kartu hadiah"
+
+msgid ""
+"Check the balance of a gift card for POS checkout. Returns the current "
+"balance if valid, or an error message if invalid. Requires staff "
+"authentication."
+msgstr ""
+"Periksa saldo kartu hadiah untuk checkout POS. Mengembalikan saldo saat ini "
+"jika valid, atau pesan kesalahan jika tidak valid. Memerlukan otentikasi "
+"staf."
+
+msgid "Gift card balance info"
+msgstr "Info saldo kartu hadiah"
+
+msgid "Invalid gift card or missing code"
+msgstr "Kartu hadiah tidak valid atau kode hilang"
+
+msgid "Process gift card payment"
+msgstr "Proses pembayaran kartu hadiah"
+
+msgid ""
+"Complete a POS transaction using a gift card. Validates the gift card has "
+"sufficient balance. If the gift card balance is less than the order total, "
+"use the split tender endpoint instead. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Lakukan transaksi POS menggunakan kartu hadiah. Memvalidasi kartu hadiah "
+"memiliki saldo yang cukup. Jika saldo kartu hadiah kurang dari total "
+"pesanan, gunakan endpoint split tender sebagai gantinya. Memerlukan shift "
+"yang sedang terbuka di terminal. Memerlukan otentikasi staf dan lisensi POS "
+"yang valid."
+
+msgid "Empty cart, invalid gift card, or insufficient balance"
+msgstr "Keranjang kosong, kartu hadiah tidak valid, atau saldo tidak cukup"
+
+msgid "Process split tender payment"
+msgstr "Proses pembayaran tender terbagi"
+
+msgid ""
+"Complete a POS transaction using multiple payment methods (split tender). "
+"The total of all payments must cover the order total. Change is calculated "
+"on the last cash payment if the total exceeds the order amount. Requires an "
+"open shift on the terminal. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Lengkapi transaksi POS menggunakan beberapa metode pembayaran (split "
+"tender). Total semua pembayaran harus mencakup total pemesanan. Uang "
+"kembalian dihitung berdasarkan pembayaran tunai terakhir jika total melebihi"
+" jumlah pemesanan. Memerlukan shift yang terbuka di terminal. Memerlukan "
+"otentikasi staf dan lisensi POS yang valid."
+
+msgid "Empty cart, invalid payments, or insufficient total"
+msgstr "Keranjang kosong, pembayaran tidak valid, atau total tidak cukup"
+
+msgid "Process terminal card payment"
+msgstr "Proses pembayaran kartu terminal"
+
+msgid ""
+"Complete a POS transaction with an integrated card terminal payment. The "
+"frontend must have already collected payment via the terminal SDK and "
+"obtained a provider_payment_id (e.g. Stripe PaymentIntent). This endpoint "
+"verifies the payment succeeded before creating the order. Requires an open "
+"shift on the terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Lengkapi transaksi POS dengan pembayaran terminal kartu terintegrasi. "
+"Frontend harus sudah mengumpulkan pembayaran melalui SDK terminal dan "
+"mendapatkan provider_payment_id (misalnya, Stripe PaymentIntent). Endpoint "
+"ini memverifikasi pembayaran berhasil sebelum membuat pesanan. Memerlukan "
+"shift yang terbuka di terminal. Memerlukan otentikasi staf dan lisensi POS "
+"yang valid."
+
+msgid "Empty cart or payment verification failed"
+msgstr "Keranjang kosong atau verifikasi pembayaran gagal"
+
+msgid "Search customers"
+msgstr "Cari pelanggan"
+
+msgid ""
+"Search for customers by email, phone, first name, or last name. Returns up "
+"to 20 matching results. Minimum 2 characters required. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Cari pelanggan berdasarkan email, telepon, nama depan, atau nama belakang. "
+"Mengembalikan hingga 20 hasil yang cocok. Diperlukan minimal 2 karakter. "
+"Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Search query (email, phone, or name). Minimum 2 characters."
+msgstr "Kueri pencarian (email, telepon, atau nama). Minimal 2 karakter."
+
+msgid "Search query too short"
+msgstr "Pencarian terlalu pendek"
+
+msgid "Create walk-in customer"
+msgstr "Buat pelanggan walk-in"
+
+msgid ""
+"Create a new customer for a walk-in sale. If a customer with the given email"
+" already exists, returns the existing customer instead of creating a "
+"duplicate. Email is optional for truly anonymous walk-in customers. Requires"
+" staff authentication and valid POS license."
+msgstr ""
+"Buat pelanggan baru untuk penjualan walk-in. Jika pelanggan dengan email "
+"yang diberikan sudah ada, kembalikan pelanggan yang sudah ada alih-alih "
+"membuat duplikat. Email bersifat opsional untuk pelanggan walk-in yang "
+"benar-benar anonim. Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Existing customer found with this email"
+msgstr "Pelanggan yang sudah ada ditemukan dengan email ini"
+
+msgid "Get customer details"
+msgstr "Dapatkan detail pelanggan"
+
+msgid ""
+"Retrieve customer details including contact info and recent order history. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Mengambil detail pelanggan termasuk informasi kontak dan riwayat pemesanan "
+"terbaru. Membutuhkan otentikasi staf dan lisensi POS yang valid."
+
+msgid "List stock levels for warehouse"
+msgstr "Daftar tingkat stok untuk gudang"
+
+msgid ""
+"Returns paginated stock levels for the terminal's warehouse. Supports search"
+" by product name or SKU and filtering for low-stock or no-stock items. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Mengembalikan tingkat stok yang dipaginasi untuk gudang terminal. Mendukung "
+"pencarian berdasarkan nama produk atau SKU dan penyaringan untuk item stok "
+"rendah atau tanpa stok. Membutuhkan otentikasi staf dan lisensi POS yang "
+"valid."
+
+msgid "Search by product name or SKU"
+msgstr "Cari berdasarkan nama produk atau SKU"
+
+msgid "Only return items at or below low stock threshold"
+msgstr ""
+"Hanya kembalikan item yang berada di bawah atau sama dengan ambang batas "
+"stok rendah"
+
+msgid "Only return items with zero available stock"
+msgstr "Hanya kembalikan item dengan stok yang tersedia nol"
+
+msgid "Warehouse not determined"
+msgstr "Gudang tidak ditentukan"
+
+msgid "Get product stock detail"
+msgstr "Dapatkan detail stok produk"
+
+msgid ""
+"Returns stock levels for a specific product in the terminal's warehouse, "
+"including variant-level breakdown. Requires staff authentication and valid "
+"POS license."
+msgstr ""
+"Mengembalikan tingkat stok untuk produk tertentu di gudang terminal, "
+"termasuk analisis tingkat variasi. Membutuhkan otentikasi staf dan lisensi "
+"POS yang valid."
+
+msgid "Check stock across all locations"
+msgstr "Periksa stok di semua lokasi"
+
+msgid ""
+"Returns stock levels for a product across all warehouse locations. Useful "
+"for checking if an out-of-stock item is available at another location. The "
+"current terminal's warehouse is marked with is_current=true. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Mengembalikan tingkat stok untuk produk di semua lokasi gudang. Berguna "
+"untuk memeriksa apakah barang yang habis stoknya tersedia di lokasi lain. "
+"Gudang terminal saat ini ditandai dengan is_current=true. Membutuhkan "
+"otentikasi staf dan lisensi POS yang valid."
+
+msgid "Adjust stock levels"
+msgstr "Atur ulang tingkat stok"
+
+msgid ""
+"Adjust stock for a product in the terminal's warehouse. Supports four "
+"adjustment types: 'receive' (add stock from shipment), 'damage' (remove "
+"damaged/lost stock), 'recount' (set absolute on_hand from physical count), "
+"'return' (add stock back from customer return). Creates an immutable "
+"StockMovement audit record. Requires staff authentication, valid POS "
+"license, and pos_stock_adjustment permission."
+msgstr ""
+"Menyesuaikan stok untuk produk di gudang terminal. Mendukung empat jenis "
+"penyesuaian: 'receive' (menambahkan stok dari pengiriman), 'damage' "
+"(menghapus stok yang rusak/hilang), 'recount' (mengatur on_hand absolut dari"
+" penghitungan fisik), 'return' (menambahkan stok kembali dari pengembalian "
+"pelanggan). Membuat catatan audit StockMovement yang tidak dapat diubah. "
+"Membutuhkan otentikasi staf, lisensi POS yang valid, dan izin "
+"pos_stock_adjustment."
+
+msgid "Stock adjusted successfully"
+msgstr "Tingkat stok berhasil diatur ulang"
+
+msgid "Validation error or warehouse not determined"
+msgstr "Kesalahan validasi atau gudang tidak ditentukan"
+
+msgid "Permission denied or POS license required"
+msgstr "Akses ditolak atau lisensi POS diperlukan"
+
+msgid "Product or stock item not found"
+msgstr "Produk atau item stok tidak ditemukan"
+
+msgid "List stock movement history"
+msgstr "Daftar sejarah pergerakan stok"
+
+msgid ""
+"Returns paginated stock movement records for the terminal's warehouse. "
+"Useful for auditing recent stock changes (adjustments, damage, recounts, "
+"returns). Supports filtering by product and movement type. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Mengembalikan catatan pergerakan stok yang dipaginasi untuk gudang terminal."
+" Berguna untuk mengaudit perubahan stok terbaru (penyesuaian, kerusakan, "
+"penghitungan ulang, pengembalian). Mendukung penyaringan berdasarkan produk "
+"dan jenis pergerakan. Membutuhkan otentikasi staf dan lisensi POS yang "
+"valid."
+
+msgid "Filter movements by product ID"
+msgstr "Saring pergerakan berdasarkan ID produk"
+
+msgid "Comma-separated movement types to include (e.g. 'damage,recount')"
+msgstr ""
+"Jenis pergerakan yang akan dimasukkan, dipisahkan dengan koma (misalnya "
+"'damage,recount')"
+
+msgid "Items per page (default: 20, max: 100)"
+msgstr "Item per halaman (default: 20, maks: 100)"
+
+msgid "Get customer loyalty info"
+msgstr "Dapatkan informasi loyalitas pelanggan"
+
+msgid ""
+"Retrieve loyalty membership status, tier, and points balance for a customer."
+" Returns `is_member: false` if the customer has no active loyalty "
+"membership. Requires staff authentication and valid POS license."
+msgstr ""
+"Mendapatkan status keanggotaan loyalitas, tingkat, dan saldo poin untuk "
+"pelanggan. Mengembalikan `is_member: false` jika pelanggan tidak memiliki "
+"keanggotaan loyalitas yang aktif. Membutuhkan otentikasi staf dan lisensi "
+"POS yang valid."
+
+msgid ""
+"Loyalty membership info. `is_member` indicates whether the customer has an "
+"active membership. When true, includes `tier_name`, `tier_color`, and "
+"`available_points`."
+msgstr ""
+"Informasi keanggotaan loyalitas. `is_member` menunjukkan apakah pelanggan "
+"memiliki keanggotaan aktif. Ketika true, mencakup `tier_name`, `tier_color`,"
+" dan `available_points`.\n"
+
+msgid "Preview loyalty points for cart"
+msgstr "Pratinjau poin loyalitas untuk keranjang"
+
+msgid ""
+"Calculate the loyalty points a customer would earn for a given cart total. "
+"Returns 0 if the customer has no active loyalty membership. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Hitung poin loyalitas yang akan didapatkan pelanggan untuk total keranjang "
+"yang diberikan. Mengembalikan 0 jika pelanggan tidak memiliki keanggotaan "
+"loyalitas aktif. Membutuhkan otentikasi staf dan lisensi POS yang valid.\n"
+
+msgid "Cart total as a decimal string (e.g. '49.99'). Defaults to '0'."
+msgstr ""
+"Total keranjang sebagai string desimal (misalnya '49.99'). Defaultnya adalah"
+" '0'."
+
+msgid ""
+"Points preview. `points_preview` is the number of points the customer would "
+"earn for the given cart total."
+msgstr ""
+"Pratinjau poin. `points_preview` adalah jumlah poin yang akan didapatkan "
+"pelanggan untuk total keranjang yang diberikan.\n"
+
+msgid "List POS orders"
+msgstr "Daftar pesanan POS"
+
+msgid ""
+"Returns orders with advanced filtering for date range, origin, customer, "
+"cashier, and search. Supports viewing web orders for return scenarios. "
+"Default: today's orders from this terminal only. Search mode: When 'search' "
+"is provided, date/origin/cashier filters are bypassed to find any order by "
+"number, customer name, email, or phone. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Mengembalikan pesanan dengan penyaringan lanjutan untuk rentang tanggal, "
+"asal, pelanggan, kasir, dan pencarian. Mendukung tampilan pesanan web untuk "
+"skenario pengembalian. Default: hanya pesanan hari ini dari terminal ini. "
+"Mode pencarian: Ketika 'search' diberikan, penyaring tanggal/asal/kasir akan"
+" dilewati untuk mencari pesanan apa pun berdasarkan nomor, nama pelanggan, "
+"email, atau telepon. Membutuhkan otentikasi staf dan lisensi POS yang valid."
+
+msgid ""
+"Start date for range filter (ISO format, default: today). Ignored when "
+"search is provided."
+msgstr ""
+"Tanggal awal untuk filter rentang (format ISO, default: hari ini). Diabaikan"
+" saat pencarian disediakan."
+
+msgid ""
+"End date for range filter (ISO format, default: today). Ignored when search "
+"is provided."
+msgstr ""
+"Tanggal akhir untuk filter rentang (format ISO, default: hari ini). "
+"Diabaikan saat pencarian disediakan."
+
+msgid ""
+"Order origin filter: this_terminal (default), all_pos, all (includes web). "
+"Ignored when search is provided."
+msgstr ""
+"Filter asal pemesanan: this_terminal (default), all_pos, all (termasuk web)."
+" Diabaikan saat pencarian disediakan."
+
+msgid "Filter by customer user ID. Ignored when search is provided."
+msgstr ""
+"Filter berdasarkan ID pengguna pelanggan. Diabaikan saat pencarian "
+"disediakan."
+
+msgid "Filter by cashier staff ID. Ignored when search is provided."
+msgstr ""
+"Filter berdasarkan ID staf kasir. Diabaikan saat pencarian disediakan."
+
+msgid ""
+"Search across ALL orders by order number, customer name, email, or phone. "
+"Bypasses date/origin filters."
+msgstr ""
+"Cari melalui SEMUA pemesanan berdasarkan nomor pemesanan, nama pelanggan, "
+"email, atau telepon. Melewati filter tanggal/asal."
+
+msgid "Filter by order status (applies in both modes)"
+msgstr "Filtir berdasarkan status pemesanan (berlaku dalam kedua mode)"
+
+msgid "Get order details"
+msgstr "Dapatkan detail pesanan"
+
+msgid ""
+"Returns full order details including items and payment breakdown. Supports "
+"both POS and web orders (for return scenarios). Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Mengembalikan detail pemesanan lengkap termasuk item dan pemecahan "
+"pembayaran. Mendukung pemesanan POS dan web (untuk skenario pengembalian). "
+"Membutuhkan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Get receipt data for printing"
+msgstr "Dapatkan data struk untuk mencetak"
+
+msgid ""
+"Returns receipt-formatted data for a POS order including store info, items, "
+"payments, and footer text. Designed for ESC/POS thermal printers. Requires "
+"staff authentication and valid POS license."
+msgstr ""
+"Mengembalikan data yang diformat sebagai struk untuk pesanan POS, termasuk "
+"informasi toko, barang, pembayaran, dan teks footer. Dirancang untuk printer"
+" termal ESC/POS. Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Process order refund"
+msgstr "Proses pengembalian dana pesanan"
+
+msgid ""
+"Process a full or partial refund for a POS order. For partial refunds, "
+"specify the items and quantities to refund. Creates a Refund record and "
+"updates the order and shift totals. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Proses pengembalian dana penuh atau sebagian untuk pesanan POS. Untuk "
+"pengembalian sebagian, tentukan barang dan jumlah yang akan dikembalikan. "
+"Membuat catatan Pengembalian dan memperbarui total pesanan dan shift. "
+"Memerlukan shift yang sedang berlangsung di terminal. Memerlukan otentikasi "
+"staf dan lisensi POS yang valid."
+
+msgid "Refund processed successfully"
+msgstr "Pengembalian dana berhasil diproses"
+
+msgid "Invalid refund request or order already refunded"
+msgstr ""
+"Permintaan pengembalian dana tidak valid atau pemesanan sudah dikembalikan"
+
+msgid "Void a POS order"
+msgstr "Batalkan pesanan POS"
+
+msgid ""
+"Cancel a POS order from the current shift. Only orders placed during the "
+"current open shift can be voided. This creates a full refund and reverses "
+"all payment and inventory changes. Requires an open shift on the terminal. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Batalkan pesanan POS dari shift saat ini. Hanya pesanan yang ditempatkan "
+"selama shift terbuka saat ini yang dapat dibatalkan. Ini akan membuat "
+"pengembalian dana penuh dan membatalkan semua perubahan pembayaran dan "
+"inventaris. Memerlukan shift yang sedang berlangsung di terminal. Memerlukan"
+" otentikasi staf dan lisensi POS yang valid."
+
+msgid "Order voided successfully"
+msgstr "Pemesanan dibatalkan dengan sukses"
+
+msgid "Order cannot be voided (not from current shift)"
+msgstr "Pemesanan tidak dapat dibatalkan (bukan dari shift saat ini)"
+
+msgid "List POS cashiers"
+msgstr "Daftar kasir POS"
+
+msgid ""
+"Returns list of staff members who have processed POS orders. Used to "
+"populate the cashier filter dropdown. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Mengembalikan daftar staf yang telah memproses pesanan POS. Digunakan untuk "
+"mengisi dropdown filter kasir. Memerlukan otentikasi staf dan lisensi POS "
+"yang valid."
+
+msgid "List of cashiers"
+msgstr "Daftar kasir"
+
+msgid "Send digital receipt"
+msgstr "Kirim struk digital"
+
+msgid ""
+"Send a digital receipt to the customer via email, SMS, or WhatsApp. The "
+"receipt is sent asynchronously via Celery task. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Kirim struk digital ke pelanggan melalui email, SMS, atau WhatsApp. Struk "
+"dikirim secara asinkron melalui tugas Celery. Memerlukan otentikasi staf dan"
+" lisensi POS yang valid."
+
+msgid "Receipt queued for sending"
+msgstr "Struk telah diproses untuk dikirim"
+
+msgid "Get receipt sending status"
+msgstr "Dapatkan status pengiriman struk"
+
+msgid ""
+"Check which digital receipts have been sent for an order. Returns timestamps"
+" for email and SMS/WhatsApp deliveries."
+msgstr ""
+"Periksa struk digital mana yang telah dikirim untuk sebuah pesanan. "
+"Mengembalikan timestamp untuk pengiriman email dan SMS/WhatsApp."
+
+msgid "Receipt status"
+msgstr "Status struk"
+
+msgid "Get current shift summary"
+msgstr "Dapatkan ringkasan shift saat ini"
+
+msgid ""
+"Returns the open shift summary for the current cashier on the terminal, "
+"including totals, transaction count, and payment method breakdown. Returns "
+"null shift if no shift is open. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Mengembalikan ringkasan shift yang sedang berlangsung untuk kasir saat ini "
+"di terminal, termasuk total, jumlah transaksi, dan pemecahan metode "
+"pembayaran. Mengembalikan shift null jika tidak ada shift yang sedang "
+"berlangsung. Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Open a new shift"
+msgstr "Buka shift baru"
+
+msgid ""
+"Start a new shift on the terminal. Only one open shift is allowed per "
+"terminal at any time. Records the opening cash amount. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Mulai shift baru di terminal. Hanya satu shift yang sedang berlangsung yang "
+"diperbolehkan per terminal pada waktu tertentu. Merekam jumlah uang tunai "
+"awal. Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Invalid opening cash amount"
+msgstr "Jumlah uang pembukaan tidak valid"
+
+msgid "A shift is already open on this terminal"
+msgstr "Sebuah shift sudah terbuka di terminal ini"
+
+msgid "Close current shift"
+msgstr "Tutup shift saat ini"
+
+msgid ""
+"Close the current open shift. Records the closing cash amount and calculates"
+" the expected vs actual cash difference. Requires staff authentication and "
+"valid POS license."
+msgstr ""
+"Tutup shift yang sedang berlangsung. Merekam jumlah uang tunai akhir dan "
+"menghitung selisih antara uang tunai yang diperkirakan dan sebenarnya. "
+"Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Record cash movement"
+msgstr "Catat pergerakan uang"
+
+msgid ""
+"Record a cash-in or cash-out movement during the shift. Examples: adding "
+"float, removing for deposit, petty cash. Requires an open shift on the "
+"terminal. Requires staff authentication and valid POS license."
+msgstr ""
+"Mencatat pergerakan uang tunai masuk atau keluar selama shift. Contoh: "
+"menambahkan uang kecil, mengambil untuk deposit, uang kecil. Memerlukan "
+"shift yang terbuka di terminal. Memerlukan otentikasi staf dan lisensi POS "
+"yang valid."
+
+msgid "Cash movement recorded"
+msgstr "Pergerakan uang telah dicatat"
+
+msgid "Invalid movement data"
+msgstr "Data pergerakan tidak valid"
+
+msgid "Get daily sales report"
+msgstr "Dapatkan laporan penjualan harian"
+
+msgid ""
+"Returns an aggregated daily sales report for the terminal including totals, "
+"transaction count, average transaction value, and payment method breakdown. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Mengembalikan laporan penjualan harian terkonsolidasi untuk terminal, "
+"termasuk total, jumlah transaksi, nilai rata-rata transaksi, dan analisis "
+"metode pembayaran. Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Report date (ISO format, default: today)"
+msgstr "Tanggal laporan (format ISO, default: hari ini)"
+
+msgid "Get top selling products"
+msgstr "Dapatkan produk terlaris"
+
+msgid ""
+"Returns the top selling products for the terminal on a given date, ranked by"
+" quantity sold. Requires staff authentication and valid POS license."
+msgstr ""
+"Mengembalikan daftar produk terlaris untuk terminal pada tanggal tertentu, "
+"diurutkan berdasarkan jumlah yang terjual. Memerlukan otentikasi staf dan "
+"lisensi POS yang valid."
+
+msgid "Number of products to return (default: 10, max: 50)"
+msgstr "Jumlah produk yang dikembalikan (default: 10, maks: 50)"
+
+msgid "Sync products since timestamp"
+msgstr "Sinkronkan produk sejak timestamp"
+
+msgid ""
+"Returns products that have been created or updated since the given "
+"timestamp. Used for incremental product sync to the POS terminal's local "
+"database. Returns a sync_token for the next sync request. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Mengembalikan produk yang telah dibuat atau diperbarui sejak timestamp yang "
+"diberikan. Digunakan untuk sinkronisasi produk bertahap ke database lokal "
+"terminal POS. Mengembalikan sync_token untuk permintaan sinkronisasi "
+"berikutnya. Membutuhkan autentikasi staf dan lisensi POS yang valid."
+
+msgid "ISO timestamp to fetch changes since. Omit for full sync."
+msgstr ""
+"Timestamp ISO untuk mengambil perubahan sejak. Abaikan untuk sinkronisasi "
+"penuh."
+
+msgid "Items per page (default: 100, max: 200)"
+msgstr "Jumlah item per halaman (default: 100, maks: 200)"
+
+msgid "Sync customers since timestamp"
+msgstr "Sinkronkan pelanggan sejak timestamp"
+
+msgid ""
+"Returns customers that have been created or have placed orders since the "
+"given timestamp. Used for offline customer lookup. Requires staff "
+"authentication and valid POS license."
+msgstr ""
+"Mengembalikan pelanggan yang telah dibuat atau telah melakukan pemesanan "
+"sejak timestamp yang diberikan. Digunakan untuk pencarian pelanggan offline."
+" Membutuhkan autentikasi staf dan lisensi POS yang valid."
+
+msgid "Customer sync data"
+msgstr "Data sinkronisasi pelanggan"
+
+msgid "Upload offline transactions"
+msgstr "Upload transaksi offline"
+
+msgid ""
+"Batch upload transactions that were processed while the terminal was "
+"offline. Each transaction creates an Order with items and payments. Uses "
+"local_id for idempotency -- duplicate uploads are detected and skipped. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Unggah transaksi dalam batch yang diproses saat terminal sedang offline. "
+"Setiap transaksi menciptakan sebuah Pemesanan dengan item dan pembayaran. "
+"Menggunakan local_id untuk idempotensi -- unggah ganda terdeteksi dan "
+"dilewati. Membutuhkan autentikasi staf dan lisensi POS yang valid."
+
+msgid "Upload results with success/failure per transaction"
+msgstr "Upload hasil dengan status sukses/gagal per transaksi"
+
+msgid "Get sync status"
+msgstr "Dapatkan status sinkronisasi"
+
+msgid ""
+"Returns the current server time and database counts for sync planning. "
+"Requires staff authentication and valid POS license."
+msgstr ""
+"Mengembalikan waktu server saat ini dan jumlah database untuk perencanaan "
+"sinkronisasi. Membutuhkan otentikasi staf dan lisensi POS yang valid."
+
+msgid "Get sync version info"
+msgstr "Dapatkan informasi versi sinkronisasi"
+
+msgid ""
+"Returns API version and data schema version for client compatibility checks."
+" Clients should clear and resync when schema version increases."
+msgstr ""
+"Mengembalikan versi API dan versi skema data untuk pemeriksaan "
+"kompatibilitas klien. Klien harus mengosongkan dan menyinkronkan ulang saat "
+"versi skema meningkat."
+
+msgid "Version information"
+msgstr "Informasi versi"
+
+msgid "Upload offline stock adjustments"
+msgstr "Upload penyesuaian stok offline"
+
+msgid ""
+"Batch upload stock adjustments that were queued while the terminal was "
+"offline. Each adjustment uses an idempotency key to prevent duplicates. "
+"Requires staff authentication, valid POS license, and stock adjustment "
+"permission."
+msgstr ""
+"Unggah batch penyesuaian stok yang telah diproses saat terminal sedang "
+"offline. Setiap penyesuaian menggunakan kunci idempotency untuk mencegah "
+"duplikasi. Membutuhkan otentikasi staf, lisensi POS yang valid, dan izin "
+"penyesuaian stok."
+
+msgid "Upload results with success/failure per adjustment"
+msgstr "Upload hasil dengan status sukses/gagal per penyesuaian"
+
+msgid "POS license or permission required"
+msgstr "Dibutuhkan lisensi atau izin POS"
+
+msgid "Sync orders for offline cache"
+msgstr "Sinkronkan pesanan untuk cache offline"
+
+msgid ""
+"Returns orders for offline caching on the POS terminal. POS orders are "
+"prioritised over web orders up to the terminal's sync limit. Supports delta "
+"sync via the 'since' parameter. Requires staff authentication and valid POS "
+"license."
+msgstr ""
+"Mengembalikan pesanan untuk penyimpanan offline di terminal POS. Pesanan POS"
+" memiliki prioritas lebih tinggi daripada pesanan web hingga batas "
+"sinkronisasi terminal. Mendukung sinkronisasi delta melalui parameter "
+"'since'. Memerlukan otentikasi staf dan lisensi POS yang valid."
+
+msgid "ISO timestamp for delta sync. Omit for full sync."
+msgstr ""
+"Timestamp ISO untuk sinkronisasi delta. Hilangkan untuk sinkronisasi penuh."
+
+msgid "Register POS terminal"
+msgstr "Daftarkan terminal POS"
+
+msgid ""
+"Register a new device as a POS terminal using a pairing code. The pairing "
+"code is generated in the admin panel when creating a terminal."
+msgstr ""
+"Daftarkan perangkat baru sebagai terminal POS menggunakan kode pasangan. "
+"Kode pasangan dihasilkan di panel administrasi saat membuat terminal."
+
+msgid "Terminal registered successfully, returns terminal config"
+msgstr "Terminal berhasil terdaftar, mengembalikan konfigurasi terminal"
+
+msgid "Invalid or expired pairing code"
+msgstr "Kode pasangan tidak valid atau sudah kadaluarsa"
+
+msgid "Get terminal configuration"
+msgstr "Dapatkan konfigurasi terminal"
+
+msgid ""
+"Returns the current terminal's configuration including hardware settings."
+msgstr ""
+"Mengembalikan konfigurasi terminal saat ini termasuk pengaturan perangkat "
+"keras."
+
+msgid "Terminal heartbeat"
+msgstr "Pulsa terminal"
+
+msgid "Report that the terminal is online. Should be called every 60 seconds."
+msgstr ""
+"Laporkan bahwa terminal sedang online. Seharusnya dipanggil setiap 60 detik."
+
+msgid "Heartbeat recorded"
+msgstr "Pulsa tercatat"
+
+msgid "Get receipt template"
+msgstr "Dapatkan template struk"
+
+msgid ""
+"Returns the receipt template for the terminal's warehouse. Falls back to the"
+" default template (no warehouse assigned) if the warehouse has no specific "
+"template. Returns sensible defaults if no template exists at all."
+msgstr ""
+"Mengembalikan template struk untuk gudang terminal. Kembali ke template "
+"default (tidak ada gudang yang ditugaskan) jika gudang tidak memiliki "
+"template khusus. Mengembalikan nilai default yang masuk akal jika sama "
+"sekali tidak ada template."
+
+msgid "Receipt template data"
+msgstr "Data template struk"
+
+msgid "Get promo slides"
+msgstr "Dapatkan slide promosi"
+
+msgid ""
+"Returns promotional slides for the terminal's warehouse. Slides are "
+"displayed on the customer-facing display during idle periods."
+msgstr ""
+"Mengembalikan slide promosi untuk gudang terminal. Slide ini ditampilkan "
+"pada layar yang menghadap ke pelanggan selama periode kosong."
+
+msgid "List of promo slides with image URLs"
+msgstr "Daftar slide promo dengan URL gambar"
+
+msgid "Generate display pairing code"
+msgstr "Buat kode pasangan tampilan"
+
+msgid ""
+"Generate a short-lived 6-digit pairing code for customer display "
+"authentication. The code expires after 5 minutes and can only be used once. "
+"Generating a new code invalidates any existing unused codes for this "
+"terminal."
+msgstr ""
+"Buat kode pasangan 6 digit yang berlaku singkat untuk otentikasi layar "
+"pelanggan. Kode ini kedaluwarsa setelah 5 menit dan hanya dapat digunakan "
+"sekali. Membuat kode baru akan membatalkan semua kode yang belum digunakan "
+"untuk terminal ini."
+
+msgid "Pairing code generated"
+msgstr "Kode pasangan berhasil dibuat"
+
+msgid "List managers for unlock override"
+msgstr "Daftar manajer untuk override pembukaan kunci"
+
+msgid ""
+"Return list of managers (id and name) for the manager override unlock flow."
+msgstr ""
+"Kembalikan daftar manajer (id dan nama) untuk alur pembukaan kunci override "
+"manajer."
+
+msgid "List of managers"
+msgstr "Daftar manajer"
+
+msgid "Verify unlock PIN"
+msgstr "Verifikasi PIN pembukaan kunci"
+
+msgid ""
+"Verify a cashier or manager PIN to unlock the terminal. After 3 failed "
+"attempts, only manager PIN will be accepted. All attempts are logged for "
+"audit purposes."
+msgstr ""
+"Verifikasi PIN kasir atau manajer untuk membuka kunci terminal. Setelah 3 "
+"upaya gagal, hanya PIN manajer yang akan diterima. Semua upaya dicatat untuk"
+" tujuan audit."
+
+msgid "PIN verified successfully"
+msgstr "PIN berhasil diverifikasi"
+
+msgid "Invalid PIN"
+msgstr "PIN tidak valid"
+
+msgid "Log terminal lock event"
+msgstr "Catat kejadian kunci terminal"
+
+msgid ""
+"Log when a terminal is locked (manually or via auto-lock timeout). This "
+"endpoint is for audit logging only and does not change terminal state."
+msgstr ""
+"Catat saat terminal dikunci (secara manual atau melalui timeout kunci "
+"otomatis). Endpoint ini hanya untuk pencatatan audit dan tidak mengubah "
+"status terminal."
+
+msgid "Event logged successfully"
+msgstr "Kejadian berhasil dicatat"
+
+msgid "Invalid event type"
+msgstr "Jenis kejadian tidak valid"
+
+msgid "Verify unlock card"
+msgstr "Verifikasi kartu pembuka kunci"
+
+msgid ""
+"Verify a staff ID card swipe to unlock the terminal. Card data is hashed and"
+" compared against stored card hashes. After 3 failed PIN attempts, only "
+"manager cards are accepted."
+msgstr ""
+"Verifikasi gesekan kartu ID staf untuk membuka kunci terminal. Data kartu "
+"dihash dan dibandingkan dengan hash kartu yang disimpan. Setelah 3 upaya PIN"
+" gagal, hanya kartu manajer yang diterima."
+
+msgid "Card verified successfully"
+msgstr "Kartu berhasil diverifikasi"
+
+msgid "Card not recognized"
+msgstr "Kartu tidak dikenali"
+
+msgid "Register staff unlock card"
+msgstr "Daftarkan kartu pembuka kunci staf"
+
+msgid "Register a card swipe for the current user's quick terminal unlock."
+msgstr ""
+"Daftarkan gesek kartu untuk pembukaan kunci terminal cepat pengguna saat "
+"ini."
+
+msgid "Card registered successfully"
+msgstr "Kartu berhasil didaftarkan"
+
+msgid "Card already registered to another user"
+msgstr "Kartu sudah terdaftar ke pengguna lain"
+
+msgid "Remove staff unlock card"
+msgstr "Hapus kartu pembuka kunci staf"
+
+msgid "Remove the current user's registered unlock card."
+msgstr "Hapus kartu pembukaan kunci yang terdaftar pengguna saat ini."
+
+msgid "Card removed successfully"
+msgstr "Kartu berhasil dihapus"
+
+msgid "Set cashier PIN"
+msgstr "Atur PIN kasir"
+
+msgid ""
+"Set or update the current user's cashier PIN for terminal lock/unlock. PIN "
+"must be 4-6 digits. Both pin and pin_confirm must match."
+msgstr ""
+"Atur atau perbarui PIN kasir pengguna saat ini untuk mengunci/membuka kunci "
+"terminal. PIN harus berupa 4-6 digit. Kedua pin dan pin_confirm harus cocok."
+
+msgid "PIN set successfully"
+msgstr "PIN berhasil diatur"
+
+msgid "Get terminal provider config"
+msgstr "Dapatkan konfigurasi penyedia terminal"
+
+msgid ""
+"Returns the terminal provider configuration for the current terminal, "
+"including the integration mode (sdk, cloud, or manual) and connected reader "
+"details. Used by the POS frontend on startup to determine if an integrated "
+"card reader is available and which payment flow to use."
+msgstr ""
+"Mengembalikan konfigurasi penyedia terminal untuk terminal saat ini, "
+"termasuk mode integrasi (sdk, cloud, atau manual) dan detail pembaca yang "
+"terhubung. Digunakan oleh frontend POS saat startup untuk menentukan apakah "
+"pembaca kartu terintegrasi tersedia dan alur pembayaran yang harus "
+"digunakan."
+
+msgid "Create connection token"
+msgstr "Buat token koneksi"
+
+msgid ""
+"Creates a short-lived connection token for SDK-mode terminal providers (e.g."
+" Stripe Terminal JS SDK). The frontend calls this endpoint when initializing"
+" the SDK to establish a direct connection with the reader. SDK only. Cloud "
+"providers do not use connection tokens. Returns 400 if the provider does not"
+" support SDK tokens."
+msgstr ""
+"Membuat token koneksi sementara untuk penyedia terminal dalam mode SDK "
+"(misalnya Stripe Terminal JS SDK). Frontend memanggil endpoint ini saat "
+"menginisialisasi SDK untuk menetapkan koneksi langsung dengan pembaca. Hanya"
+" untuk SDK. Penyedia awan tidak menggunakan token koneksi. Mengembalikan 400"
+" jika penyedia tidak mendukung token SDK."
+
+msgid "List card readers"
+msgstr "Daftar pembaca kartu"
+
+msgid ""
+"List available card readers from the terminal provider. Works for both SDK-"
+"mode and cloud-mode providers. Each reader object contains: id, label, type,"
+" serial_number, and status."
+msgstr ""
+"Daftar pembaca kartu yang tersedia dari penyedia terminal. Berfungsi untuk "
+"penyedia SDK-mode dan cloud-mode. Setiap objek pembaca berisi: id, label, "
+"tipe, serial_number, dan status."
+
+msgid "Create payment intent for terminal"
+msgstr "Buat niat pembayaran untuk terminal"
+
+msgid ""
+"Creates a PaymentIntent for card_present collection on the terminal reader. "
+"The frontend uses the returned client_secret to collect payment via the SDK."
+" SDK only. Cloud providers should use initiate-cloud-payment. If currency is"
+" omitted, defaults to the terminal's configured currency."
+msgstr ""
+"Membuat PaymentIntent untuk pengumpulan card_present pada pembaca terminal. "
+"Frontend menggunakan client_secret yang dikembalikan untuk mengumpulkan "
+"pembayaran melalui SDK. Hanya berlaku untuk SDK. Penyedia cloud sebaiknya "
+"menggunakan initiate-cloud-payment. Jika mata uang tidak disebutkan, akan "
+"diatur ke mata uang yang dikonfigurasi di terminal."
+
+msgid "Capture/verify terminal payment"
+msgstr "Tangkap/verifikasi pembayaran terminal"
+
+msgid ""
+"Verifies that a PaymentIntent was successfully processed on the terminal "
+"reader and returns card details (brand, last4) from the provider. SDK only."
+msgstr ""
+"Memverifikasi bahwa PaymentIntent berhasil diproses di pembaca terminal dan "
+"mengembalikan detail kartu (brand, last4) dari penyedia. SDK hanya."
+
+msgid "Cancel terminal payment"
+msgstr "Batal pembayaran terminal"
+
+msgid ""
+"Cancel a pending PaymentIntent on the terminal reader (e.g. customer "
+"cancelled). SDK only. Cloud providers should use cancel-cloud-payment."
+msgstr ""
+"Membatalkan PaymentIntent yang sedang menunggu di pembaca terminal "
+"(misalnya, pelanggan membatalkan). SDK hanya. Penyedia awan sebaiknya "
+"menggunakan cancel-cloud-payment."
+
+msgid "Initiate cloud payment on reader"
+msgstr "Mulai pembayaran awan di pembaca"
+
+msgid ""
+"Sends a payment request to a card reader via the provider's cloud API. For "
+"cloud-mode terminal providers only (Adyen, Square, SumUp, Zettle). Cloud "
+"only. Returns 400 if provider uses SDK mode. If currency is omitted, "
+"defaults to the terminal's configured currency."
+msgstr ""
+"Mengirimkan permintaan pembayaran ke pembaca kartu melalui API awan "
+"penyedia. Hanya untuk penyedia terminal mode awan (Adyen, Square, SumUp, "
+"Zettle). Awan hanya. Mengembalikan 400 jika penyedia menggunakan mode SDK. "
+"Jika mata uang tidak disebutkan, akan default ke mata uang yang "
+"dikonfigurasi di terminal."
+
+msgid "Check cloud payment status"
+msgstr "Periksa status pembayaran cloud"
+
+msgid ""
+"Poll the status of a cloud-initiated payment. Returns the current status: "
+"pending, succeeded, failed, or canceled. When status is 'succeeded', the "
+"response includes card_brand, last4, and the provider payment_id. When "
+"'canceled', includes cancel_reason. Frontend should poll every 2 seconds "
+"until status is no longer 'pending'."
+msgstr ""
+"Pantau status pembayaran yang dimulai di awan. Mengembalikan status saat "
+"ini: menunggu, berhasil, gagal, atau dibatalkan. Ketika statusnya "
+"'berhasil', respons mencakup card_brand, last4, dan payment_id penyedia. "
+"Ketika 'dibatalkan', mencakup cancel_reason. Frontend sebaiknya memantau "
+"setiap 2 detik hingga status tidak lagi 'menunggu'."
+
+msgid "Provider-specific transaction ID returned by initiate-cloud-payment"
+msgstr ""
+"ID transaksi spesifik penyedia yang dikembalikan oleh initiate-cloud-payment"
+
+msgid "Cancel cloud payment"
+msgstr "Batal pembayaran cloud"
+
+msgid ""
+"Cancel a pending cloud-initiated payment on the reader. Cloud only. Behavior"
+" varies by provider."
+msgstr ""
+"Batal pembayaran yang dimulai oleh cloud yang sedang menunggu di pembaca. "
+"Hanya tersedia di cloud. Perilaku bervariasi tergantung penyedia."
+
+msgid "Begin WebAuthn registration"
+msgstr "Mulai pendaftaran WebAuthn"
+
+msgid ""
+"Generate registration options for biometric enrollment. Returns challenge "
+"and credential creation options."
+msgstr ""
+"Buat opsi pendaftaran untuk pendaftaran biometrik. Mengembalikan tantangan "
+"dan opsi pembuatan kredensial."
+
+msgid "Registration options"
+msgstr "Opsi pendaftaran"
+
+msgid "Complete WebAuthn registration"
+msgstr "Selesaikan pendaftaran WebAuthn"
+
+msgid "Verify attestation and store credential for biometric unlock."
+msgstr ""
+"Verifikasi sertifikasi dan simpan kredensial untuk pembukaan kunci "
+"biometrik."
+
+msgid "Credential registered"
+msgstr "Kredensial terdaftar"
+
+msgid "Verification failed"
+msgstr "Verifikasi gagal"
+
+msgid "Begin WebAuthn authentication"
+msgstr "Mulai otentikasi WebAuthn"
+
+msgid ""
+"Generate authentication challenge for biometric unlock. Returns "
+"allowCredentials for the locked-by user and all managers. If failed_attempts"
+" >= 3, only manager credentials are included."
+msgstr ""
+"Buat tantangan otentikasi untuk penguncian biometrik. Mengembalikan "
+"allowCredentials untuk pengguna yang dikunci dan semua manajer. Jika "
+"failed_attempts >= 3, hanya kredensial manajer yang dimasukkan."
+
+msgid "Authentication options"
+msgstr "Opsi otentikasi"
+
+msgid "No credentials registered"
+msgstr "Tidak ada kredensial yang terdaftar"
+
+msgid "Complete WebAuthn authentication"
+msgstr "Selesaikan otentikasi WebAuthn"
+
+msgid "Verify biometric assertion and unlock terminal."
+msgstr "Verifikasi pernyataan biometrik dan buka kunci terminal."
+
+msgid "Authentication successful"
+msgstr "Otentikasi berhasil"

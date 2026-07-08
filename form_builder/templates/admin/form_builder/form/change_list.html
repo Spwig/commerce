@@ -1,0 +1,145 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Forms" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'form_builder/css/admin_form_builder.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-wpforms"></i>
+                {% trans "Forms" %}
+            </h1>
+            <p class="subtitle">{% trans "Create and manage custom forms for your store" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            {% if deleted_count %}
+            <a href="{% url 'form_builder_admin:form_recycle_bin' %}" class="button change-list-action-button secondary">
+                <i class="fas fa-trash-alt"></i> {% trans "Recycle Bin" %}
+                <span class="badge">{{ deleted_count }}</span>
+            </a>
+            {% endif %}
+            <a href="{% url 'form_builder:create_form' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Form" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="dashboard-stats-grid mb-20">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-wpforms"></i></div>
+            <div class="value">{{ total_forms }}</div>
+            <div class="label">{% trans "Total Forms" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ active_forms }}</div>
+            <div class="label">{% trans "Active Forms" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-inbox"></i></div>
+            <div class="value">{{ total_responses }}</div>
+            <div class="label">{% trans "Total Responses" %}</div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or title...' %}"
+                    value="">
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- Multi-step -->
+            <div class="filter-field">
+                <label for="filter-multistep">
+                    <i class="fas fa-layer-group"></i> {% trans "Form Type" %}
+                </label>
+                <select id="filter-multistep">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="single">{% trans "Single Step" %}</option>
+                    <option value="multi">{% trans "Multi-Step" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Forms" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-wpforms"></i>
+            <span id="form-count">{{ cl.result_count }}</span> {% trans "form" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="form-results">
+        {% include "admin/form_builder/partials/form_cards.html" with forms=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% blocktrans count counter=cl.result_count %}{{ counter }} form{% plural %}{{ counter }} forms{% endblocktrans %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url "form_builder_admin:filter_forms" %}"
+     data-results-container="form-results"
+     data-results-count="form-count"
+     class="hidden"></div>
+</div>
+{% endblock %}

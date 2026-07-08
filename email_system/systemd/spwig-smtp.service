@@ -1,0 +1,32 @@
+[Unit]
+Description=Spwig Built-in SMTP Server
+Documentation=file:///path/to/shop/email_system/providers/builtin/INSTALLATION.md
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/path/to/shop
+Environment="PATH=/path/to/shop/shop_venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=core.settings"
+ExecStart=/path/to/shop/shop_venv/bin/python /path/to/shop/manage.py start_smtp_server
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=spwig-smtp
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/path/to/shop/media /path/to/shop/logs
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target

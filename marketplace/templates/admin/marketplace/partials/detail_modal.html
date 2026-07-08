@@ -1,0 +1,64 @@
+{% load i18n %}
+<div class="marketplace-modal-detail">
+    <div class="marketplace-modal-header">
+        {% if component.thumbnail_url %}
+        <div class="marketplace-modal-thumb">
+            <img src="{{ component.thumbnail_url }}" alt="{{ component.name }}">
+        </div>
+        {% endif %}
+        <div class="marketplace-modal-info">
+            <div class="marketplace-modal-meta">
+                {% if component.type_icon %}<i class="fas {{ component.type_icon }}"></i> {% endif %}
+                {{ component.type_display }}
+                {% if component.average_rating and component.rating_count %}
+                <span class="marketplace-rating-inline">
+                    <i class="fas fa-star"></i> {{ component.average_rating }}
+                    <small>({{ component.rating_count }})</small>
+                </span>
+                {% endif %}
+            </div>
+            <h2>{{ component.name }}</h2>
+            <p class="marketplace-modal-author">
+                {% trans "by" %} {{ component.author.name }}
+                {% if component.author.is_verified %}
+                <i class="fas fa-check-circle" title="{% trans 'Verified' %}"></i>
+                {% endif %}
+            </p>
+            <p class="marketplace-modal-version">v{{ component.current_version }}</p>
+        </div>
+    </div>
+
+    <div class="marketplace-modal-body">
+        <p>{{ component.description }}</p>
+    </div>
+
+    <div class="marketplace-modal-footer">
+        {% if component.is_installed %}
+        <span class="marketplace-badge marketplace-badge-installed">
+            <i class="fas fa-check"></i> {% trans "Installed" %}
+        </span>
+        {% elif component.pricing_model == 'paid' and not component.is_entitled %}
+        <span class="marketplace-badge marketplace-badge-price">
+            &euro;{{ component.price_eur }}
+        </span>
+        <button class="marketplace-btn marketplace-btn-primary"
+                id="btn-purchase"
+                data-slug="{{ component.slug }}">
+            <i class="fas fa-shopping-cart"></i> {% trans "Purchase" %}
+        </button>
+        {% else %}
+        {% if component.pricing_model == 'free' %}
+        <span class="marketplace-badge marketplace-badge-free">{% trans "Free" %}</span>
+        {% endif %}
+        <button class="marketplace-btn marketplace-btn-primary"
+                id="btn-install"
+                data-slug="{{ component.slug }}"
+                data-version="{{ component.current_version }}">
+            <i class="fas fa-download"></i> {% trans "Install" %}
+        </button>
+        {% endif %}
+        <a href="{{ component.detail_url }}" class="marketplace-btn marketplace-btn-secondary">
+            {% trans "View Full Details" %} <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</div>

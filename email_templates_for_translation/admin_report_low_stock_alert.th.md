@@ -1,0 +1,74 @@
+---
+template_type: admin_report_low_stock_alert
+category: Admin Reports
+---
+
+# Email Template: admin_report_low_stock_alert
+
+## Subject
+📦 แจ้งเตือนสินค้าใกล้หมดสต็อก - ต้องการสั่งซื้อใหม่ {{ product_count }} รายการ
+
+## HTML Content
+<mjml>
+  <mj-body>
+    <mj-section background-color="#fef3c7">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold" color="#92400e" align="center">
+          📦 แจ้งเตือนสินค้าใกล้หมดสต็อก
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="18px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}">
+          ต้องการสั่งซื้อใหม่
+        </mj-text>
+
+        <mj-text font-size="15px" color="{{ theme.color.text|default:'#4b5563' }}">
+          มี {{ product_count }} รายการสินค้าที่ต่ำกว่าจุดสั่งซื้อใหม่
+        </mj-text>
+
+        <mj-spacer height="20px" />
+
+        {% for item in low_stock_items %}
+        <mj-section background-color="{{ theme.color.surface|default:'#f9fafb' }}" border-radius="8px" padding="15px">
+          <mj-column>
+            <mj-text font-size="15px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}">
+              {{ item.product_name }}
+            </mj-text>
+            <mj-text font-size="14px" color="{{ theme.color.text|default:'#4b5563' }}">
+              <strong>Stock:</strong> <span style="color: #dc2626;">{{ item.current_stock }}</span> / Reorder at: {{ item.reorder_point }}<br/>
+              <strong>SKU:</strong> {{ item.sku }}
+            </mj-text>
+          </mj-column>
+        </mj-section>
+        <mj-spacer height="10px" />
+        {% endfor %}
+
+        <mj-spacer height="20px" />
+
+        <mj-button href="{{ inventory_url }}" background-color="{{ theme.color.primary|default:'#2563eb' }}" color="#ffffff" font-size="16px" font-weight="bold" border-radius="6px" padding="15px 40px">
+          View Inventory
+        </mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+
+## Text Content
+📦 แจ้งเตือนสินค้าใกล้หมดสต็อก
+
+ต้องการสั่งซื้อใหม่
+
+มี {{ product_count }} รายการสินค้าที่ต่ำกว่าจุดสั่งซื้อใหม่
+
+รายการสินค้าใกล้หมดสต็อก:
+{% for item in low_stock_items %}
+{{ item.product_name }}
+Stock: {{ item.current_stock }} / Reorder at: {{ item.reorder_point }}
+SKU: {{ item.sku }}
+
+{% endfor %}
+
+View inventory: {{ inventory_url }}

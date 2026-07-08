@@ -1,0 +1,254 @@
+{
+  "element_type": "featured_blog_banner",
+  "name": "Featured Blog Banner",
+  "description": "Highlight a single blog post with a large featured banner",
+  "version": "1.0.1",
+  "category": "marketing",
+  "icon": "fas fa-bookmark",
+  "author": "Page Builder System",
+  "tags": ["blog", "featured", "banner", "hero", "article"],
+  "supports_translation": true,
+  "translation_domain": "featured_blog_banner_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/featured-blog-banner.css"],
+  "disable_base_properties": ["text_color", "background"],
+  "context_provider": "page_builder.context_providers.featured_blog_banner_context",
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-bookmark",
+      "order": 1,
+      "properties": {
+        "source_group": {
+          "type": "property_group",
+          "label": "Post Source",
+          "columns": 1,
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "options": [
+                {"value": "dynamic", "label": "Live from Blog"},
+                {"value": "static", "label": "Manual Content"}
+              ],
+              "default": "dynamic"
+            },
+            "source": {
+              "type": "select",
+              "label": "Post Source",
+              "options": [
+                {"value": "latest_featured", "label": "Latest Featured Post"},
+                {"value": "latest_pinned", "label": "Latest Pinned Post"},
+                {"value": "latest", "label": "Latest Post"}
+              ],
+              "default": "latest_featured",
+              "show_if": {"data_source": "dynamic"}
+            },
+            "post_slug": {
+              "type": "string",
+              "label": "Specific Post Slug",
+              "help_text": "Leave empty to use the source selection above",
+              "show_if": {"data_source": "dynamic"}
+            }
+          }
+        },
+        "static_content_group": {
+          "type": "property_group",
+          "label": "Static Content",
+          "columns": 1,
+          "show_if": {"data_source": "static"},
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Title",
+              "translatable": true
+            },
+            "excerpt": {
+              "type": "textarea",
+              "label": "Excerpt",
+              "rows": 3,
+              "full_width": true,
+              "translatable": true
+            },
+            "image": {
+              "type": "image",
+              "label": "Background Image"
+            },
+            "url": {
+              "type": "link_selector",
+              "label": "Link URL"
+            },
+            "category": {
+              "type": "string",
+              "label": "Category Label"
+            },
+            "author": {
+              "type": "string",
+              "label": "Author"
+            },
+            "date": {
+              "type": "string",
+              "label": "Date"
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-expand",
+      "order": 2,
+      "properties": {
+        "size_group": {
+          "type": "property_group",
+          "label": "Size",
+          "columns": 1,
+          "properties": {
+            "height": {
+              "type": "select",
+              "label": "Banner Height",
+              "options": [
+                {"value": "sm", "label": "Small (300px)"},
+                {"value": "md", "label": "Medium (400px)"},
+                {"value": "lg", "label": "Large (500px)"},
+                {"value": "xl", "label": "Extra Large (600px)"},
+                {"value": "full", "label": "Full Viewport"}
+              ],
+              "default": "lg"
+            }
+          }
+        },
+        "overlay_group": {
+          "type": "property_group",
+          "label": "Overlay",
+          "properties": {
+            "overlay_style": {
+              "type": "select",
+              "label": "Overlay Style",
+              "options": [
+                {"value": "gradient", "label": "Gradient"},
+                {"value": "solid", "label": "Solid Dark"},
+                {"value": "none", "label": "None"}
+              ],
+              "default": "gradient"
+            },
+            "overlay_opacity": {
+              "type": "range",
+              "label": "Overlay Opacity",
+              "min": 0,
+              "max": 1,
+              "step": 0.1,
+              "default": 0.6
+            }
+          }
+        },
+        "content_group": {
+          "type": "property_group",
+          "label": "Content Layout",
+          "properties": {
+            "content_position": {
+              "type": "select",
+              "label": "Content Position",
+              "options": [
+                {"value": "center", "label": "Center"},
+                {"value": "left", "label": "Left"},
+                {"value": "right", "label": "Right"},
+                {"value": "bottom-left", "label": "Bottom Left"},
+                {"value": "bottom-center", "label": "Bottom Center"}
+              ],
+              "default": "center"
+            },
+            "content_width": {
+              "type": "select",
+              "label": "Content Width",
+              "options": [
+                {"value": "narrow", "label": "Narrow"},
+                {"value": "medium", "label": "Medium"},
+                {"value": "wide", "label": "Wide"}
+              ],
+              "default": "medium"
+            }
+          }
+        },
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Show/Hide Elements",
+          "properties": {
+            "show_category": {"type": "boolean", "label": "Show Category", "default": true},
+            "show_excerpt": {"type": "boolean", "label": "Show Excerpt", "default": true},
+            "show_author": {"type": "boolean", "label": "Show Author", "default": true},
+            "show_date": {"type": "boolean", "label": "Show Date", "default": true}
+          }
+        }
+      }
+    },
+    "cta": {
+      "label": "Button",
+      "icon": "fas fa-mouse-pointer",
+      "order": 3,
+      "properties": {
+        "button_group": {
+          "type": "property_group",
+          "label": "CTA Button",
+          "properties": {
+            "show_button": {
+              "type": "boolean",
+              "label": "Show CTA Button",
+              "default": true
+            },
+            "button_text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "Read Article",
+              "translatable": true
+            },
+            "button_style": {
+              "type": "select",
+              "label": "Button Style",
+              "options": [
+                {"value": "primary", "label": "Primary"},
+                {"value": "secondary", "label": "Secondary"},
+                {"value": "outline", "label": "Outline Light"}
+              ],
+              "default": "primary"
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "data_source": {"type": "select", "default": "dynamic"},
+    "source": {"type": "select", "default": "latest_featured"},
+    "post_slug": {"type": "string"},
+    "title": {"type": "string", "translatable": true},
+    "excerpt": {"type": "textarea", "translatable": true},
+    "image": {"type": "image"},
+    "url": {"type": "link_selector"},
+    "category": {"type": "string"},
+    "author": {"type": "string"},
+    "date": {"type": "string"},
+    "height": {"type": "select", "default": "lg"},
+    "overlay_style": {"type": "select", "default": "gradient"},
+    "overlay_opacity": {"type": "range", "default": 0.6},
+    "content_position": {"type": "select", "default": "center"},
+    "content_width": {"type": "select", "default": "medium"},
+    "show_category": {"type": "boolean", "default": true},
+    "show_excerpt": {"type": "boolean", "default": true},
+    "show_author": {"type": "boolean", "default": true},
+    "show_date": {"type": "boolean", "default": true},
+    "show_button": {"type": "boolean", "default": true},
+    "button_text": {"type": "string", "default": "Read Article", "translatable": true},
+    "button_style": {"type": "select", "default": "primary"}
+  },
+  "translations": {
+    "en": {"name": "Featured Blog Banner", "description": "Highlight a single blog post with a large featured banner"},
+    "es": {"name": "Banner de Blog Destacado", "description": "Destaca una publicación de blog con un banner grande"},
+    "fr": {"name": "Bannière Article Vedette", "description": "Mettez en avant un article avec une grande bannière"},
+    "de": {"name": "Featured Blog-Banner", "description": "Einen Blog-Beitrag mit einem großen Banner hervorheben"},
+    "pt": {"name": "Banner de Blog Destaque", "description": "Destaque um post de blog com um banner grande"},
+    "zh-hans": {"name": "精选博客横幅", "description": "用大横幅突出显示单篇博客文章"},
+    "ja": {"name": "注目記事バナー", "description": "大きなバナーでブログ記事をハイライト"}
+  }
+}

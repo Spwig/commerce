@@ -1,0 +1,8 @@
+{% load i18n element_tags %}
+{% with height=element.content.height|default:40 unit=element.content.height_unit|default:"px" %}
+<div class="pb-spacer"
+     {% hover_animation_attrs element %}
+     style="--spacer-height: {{ height }}{{ unit }}; height: {{ height }}{{ unit }};{% base_styles element %}"
+     aria-hidden="true">
+</div>
+{% endwith %}

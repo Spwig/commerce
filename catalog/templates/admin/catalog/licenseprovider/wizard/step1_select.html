@@ -1,0 +1,101 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+    <link rel="stylesheet" href="{% static 'catalog/admin/css/licenseprovider_step1_select.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'catalog/admin/js/licenseprovider_wizard_step1.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <h1>{% trans "Connect License Provider" %}</h1>
+        <p class="wizard-subtitle">{% trans "Choose an external license management provider to sync your licenses with" %}</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="wizard-steps">
+        <div class="step active">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Setup" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Credentials" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Test & Save" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <div class="wizard-step-content">
+            <h2 class="step-title">{% trans "Select License Provider" %}</h2>
+            <p class="step-description">
+                {% trans "Choose the license management service you want to integrate with. You can manage multiple providers if needed." %}
+            </p>
+
+            <form method="post" id="provider-select-form">
+                {% csrf_token %}
+
+                <div class="provider-selection-grid">
+                    {% for provider in providers %}
+                    <label class="provider-option" for="provider_{{ provider.key }}">
+                        <input type="radio" name="provider_key" value="{{ provider.key }}" id="provider_{{ provider.key }}" required>
+                        <div class="provider-option-inner">
+                            {% if provider.logo %}
+                            <img src="{% static provider.logo %}" alt="{{ provider.name }}" class="provider-logo">
+                            {% else %}
+                            <div class="provider-logo-placeholder">
+                                {{ provider.name|slice:":1"|upper }}
+                            </div>
+                            {% endif %}
+
+                            <div>
+                                <div class="provider-name">{{ provider.name }}</div>
+
+                                {% if provider.key == 'spwig_server' %}
+                                <span class="provider-badge recommended">{% trans "Recommended" %}</span>
+                                {% elif provider.key == 'keygen' %}
+                                <span class="provider-badge popular">{% trans "Popular" %}</span>
+                                {% endif %}
+
+                                <p class="provider-description">
+                                    {{ provider.description|default:"" }}
+                                </p>
+                            </div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <!-- Navigation -->
+                <div class="wizard-actions">
+                    <a href="{% url 'admin:catalog_licenseprovider_changelist' %}" class="button">
+                        {% trans "Cancel" %}
+                    </a>
+                    <button type="submit" id="continue-btn" class="button default" disabled>
+                        {% trans "Continue" %} →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

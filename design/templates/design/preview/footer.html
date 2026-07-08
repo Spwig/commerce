@@ -1,0 +1,222 @@
+{% load static i18n theme_tags core_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer Preview - {{ footer.name }}</title>
+
+    <!-- Favicon -->
+    {% favicon_meta %}
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- CSS Load Order: Base → Theme → Brand → Zones → Widgets -->
+
+    <!-- 1. Base CSS (for .container class and base styles) -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <!-- 2. Theme CSS - Sets CSS variables -->
+    {% if theme_css_url %}
+        <link rel="stylesheet" href="{{ theme_css_url }}">
+    {% endif %}
+
+    <!-- 3. Brand CSS - Overrides theme variables -->
+    {% if brand_css_url %}
+        <link rel="stylesheet" href="{{ brand_css_url }}">
+    {% endif %}
+
+    <!-- 4. Header/Footer Zones CSS (layout structure) -->
+    <link rel="stylesheet" href="{% static 'design/css/header-footer-zones.css' %}">
+
+    <!-- 5. Widget CSS - Individual widget stylesheets using theme variables -->
+    <link rel="stylesheet" href="{% static 'design/css/widgets/logo.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/search.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/cart.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/account.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/language.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/currency.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/social.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/newsletter.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/contact.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/text.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/links.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/payment.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/trust_badges.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/announcement.css' %}">
+    <link rel="stylesheet" href="{% static 'design/css/widgets/custom.css' %}">
+
+    <!-- 6. Preview-specific styles -->
+    <link rel="stylesheet" href="{% static 'design/css/preview.css' %}">
+</head>
+<body class="preview-footer">
+    <div class="preview-info">
+        {% trans "Preview" %}: {{ footer.name }} ({{ footer.layout_type }})
+    </div>
+
+    <div class="demo-content">
+        <h1>{% trans "Footer Preview" %}</h1>
+        <p>{% trans "Scroll down to see your footer template. The footer below will appear on all pages using this template." %}</p>
+
+        {% for i in "12345" %}
+            <p style="margin-top: 2rem;">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+        {% endfor %}
+    </div>
+
+    <footer class="site-footer" role="contentinfo">
+        {# Top Zone #}
+        {% if zones.top_full or zones.top_left or zones.top_center or zones.top_right %}
+        <div class="footer-zone footer-zone--top">
+            <div class="container">
+                <div class="footer-zone__inner">
+                    {% if zones.top_left %}
+                    <div class="footer-zone__section footer-zone__section--left">
+                        {% for placement in zones.top_left %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.top_center %}
+                    <div class="footer-zone__section footer-zone__section--center">
+                        {% for placement in zones.top_center %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.top_right %}
+                    <div class="footer-zone__section footer-zone__section--right">
+                        {% for placement in zones.top_right %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.top_full %}
+                    <div class="footer-zone__section footer-zone__section--full">
+                        {% for placement in zones.top_full %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Main Content - Columns Layout #}
+        <div class="footer-main">
+            <div class="container">
+                <div class="footer-columns footer-columns--4">
+                    {% if zones.column_1 %}
+                    <div class="footer-column">
+                        {% for placement in zones.column_1 %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.column_2 %}
+                    <div class="footer-column">
+                        {% for placement in zones.column_2 %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.column_3 %}
+                    <div class="footer-column">
+                        {% for placement in zones.column_3 %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.column_4 %}
+                    <div class="footer-column">
+                        {% for placement in zones.column_4 %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Middle Zone #}
+        {% if zones.main_full or zones.main_left or zones.main_center or zones.main_right %}
+        <div class="footer-zone footer-zone--middle">
+            <div class="container">
+                <div class="footer-zone__inner">
+                    {% if zones.main_left %}
+                    <div class="footer-zone__section footer-zone__section--left">
+                        {% for placement in zones.main_left %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.main_center %}
+                    <div class="footer-zone__section footer-zone__section--center">
+                        {% for placement in zones.main_center %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.main_right %}
+                    <div class="footer-zone__section footer-zone__section--right">
+                        {% for placement in zones.main_right %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.main_full %}
+                    <div class="footer-zone__section footer-zone__section--full">
+                        {% for placement in zones.main_full %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Bottom Bar #}
+        {% if zones.bottom_bar_left or zones.bottom_bar_center or zones.bottom_bar_right or zones.bottom_full %}
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-bottom__inner">
+                    {% if zones.bottom_bar_left %}
+                    <div class="footer-bottom__section footer-bottom__section--left">
+                        {% for placement in zones.bottom_bar_left %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.bottom_bar_center %}
+                    <div class="footer-bottom__section footer-bottom__section--center">
+                        {% for placement in zones.bottom_bar_center %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.bottom_bar_right %}
+                    <div class="footer-bottom__section footer-bottom__section--right">
+                        {% for placement in zones.bottom_bar_right %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if zones.bottom_full %}
+                    <div class="footer-bottom__section footer-bottom__section--full">
+                        {% for placement in zones.bottom_full %}
+                            <div class="widget-wrapper">{% render_widget placement %}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </footer>
+</body>
+</html>

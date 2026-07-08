@@ -1,0 +1,164 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Digital Assets" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_license_key.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-file-download"></i>
+                {% trans "Digital Assets" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage downloadable files and digital content for your products" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_product_changelist' %}?digital_assets__isnull=False" class="button">
+                <i class="fas fa-box"></i> {% trans "Digital Products" %}
+            </a>
+            <a href="{% url 'admin:catalog_digitalasset_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Upload Asset" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by filename, product, version...' %}"
+                    value="">
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-info-circle"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- License Required -->
+            <div class="filter-field">
+                <label for="filter-license">
+                    <i class="fas fa-key"></i> {% trans "License" %}
+                </label>
+                <select id="filter-license">
+                    <option value="">{% trans "All Assets" %}</option>
+                    <option value="yes">{% trans "Requires License" %}</option>
+                    <option value="no">{% trans "No License Required" %}</option>
+                </select>
+            </div>
+
+            <!-- Product -->
+            <div class="filter-field">
+                <label for="filter-product">
+                    <i class="fas fa-box"></i> {% trans "Product" %}
+                </label>
+                <select id="filter-product">
+                    <option value="">{% trans "All Products" %}</option>
+                    {% for product in digital_products %}
+                    <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Digital Assets" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-file-download"></i>
+            <span id="asset-count">{{ cl.result_count }}</span> {% trans "asset" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="asset-results">
+        {% include "admin/catalog/digitalasset/partials/asset_cards.html" with assets=cl.result_list %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 asset{% plural %}{{ counter }} assets{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'assets' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+
+<div id="list-filter-config"
+     data-filter-url="{% url 'catalog_admin:filter_digital_assets' %}"
+     data-results-container="asset-results"
+     data-results-count="asset-count"
+     style="display:none;"></div>
+{% endblock %}

@@ -1,0 +1,947 @@
+{
+  "element_type": "form",
+  "name": "Form",
+  "description": "Display forms created with the Form Builder. Supports multi-step forms, conditional logic, and custom styling.",
+  "version": "2.0.1",
+  "category": "forms",
+  "icon": "fas fa-wpforms",
+  "author": "Page Builder System",
+  "tags": [
+    "form",
+    "contact",
+    "survey",
+    "multi-step",
+    "conditional"
+  ],
+  "supports_translation": false,
+  "template_file": "template.html",
+  "inherit_base": true,
+  "disable_base_properties": [
+    "text_color",
+    "rounded",
+    "hover_background"
+  ],
+  "context_provider": "form_builder.context_providers.form_element_context",
+  "assets": {
+    "css": [
+      "form_builder/css/form_frontend.css"
+    ],
+    "js": [
+      "form_builder/js/dynamic_form.js"
+    ]
+  },
+  "tabs": {
+    "form_selection": {
+      "label": "Form",
+      "icon": "fas fa-wpforms",
+      "order": 1,
+      "properties": {
+        "form_select_group": {
+          "type": "property_group",
+          "label": "Form Selection",
+          "columns": 1,
+          "properties": {
+            "form_slug": {
+              "type": "form_select",
+              "label": "Select Form",
+              "help_text": "Choose a form created in the Form Builder, or create a new one."
+            }
+          }
+        },
+        "title_group": {
+          "type": "property_group",
+          "label": "Title",
+          "help_text": "Configure the form title appearance",
+          "properties": {
+            "show_title": {
+              "type": "boolean",
+              "label": "Show Title",
+              "default": true
+            },
+            "title_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "help_text": "Font style settings",
+              "utility": "typography_editor",
+              "default": "",
+              "show_when": {
+                "property": "show_title",
+                "value": true
+              }
+            },
+            "title_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "help_text": "Text color",
+              "utility": "color_picker",
+              "default": "",
+              "show_when": {
+                "property": "show_title",
+                "value": true
+              }
+            },
+            "title_shadow": {
+              "type": "shadow",
+              "label": "Shadow",
+              "help_text": "Text shadow effect",
+              "utility": "shadow_editor",
+              "shadow_type": "text",
+              "default": "",
+              "show_when": {
+                "property": "show_title",
+                "value": true
+              }
+            }
+          }
+        },
+        "description_group": {
+          "type": "property_group",
+          "label": "Description",
+          "help_text": "Configure the form description appearance",
+          "properties": {
+            "show_description": {
+              "type": "boolean",
+              "label": "Show Description",
+              "default": true
+            },
+            "description_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "help_text": "Font style settings",
+              "utility": "typography_editor",
+              "default": "",
+              "show_when": {
+                "property": "show_description",
+                "value": true
+              }
+            },
+            "description_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "help_text": "Text color",
+              "utility": "color_picker",
+              "default": "",
+              "show_when": {
+                "property": "show_description",
+                "value": true
+              }
+            },
+            "description_shadow": {
+              "type": "shadow",
+              "label": "Shadow",
+              "help_text": "Text shadow effect",
+              "utility": "shadow_editor",
+              "shadow_type": "text",
+              "default": "",
+              "show_when": {
+                "property": "show_description",
+                "value": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "step_appearance": {
+      "label": "Step Indicator",
+      "icon": "fas fa-list-ol",
+      "order": 2,
+      "properties": {
+        "step_style_group": {
+          "type": "property_group",
+          "label": "Step Indicator Style",
+          "columns": 1,
+          "properties": {
+            "step_indicator_style": {
+              "type": "select",
+              "label": "Indicator Style",
+              "help_text": "How the step progress is displayed for multi-step forms.",
+              "options": [
+                {
+                  "value": "progress_bar",
+                  "label": "Progress Bar"
+                },
+                {
+                  "value": "numbered_circles",
+                  "label": "Numbered Circles"
+                },
+                {
+                  "value": "breadcrumb",
+                  "label": "Breadcrumb Trail"
+                },
+                {
+                  "value": "steps_text",
+                  "label": "Step X of Y Text"
+                },
+                {
+                  "value": "none",
+                  "label": "None (Hide)"
+                }
+              ],
+              "default": "numbered_circles"
+            }
+          }
+        },
+        "progress_bar_group": {
+          "type": "property_group",
+          "label": "Progress Bar",
+          "help_text": "Configure the progress bar appearance",
+          "show_when": {
+            "property": "step_indicator_style",
+            "value": "progress_bar"
+          },
+          "properties": {
+            "progress_bar_height": {
+              "type": "size",
+              "label": "Height",
+              "default": "8px"
+            },
+            "progress_bar_radius": {
+              "type": "size",
+              "label": "Border Radius",
+              "default": "4px"
+            },
+            "progress_bar_bg_color": {
+              "type": "color_advanced",
+              "label": "Track Color",
+              "utility": "color_picker",
+              "default": "#e5e7eb"
+            },
+            "progress_bar_fill_color": {
+              "type": "color_advanced",
+              "label": "Fill Color",
+              "utility": "color_picker",
+              "default": "var(--color-primary)"
+            }
+          }
+        },
+        "circle_appearance_group": {
+          "type": "property_group",
+          "label": "Circle Appearance",
+          "help_text": "Size and colors for step circles",
+          "show_when": {
+            "property": "step_indicator_style",
+            "value": "numbered_circles"
+          },
+          "properties": {
+            "circle_size": {
+              "type": "size",
+              "label": "Size",
+              "default": "40px"
+            },
+            "circle_inactive_bg": {
+              "type": "color_advanced",
+              "label": "Inactive Background",
+              "utility": "color_picker",
+              "default": "#e5e7eb"
+            },
+            "circle_inactive_text": {
+              "type": "color_advanced",
+              "label": "Inactive Text",
+              "utility": "color_picker",
+              "default": "#6b7280"
+            },
+            "circle_active_bg": {
+              "type": "color_advanced",
+              "label": "Active Background",
+              "utility": "color_picker",
+              "default": "var(--color-primary)"
+            },
+            "circle_active_text": {
+              "type": "color_advanced",
+              "label": "Active Text",
+              "utility": "color_picker",
+              "default": "#ffffff"
+            },
+            "circle_completed_bg": {
+              "type": "color_advanced",
+              "label": "Completed Background",
+              "utility": "color_picker",
+              "default": "var(--color-success)"
+            }
+          }
+        },
+        "circle_typography_group": {
+          "type": "property_group",
+          "label": "Circle Typography",
+          "help_text": "Font styling for step numbers and labels",
+          "show_when": {
+            "property": "step_indicator_style",
+            "value": "numbered_circles"
+          },
+          "properties": {
+            "circle_number_typography": {
+              "type": "typography",
+              "label": "Number Font",
+              "utility": "typography_editor"
+            },
+            "circle_label_typography": {
+              "type": "typography",
+              "label": "Label Font",
+              "utility": "typography_editor"
+            }
+          }
+        },
+        "connector_group": {
+          "type": "property_group",
+          "label": "Connector Line",
+          "help_text": "Line connecting step circles",
+          "show_when": {
+            "property": "step_indicator_style",
+            "value": "numbered_circles"
+          },
+          "properties": {
+            "connector_color": {
+              "type": "color_advanced",
+              "label": "Color",
+              "utility": "color_picker",
+              "default": "#e5e7eb"
+            },
+            "connector_width": {
+              "type": "size",
+              "label": "Width",
+              "default": "2px"
+            }
+          }
+        },
+        "breadcrumb_group": {
+          "type": "property_group",
+          "label": "Breadcrumb Style",
+          "help_text": "Configure breadcrumb trail appearance",
+          "show_when": {
+            "property": "step_indicator_style",
+            "value": "breadcrumb"
+          },
+          "properties": {
+            "breadcrumb_bg_color": {
+              "type": "color_advanced",
+              "label": "Background",
+              "utility": "color_picker",
+              "default": "#f3f4f6"
+            },
+            "breadcrumb_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "utility": "typography_editor"
+            },
+            "breadcrumb_active_color": {
+              "type": "color_advanced",
+              "label": "Active Step Color",
+              "utility": "color_picker",
+              "default": "var(--color-primary)"
+            },
+            "breadcrumb_separator_color": {
+              "type": "color_advanced",
+              "label": "Separator Color",
+              "utility": "color_picker",
+              "default": "#9ca3af"
+            }
+          }
+        },
+        "steps_text_group": {
+          "type": "property_group",
+          "label": "Steps Text Style",
+          "help_text": "Configure 'Step X of Y' text appearance",
+          "show_when": {
+            "property": "step_indicator_style",
+            "value": "steps_text"
+          },
+          "properties": {
+            "steps_text_typography": {
+              "type": "typography",
+              "label": "Typography",
+              "utility": "typography_editor"
+            },
+            "steps_text_color": {
+              "type": "color_advanced",
+              "label": "Text Color",
+              "utility": "color_picker",
+              "default": "#6b7280"
+            }
+          }
+        },
+        "step_options_group": {
+          "type": "property_group",
+          "label": "Step Options",
+          "properties": {
+            "step_transition": {
+              "type": "select",
+              "label": "Step Transition",
+              "help_text": "Animation when moving between steps.",
+              "options": [
+                {
+                  "value": "slide",
+                  "label": "Slide"
+                },
+                {
+                  "value": "fade",
+                  "label": "Fade"
+                },
+                {
+                  "value": "instant",
+                  "label": "Instant (No Animation)"
+                }
+              ],
+              "default": "slide"
+            },
+            "show_step_titles": {
+              "type": "boolean",
+              "label": "Show Step Titles",
+              "default": true,
+              "show_when": {
+                "property": "step_indicator_style",
+                "values": [
+                  "numbered_circles",
+                  "breadcrumb"
+                ]
+              }
+            },
+            "show_step_descriptions": {
+              "type": "boolean",
+              "label": "Show Step Descriptions",
+              "default": true
+            }
+          }
+        }
+      }
+    },
+    "field_styling": {
+      "label": "Fields",
+      "icon": "fas fa-check-square",
+      "order": 3,
+      "properties": {
+        "field_style_group": {
+          "type": "property_group",
+          "label": "Field Style",
+          "properties": {
+            "field_style": {
+              "type": "select",
+              "label": "Field Style",
+              "options": [
+                {
+                  "value": "outlined",
+                  "label": "Outlined"
+                },
+                {
+                  "value": "filled",
+                  "label": "Filled Background"
+                },
+                {
+                  "value": "underlined",
+                  "label": "Underlined Only"
+                }
+              ],
+              "default": "outlined"
+            },
+            "label_position": {
+              "type": "select",
+              "label": "Label Position",
+              "options": [
+                {
+                  "value": "above",
+                  "label": "Above Field"
+                },
+                {
+                  "value": "floating",
+                  "label": "Floating Label"
+                },
+                {
+                  "value": "inline",
+                  "label": "Inline (Side by Side)"
+                }
+              ],
+              "default": "above"
+            }
+          }
+        },
+        "field_size_group": {
+          "type": "property_group",
+          "label": "Field Size & Spacing",
+          "properties": {
+            "field_size": {
+              "type": "select",
+              "label": "Field Size",
+              "options": [
+                {
+                  "value": "sm",
+                  "label": "Small"
+                },
+                {
+                  "value": "md",
+                  "label": "Medium"
+                },
+                {
+                  "value": "lg",
+                  "label": "Large"
+                }
+              ],
+              "default": "md"
+            },
+            "field_spacing": {
+              "type": "select",
+              "label": "Field Spacing",
+              "options": [
+                {
+                  "value": "compact",
+                  "label": "Compact"
+                },
+                {
+                  "value": "normal",
+                  "label": "Normal"
+                },
+                {
+                  "value": "spacious",
+                  "label": "Spacious"
+                }
+              ],
+              "default": "normal"
+            }
+          }
+        },
+        "field_options_group": {
+          "type": "property_group",
+          "label": "Field Options",
+          "properties": {
+            "show_required_indicator": {
+              "type": "boolean",
+              "label": "Show Required Indicator (*)",
+              "default": true
+            },
+            "show_help_text": {
+              "type": "boolean",
+              "label": "Show Field Help Text",
+              "default": true
+            }
+          }
+        }
+      }
+    },
+    "validation": {
+      "label": "Validation",
+      "icon": "fas fa-check-circle",
+      "order": 4,
+      "properties": {
+        "validation_group": {
+          "type": "property_group",
+          "label": "Validation Settings",
+          "properties": {
+            "validation_display": {
+              "type": "select",
+              "label": "Error Display",
+              "options": [
+                {
+                  "value": "below_field",
+                  "label": "Below Field"
+                },
+                {
+                  "value": "tooltip",
+                  "label": "Tooltip"
+                },
+                {
+                  "value": "summary",
+                  "label": "Summary at Top"
+                }
+              ],
+              "default": "below_field"
+            },
+            "validate_on": {
+              "type": "select",
+              "label": "Validate On",
+              "options": [
+                {
+                  "value": "blur",
+                  "label": "Field Blur (Leave Field)"
+                },
+                {
+                  "value": "input",
+                  "label": "As User Types"
+                },
+                {
+                  "value": "submit",
+                  "label": "Form Submit Only"
+                }
+              ],
+              "default": "blur"
+            },
+            "show_success_state": {
+              "type": "boolean",
+              "label": "Show Success State on Valid Fields",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "buttons": {
+      "label": "Buttons",
+      "icon": "fas fa-hand-pointer",
+      "order": 5,
+      "properties": {
+        "button_style_group": {
+          "type": "property_group",
+          "label": "Button Style",
+          "properties": {
+            "button_style": {
+              "type": "select",
+              "label": "Button Style",
+              "options": [
+                {
+                  "value": "primary",
+                  "label": "Primary"
+                },
+                {
+                  "value": "secondary",
+                  "label": "Secondary"
+                },
+                {
+                  "value": "outline",
+                  "label": "Outline"
+                }
+              ],
+              "default": "primary"
+            },
+            "button_size": {
+              "type": "select",
+              "label": "Button Size",
+              "options": [
+                {
+                  "value": "sm",
+                  "label": "Small"
+                },
+                {
+                  "value": "md",
+                  "label": "Medium"
+                },
+                {
+                  "value": "lg",
+                  "label": "Large"
+                }
+              ],
+              "default": "md"
+            }
+          }
+        },
+        "button_layout_group": {
+          "type": "property_group",
+          "label": "Button Layout",
+          "properties": {
+            "button_width": {
+              "type": "select",
+              "label": "Button Width",
+              "options": [
+                {
+                  "value": "auto",
+                  "label": "Auto (Fit Content)"
+                },
+                {
+                  "value": "full",
+                  "label": "Full Width"
+                }
+              ],
+              "default": "auto"
+            },
+            "button_alignment": {
+              "type": "select",
+              "label": "Button Alignment",
+              "options": [
+                {
+                  "value": "left",
+                  "label": "Left"
+                },
+                {
+                  "value": "center",
+                  "label": "Center"
+                },
+                {
+                  "value": "right",
+                  "label": "Right"
+                },
+                {
+                  "value": "space-between",
+                  "label": "Space Between (Multi-step)"
+                }
+              ],
+              "default": "right"
+            }
+          }
+        }
+      }
+    },
+    "behavior": {
+      "label": "Behavior",
+      "icon": "fas fa-cogs",
+      "order": 6,
+      "properties": {
+        "submit_action_group": {
+          "type": "property_group",
+          "label": "Submit Action",
+          "columns": 1,
+          "properties": {
+            "success_action": {
+              "type": "select",
+              "label": "On Successful Submit",
+              "options": [
+                {
+                  "value": "message",
+                  "label": "Show Success Message"
+                },
+                {
+                  "value": "redirect",
+                  "label": "Redirect to URL"
+                },
+                {
+                  "value": "replace",
+                  "label": "Replace Form with Message"
+                }
+              ],
+              "default": "replace"
+            },
+            "success_redirect_url": {
+              "type": "url",
+              "label": "Redirect URL",
+              "help_text": "URL to redirect to after successful submission (when redirect is selected)."
+            }
+          }
+        },
+        "behavior_options_group": {
+          "type": "property_group",
+          "label": "Behavior Options",
+          "properties": {
+            "auto_save_progress": {
+              "type": "boolean",
+              "label": "Auto-save Progress",
+              "help_text": "Automatically save progress on multi-step forms so users can continue later.",
+              "default": false
+            },
+            "scroll_to_error": {
+              "type": "boolean",
+              "label": "Scroll to First Error",
+              "default": true
+            },
+            "submit_button_loading": {
+              "type": "boolean",
+              "label": "Show Loading State on Submit",
+              "default": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "form_slug": {
+      "type": "form_select",
+      "label": "Select Form"
+    },
+    "show_title": {
+      "type": "boolean",
+      "label": "Show Form Title",
+      "default": true
+    },
+    "show_description": {
+      "type": "boolean",
+      "label": "Show Form Description",
+      "default": true
+    },
+    "title_typography": {
+      "type": "typography",
+      "label": "Title Typography",
+      "utility": "typography_editor"
+    },
+    "title_color": {
+      "type": "color_advanced",
+      "label": "Title Color",
+      "utility": "color_picker"
+    },
+    "title_shadow": {
+      "type": "shadow",
+      "label": "Title Shadow",
+      "utility": "shadow_editor",
+      "shadow_type": "text"
+    },
+    "description_typography": {
+      "type": "typography",
+      "label": "Description Typography",
+      "utility": "typography_editor"
+    },
+    "description_color": {
+      "type": "color_advanced",
+      "label": "Description Color",
+      "utility": "color_picker"
+    },
+    "description_shadow": {
+      "type": "shadow",
+      "label": "Description Shadow",
+      "utility": "shadow_editor",
+      "shadow_type": "text"
+    },
+    "step_indicator_style": {
+      "type": "select",
+      "label": "Step Indicator Style",
+      "options": [
+        {
+          "value": "progress_bar",
+          "label": "Progress Bar"
+        },
+        {
+          "value": "numbered_circles",
+          "label": "Numbered Circles"
+        },
+        {
+          "value": "breadcrumb",
+          "label": "Breadcrumb Trail"
+        },
+        {
+          "value": "steps_text",
+          "label": "Step X of Y Text"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "numbered_circles"
+    },
+    "step_transition": {
+      "type": "select",
+      "label": "Step Transition",
+      "options": [
+        {
+          "value": "slide",
+          "label": "Slide"
+        },
+        {
+          "value": "fade",
+          "label": "Fade"
+        },
+        {
+          "value": "instant",
+          "label": "Instant"
+        }
+      ],
+      "default": "slide"
+    },
+    "field_style": {
+      "type": "select",
+      "label": "Field Style",
+      "options": [
+        {
+          "value": "outlined",
+          "label": "Outlined"
+        },
+        {
+          "value": "filled",
+          "label": "Filled"
+        },
+        {
+          "value": "underlined",
+          "label": "Underlined"
+        }
+      ],
+      "default": "outlined"
+    },
+    "label_position": {
+      "type": "select",
+      "label": "Label Position",
+      "options": [
+        {
+          "value": "above",
+          "label": "Above"
+        },
+        {
+          "value": "floating",
+          "label": "Floating"
+        },
+        {
+          "value": "inline",
+          "label": "Inline"
+        }
+      ],
+      "default": "above"
+    },
+    "button_style": {
+      "type": "select",
+      "label": "Button Style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Primary"
+        },
+        {
+          "value": "secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "primary"
+    },
+    "success_action": {
+      "type": "select",
+      "label": "Success Action",
+      "options": [
+        {
+          "value": "message",
+          "label": "Show Message"
+        },
+        {
+          "value": "redirect",
+          "label": "Redirect"
+        },
+        {
+          "value": "replace",
+          "label": "Replace Form"
+        }
+      ],
+      "default": "replace"
+    }
+  },
+  "scripts": [
+    "/static/page_builder/js/elements/form-element.js"
+  ],
+  "translations": {
+    "en": {
+      "name": "Form",
+      "description": "Display forms created with the Form Builder"
+    },
+    "es": {
+      "name": "Formulario",
+      "description": "Mostrar formularios creados con el Constructor de Formularios"
+    },
+    "fr": {
+      "name": "Formulaire",
+      "description": "Afficher les formulaires cr\u00e9\u00e9s avec le Constructeur de Formulaires"
+    },
+    "de": {
+      "name": "Formular",
+      "description": "Formulare aus dem Formular-Builder anzeigen"
+    },
+    "pt": {
+      "name": "Formul\u00e1rio",
+      "description": "Exibir formul\u00e1rios criados com o Construtor de Formul\u00e1rios"
+    },
+    "zh-hans": {
+      "name": "\u8868\u5355",
+      "description": "\u663e\u793a\u4f7f\u7528\u8868\u5355\u6784\u5efa\u5668\u521b\u5efa\u7684\u8868\u5355"
+    },
+    "ja": {
+      "name": "\u30d5\u30a9\u30fc\u30e0",
+      "description": "\u30d5\u30a9\u30fc\u30e0\u30d3\u30eb\u30c0\u30fc\u3067\u4f5c\u6210\u3057\u305f\u30d5\u30a9\u30fc\u30e0\u3092\u8868\u793a"
+    }
+  },
+  "defaults": {
+    "title": "Custom Form",
+    "description": "Fill out this form",
+    "fields": [
+      {
+        "type": "text",
+        "name": "sample_field",
+        "label": "Sample Field",
+        "required": true
+      }
+    ],
+    "button_text": "Submit"
+  }
+}

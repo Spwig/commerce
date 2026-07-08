@@ -1,0 +1,110 @@
+{% extends "admin/exchange_rates/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Select an Exchange Rate Provider" %}</h2>
+    <p class="step-description">{% trans "Choose the exchange rate provider you want to connect to your store." %}</p>
+
+    {% if providers %}
+    <form method="post" id="provider-select-form">
+        {% csrf_token %}
+
+        <div class="providers-grid">
+            {% for provider in providers %}
+            <label class="provider-card" for="provider-{{ provider.component.id }}">
+                <input type="radio"
+                       name="component_id"
+                       value="{{ provider.component.id }}"
+                       id="provider-{{ provider.component.id }}"
+                       required>
+
+                <div class="provider-card-content">
+                    {% if provider.component.thumbnail_url %}
+                    <div class="provider-logo">
+                        <div class="logo-plate" data-auto-contrast>
+                            <img src="{{ provider.component.thumbnail_url }}" alt="{{ provider.component.name }}" crossorigin="anonymous">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="provider-logo provider-logo-placeholder">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    {% endif %}
+
+                    <h3 class="provider-name">{{ provider.component.name }}</h3>
+
+                    {% if provider.component.description %}
+                    <p class="provider-description">{{ provider.component.description|truncatewords:20 }}</p>
+                    {% endif %}
+
+                    <!-- Capability Badges -->
+                    {% if provider.capabilities %}
+                    <div class="provider-capabilities">
+                        {% if provider.capabilities.live_rates %}
+                        <span class="capability-badge">
+                            <i class="fas fa-sync"></i> {% trans "Live Rates" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.historical %}
+                        <span class="capability-badge">
+                            <i class="fas fa-history"></i> {% trans "Historical" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.crypto %}
+                        <span class="capability-badge">
+                            <i class="fab fa-bitcoin"></i> {% trans "Crypto" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.commodities %}
+                        <span class="capability-badge">
+                            <i class="fas fa-coins"></i> {% trans "Commodities" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.base_currency_selection %}
+                        <span class="capability-badge">
+                            <i class="fas fa-exchange-alt"></i> {% trans "Any Base Currency" %}
+                        </span>
+                        {% endif %}
+                        {% if provider.capabilities.batch_requests %}
+                        <span class="capability-badge">
+                            <i class="fas fa-layer-group"></i> {% trans "Batch Requests" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="provider-check">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>{% trans "No Providers Available" %}</h3>
+        <p>{% trans "No exchange rate provider components are currently installed." %}</p>
+        <p>{% trans "Please download and install exchange rate provider components from the component registry." %}</p>
+        <a href="{% url 'admin:component_updates_componentregistry_changelist' %}" class="btn btn-primary">
+            <i class="fas fa-download"></i> {% trans "Browse Components" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+{% if providers %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:exchange_rates_exchangerateprovideraccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="provider-select-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endif %}
+{% endblock %}

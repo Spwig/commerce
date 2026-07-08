@@ -1,0 +1,21 @@
+{% load element_tags %}
+<!-- Generic Section -->
+<section class="generic-section section"
+         data-section-id="{{ section.id }}">
+    <div class="container">
+        <!-- Section elements -->
+        <div class="elements-container">
+            {% for element in elements %}
+                {% render_element element %}
+                {% if settings.DEBUG %}
+                    {% debug_element element %}
+                {% endif %}
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-plus-circle empty-state__icon"></i>
+                    <p class="empty-state__text">Drop elements into this section</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

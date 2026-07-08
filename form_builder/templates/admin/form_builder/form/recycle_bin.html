@@ -1,0 +1,90 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Form Recycle Bin" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'form_builder/css/admin_recycle_bin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="recycle-bin-container">
+    <div class="recycle-bin-header">
+        <div>
+            <h1>
+                <i class="fas fa-trash-alt"></i>
+                {% trans "Form Recycle Bin" %}
+            </h1>
+            <p class="subtitle">{% trans "Deleted forms are stored here and can be restored or permanently deleted." %}</p>
+        </div>
+        <div class="recycle-bin-header-actions">
+            <a href="{% url 'admin:form_builder_form_changelist' %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Forms" %}
+            </a>
+        </div>
+    </div>
+
+    {% if deleted_forms %}
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="recycle-bin-actions">
+            <button type="submit" name="action" value="restore" class="button btn-success">
+                <i class="fas fa-undo"></i> {% trans "Restore Selected" %}
+            </button>
+            <button type="submit" name="action" value="permanent_delete" class="button btn-danger"
+                    data-confirm="{% trans 'Permanently delete selected forms? This cannot be undone.' %}">
+                <i class="fas fa-trash"></i> {% trans "Permanently Delete Selected" %}
+            </button>
+            <button type="submit" name="action" value="empty_bin" class="button btn-warning"
+                    data-confirm="{% trans 'Empty entire recycle bin? This will permanently delete all forms. This cannot be undone.' %}">
+                <i class="fas fa-dumpster-fire"></i> {% trans "Empty Recycle Bin" %}
+            </button>
+        </div>
+
+        <table class="recycle-bin-table">
+            <thead>
+                <tr>
+                    <th class="col-select">
+                        <input type="checkbox" id="select-all" title="{% trans 'Select all' %}">
+                    </th>
+                    <th>{% trans "Form Name" %}</th>
+                    <th>{% trans "Title" %}</th>
+                    <th>{% trans "Deleted By" %}</th>
+                    <th>{% trans "Deleted At" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in deleted_forms %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="form_ids" value="{{ form.id }}">
+                    </td>
+                    <td><strong>{{ form.name }}</strong></td>
+                    <td>{{ form.title }}</td>
+                    <td>{{ form.deleted_by.username|default:"-" }}</td>
+                    <td>{{ form.deleted_at|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-trash-alt"></i>
+        <h2>{% trans "Recycle bin is empty" %}</h2>
+        <p>{% trans "Deleted forms will appear here." %}</p>
+        <a href="{% url 'admin:form_builder_form_changelist' %}" class="button">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Forms" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block footer %}
+<script src="{% static 'form_builder/js/admin_recycle_bin.js' %}" defer></script>
+{% endblock %}

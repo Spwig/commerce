@@ -1,0 +1,29 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Hide the "+" (add related) button on selected_attributes field in ProductVariant inline
+ *
+ * This prevents merchants from clicking the add button which would create an AttributeValue
+ * that's not assigned to the product, causing validation errors.
+ *
+ * Instead, merchants should use the "Quick Add Attribute" section in the
+ * "Product Attributes & Variations" tab.
+ */
+
+/* Hide add-related link for selected_attributes field */
+.field-selected_attributes .add-related,
+.variant-field.field-selected_attributes .add-related,
+[id*="selected_attributes"] + .add-related,
+.attributes-widget .add-related {
+    display: none !important;
+}
+
+/* Also hide change and delete related links if they appear */
+.field-selected_attributes .change-related,
+.field-selected_attributes .delete-related,
+.variant-field.field-selected_attributes .change-related,
+.variant-field.field-selected_attributes .delete-related,
+.attributes-widget .change-related,
+.attributes-widget .delete-related {
+    display: none !important;
+}

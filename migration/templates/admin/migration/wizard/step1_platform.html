@@ -1,0 +1,100 @@
+{% extends "admin/migration/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-store"></i>
+        {% trans "Select Source Platform" %}
+    </h3>
+    <p>{% trans "Choose the e-commerce platform you're migrating from. We'll guide you through the process of importing your data." %}</p>
+</div>
+
+<form method="post" action="{% url 'admin:migration_wizard_step1' %}" id="platform-form">
+    {% csrf_token %}
+
+    <div class="platform-grid">
+        <div class="platform-card" data-action="select-platform" data-platform="woocommerce">
+            <input type="radio" name="platform" value="woocommerce" id="platform-woocommerce" class="platform-radio-hidden">
+            <div class="platform-icon woocommerce">
+                <i class="fab fa-wordpress"></i>
+            </div>
+            <div class="platform-name">WooCommerce</div>
+            <div class="platform-description">{% trans "WordPress + WooCommerce stores" %}</div>
+        </div>
+
+        <div class="platform-card" data-action="select-platform" data-platform="shopify">
+            <input type="radio" name="platform" value="shopify" id="platform-shopify" class="platform-radio-hidden">
+            <div class="platform-icon shopify">
+                <i class="fab fa-shopify"></i>
+            </div>
+            <div class="platform-name">Shopify</div>
+            <div class="platform-description">{% trans "Shopify stores using Admin API" %}</div>
+        </div>
+
+        <div class="platform-card" data-action="select-platform" data-platform="magento">
+            <input type="radio" name="platform" value="magento" id="platform-magento" class="platform-radio-hidden">
+            <div class="platform-icon magento">
+                <i class="fab fa-magento"></i>
+            </div>
+            <div class="platform-name">Magento</div>
+            <div class="platform-description">{% trans "Magento 2 / Adobe Commerce stores" %}</div>
+        </div>
+
+        <div class="platform-card" data-action="select-platform" data-platform="csv">
+            <input type="radio" name="platform" value="csv" id="platform-csv" class="platform-radio-hidden">
+            <div class="platform-icon csv">
+                <i class="fas fa-file-csv"></i>
+            </div>
+            <div class="platform-name">CSV Import</div>
+            <div class="platform-description">{% trans "Import from CSV files" %}</div>
+        </div>
+    </div>
+
+    <div class="info-box wizard-hidden" id="platform-info">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong id="platform-info-title"></strong>
+            <p id="platform-info-description"></p>
+        </div>
+    </div>
+
+    <div class="wizard-nav">
+        <a href="{% url 'admin:migration_migrationjob_changelist' %}" class="button secondary">
+            <i class="fas fa-times"></i>
+            {% trans "Cancel" %}
+        </a>
+        <button type="submit" class="button primary" id="next-button" disabled>
+            {% trans "Next: Configure Connection" %}
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+
+<script type="application/json" id="step1-data">
+{
+    "platforms": {
+        "woocommerce": {
+            "title": "{% trans 'WooCommerce Migration' %}",
+            "description": "{% trans 'We will connect to your WooCommerce store using the REST API. You will need to provide your store URL and API credentials in the next step.' %}"
+        },
+        "shopify": {
+            "title": "{% trans 'Shopify Migration' %}",
+            "description": "{% trans 'We will connect to your Shopify store using the Admin API. You will need to create a private app in the Shopify Developer Dashboard and provide your Client ID and Client Secret in the next step.' %}"
+        },
+        "magento": {
+            "title": "{% trans 'Magento Migration' %}",
+            "description": "{% trans 'We will connect to your Magento 2 store using the REST API. You will need to create an Integration in your Magento admin and provide the Access Token in the next step.' %}"
+        },
+        "csv": {
+            "title": "{% trans 'CSV Import' %}",
+            "description": "{% trans 'Import your data from CSV files. We will provide templates in the next step for products, customers, orders, and other data.' %}"
+        }
+    },
+    "translations": {
+        "selectPlatform": "{% trans 'Please select a platform to continue.' %}"
+    }
+}
+</script>
+<script src="{% static 'migration/js/wizard_step1.js' %}"></script>
+{% endblock %}

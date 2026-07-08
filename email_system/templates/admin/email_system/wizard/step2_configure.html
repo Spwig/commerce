@@ -1,0 +1,148 @@
+{% extends "admin/email_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Configure Credentials" %}</h2>
+    <p class="step-description">{% trans "Enter the credentials for" %} {{ component.name }}</p>
+
+    {% if has_instructions %}
+    <div class="setup-instructions">
+        <h3>{% trans "Setup Instructions" %}</h3>
+        {{ instructions_html }}
+    </div>
+    {% endif %}
+
+    <form method="post" id="credentials-form" class="wizard-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="account_name">{% trans "Account Display Name" %} *</label>
+            <input type="text"
+                   name="account_name"
+                   id="account_name"
+                   class="form-control"
+                   value="{{ component.name }}"
+                   required>
+            <p class="help-text">{% trans "A friendly name to identify this email account in your admin panel" %}</p>
+        </div>
+
+        {% if requires_oauth %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            {% trans "This provider uses OAuth 2.0 authentication. Enter your OAuth credentials below to authorize the connection." %}
+        </div>
+
+        <div class="form-group">
+            <label for="client_id">{% trans "Client ID" %} *</label>
+            <input type="text"
+                   name="client_id"
+                   id="client_id"
+                   class="form-control"
+                   required
+                   placeholder="123456789-abc.apps.googleusercontent.com">
+            <p class="help-text">{% trans "OAuth 2.0 client ID from your provider console" %}</p>
+        </div>
+
+        <div class="form-group">
+            <label for="client_secret">{% trans "Client Secret" %} *</label>
+            <input type="password"
+                   name="client_secret"
+                   id="client_secret"
+                   class="form-control"
+                   required>
+            <p class="help-text">{% trans "OAuth 2.0 client secret from your provider console" %}</p>
+        </div>
+        {% elif credential_schema %}
+        <div class="form-section">
+            <h3 class="form-section-title">
+                <i class="fas fa-key"></i> {% trans "Provider Credentials" %}
+            </h3>
+
+            {% for field_name, field_config in credential_schema.items %}
+            <div class="form-group">
+                <label for="id_{{ field_name }}">
+                    {{ field_config.label }}
+                    {% if field_config.required %}<span class="required">*</span>{% endif %}
+                </label>
+
+                {% if field_config.type == 'password' %}
+                    <input type="password"
+                           name="{{ field_name }}"
+                           id="id_{{ field_name }}"
+                           class="form-control"
+                           {% if field_config.required %}required{% endif %}
+                           {% if field_config.stored_value %}value="{{ field_config.stored_value }}"{% endif %}
+                           {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>
+                {% elif field_config.type == 'number' %}
+                    <input type="number"
+                           name="{{ field_name }}"
+                           id="id_{{ field_name }}"
+                           class="form-control"
+                           {% if field_config.required %}required{% endif %}
+                           value="{% firstof field_config.stored_value field_config.default %}"
+                           {% if field_config.minimum %}min="{{ field_config.minimum }}"{% endif %}
+                           {% if field_config.maximum %}max="{{ field_config.maximum }}"{% endif %}
+                           {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>
+                {% elif field_config.type == 'boolean' %}
+                    <label class="checkbox-label">
+                        <input type="checkbox"
+                               name="{{ field_name }}"
+                               id="id_{{ field_name }}"
+                               {% if field_config.has_stored_value %}{% if field_config.stored_value %}checked{% endif %}{% elif field_config.default %}checked{% endif %}>
+                        <span>{{ field_config.help_text }}</span>
+                    </label>
+                {% elif field_config.type == 'select' %}
+                    <select name="{{ field_name }}"
+                            id="id_{{ field_name }}"
+                            class="form-control"
+                            {% if field_config.required %}required{% endif %}>
+                        <option value="">{% trans "Select..." %}</option>
+                        {% for choice in field_config.options %}
+                        <option value="{{ choice.value }}" {% if field_config.stored_value == choice.value %}selected{% elif field_config.default == choice.value %}selected{% endif %}>{{ choice.label }}</option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <input type="text"
+                           name="{{ field_name }}"
+                           id="id_{{ field_name }}"
+                           class="form-control"
+                           {% if field_config.required %}required{% endif %}
+                           {% if field_config.stored_value %}value="{{ field_config.stored_value }}"{% endif %}
+                           {% if field_config.placeholder %}placeholder="{{ field_config.placeholder }}"{% endif %}>
+                {% endif %}
+
+                {% if field_config.help_text and field_config.type != 'boolean' %}
+                <p class="help-text">
+                    <i class="fas fa-question-circle"></i> {{ field_config.help_text }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="security-notice">
+                <i class="fas fa-lock"></i>
+                <span>{% trans "Your credentials will be securely encrypted before being stored." %}</span>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            {% trans "No additional credential configuration is needed for this provider." %}
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% include "providers_common/includes/manifest_i18n.html" %}
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'email_system:wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="credentials-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

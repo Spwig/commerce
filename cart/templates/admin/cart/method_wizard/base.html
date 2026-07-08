@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Add Shipping Method" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'cart/css/method-wizard.css' %}">
+{% block form_media %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <h1><i class="fas fa-dolly"></i> {% trans "Add Shipping Method" %}</h1>
+        <p class="wizard-subtitle">{% trans "Configure a new shipping method for your store" %}</p>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="wizard-steps">
+        <div class="step {% if step == 1 %}active{% elif step > 1 %}completed{% endif %}">
+            <div class="step-number">{% if step > 1 %}<i class="fas fa-check"></i>{% else %}1{% endif %}</div>
+            <div class="step-label">{% trans "Method Basics" %}</div>
+        </div>
+        <div class="step-connector {% if step > 1 %}active{% endif %}"></div>
+
+        <div class="step {% if step == 2 %}active{% elif step > 2 %}completed{% endif %}">
+            <div class="step-number">{% if step > 2 %}<i class="fas fa-check"></i>{% else %}2{% endif %}</div>
+            <div class="step-label">{% trans "Eligibility" %}</div>
+        </div>
+        <div class="step-connector {% if step > 2 %}active{% endif %}"></div>
+
+        <div class="step {% if step == 3 %}active{% elif step > 3 %}completed{% endif %}">
+            <div class="step-number">{% if step > 3 %}<i class="fas fa-check"></i>{% else %}3{% endif %}</div>
+            <div class="step-label">{% trans "Coverage" %}</div>
+        </div>
+        <div class="step-connector {% if step > 3 %}active{% endif %}"></div>
+
+        <div class="step {% if step == 4 %}active{% elif step > 4 %}completed{% endif %}">
+            <div class="step-number">{% if step > 4 %}<i class="fas fa-check"></i>{% else %}4{% endif %}</div>
+            <div class="step-label">{% trans "Features" %}</div>
+        </div>
+        <div class="step-connector {% if step > 4 %}active{% endif %}"></div>
+
+        <div class="step {% if step == 5 %}active{% elif step > 5 %}completed{% endif %}">
+            <div class="step-number">{% if step > 5 %}<i class="fas fa-check"></i>{% else %}5{% endif %}</div>
+            <div class="step-label">{% trans "Review" %}</div>
+        </div>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        {% block wizard_content %}{% endblock %}
+    </div>
+
+    <!-- Wizard Navigation -->
+    <div class="wizard-navigation">
+        {% block wizard_navigation %}{% endblock %}
+    </div>
+
+    {% block wizard_js %}{% endblock %}
+</div>
+{% endblock %}

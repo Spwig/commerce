@@ -1,0 +1,84 @@
+{% load i18n %}
+
+<!-- Timing Configuration Modal -->
+<div class="admin-modal-overlay" id="timing-modal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title"><i class="fas fa-stopwatch"></i> {% trans "Configure Timing" %}</h2>
+            <button type="button" class="admin-modal-close" data-modal="timing-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="admin-modal-section">
+                <h3>{% trans "Attribution Window" %}</h3>
+
+                <div class="form-row">
+                    <label for="timing-cookie-ttl">{% trans "Referral Cookie TTL (Days)" %}</label>
+                    <input type="number" id="timing-cookie-ttl" min="1" placeholder="30">
+                    <p class="help">{% trans "How long the referral tracking cookie lasts" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="timing-attribution-method">{% trans "Attribution Method" %}</label>
+                    <select id="timing-attribution-method">
+                        <option value="first-click">{% trans "First-Click (first referrer gets credit)" %}</option>
+                        <option value="last-click" selected>{% trans "Last-Click (most recent referrer gets credit)" %}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Reward Issuance" %}</h3>
+
+                <div class="form-row">
+                    <label for="timing-referrer-when">{% trans "When to Issue Referrer Reward" %}</label>
+                    <select id="timing-referrer-when">
+                        <option value="signup">{% trans "On Referee Signup" %}</option>
+                        <option value="first-order" selected>{% trans "On Referee First Order" %}</option>
+                        <option value="order-fulfilled">{% trans "After Order Fulfilled" %}</option>
+                        <option value="refund-window">{% trans "After Refund Window Closes" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="timing-referee-when">{% trans "When to Issue Referee Reward" %}</label>
+                    <select id="timing-referee-when">
+                        <option value="signup">{% trans "On Signup" %}</option>
+                        <option value="first-order" selected>{% trans "On First Order" %}</option>
+                        <option value="order-fulfilled">{% trans "After Order Fulfilled" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="timing-refund-window-days">{% trans "Refund Window (Days)" %}</label>
+                    <input type="number" id="timing-refund-window-days" min="0" placeholder="30">
+                    <p class="help">{% trans "Wait period before issuing rewards (guards against refunds)" %}</p>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Processing Schedule" %}</h3>
+
+                <div class="form-row">
+                    <label for="timing-auto-approve">
+                        <input type="checkbox" id="timing-auto-approve" checked>
+                        {% trans "Auto-approve attributions (no manual review)" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="timing-batch-process">
+                        <input type="checkbox" id="timing-batch-process">
+                        {% trans "Process rewards in batches (daily)" %}
+                    </label>
+                    <p class="help">{% trans "If unchecked, rewards are issued immediately" %}</p>
+                </div>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="referral-modal-btn-secondary" data-modal="timing-modal">{% trans "Cancel" %}</button>
+            <button type="button" class="referral-modal-btn-primary" id="save-timing-config">{% trans "Save Configuration" %}</button>
+        </div>
+    </div>
+</div>

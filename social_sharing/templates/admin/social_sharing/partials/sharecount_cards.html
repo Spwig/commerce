@@ -1,0 +1,123 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+{% if sharecounts %}
+<div class="list-row-cards">
+    {% for count in sharecounts %}
+    <div class="list-row-card">
+        <!-- Platform Icon -->
+        <div class="list-row-card-icon sharecount-visual">
+            <div class="sharecount-platform-icon platform-{{ count.platform }}">
+                {% if count.platform == 'facebook' %}
+                    <i class="fab fa-facebook"></i>
+                {% elif count.platform == 'twitter' %}
+                    <i class="fab fa-twitter"></i>
+                {% elif count.platform == 'linkedin' %}
+                    <i class="fab fa-linkedin"></i>
+                {% elif count.platform == 'pinterest' %}
+                    <i class="fab fa-pinterest"></i>
+                {% elif count.platform == 'whatsapp' %}
+                    <i class="fab fa-whatsapp"></i>
+                {% elif count.platform == 'telegram' %}
+                    <i class="fab fa-telegram"></i>
+                {% elif count.platform == 'email' %}
+                    <i class="fas fa-envelope"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <!-- Title Row: Content + Platform Badge -->
+            <div class="sharecount-title-row">
+                <h3 class="list-row-card-title">
+                    {{ count.content_type.model|title }} #{{ count.object_id }}
+                    {% if count.content_object %} - {{ count.content_object|truncatechars:40 }}{% endif %}
+                </h3>
+                <span class="list-row-card-badge platform-{{ count.platform }}">
+                    {% if count.platform == 'facebook' %}
+                        <i class="fab fa-facebook"></i> {% trans "Facebook" %}
+                    {% elif count.platform == 'twitter' %}
+                        <i class="fab fa-twitter"></i> {% trans "Twitter" %}
+                    {% elif count.platform == 'linkedin' %}
+                        <i class="fab fa-linkedin"></i> {% trans "LinkedIn" %}
+                    {% elif count.platform == 'pinterest' %}
+                        <i class="fab fa-pinterest"></i> {% trans "Pinterest" %}
+                    {% elif count.platform == 'whatsapp' %}
+                        <i class="fab fa-whatsapp"></i> {% trans "WhatsApp" %}
+                    {% elif count.platform == 'telegram' %}
+                        <i class="fab fa-telegram"></i> {% trans "Telegram" %}
+                    {% elif count.platform == 'email' %}
+                        <i class="fas fa-envelope"></i> {% trans "Email" %}
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Compact Meta Row -->
+            <div class="list-row-card-meta sharecount-meta-compact">
+                <!-- Share Count - Prominent Display -->
+                <span class="list-row-card-meta-item sharecount-count-display">
+                    <i class="fas fa-share-nodes"></i>
+                    <span class="sharecount-count-value {% if count.count > 1000 %}high{% elif count.count > 100 %}medium{% endif %}">
+                        {% if count.count > 1000 %}{{ count.count|floatformat:0 }}{% else %}{{ count.count }}{% endif %}
+                    </span>
+                    <span class="sharecount-count-label">
+                        {% if count.count == 1 %}
+                            {% trans "share" %}
+                        {% else %}
+                            {% trans "shares" %}
+                        {% endif %}
+                    </span>
+                </span>
+
+                <!-- Last Updated -->
+                <span class="list-row-card-meta-item">
+                    <i class="far fa-clock"></i>
+                    {% trans "Updated" %}: {{ count.last_updated|date:"M d, Y H:i" }}
+                </span>
+
+                <!-- Content Type Icon -->
+                <span class="list-row-card-meta-item">
+                    {% if count.content_type.model == 'product' %}
+                        <i class="fas fa-box"></i>
+                    {% elif count.content_type.model == 'category' %}
+                        <i class="fas fa-folder"></i>
+                    {% elif count.content_type.model == 'page' %}
+                        <i class="fas fa-file-alt"></i>
+                    {% else %}
+                        <i class="fas fa-file"></i>
+                    {% endif %}
+                    {{ count.content_type.model|title }}
+                </span>
+
+                <!-- Link to content (if product) -->
+                {% if count.content_type.model == 'product' and count.content_object %}
+                    {% if count.content_object.images.all.0 %}
+                        <span class="list-row-card-meta-item sharecount-product-thumb-meta">
+                            <a href="{% url 'admin:catalog_product_change' count.content_object.id %}" title="{{ count.content_object.name }}">
+                                <img src="{{ count.content_object.images.all.0.thumbnail_small }}"
+                                     alt="{{ count.content_object.name }}"
+                                     class="sharecount-product-thumb-inline">
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <div class="no-results">
+        <div>
+            <i class="fas fa-search"></i>
+        </div>
+        <div>{% trans "No share counts found matching your filters." %}</div>
+        <div class="mt-8">
+            <button class="button secondary" data-action="clear-filters">
+                <i class="fas fa-times"></i>
+                {% trans "Clear Filters" %}
+            </button>
+        </div>
+    </div>
+{% endif %}

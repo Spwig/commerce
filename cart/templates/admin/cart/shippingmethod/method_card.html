@@ -1,0 +1,153 @@
+{% load i18n %}
+
+<div class="method-card" data-method-id="{{ method.id }}" data-name="{{ method.name }}"
+     data-type="{{ method.method_type }}" data-is-active="{{ method.is_active|yesno:'true,false' }}">
+
+    <!-- Checkbox -->
+    <div class="method-checkbox">
+        <input type="checkbox" class="method-select" value="{{ method.id }}">
+    </div>
+
+    <!-- Icon with Sort Order Badge -->
+    <div class="method-icon">
+        <div class="method-icon-container {% if method.method_type == 'flat_rate' %}flat-rate
+            {% elif method.method_type == 'table_rate' %}calculated
+            {% elif method.method_type == 'real_time' %}real-time
+            {% elif method.method_type == 'local_pickup' %}local-pickup{% endif %}">
+            {% if method.image %}
+                <img src="{{ method.image.get_display_url }}" alt="{{ method.image.title }}" class="method-icon-img">
+            {% elif method.icon %}
+                <i class="fas {{ method.icon }}"></i>
+            {% else %}
+                <i class="fas fa-{% if method.method_type == 'flat_rate' %}dollar-sign
+                    {% elif method.method_type == 'real_time' %}shipping-fast
+                    {% elif method.method_type == 'local_pickup' %}store
+                    {% else %}table{% endif %}"></i>
+            {% endif %}
+            <div class="method-sort-badge">
+                <span class="sort-value">{{ method.sort_order }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Method Info -->
+    <div class="method-info">
+        <div class="method-header">
+            <div class="method-title-row">
+                <h3 class="method-name">{{ method.name }}</h3>
+                <div class="method-badges">
+                    <span class="method-type-badge {{ method.method_type }}">
+                        {{ method.get_method_type_display }}
+                    </span>
+                    {% if method.flat_rate_cost %}
+                        <span class="method-cost-badge">
+                            {{ method.flat_rate_cost }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% if method.description %}
+                <p class="method-description">{{ method.description|truncatewords:20 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Conditions Summary -->
+        <div class="method-conditions">
+            <!-- Geographic Coverage -->
+            {% if method.zones.exists %}
+                <div class="condition-item">
+                    <i class="fas fa-globe"></i>
+                    <span class="condition-label">{% trans "Zones:" %}</span>
+                    <span class="condition-value">
+                        {{ method.zones.count }} {% trans "zone" %}{% if method.zones.count != 1 %}s{% endif %}
+                    </span>
+                </div>
+            {% elif method.available_countries %}
+                <div class="condition-item">
+                    <i class="fas fa-flag"></i>
+                    <span class="condition-label">{% trans "Countries:" %}</span>
+                    <span class="condition-value">
+                        {{ method.available_countries|length }} {% trans "country" %}{% if method.available_countries|length != 1 %}ies{% else %}y{% endif %}
+                    </span>
+                </div>
+            {% else %}
+                <div class="condition-item">
+                    <i class="fas fa-globe-americas"></i>
+                    <span class="condition-label">{% trans "Coverage:" %}</span>
+                    <span class="condition-value">{% trans "Worldwide" %}</span>
+                </div>
+            {% endif %}
+
+            <!-- Pickup Locations (for local_pickup) -->
+            {% if method.method_type == 'local_pickup' and method.pickup_locations.exists %}
+                <div class="condition-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="condition-label">{% trans "Pickup:" %}</span>
+                    <span class="condition-value">
+                        {{ method.pickup_locations.count }} {% trans "location" %}{% if method.pickup_locations.count != 1 %}s{% endif %}
+                    </span>
+                </div>
+            {% endif %}
+
+            <!-- Carrier Info (for real_time) -->
+            {% if method.method_type == 'real_time' and method.carrier %}
+                <div class="condition-item">
+                    <i class="fas fa-truck"></i>
+                    <span class="condition-label">{% trans "Carrier:" %}</span>
+                    <span class="condition-value">
+                        {{ method.get_carrier_display }}
+                        {% if method.carrier_service_code %}({{ method.carrier_service_code }}){% endif %}
+                    </span>
+                </div>
+            {% endif %}
+
+            <!-- Delivery Time -->
+            <div class="condition-item">
+                <i class="fas fa-clock"></i>
+                <span class="condition-label">{% trans "Delivery:" %}</span>
+                <span class="condition-value">
+                    {% if method.method_type == 'local_pickup' %}
+                        {% trans "Instant Pickup" %}
+                    {% else %}
+                        {{ method.min_delivery_days }}-{{ method.max_delivery_days }} {% trans "business days" %}
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Status Row -->
+        <div class="method-status-row">
+            <span class="status-badge {% if method.is_active %}status-active{% else %}status-inactive{% endif %}">
+                {% if method.is_active %}
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                {% else %}
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                {% endif %}
+            </span>
+            <span class="method-meta">
+                <i class="fas fa-calendar"></i> {% trans "Created" %}: {{ method.created_at|date:"M d, Y" }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="method-actions">
+        <a href="{% url 'admin:cart_shippingmethod_change' method.id %}"
+           class="action-btn edit-btn"
+           title="{% trans 'Edit method' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <button class="action-btn method-toggle-btn"
+                data-method-id="{{ method.id }}"
+                data-is-active="{{ method.is_active|yesno:'true,false' }}"
+                title="{% trans 'Toggle active status' %}">
+            <i class="fas fa-toggle-{% if method.is_active %}on{% else %}off{% endif %}"></i>
+        </button>
+        <button class="action-btn delete-btn"
+                data-method-id="{{ method.id }}"
+                data-method-name="{{ method.name }}"
+                title="{% trans 'Delete method' %}">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</div>

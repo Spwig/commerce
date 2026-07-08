@@ -1,0 +1,210 @@
+{
+  "element_type": "product_carousel",
+  "name": "Product Carousel",
+  "description": "Sliding carousel showcasing products with images, prices, and add-to-cart functionality",
+  "version": "1.0.2",
+  "category": "ecommerce",
+  "icon": "fas fa-shopping-cart",
+  "author": "Page Builder System",
+  "tags": ["products", "carousel", "ecommerce", "shopping", "slider"],
+  "supports_translation": true,
+  "translation_domain": "product_carousel_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "scripts": [
+    "/static/page_builder/js/elements/product-carousel.js"
+  ],
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "basic": {
+      "label": "Content",
+      "icon": "fas fa-shopping-cart",
+      "order": 1,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Featured Products",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "textarea",
+              "label": "Section Subtitle",
+              "default": "Discover our best-selling products",
+              "translatable": true,
+              "rows": 2,
+              "full_width": true
+            }
+          }
+        },
+        "products_group": {
+          "type": "property_group",
+          "label": "Products",
+          "columns": 1,
+          "properties": {
+            "products": {
+              "type": "array",
+              "label": "Products",
+              "full_width": true,
+              "item_schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string", "label": "Product Name", "translatable": true},
+                  "image": {"type": "image", "label": "Product Image"},
+                  "price": {"type": "string", "label": "Price"},
+                  "original_price": {"type": "string", "label": "Original Price (optional)"},
+                  "description": {"type": "textarea", "label": "Short Description", "translatable": true, "rows": 2},
+                  "rating": {"type": "select", "label": "Rating", "options": [{"value": "1", "label": "1 Star"}, {"value": "2", "label": "2 Stars"}, {"value": "3", "label": "3 Stars"}, {"value": "4", "label": "4 Stars"}, {"value": "5", "label": "5 Stars"}]},
+                  "badge": {"type": "string", "label": "Badge (Sale, New, etc.)", "translatable": true},
+                  "link": {"type": "url", "label": "Product Link", "link_selector": true},
+                  "sku": {"type": "string", "label": "SKU/Product ID"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "carousel": {
+      "label": "Carousel",
+      "icon": "fas fa-play-circle",
+      "order": 2,
+      "properties": {
+        "carousel_settings_group": {
+          "type": "property_group",
+          "label": "Carousel Settings",
+          "properties": {
+            "products_per_view": {
+              "type": "select",
+              "label": "Products Per View",
+              "options": [
+                {"value": "1", "label": "1 Product"},
+                {"value": "2", "label": "2 Products"},
+                {"value": "3", "label": "3 Products"},
+                {"value": "4", "label": "4 Products"},
+                {"value": "5", "label": "5 Products"}
+              ],
+              "default": "4"
+            },
+            "play_interval": {
+              "type": "number",
+              "label": "Interval (sec)",
+              "default": 4,
+              "min": 1,
+              "max": 10
+            }
+          }
+        },
+        "playback_group": {
+          "type": "property_group",
+          "label": "Playback",
+          "properties": {
+            "auto_play": {
+              "type": "boolean",
+              "label": "Auto Play",
+              "default": true
+            },
+            "infinite_loop": {
+              "type": "boolean",
+              "label": "Infinite Loop",
+              "default": true
+            }
+          }
+        },
+        "navigation_group": {
+          "type": "property_group",
+          "label": "Navigation",
+          "properties": {
+            "show_arrows": {
+              "type": "boolean",
+              "label": "Show Arrows",
+              "default": true
+            },
+            "show_dots": {
+              "type": "boolean",
+              "label": "Show Dots",
+              "default": true
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-eye",
+      "order": 3,
+      "properties": {
+        "product_info_group": {
+          "type": "property_group",
+          "label": "Product Info",
+          "properties": {
+            "show_rating": {
+              "type": "boolean",
+              "label": "Show Ratings",
+              "default": true
+            },
+            "show_description": {
+              "type": "boolean",
+              "label": "Show Description",
+              "default": false
+            },
+            "show_badges": {
+              "type": "boolean",
+              "label": "Show Badges",
+              "default": true
+            }
+          }
+        },
+        "button_group": {
+          "type": "property_group",
+          "label": "Add to Cart Button",
+          "columns": 1,
+          "properties": {
+            "button_text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "Add to Cart",
+              "translatable": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {"type": "string", "label": "Section Title", "default": "Featured Products", "translatable": true},
+    "subtitle": {"type": "textarea", "label": "Section Subtitle", "default": "Discover our best-selling products", "translatable": true, "rows": 2},
+    "products_per_view": {"type": "select", "label": "Products Per View", "options": [{"value": "1", "label": "1 Product"}, {"value": "2", "label": "2 Products"}, {"value": "3", "label": "3 Products"}, {"value": "4", "label": "4 Products"}, {"value": "5", "label": "5 Products"}], "default": "4"},
+    "auto_play": {"type": "boolean", "label": "Auto Play", "default": true},
+    "play_interval": {"type": "number", "label": "Auto Play Interval (seconds)", "default": 4, "min": 1, "max": 10},
+    "show_arrows": {"type": "boolean", "label": "Show Navigation Arrows", "default": true},
+    "show_dots": {"type": "boolean", "label": "Show Pagination Dots", "default": true},
+    "infinite_loop": {"type": "boolean", "label": "Infinite Loop", "default": true},
+    "products": {"type": "array", "label": "Products", "item_schema": {"type": "object", "properties": {"name": {"type": "string", "label": "Product Name", "translatable": true}, "image": {"type": "image", "label": "Product Image"}, "price": {"type": "string", "label": "Price"}, "original_price": {"type": "string", "label": "Original Price (optional)"}, "description": {"type": "textarea", "label": "Short Description", "translatable": true, "rows": 2}, "rating": {"type": "select", "label": "Rating", "options": [{"value": "1", "label": "1 Star"}, {"value": "2", "label": "2 Stars"}, {"value": "3", "label": "3 Stars"}, {"value": "4", "label": "4 Stars"}, {"value": "5", "label": "5 Stars"}]}, "badge": {"type": "string", "label": "Badge (Sale, New, etc.)", "translatable": true}, "link": {"type": "url", "label": "Product Link", "link_selector": true}, "sku": {"type": "string", "label": "SKU/Product ID"}}}},
+    "show_rating": {"type": "boolean", "label": "Show Product Ratings", "default": true},
+    "show_description": {"type": "boolean", "label": "Show Product Descriptions", "default": false},
+    "show_badges": {"type": "boolean", "label": "Show Product Badges", "default": true},
+    "button_text": {"type": "string", "label": "Add to Cart Button Text", "default": "Add to Cart", "translatable": true}
+  },
+  "translations": {
+    "en": {"name": "Product Carousel", "description": "Sliding carousel showcasing products with images, prices, and add-to-cart functionality"},
+    "es": {"name": "Carrusel de Productos", "description": "Carrusel deslizante que muestra productos con imágenes, precios y funcionalidad de agregar al carrito"},
+    "fr": {"name": "Carrousel de Produits", "description": "Carrousel coulissant présentant des produits avec images, prix et fonctionnalité d'ajout au panier"},
+    "de": {"name": "Produktkarussell", "description": "Gleitendes Karussell mit Produkten, Bildern, Preisen und Warenkorb-Funktionalität"},
+    "pt": {"name": "Carrossel de Produtos", "description": "Carrossel deslizante exibindo produtos com imagens, preços e funcionalidade de adicionar ao carrinho"},
+    "zh-hans": {"name": "产品轮播", "description": "滑动轮播展示产品图片、价格和添加到购物车功能"},
+    "ja": {"name": "商品カルーセル", "description": "画像、価格、カート追加機能付きの商品を表示するスライディングカルーセル"}
+  },
+  "defaults": {
+    "title": "Product Carousel",
+    "description": "Discover our products",
+    "products_count": 6,
+    "autoplay": true,
+    "show_dots": true
+  }
+}

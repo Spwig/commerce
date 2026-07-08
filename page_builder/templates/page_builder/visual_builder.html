@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+{% load i18n static translation_tags %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% trans 'Visual Page Builder' %} - {{ page.title }}</title>
+
+    <!-- Favicon -->
+    {% load core_extras %}
+    {% favicon_meta %}
+
+    {% load static %}
+
+    <!-- CSS Layer Declaration - MUST be loaded first -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/layers.css' %}">
+
+    <!-- Core Admin Theme Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+
+    <!-- Admin Base Styles (contains shared components like tabs) -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Page Builder Admin Styles (Applied globally) -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/visual-builder.css' %}">
+
+    <!-- Canvas Reset (in canvas-reset layer) - Minimal admin isolation -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/canvas-reset.css' %}">
+
+    <!-- Legacy canvas-isolation for compatibility (being migrated) -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/canvas-isolation.css' %}">
+
+    <!-- Element-specific CSS (for visual preview) -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/blog-post-carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/blog-post-grid.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/button.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/category-showcase.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/contact-form.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/container.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/countdown-timer.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/cta-banner.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/divider.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/faq-accordion.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/featured-blog-banner.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/gift-card-promo.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/heading.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/hero.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/icon.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/image.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/image-accordion.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/loyalty-banner.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/modal-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/navigation-menu.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/product-grid.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/product-list.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/promotion-banner.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/related-posts.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/reviews-display.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/sale-products.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/social-links.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/spacer.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/text.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/trust-badges.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/video-embed.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/css/elements/voucher-code-display.css' %}">
+
+    <!-- Shared layout CSS (product grid columns, category grid) -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/category-grid.css' %}">
+
+    <!-- Platform component styles (product cards, etc.) -->
+    <link rel="stylesheet" href="{% static 'design/platform/components.css' %}">
+
+    <!-- Builder Canvas Chrome (in builder-ui layer) - Wrappers, controls, drop zones -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/builder/builder-canvas-chrome.css' %}">
+
+    <!-- Theme CSS is loaded dynamically via loadThemeSystemCSS() to be properly scoped -->
+    {% load theme_tags %}
+
+    <!-- History/Undo Visual Feedback Styles -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/history-undo.css' %}">
+
+    <!-- Template Styles (Should only apply to content preview) -->
+    <style id="template-styles-scoped">
+        /* Scope modern-shop.css to only affect content preview */
+        .pb-content-preview {
+            /* We'll inject the template CSS here via JavaScript to properly scope it */
+        }
+    </style>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+    
+    <!-- Sortable.js for drag and drop (MUST load before page builder scripts) -->
+    <!-- Loading locally to avoid CDN dependency issues -->
+    <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+    <script src="{% static 'page_builder/js/sortable-verify.js' %}"></script>
+
+    <!-- Modern History UI - Load last to override theme styles -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/history-modern.css' %}">
+</head>
+<body class="page-builder-body" data-theme="{{ admin_theme|default:'light' }}">
+
+    <!-- Desktop-only overlay for small screens -->
+    <div class="desktop-only-overlay">
+        <div class="desktop-only-card">
+            <i class="fas fa-desktop desktop-only-icon"></i>
+            <h2>{% trans 'Desktop Required' %}</h2>
+            <p>{% trans 'The Page Builder requires a larger screen. Please switch to a desktop or laptop computer for the best experience.' %}</p>
+            <a href="{% url 'admin:page_builder_page_changelist' %}" class="button primary">
+                <i class="fas fa-arrow-left"></i> {% trans 'Back to Pages' %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Interface Wrapper -->
+    <div class="pb-admin-interface">
+
+        <!-- Top Toolbar -->
+    <div class="builder-toolbar">
+        <div class="toolbar-left">
+            <h1 class="builder-title">
+                <i class="fas fa-magic"></i>
+                {% trans 'Page Builder' %}
+            </h1>
+            <span class="page-name">{{ page.title }}</span>
+            
+            <!-- Language Switcher -->
+            {% include 'components/language_switcher.html' %}
+        </div>
+        
+        <div class="toolbar-center">
+            <div class="device-preview">
+                <button class="device-btn active" data-device="desktop">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button class="device-btn" data-device="tablet">
+                    <i class="fas fa-tablet-alt"></i>
+                </button>
+                <button class="device-btn" data-device="mobile">
+                    <i class="fas fa-mobile-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="toolbar-right">
+            <!-- Draft/Published Status Indicator -->
+            <div class="page-status-indicator">
+                <span id="page-status-badge" class="status-badge status-draft">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span class="status-text">{% trans 'Draft' %}</span>
+                </span>
+                <span id="auto-save-indicator" class="auto-save-indicator" style="display: none;">
+                    <i class="fas fa-sync fa-spin"></i>
+                    <span class="save-text">{% trans 'Auto-saving...' %}</span>
+                </span>
+            </div>
+
+            <!-- Page Settings Button -->
+            <button class="btn btn-outline page-settings-btn" id="page-settings-btn" data-action="open-page-settings" title="{% trans 'Page Settings' %}">
+                <i class="fas fa-cog"></i>
+                <span class="btn-label">{% trans 'Page' %}</span>
+            </button>
+
+            <!-- Version History Button -->
+            <button class="btn btn-outline" data-action="toggle-version-history" title="{% trans 'Version History' %}">
+                <i class="fas fa-history"></i>
+            </button>
+
+            <!-- Modern Undo/Redo Buttons -->
+            <div class="undo-redo-buttons">
+                <div class="history-button-wrapper" id="undo-wrapper">
+                    <button class="history-btn" id="undo-btn" data-action="undo" disabled title="{% trans 'Undo' %} (Ctrl+Z)">
+                        <i class="fas fa-undo-alt"></i>
+                        <span class="history-btn-label">{% trans 'Undo' %}</span>
+                    </button>
+                    <div class="history-dropdown modern" id="undo-history-dropdown">
+                        <div class="history-dropdown-header">
+                            <span class="history-dropdown-title">{% trans 'Undo History' %}</span>
+                            <span class="history-dropdown-hint">{% trans 'Click to jump to any point' %}</span>
+                        </div>
+                        <div class="history-timeline" id="undo-history-timeline">
+                            <!-- History items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-button-wrapper" id="redo-wrapper">
+                    <button class="history-btn" id="redo-btn" data-action="redo" disabled title="{% trans 'Redo' %} (Ctrl+Shift+Z)">
+                        <i class="fas fa-redo-alt"></i>
+                        <span class="history-btn-label">{% trans 'Redo' %}</span>
+                    </button>
+                    <div class="history-dropdown modern" id="redo-history-dropdown">
+                        <div class="history-dropdown-header">
+                            <span class="history-dropdown-title">{% trans 'Redo History' %}</span>
+                            <span class="history-dropdown-hint">{% trans 'Click to jump to any point' %}</span>
+                        </div>
+                        <div class="history-timeline" id="redo-history-timeline">
+                            <!-- History items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-outline structure-toggle-btn" data-action="toggle-structure-view" id="structure-toggle-btn" title="{% trans 'Structure' %}">
+                <i class="fas fa-sitemap"></i>
+            </button>
+            <button class="preview-btn" data-action="preview-page">
+                <i class="fas fa-eye"></i>
+                <span>{% trans 'Preview' %}</span>
+            </button>
+
+            <!-- Save/Publish Dropdown -->
+            <div class="save-dropdown-wrapper">
+                <button class="save-dropdown-btn primary" data-action="save-draft">
+                    <i class="fas fa-save"></i>
+                    <span>{% trans 'Save Draft' %}</span>
+                </button>
+                <button class="save-dropdown-toggle" data-action="toggle-save-dropdown">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="save-dropdown-menu" id="saveDropdownMenu">
+                    <button class="dropdown-item" data-action="publish-page">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>{% trans 'Publish' %}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Builder Layout -->
+    <div class="builder-layout">
+        
+        <!-- Left Sidebar - Component Library -->
+        <div class="builder-sidebar left-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-plus-circle"></i> Add Components</h3>
+            </div>
+            
+            <div class="component-library">
+                {% load element_tags %}
+                {% render_sidebar_elements %}
+            </div>
+        </div>
+
+        <!-- Center Canvas - Page Preview -->
+        <div class="builder-canvas">
+            <!-- Content Preview Wrapper -->
+            <div class="pb-content-preview">
+            <div class="canvas-container">
+                <div class="canvas-frame" id="page-canvas">
+                    
+                    <!-- Drop Zone for empty page -->
+                    {% load element_tags %}
+                    {% get_page_elements page as direct_elements %}
+                    <div class="empty-drop-zone" id="main-drop-zone" style="display: {% if direct_elements|length == 0 %}block{% else %}none{% endif %}">
+                        <div class="empty-message">
+                            <i class="fas fa-magic"></i>
+                            <h3>Start Building Your Page</h3>
+                            <p>Drag elements from the left sidebar to begin</p>
+                        </div>
+                    </div>
+
+                    <!-- Page Elements (Direct elements without sections) -->
+                    <div class="page-elements" id="page-elements">
+                        {% for element in direct_elements %}
+                            {% include 'page_builder/partials/visual_builder_element.html' with element=element %}
+                        {% endfor %}
+
+                        <!-- Persistent Drop Zone for Page Elements -->
+                        <div class="page-drop-zone" data-page-id="{{ page.id }}" data-action="show-quick-add" data-add-to="page" style="
+                            min-height: 80px;
+                            border: 2px dashed #cbd5e0;
+                            border-radius: 8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: #718096;
+                            font-size: 14px;
+                            background: rgba(237, 242, 247, 0.3);
+                            margin: 20px;
+                            opacity: 0.7;
+                            transition: all 0.3s ease;
+                            cursor: pointer;
+                        ">
+                            <div style="text-align: center; pointer-events: none;">
+                                <i class="fas fa-plus-circle" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                                <span style="font-weight: 500;">Drop elements here</span>
+                                <br>
+                                <small style="opacity: 0.8;">or click to add</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sections have been removed from the codebase -->
+                </div>
+            </div>
+            </div><!-- End Content Preview Wrapper -->
+        </div>
+
+        <!-- Right Sidebar - Properties Panel -->
+        <div class="builder-sidebar right-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-cogs"></i> Properties</h3>
+            </div>
+            
+            <div class="properties-panel" id="properties-panel">
+                <div class="no-selection">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <p>Select an element to edit its properties</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div><!-- End Admin Interface Wrapper -->
+
+    <!-- Modals for editing -->
+    <div class="modal-overlay" id="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Element</h3>
+                <button class="modal-close" data-action="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" data-action="close-modal">Cancel</button>
+                <button class="btn btn-primary" data-action="save-element">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Structure View Floating Window -->
+    <div id="structure-view-window" class="structure-window hidden">
+        <div class="structure-header">
+            <div class="structure-title">
+                <i class="fas fa-sitemap"></i>
+                <span>{% trans 'Page Structure' %}</span>
+            </div>
+            <div class="structure-controls">
+                <button class="structure-btn" data-action="expand-all-structure" title="{% trans 'Expand All' %}">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="structure-btn" data-action="collapse-all-structure" title="{% trans 'Collapse All' %}">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                </button>
+                <button class="structure-btn" data-action="toggle-structure-view" title="{% trans 'Close' %}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="structure-content">
+            <div id="structure-tree" class="structure-tree">
+                <!-- Dynamic structure tree will be populated here -->
+            </div>
+        </div>
+        <div class="structure-footer">
+            <div class="structure-info">
+                <span id="structure-element-count">0 {% trans 'elements' %}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Version History Floating Window -->
+    <div id="version-history-window" class="structure-window hidden" style="right: 20px; top: 80px;">
+        <div class="structure-header">
+            <div class="structure-title">
+                <i class="fas fa-history"></i>
+                <span>{% trans 'Version History' %}</span>
+            </div>
+            <div class="structure-controls">
+                <button class="structure-btn" data-action="refresh-versions" title="{% trans 'Refresh' %}">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="structure-btn" data-action="toggle-version-history" title="{% trans 'Close' %}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="structure-content">
+            <div id="version-history-list" class="version-history-list">
+                <!-- Dynamic version list populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu for Structure View -->
+    <div id="structure-context-menu" class="context-menu hidden">
+        <div class="context-menu-item" data-action="edit">
+            <i class="fas fa-edit"></i>
+            <span>{% trans 'Edit' %}</span>
+        </div>
+        <div class="context-menu-item" data-action="add-same">
+            <i class="fas fa-plus"></i>
+            <span>{% trans 'Add Same' %}</span>
+        </div>
+        <div class="context-menu-item" data-action="duplicate">
+            <i class="fas fa-copy"></i>
+            <span>{% trans 'Duplicate' %}</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" data-action="reset-style">
+            <i class="fas fa-undo"></i>
+            <span>{% trans 'Reset Style' %}</span>
+        </div>
+        <div class="context-menu-item" data-action="copy-style">
+            <i class="fas fa-palette"></i>
+            <span>{% trans 'Copy Style' %}</span>
+        </div>
+        <div class="context-menu-item" data-action="paste-style" id="paste-style-item">
+            <i class="fas fa-paint-brush"></i>
+            <span>{% trans 'Paste Style' %}</span>
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item context-menu-danger" data-action="delete">
+            <i class="fas fa-trash"></i>
+            <span>{% trans 'Delete' %}</span>
+        </div>
+    </div>
+
+    <!-- Global Animations CSS -->
+    <link rel="stylesheet" href="{% static 'core/frontend/animations.css' %}">
+
+    <!-- Utility CSS (dynamically loaded from installed utilities) -->
+    {% for css_file in utility_css_files %}
+    <link rel="stylesheet" href="{% static css_file %}">
+    {% endfor %}
+    <link rel="stylesheet" href="{% static 'page_builder/css/translation_section.css' %}">
+    <!-- Media Library CSS for image selection -->
+    <link rel="stylesheet" href="{% static 'media_library/css/media-library.css' %}">
+
+    <!-- Utility JavaScript (dynamically loaded from installed utilities) -->
+    {% for js_file in utility_js_files %}
+    <script src="{% static js_file %}"></script>
+    {% endfor %}
+    <!-- Media Library and Upload Queue -->
+    <script src="{% static 'media_library/js/media-library.js' %}"></script>
+    <script src="{% static 'media_library/js/upload-queue.js' %}"></script>
+    <script src="{% static 'page_builder/js/translation_integration.js' %}"></script>
+
+    <!-- Live Preview Manager -->
+    <script src="{% static 'page_builder/js/live-preview-manager.js' %}"></script>
+
+    <!-- Property Renderer -->
+    <script src="{% static 'page_builder/js/property_renderer.js' %}"></script>
+
+    <!-- Modular Page Builder JavaScript -->
+    <!-- API Client (must load first) -->
+    <script src="{% static 'page_builder/js/api/api-client.js' %}"></script>
+
+    <!-- State Management System -->
+    <script src="{% static 'page_builder/js/state/state-manager.js' %}"></script>
+
+    <!-- Content Management System -->
+    <script src="{% static 'page_builder/js/content/content-manager.js' %}"></script>
+
+    <!-- History System -->
+    <script src="{% static 'page_builder/js/history/dom-snapshot.js' %}"></script>
+    <script src="{% static 'page_builder/js/history/commands.js' %}"></script>
+    <script src="{% static 'page_builder/js/history/history-manager.js' %}"></script>
+
+    <!-- Main Page Builder JavaScript -->
+    <script src="{% static 'page_builder/js/visual-builder.js' %}"></script>
+
+    <!-- Debug Panel for StateManager -->
+    <script src="{% static 'page_builder/js/debug-panel.js' %}"></script>
+
+    <script type="application/json" id="page-builder-config">
+    {
+        "csrfToken": "{{ csrf_token }}",
+        "adminTheme": "{{ admin_theme|default:'light' }}",
+        "pageData": {{ page_data_json|safe }},
+        "colorPickerTranslations": {
+            "selectColor": "{% trans 'Select Color' %}",
+            "presets": "{% trans 'Presets' %}",
+            "recent": "{% trans 'Recent' %}",
+            "clear": "{% trans 'Clear' %}",
+            "apply": "{% trans 'Apply' %}",
+            "pickFromScreen": "{% trans 'Pick from Screen' %}"
+        },
+        "languages": {% page_builder_languages_json %},
+        "forceLightMode": {% if design_settings.force_light_mode %}true{% else %}false{% endif %},
+        "cssConfig": {
+            "baseCss": "{% static 'css/base.css' %}",
+            "themeId": "{% if page_theme_css_url %}theme-css{% else %}theme-fallback{% endif %}",
+            "themeCss": "{% if page_theme_css_url %}{{ page_theme_css_url }}{% else %}{% static 'page_builder/css/templates/modern-shop-theme.css' %}{% endif %}",
+            "brandCss": "{{ brand_css_url|default:'' }}",
+            "formBuilderCss": "{% static 'form_builder/css/form_frontend.css' %}"
+        },
+        "allElementsData": {{ all_elements_data_json|safe }},
+        "elementMetadata": {{ element_metadata_json|safe }},
+        "adminPrefix": "{{ admin_pb_prefix }}"
+    }
+    </script>
+    {% if icon_registry_json %}<script type="application/json" id="icon-picker-registry">{{ icon_registry_json|safe }}</script>{% endif %}
+    <script src="{% static 'page_builder/js/builder-init.js' %}"></script>
+</body>
+</html>

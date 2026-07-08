@@ -1,0 +1,112 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Subscriptions" %}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% trans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% trans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% trans 'My Account' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {% trans 'My Subscriptions' %}
+                </li>
+            </ol>
+        </nav>
+        <h1 class="page-header__title">{% trans "My Subscriptions" %}</h1>
+        <p class="page-header__subtitle">{% trans "Manage your active and past subscriptions" %}</p>
+    </div>
+</section>
+
+<section class="section">
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+
+        {% if subscriptions %}
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {% for subscription in subscriptions %}
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <!-- Status Badge -->
+                    <div class="mb-4">
+                        {% if subscription.status == 'active' %}
+                            <span class="inline-block px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
+                                {% trans "Active" %}
+                            </span>
+                        {% elif subscription.status == 'trial' %}
+                            <span class="inline-block px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
+                                {% trans "Trial" %}
+                            </span>
+                        {% elif subscription.status == 'paused' %}
+                            <span class="inline-block px-3 py-1 text-sm font-semibold text-yellow-800 bg-yellow-100 rounded-full">
+                                {% trans "Paused" %}
+                            </span>
+                        {% elif subscription.status == 'past_due' %}
+                            <span class="inline-block px-3 py-1 text-sm font-semibold text-red-800 bg-red-100 rounded-full">
+                                {% trans "Past Due" %}
+                            </span>
+                        {% elif subscription.status == 'canceled' %}
+                            <span class="inline-block px-3 py-1 text-sm font-semibold text-gray-800 bg-gray-100 rounded-full">
+                                {% trans "Canceled" %}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Product Info -->
+                    <h3 class="text-xl font-semibold mb-2">{{ subscription.product.name }}</h3>
+                    {% if subscription.variant %}
+                        <p class="text-sm text-gray-600 mb-2">{{ subscription.variant.name }}</p>
+                    {% endif %}
+
+                    <!-- Plan Info -->
+                    <div class="mb-4 text-gray-700">
+                        <p class="font-medium">{{ subscription.plan.name }}</p>
+                        <p class="text-sm">{{ subscription.plan.price }} / {{ subscription.plan.get_billing_cycle_display }}</p>
+                    </div>
+
+                    <!-- Next Billing Date -->
+                    {% if subscription.next_billing_date and subscription.status in 'active,trial' %}
+                        <p class="text-sm text-gray-600 mb-4">
+                            {% trans "Next billing:" %} {{ subscription.next_billing_date|date:"M d, Y" }}
+                        </p>
+                    {% endif %}
+
+                    <!-- Actions -->
+                    <div class="mt-4">
+                        <a href="{% url 'accounts:subscription_detail' subscription.subscription_id %}" 
+                           class="inline-block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                            {% trans "Manage Subscription" %}
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white rounded-lg shadow-md p-8 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">{% trans "No subscriptions yet" %}</h3>
+                <p class="text-gray-600 mb-4">{% trans "You don't have any subscriptions. Browse our products to find subscription options." %}</p>
+                <a href="{% url 'page_builder:home' %}" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    {% trans "Browse Products" %}
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- Payment Methods Link -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'accounts:payment_token_list' %}" class="text-blue-600 hover:text-blue-800">
+                {% trans "Manage Payment Methods" %}
+            </a>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

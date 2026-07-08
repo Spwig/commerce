@@ -1,0 +1,1208 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-17 15:30+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Italian <LL@li.org>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Provider Information"
+msgstr "Informazioni sul Fornitore"
+
+msgid "Configuration"
+msgstr "Configurazione"
+
+msgid "Credentials"
+msgstr "Credenziali"
+
+msgid ""
+"Credentials are encrypted and managed through the provider wizard. To update "
+"credentials, reinstall the provider."
+msgstr ""
+"Le credenziali sono crittografate e gestite tramite il wizard del provider. "
+"Per aggiornare le credenziali, reinstallare il provider."
+
+msgid "Sync Status"
+msgstr "Stato di sincronizzazione"
+
+msgid "Timestamps"
+msgstr "Timestamp"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Status"
+msgstr "Stato"
+
+msgid "Primary"
+msgstr "Principale"
+
+msgid "Credentials are encrypted and stored securely"
+msgstr "Le credenziali sono crittografate e archiviate in modo sicuro"
+
+msgid "No credentials configured"
+msgstr "Nessune credenziali configurate"
+
+msgid "Currency Pair"
+msgstr "Coppia di valute"
+
+msgid "Stale"
+msgstr "Obsoleto"
+
+msgid "Fresh"
+msgstr "Aggiornato"
+
+msgid "Order"
+msgstr "Ordine"
+
+msgid "Rate"
+msgstr "Tasso"
+
+msgid "Settings"
+msgstr "Impostazioni"
+
+msgid "ACTIVE"
+msgstr "ATTIVO"
+
+msgid "INACTIVE"
+msgstr "INATTIVO"
+
+msgid "Notes"
+msgstr "Note"
+
+msgid "List manual exchange rates"
+msgstr "Elenco valute di cambio manuali"
+
+msgid ""
+"Returns all manual exchange rates for the current site. Staff authentication "
+"required."
+msgstr ""
+"Restituisce tutte le valute di cambio manuali per il sito corrente. "
+"Autenticazione dello staff richiesta."
+
+msgid "Create a manual exchange rate"
+msgstr "Crea una valuta di cambio manuale"
+
+msgid ""
+"Create a new manual exchange rate for a currency pair. Only one rate per "
+"currency pair is allowed. Manual rates take precedence over provider rates "
+"when active."
+msgstr ""
+"Crea un nuovo tasso di cambio manuale per una coppia di valute. È ammesso un "
+"solo tasso per coppia di valute. I tassi manuali hanno la precedenza sui "
+"tassi del fornitore quando attivi."
+
+msgid "Rate created successfully"
+msgstr "Valuta di cambio creata con successo"
+
+msgid "Validation error (duplicate pair, invalid rate, etc.)"
+msgstr "Errore di validazione (coppia duplicata, tasso non valido, ecc.)"
+
+msgid "Get manual exchange rate details"
+msgstr "Ottieni i dettagli della valuta di cambio manuale"
+
+msgid "Retrieve a specific manual exchange rate by ID."
+msgstr "Recupera una specifica valuta di cambio manuale per ID."
+
+msgid "Update a manual exchange rate"
+msgstr "Aggiorna una valuta di cambio manuale"
+
+msgid "Fully update a manual exchange rate. All fields required."
+msgstr ""
+"Aggiorna completamente una valuta di cambio manuale. Tutti i campi richiesti."
+
+msgid "Rate updated successfully"
+msgstr "Valuta di cambio aggiornata con successo"
+
+msgid "Partially update a manual exchange rate"
+msgstr "Aggiorna parzialmente una valuta di cambio manuale"
+
+msgid ""
+"Update specific fields of a manual exchange rate. Commonly used to update "
+"just the rate value."
+msgstr ""
+"Aggiorna campi specifici di una valuta di cambio manuale. Usato comunemente "
+"per aggiornare solo il valore del tasso."
+
+msgid "Delete a manual exchange rate"
+msgstr "Elimina una valuta di cambio manuale"
+
+msgid ""
+"Permanently delete a manual exchange rate. The system will fall back to "
+"provider rates for this currency pair."
+msgstr ""
+"Elimina definitivamente un tasso di cambio manuale. Il sistema passerà ai "
+"tassi del fornitore per questa coppia di valute."
+
+msgid "Rate deleted successfully"
+msgstr "Valuta di cambio eliminata con successo"
+
+msgid "Manual exchange rate created successfully."
+msgstr "Tasso di cambio manuale creato con successo."
+
+msgid "Failed to create manual exchange rate."
+msgstr "Impossibile creare il tasso di cambio manuale."
+
+msgid "Manual exchange rate updated successfully."
+msgstr "Tasso di cambio manuale aggiornato con successo."
+
+msgid "Failed to update manual exchange rate."
+msgstr "Impossibile aggiornare il tasso di cambio manuale."
+
+msgid "Manual exchange rate deleted successfully."
+msgstr "Tasso di cambio manuale eliminato con successo."
+
+msgid "Toggle manual rate active status"
+msgstr "Attiva/Disattiva lo stato della valuta manuale"
+
+msgid ""
+"Toggle the active/inactive status of a manual exchange rate. When "
+"deactivated, the system falls back to provider rates."
+msgstr ""
+"Attiva o disattiva lo stato di un tasso di cambio manuale. Quando "
+"disattivato, il sistema passerà ai tassi del fornitore."
+
+msgid "Status toggled successfully"
+msgstr "Stato commutato con successo"
+
+msgid "Rate {} successfully"
+msgstr "Tasso {} con successo"
+
+msgid "activated"
+msgstr "attivato"
+
+msgid "deactivated"
+msgstr "deattivato"
+
+msgid "Bulk create or update manual rates"
+msgstr "Crea o aggiorna in blocco le valute di cambio manuali"
+
+msgid ""
+"Create or update multiple manual exchange rates in a single request. Each "
+"rate is identified by its base_currency + target_currency pair. If a rate "
+"for the pair already exists, it is updated; otherwise a new one is created. "
+"Maximum 100 rates per request.\n"
+"\n"
+"**Request body example:**\n"
+"```json\n"
+"{\n"
+"  \"rates\": [\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"EUR\", \"rate\": "
+"\"0.92\"},\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"GBP\", \"rate\": "
+"\"0.79\", \"is_active\": true}\n"
+"  ]\n"
+"}\n"
+"```"
+msgstr ""
+"Crea o aggiorna più tassi di cambio manuali in una singola richiesta. Ogni "
+"tasso viene identificato dalla coppia base_currency + target_currency. Se un "
+"tasso per la coppia esiste già, viene aggiornato; altrimenti ne viene creato "
+"uno nuovo. Massimo 100 tassi per richiesta. **Esempio del corpo della "
+"richiesta:** ```json {\n"
+"  \"rates\": [\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"EUR\", \"rate\": "
+"\"0.92\"},\n"
+"    {\"base_currency\": \"USD\", \"target_currency\": \"GBP\", \"rate\": "
+"\"0.79\", \"is_active\": true}\n"
+"  ]\n"
+"} ```"
+
+msgid "Bulk operation completed"
+msgstr "Operazione di tipo bulk completata"
+
+msgid "Invalid request data."
+msgstr "Dati della richiesta non validi."
+
+msgid "base_currency, target_currency, and rate are required."
+msgstr "base_currency, target_currency e rate sono obbligatori."
+
+msgid "Base and target currencies must be different."
+msgstr "La valuta base e la valuta target devono essere diverse."
+
+msgid "Exchange rate must be greater than zero."
+msgstr "Il tasso di cambio deve essere maggiore di zero."
+
+msgid "Invalid rate value."
+msgstr "Valore del tasso non valido."
+
+#, python-format
+msgid "Bulk operation completed: %(created)d created, %(updated)d updated."
+msgstr ""
+"Operazione di massa completata: %(created)d creati, %(updated)d aggiornati."
+
+msgid "Sync manual rates from provider"
+msgstr "Sincronizza le valute manuali dal fornitore"
+
+msgid ""
+"Auto-populate manual exchange rates from the latest provider rates. Rates "
+"marked as locked (exclude_from_auto_sync) will be skipped. Creates new "
+"manual rates or updates existing unlocked ones."
+msgstr ""
+"Popola automaticamente le valute di cambio manuali dalle ultime valute del "
+"fornitore. Le valute contrassegnate come bloccate (exclude_from_auto_sync) "
+"verranno ignorate. Crea nuove valute di cambio manuali o aggiorna quelle "
+"esistenti non bloccate."
+
+msgid "Sync completed"
+msgstr "Sincronizzazione completata"
+
+msgid "Sync failed"
+msgstr "Sincronizzazione fallita"
+
+msgid "No provider rate available"
+msgstr "Nessun tasso del fornitore disponibile"
+
+#, python-format
+msgid "Synced from provider on %(date)s"
+msgstr "Sincronizzato dal fornitore il %(date)s"
+
+#, python-format
+msgid ""
+"Sync complete: %(created)d created, %(updated)d updated, %(skipped)d locked "
+"(skipped)"
+msgstr ""
+"Sincronizzazione completata: %(created)d creati, %(updated)d aggiornati, "
+"%(skipped)d bloccati (saltati)"
+
+msgid "An error occurred during sync."
+msgstr "È verificato un errore durante la sincronizzazione."
+
+msgid "Exchange Rates"
+msgstr "Tassi di cambio"
+
+msgid "Site"
+msgstr "Sito"
+
+msgid "Site this provider account belongs to"
+msgstr "Sito a cui appartiene questo account del provider"
+
+msgid "Provider Component"
+msgstr "Componente fornitore"
+
+msgid "Exchange rate provider component from update system"
+msgstr "Componente del provider di cambio valuta dal sistema di aggiornamento"
+
+msgid "Account Name"
+msgstr "Nome account"
+
+msgid ""
+"Friendly name for this provider account (e.g., 'Main Exchange Rate Provider')"
+msgstr ""
+"Nome amichevole per questo account del provider (es. 'Main Exchange Rate "
+"Provider')"
+
+msgid "Encrypted Credentials"
+msgstr "Credenziali crittografate"
+
+msgid "Encrypted API credentials for this provider"
+msgstr "Credenziali API crittografate per questo provider"
+
+msgid "Active"
+msgstr "Attivo"
+
+msgid ""
+"Whether this provider account is active and should be used for rate fetching"
+msgstr ""
+"Se questo account del provider è attivo e dovrebbe essere utilizzato per il "
+"recupero dei tassi"
+
+msgid "Primary Provider"
+msgstr "Fornitore principale"
+
+msgid "Use this provider as primary source for exchange rates"
+msgstr "Usa questo provider come fonte primaria per i tassi di cambio"
+
+msgid "Priority"
+msgstr "Priorità"
+
+msgid "Priority for fallback chain (lower = higher priority)"
+msgstr "Priorità per la catena di fallback (minore = priorità maggiore)"
+
+msgid "Provider Settings"
+msgstr "Impostazioni del provider"
+
+msgid "Provider-specific settings and configuration"
+msgstr "Impostazioni e configurazione specifiche del fornitore"
+
+msgid "Last Sync At"
+msgstr "Ultima sincronizzazione il"
+
+msgid "When rates were last successfully fetched"
+msgstr "Quando i tassi sono stati ultimamente recuperati con successo"
+
+msgid "Pending"
+msgstr "In attesa"
+
+msgid "Success"
+msgstr "Successo"
+
+msgid "Error"
+msgstr "Errore"
+
+msgid "Sync Error Message"
+msgstr "Messaggio di errore di sincronizzazione"
+
+msgid "Error message from last sync attempt"
+msgstr "Messaggio di errore dall'ultimo tentativo di sincronizzazione"
+
+msgid "Exchange Rate Provider Account"
+msgstr "Account fornitore di tassi di cambio"
+
+msgid "Exchange Rate Provider Accounts"
+msgstr "Account fornitori di tassi di cambio"
+
+msgid "Provider Account"
+msgstr "Account fornitore"
+
+msgid "Base Currency"
+msgstr "Valuta base"
+
+msgid "Base currency code (e.g., 'USD')"
+msgstr "Codice valuta base (es. 'USD')"
+
+msgid "Target Currency"
+msgstr "Valuta target"
+
+msgid "Target currency code (e.g., 'EUR')"
+msgstr "Codice valuta target (es. 'EUR')"
+
+msgid "Exchange Rate"
+msgstr "Tasso di cambio"
+
+msgid "Exchange rate from base to target (e.g., 0.85 means 1 USD = 0.85 EUR)"
+msgstr "Tasso di cambio da base a target (es. 0.85 significa 1 USD = 0.85 EUR)"
+
+msgid "Fetched At"
+msgstr "Ricevuto il"
+
+msgid "When this rate was last fetched from provider"
+msgstr "Quando questo tasso è stato ultimamente recuperato dal provider"
+
+msgid "Provider Name"
+msgstr "Nome fornitore"
+
+msgid "Name of exchange rate provider used"
+msgstr "Nome del provider di cambio valuta utilizzato"
+
+msgid "Created At"
+msgstr "Creato il"
+
+msgid "When this rate snapshot was created"
+msgstr "Quando è stato creato questo snapshott del tasso"
+
+msgid "Exchange Rate History"
+msgstr "Storico tassi di cambio"
+
+msgid "Site this manual rate belongs to"
+msgstr "Sito a cui appartiene questa tariffa manuale"
+
+msgid ""
+"Exchange rate from base to target (e.g., 0.85 means 1 base = 0.85 target)"
+msgstr ""
+"Tasso di cambio da base a target (es. 0,85 significa 1 base = 0,85 target)"
+
+msgid "Whether this manual rate is active and should be used for conversions"
+msgstr ""
+"Se questa tariffa manuale è attiva e deve essere utilizzata per le "
+"conversioni"
+
+msgid "Locked (Exclude from Auto-Sync)"
+msgstr "Bloccato (escludi da Auto-Sincronizzazione)"
+
+msgid ""
+"When enabled, this rate will not be overwritten by provider sync operations. "
+"Use for rates you manage manually."
+msgstr ""
+"Quando abilitato, questo tasso non verrà sovrascritto dalle operazioni di "
+"sincronizzazione del fornitore. Utilizzare per i tassi gestiti manualmente."
+
+msgid ""
+"Optional notes about this rate (e.g., 'Fixed rate for wholesale customers')"
+msgstr ""
+"Note opzionali su questo tasso (es. 'Tasso fisso per clienti al dettaglio')"
+
+msgid "Manual Exchange Rate"
+msgstr "Tasso di cambio manuale"
+
+msgid "Manual Exchange Rates"
+msgstr "Tassi di cambio manuali"
+
+msgid "Inactive"
+msgstr "Inattivo"
+
+msgid ""
+"\n"
+"        <h3>Fixer.io Setup</h3>\n"
+"        <ol>\n"
+"            <li>Sign up at <a href=\"https://fixer.io/product\" "
+"target=\"_blank\">fixer.io/product</a></li>\n"
+"            <li>Get your Access Key from the <a href=\"https://fixer.io/"
+"dashboard\" target=\"_blank\">dashboard</a></li>\n"
+"            <li>Enter your Access Key in the credentials field</li>\n"
+"        </ol>\n"
+"        <p><strong>Free Tier:</strong> 100 requests/month (sufficient for ~3 "
+"daily updates)</p>\n"
+"        <p><strong>Paid Plans:</strong> From $10/month for 1,000 requests</"
+"p>\n"
+"        <p><strong>Data Source:</strong> European Central Bank (ECB)</p>\n"
+"        <p><strong>Note:</strong> Free tier only provides EUR as base "
+"currency. Historical rates and custom base currencies require paid plans.</"
+"p>\n"
+"        <p><strong>Best For:</strong> EU-based stores requiring ECB "
+"compliance</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h3>Configurazione Fixer.io</h3> <ol> <li>Iscriviti a <a "
+"href=\"https://fixer.io/product\" target=\"_blank\">fixer.io/product</a></"
+"li> <li>Ottieni la tua chiave di accesso dal <a href=\"https://fixer.io/"
+"dashboard\" target=\"_blank\">dashboard</a></li> <li>Inserisci la tua chiave "
+"di accesso nel campo credenziali</li> </ol> <p><strong>Livello gratuito:</"
+"strong> 100 richieste/mese (sufficienti per ~3 aggiornamenti quotidiani)</p> "
+"<p><strong>Piani a pagamento:</strong> A partire da $10/mese per 1.000 "
+"richieste</p> <p><strong>Fonte dei dati:</strong> Banca centrale europea "
+"(BCE)</p> <p><strong>Nota:</strong> Il livello gratuito fornisce solo EUR "
+"come valuta base. Le quotazioni storiche e le valute base personalizzate "
+"richiedono piani a pagamento.</p> <p><strong>Migliore per:</strong> Negozzi "
+"basati in UE che richiedono la conformità alla BCE</p>\n"
+"        "
+
+msgid ""
+"\n"
+"        <h3>Open Exchange Rates Setup</h3>\n"
+"        <ol>\n"
+"            <li>Sign up at <a href=\"https://openexchangerates.org/signup\" "
+"target=\"_blank\">openexchangerates.org/signup</a></li>\n"
+"            <li>Get your App ID from the <a href=\"https://openexchangerates."
+"org/account/app-ids\" target=\"_blank\">dashboard</a></li>\n"
+"            <li>Enter your App ID in the credentials field</li>\n"
+"        </ol>\n"
+"        <p><strong>Free Tier:</strong> 1,000 requests/month (sufficient for "
+"~30 daily updates)</p>\n"
+"        <p><strong>Paid Plans:</strong> From $12/month for unlimited "
+"requests and hourly updates</p>\n"
+"        <p><strong>Note:</strong> Free tier only provides USD as base "
+"currency and daily updates. Historical rates and cryptocurrency support "
+"require paid plans.</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h3>Configurazione Open Exchange Rates</h3> <ol> <li>Iscriviti a <a "
+"href=\"https://openexchangerates.org/signup\" "
+"target=\"_blank\">openexchangerates.org/signup</a></li> <li>Ottieni il tuo "
+"App ID dal <a href=\"https://openexchangerates.org/account/app-ids\" "
+"target=\"_blank\">dashboard</a></li> <li>Inserisci il tuo App ID nel campo "
+"credenziali</li> </ol> <p><strong>Livello gratuito:</strong> 1.000 richieste/"
+"mese (sufficienti per ~30 aggiornamenti quotidiani)</p> <p><strong>Piani a "
+"pagamento:</strong> A partire da $12/mese per richieste illimitate e "
+"aggiornamenti orari</p> <p><strong>Nota:</strong> Il livello gratuito "
+"fornisce solo USD come valuta base e aggiornamenti quotidiani. Le quotazioni "
+"storiche e il supporto per criptovalute richiedono piani a pagamento.</p>\n"
+"        "
+
+msgid ""
+"List of rate objects with base_currency, target_currency, rate, and optional "
+"is_active/notes"
+msgstr ""
+"Elenco di oggetti tasso con base_currency, target_currency, rate e opzionali "
+"is_active/notes"
+
+msgid "Exchange Rate Providers"
+msgstr "Fornitori di cambio valuta"
+
+msgid "Site Admin"
+msgstr "Amministratore del sito"
+
+msgid "Manage currency exchange rate provider integrations"
+msgstr "Gestisci le integrazioni dei provider di cambio valuta"
+
+msgid "provider"
+msgstr "fornitore"
+
+msgid "active"
+msgstr "attivo"
+
+msgid "Browse Providers"
+msgstr "Esplora fornitori"
+
+msgid "Bulk Actions"
+msgstr "Azioni di massa"
+
+msgid "Enable Selected"
+msgstr "Abilita selezionati"
+
+msgid "Disable Selected"
+msgstr "Disabilita selezionati"
+
+msgid "Set as Primary"
+msgstr "Imposta come principale"
+
+msgid "Sync Rates"
+msgstr "Sincronizza tassi"
+
+msgid "Delete Selected"
+msgstr "Elimina selezionati"
+
+msgid "Apply"
+msgstr "Applica"
+
+msgid "selected"
+msgstr "selezionati"
+
+msgid "All Sync Statuses"
+msgstr "Tutti gli stati di sincronizzazione"
+
+msgid "All Active Status"
+msgstr "Tutti gli stati attivi"
+
+msgid "All Providers"
+msgstr "Tutti i fornitori"
+
+msgid "Search providers..."
+msgstr "Cerca fornitori..."
+
+msgid "Select All"
+msgstr "Seleziona tutto"
+
+#, python-format
+msgid "%(counter)s provider"
+msgid_plural "%(counter)s providers"
+msgstr[0] "%(counter)s fornitore"
+msgstr[1] "%(counter)s fornitori"
+
+msgid "No provider accounts found"
+msgstr "Nessun account fornitore trovato"
+
+msgid "Try adjusting your filters or search query."
+msgstr "Prova a modificare i filtri o la query di ricerca."
+
+msgid "Get started by connecting your first exchange rate provider."
+msgstr "Inizia collegando il tuo primo provider di cambio valuta."
+
+msgid "Browse & Install Providers"
+msgstr "Esplora e installa i fornitori"
+
+msgid "Loading..."
+msgstr "Caricamento..."
+
+msgid "Provider:"
+msgstr "Fornitore:"
+
+msgid "Last synced:"
+msgstr "Ultima sincronizzazione:"
+
+msgid "ago"
+msgstr "fa"
+
+msgid "Never synced"
+msgstr "Mai sincronizzato"
+
+msgid "Edit"
+msgstr "Modifica"
+
+msgid "Disable"
+msgstr "Disattiva"
+
+msgid "Enable"
+msgstr "Abilita"
+
+msgid "Delete"
+msgstr "Elimina"
+
+msgid "Set and manage exchange rates manually for currency conversions"
+msgstr ""
+"Imposta e gestisci i tassi di cambio manualmente per le conversioni valutarie"
+
+msgid "rate"
+msgstr "tasso"
+
+msgid "inactive"
+msgstr "inattivo"
+
+msgid "locked"
+msgstr "bloccato"
+
+msgid "Sync from Provider"
+msgstr "Sincronizza dal fornitore"
+
+msgid "Add Rate"
+msgstr "Aggiungi Tasso"
+
+msgid ""
+"Manual rates take precedence over provider-fetched rates. Lock rates to "
+"prevent them from being overwritten during provider sync."
+msgstr ""
+"I tassi manuali hanno la precedenza sui tassi ottenuti dal fornitore. Blocca "
+"i tassi per impedire che vengano sovrascritti durante la sincronizzazione "
+"del fornitore."
+
+msgid "Updated"
+msgstr "Aggiornato"
+
+msgid "Locked"
+msgstr "Bloccato"
+
+msgid "Unlock (allow auto-sync)"
+msgstr "Sblocca (consenti sincronizzazione automatica)"
+
+msgid "Lock (exclude from auto-sync)"
+msgstr "Blocca (escludi dalla sincronizzazione automatica)"
+
+msgid "Deactivate"
+msgstr "Deattiva"
+
+msgid "Activate"
+msgstr "Attiva"
+
+msgid "No manual exchange rates"
+msgstr "Nessun tasso di cambio manuale"
+
+msgid ""
+"Add manual exchange rates to define fixed conversion rates between "
+"currencies."
+msgstr ""
+"Aggiungi tassi di cambio manuali per definire tassi di conversione fissi tra "
+"valute."
+
+msgid "Add Your First Rate"
+msgstr "Aggiungi il tuo primo tasso"
+
+msgid "Syncing from Provider"
+msgstr "Sincronizzazione dal fornitore"
+
+msgid "Fetching latest provider rates and updating unlocked manual rates..."
+msgstr ""
+"Recupero dei tassi più recenti del fornitore e aggiornamento dei tassi "
+"manuali non bloccati..."
+
+msgid "Browse Exchange Rate Providers"
+msgstr "Esplora fornitori di tassi di cambio"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Provider Accounts"
+msgstr "Account fornitori"
+
+msgid ""
+"Choose an exchange rate provider to integrate with your store. Install new "
+"providers or configure existing ones."
+msgstr ""
+"Scegli un fornitore di tassi di cambio da integrare con il tuo negozio. "
+"Installa nuovi fornitori o configura quelli esistenti."
+
+msgid "Update Server Unavailable"
+msgstr "Server non disponibile per l'aggiornamento"
+
+msgid ""
+"Could not connect to the update server. Showing locally installed providers "
+"only."
+msgstr ""
+"Non è stato possibile connettersi al server di aggiornamento. Verranno "
+"visualizzati solo i provider installati localmente."
+
+msgid "Exchange Rate Provider Marketplace"
+msgstr "Mercato fornitori di tassi di cambio"
+
+msgid ""
+"Here you can discover and install exchange rate providers to automate your "
+"currency conversion, including live rates, historical data, and multi-"
+"currency support."
+msgstr ""
+"Qui puoi scoprire e installare fornitori di tassi di cambio per "
+"automatizzare la conversione delle valute, inclusi i tassi in tempo reale, i "
+"dati storici e il supporto per valute multiple."
+
+msgid "What you can do:"
+msgstr "Cosa puoi fare:"
+
+msgid "Browse available exchange rate providers by feature and pricing"
+msgstr ""
+"Esplora i fornitori di tassi di cambio disponibili in base alle "
+"caratteristiche e al prezzo"
+
+msgid "Install new providers with one click"
+msgstr "Installa nuovi fornitori con un clic"
+
+msgid "Update installed providers to the latest versions"
+msgstr "Aggiorna i fornitori installati alle ultime versioni"
+
+msgid "Configure provider settings after installation"
+msgstr "Configura le impostazioni del fornitore dopo l'installazione"
+
+msgid "Getting Started:"
+msgstr "Guida per l'avvio:"
+
+msgid "Browse providers below and find the right one for you"
+msgstr "Esplora i fornitori di seguito e trova quello adatto a te"
+
+msgid "Click 'Install' to add the provider to your store"
+msgstr "Fai clic su 'Installa' per aggiungere il provider al tuo negozio"
+
+msgid "Navigate to Settings to configure API credentials"
+msgstr "Vai a Impostazioni per configurare le credenziali API"
+
+msgid "Test the provider connection and sync exchange rates"
+msgstr "Testa la connessione del fornitore e sincronizza i tassi di cambio"
+
+#, python-format
+msgid ""
+"\n"
+"                    Currently: %(counter)s provider available\n"
+"                "
+msgid_plural ""
+"\n"
+"                    Currently: %(counter)s providers available\n"
+"                "
+msgstr[0] ""
+"\n"
+"                    Currently: %(counter)s fornitore disponibile\n"
+"                "
+msgstr[1] ""
+"\n"
+"                    Currently: %(counter)s fornitori disponibili\n"
+"                "
+
+msgid "Update Available"
+msgstr "Aggiornamento disponibile"
+
+msgid "Installed"
+msgstr "Installato"
+
+msgid "Available"
+msgstr "Disponibile"
+
+msgid "Live Rates"
+msgstr "Tassi in tempo reale"
+
+msgid "Historical"
+msgstr "Storico"
+
+msgid "Crypto"
+msgstr "Criptovalute"
+
+msgid "Commodities"
+msgstr "Merci"
+
+msgid "Any Base Currency"
+msgstr "Qualsiasi valuta base"
+
+msgid "Batch Requests"
+msgstr "Richieste in batch"
+
+msgid "Free"
+msgstr "Gratuito"
+
+msgid "Update"
+msgstr "Aggiorna"
+
+msgid "Configure"
+msgstr "Configura"
+
+msgid "Install"
+msgstr "Installa"
+
+msgid "View Details"
+msgstr "Visualizza dettagli"
+
+msgid "Learn More"
+msgstr "Scopri di più"
+
+msgid "No Providers Available"
+msgstr "Nessun fornitore disponibile"
+
+msgid ""
+"No exchange rate providers are currently available. Please check your update "
+"server connection or contact support."
+msgstr ""
+"Nessun fornitore di tassi di cambio è attualmente disponibile. Per favore "
+"controlla la connessione al server degli aggiornamenti o contatta il "
+"supporto."
+
+msgid "Installing provider..."
+msgstr "Installazione del fornitore in corso..."
+
+msgid "Connect Exchange Rate Provider"
+msgstr "Connetti fornitore di tassi di cambio"
+
+msgid "Follow these steps to connect your exchange rate provider account"
+msgstr ""
+"Segui questi passaggi per collegare il tuo account del fornitore di tassi di "
+"cambio"
+
+msgid "Select Provider"
+msgstr "Seleziona fornitore"
+
+msgid "Setup Instructions"
+msgstr "Istruzioni per l'impostazione"
+
+msgid "Enter Credentials"
+msgstr "Inserisci credenziali"
+
+msgid "Test Connection"
+msgstr "Testa la connessione"
+
+msgid "Select an Exchange Rate Provider"
+msgstr "Seleziona un Fornitore di Tasso di Cambio"
+
+msgid "Choose the exchange rate provider you want to connect to your store."
+msgstr ""
+"Scegli il fornitore di tassi di cambio che desideri collegare al tuo negozio."
+
+msgid "No exchange rate provider components are currently installed."
+msgstr ""
+"Nessun componente del fornitore di tassi di cambio è attualmente installato."
+
+msgid ""
+"Please download and install exchange rate provider components from the "
+"component registry."
+msgstr ""
+"Per favore, scarica e installa i componenti del fornitore di tassi di cambio "
+"dalla registrazione dei componenti."
+
+msgid "Browse Components"
+msgstr "Esplora componenti"
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Next"
+msgstr "Avanti"
+
+#, python-format
+msgid ""
+"\n"
+"        Before entering credentials, review these setup steps for "
+"%(provider)s.\n"
+"        "
+msgstr ""
+"\n"
+"        Prima di inserire le credenziali, rivedi questi passaggi di "
+"configurazione per %(provider)s.\n"
+"        "
+
+msgid "Setup Instructions Not Available"
+msgstr "Istruzioni per l'impostazione non disponibili"
+
+#, python-format
+msgid ""
+"\n"
+"                    Setup instructions are not available for this version of "
+"%(provider)s.\n"
+"                    Please contact support for assistance or check for an "
+"updated version.\n"
+"                    "
+msgstr ""
+"\n"
+"                    Le istruzioni per la configurazione non sono disponibili "
+"per questa versione di %(provider)s. Per favore, contatta il supporto per "
+"l'assistenza o verifica se è disponibile una versione aggiornata.\n"
+"                    "
+
+msgid "Back"
+msgstr "Indietro"
+
+msgid "Continue to Credentials"
+msgstr "Procedi alle credenziali"
+
+msgid "Enter API Credentials"
+msgstr "Inserisci credenziali API"
+
+#, python-format
+msgid ""
+"\n"
+"        Enter your API credentials for %(provider)s. These will be securely "
+"encrypted and stored.\n"
+"        "
+msgstr ""
+"\n"
+"        Inserisci le tue credenziali API per %(provider)s. Queste saranno "
+"crittografate e archiviate in modo sicuro.\n"
+"        "
+
+msgid "Don't have an account yet?"
+msgstr "Non hai ancora un account?"
+
+msgid "You'll need an account to get API credentials."
+msgstr "Hai bisogno di un account per ottenere le credenziali API."
+
+msgid "Sign up here"
+msgstr "Iscriviti qui"
+
+msgid "API Credentials"
+msgstr "Credenziali API"
+
+msgid "Select..."
+msgstr "Seleziona..."
+
+msgid "No credential fields configured for this provider."
+msgstr "Nessun campo credenziale configurato per questo provider."
+
+msgid ""
+"Your credentials will be encrypted using AES-256 encryption before being "
+"stored in the database."
+msgstr ""
+"Le tue credenziali saranno crittografate utilizzando l'algoritmo AES-256 "
+"prima di essere archiviate nel database."
+
+#, python-format
+msgid ""
+"\n"
+"        Test the connection to %(provider)s to verify your credentials are "
+"correct.\n"
+"        "
+msgstr ""
+"\n"
+"        Testa la connessione a %(provider)s per verificare che le tue "
+"credenziali siano corrette.\n"
+"        "
+
+msgid "Testing connection..."
+msgstr "Test della connessione..."
+
+msgid "Please wait while we verify your credentials."
+msgstr "Per favore, attendi mentre verifichiamo le tue credenziali."
+
+msgid "Click to test the connection with your entered credentials."
+msgstr "Fai clic per testare la connessione con le credenziali inserite."
+
+msgid "Connection Successful!"
+msgstr "Connessione riuscita!"
+
+msgid "Connection Details"
+msgstr "Dettagli della connessione"
+
+msgid "Save & Finish"
+msgstr "Salva e finisci"
+
+msgid "Your credentials were verified successfully."
+msgstr "Le tue credenziali sono state verificate con successo."
+
+msgid "Connection Failed"
+msgstr "Connessione fallita"
+
+msgid "Could not connect to the provider API."
+msgstr "Non è stato possibile connettersi all'API del provider."
+
+msgid "An unexpected error occurred."
+msgstr "È verificato un errore inaspettato."
+
+msgid "Saving..."
+msgstr "Salvataggio in corso..."
+
+msgid "Failed to save provider account."
+msgstr "Impossibile salvare l'account del fornitore."
+
+msgid "An error occurred while saving."
+msgstr "È verificato un errore durante il salvataggio."
+
+msgid "Provider {} successfully"
+msgstr "Provider {} abilitato con successo"
+
+msgid "enabled"
+msgstr "abilitato"
+
+msgid "disabled"
+msgstr "disabilitato"
+
+msgid "An error occurred while updating the provider."
+msgstr "Si è verificato un errore durante l'aggiornamento del fornitore."
+
+msgid "\"{}\" set as primary provider"
+msgstr "\"{}\" impostato come fornitore principale"
+
+msgid "An error occurred while setting the primary provider."
+msgstr ""
+"Si è verificato un errore durante l'impostazione del fornitore principale."
+
+msgid "Provider implementation not found"
+msgstr "Implementazione del fornitore non trovata"
+
+msgid ""
+"Failed to decrypt provider credentials. Please reconfigure the provider."
+msgstr ""
+"Impossibile decrittografare le credenziali del fornitore. Per favore, "
+"riconfigura il fornitore."
+
+msgid "Site settings not configured"
+msgstr "Le impostazioni del sito non sono configurate"
+
+msgid "No rates returned from provider"
+msgstr "Nessun tasso di cambio restituito dal fornitore"
+
+msgid "Successfully synced {} exchange rate(s)"
+msgstr "Tasso/i di cambio {} sincronizzato/i con successo"
+
+msgid "Failed to sync exchange rates. Check the provider configuration."
+msgstr ""
+"Impossibile sincronizzare i tassi di cambio. Controlla la configurazione del "
+"fornitore."
+
+msgid "Provider \"{}\" successfully deleted"
+msgstr "Provider \"{}\" eliminato con successo"
+
+msgid "An error occurred while deleting the provider."
+msgstr "Si è verificato un errore durante l'eliminazione del fornitore."
+
+msgid "Invalid action or no providers selected"
+msgstr "Azione non valida o nessun provider selezionato"
+
+msgid "{} provider(s) enabled"
+msgstr "{} fornitore(i) abilitato(i)"
+
+msgid "{} provider(s) disabled"
+msgstr "{} fornitore(i) disabilitato(i)"
+
+msgid "Please select exactly one provider to set as primary"
+msgstr "Seleziona esattamente un provider per impostarlo come primario"
+
+msgid "{} provider(s) queued for sync, {} errors: {}"
+msgstr "{} provider(s) in coda per la sincronizzazione, {} errori: {}"
+
+msgid "{} provider(s) queued for sync"
+msgstr "{} fornitore(i) in coda per la sincronizzazione"
+
+msgid "{} provider(s) deleted"
+msgstr "{} fornitore(i) eliminato(i)"
+
+msgid "Unknown action: {}"
+msgstr "Azione sconosciuta: {}"
+
+msgid "An error occurred while performing the bulk action."
+msgstr "Si è verificato un errore durante l'esecuzione dell'azione di massa."
+
+msgid "An error occurred while updating the rate."
+msgstr "Si è verificato un errore durante l'aggiornamento del tasso."
+
+msgid "unlocked"
+msgstr "sbloccato"
+
+msgid "Unlocked"
+msgstr "Sbloccato"
+
+msgid "Provider is already installed. Configure it now."
+msgstr "Il fornitore è già installato. Configuralo ora."
+
+msgid "Provider not found on update server."
+msgstr "Fornitore non trovato sul server di aggiornamento."
+
+msgid "Could not determine provider version."
+msgstr "Non è stato possibile determinare la versione del fornitore."
+
+#, python-format
+msgid "Failed to download provider: %(error)s"
+msgstr "Impossibile scaricare il fornitore: %(error)s"
+
+#, python-format
+msgid "Failed to install provider: %(error)s"
+msgstr "Impossibile installare il fornitore: %(error)s"
+
+#, python-format
+msgid "Provider \"%(name)s\" installed successfully! Configure it now."
+msgstr "Fornitore \"%(name)s\" installato con successo! Configuralo ora."
+
+msgid "An unexpected error occurred during installation."
+msgstr "Si è verificato un errore inaspettato durante l'installazione."
+
+msgid "Provider not installed."
+msgstr "Fornitore non installato."
+
+#, python-format
+msgid "Could not connect to update server: %(error)s"
+msgstr "Impossibile connettersi al server degli aggiornamenti: %(error)s"
+
+msgid "Could not determine latest version."
+msgstr "Non è stato possibile determinare l'ultima versione."
+
+#, python-format
+msgid "Provider \"%(name)s\" is already up to date (v%(version)s)."
+msgstr "Il fornitore \"%(name)s\" è già aggiornato (v%(version)s)."
+
+#, python-format
+msgid "Failed to download update: %(error)s"
+msgstr "Impossibile scaricare l'aggiornamento: %(error)s"
+
+#, python-format
+msgid "Failed to install update: %(error)s"
+msgstr "Impossibile installare l'aggiornamento: %(error)s"
+
+#, python-format
+msgid "Provider \"%(name)s\" updated successfully to v%(version)s!"
+msgstr "Fornitore \"%(name)s\" aggiornato con successo a v%(version)s!"
+
+msgid "An unexpected error occurred during the update."
+msgstr "Si è verificato un errore inaspettato durante l'aggiornamento."
+
+msgid "Connect Exchange Rate Provider - Select Provider"
+msgstr "Collega il provider di cambio valuta - Seleziona il provider"
+
+msgid "Please select a provider."
+msgstr "Seleziona un fornitore."
+
+msgid "Invalid provider selected."
+msgstr "Fornitore selezionato non valido."
+
+msgid "Please select a provider first."
+msgstr "Seleziona prima un fornitore."
+
+#, python-format
+msgid "Setup instructions not found for %(provider)s. Please contact support."
+msgstr ""
+"Le istruzioni per la configurazione non sono state trovate per %(provider)s. "
+"Per favore, contatta il supporto."
+
+#, python-format
+msgid "Error loading provider: %(error)s"
+msgstr "Errore nel caricamento del fornitore: %(error)s"
+
+msgid "Connect Exchange Rate Provider - Setup Instructions"
+msgstr "Collega il provider di cambio valuta - Istruzioni per l'installazione"
+
+msgid "Could not load provider configuration."
+msgstr "Non è stato possibile caricare la configurazione del fornitore."
+
+msgid "Connect Exchange Rate Provider - Enter Credentials"
+msgstr "Collega il provider di cambio valuta - Inserisci le credenziali"
+
+msgid "Error loading provider configuration."
+msgstr "Errore nel caricamento della configurazione del fornitore."
+
+msgid "Please complete previous steps first."
+msgstr "Per favore completa prima i passaggi precedenti."
+
+msgid "Provider not found."
+msgstr "Fornitore non trovato."
+
+msgid "Connect Exchange Rate Provider - Test Connection"
+msgstr "Collega il provider di cambio valuta - Testa la connessione"
+
+msgid "Provider implementation not found."
+msgstr "Implementazione del fornitore non trovata."
+
+msgid "An error occurred while testing the connection."
+msgstr "Si è verificato un errore durante il test della connessione."
+
+msgid "Site not configured."
+msgstr "Sito non configurato."
+
+msgid "Connection test failed"
+msgstr "Test di connessione fallito"
+
+msgid "Provider connected successfully!"
+msgstr "Fornitore collegato con successo!"
+
+msgid "An error occurred while saving the provider."
+msgstr "Si è verificato un errore durante il salvataggio del fornitore."

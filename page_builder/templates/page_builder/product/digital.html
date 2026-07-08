@@ -1,0 +1,203 @@
+{% extends "page_builder/product/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Digital Product Template - Optimized for software, ebooks, courses, digital downloads #}
+{# No shipping UI, feature lists, instant delivery badges, license info #}
+
+{% block product_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-digital.css' %}">
+{% endblock %}
+
+{% block product_layout %}
+<section class="product-section product-section--digital">
+    <div class="container">
+        <div class="product-layout product-layout--digital">
+            {# Gallery / Preview section #}
+            <div class="product-digital__preview">
+                {% include "page_builder/product/_gallery.html" %}
+            </div>
+
+            {# Product info with digital-specific sections #}
+            <div class="product-digital__info">
+                <div class="product-info" data-product-name="{{ product.name }}">
+                    {% if template_options.show_brand and product.brand %}
+                    <p class="product-info__brand">{{ product.brand.name }}</p>
+                    {% endif %}
+
+                    <h1 class="product-info__title">{{ product.name }}</h1>
+
+                    {% if review_stats %}
+                    <div class="product-info__rating">
+                        <div class="star-rating" aria-label="{% blocktrans with rating=review_stats.average %}Rated {{ rating }} out of 5{% endblocktrans %}">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star {% if forloop.counter <= review_stats.average %}star-rating__star--filled{% else %}star-rating__star--empty{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                        <a href="#reviews" class="product-info__review-link">
+                            {{ review_stats.average }} ({{ review_stats.total }} {% mtrans 'reviews' %})
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <div class="product-info__price" id="product-price">
+                        {% if product.is_on_sale %}
+                        <span class="price price--sale">{{ product.formatted_price }}</span>
+                        <span class="price price--compare">{{ product.formatted_compare_price }}</span>
+                        <span class="price__badge">{% mtrans 'Sale' %}</span>
+                        {% else %}
+                        <span class="price">{{ product.formatted_price }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if template_options.show_instant_delivery_badge %}
+                    {# Instant Delivery Badge #}
+                    <div class="digital-badge digital-badge--delivery">
+                        <i class="fas fa-bolt"></i>
+                        <span>{% mtrans 'Instant Digital Delivery' %}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if product.short_description %}
+                    <div class="product-info__description">{{ product.short_description|safe }}</div>
+                    {% endif %}
+
+                    {# What's Included / Features List #}
+                    {% if template_options.show_features_list and product.features %}
+                    <div class="digital-features">
+                        <h3 class="digital-features__title">{% mtrans "What's Included" %}</h3>
+                        <ul class="digital-features__list">
+                            {% for key, value in product.features.items %}
+                            <li class="digital-features__item">
+                                <i class="fas fa-check-circle"></i>
+                                <span><strong>{{ key }}:</strong> {{ value }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {# License Info #}
+                    {% if template_options.show_license_info and product.license_type %}
+                    <div class="digital-license">
+                        <h3 class="digital-license__title">{% mtrans 'License' %}</h3>
+                        <div class="digital-license__info">
+                            <i class="fas fa-key"></i>
+                            <span>{{ product.license_type }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Stock Status (for limited digital keys) -->
+                    {% include "catalog/includes/stock_status.html" %}
+
+                    <!-- Variant Selection (e.g., different editions) -->
+                    {% if attribute_assignments %}
+                    <div class="product-variants" id="variant-selector" data-mode="attributes">
+                        {% for assignment in attribute_assignments %}
+                        <div class="variant-group" data-attribute="{{ assignment.attribute.slug }}" data-type="{{ assignment.attribute.type }}">
+                            <label class="variant-group__label">
+                                {{ assignment.attribute.name }}:
+                                <span class="variant-group__selected" id="selected-{{ assignment.attribute.slug }}"></span>
+                            </label>
+                            <div class="variant-group__options">
+                                {% for value in assignment.allowed_values.all %}
+                                <button type="button"
+                                        class="variant-swatch variant-swatch--text"
+                                        data-attribute="{{ assignment.attribute.slug }}"
+                                        data-value="{{ value.slug }}"
+                                        data-display="{{ value.value }}">
+                                    {{ value.value }}
+                                </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% elif variants.count > 1 %}
+                    <div class="product-variants" id="variant-selector" data-mode="direct">
+                        <div class="variant-group">
+                            <label class="variant-group__label">
+                                {% mtrans 'Edition' %}:
+                                <span class="variant-group__selected" id="selected-variant"></span>
+                            </label>
+                            <div class="variant-group__options">
+                                {% for variant in variants %}
+                                {% if variant.is_active %}
+                                <button type="button"
+                                        class="variant-swatch variant-swatch--text"
+                                        data-variant-id="{{ variant.id }}">
+                                    {{ variant.name }}
+                                </button>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {# Add to Cart (no quantity selector for digital by default) #}
+                    <div class="product-actions product-actions--digital">
+                        <button type="button"
+                                class="btn btn--primary btn--lg btn--add-to-cart btn--full-width"
+                                id="add-to-cart"
+                                data-product-id="{{ product.id }}">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>{% mtrans 'Add to Cart' %}</span>
+                        </button>
+                    </div>
+
+                    {# Express Checkout #}
+                    {% if payments_enabled and express_checkout_methods %}
+                    <div class="express-checkout" id="express-checkout">
+                        <div class="express-checkout__divider">
+                            <span>{% mtrans 'or checkout with' %}</span>
+                        </div>
+                        <div class="express-checkout__buttons">
+                            {% for method in express_checkout_methods %}
+                            <button type="button"
+                                    class="express-btn {{ method.button_class }}"
+                                    id="pdp-{{ method.slug }}"
+                                    data-action="express-checkout"
+                                    data-provider="{{ method.provider_slug }}"
+                                    data-method="{{ method.slug }}"
+                                    {% if method.requires_js_check %}style="display: none;" data-js-check="{{ method.js_check }}"{% endif %}>
+                                <i class="{{ method.icon }}"></i>
+                                {% if method.slug == 'apple_pay' or method.slug == 'google_pay' %}Pay{% else %}{{ method.name }}{% endif %}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {# Digital Trust Badges #}
+                    {% if product_trust_badges %}
+                    <div class="trust-badges trust-badges--digital">
+                        {% include "page_builder/includes/_trust_badges.html" with trust_badges=product_trust_badges %}
+                    </div>
+                    {% endif %}
+
+                    {# Product Meta #}
+                    <div class="product-meta">
+                        {% if template_options.show_sku and product.sku %}
+                        <p class="product-meta__item">
+                            <span class="product-meta__label">{% mtrans 'SKU' %}:</span>
+                            <span class="product-meta__value" id="product-sku">{{ product.sku }}</span>
+                        </p>
+                        {% endif %}
+                        {% if product.category %}
+                        <p class="product-meta__item">
+                            <span class="product-meta__label">{% mtrans 'Category' %}:</span>
+                            <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="product-meta__link">
+                                {{ product.category.name }}
+                            </a>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}

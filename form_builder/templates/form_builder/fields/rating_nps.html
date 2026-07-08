@@ -1,0 +1,48 @@
+{% load i18n merchant_trans %}
+{# Net Promoter Score (NPS) Field - 0 to 10 scale #}
+{% with config=field.rating_config %}
+{% with low_label=config.low_label|default:_("Not at all likely") %}
+{% with high_label=config.high_label|default:_("Extremely likely") %}
+{% with show_numbers=config.show_numbers|default:True %}
+
+<div class="rating-nps-wrapper"
+     data-field-name="{{ field.field_name }}">
+
+    <div class="nps-labels">
+        <span class="nps-label-low">{{ low_label }}</span>
+        <span class="nps-label-high">{{ high_label }}</span>
+    </div>
+
+    <div class="nps-scale">
+        {% for i in "0123456789" %}
+        <div class="nps-option {% if forloop.counter <= 6 %}detractor{% elif forloop.counter <= 8 %}passive{% else %}promoter{% endif %}">
+            <input type="radio"
+                   id="field-{{ field.field_name }}-{{ i }}"
+                   name="{{ field.field_name }}"
+                   value="{{ i }}"
+                   {% if forloop.first and field.is_required %}required{% endif %}>
+            <label for="field-{{ field.field_name }}-{{ i }}">
+                {% if show_numbers %}{{ i }}{% endif %}
+            </label>
+        </div>
+        {% endfor %}
+        {# Add 10 separately since the loop only goes 0-9 #}
+        <div class="nps-option promoter">
+            <input type="radio"
+                   id="field-{{ field.field_name }}-10"
+                   name="{{ field.field_name }}"
+                   value="10">
+            <label for="field-{{ field.field_name }}-10">
+                {% if show_numbers %}10{% endif %}
+            </label>
+        </div>
+    </div>
+
+    <div class="nps-legend">
+        <span class="legend-item detractor">0-6 {% mtrans "Detractors" %}</span>
+        <span class="legend-item passive">7-8 {% mtrans "Passives" %}</span>
+        <span class="legend-item promoter">9-10 {% mtrans "Promoters" %}</span>
+    </div>
+</div>
+
+{% endwith %}{% endwith %}{% endwith %}

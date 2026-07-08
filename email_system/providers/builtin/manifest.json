@@ -1,0 +1,160 @@
+{
+  "component_type": "email_provider",
+  "slug": "builtin_smtp",
+  "name": "Built-in SMTP Server",
+  "version": "1.0.0",
+  "provider_key": "builtin_smtp",
+  "is_builtin": true,
+  "entry_point": "provider.py",
+  "class_name": "BuiltinSMTPProvider",
+  "description": "Self-hosted SMTP server with automatic DKIM signing for professional email delivery. Zero configuration required - works out of the box.",
+  "author": "Spwig",
+  "author_details": {
+    "name": "Spwig E-commerce Platform",
+    "email": "support@spwig.com",
+    "website": "https://spwig.com"
+  },
+  "homepage_url": "https://spwig.com/docs/email/builtin-smtp",
+  "support_url": "https://spwig.com/docs/email/builtin-smtp/troubleshooting",
+  "api_docs_url": "https://spwig.com/docs/email/builtin-smtp/api",
+  "logo": "logo.svg",
+  "min_platform_version": "1.0.0",
+  "license": "Proprietary",
+  "capabilities": {
+    "send": true,
+    "oauth": false,
+    "api_key": false,
+    "webhooks": false,
+    "attachments": true,
+    "inline_images": true,
+    "templates": true,
+    "tracking": false,
+    "bounce_handling": true,
+    "dkim_signing": true,
+    "custom_headers": true,
+    "batch_sending": false,
+    "localhost_only": true
+  },
+  "rate_limits": {
+    "emails_per_second": 50,
+    "emails_per_hour": 10000,
+    "emails_per_month": null,
+    "has_burst_limit": false,
+    "notes": "Rate limits depend on Postfix configuration"
+  },
+  "dependencies": {
+    "python": ">=3.10",
+    "django": ">=4.2",
+    "aiosmtpd": ">=1.4.6",
+    "dkimpy": ">=1.1.8",
+    "postfix": ">=3.0"
+  },
+  "credential_schema": {
+    "enabled": {
+      "type": "boolean",
+      "title": "Enable Built-in SMTP Server",
+      "description": "Use the platform's built-in SMTP server for sending emails",
+      "required": false,
+      "default": true,
+      "secret": false
+    },
+    "dkim_selector": {
+      "type": "string",
+      "title": "DKIM Selector",
+      "description": "DKIM selector for email signing (default: mail)",
+      "required": false,
+      "default": "mail",
+      "secret": false,
+      "placeholder": "mail"
+    }
+  },
+  "dns_requirements": {
+    "dkim_selector": "mail",
+    "dkim_info": "DKIM keys are auto-generated during wizard setup",
+    "requires_domain_verification": false,
+    "spf_include": null,
+    "spf_mechanism": "v=spf1 ip4:{SERVER_IP} ~all",
+    "dmarc_recommended": true,
+    "ptr_dns_required": true,
+    "notes": [
+      "Built-in SMTP server runs on localhost:2525 for security",
+      "Emails are relayed through Postfix MTA for delivery",
+      "DKIM keys are stored encrypted in the database",
+      "SPF record must include your server's public IP address",
+      "PTR/rDNS record should point your IP to your domain",
+      "DNS configuration is critical for deliverability",
+      "DNS propagation can take 15 minutes to 48 hours"
+    ]
+  },
+  "setup_requirements": {
+    "postfix_installed": {
+      "title": "Postfix MTA",
+      "description": "Postfix must be installed and configured as a relay MTA",
+      "command": "sudo apt-get install postfix",
+      "verification": "postfix status"
+    },
+    "dkim_keys_generated": {
+      "title": "DKIM Keys",
+      "description": "Generate DKIM keys for email signing",
+      "command": "./manage.py generate_dkim_keys --domain yourdomain.com",
+      "verification": "Keys stored in EmailAccount credentials"
+    },
+    "smtp_server_running": {
+      "title": "SMTP Server",
+      "description": "Start the built-in SMTP server",
+      "command": "./manage.py start_smtp_server",
+      "verification": "Server listening on localhost:2525"
+    },
+    "dns_configured": {
+      "title": "DNS Records",
+      "description": "Configure SPF, DKIM, and DMARC DNS records",
+      "command": "See DNS Configuration wizard step",
+      "verification": "DNS validation passes"
+    }
+  },
+  "pricing": {
+    "free_tier": {
+      "emails_per_month": null,
+      "features": [
+        "Unlimited emails (limited by your server)",
+        "DKIM signing",
+        "Attachment support",
+        "Full control of infrastructure"
+      ]
+    },
+    "paid_tiers": [],
+    "cost_notes": "Built-in SMTP is free. You only pay for your server infrastructure."
+  },
+  "advantages": [
+    "Zero monthly fees - completely free",
+    "Full control of your email infrastructure",
+    "No rate limits (except server capacity)",
+    "Privacy - emails don't go through third parties",
+    "Works offline for local development",
+    "No OAuth complexity",
+    "Automatic DKIM signing"
+  ],
+  "disadvantages": [
+    "Requires Postfix installation and configuration",
+    "Requires DNS configuration for deliverability",
+    "No bounce tracking dashboard (manual Postfix logs)",
+    "No click/open tracking",
+    "Server IP reputation affects deliverability",
+    "Requires reverse DNS (PTR) configuration"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2025-10-26",
+      "changes": [
+        "Initial release",
+        "DKIM signing with auto-generated keys",
+        "Postfix relay integration",
+        "DNS validation wizard",
+        "Localhost-only SMTP server (port 2525)",
+        "Encrypted credential storage",
+        "Management commands for DKIM and server"
+      ]
+    }
+  ]
+}

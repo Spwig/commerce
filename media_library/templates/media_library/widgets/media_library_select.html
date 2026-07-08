@@ -1,0 +1,36 @@
+{% load i18n %}
+{% load static %}
+<div class="media-library-widget" data-field-name="{{ field_name }}"{% if auto_save %} data-auto-save-url="{{ auto_save.url }}" data-auto-save-app="{{ auto_save.app_label }}" data-auto-save-model="{{ auto_save.model_name }}" data-auto-save-pk="{{ auto_save.pk }}" data-auto-save-field="{{ auto_save.field }}"{% endif %}>
+    <div class="media-preview">
+        {% if image_url %}
+            <img src="{{ image_url }}" alt="{% trans 'Selected image' %}" class="preview-image" style="max-width: 150px; max-height: 150px; object-fit: cover; border: 1px solid var(--border-color); border-radius: 4px;">
+        {% else %}
+            <div class="no-image-preview drop-zone" style="width: 150px; height: 150px; border: 2px dashed var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--body-quiet-color); border-radius: 4px; text-align: center; cursor: pointer; transition: all 0.2s ease;">
+                <span>{% trans 'No Image Selected, Drop Here' %}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="media-controls" style="margin-top: 10px;">
+        <input type="hidden" name="{{ field_name }}" value="{{ current_value }}" class="media-field-input">
+        <button type="button" class="media-select-btn" style="background: var(--primary); color: var(--primary-fg); border: none; padding: 8px 15px; border-radius: 4px; margin-right: 10px; cursor: pointer;">
+            <i class="fas fa-images"></i> {% trans 'Select from Media Library' %}
+        </button>
+        {% if current_value %}
+            <button type="button" class="media-clear-btn" style="background: var(--delete-button-bg); color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                ✕ {% trans 'Clear' %}
+            </button>
+        {% endif %}
+    </div>
+</div>
+
+<script type="application/json" class="media-widget-i18n">
+{
+    "saved": "{% trans 'Saved' %}",
+    "noImage": "{% trans 'No Image Selected, Drop Here' %}",
+    "uploading": "{% trans 'Uploading...' %}",
+    "uploadFailed": "{% trans 'Upload failed' %}",
+    "clear": "{% trans 'Clear' %}",
+    "dropImage": "{% trans 'Please drop an image file' %}"
+}
+</script>

@@ -1,0 +1,243 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Social Sharing Settings" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'social_sharing/css/admin_settings_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="settings-admin-header">
+        <div class="header-title">
+            <h1>
+                <i class="fas fa-share-alt"></i>
+                {% trans "Social Sharing Settings" %}
+            </h1>
+            <div class="header-meta">
+                <span class="meta-item">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Configure automatic social sharing buttons across your store" %}
+                </span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="submit" form="settings-form" class="util-btn" name="_save" title="{% trans 'Save settings' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" id="settings-form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Display Form Errors -->
+        {% if adminform.form.errors or adminform.form.non_field_errors %}
+        <div class="form-errors-banner">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="error-content">
+                <h3>{% trans "Please correct the errors below" %}</h3>
+                {% if adminform.form.non_field_errors %}
+                    <ul class="errorlist">
+                        {% for error in adminform.form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="placement" role="tab" aria-selected="true">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="label">{% trans "Placement" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="appearance" role="tab" aria-selected="false">
+                <i class="fas fa-palette"></i>
+                <span class="label">{% trans "Appearance" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="tracking" role="tab" aria-selected="false">
+                <i class="fas fa-chart-line"></i>
+                <span class="label">{% trans "Tracking" %}</span>
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Placement Tab -->
+            <div class="tab-panel active" data-panel="placement" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-map-marker-alt"></i> {% trans "Automatic Placement" %}</h2>
+                    <p class="form-card-description">{% trans "Configure where social share buttons appear automatically across your store." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.enable_on_products }} {{ adminform.form.enable_on_products.label }}
+                                </label>
+                                {% if adminform.form.enable_on_products.help_text %}<p class="help">{{ adminform.form.enable_on_products.help_text }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.enable_on_categories }} {{ adminform.form.enable_on_categories.label }}
+                                </label>
+                                {% if adminform.form.enable_on_categories.help_text %}<p class="help">{{ adminform.form.enable_on_categories.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.enable_on_blog_posts }} {{ adminform.form.enable_on_blog_posts.label }}
+                                </label>
+                                {% if adminform.form.enable_on_blog_posts.help_text %}<p class="help">{{ adminform.form.enable_on_blog_posts.help_text }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.enable_on_pages }} {{ adminform.form.enable_on_pages.label }}
+                                </label>
+                                {% if adminform.form.enable_on_pages.help_text %}<p class="help">{{ adminform.form.enable_on_pages.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row social-settings-placement-field">
+                        {{ adminform.form.placement_position.label_tag }}
+                        {{ adminform.form.placement_position }}
+                        {% if adminform.form.placement_position.help_text %}<p class="help">{{ adminform.form.placement_position.help_text }}</p>{% endif %}
+                        {% if adminform.form.placement_position.errors %}<p class="error">{{ adminform.form.placement_position.errors }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appearance Tab -->
+            <div class="tab-panel" data-panel="appearance" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-share-alt"></i> {% trans "Platforms" %}</h2>
+                    <p class="form-card-description">{% trans "Select which social platforms to show. If none are selected, all platforms will be displayed." %}</p>
+
+                    <div class="form-row">
+                        {{ adminform.form.enabled_platforms }}
+                        {% if adminform.form.enabled_platforms.help_text %}<p class="help">{{ adminform.form.enabled_platforms.help_text }}</p>{% endif %}
+                        {% if adminform.form.enabled_platforms.errors %}<p class="error">{{ adminform.form.enabled_platforms.errors }}</p>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2><i class="fas fa-paint-brush"></i> {% trans "Button Appearance" %}</h2>
+                    <p class="form-card-description">{% trans "Control how the share buttons look on your store." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.button_style.label_tag }}
+                                {{ adminform.form.button_style }}
+                                {% if adminform.form.button_style.help_text %}<p class="help">{{ adminform.form.button_style.help_text }}</p>{% endif %}
+                                {% if adminform.form.button_style.errors %}<p class="error">{{ adminform.form.button_style.errors }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.button_size.label_tag }}
+                                {{ adminform.form.button_size }}
+                                {% if adminform.form.button_size.help_text %}<p class="help">{{ adminform.form.button_size.help_text }}</p>{% endif %}
+                                {% if adminform.form.button_size.errors %}<p class="error">{{ adminform.form.button_size.errors }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                {{ adminform.form.layout_direction.label_tag }}
+                                {{ adminform.form.layout_direction }}
+                                {% if adminform.form.layout_direction.help_text %}<p class="help">{{ adminform.form.layout_direction.help_text }}</p>{% endif %}
+                                {% if adminform.form.layout_direction.errors %}<p class="error">{{ adminform.form.layout_direction.errors }}</p>{% endif %}
+                            </div>
+                            <div class="form-row">
+                                {{ adminform.form.mobile_visibility.label_tag }}
+                                {{ adminform.form.mobile_visibility }}
+                                {% if adminform.form.mobile_visibility.help_text %}<p class="help">{{ adminform.form.mobile_visibility.help_text }}</p>{% endif %}
+                                {% if adminform.form.mobile_visibility.errors %}<p class="error">{{ adminform.form.mobile_visibility.errors }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="checkbox-label">
+                            {{ adminform.form.show_title }} {{ adminform.form.show_title.label }}
+                        </label>
+                        {% if adminform.form.show_title.help_text %}<p class="help">{{ adminform.form.show_title.help_text }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracking Tab -->
+            <div class="tab-panel" data-panel="tracking" role="tabpanel">
+                <div class="form-card">
+                    <h2><i class="fas fa-chart-line"></i> {% trans "Tracking & Analytics" %}</h2>
+                    <p class="form-card-description">{% trans "Control share tracking and count display." %}</p>
+
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.show_counts }} {{ adminform.form.show_counts.label }}
+                                </label>
+                                {% if adminform.form.show_counts.help_text %}<p class="help">{{ adminform.form.show_counts.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                <label class="checkbox-label">
+                                    {{ adminform.form.track_shares }} {{ adminform.form.track_shares.label }}
+                                </label>
+                                {% if adminform.form.track_shares.help_text %}<p class="help">{{ adminform.form.track_shares.help_text }}</p>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if original %}
+                <div class="form-card">
+                    <h2><i class="fas fa-info-circle"></i> {% trans "Metadata" %}</h2>
+                    <div class="two-column-layout">
+                        <div class="column">
+                            <div class="form-row">
+                                <label>{% trans "Last Updated" %}</label>
+                                <p class="readonly-value">{{ original.updated_at|date:"M d, Y g:i A" }}</p>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="form-row">
+                                <label>{% trans "Updated By" %}</label>
+                                <p class="readonly-value">{{ original.updated_by|default:"—" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Submit buttons (hidden, triggered by header buttons) -->
+        <div class="submit-row social-hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'social_sharing/admin/js/social-settings.js' %}"></script>
+{% endblock %}

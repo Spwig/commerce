@@ -1,0 +1,225 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Hosting Subscription" %} - {{ subscription.store_name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li><a href="{% url 'accounts:dashboard' %}" class="text-gray-700 hover:text-blue-600">{% trans "Account" %}</a></li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <span class="text-gray-500">{% trans "Hosting Subscription" %}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Store Overview Card -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900 mb-1">{{ subscription.store_name }}</h1>
+                            <p class="text-gray-600">{{ subscription.hosted_plan.name }}</p>
+                            {% if store_url %}
+                            <a href="{{ store_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 text-sm mt-1 inline-block">
+                                {{ subscription.store_slug }}.myspwig.com <i class="fas fa-external-link-alt text-xs"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                            {% if subscription.status == 'active' %}bg-green-100 text-green-800
+                            {% elif subscription.status == 'past_due' %}bg-amber-100 text-amber-800
+                            {% elif subscription.status == 'suspended' %}bg-red-100 text-red-800
+                            {% elif subscription.status == 'cancelled' %}bg-gray-100 text-gray-800
+                            {% elif subscription.status == 'pending' %}bg-blue-100 text-blue-800
+                            {% endif %}">
+                            {{ subscription.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Status alerts -->
+                {% if subscription.status == 'past_due' %}
+                <div class="bg-amber-50 border-l-4 border-amber-400 p-4 m-4 rounded">
+                    <div class="flex">
+                        <i class="fas fa-exclamation-triangle text-amber-400 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="text-sm font-medium text-amber-800">{% trans "Payment Past Due" %}</p>
+                            <p class="text-sm text-amber-700 mt-1">{% trans "Your last payment could not be processed. Please update your payment method to avoid service interruption." %}</p>
+                        </div>
+                    </div>
+                </div>
+                {% elif subscription.status == 'suspended' %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 m-4 rounded">
+                    <div class="flex">
+                        <i class="fas fa-pause-circle text-red-400 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="text-sm font-medium text-red-800">{% trans "Account Suspended" %}</p>
+                            <p class="text-sm text-red-700 mt-1">{% trans "Your store is currently offline. Reactivate your subscription to restore access." %}</p>
+                        </div>
+                    </div>
+                </div>
+                {% elif subscription.status == 'cancelled' %}
+                <div class="bg-gray-50 border-l-4 border-gray-400 p-4 m-4 rounded">
+                    <div class="flex">
+                        <i class="fas fa-info-circle text-gray-400 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">{% trans "Subscription Cancelled" %}</p>
+                            {% if subscription.current_period_end and subscription.current_period_end > now %}
+                            <p class="text-sm text-gray-700 mt-1">{% blocktrans with date=subscription.current_period_end|date:"d M Y" %}You still have access until {{ date }}.{% endblocktrans %}</p>
+                            {% endif %}
+                            {% if subscription.termination_scheduled_at %}
+                            <p class="text-sm text-gray-600 mt-1">{% blocktrans with date=subscription.termination_scheduled_at|date:"d M Y" %}Your data will be removed on {{ date }}.{% endblocktrans %}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="p-6">
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Plan" %}</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ subscription.hosted_plan.name }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Billing" %}</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-900">
+                                &euro;{{ billing_amount }} / {{ subscription.get_billing_interval_display }}
+                            </dd>
+                        </div>
+                        {% if subscription.next_billing_date and subscription.status == 'active' %}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Next Billing Date" %}</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ subscription.next_billing_date|date:"d M Y" }}</dd>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Region" %}</dt>
+                            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ subscription.region }}</dd>
+                        </div>
+                        {% if subscription.pos_addon %}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Add-ons" %}</dt>
+                            <dd class="mt-1 text-sm font-medium text-gray-900">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    <i class="fas fa-cash-register mr-1"></i> {% trans "Point of Sale" %}
+                                </span>
+                            </dd>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">{% trans "Member Since" %}</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ subscription.created_at|date:"d M Y" }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Billing History -->
+            {% if billing_logs %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">{% trans "Billing History" %}</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{% trans "Date" %}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{% trans "Amount" %}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{% trans "Status" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for log in billing_logs %}
+                            <tr>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ log.billing_date|date:"d M Y" }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">&euro;{{ log.amount }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium
+                                        {% if log.status == 'successful' %}bg-green-100 text-green-800
+                                        {% elif log.status == 'failed' %}bg-red-100 text-red-800
+                                        {% elif log.status == 'processing' %}bg-blue-100 text-blue-800
+                                        {% elif log.status == 'retrying' %}bg-amber-100 text-amber-800
+                                        {% endif %}">
+                                        {{ log.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">{% trans "Actions" %}</h2>
+                </div>
+                <div class="p-4 space-y-2">
+                    {% if admin_url %}
+                    <a href="{{ admin_url }}" target="_blank" rel="noopener" class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-store mr-3"></i> {% trans "Go to Store Admin" %}
+                        <i class="fas fa-external-link-alt ml-auto text-xs"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if can_update_payment %}
+                    <a href="{% url 'accounts:hosting_update_payment' %}" class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors
+                        {% if subscription.status == 'past_due' %}ring-2 ring-amber-400{% endif %}">
+                        <i class="fas fa-credit-card mr-3"></i> {% trans "Update Payment Method" %}
+                    </a>
+                    {% endif %}
+
+                    {% if can_change_interval %}
+                    <a href="{% url 'accounts:hosting_change_interval' %}" class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-calendar-alt mr-3"></i> {% trans "Change Billing Interval" %}
+                    </a>
+                    {% endif %}
+
+                    {% if can_undo_cancel %}
+                    <a href="{% url 'accounts:hosting_undo_cancel' %}" class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-green-700 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                        <i class="fas fa-undo mr-3"></i> {% trans "Undo Cancellation" %}
+                    </a>
+                    {% endif %}
+
+                    {% if can_reactivate %}
+                    <a href="{% url 'accounts:hosting_reactivate' %}" class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-green-700 bg-green-50 rounded-lg hover:bg-green-100 transition-colors ring-2 ring-green-400">
+                        <i class="fas fa-play-circle mr-3"></i> {% trans "Reactivate Subscription" %}
+                    </a>
+                    {% endif %}
+
+                    {% if can_cancel %}
+                    <a href="{% url 'accounts:hosting_cancel' %}" class="flex items-center w-full px-4 py-2.5 text-sm font-medium text-red-600 bg-white rounded-lg hover:bg-red-50 transition-colors border border-red-200 mt-4">
+                        <i class="fas fa-times-circle mr-3"></i> {% trans "Cancel Subscription" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-2">{% trans "Need help?" %}</h3>
+                    <p class="text-sm text-gray-600 mb-3">{% trans "Our support team is here to help with any questions about your hosting subscription." %}</p>
+                    <a href="mailto:support@spwig.com" class="text-sm text-blue-600 hover:text-blue-800">support@spwig.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

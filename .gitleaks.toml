@@ -1,0 +1,61 @@
+# gitleaks configuration for Spwig.
+#
+# We inherit gitleaks' default ruleset and add an allowlist for
+# documentation placeholders, test fixtures, and well-known example
+# credentials that would otherwise trip standard rules.
+#
+# If gitleaks flags a real leak, DO NOT add it here — fix the leak.
+# This file is only for documented placeholder values that never
+# corresponded to a live secret.
+#
+# Allowlist syntax: https://github.com/gitleaks/gitleaks#configuration
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Placeholders, test fixtures, and documented examples"
+regexes = [
+  # AWS's own published example key — appears in translated help text
+  # for the S3 provider setup wizard. Not a real key.
+  '''AKIAIOSFODNN7EXAMPLE''',
+
+  # Stripe placeholder patterns from help docs and unit tests. Format
+  # `sk_test_*` / `pk_test_*` / `sk_live_ABC123...` etc. are illustrative
+  # only — real Stripe keys are 32+ chars of random alphanumerics.
+  '''sk_test_placeholder''',
+  '''pk_test_placeholder''',
+  '''sk_live_ABC123\.\.\.''',
+  '''sk_live_(?:12345|1234567890|abc123|revolut123|sneaky12345)''',
+  '''pi_abc123_secret_xyz''',
+
+  # Stripe Terminal test tokens used in the "Setting up POS" help doc
+  # across every locale.
+  '''sk_live_[A-Z0-9]{3,10}\.{3}''',
+
+  # Adhoc test fixtures — pattern-shaped strings meant to look like a
+  # credential but explicitly named "test_" or containing "1234" runs.
+  '''test_api_(?:key|secret)_\d+''',
+  '''ABCD1234EFGH5678IJKL''',
+  '''ABCDEFGH12345678WXYZ''',
+  '''abc123def456''',
+
+  # FedEx sandbox example credentials from the shipping provider README.
+  # The README explicitly says "For sandbox testing, any 9-digit number
+  # works" and the api_key value starts with 'l' (invalid hex).
+  '''l7fc3d8e0b50d84fcd9549be70f9da97cd''',
+  '''158087397f194167be0db4017105f0df''',
+
+  # Help-content strings that show what a PEM-armored private key
+  # header LOOKS like — merchants need to see this to identify a
+  # correctly-formatted cert during SSL setup.
+  '''-----BEGIN (?:RSA )?PRIVATE KEY-----''',
+]
+
+paths = [
+  # Translated help topics contain example strings by design; gitleaks
+  # can't easily distinguish these from real leaks. The allowlist
+  # regexes above cover the specific patterns we know about.
+  '''help_content/topics/.*\.(?:md|html)''',
+  '''locale/.*\.po''',
+  '''translations/locale/.*\.po''',
+]

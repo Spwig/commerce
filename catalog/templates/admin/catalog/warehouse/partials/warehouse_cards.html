@@ -1,0 +1,104 @@
+{% load i18n %}
+
+<div class="list-row-card{% if not warehouse.is_active %} disabled{% endif %}">
+    <div class="list-row-card-checkbox">
+        <input type="checkbox" name="_selected_action" value="{{ warehouse.pk }}" class="action-select">
+    </div>
+
+    <div class="list-row-card-icon">
+        {% if warehouse.is_retail_location %}
+            <i class="fas fa-store"></i>
+        {% else %}
+            <i class="fas fa-warehouse"></i>
+        {% endif %}
+    </div>
+
+    <div class="list-row-card-content">
+        <h3 class="list-row-card-title">
+            <a href="{% url 'admin:catalog_warehouse_change' warehouse.pk %}">
+                {{ warehouse.name }}
+            </a>
+        </h3>
+        <p class="list-row-card-subtitle">
+            <i class="fas fa-hashtag"></i> {{ warehouse.code }}
+            {% if warehouse.region %}
+                &middot; <i class="fas fa-globe"></i> {{ warehouse.region.name }}
+            {% endif %}
+        </p>
+
+        <div class="list-row-card-badges">
+            {% if warehouse.is_active %}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+            {% else %}
+                <span class="list-row-card-badge list-row-card-badge-error">
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                </span>
+            {% endif %}
+
+            {% if warehouse.is_retail_location %}
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-store"></i> {% trans "Retail Location" %}
+                </span>
+            {% endif %}
+
+            {% if warehouse.show_on_frontend %}
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-eye"></i> {% trans "Visible on Storefront" %}
+                </span>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-stats">
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Products Stocked" %}</span>
+                <span class="list-row-card-stat-value">{{ warehouse.stock_count }}</span>
+            </div>
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Fulfillment Priority" %}</span>
+                <span class="list-row-card-stat-value">{{ warehouse.fulfillment_priority }}</span>
+            </div>
+            <div class="list-row-card-stat">
+                <span class="list-row-card-stat-label">{% trans "Stock Buffer" %}</span>
+                <span class="list-row-card-stat-value">{{ warehouse.stock_buffer_percentage }}%</span>
+            </div>
+        </div>
+
+        <div class="list-row-card-meta">
+            {% if warehouse.city or warehouse.country %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>
+                    {% if warehouse.city %}{{ warehouse.city }}{% endif %}{% if warehouse.city and warehouse.country %}, {% endif %}{% if warehouse.country %}{{ warehouse.country }}{% endif %}
+                </span>
+            </div>
+            {% endif %}
+            {% if warehouse.contact_email %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-envelope"></i>
+                <span>{{ warehouse.contact_email }}</span>
+            </div>
+            {% endif %}
+            <div class="list-row-card-meta-item">
+                <i class="fas fa-clock"></i>
+                <span>{% trans "Updated" %}: {{ warehouse.updated_at|timesince }} {% trans "ago" %}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-row-card-actions">
+        <a href="{% url 'admin:catalog_warehouse_change' warehouse.pk %}"
+           class="list-row-card-action"
+           title="{% trans 'Edit warehouse' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        {% if warehouse.stock_count > 0 %}
+        <a href="{% url 'admin:catalog_stockitem_changelist' %}?warehouse__id__exact={{ warehouse.pk }}"
+           class="list-row-card-action"
+           title="{% trans 'View stock items' %}">
+            <i class="fas fa-boxes"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>

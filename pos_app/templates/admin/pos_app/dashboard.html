@@ -1,0 +1,225 @@
+{% extends "admin/base_site.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Point of Sale" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'pos_app/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header with Stats -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-cash-register"></i>
+            {% trans "Point of Sale Dashboard" %}
+        </h1>
+        <p class="subtitle">
+            {% trans "Monitor terminals, shifts, and today's sales at a glance" %}
+        </p>
+
+    </div>
+
+        <!-- Key Metrics Stats Cards -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-desktop"></i></div>
+            <div class="value">{{ total_terminals }}</div>
+            <div class="label">{% trans "Terminals" %}</div>
+        </div>
+        <div class="dashboard-stat-card pos-stat-online">
+            <div class="icon"><i class="fas fa-wifi"></i></div>
+            <div class="value">{{ online_terminals }}</div>
+            <div class="label">{% trans "Online Now" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ open_shifts }}</div>
+            <div class="label">{% trans "Open Shifts" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-receipt"></i></div>
+            <div class="value">{{ todays_transactions }}</div>
+            <div class="label">{% trans "Today's Transactions" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-coins"></i></div>
+            <div class="value">{{ todays_sales }}</div>
+            <div class="label">{% trans "Today's Sales" %}</div>
+        </div>
+    </div>
+
+
+    <!-- Dashboard Content Area -->
+    <div class="dashboard-content">
+        <!-- Quick Actions -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3>{% trans "Add Terminal" %}</h3>
+                    <p class="description">{% trans "Register a new POS terminal device" %}</p>
+                    <a href="{% url 'admin:pos_app_posterminal_add' %}" class="button">
+                        <i class="fas fa-plus"></i> {% trans "Add" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>{% trans "Manage Staff" %}</h3>
+                    <p class="description">{% trans "Assign staff members to POS terminals" %}</p>
+                    <a href="{% url 'admin:pos_app_posterminal_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Terminals" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>{% trans "View Shifts" %}</h3>
+                    <p class="description">{% trans "Review shift history and cash reconciliation" %}</p>
+                    <a href="{% url 'admin:pos_app_posshift_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Shifts" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-tablet-alt"></i>
+                    </div>
+                    <h3>{% trans "Open POS" %}</h3>
+                    <p class="description">{% trans "Launch the point of sale interface" %}</p>
+                    <a href="/pos/" class="button" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> {% trans "Launch" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-2col-grid">
+            <!-- Recent Shifts -->
+            <div class="dashboard-section pos-recent-shifts">
+                <h3 class="dashboard-section-title">
+                    <i class="fas fa-history"></i>
+                    {% trans "Recent Shifts" %}
+                </h3>
+                {% if recent_shifts %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Cashier" %}</th>
+                                <th>{% trans "Terminal" %}</th>
+                                <th>{% trans "Ended" %}</th>
+                                <th>{% trans "Sales" %}</th>
+                                <th>{% trans "Txns" %}</th>
+                                <th>{% trans "Cash Diff" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for shift in recent_shifts %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'admin:pos_app_posshift_change' shift.pk %}">
+                                        {{ shift.cashier.get_full_name|default:shift.cashier.username }}
+                                    </a>
+                                </td>
+                                <td>{{ shift.terminal.name }}</td>
+                                <td>{{ shift.ended_at|timesince }} {% trans "ago" %}</td>
+                                <td>{{ shift.total_sales|floatformat:2 }}</td>
+                                <td>{{ shift.total_transactions }}</td>
+                                <td>
+                                    {% if shift.cash_difference == 0 or shift.cash_difference is None %}
+                                        <span class="pos-badge pos-badge-success">{% trans "OK" %}</span>
+                                    {% elif shift.cash_difference > 0 %}
+                                        <span class="pos-badge pos-badge-warning">+{{ shift.cash_difference|floatformat:2 }}</span>
+                                    {% else %}
+                                        <span class="pos-badge pos-badge-danger">{{ shift.cash_difference|floatformat:2 }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="pos-empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>{% trans "No completed shifts yet" %}</p>
+                    <span>{% trans "Shifts will appear here once cashiers close them" %}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Terminals Overview -->
+            <div class="dashboard-section pos-terminals-overview">
+                <h3 class="dashboard-section-title">
+                    <i class="fas fa-desktop"></i>
+                    {% trans "Terminals" %}
+                </h3>
+                {% if all_terminals %}
+                <div class="pos-terminal-list">
+                    {% for terminal in all_terminals %}
+                    <div class="pos-terminal-card">
+                        <div class="pos-terminal-status {% if terminal.is_online %}pos-online{% else %}pos-offline{% endif %}">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div class="pos-terminal-info">
+                            <a href="{% url 'admin:pos_app_posterminal_change' terminal.pk %}" class="pos-terminal-name">
+                                {{ terminal.name }}
+                            </a>
+                            <span class="pos-terminal-meta">
+                                {{ terminal.assigned_users.count }} {% trans "staff assigned" %}
+                            </span>
+                        </div>
+                        <div class="pos-terminal-code" title="{% trans 'Pairing Code' %}">
+                            {{ terminal.pairing_code }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="pos-empty-state">
+                    <i class="fas fa-desktop"></i>
+                    <p>{% trans "No terminals configured" %}</p>
+                    <a href="{% url 'admin:pos_app_posterminal_add' %}" class="button">
+                        <i class="fas fa-plus"></i> {% trans "Add Terminal" %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- License Info -->
+        <div class="dashboard-section pos-license-info">
+            <div class="pos-license-row">
+                <span class="pos-license-label">{% trans "License Status" %}</span>
+                <span class="pos-badge pos-badge-success">{% trans "Active" %}</span>
+            </div>
+            {% if license_status.license_key %}
+            <div class="pos-license-row">
+                <span class="pos-license-label">{% trans "License Key" %}</span>
+                <code class="pos-license-key">{{ license_status.license_key }}</code>
+            </div>
+            {% endif %}
+            {% if license_status.expires_at %}
+            <div class="pos-license-row">
+                <span class="pos-license-label">{% trans "Expires" %}</span>
+                <span>{{ license_status.expires_at }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

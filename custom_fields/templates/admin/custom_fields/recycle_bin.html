@@ -1,0 +1,114 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Custom Fields - Recycle Bin" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'custom_fields/css/custom_fields_admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="cf-management">
+
+    {# ── i18n strings for JS ── #}
+    <div id="cf-i18n" class="cf-hidden"
+         data-confirm-permanent-delete="{% trans 'Are you sure you want to permanently delete this item? This action cannot be undone.' %}"
+         data-success-restored="{% trans 'Item restored successfully.' %}"
+         data-success-deleted="{% trans 'Item permanently deleted.' %}"
+         data-error-generic="{% trans 'An error occurred. Please try again.' %}">
+    </div>
+
+    <div class="dashboard-header">
+        <div>
+            <h1><i class="fas fa-trash-alt"></i> {% trans "Custom Fields - Recycle Bin" %}</h1>
+            <p class="subtitle">{% trans "Deleted custom field groups and definitions. You can restore items or permanently delete them." %}</p>
+        </div>
+        <a href="{% url 'custom_fields:management' %}" class="cf-btn cf-btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Custom Fields" %}
+        </a>
+    </div>
+
+    {% if deleted_groups or deleted_fields %}
+
+    {# ── Deleted Groups ── #}
+    {% if deleted_groups %}
+    <h2><i class="fas fa-layer-group"></i> {% trans "Deleted Groups" %}</h2>
+    <div class="field-groups">
+        {% for group in deleted_groups %}
+        <div class="field-group-card" data-group-id="{{ group.pk }}">
+            <div class="field-group-header">
+                <div class="field-group-header-left">
+                    <h3>{{ group.name }}</h3>
+                    <span class="cf-badge cf-badge-info">{{ group.content_type }}</span>
+                    {% if group.deleted_at %}
+                    <span class="field-slug">{% trans "Deleted" %} {{ group.deleted_at|date:"M d, Y H:i" }}</span>
+                    {% endif %}
+                </div>
+                <div class="field-group-header-actions">
+                    <button class="cf-btn cf-btn-sm cf-btn-primary cf-btn-restore-group"
+                            data-group-id="{{ group.pk }}" title="{% trans 'Restore' %}">
+                        <i class="fas fa-undo"></i> {% trans "Restore" %}
+                    </button>
+                    <button class="cf-btn cf-btn-sm cf-btn-icon cf-btn-permanent-delete-group"
+                            data-group-id="{{ group.pk }}" title="{% trans 'Delete permanently' %}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# ── Deleted Fields ── #}
+    {% if deleted_fields %}
+    <h2><i class="fas fa-columns"></i> {% trans "Deleted Fields" %}</h2>
+    <div class="field-groups">
+        <div class="field-group-card">
+            <div class="field-list">
+                {% for field in deleted_fields %}
+                <div class="field-row" data-field-id="{{ field.pk }}">
+                    <div class="field-row-left">
+                        <div class="field-info">
+                            <span class="field-name">{{ field.name }}</span>
+                            <span class="field-slug">{{ field.slug }} &middot; {{ field.content_type }} &middot; {% trans "Deleted" %} {{ field.deleted_at|date:"M d, Y H:i" }}</span>
+                        </div>
+                    </div>
+                    <div class="field-row-center">
+                        <span class="field-type-badge">{{ field.get_field_type_display }}</span>
+                    </div>
+                    <div class="field-row-actions">
+                        <button class="cf-btn cf-btn-sm cf-btn-primary cf-btn-restore-field"
+                                data-field-id="{{ field.pk }}" title="{% trans 'Restore' %}">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button class="cf-btn cf-btn-sm cf-btn-icon cf-btn-permanent-delete-field"
+                                data-field-id="{{ field.pk }}" title="{% trans 'Delete permanently' %}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <h3>{% trans "Recycle bin is empty" %}</h3>
+        <p>{% trans "There are no deleted custom field groups or definitions." %}</p>
+        <a href="{% url 'custom_fields:management' %}" class="cf-btn cf-btn-primary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Custom Fields" %}
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'custom_fields/js/custom_fields_recycle_bin.js' %}"></script>
+{% endblock %}

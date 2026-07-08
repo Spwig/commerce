@@ -1,0 +1,193 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/segment_cards.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for segment in segments %}
+    <div class="list-row-card segment-card {% if not segment.is_active %}card-inactive{% endif %}">
+        <!-- Segment Icon -->
+        <div class="list-row-card-icon segment {{ segment.criteria_type|slugify }}">
+            {% if segment.criteria_type == 'rule_based' %}
+                <i class="fas fa-cogs"></i>
+            {% elif segment.criteria_type == 'manual' %}
+                <i class="fas fa-hand-pointer"></i>
+            {% elif segment.criteria_type == 'dynamic' %}
+                <i class="fas fa-sync-alt"></i>
+            {% else %}
+                <i class="fas fa-users-cog"></i>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:loyalty_loyaltysegment_change' segment.id %}"
+                   title="{% trans 'Edit segment' %}">
+                    {{ segment.name }}
+                </a>
+            </h3>
+
+            <!-- Description -->
+            <p class="list-row-card-subtitle">
+                {% if segment.description %}
+                    {% if segment.description|length > 100 %}
+                        {{ segment.description|truncatewords:15 }}
+                    {% else %}
+                        {{ segment.description }}
+                    {% endif %}
+                {% else %}
+                    <em class="text-muted">{% trans "No description provided" %}</em>
+                {% endif %}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if segment.is_active %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'This segment is active' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge"
+                          class="badge-muted"
+                          title="{% trans 'This segment is inactive' %}">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <!-- Criteria Type Badge -->
+                <span class="list-row-card-badge primary"
+                      title="{% trans 'Segment criteria type' %}">
+                    {% if segment.criteria_type == 'rule_based' %}
+                        <i class="fas fa-cogs"></i> {% trans "Rule-Based" %}
+                    {% elif segment.criteria_type == 'manual' %}
+                        <i class="fas fa-hand-pointer"></i> {% trans "Manual" %}
+                    {% elif segment.criteria_type == 'dynamic' %}
+                        <i class="fas fa-sync-alt"></i> {% trans "Dynamic" %}
+                    {% else %}
+                        <i class="fas fa-question"></i> {{ segment.get_criteria_type_display|default:segment.criteria_type }}
+                    {% endif %}
+                </span>
+
+                <!-- Member Count Badge -->
+                <span class="list-row-card-badge info"
+                      title="{% trans 'Number of members in this segment' %}">
+                    <i class="fas fa-users"></i> {{ segment.member_count }} {% trans "members" %}
+                </span>
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <!-- Member Count -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Members" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if segment.member_count > 0 %}
+                            <span class="text-primary">
+                                <i class="fas fa-users"></i> {{ segment.member_count }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">
+                                <i class="fas fa-users"></i> 0
+                            </span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <!-- Last Calculated -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Last Calculated" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if segment.last_calculated_at %}
+                            {{ segment.last_calculated_at|timesince }} {% trans "ago" %}
+                        {% else %}
+                            <em class="text-muted">{% trans "Never" %}</em>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <!-- Criteria Type -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Criteria Type" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ segment.get_criteria_type_display|default:segment.criteria_type|title }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta Information -->
+        <div class="list-row-card-meta">
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Segment slug' %}">
+                <i class="fas fa-link"></i>
+                <code class="code-small">{{ segment.slug }}</code>
+            </div>
+
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Internal segment ID' %}">
+                <i class="fas fa-key"></i>
+                <code class="code-small">{{ segment.id }}</code>
+            </div>
+
+            {% if segment.created_at %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Date created' %}">
+                <i class="fas fa-calendar-plus"></i>
+                <span>{{ segment.created_at|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+
+            {% if segment.last_calculated_at %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Last calculated' %}">
+                <i class="fas fa-clock"></i>
+                <span>{{ segment.last_calculated_at|date:"M d, Y H:i" }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltysegment_change' segment.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit segment' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% if segment.member_count > 0 %}
+            <a href="{% url 'admin:loyalty_loyaltysegmentmembership_changelist' %}?segment__id__exact={{ segment.pk }}"
+               class="list-row-card-action"
+               class="text-primary"
+               title="{% trans 'View segment members' %}">
+                <i class="fas fa-users"></i>
+            </a>
+            {% endif %}
+
+            {% if segment.criteria_type != 'manual' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="refresh-segment"
+                    data-pk="{{ segment.pk }}"
+                    title="{% trans 'Refresh segment membership' %}">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-users-cog"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No segments found." %}</p>
+        <p class="card-empty-state-subtitle">
+            <a href="{% url 'admin:loyalty_loyaltysegment_add' %}"
+               class="text-link">
+                {% trans "Create your first segment" %}
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+</div>

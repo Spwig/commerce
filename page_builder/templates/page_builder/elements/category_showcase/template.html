@@ -1,0 +1,78 @@
+{% load i18n element_tags merchant_trans %}
+<!-- Category Showcase Element -->
+<section class="category-showcase category-showcase--{{ element.content.style|default:'cards' }} section"
+         {% hover_animation_attrs element %}
+         style="{% base_styles element %}">
+
+    <div class="category-showcase__wrapper">
+        {% if element.content.title %}
+        <div class="category-showcase__header">
+            <h2 class="category-showcase__title">{{ element.content.title }}</h2>
+            {% if element.content.subtitle %}
+            <p class="category-showcase__subtitle">{{ element.content.subtitle }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="category-showcase__grid category-showcase__grid--cols-{{ element.content.columns|default:'4' }}{% if element.content.spacing %} category-showcase__grid--spacing-{{ element.content.spacing }}{% endif %}">
+            {% with categories=element_context.categories %}
+            {% for category in categories %}
+            <a href="{{ category.url|default:category.get_absolute_url }}" class="category-showcase__item">
+                {% if element.content.show_image|default:True %}
+                <div class="category-showcase__image-wrapper" style="aspect-ratio: {{ element.content.image_ratio|default:'1/1' }};">
+                    {% with card_image=category.get_card_image_thumbnail %}
+                    {% if card_image %}
+                    <img src="{{ card_image }}"
+                         alt="{{ category.name }}"
+                         class="category-showcase__image"
+                         loading="lazy">
+                    {% elif category.icon %}
+                    <div class="category-showcase__image-placeholder">
+                        <i class="{{ category.icon }}"></i>
+                    </div>
+                    {% else %}
+                    <div class="category-showcase__image-placeholder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    {% if element.content.style == 'overlay' %}
+                    <div class="category-showcase__overlay"></div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="category-showcase__content">
+                    <h3 class="category-showcase__name">{{ category.name }}</h3>
+
+                    {% if element.content.show_description and category.description %}
+                    <p class="category-showcase__description">{{ category.description|truncatechars:80 }}</p>
+                    {% endif %}
+
+                    {% if element.content.show_product_count|default:True %}
+                    <span class="category-showcase__count">
+                        {{ category.product_count|default:0 }} {% mtrans "products" %}
+                    </span>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <div class="category-showcase__empty">
+                <i class="fas fa-th-large"></i>
+                <p>{% mtrans "No categories to display" %}</p>
+            </div>
+            {% endfor %}
+            {% endwith %}
+        </div>
+
+        {% if element.content.show_view_all %}
+        <div class="category-showcase__footer">
+            <a href="{% url 'page_builder:category_list' %}" class="btn btn--secondary">
+                {% if element.content.view_all_text %}{{ element.content.view_all_text }}{% else %}{% mtrans 'View All Categories' %}{% endif %}
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>

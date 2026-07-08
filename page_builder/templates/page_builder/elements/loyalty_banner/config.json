@@ -1,0 +1,200 @@
+{
+  "element_type": "loyalty_banner",
+  "name": "Loyalty Banner",
+  "version": "1.0.1",
+  "category": "marketing",
+  "icon": "fas fa-crown",
+  "description": "Promote loyalty program enrollment and benefits",
+  "inherit_base": true,
+  "css_files": ["page_builder/css/elements/loyalty-banner.css"],
+  "tabs": {
+    "content": {
+      "label": "Content",
+      "icon": "fas fa-edit",
+      "order": 1,
+      "properties": {
+        "source_group": {
+          "type": "property_group",
+          "label": "Data Source",
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "default": "dynamic",
+              "options": [
+                {"value": "dynamic", "label": "Live from store"},
+                {"value": "static", "label": "Manual content"}
+              ]
+            },
+            "display_mode": {
+              "type": "select",
+              "label": "Display Mode",
+              "default": "enrollment",
+              "options": [
+                {"value": "enrollment", "label": "Enrollment CTA"},
+                {"value": "points_summary", "label": "Points Summary (members)"},
+                {"value": "tier_progress", "label": "Tier Progress (members)"},
+                {"value": "benefits", "label": "Benefits Overview"}
+              ]
+            }
+          }
+        },
+        "content_group": {
+          "type": "property_group",
+          "label": "Content",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Title",
+              "default": "Join Our Rewards Program",
+              "translatable": true
+            },
+            "description": {
+              "type": "textarea",
+              "label": "Description",
+              "default": "Earn points on every purchase and unlock exclusive rewards!",
+              "translatable": true,
+              "full_width": true
+            }
+          }
+        },
+        "button_group": {
+          "type": "property_group",
+          "label": "Button",
+          "properties": {
+            "button_text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "Join Now",
+              "translatable": true
+            },
+            "button_url": {
+              "type": "link_selector",
+              "label": "Button URL",
+              "default": "/account/loyalty/"
+            }
+          }
+        }
+      }
+    },
+    "benefits": {
+      "label": "Benefits",
+      "icon": "fas fa-gift",
+      "order": 2,
+      "properties": {
+        "benefits_group": {
+          "type": "property_group",
+          "label": "Benefits List",
+          "columns": 1,
+          "properties": {
+            "show_benefits": {
+              "type": "boolean",
+              "label": "Show Benefits List",
+              "default": true
+            },
+            "benefits": {
+              "type": "array",
+              "label": "Benefits",
+              "item_type": "object",
+              "full_width": true,
+              "show_if": {"show_benefits": true},
+              "default": [
+                {"icon": "fas fa-coins", "text": "Earn 1 point per $1 spent"},
+                {"icon": "fas fa-birthday-cake", "text": "Birthday bonus points"},
+                {"icon": "fas fa-tag", "text": "Exclusive member discounts"},
+                {"icon": "fas fa-truck", "text": "Free shipping on orders"}
+              ],
+              "item_properties": {
+                "icon": {"type": "string", "label": "Icon Class"},
+                "text": {"type": "string", "label": "Benefit Text", "translatable": true}
+              }
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "label": "Appearance",
+      "icon": "fas fa-palette",
+      "order": 3,
+      "properties": {
+        "style_group": {
+          "type": "property_group",
+          "label": "Style",
+          "properties": {
+            "style": {
+              "type": "select",
+              "label": "Banner Style",
+              "default": "card",
+              "options": [
+                {"value": "card", "label": "Card"},
+                {"value": "banner", "label": "Full-width Banner"},
+                {"value": "floating", "label": "Floating"},
+                {"value": "minimal", "label": "Minimal"}
+              ]
+            },
+            "icon": {
+              "type": "string",
+              "label": "Icon Class",
+              "default": "fas fa-crown"
+            }
+          }
+        },
+        "colors_group": {
+          "type": "property_group",
+          "label": "Colors",
+          "columns": 1,
+          "properties": {
+            "primary_color": {
+              "type": "color",
+              "label": "Primary Color",
+              "default": "#f59e0b"
+            }
+          }
+        },
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Visibility",
+          "columns": 1,
+          "properties": {
+            "show_for": {
+              "type": "select",
+              "label": "Show For",
+              "default": "all",
+              "options": [
+                {"value": "all", "label": "Everyone"},
+                {"value": "guests", "label": "Guests Only"},
+                {"value": "non_members", "label": "Non-members Only"},
+                {"value": "members", "label": "Members Only"}
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "data_source": {"type": "select", "label": "Data Source", "default": "dynamic", "options": [{"value": "dynamic", "label": "Live from store"}, {"value": "static", "label": "Manual content"}]},
+    "display_mode": {"type": "select", "label": "Display Mode", "default": "enrollment", "options": [{"value": "enrollment", "label": "Enrollment CTA"}, {"value": "points_summary", "label": "Points Summary (members)"}, {"value": "tier_progress", "label": "Tier Progress (members)"}, {"value": "benefits", "label": "Benefits Overview"}]},
+    "title": {"type": "string", "label": "Title", "default": "Join Our Rewards Program", "translatable": true},
+    "description": {"type": "textarea", "label": "Description", "default": "Earn points on every purchase and unlock exclusive rewards!", "translatable": true},
+    "button_text": {"type": "string", "label": "Button Text", "default": "Join Now", "translatable": true},
+    "button_url": {"type": "link_selector", "label": "Button URL", "default": "/account/loyalty/"},
+    "show_benefits": {"type": "boolean", "label": "Show Benefits List", "default": true},
+    "benefits": {"type": "array", "label": "Benefits", "item_type": "object", "show_if": {"show_benefits": true}, "default": [{"icon": "fas fa-coins", "text": "Earn 1 point per $1 spent"}, {"icon": "fas fa-birthday-cake", "text": "Birthday bonus points"}, {"icon": "fas fa-tag", "text": "Exclusive member discounts"}, {"icon": "fas fa-truck", "text": "Free shipping on orders"}], "item_properties": {"icon": {"type": "string", "label": "Icon Class"}, "text": {"type": "string", "label": "Benefit Text", "translatable": true}}},
+    "style": {"type": "select", "label": "Banner Style", "default": "card", "options": [{"value": "card", "label": "Card"}, {"value": "banner", "label": "Full-width Banner"}, {"value": "floating", "label": "Floating"}, {"value": "minimal", "label": "Minimal"}]},
+    "primary_color": {"type": "color", "label": "Primary Color", "default": "#f59e0b"},
+    "icon": {"type": "string", "label": "Icon Class", "default": "fas fa-crown"},
+    "show_for": {"type": "select", "label": "Show For", "default": "all", "options": [{"value": "all", "label": "Everyone"}, {"value": "guests", "label": "Guests Only"}, {"value": "non_members", "label": "Non-members Only"}, {"value": "members", "label": "Members Only"}]}
+  },
+  "translations": {
+    "en": {"name": "Loyalty Banner", "description": "Promote loyalty program enrollment and benefits"},
+    "es": {"name": "Banner de Fidelización", "description": "Promover inscripción y beneficios del programa de fidelización"},
+    "fr": {"name": "Bannière Fidélité", "description": "Promouvoir l'inscription et les avantages du programme de fidélité"},
+    "de": {"name": "Treueprogramm-Banner", "description": "Treueprogramm-Anmeldung und Vorteile bewerben"},
+    "pt": {"name": "Banner de Fidelidade", "description": "Promover inscrição e benefícios do programa de fidelidade"},
+    "zh-hans": {"name": "会员横幅", "description": "推广会员计划注册和福利"},
+    "ja": {"name": "ロイヤルティバナー", "description": "ロイヤルティプログラムの登録と特典を促進"}
+  }
+}

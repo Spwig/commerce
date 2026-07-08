@@ -1,0 +1,202 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Categories" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'catalog/css/admin_category_list.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-folder"></i>
+                {% trans "Category Management" %}
+            </h1>
+            <p class="subtitle">{% trans "Organize products into hierarchical categories" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:catalog_category_add' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Category" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or description...' %}"
+                    value="">
+            </div>
+
+            <!-- Parent Category -->
+            <div class="filter-field">
+                <label for="filter-parent">
+                    <i class="fas fa-sitemap"></i> {% trans "Parent Category" %}
+                </label>
+                <select id="filter-parent">
+                    <option value="">{% trans "All Categories" %}</option>
+                    <option value="null">{% trans "Top Level Only" %}</option>
+                    {% for parent in parent_categories %}
+                    <option value="{{ parent.id }}">{{ parent.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- Featured -->
+            <div class="filter-field">
+                <label for="filter-featured">
+                    <i class="fas fa-star"></i> {% trans "Featured" %}
+                </label>
+                <select id="filter-featured">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "Featured Only" %}</option>
+                    <option value="no">{% trans "Not Featured" %}</option>
+                </select>
+            </div>
+
+            <!-- Display Type -->
+            <div class="filter-field">
+                <label for="filter-display-type">
+                    <i class="fas fa-th"></i> {% trans "Display Type" %}
+                </label>
+                <select id="filter-display-type">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="grid">{% trans "Grid Layout" %}</option>
+                    <option value="list">{% trans "List Layout" %}</option>
+                    <option value="carousel">{% trans "Carousel" %}</option>
+                    <option value="masonry">{% trans "Masonry Grid" %}</option>
+                    <option value="featured">{% trans "Featured Display" %}</option>
+                </select>
+            </div>
+
+            <!-- Has Products -->
+            <div class="filter-field">
+                <label for="filter-has-products">
+                    <i class="fas fa-box"></i> {% trans "Products" %}
+                </label>
+                <select id="filter-has-products">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "Has Products" %}</option>
+                    <option value="no">{% trans "No Products" %}</option>
+                </select>
+            </div>
+
+            <!-- Has Subcategories -->
+            <div class="filter-field">
+                <label for="filter-has-subcategories">
+                    <i class="fas fa-folder-tree"></i> {% trans "Subcategories" %}
+                </label>
+                <select id="filter-has-subcategories">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "Has Subcategories" %}</option>
+                    <option value="no">{% trans "No Subcategories" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar and results wrapped in single form for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-category" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Categories" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-folder"></i>
+            <span id="category-count">{{ cl.result_count }}</span> {% trans "categor" %}{{ cl.result_count|pluralize:"y,ies" }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="category-results">
+        {% include "admin/catalog/partials/category_cards.html" with categories=cl.result_list %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 category{% plural %}{{ counter }} categories{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'categories' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+<div id="list-filter-config"
+     data-filter-url="{% url 'catalog_admin:filter_categories' %}"
+     data-results-container="category-results"
+     data-results-count="category-count"
+     style="display:none;"></div>
+</div>
+{% endblock %}

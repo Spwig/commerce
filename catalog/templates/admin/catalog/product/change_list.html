@@ -1,0 +1,327 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Products" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_product_cards.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/admin_product_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-box"></i>
+                {% trans "Product Management" %}
+            </h1>
+            <p class="subtitle">{% trans "Manage product catalog, pricing, and inventory" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'catalog_admin:catalog_product_recycle_bin' %}" class="button default change-list-action-button recycle-bin-link">
+                <i class="fas fa-trash-restore"></i> {% trans "Recycle Bin" %}
+            </a>
+            <a href="{% url 'admin:catalog_product_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Product" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filtersPanel">
+        <div class="filters-header">
+            <span><i class="fas fa-filter"></i> {% trans "Filters" %}</span>
+            <div class="filters-header-actions">
+                <button type="button" class="btn-clear-filters" id="clearFilters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+        <div class="filters-body" id="filtersBody">
+            <!-- Primary filters - always visible -->
+            <div class="filters-row">
+                <!-- Search -->
+                <div class="filter-field filter-field-wide">
+                    <label for="filterSearch">{% trans "Search" %}</label>
+                    <input type="text" class="form-control filter-input" id="filterSearch"
+                           placeholder="{% trans 'Name, SKU, HS Code...' %}" data-filter="q">
+                </div>
+
+                <!-- Status -->
+                <div class="filter-field">
+                    <label for="filterStatus">{% trans "Status" %}</label>
+                    <select class="form-select filter-input" id="filterStatus" data-filter="status">
+                        <option value="">{% trans "All Status" %}</option>
+                        <option value="published">{% trans "Published" %}</option>
+                        <option value="draft">{% trans "Draft" %}</option>
+                        <option value="archived">{% trans "Archived" %}</option>
+                    </select>
+                </div>
+
+                <!-- Category -->
+                <div class="filter-field">
+                    <label for="filterCategory">{% trans "Category" %}</label>
+                    <select class="form-select filter-input" id="filterCategory" data-filter="category">
+                        <option value="">{% trans "All Categories" %}</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Product Type -->
+                <div class="filter-field">
+                    <label for="filterProductType">{% trans "Type" %}</label>
+                    <select class="form-select filter-input" id="filterProductType" data-filter="product_type">
+                        <option value="">{% trans "All Types" %}</option>
+                        <option value="simple">{% trans "Simple" %}</option>
+                        <option value="variable">{% trans "Variable" %}</option>
+                        <option value="bundle">{% trans "Bundle" %}</option>
+                        <option value="configurable">{% trans "Configurable" %}</option>
+                        <option value="virtual">{% trans "Virtual" %}</option>
+                        <option value="downloadable">{% trans "Downloadable" %}</option>
+                        <option value="gift_card">{% trans "Gift Card" %}</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- More Filters toggle -->
+            <div class="advanced-filters-toggle">
+                <button type="button" class="btn-more-filters" id="moreFiltersBtn">
+                    <i class="fas fa-sliders-h"></i>
+                    {% trans "More Filters" %}
+                    <span class="advanced-filter-badge product-list-hidden" id="advancedFilterBadge">0</span>
+                    <i class="fas fa-chevron-down toggle-chevron"></i>
+                </button>
+            </div>
+
+            <!-- Advanced filters - collapsed by default -->
+            <div class="advanced-filters-wrapper" id="advancedFiltersWrapper">
+                <div class="filters-row">
+                    <!-- Brand -->
+                    <div class="filter-field">
+                        <label for="filterBrand">{% trans "Brand" %}</label>
+                        <select class="form-select filter-input" id="filterBrand" data-filter="brand">
+                            <option value="">{% trans "All Brands" %}</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}">{{ brand.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Digital -->
+                    <div class="filter-field">
+                        <label for="filterDigital">{% trans "Digital" %}</label>
+                        <select class="form-select filter-input" id="filterDigital" data-filter="is_digital">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="digital">{% trans "Digital Only" %}</option>
+                            <option value="physical">{% trans "Physical Only" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Has Digital Assets -->
+                    <div class="filter-field">
+                        <label for="filterDigitalAssets">{% trans "Assets" %}</label>
+                        <select class="form-select filter-input" id="filterDigitalAssets" data-filter="has_digital_assets">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="with">{% trans "With Assets" %}</option>
+                            <option value="without">{% trans "Without Assets" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Requires License -->
+                    <div class="filter-field">
+                        <label for="filterLicense">{% trans "License" %}</label>
+                        <select class="form-select filter-input" id="filterLicense" data-filter="requires_license">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="licensed">{% trans "Licensed" %}</option>
+                            <option value="unlicensed">{% trans "Unlicensed" %}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filters-row">
+                    <!-- Pricing Strategy -->
+                    <div class="filter-field">
+                        <label for="filterPricing">{% trans "Pricing" %}</label>
+                        <select class="form-select filter-input" id="filterPricing" data-filter="pricing_strategy">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="fixed">{% trans "Fixed" %}</option>
+                            <option value="tiered">{% trans "Tiered" %}</option>
+                            <option value="volume">{% trans "Volume" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- On Sale -->
+                    <div class="filter-field">
+                        <label for="filterSale">{% trans "Sale" %}</label>
+                        <select class="form-select filter-input" id="filterSale" data-filter="on_sale">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="yes">{% trans "On Sale" %}</option>
+                            <option value="no">{% trans "Not On Sale" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Subscription -->
+                    <div class="filter-field">
+                        <label for="filterSubscription">{% trans "Subscription" %}</label>
+                        <select class="form-select filter-input" id="filterSubscription" data-filter="is_subscription">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="yes">{% trans "Subscription" %}</option>
+                            <option value="no">{% trans "Non-Subscription" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Preorder -->
+                    <div class="filter-field">
+                        <label for="filterPreorder">{% trans "Preorder" %}</label>
+                        <select class="form-select filter-input" id="filterPreorder" data-filter="is_preorder">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="yes">{% trans "Preorder" %}</option>
+                            <option value="no">{% trans "Not Preorder" %}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filters-row">
+                    <!-- Featured -->
+                    <div class="filter-field">
+                        <label for="filterFeatured">{% trans "Featured" %}</label>
+                        <select class="form-select filter-input" id="filterFeatured" data-filter="is_featured">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="yes">{% trans "Featured" %}</option>
+                            <option value="no">{% trans "Not Featured" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Inventory Tracking -->
+                    <div class="filter-field">
+                        <label for="filterInventory">{% trans "Inventory" %}</label>
+                        <select class="form-select filter-input" id="filterInventory" data-filter="track_inventory">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="yes">{% trans "Tracked" %}</option>
+                            <option value="no">{% trans "Not Tracked" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Import Source -->
+                    <div class="filter-field">
+                        <label for="filterImport">{% trans "Source" %}</label>
+                        <select class="form-select filter-input" id="filterImport" data-filter="import_source">
+                            <option value="">{% trans "All" %}</option>
+                            <option value="manual">{% trans "Manual" %}</option>
+                            <option value="imported">{% trans "Imported" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Spacer -->
+                    <div class="filter-field"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="product-toolbar">
+        <div class="toolbar-left">
+            <!-- Bulk Actions -->
+            <select id="bulk-action-selector" class="bulk-action-select">
+                <option value="">{% trans "Bulk Actions" %}</option>
+                <option value="publish">{% trans "Mark as Published" %}</option>
+                <option value="draft">{% trans "Mark as Draft" %}</option>
+                <option value="feature">{% trans "Mark as Featured" %}</option>
+                <option value="unfeature">{% trans "Remove Featured" %}</option>
+                <option value="export">{% trans "Export to CSV" %}</option>
+                <option value="delete">{% trans "Delete Selected" %}</option>
+            </select>
+            <button id="apply-bulk-action" class="button default" disabled>
+                <i class="fas fa-check"></i> {% trans "Apply" %}
+            </button>
+            <span id="selected-count" class="selected-count"></span>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- View Toggle -->
+            <div class="view-toggle">
+                <button id="grid-view-btn" class="view-btn active" data-view="grid" title="{% trans 'Grid View' %}">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button id="list-view-btn" class="view-btn" data-view="list" title="{% trans 'List View' %}">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="products-loading" class="products-loading product-list-hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading products..." %}</p>
+        </div>
+    </div>
+
+    <!-- Products Container -->
+    {% if cl.result_list %}
+        <div id="products-container" class="products-grid"
+             data-total-count="{{ cl.result_count }}"
+             data-page-size="{{ cl.list_per_page }}"
+             data-current-page="{{ cl.page_num }}"
+             data-total-pages="{{ cl.paginator.num_pages }}">
+            {% for product in cl.result_list %}
+                {% include "admin/catalog/product/product_card.html" with product=product %}
+            {% endfor %}
+        </div>
+
+        <!-- Infinite Scroll Sentinel -->
+        <div id="scroll-sentinel" class="scroll-sentinel">
+            <div class="scroll-sentinel-spinner product-list-hidden" id="scroll-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>{% trans "Loading more products..." %}</span>
+            </div>
+            <div class="scroll-sentinel-end product-list-hidden" id="scroll-end">
+                <span class="scroll-end-text">{% trans "All products loaded" %} ({{ cl.result_count }})</span>
+            </div>
+        </div>
+    {% else %}
+        <div class="products-empty-state">
+            <i class="fas fa-box-open"></i>
+            <h2>{% trans "No Products Found" %}</h2>
+            <p>
+                {% if request.GET.q or request.GET.status or request.GET.product_type or request.GET.category or request.GET.brand or request.GET.is_digital or request.GET.has_digital_assets or request.GET.requires_license or request.GET.is_featured %}
+                    {% trans "No products match your current filters. Try adjusting or clearing filters." %}
+                {% else %}
+                    {% trans "No products available. Start by adding your first product!" %}
+                {% endif %}
+            </p>
+            {% if request.GET.q or request.GET.status or request.GET.product_type or request.GET.category or request.GET.brand %}
+                <a href="{% url 'admin:catalog_product_changelist' %}" class="button default">
+                    <i class="fas fa-times"></i> {% trans "Clear Filters" %}
+                </a>
+            {% else %}
+                <a href="{% url 'admin:catalog_product_add' %}" class="button default">
+                    <i class="fas fa-plus"></i> {% trans "Add Your First Product" %}
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'catalog/js/admin_product_list.js' %}"></script>
+<script src="{% static 'catalog/admin/js/product_change_list_extra.js' %}"></script>
+{% endblock %}

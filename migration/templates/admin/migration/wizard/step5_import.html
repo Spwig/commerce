@@ -1,0 +1,290 @@
+{% extends "admin/migration/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-download"></i>
+        {% trans "Import in Progress" %}
+    </h3>
+    <p>{% trans "Importing data from" %} {{ job.get_platform_display }}{% trans ". This process is running in the background - you can safely close this window and check back later." %}</p>
+</div>
+
+<!-- Overall Progress -->
+<div class="content-box">
+    <h3>
+        <i class="fas fa-tasks"></i>
+        {% trans "Overall Progress" %}
+    </h3>
+
+    <div class="my-20">
+        <div class="import-progress-header">
+            <span class="text-body font-semibold">
+                <span id="overall-status">{% trans "Initializing..." %}</span>
+            </span>
+            <span class="text-body font-semibold">
+                <span id="overall-percentage">0</span>%
+            </span>
+        </div>
+        <div class="progress-bar-container">
+            <div id="overall-progress-bar" class="progress-bar-fill gradient-fill"></div>
+        </div>
+        <div class="mt-8 text-muted text-xs">
+            <span id="overall-stats">{% trans "Starting import..." %}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Step Progress -->
+<div class="content-box">
+    <h3>
+        <i class="fas fa-list-check"></i>
+        {% trans "Import Steps" %}
+    </h3>
+
+    <div id="steps-container">
+        <!-- Steps will be populated dynamically -->
+        <div class="step-item step-item-hidden" data-step="categories">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-folder-tree"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Categories" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="products">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Products" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="customers">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Customers" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="orders">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Orders" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="reviews">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Reviews" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="coupons">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-ticket"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Coupons" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="blog">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-blog"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Blog Posts" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="affiliates">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Affiliates" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="commissions">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Commissions" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item step-item-hidden" data-step="payouts">
+            <div class="step-item-container">
+                <div class="step-icon step-icon-circle">
+                    <i class="fas fa-money-check-alt"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="step-header-row">
+                        <strong class="text-body">{% trans "Payouts" %}</strong>
+                        <span class="step-percentage step-percentage-text">0%</span>
+                    </div>
+                    <div class="step-progress-bar-container">
+                        <div class="step-progress-bar step-progress-bar-fill"></div>
+                    </div>
+                    <div class="step-stats step-stats-text">
+                        {% trans "Waiting..." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Live Logs -->
+<div class="content-box">
+    <h3>
+        <i class="fas fa-terminal"></i>
+        {% trans "Import Log" %}
+        <button type="button" class="button secondary float-right" data-action="toggle-logs">
+            <i class="fas fa-chevron-down" id="logs-toggle-icon"></i>
+            <span id="logs-toggle-text">{% trans "Show Details" %}</span>
+        </button>
+    </h3>
+
+    <div id="logs-container" class="logs-container step-item-hidden">
+        <!-- Logs will be populated here -->
+    </div>
+</div>
+
+<!-- Action Buttons (hidden until complete or error) -->
+<div class="wizard-nav step-item-hidden" id="action-buttons">
+    <a href="{% url 'admin:migration_migrationjob_changelist' %}" class="button secondary">
+        <i class="fas fa-list"></i>
+        {% trans "View All Migrations" %}
+    </a>
+    <a href="{% url 'admin:migration_wizard_step6' job.id %}" class="button success" id="complete-button">
+        {% trans "View Results" %}
+        <i class="fas fa-arrow-right"></i>
+    </a>
+</div>
+
+<script type="application/json" id="step5-data">
+{
+    "config": {
+        "progressUrl": "{% url 'admin:migration_job_progress' job.id %}"
+    },
+    "translations": {
+        "hideDetails": "{% trans 'Hide Details' %}",
+        "showDetails": "{% trans 'Show Details' %}",
+        "viewErrorReport": "{% trans 'View Error Report' %}"
+    }
+}
+</script>
+<script src="{% static 'migration/js/wizard_step5.js' %}"></script>
+{% endblock %}

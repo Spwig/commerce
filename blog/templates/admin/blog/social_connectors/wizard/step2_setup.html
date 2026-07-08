@@ -1,0 +1,94 @@
+{% extends "admin/blog/social_connectors/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content setup-step">
+    <h2 class="step-title">
+        <i class="fas fa-book-open"></i>
+        {% trans "Setup Instructions" %}
+    </h2>
+    <p class="step-description">
+        {% blocktrans with provider=component.name %}
+        Before connecting, review these setup steps for {{ provider }}.
+        {% endblocktrans %}
+    </p>
+
+    {% if has_instructions %}
+        {# Render provider-specific instructions #}
+        {{ instructions_html }}
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <p><strong>{% trans "Setup Instructions Not Available" %}</strong></p>
+                <p>
+                    {% blocktrans with provider=component.name %}
+                    Setup instructions are not available for this version of {{ provider }}.
+                    Please check the provider documentation or contact support.
+                    {% endblocktrans %}
+                </p>
+                {% if oauth_config.authorize_url %}
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "This provider uses OAuth authentication. You will be redirected to authorize access in the next step." %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- OAuth Information -->
+    {% if oauth_config %}
+    <div class="info-box">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+            <strong>{% trans "OAuth Authentication" %}</strong>
+            <p>
+                {% blocktrans with provider=component.name %}
+                {{ provider }} uses OAuth for secure authentication. You will be redirected to authorize
+                your account, and we will securely store the access token.
+                {% endblocktrans %}
+            </p>
+            {% if oauth_config.scope %}
+            <p class="help-text">
+                <i class="fas fa-lock"></i>
+                {% trans "Required permissions:" %}
+                {% for scope in oauth_config.scope %}
+                    <code>{{ scope }}</code>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Requirements -->
+    {% if requirements %}
+    <div class="help-box">
+        <i class="fas fa-clipboard-list"></i>
+        <strong>{% trans "Requirements" %}</strong>
+        <ul class="requirements-list">
+            {% for requirement in requirements %}
+            <li><i class="fas fa-check"></i> {{ requirement }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" id="setup-form">
+        {% csrf_token %}
+    </form>
+</div>
+{% include "providers_common/includes/manifest_i18n.html" %}
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'blog_admin:wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="setup-form" class="btn btn-primary">
+        {% trans "Continue to Configuration" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

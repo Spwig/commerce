@@ -1,0 +1,373 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Translation Jobs" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'translations/admin/css/translations.css' %}">
+<link rel="stylesheet" href="{% static 'translations/admin/css/translation_jobs.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/provider_browse.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'translations/admin/js/translation_jobs.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+    <div id="notification-container" class="notification-container"></div>
+    <div id="content-main">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1><i class="fas fa-tasks"></i> {% trans "Translation Jobs" %}</h1>
+        <p class="subtitle">{% trans "Monitor and manage translation job queue." %}</p>
+    </div>
+
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value" id="pending-count">{{ jobs_stats.pending }}</div>
+            <div class="label">{% trans "Pending" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-spinner"></i></div>
+            <div class="value" id="processing-count">{{ jobs_stats.processing }}</div>
+            <div class="label">{% trans "Processing" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ jobs_stats.completed }}</div>
+            <div class="label">{% trans "Completed" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="value">{{ jobs_stats.failed }}</div>
+            <div class="label">{% trans "Failed" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-ban"></i></div>
+            <div class="value">{{ jobs_stats.cancelled }}</div>
+            <div class="label">{% trans "Cancelled" %}</div>
+        </div>
+    </div>
+
+
+    <!-- Service Health Status -->
+    <div class="service-status {% if not service_info.is_available %}offline{% elif service_info.degraded %}degraded{% else %}online{% endif %}">
+        {% if service_info.is_available %}
+            {% if not service_info.degraded %}
+                <h3><i class="fas fa-check-circle"></i> {% trans "Translation Service Healthy" %}</h3>
+                <p>{% trans "All translation providers are operational. Jobs are being processed normally." %}</p>
+                <div class="service-status-details">
+                    <span><i class="fas fa-server"></i> {% trans "Active Providers:" %} <strong>{{ service_info.active_providers }}</strong></span>
+                    <span><i class="fas fa-microchip"></i> {% trans "Models Loaded:" %} <strong>{{ service_info.loaded_models }}</strong></span>
+                    <span><i class="fas fa-tachometer-alt"></i> {% trans "Queue Depth:" %} <strong>{{ jobs_stats.pending }}</strong></span>
+                </div>
+            {% else %}
+                <h3><i class="fas fa-exclamation-triangle"></i> {% trans "Service Degraded" %}</h3>
+                <p>{% trans "The translation service is running with limited capacity. Some features may be unavailable." %}</p>
+                <div class="service-status-degraded-reason">
+                    <i class="fas fa-info-circle"></i> {{ service_info.degraded_reason|default:"Some providers are offline or experiencing issues." }}
+                </div>
+            {% endif %}
+        {% else %}
+            <h3><i class="fas fa-times-circle"></i> {% trans "Translation Service Offline" %}</h3>
+            <p>{% trans "The translation service is currently unavailable. Jobs cannot be processed at this time." %}</p>
+            <div class="service-status-offline-action">
+                <a href="{% url 'translations:dashboard' %}" class="button default">
+                    <i class="fas fa-tools"></i> {% trans "Go to Service Dashboard" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <button class="button default" data-action="open-create-job-modal">
+            <i class="fas fa-plus"></i> {% trans "Create Job" %}
+        </button>
+        <button class="button" data-action="refresh-job-list">
+            <i class="fas fa-sync"></i> {% trans "Refresh" %}
+        </button>
+        <button class="button" data-action="open-bulk-actions-menu" id="bulk-actions-btn" disabled>
+            <i class="fas fa-tasks"></i> {% trans "Bulk Actions" %}
+        </button>
+        <div class="action-bar-right">
+            <label class="action-bar-select-all">
+                <input type="checkbox" id="select-all" data-action="toggle-select-all">
+                {% trans "Select all" %}
+            </label>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="admin-tabs">
+        <button class="admin-tab-btn active" data-tab="all" data-action="switch-tab" data-tab="all">
+            <i class="fas fa-list"></i> {% trans "All Jobs" %}
+        </button>
+        <button class="admin-tab-btn" data-tab="queue" data-action="switch-tab" data-tab="queue">
+            <i class="fas fa-clock"></i> {% trans "Queue" %} <span class="tab-count" id="queue-count">{{ jobs_stats.pending }}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="processing" data-action="switch-tab" data-tab="processing">
+            <i class="fas fa-spinner"></i> {% trans "Processing" %} <span class="tab-count" id="processing-tab-count">{{ jobs_stats.processing }}</span>
+        </button>
+        <button class="admin-tab-btn" data-tab="completed" data-action="switch-tab" data-tab="completed">
+            <i class="fas fa-check-circle"></i> {% trans "Completed" %}
+        </button>
+        <button class="admin-tab-btn" data-tab="failed" data-action="switch-tab" data-tab="failed">
+            <i class="fas fa-exclamation-triangle"></i> {% trans "Failed" %} <span class="tab-count text-danger" id="failed-count">{{ jobs_stats.failed }}</span>
+        </button>
+    </div>
+
+    <!-- Jobs Card List -->
+    <div class="list-row-cards" id="jobs-container">
+        {% for job in recent_jobs %}
+        <div class="list-row-card" data-job-id="{{ job.id }}">
+            <div class="list-row-card-checkbox">
+                <input type="checkbox" class="job-select" value="{{ job.id }}" data-action="toggle-job-selection" data-job-id="{{ job.id }}">
+            </div>
+
+            <div class="list-row-card-icon">
+                {% if job.status == 'pending' %}
+                    <i class="fas fa-clock job-icon-pending"></i>
+                {% elif job.status == 'processing' %}
+                    <i class="fas fa-spinner fa-spin job-icon-processing"></i>
+                {% elif job.status == 'completed' %}
+                    <i class="fas fa-check-circle job-icon-completed"></i>
+                {% elif job.status == 'failed' %}
+                    <i class="fas fa-times-circle job-icon-failed"></i>
+                {% elif job.status == 'cancelled' %}
+                    <i class="fas fa-ban job-icon-cancelled"></i>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-content">
+                <h3 class="list-row-card-title">
+                    {{ job.get_job_type_display }} {% trans "Translation" %}
+                </h3>
+                <div class="list-row-card-badges">
+                    <span class="list-row-card-badge {% if job.status == 'completed' %}list-row-card-badge-success{% elif job.status == 'failed' %}list-row-card-badge-error{% elif job.status == 'processing' %}list-row-card-badge-primary{% elif job.status == 'pending' %}list-row-card-badge-warning{% endif %}">
+                        {{ job.get_status_display }}
+                    </span>
+                    {% if job.priority >= 10 %}
+                        <span class="list-row-card-badge list-row-card-badge-error">
+                            <i class="fas fa-arrow-up"></i> {% trans "High Priority" %}
+                        </span>
+                    {% endif %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-language"></i>
+                        {{ job.source_language }} <i class="fas fa-arrow-right"></i>
+                        {% for lang in job.target_languages %}{{ lang }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    </span>
+                </div>
+                <div class="list-row-card-meta">
+                    <div class="list-row-card-meta-item">
+                        <i class="fas fa-hashtag"></i>
+                        <span>#{{ job.id }}</span>
+                    </div>
+                    <div class="list-row-card-meta-item">
+                        <i class="fas fa-server"></i>
+                        <span>{% if job.provider %}{{ job.provider.name }}{% else %}{% trans "Auto" %}{% endif %}</span>
+                    </div>
+                    <div class="list-row-card-meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ job.created_at|timesince }} {% trans "ago" %}</span>
+                    </div>
+                    {% if job.created_by %}
+                    <div class="list-row-card-meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>{{ job.created_by.username }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Progress" %}</span>
+                    <div class="job-card-progress">
+                        <div class="job-card-progress-bar">
+                            <div class="job-card-progress-fill" data-width="{{ job.progress }}"></div>
+                        </div>
+                        <span class="job-card-progress-text">{{ job.progress }}%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-row-card-actions">
+                {% if job.status == 'pending' %}
+                    <button class="list-row-card-action" data-action="start-job" data-job-id="{{ job.id }}" title="{% trans 'Start' %}">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="list-row-card-action" data-action="cancel-job" data-job-id="{{ job.id }}" title="{% trans 'Cancel' %}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                {% elif job.status == 'processing' %}
+                    <button class="list-row-card-action" data-action="cancel-job" data-job-id="{{ job.id }}" title="{% trans 'Cancel' %}">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                {% elif job.status == 'failed' %}
+                    <button class="list-row-card-action" data-action="retry-job" data-job-id="{{ job.id }}" title="{% trans 'Retry' %}">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                {% endif %}
+                <button class="list-row-card-action" data-action="view-job-details" data-job-id="{{ job.id }}" title="{% trans 'Details' %}">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="list-row-card jobs-empty-state">
+            <div class="jobs-empty-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <p class="jobs-empty-text">{% trans "No translation jobs yet" %}</p>
+            <p class="jobs-empty-subtext">
+                {% trans "Create a job to start translating your content." %}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <span class="pagination-info">
+            {% trans "Showing" %} <span id="showing-start">1</span>-<span id="showing-end">10</span>
+            {% trans "of" %} <span id="total-jobs">{{ recent_jobs|length }}</span> {% trans "jobs" %}
+        </span>
+        <div class="pagination-controls">
+            <button class="util-btn" data-action="previous-page" id="prev-btn" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="page-info">
+                {% trans "Page" %} <span id="current-page">1</span> / <span id="total-pages">1</span>
+            </span>
+            <button class="util-btn" data-action="next-page" id="next-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Create Job Modal -->
+    <div id="create-job-modal" class="admin-modal-overlay">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h2 class="admin-modal-title">{% trans "Create Translation Job" %}</h2>
+                <button class="admin-modal-close" data-action="close-create-job-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="create-job-form" data-action="submit-create-job">
+                {% csrf_token %}
+                <div class="admin-modal-body">
+                    <div class="form-row">
+                        <label for="job-type" class="required">{% trans "Job Type" %}</label>
+                        <select id="job-type" name="job_type" class="form-control" required>
+                            <option value="product">{% trans "Product" %}</option>
+                            <option value="category">{% trans "Category" %}</option>
+                            <option value="page">{% trans "Page" %}</option>
+                            <option value="email">{% trans "Email Template" %}</option>
+                            <option value="bulk">{% trans "Bulk Translation" %}</option>
+                            <option value="custom">{% trans "Custom" %}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="source-lang" class="required">{% trans "Source Language" %}</label>
+                        <select id="source-lang" name="source_language" class="form-control" required>
+                            {% for lang in languages %}
+                                <option value="{{ lang.code }}" {% if lang.is_default %}selected{% endif %}>
+                                    {{ lang.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="target-langs" class="required">{% trans "Target Languages" %}</label>
+                        <div class="checkbox-list">
+                            {% for lang in languages %}
+                                {% if not lang.is_default %}
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="target_languages" value="{{ lang.code }}">
+                                    {{ lang.name }}
+                                </label>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="priority">{% trans "Priority" %}</label>
+                        <input type="range" id="priority" name="priority" min="0" max="10" value="5" class="priority-slider">
+                        <div class="priority-labels">
+                            <span>{% trans "Low" %}</span>
+                            <span id="priority-value">5</span>
+                            <span>{% trans "High" %}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="provider">{% trans "Translation Provider" %}</label>
+                        <select id="provider" name="provider_id" class="form-control">
+                            <option value="">{% trans "Auto-select" %}</option>
+                            {% for provider in providers %}
+                                <option value="{{ provider.id }}">{{ provider.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>
+                            <input type="checkbox" name="execute_now" checked>
+                            {% trans "Start processing immediately" %}
+                        </label>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="button" data-action="close-create-job-modal">
+                        {% trans "Cancel" %}
+                    </button>
+                    <button type="submit" class="button default">
+                        <i class="fas fa-plus"></i> {% trans "Create Job" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Job Details Modal -->
+    <div id="job-details-modal" class="admin-modal-overlay">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h2 class="admin-modal-title">{% trans "Job Details" %}</h2>
+                <button class="admin-modal-close" data-action="close-job-details-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal-body" id="job-details-content">
+                <!-- Content loaded via JavaScript -->
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="button" data-action="close-job-details-modal">
+                    {% trans "Close" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Menu -->
+    <div id="bulk-actions-menu" class="dropdown-menu" hidden>
+        <button class="dropdown-item" data-action="bulk-cancel">
+            <i class="fas fa-ban"></i> {% trans "Cancel Selected" %}
+        </button>
+        <button class="dropdown-item" data-action="bulk-retry">
+            <i class="fas fa-redo"></i> {% trans "Retry Failed" %}
+        </button>
+        <button class="dropdown-item" data-action="bulk-delete">
+            <i class="fas fa-trash"></i> {% trans "Delete Selected" %}
+        </button>
+    </div>
+</div>
+{% endblock %}

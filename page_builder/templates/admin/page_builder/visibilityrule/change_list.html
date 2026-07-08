@@ -1,0 +1,246 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Visibility Rules" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'page_builder/admin/css/pb-change-list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'page_builder/js/admin/rule-admin.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-filter"></i>
+                {% trans "Visibility Rules" %}
+            </h1>
+            <p class="subtitle">{% trans "Create conditions to control when page elements are shown or hidden" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'page_builder_admin:visibility_rule_wizard' %}" class="button change-list-action-button">
+                <i class="fas fa-magic"></i> {% trans "Create Rule" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or description...' %}"
+                    value="">
+            </div>
+
+            <!-- Rule Category -->
+            <div class="filter-field">
+                <label for="filter-category">
+                    <i class="fas fa-tags"></i> {% trans "Category" %}
+                </label>
+                <select id="filter-category">
+                    <option value="">{% trans "All Categories" %}</option>
+                    <option value="geo">{% trans "Geographic" %}</option>
+                    <option value="user">{% trans "User & Authentication" %}</option>
+                    <option value="device">{% trans "Device & Technical" %}</option>
+                    <option value="time">{% trans "Time-Based" %}</option>
+                    <option value="behavioral">{% trans "Behavioral" %}</option>
+                    <option value="ecommerce">{% trans "E-commerce" %}</option>
+                    <option value="language">{% trans "Language & Localization" %}</option>
+                </select>
+            </div>
+
+            <!-- Rule Type -->
+            <div class="filter-field">
+                <label for="filter-rule-type">
+                    <i class="fas fa-cog"></i> {% trans "Rule Type" %}
+                </label>
+                <select id="filter-rule-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <optgroup label="{% trans 'Geographic' %}">
+                        <option value="geo_country">{% trans "Country" %}</option>
+                        <option value="geo_region">{% trans "Region/State" %}</option>
+                        <option value="geo_city">{% trans "City" %}</option>
+                        <option value="geo_timezone">{% trans "Time Zone" %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans 'User & Authentication' %}">
+                        <option value="user_logged_in">{% trans "Logged In Status" %}</option>
+                        <option value="user_group">{% trans "User Group" %}</option>
+                        <option value="user_segment">{% trans "Customer Segment" %}</option>
+                        <option value="user_lifetime_value">{% trans "Customer Lifetime Value" %}</option>
+                        <option value="user_order_count">{% trans "Order Count" %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans 'Device & Technical' %}">
+                        <option value="device_type">{% trans "Device Type" %}</option>
+                        <option value="browser">{% trans "Browser" %}</option>
+                        <option value="operating_system">{% trans "Operating System" %}</option>
+                        <option value="screen_size">{% trans "Screen Size" %}</option>
+                        <option value="connection_speed">{% trans "Connection Speed" %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans 'Time-Based' %}">
+                        <option value="date_range">{% trans "Date Range" %}</option>
+                        <option value="time_range">{% trans "Time of Day" %}</option>
+                        <option value="day_of_week">{% trans "Day of Week" %}</option>
+                        <option value="business_hours">{% trans "Business Hours" %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans 'Behavioral' %}">
+                        <option value="first_visit">{% trans "First Time Visitor" %}</option>
+                        <option value="visit_count">{% trans "Visit Count" %}</option>
+                        <option value="page_views">{% trans "Page Views in Session" %}</option>
+                        <option value="time_on_site">{% trans "Time on Site" %}</option>
+                        <option value="referrer">{% trans "Referrer Source" %}</option>
+                        <option value="utm_campaign">{% trans "UTM Campaign" %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans 'E-commerce' %}">
+                        <option value="cart_value">{% trans "Cart Value" %}</option>
+                        <option value="cart_items">{% trans "Cart Item Count" %}</option>
+                        <option value="has_purchased">{% trans "Has Purchased Before" %}</option>
+                        <option value="abandoned_cart">{% trans "Has Abandoned Cart" %}</option>
+                        <option value="wishlist_items">{% trans "Has Wishlist Items" %}</option>
+                    </optgroup>
+                    <optgroup label="{% trans 'Language & Localization' %}">
+                        <option value="browser_language">{% trans "Browser Language" %}</option>
+                        <option value="selected_language">{% trans "Selected Language" %}</option>
+                        <option value="selected_currency">{% trans "Selected Currency" %}</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Operator -->
+            <div class="filter-field">
+                <label for="filter-operator">
+                    <i class="fas fa-equals"></i> {% trans "Operator" %}
+                </label>
+                <select id="filter-operator">
+                    <option value="">{% trans "All Operators" %}</option>
+                    <option value="equals">{% trans "Equals" %}</option>
+                    <option value="not_equals">{% trans "Not Equals" %}</option>
+                    <option value="contains">{% trans "Contains" %}</option>
+                    <option value="not_contains">{% trans "Does Not Contain" %}</option>
+                    <option value="greater_than">{% trans "Greater Than" %}</option>
+                    <option value="less_than">{% trans "Less Than" %}</option>
+                    <option value="in_list">{% trans "In List" %}</option>
+                    <option value="not_in_list">{% trans "Not In List" %}</option>
+                    <option value="is_true">{% trans "Is True" %}</option>
+                    <option value="is_false">{% trans "Is False" %}</option>
+                    <option value="between">{% trans "Between" %}</option>
+                    <option value="regex">{% trans "Matches Regex" %}</option>
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- Priority -->
+            <div class="filter-field">
+                <label for="filter-priority">
+                    <i class="fas fa-sort-numeric-up"></i> {% trans "Priority" %}
+                </label>
+                <select id="filter-priority">
+                    <option value="">{% trans "All Priorities" %}</option>
+                    <option value="high">{% trans "High (1-3)" %}</option>
+                    <option value="medium">{% trans "Medium (4-7)" %}</option>
+                    <option value="low">{% trans "Low (8-10)" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form-rule" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Rules" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-filter"></i>
+            <span id="rule-count">{{ cl.result_count }}</span> {% trans "rule" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container (will be loaded via AJAX) -->
+    <div id="rule-results">
+        {% include "admin/page_builder/visibilityrule/partials/rule_cards.html" with rules=cl.result_list %}
+    </div>
+
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 rule{% plural %}{{ counter }} rules{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'rules' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+
+        {% if cl.formset and cl.result_count %}
+            <input type="submit" name="_save" class="default" value="{% trans 'Save' %}">
+        {% endif %}
+    </p>
+    {% endif %}
+
+    <div id="list-filter-config"
+     data-filter-url="{% url "page_builder_admin:filter_visibility_rules" %}"
+     data-results-container="rule-results"
+     data-results-count="rule-count"
+     style="display:none;"></div>
+</div>
+{% endblock %}

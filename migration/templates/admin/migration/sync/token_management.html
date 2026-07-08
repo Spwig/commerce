@@ -1,0 +1,113 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Sync Token Management" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'migration/css/sync-wizard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'migration/js/token-management.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <div class="wizard-header">
+        <a href="{% url 'admin:migration_syncjob_changelist' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Sync Dashboard" %}
+        </a>
+        <h1>
+            <div class="migration-icon-large themed">
+                <i class="fas fa-key"></i>
+            </div>
+            {% trans "Sync Token Management" %}
+        </h1>
+    </div>
+
+    <div class="wizard-content">
+        <div class="content-box">
+            <h3><i class="fas fa-info-circle"></i> {% trans "About Sync Tokens" %}</h3>
+            <p>{% trans "Sync tokens allow other Spwig instances to connect to this installation. Generate a token here and provide it to the remote instance." %}</p>
+            <div class="info-box">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <strong>{% trans "Security" %}</strong>
+                    <p>{% trans "Tokens grant read and write access to settings data. Only share them with trusted administrators. Revoke tokens immediately if compromised." %}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-box">
+            <h3><i class="fas fa-plus-circle"></i> {% trans "Generate New Token" %}</h3>
+            <form method="post" class="token-generate-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="generate">
+                <div class="form-group">
+                    <label for="token-name">{% trans "Token Name" %}</label>
+                    <input type="text" name="name" id="token-name" class="form-control"
+                           placeholder="{% trans 'e.g., Staging Server Token' %}" value="Sync Token">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-key"></i>
+                    {% trans "Generate Token" %}
+                </button>
+            </form>
+        </div>
+
+        <div class="content-box">
+            <h3><i class="fas fa-list"></i> {% trans "Active Tokens" %}</h3>
+            {% if tokens %}
+            <div class="token-cards">
+                {% for token in tokens %}
+                <div class="token-card">
+                    <div class="token-card-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="token-card-content">
+                        <div class="token-card-name">{{ token.name }}</div>
+                        <div class="token-card-preview">{{ token.token|truncatechars:16 }}</div>
+                        <div class="token-card-meta">
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                {% trans "Created" %} {{ token.created_at|date:"M d, Y" }}
+                            </span>
+                            <span>
+                                <i class="fas fa-clock"></i>
+                                {% if token.last_used_at %}
+                                    {% trans "Last used" %} {{ token.last_used_at|date:"M d, Y" }}
+                                {% else %}
+                                    {% trans "Never used" %}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="token-card-actions">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="revoke">
+                            <input type="hidden" name="token_id" value="{{ token.pk }}">
+                            <button type="button" class="token-revoke-btn"
+                                    data-action="revoke-token"
+                                    data-token-name="{{ token.name }}">
+                                <i class="fas fa-ban"></i> {% trans "Revoke" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-key"></i>
+                <h3>{% trans "No Active Tokens" %}</h3>
+                <p>{% trans "Generate a token to allow remote Spwig instances to connect." %}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

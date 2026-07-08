@@ -1,0 +1,159 @@
+{% load i18n static merchant_trans %}
+{% if cookie_consent_ctx.enabled %}
+<div id="cookie-banner"
+     class="cookie-banner cookie-banner--{{ cookie_consent_ctx.position }}"
+     data-cookie-consent-mode="{{ cookie_consent_ctx.mode }}"
+     data-cookie-consent-url="{% url 'cookie_consent' %}"
+     aria-live="polite"
+     aria-label="{% mtrans 'Cookie consent' %}"
+     role="dialog">
+
+    <div class="cookie-banner__inner">
+        <div class="cookie-banner__content">
+            <h2 class="cookie-banner__title">
+                {% if cookie_consent_ctx.title %}
+                    {{ cookie_consent_ctx.title }}
+                {% else %}
+                    {% mtrans 'We use cookies' %}
+                {% endif %}
+            </h2>
+            <p class="cookie-banner__text">
+                {% if cookie_consent_ctx.text %}
+                    {{ cookie_consent_ctx.text }}
+                {% else %}
+                    {% mtrans 'We use cookies to improve your experience, analyse site traffic and personalise content.' %}
+                {% endif %}
+                {% if cookie_consent_ctx.policy_url %}
+                <a href="{{ cookie_consent_ctx.policy_url }}"
+                   class="cookie-banner__link">
+                    {% mtrans 'Cookie Policy' %}
+                </a>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="cookie-banner__actions">
+            {% if cookie_consent_ctx.mode == 'granular' %}
+            <button type="button" class="cookie-banner__btn cookie-banner__btn--manage"
+                    data-cookie-action="manage">
+                {% mtrans 'Manage Preferences' %}
+            </button>
+            {% endif %}
+            <button type="button" class="cookie-banner__btn cookie-banner__btn--reject"
+                    data-cookie-action="reject">
+                {% mtrans 'Reject All' %}
+            </button>
+            <button type="button" class="cookie-banner__btn cookie-banner__btn--accept"
+                    data-cookie-action="accept">
+                {% mtrans 'Accept All' %}
+            </button>
+        </div>
+    </div>
+
+    {% if cookie_consent_ctx.mode == 'granular' %}
+    <div class="cookie-prefs-modal" id="cookie-prefs-modal"
+         role="dialog" aria-modal="true"
+         aria-label="{% mtrans 'Cookie Preferences' %}">
+        <div class="cookie-prefs-modal__backdrop" data-cookie-action="close-modal"></div>
+        <div class="cookie-prefs-modal__panel">
+            <div class="cookie-prefs-modal__header">
+                <h3>{% mtrans 'Cookie Preferences' %}</h3>
+                <button type="button" class="cookie-prefs-modal__close"
+                        data-cookie-action="close-modal"
+                        aria-label="{% mtrans 'Close' %}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="cookie-prefs-modal__body">
+
+                <div class="cookie-category">
+                    <div class="cookie-category__header">
+                        <span class="cookie-category__name">{% mtrans 'Necessary' %}</span>
+                        <span class="cookie-category__badge">{% mtrans 'Always On' %}</span>
+                    </div>
+                    <p class="cookie-category__desc">
+                        {% mtrans 'Required for the site to function correctly. Cannot be disabled.' %}
+                    </p>
+                </div>
+
+                <div class="cookie-category">
+                    <div class="cookie-category__header">
+                        <label class="cookie-category__toggle">
+                            <input type="checkbox" id="consent-analytics"
+                                   name="analytics"
+                                   class="cookie-category__checkbox">
+                            <span class="cookie-category__slider"></span>
+                        </label>
+                        <label class="cookie-category__name"
+                               for="consent-analytics">{% mtrans 'Analytics' %}</label>
+                    </div>
+                    <p class="cookie-category__desc">
+                        {% if cookie_consent_ctx.analytics_desc %}
+                            {{ cookie_consent_ctx.analytics_desc }}
+                        {% else %}
+                            {% mtrans 'Help us understand how visitors use our site to improve the experience.' %}
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="cookie-category">
+                    <div class="cookie-category__header">
+                        <label class="cookie-category__toggle">
+                            <input type="checkbox" id="consent-marketing"
+                                   name="marketing"
+                                   class="cookie-category__checkbox">
+                            <span class="cookie-category__slider"></span>
+                        </label>
+                        <label class="cookie-category__name"
+                               for="consent-marketing">{% mtrans 'Marketing' %}</label>
+                    </div>
+                    <p class="cookie-category__desc">
+                        {% if cookie_consent_ctx.marketing_desc %}
+                            {{ cookie_consent_ctx.marketing_desc }}
+                        {% else %}
+                            {% mtrans 'Used to show you relevant advertisements on other websites.' %}
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="cookie-category">
+                    <div class="cookie-category__header">
+                        <label class="cookie-category__toggle">
+                            <input type="checkbox" id="consent-functional"
+                                   name="functional"
+                                   class="cookie-category__checkbox">
+                            <span class="cookie-category__slider"></span>
+                        </label>
+                        <label class="cookie-category__name"
+                               for="consent-functional">{% mtrans 'Functional' %}</label>
+                    </div>
+                    <p class="cookie-category__desc">
+                        {% if cookie_consent_ctx.functional_desc %}
+                            {{ cookie_consent_ctx.functional_desc }}
+                        {% else %}
+                            {% mtrans 'Enable enhanced features like live chat and saved preferences.' %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="cookie-prefs-modal__footer">
+                <button type="button" class="cookie-banner__btn cookie-banner__btn--reject"
+                        data-cookie-action="reject">
+                    {% mtrans 'Reject All' %}
+                </button>
+                <button type="button" class="cookie-banner__btn cookie-banner__btn--save"
+                        data-cookie-action="save-prefs">
+                    {% mtrans 'Save Preferences' %}
+                </button>
+                <button type="button" class="cookie-banner__btn cookie-banner__btn--accept"
+                        data-cookie-action="accept">
+                    {% mtrans 'Accept All' %}
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endif %}

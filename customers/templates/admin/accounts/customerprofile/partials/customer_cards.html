@@ -1,0 +1,226 @@
+{% load i18n static currency_tags %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for profile in customers %}
+    {% with user=profile.user %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ profile.pk }}">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if user.is_staff %}
+                <i class="fas fa-user-shield text-primary"></i>
+            {% else %}
+                <i class="fas fa-user-circle"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:accounts_customerprofile_change' profile.pk %}">
+                    {% if user.get_full_name %}
+                        {{ user.get_full_name }}
+                    {% else %}
+                        {{ user.username }}
+                    {% endif %}
+                </a>
+            </h3>
+
+            <div class="list-row-card-subtitle">
+                <i class="fas fa-user"></i> {{ user.username }}
+                {% if user.email %}
+                    <span class="ml-15">
+                        <i class="fas fa-envelope"></i> {{ user.email }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-badges">
+                <!-- Staff Badge -->
+                {% if user.is_staff %}
+                <span class="badge badge-success">
+                    <i class="fas fa-user-shield"></i> {% trans "Staff" %}
+                </span>
+                {% endif %}
+
+                <!-- Affiliate Badge -->
+                {% if profile.user.affiliate_set.exists %}
+                {% with affiliate=profile.user.affiliate_set.first %}
+                <span class="badge badge-primary">
+                    <i class="fas fa-handshake"></i> {% trans "Affiliate" %}
+                    {% if affiliate.status == 'active' %}
+                        ({% trans "Active" %})
+                    {% elif affiliate.status == 'pending' %}
+                        ({% trans "Pending" %})
+                    {% elif affiliate.status == 'suspended' %}
+                        ({% trans "Suspended" %})
+                    {% endif %}
+                </span>
+                {% endwith %}
+                {% endif %}
+
+                <!-- Loyalty Member Badge -->
+                {% if user.loyalty_member.is_active|default:False %}
+                <span class="badge badge-info">
+                    <i class="fas fa-star"></i> {% trans "Loyalty Member" %}
+                    {% if user.loyalty_member.current_tier %}
+                        ({{ user.loyalty_member.current_tier.name }})
+                    {% endif %}
+                </span>
+                {% endif %}
+
+                <!-- VIP Badge -->
+                {% if profile.is_vip_customer %}
+                <span class="badge badge-warning">
+                    <i class="fas fa-crown"></i> {% trans "VIP" %}
+                </span>
+                {% endif %}
+
+                <!-- At Risk Badge -->
+                {% if profile.is_at_risk %}
+                <span class="badge badge-danger">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans "At Risk" %}
+                </span>
+                {% endif %}
+
+                <!-- Social Sharing Badge -->
+                {% with social_shares=profile.user.social_shares.count %}
+                {% if social_shares > 0 %}
+                <span class="badge badge-info">
+                    <i class="fas fa-share-alt"></i> {{ social_shares }} {% trans "share" %}{{ social_shares|pluralize }}
+                </span>
+                {% endif %}
+                {% endwith %}
+
+                <!-- Marketing Emails Badge -->
+                {% with comm_prefs=profile.user.communication_preferences %}
+                {% if comm_prefs and comm_prefs.email_marketing %}
+                <span class="badge badge-secondary">
+                    <i class="fas fa-envelope-open-text"></i> {% trans "Marketing" %}
+                </span>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <!-- Total Orders -->
+                <div class="stat-item">
+                    <div class="stat-label">{% trans "Total Orders" %}</div>
+                    <div class="stat-value">
+                        <i class="fas fa-shopping-bag"></i>
+                        {{ profile.total_orders }}
+                    </div>
+                </div>
+
+                <!-- Total Spent -->
+                <div class="stat-item">
+                    <div class="stat-label">{% trans "Total Spent" %}</div>
+                    <div class="stat-value">
+                        <i class="fas fa-dollar-sign"></i>
+                        {{ profile.total_spent }}
+                    </div>
+                </div>
+
+                <!-- Total Products Purchased -->
+                {% with total_products=profile.user.order_items.count %}
+                <div class="stat-item">
+                    <div class="stat-label">{% trans "Products Purchased" %}</div>
+                    <div class="stat-value">
+                        <i class="fas fa-box"></i>
+                        {{ total_products }}
+                    </div>
+                </div>
+                {% endwith %}
+
+                <!-- Average Order Value -->
+                <div class="stat-item">
+                    <div class="stat-label">{% trans "Avg Order Value" %}</div>
+                    <div class="stat-value">
+                        <i class="fas fa-chart-line"></i>
+                        {% if profile.average_order_value %}
+                            {{ profile.average_order_value|format_currency:site_settings.default_currency }}
+                        {% else %}
+                            {{ 0|format_currency:site_settings.default_currency }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span class="meta-label">{% trans "Registered" %}:</span>
+                    {{ profile.created_at|date:"SHORT_DATE_FORMAT" }}
+                </div>
+
+                {% if profile.days_since_last_order %}
+                <div class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span class="meta-label">{% trans "Last Order" %}:</span>
+                    {% blocktrans count days=profile.days_since_last_order %}
+                        {{ days }} day ago
+                    {% plural %}
+                        {{ days }} days ago
+                    {% endblocktrans %}
+                </div>
+                {% else %}
+                <div class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span class="meta-label">{% trans "Last Order" %}:</span>
+                    {% trans "No orders yet" %}
+                </div>
+                {% endif %}
+
+                {% if profile.customer_segment %}
+                <div class="meta-item">
+                    <i class="fas fa-users"></i>
+                    <span class="meta-label">{% trans "Segment" %}:</span>
+                    {{ profile.customer_segment.name }}
+                </div>
+                {% endif %}
+
+                {% if profile.wishlist_items_count > 0 %}
+                <div class="meta-item">
+                    <i class="fas fa-heart"></i>
+                    <span class="meta-label">{% trans "Wishlist" %}:</span>
+                    {{ profile.wishlist_items_count }} {% trans "item" %}{{ profile.wishlist_items_count|pluralize }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:accounts_customerprofile_change' profile.pk %}"
+               class="button small"
+               title="{% trans 'View customer profile' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+
+            <a href="{% url 'admin:accounts_customerprofile_change' profile.pk %}"
+               class="button small primary"
+               title="{% trans 'Edit customer profile' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% if user.orders.exists %}
+            <a href="{% url 'admin:orders_order_changelist' %}?user={{ user.id }}"
+               class="button small secondary"
+               title="{% trans 'View customer orders' %}">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endwith %}
+    {% empty %}
+    <div class="list-row-empty">
+        <div class="empty-state">
+            <i class="fas fa-users fa-3x"></i>
+            <h3>{% trans "No customers found" %}</h3>
+            <p>{% trans "Try adjusting your filters or search criteria." %}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>

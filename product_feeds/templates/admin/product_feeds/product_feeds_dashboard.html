@@ -1,0 +1,286 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Product Feeds Dashboard" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'product_feeds/admin/css/product_feeds_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header with Stats -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-rss"></i>
+            {% trans "Product Feeds Dashboard" %}
+        </h1>
+        <p class="subtitle">
+            {% trans "Manage your product feed connections to shopping platforms and marketplaces" %}
+        </p>
+    </div>
+
+    <!-- KPI Statistics Cards -->
+    <div class="dashboard-stats-grid">
+        <!-- Total Feed Accounts -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-plug"></i></div>
+            <div class="value">{{ total_accounts|default:0 }}</div>
+            <div class="label">{% trans "Total Feeds" %}</div>
+        </div>
+
+        <!-- Active Feeds -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <div class="value">{{ active_accounts|default:0 }}</div>
+            <div class="label">{% trans "Active Feeds" %}</div>
+        </div>
+
+        <!-- Products in Feeds -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-box"></i></div>
+            <div class="value">{{ total_products|default:0 }}</div>
+            <div class="label">{% trans "Products in Feeds" %}</div>
+        </div>
+
+        <!-- Feeds with Errors -->
+        <div class="dashboard-stat-card {% if accounts_with_errors > 0 %}stat-warning{% endif %}">
+            <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="value">{{ accounts_with_errors|default:0 }}</div>
+            <div class="label">{% trans "Feeds with Errors" %}</div>
+        </div>
+
+        <!-- Successful Syncs (24h) -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-sync-alt"></i></div>
+            <div class="value">{{ successful_syncs_24h|default:0 }}</div>
+            <div class="label">{% trans "Syncs (24h)" %}</div>
+        </div>
+
+        <!-- Products Synced (24h) -->
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div class="value">{{ products_synced_24h|default:0 }}</div>
+            <div class="label">{% trans "Products Synced (24h)" %}</div>
+        </div>
+
+        <!-- Due for Sync -->
+        <div class="dashboard-stat-card {% if due_for_sync > 0 %}stat-info{% endif %}">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">{{ due_for_sync|default:0 }}</div>
+            <div class="label">{% trans "Due for Sync" %}</div>
+        </div>
+
+        <!-- Currently Syncing -->
+        <div class="dashboard-stat-card {% if syncing_accounts > 0 %}stat-active{% endif %}">
+            <div class="icon"><i class="fas fa-spinner"></i></div>
+            <div class="value">{{ syncing_accounts|default:0 }}</div>
+            <div class="label">{% trans "Currently Syncing" %}</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area -->
+    <div class="dashboard-content">
+
+        <!-- Quick Actions -->
+        <div class="dashboard-actions-section">
+            <h2 class="dashboard-section-title">
+                <i class="fas fa-bolt"></i>
+                {% trans "Quick Actions" %}
+            </h2>
+            <div class="dashboard-actions-grid">
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h3>{% trans "Add Provider" %}</h3>
+                    <p class="description">{% trans "Connect a new feed provider" %}</p>
+                    <a href="{% url 'product_feeds:wizard_step1' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Add" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3>{% trans "Feed Accounts" %}</h3>
+                    <p class="description">{% trans "Manage your feed accounts" %}</p>
+                    <a href="{% url 'admin:product_feeds_feedprovideraccount_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>{% trans "Browse Providers" %}</h3>
+                    <p class="description">{% trans "Explore available providers" %}</p>
+                    <a href="{% url 'product_feeds:provider_browse' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "Browse" %}
+                    </a>
+                </div>
+
+                <div class="dashboard-action-card">
+                    <div class="card-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>{% trans "Sync Logs" %}</h3>
+                    <p class="description">{% trans "View sync history" %}</p>
+                    <a href="{% url 'admin:product_feeds_feedsynclog_changelist' %}" class="button">
+                        <i class="fas fa-arrow-right"></i> {% trans "View" %}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Tables Grid -->
+        <div class="tables-grid">
+            <!-- Attention Needed Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {% trans "Attention Needed" %}
+                </h2>
+                {% if attention_needed %}
+                <div class="table-responsive">
+                    <table class="loyalty-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Feed" %}</th>
+                                <th>{% trans "Provider" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Issue" %}</th>
+                                <th>{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for account in attention_needed %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'admin:product_feeds_feedprovideraccount_change' account.id %}" class="member-link">
+                                        {{ account.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="provider-badge">{{ account.component.name }}</span>
+                                </td>
+                                <td>
+                                    {% if account.sync_status == 'error' %}
+                                        <span class="status-badge status-error">{% trans "Error" %}</span>
+                                    {% elif not account.last_sync_at %}
+                                        <span class="status-badge status-warning">{% trans "Never Synced" %}</span>
+                                    {% else %}
+                                        <span class="status-badge status-pending">{% trans "Pending" %}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if account.sync_status == 'error' %}
+                                        <span class="error-text">{{ account.sync_error_message|truncatewords:10 }}</span>
+                                    {% elif not account.last_sync_at %}
+                                        <span class="warning-text">{% trans "Needs initial sync" %}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn-sync btn-small" data-account-id="{{ account.id }}" title="{% trans 'Sync Now' %}">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-data-box">
+                    <i class="fas fa-check-circle"></i>
+                    <p>{% trans "All feeds are healthy!" %}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="section">
+                <h2 class="dashboard-section-title">
+                    <i class="fas fa-history"></i>
+                    {% trans "Recent Sync Activity" %}
+                </h2>
+                {% if recent_syncs %}
+                <div class="table-responsive">
+                    <table class="loyalty-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Time" %}</th>
+                                <th>{% trans "Feed" %}</th>
+                                <th>{% trans "Status" %}</th>
+                                <th>{% trans "Products" %}</th>
+                                <th>{% trans "Duration" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sync in recent_syncs %}
+                            <tr>
+                                <td>{{ sync.started_at|date:"M d, H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'admin:product_feeds_feedprovideraccount_change' sync.account.id %}" class="member-link">
+                                        {{ sync.account.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if sync.status == 'success' %}
+                                        <span class="status-badge status-success">{% trans "Success" %}</span>
+                                    {% elif sync.status == 'failed' %}
+                                        <span class="status-badge status-error">{% trans "Failed" %}</span>
+                                    {% elif sync.status == 'partial' %}
+                                        <span class="status-badge status-warning">{% trans "Partial" %}</span>
+                                    {% elif sync.status == 'running' %}
+                                        <span class="status-badge status-active">{% trans "Running" %}</span>
+                                    {% else %}
+                                        <span class="status-badge status-pending">{% trans "Pending" %}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if sync.status == 'success' or sync.status == 'partial' %}
+                                        <strong>{{ sync.products_synced }}</strong>
+                                        {% if sync.products_failed > 0 %}
+                                            <span class="text-muted">({{ sync.products_failed }} {% trans "failed" %})</span>
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if sync.duration_seconds %}
+                                        {{ sync.duration_seconds }}s
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="view-all-button">
+                    <a href="{% url 'admin:product_feeds_feedsynclog_changelist' %}" class="btn">
+                        <i class="fas fa-list"></i> {% trans "View All Logs" %}
+                    </a>
+                </div>
+                {% else %}
+                <div class="no-data-box">
+                    <i class="fas fa-inbox"></i>
+                    <p>{% trans "No sync activity yet" %}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="{% static 'product_feeds/js/product_feeds_dashboard.js' %}"></script>
+{% endblock %}

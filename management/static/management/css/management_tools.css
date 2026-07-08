@@ -1,0 +1,110 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Management Tools Styling */
+.management-tools-section {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.management-tools-title {
+    margin-top: 0;
+    color: var(--link-fg);
+    border-bottom: 2px solid var(--link-fg);
+    padding-bottom: 5px;
+}
+
+.management-tools-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.management-tool-btn {
+    background: var(--primary) !important;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 5px 0;
+    transition: all 0.2s ease;
+}
+
+.management-tool-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    color: white !important;
+    text-decoration: none;
+}
+
+.management-tools-descriptions {
+    margin-top: 10px;
+}
+
+.management-tool-desc {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin: 2px 0;
+}
+
+/* Hidden utility - used for config divs and conditional visibility */
+.mgmt-hidden {
+    display: none !important;
+}
+
+/* Level badge for admin list display (format_html) */
+.mgmt-level-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.mgmt-level-badge-DEBUG {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+}
+
+.mgmt-level-badge-INFO {
+    background: rgba(23, 162, 184, 0.15);
+    color: #17a2b8;
+}
+
+.mgmt-level-badge-WARNING {
+    background: rgba(255, 193, 7, 0.15);
+    color: #856404;
+}
+
+.mgmt-level-badge-ERROR {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+}
+
+.mgmt-level-badge-CRITICAL {
+    background: rgba(114, 28, 36, 0.2);
+    color: #721c24;
+}
+
+/* Code preview for admin list display (format_html) */
+.mgmt-code-preview {
+    background: var(--darkened-bg, #f8f8f8);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+/* Code message preview for admin list display (format_html) */
+.mgmt-code-message {
+    font-size: 12px;
+    font-family: monospace;
+}

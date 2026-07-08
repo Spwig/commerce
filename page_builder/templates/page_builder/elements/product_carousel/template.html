@@ -1,0 +1,124 @@
+{% load i18n element_tags merchant_trans %}
+{% mtrans "Add to Cart" as default_add_to_cart %}
+<!-- Product Carousel Element -->
+<section class="product-carousel section" {% hover_animation_attrs element %} style="{% base_styles element %}" data-product-carousel data-added-text="{% mtrans 'Added!' %}">
+    <div class="container">
+        {% if element.content.title or element.content.subtitle %}
+        <div class="section-header text-center mb-12">
+            {% if element.content.title %}
+            <h2 class="section-header__title">{{ element.content.title }}</h2>
+            {% endif %}
+            {% if element.content.subtitle %}
+            <p class="section-header__subtitle">{{ element.content.subtitle }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if element.content.products %}
+        <div class="carousel-container">
+            <div class="carousel product-carousel__carousel"
+                 data-products-per-view="{{ element.content.products_per_view|default:4 }}"
+                 data-auto-play="{{ element.content.auto_play|yesno:'true,false' }}"
+                 data-play-interval="{{ element.content.play_interval|default:4 }}"
+                 data-infinite="{{ element.content.infinite_loop|yesno:'true,false' }}">
+
+                <div class="carousel__track">
+                    {% for product in element.content.products %}
+                    <div class="carousel__slide product-carousel__slide">
+                        <div class="product-card">
+                            <!-- Product Badge -->
+                            {% if element.content.show_badges and product.badge %}
+                            <div class="product-card__badge">
+                                <span class="badge badge--sale">{{ product.badge }}</span>
+                            </div>
+                            {% endif %}
+
+                            <!-- Product Image -->
+                            <div class="product-card__image">
+                                <img src="{{ product.image }}"
+                                     alt="{{ product.name }}"
+                                     class="product-card__img">
+
+                                <!-- Hover Overlay -->
+                                <div class="product-card__overlay">
+                                    <a href="{{ product.link|default:'#' }}" class="btn btn--secondary btn--sm">
+                                        {% mtrans "View Details" %}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Product Info -->
+                            <div class="product-card__content">
+                                <h3 class="product-card__title line-clamp-2">
+                                    <a href="{{ product.link|default:'#' }}" class="product-card__link">
+                                        {{ product.name }}
+                                    </a>
+                                </h3>
+
+                                {% if element.content.show_description and product.description %}
+                                <p class="product-card__description line-clamp-2">{{ product.description }}</p>
+                                {% endif %}
+
+                                {% if element.content.show_rating and product.rating %}
+                                <div class="rating mb-2">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= product.rating %}
+                                            <i class="fas fa-star rating__star rating__star--filled"></i>
+                                        {% else %}
+                                            <i class="far fa-star rating__star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span class="rating__count">({{ product.rating }})</span>
+                                </div>
+                                {% endif %}
+
+                                <!-- Price -->
+                                <div class="product-card__price-row">
+                                    <div class="product-card__price">
+                                        <span class="product-card__price-current">{{ product.price }}</span>
+                                        {% if product.original_price %}
+                                        <span class="product-card__price-original">{{ product.original_price }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Add to Cart Button -->
+                                <button class="btn btn--primary btn--full add-to-cart-btn"
+                                        data-sku="{{ product.sku }}"
+                                        data-name="{{ product.name }}"
+                                        data-price="{{ product.price }}">
+                                    {{ element.content.button_text|default:default_add_to_cart }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Navigation Arrows -->
+            {% if element.content.show_arrows %}
+            <button class="carousel__control carousel__prev" aria-label="{% mtrans 'Previous' %}">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel__control carousel__next" aria-label="{% mtrans 'Next' %}">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- Pagination Dots -->
+        {% if element.content.show_dots %}
+        <div class="carousel__indicators carousel__indicators--bottom">
+            <!-- Dots will be generated by JavaScript -->
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-shopping-cart empty-state__icon"></i>
+            <p class="empty-state__text">{% mtrans "Add products to display in the carousel" %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>

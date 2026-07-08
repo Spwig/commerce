@@ -1,0 +1,172 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "API Tokens" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/apitoken_changelist.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-key"></i>
+            {% trans "API Tokens" %}
+        </h1>
+        <p class="subtitle">{% trans "Manage API tokens for external integrations and services" %}</p>
+    </div>
+
+    <!-- Stats Dashboard -->
+    {% if token_stats %}
+    <div class="dashboard-card">
+        <h3><i class="fas fa-chart-bar"></i> {% trans "Overview" %}</h3>
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-key"></i></div>
+                <div class="value">{{ token_stats.total|default:"0" }}</div>
+                <div class="label">{% trans "Total Tokens" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="value">{{ token_stats.active|default:"0" }}</div>
+                <div class="label">{% trans "Active Tokens" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-question-circle"></i></div>
+                <div class="value">{{ token_stats.help_system|default:"0" }}</div>
+                <div class="label">{% trans "Help System" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-plug"></i></div>
+                <div class="value">{{ token_stats.integration|default:"0" }}</div>
+                <div class="label">{% trans "Integration" %}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Help Text -->
+    {% if help_text %}
+    <div class="dashboard-card apitoken-help-card">
+        <p class="apitoken-help-text">
+            <i class="fas fa-info-circle apitoken-help-icon"></i>
+            {{ help_text }}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Add Token Button -->
+    {% if has_add_permission %}
+    <div class="apitoken-add-wrapper">
+        <a href="{% url 'admin:core_apitoken_add' %}" class="button default">
+            <i class="fas fa-plus"></i> {% trans "Add Token" %}
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Actions bar for bulk operations -->
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form id="changelist-form" method="post">
+        {% csrf_token %}
+        <div class="actions">
+            {{ action_form.action }}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="0">{% trans "Go" %}</button>
+            {% if actions_selection_counter %}
+            <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">0 {% trans "of" %} {{ cl.result_list|length }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Token Cards -->
+    <div class="list-row-cards">
+        {% for token in cl.result_list %}
+        <div class="list-row-card">
+            {% if action_form %}
+            <div class="list-row-card-checkbox">
+                <input type="checkbox" name="_selected_action" value="{{ token.pk }}" class="action-select">
+            </div>
+            {% endif %}
+            <div class="list-row-card-icon">
+                {% if token.token_type == 'help_system' %}
+                <i class="fas fa-question-circle"></i>
+                {% elif token.token_type == 'integration' %}
+                <i class="fas fa-plug"></i>
+                {% elif token.token_type == 'webhook' %}
+                <i class="fas fa-broadcast-tower"></i>
+                {% else %}
+                <i class="fas fa-code"></i>
+                {% endif %}
+            </div>
+            <div class="list-row-card-content">
+                <h3 class="list-row-card-title">
+                    <a href="{% url 'admin:core_apitoken_change' token.pk %}">{{ token.name }}</a>
+                </h3>
+                <p class="list-row-card-subtitle">
+                    <code>{{ token.mask_token }}</code>
+                    {% if token.description %} &mdash; {{ token.description|truncatewords:15 }}{% endif %}
+                </p>
+                <div class="list-row-card-badges">
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        {{ token.get_token_type_display }}
+                    </span>
+                    {% if token.is_active and not token.is_expired %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% elif token.is_expired %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-clock"></i> {% trans "Expired" %}
+                    </span>
+                    {% else %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="list-row-card-meta">
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-chart-bar"></i> {{ token.usage_count }} {% trans "uses" %}
+                    </span>
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-clock"></i>
+                        {% if token.last_used_at %}{{ token.last_used_at|date:"M d, Y H:i" }}{% else %}{% trans "Never used" %}{% endif %}
+                    </span>
+                    {% if token.expires_at %}
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-calendar"></i> {% trans "Expires" %} {{ token.expires_at|date:"M d, Y" }}
+                    </span>
+                    {% endif %}
+                    <span class="list-row-card-meta-item">
+                        <i class="fas fa-plus"></i> {{ token.created_at|date:"M d, Y" }}
+                    </span>
+                </div>
+            </div>
+            <div class="list-row-card-actions">
+                <a href="{% url 'admin:core_apitoken_change' token.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{% url 'admin:core_apitoken_delete' token.pk %}" class="list-row-card-action deletelink" title="{% trans 'Delete' %}">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="list-row-card apitoken-empty-state">
+            <i class="fas fa-key apitoken-empty-icon"></i>
+            <p class="apitoken-empty-title">{% trans "No API tokens created yet." %}</p>
+            <p class="apitoken-empty-subtitle">
+                {% trans "Create a token to enable external integrations and services." %}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if action_form and actions_on_top and cl.show_admin_actions %}
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,2759 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 04:42+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Vietnamese <LL@li.org>\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Action and method IDs required"
+msgstr "Yêu cầu ID hành động và phương thức"
+
+msgid "{} method(s) enabled"
+msgstr "\"{}\" phương thức được bật"
+
+msgid "{} method(s) disabled"
+msgstr "\"{}\" phương thức bị tắt"
+
+msgid "{} method(s) deleted"
+msgstr "\"{}\" phương thức đã xóa"
+
+msgid "Unknown action"
+msgstr "Hành động không xác định"
+
+msgid "Invalid request data"
+msgstr "Dữ liệu yêu cầu không hợp lệ"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại."
+
+msgid "Basic Information"
+msgstr "Thông tin cơ bản"
+
+msgid "Geographic Scope"
+msgstr "Phạm vi địa lý"
+
+msgid "Application Rules"
+msgstr "Quy tắc áp dụng"
+
+msgid "Product Exemptions"
+msgstr "Ngoại lệ sản phẩm"
+
+msgid "Timestamps"
+msgstr "Thời gian"
+
+msgid "Rate %"
+msgstr "Tỷ lệ %"
+
+msgid "Cart"
+msgstr "Giỏ hàng"
+
+msgid "Enter as percentage (e.g., 8.25 for 8.25%)"
+msgstr "Nhập dưới dạng phần trăm (ví dụ: 8.25 cho 8.25%)"
+
+msgid "Rate (%)"
+msgstr "Tỷ lệ (%)"
+
+msgid "Please complete Step 1 first"
+msgstr "Vui lòng hoàn thành Bước 1 trước"
+
+msgid "Please complete the wizard steps"
+msgstr "Vui lòng hoàn thành các bước hướng dẫn"
+
+#, python-format
+msgid "Shipping method \"%(name)s\" created successfully!"
+msgstr "Phương thức vận chuyển \"%(name)s\" đã được tạo thành công!"
+
+msgid "Please configure rate tables for this method."
+msgstr "Vui lòng cấu hình bảng tỷ lệ cho phương pháp này."
+
+#, python-format
+msgid "Failed to create shipping method: %(error)s"
+msgstr "Không thể tạo phương thức vận chuyển: %(error)s"
+
+msgid "Get mini-cart data"
+msgstr "Lấy dữ liệu giỏ hàng nhỏ"
+
+msgid ""
+"\n"
+"    Retrieve the current cart contents formatted for the mini-cart "
+"component.\n"
+"\n"
+"    Works for both authenticated users (cart linked to user account) and\n"
+"    anonymous users (cart linked to session). Cart data includes all items\n"
+"    with product details, quantities, prices, and images.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Initial mini-cart load on page\n"
+"    - Refreshing cart after external changes\n"
+"    - Checking cart status before checkout\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"    "
+msgstr ""
+"\n"
+"    Lấy nội dung giỏ hàng hiện tại được định dạng cho thành phần mini-cart. "
+"Hoạt động cho cả người dùng đã xác thực (giỏ hàng liên kết với tài khoản "
+"người dùng) và người dùng không xác thực (giỏ hàng liên kết với phiên). Dữ "
+"liệu giỏ hàng bao gồm tất cả các mục với chi tiết sản phẩm, số lượng, giá và "
+"hình ảnh. **Các trường hợp sử dụng:** - Tải mini-cart ban đầu trên trang - "
+"Làm mới giỏ hàng sau các thay đổi bên ngoài - Kiểm tra trạng thái giỏ hàng "
+"trước khi thanh toán **Xác thực:** Không yêu cầu (sử dụng phiên cho người "
+"dùng không xác thực)\n"
+"    "
+
+msgid "Cart data retrieved successfully"
+msgstr "Đã lấy dữ liệu giỏ hàng thành công"
+
+msgid "Update cart item quantity"
+msgstr "Cập nhật số lượng mục giỏ hàng"
+
+msgid ""
+"\n"
+"    Update the quantity of an item in the cart.\n"
+"\n"
+"    Set quantity to 0 to remove the item entirely. The endpoint validates\n"
+"    stock availability before updating and returns the full updated cart.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Increment/decrement quantity buttons in mini-cart\n"
+"    - Direct quantity input changes\n"
+"    - Removing items (quantity=0)\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"\n"
+"    **Validation:**\n"
+"    - Item must exist in user's cart\n"
+"    - Quantity must be non-negative integer\n"
+"    - Stock availability is checked for inventory-tracked products\n"
+"    "
+msgstr ""
+"\n"
+"    Cập nhật số lượng của một mục trong giỏ hàng. Đặt số lượng thành 0 để "
+"xóa hoàn toàn mục đó. Đầu cuối xác minh tính khả dụng của hàng tồn kho trước "
+"khi cập nhật và trả về giỏ hàng đã cập nhật đầy đủ. **Các trường hợp sử dụng:"
+"** - Các nút tăng/giảm số lượng trong mini-cart - Thay đổi trực tiếp đầu vào "
+"số lượng - Xóa các mục (số lượng = 0) **Xác thực:** Không yêu cầu (xác minh "
+"mục thuộc giỏ hàng của người dùng) **Xác minh:** - Mục phải tồn tại trong "
+"giỏ hàng của người dùng - Số lượng phải là số nguyên không âm - Kiểm tra "
+"tính khả dụng của hàng tồn kho cho các sản phẩm theo dõi tồn kho\n"
+"    "
+
+msgid "Cart updated successfully"
+msgstr "Cập nhật giỏ hàng thành công"
+
+msgid "Invalid request data or insufficient stock"
+msgstr "Dữ liệu yêu cầu không hợp lệ hoặc tồn kho không đủ"
+
+msgid "Cart item not found"
+msgstr "Không tìm thấy mục giỏ hàng"
+
+msgid "Remove item from cart"
+msgstr "Xóa mục khỏi giỏ hàng"
+
+msgid ""
+"\n"
+"    Remove an item from the cart entirely.\n"
+"\n"
+"    Returns the updated cart data after removal.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Delete button on cart items\n"
+"    - Clearing specific items\n"
+"\n"
+"    **Authentication:** None required (validates item belongs to user's "
+"cart)\n"
+"    "
+msgstr ""
+"\n"
+"    Xóa hoàn toàn một mục khỏi giỏ hàng. Trả về dữ liệu giỏ hàng đã cập nhật "
+"sau khi xóa. **Các trường hợp sử dụng:** - Nút xóa trên các mục giỏ hàng - "
+"Xóa các mục cụ thể **Xác thực:** Không cần (kiểm tra mục có thuộc giỏ hàng "
+"của người dùng không)\n"
+"    "
+
+msgid "Item removed successfully"
+msgstr "Xóa mục thành công"
+
+msgid "Get empty cart recommendations"
+msgstr "Lấy khuyến nghị giỏ hàng trống"
+
+msgid ""
+"\n"
+"    Get intelligent product recommendations for the empty cart state.\n"
+"\n"
+"    Returns personalized suggestions organized into labeled sections based "
+"on:\n"
+"    - **Recently viewed**: Products the user has browsed (session-based for "
+"anonymous users)\n"
+"    - **Related**: Products in the same categories as recently viewed items\n"
+"    - **On sale**: Currently discounted products\n"
+"    - **Trending**: Popular products by views/sales\n"
+"    - **Featured**: Editor-picked products as fallback\n"
+"\n"
+"    All returned products are verified to be in stock and available for "
+"purchase.\n"
+"\n"
+"    **Use Cases:**\n"
+"    - Empty cart state in mini-cart\n"
+"    - \"You might like\" sections\n"
+"    - Cross-sell opportunities\n"
+"\n"
+"    **Authentication:** None required (uses session for anonymous users)\n"
+"\n"
+"    **Personalization:**\n"
+"    - Anonymous users: Based on session recently-viewed products\n"
+"    - Authenticated users: Based on account history and preferences\n"
+"    "
+msgstr ""
+"\n"
+"    Đề xuất sản phẩm thông minh cho trạng thái giỏ hàng trống. Trả về các "
+"gợi ý cá nhân hóa được tổ chức thành các phần có nhãn theo: - **Đã xem gần "
+"đây**: Các sản phẩm người dùng đã xem (dựa trên phiên cho người dùng ẩn "
+"danh) - **Liên quan**: Các sản phẩm thuộc cùng danh mục với các sản phẩm đã "
+"xem gần đây - **Đang giảm giá**: Các sản phẩm đang được giảm giá - **Xu "
+"hướng**: Các sản phẩm phổ biến theo lượt xem/bán hàng - **Đặc biệt**: Các "
+"sản phẩm được chọn bởi biên tập viên làm phương án dự phòng Tất cả sản phẩm "
+"được trả về đều đã được xác nhận là có sẵn và có thể mua. **Các trường hợp "
+"sử dụng:** - Trạng thái giỏ hàng trống trong giỏ hàng nhỏ - Các phần \"Bạn "
+"có thể thích\" - Cơ hội bán chéo **Xác thực:** Không yêu cầu (sử dụng phiên "
+"cho người dùng ẩn danh) **Cá nhân hóa:** - Người dùng ẩn danh: Dựa trên các "
+"sản phẩm đã xem gần đây trong phiên - Người dùng đã xác thực: Dựa trên lịch "
+"sử tài khoản và sở thích\n"
+"    "
+
+msgid "Maximum number of products to return (default: 6, max: 12)"
+msgstr "Số lượng tối đa sản phẩm để trả về (mặc định: 6, tối đa: 12)"
+
+msgid "Recommendations retrieved successfully"
+msgstr "Lấy khuyến nghị thành công"
+
+msgid "User"
+msgstr "Người dùng"
+
+msgid "Session Key"
+msgstr "Khóa phiên"
+
+msgid "Cart Currency"
+msgstr "Tiền tệ giỏ hàng"
+
+msgid ""
+"Currency code for all items in this cart (e.g. EUR, NZD). Empty means store "
+"default currency."
+msgstr ""
+"Mã tiền tệ cho tất cả các mục trong giỏ hàng này (ví dụ: EUR, NZD). Trống có "
+"nghĩa là tiền tệ mặc định của cửa hàng."
+
+msgid "Default Layout"
+msgstr "Bố cục mặc định"
+
+msgid "Compact View"
+msgstr "Xem gọn"
+
+msgid "Detailed View"
+msgstr "Xem chi tiết"
+
+msgid "Minimal View"
+msgstr "Xem tối giản"
+
+msgid "Sidebar Cart"
+msgstr "Giỏ hàng thanh bên"
+
+msgid "Overlay Cart"
+msgstr "Giỏ hàng chồng"
+
+msgid "How the cart is displayed"
+msgstr "Cách hiển thị giỏ hàng"
+
+msgid "Cart Layout"
+msgstr "Bố cục giỏ hàng"
+
+msgid "Show Product Images"
+msgstr "Hiển thị hình ảnh sản phẩm"
+
+msgid "Show Product Variants"
+msgstr "Hiển thị biến thể sản phẩm"
+
+msgid "Show Remove Button"
+msgstr "Hiển thị nút xóa"
+
+msgid "Show Quantity Controls"
+msgstr "Hiển thị điều khiển số lượng"
+
+msgid "Show Item Totals"
+msgstr "Hiển thị tổng số lượng mục"
+
+msgid "Show Cart Summary"
+msgstr "Hiển thị tóm tắt giỏ hàng"
+
+msgid "Show Savings"
+msgstr "Hiển thị khoản tiết kiệm"
+
+msgid "Single Page Checkout"
+msgstr "Thanh toán trên một trang"
+
+msgid "Multi-Step Checkout"
+msgstr "Thanh toán nhiều bước"
+
+msgid "Accordion Style"
+msgstr "Phong cách ngăn xếp"
+
+msgid "Wizard Style"
+msgstr "Phong cách hướng dẫn"
+
+msgid "Checkout Flow"
+msgstr "Quy trình thanh toán"
+
+msgid "Shipping Address"
+msgstr "Địa chỉ giao hàng"
+
+msgid "Shipping Method"
+msgstr "Phương thức giao hàng"
+
+msgid "Calculated shipping cost"
+msgstr "Chi phí giao hàng được tính"
+
+msgid "Shipping Cost"
+msgstr "Chi phí giao hàng"
+
+msgid "Estimated Delivery Date"
+msgstr "Ngày giao hàng dự kiến"
+
+msgid "Shipping Notes"
+msgstr "Ghi chú giao hàng"
+
+msgid "None"
+msgstr "Không"
+
+msgid "Percentage"
+msgstr "Phần trăm"
+
+msgid "Fixed Amount"
+msgstr "Số tiền cố định"
+
+msgid "POS manual discount type"
+msgstr "Loại giảm giá thủ công POS"
+
+msgid "POS manual discount value"
+msgstr "Giá trị giảm giá thủ công POS"
+
+msgid "Discount value (percentage or fixed amount)"
+msgstr "Giá trị giảm giá (phần trăm hoặc số cố định)"
+
+msgid "POS discount applied by"
+msgstr "Giảm giá POS được áp dụng bởi"
+
+msgid "POS discount approved by"
+msgstr "Giảm giá POS được duyệt bởi"
+
+msgid "Manager who approved the discount if it exceeded staff limit"
+msgstr "Người quản lý đã phê duyệt giảm giá nếu vượt quá giới hạn nhân viên"
+
+msgid "POS discount reason"
+msgstr "Lý do giảm giá POS"
+
+msgid "Created At"
+msgstr "Tạo lúc"
+
+msgid "Updated At"
+msgstr "Cập nhật lúc"
+
+msgid "Shopping Cart"
+msgstr "Giỏ hàng"
+
+msgid "Shopping Carts"
+msgstr "Giỏ hàng"
+
+#, python-brace-format
+msgid "Cart for {username}"
+msgstr "Giỏ hàng cho {username}"
+
+#, python-brace-format
+msgid "Cart (Session: {session})"
+msgstr "Giỏ hàng (Phiên: {session})"
+
+msgid "No shipping required"
+msgstr "Không yêu cầu giao hàng"
+
+msgid "Shipping address required"
+msgstr "Yêu cầu địa chỉ giao hàng"
+
+msgid "Available shipping methods retrieved"
+msgstr "Phương thức giao hàng khả dụng đã được truy xuất"
+
+msgid "Shipping calculated successfully"
+msgstr "Tính toán giao hàng thành công"
+
+msgid "Invalid gift card code"
+msgstr "Mã thẻ quà tặng không hợp lệ"
+
+msgid "Gift card already applied"
+msgstr "Thẻ quà tặng đã được áp dụng"
+
+msgid "Gift card is not active"
+msgstr "Thẻ quà tặng không đang hoạt động"
+
+msgid "Gift card has expired"
+msgstr "Thẻ quà tặng đã hết hạn"
+
+msgid "Gift card has been fully redeemed"
+msgstr "Thẻ quà tặng đã được sử dụng hết"
+
+msgid "Gift card cannot be used"
+msgstr "Không thể sử dụng thẻ quà tặng"
+
+#, python-brace-format
+msgid ""
+"Currency mismatch. Gift card is in {card_currency}, cart is in "
+"{cart_currency}"
+msgstr ""
+"Không khớp tiền tệ. Thẻ quà tặng ở {card_currency}, giỏ hàng ở "
+"{cart_currency}"
+
+#, python-brace-format
+msgid ""
+"This gift card is in {card_currency}. Please switch your currency to "
+"{card_currency} to use it."
+msgstr ""
+"Thẻ quà tặng này ở {card_currency}. Vui lòng chuyển tiền tệ của bạn sang "
+"{card_currency} để sử dụng nó."
+
+msgid "Gift cards cannot be used to purchase other gift cards"
+msgstr "Không thể sử dụng thẻ quà tặng để mua các thẻ quà tặng khác"
+
+msgid "Cart total is already covered"
+msgstr "Tổng giỏ hàng đã được thanh toán đầy đủ"
+
+msgid "Unable to process gift card currency conversion"
+msgstr "Không thể xử lý chuyển đổi tiền tệ thẻ quà tặng"
+
+msgid "Gift card applied successfully"
+msgstr "Áp dụng thẻ quà tặng thành công"
+
+msgid "Product"
+msgstr "Sản phẩm"
+
+msgid "Variant"
+msgstr "Biến thể"
+
+msgid "Quantity"
+msgstr "Số lượng"
+
+msgid "Unit Price"
+msgstr "Giá đơn vị"
+
+msgid ""
+"Product customizations with calculated prices: {customization_option_id: "
+"{'value': '...', 'calculated_price': '10.00'}}"
+msgstr ""
+"Cá nhân hóa sản phẩm với giá được tính: {customization_option_id: {'value': "
+"'...', 'calculated_price': '10.00'}}"
+
+msgid "Customizations"
+msgstr "Tùy chỉnh"
+
+msgid "Is Subscription"
+msgstr "Là Ký gửi"
+
+msgid "Whether this item will be purchased as a subscription"
+msgstr "Liệu mặt hàng này có được mua dưới dạng đăng ký không"
+
+msgid "Subscription Plan"
+msgstr "Kế hoạch Ký gửi"
+
+msgid "Selected subscription plan for recurring billing"
+msgstr "Kế hoạch đăng ký được chọn cho thanh toán định kỳ"
+
+msgid "Pricing Tier"
+msgstr "Cấp giá"
+
+msgid "Selected pricing tier (billing frequency) for subscription"
+msgstr "Cấp giá đã chọn (tần suất thanh toán) cho đăng ký"
+
+msgid "Payment Token"
+msgstr "Mã thanh toán"
+
+msgid ""
+"Saved payment method for subscription billing (required for subscriptions)"
+msgstr ""
+"Phương thức thanh toán đã lưu cho thanh toán đăng ký (bắt buộc cho đăng ký)"
+
+msgid "Parent Bundle"
+msgstr "Gói cha"
+
+msgid "If this is a bundle component, reference to bundle CartItem"
+msgstr "Nếu đây là thành phần gói, tham chiếu đến CartItem gói"
+
+msgid ""
+"Booking details: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+msgstr ""
+"Chi tiết đặt chỗ: {start_datetime, end_datetime, resource_id, persons, "
+"timezone}"
+
+msgid "Booking Data"
+msgstr "Dữ liệu đặt hàng"
+
+msgid "Customer notes for this item"
+msgstr "Ghi chú của khách hàng cho mục này"
+
+msgid "Notes"
+msgstr "Ghi chú"
+
+msgid "manual discount type"
+msgstr "Loại giảm giá thủ công"
+
+msgid "manual discount value"
+msgstr "Giá trị giảm giá thủ công"
+
+msgid "discount applied by"
+msgstr "Giảm giá được áp dụng bởi"
+
+msgid "discount approved by"
+msgstr "Giảm giá được phê duyệt bởi"
+
+msgid "discount reason"
+msgstr "Lý do giảm giá"
+
+msgid "Cart Item"
+msgstr "Mục giỏ hàng"
+
+msgid "Cart Items"
+msgstr "Các mục giỏ hàng"
+
+msgid "My Wishlist"
+msgstr "Danh sách mong muốn của tôi"
+
+msgid "Name"
+msgstr "Tên"
+
+msgid "Grid Layout"
+msgstr "Bố cục lưới"
+
+msgid "List Layout"
+msgstr "Bố cục danh sách"
+
+msgid "How wishlist items are displayed"
+msgstr "Cách hiển thị các mục danh sách mong muốn"
+
+msgid "Wishlist Layout"
+msgstr "Bố cục danh sách mong muốn"
+
+msgid "Is Public"
+msgstr "Là công khai"
+
+msgid "Share Slug"
+msgstr "Chia sẻ slug"
+
+msgid "Show Prices"
+msgstr "Hiển thị giá"
+
+msgid "Show Availability"
+msgstr "Hiển thị tình trạng có sẵn"
+
+msgid "Show Add to Cart"
+msgstr "Hiển thị Thêm vào giỏ hàng"
+
+msgid "Wishlist"
+msgstr "Danh sách mong muốn"
+
+msgid "Wishlists"
+msgstr "Các danh sách mong muốn"
+
+msgid "Low"
+msgstr "Thấp"
+
+msgid "Medium"
+msgstr "Trung bình"
+
+msgid "High"
+msgstr "Cao"
+
+msgid "Priority"
+msgstr "Ưu tiên"
+
+msgid "Notify When Available"
+msgstr "Thông báo khi có sẵn"
+
+msgid "Notify When On Sale"
+msgstr "Thông báo khi giảm giá"
+
+msgid "Wishlist Item"
+msgstr "Mục danh sách mong muốn"
+
+msgid "Wishlist Items"
+msgstr "Các mục danh sách mong muốn"
+
+msgid "Viewed At"
+msgstr "Xem lúc"
+
+msgid "View Count"
+msgstr "Số lần xem"
+
+msgid "Recently Viewed Product"
+msgstr "Sản phẩm đã xem gần đây"
+
+msgid "Recently Viewed Products"
+msgstr "Các sản phẩm đã xem gần đây"
+
+#, python-brace-format
+msgid "Session: {session}"
+msgstr "Phiên: {session}"
+
+#, python-brace-format
+msgid "{product} viewed by {user}"
+msgstr "{product} được {user} xem"
+
+msgid "Description"
+msgstr "Mô tả"
+
+msgid "Flat Rate"
+msgstr "Phí cố định"
+
+msgid "Free Shipping"
+msgstr "Giao hàng miễn phí"
+
+msgid "Weight Based"
+msgstr "Dựa trên trọng lượng"
+
+msgid "Price Based"
+msgstr "Dựa trên giá"
+
+msgid "Real-Time Carrier Rates"
+msgstr "Phí vận chuyển theo thời gian thực"
+
+msgid "Local Pickup"
+msgstr "Lấy hàng tại chỗ"
+
+msgid "Table Rate"
+msgstr "Mức phí theo bảng"
+
+msgid "Method Type"
+msgstr "Loại phương pháp"
+
+msgid "Fixed shipping cost (for flat_rate type)"
+msgstr "Chi phí vận chuyển cố định (dành cho loại flat_rate)"
+
+msgid "Flat Rate Cost"
+msgstr "Chi phí mức cố định"
+
+msgid "Minimum cart value to qualify"
+msgstr "Giá trị giỏ hàng tối thiểu để đủ điều kiện"
+
+msgid "Minimum Order Value"
+msgstr "Giá trị đơn hàng tối thiểu"
+
+msgid "Maximum cart value to qualify"
+msgstr "Giá trị giỏ hàng tối đa để đủ điều kiện"
+
+msgid "Maximum Order Value"
+msgstr "Giá trị đơn hàng tối đa"
+
+msgid "Minimum cart weight (kg)"
+msgstr "Trọng lượng giỏ hàng tối thiểu (kg)"
+
+msgid "Minimum Weight"
+msgstr "Trọng lượng tối thiểu"
+
+msgid "Maximum cart weight (kg)"
+msgstr "Trọng lượng giỏ hàng tối đa (kg)"
+
+msgid "Maximum Weight"
+msgstr "Trọng lượng tối đa"
+
+msgid "Shipping Zones"
+msgstr "Khu vực vận chuyển"
+
+msgid ""
+"Zones where this shipping method is available. If empty, legacy country/"
+"state restrictions apply."
+msgstr ""
+"Các khu vực mà phương pháp vận chuyển này có sẵn. Nếu trống, các hạn chế "
+"quốc gia/tỉnh cũ sẽ áp dụng."
+
+msgid "Pickup Locations"
+msgstr "Địa điểm lấy hàng"
+
+msgid ""
+"Locations where customers can pick up orders using this shipping method. "
+"Only applies to 'local_pickup' method type."
+msgstr ""
+"Các địa điểm mà khách hàng có thể nhận hàng bằng phương pháp vận chuyển này. "
+"Chỉ áp dụng cho loại phương pháp 'local_pickup'."
+
+msgid "Minimum delivery time in business days"
+msgstr "Thời gian giao hàng tối thiểu (theo ngày làm việc)"
+
+msgid "Minimum Delivery Days"
+msgstr "Số ngày giao hàng tối thiểu"
+
+msgid "Maximum delivery time in business days"
+msgstr "Thời gian giao hàng tối đa (theo ngày làm việc)"
+
+msgid "Maximum Delivery Days"
+msgstr "Số ngày giao hàng tối đa"
+
+msgid "Font Awesome icon class (e.g., 'fa-truck', 'fa-box')"
+msgstr "Lớp biểu tượng Font Awesome (ví dụ: 'fa-truck', 'fa-box')"
+
+msgid "Icon"
+msgstr "Biểu tượng"
+
+msgid ""
+"Custom shipping method image from media library. If provided, this takes "
+"priority over icon."
+msgstr ""
+"Hình ảnh phương pháp vận chuyển tùy chỉnh từ thư viện phương tiện. Nếu được "
+"cung cấp, điều này sẽ ưu tiên hơn biểu tượng."
+
+msgid "Image"
+msgstr "Hình ảnh"
+
+msgid "Sort Order"
+msgstr "Thứ tự sắp xếp"
+
+msgid "Is Active"
+msgstr "Đang hoạt động"
+
+msgid "Custom Carrier"
+msgstr "Nhà vận chuyển tùy chỉnh"
+
+msgid "Carrier"
+msgstr "Nhà vận chuyển"
+
+msgid "Carrier-specific service code"
+msgstr "Mã dịch vụ cụ thể cho nhà vận chuyển"
+
+msgid "Carrier Service Code"
+msgstr "Mã dịch vụ nhà vận chuyển"
+
+msgid "Shipping Methods"
+msgstr "Phương pháp vận chuyển"
+
+msgid "Shipping method is not active"
+msgstr "Phương pháp vận chuyển không hoạt động"
+
+#, python-brace-format
+msgid "Minimum order value {value} required"
+msgstr "Yêu cầu giá trị đơn hàng tối thiểu là {value}"
+
+#, python-brace-format
+msgid "Maximum order value {value} exceeded"
+msgstr "Giá trị đơn hàng tối đa {value} đã vượt quá"
+
+#, python-brace-format
+msgid "Minimum weight {weight}kg required"
+msgstr "Cần trọng lượng tối thiểu {weight}kg"
+
+#, python-brace-format
+msgid "Maximum weight {weight}kg exceeded"
+msgstr "Trọng lượng tối đa {weight}kg đã vượt quá"
+
+msgid "Cart contains only digital products"
+msgstr "Giỏ hàng chỉ chứa sản phẩm số"
+
+msgid "Available"
+msgstr "Có sẵn"
+
+msgid "No geographic restrictions"
+msgstr "Không có hạn chế địa lý"
+
+#, python-brace-format
+msgid "Available in {zone}"
+msgstr "Có sẵn tại {zone}"
+
+msgid "Not available in your location"
+msgstr "Không có sẵn tại vị trí của bạn"
+
+msgid "Available worldwide"
+msgstr "Có sẵn trên toàn thế giới"
+
+msgid "ISO 3166-1 alpha-2 country code"
+msgstr "Mã quốc gia ISO 3166-1 alpha-2"
+
+msgid "Country"
+msgstr "Quốc gia"
+
+msgid "State/Province/Region"
+msgstr "Tỉnh / Bang / Khu vực"
+
+msgid "State"
+msgstr "Tỉnh / Bang"
+
+msgid "City name (optional)"
+msgstr "Tên thành phố (tùy chọn)"
+
+msgid "City"
+msgstr "Thành phố"
+
+msgid "List of specific postal codes (optional)"
+msgstr "Danh sách mã bưu chính cụ thể (tùy chọn)"
+
+msgid "Postal Codes"
+msgstr "Mã bưu chính"
+
+msgid "Tax rate as decimal (e.g., 0.0825 for 8.25%)"
+msgstr "Mức thuế dưới dạng thập phân (ví dụ: 0.0825 cho 8.25%)"
+
+msgid "Rate"
+msgstr "Mức phí"
+
+msgid "Sales Tax"
+msgstr "Thuế bán hàng"
+
+msgid "Custom Tax"
+msgstr "Thuế tùy chỉnh"
+
+msgid "Tax Type"
+msgstr "Loại thuế"
+
+msgid "Apply tax to shipping costs"
+msgstr "Áp dụng thuế cho chi phí vận chuyển"
+
+msgid "Applies to Shipping"
+msgstr "Áp dụng cho vận chuyển"
+
+msgid "Calculate on top of other taxes (compound tax)"
+msgstr "Tính trên các loại thuế khác (thuế kép)"
+
+msgid "Compound Tax"
+msgstr "Thuế kết hợp"
+
+msgid "Product types exempt from this tax (e.g., ['digital', 'service'])"
+msgstr "Loại sản phẩm miễn trừ thuế này (ví dụ: ['digital', 'service'])"
+
+msgid "Exempt Product Types"
+msgstr "Loại sản phẩm miễn thuế"
+
+msgid "Categories exempt from this tax"
+msgstr "Danh mục miễn thuế này"
+
+msgid "Exempt Categories"
+msgstr "Danh mục miễn thuế"
+
+msgid "Higher priority rules take precedence"
+msgstr "Các quy tắc có độ ưu tiên cao hơn sẽ được ưu tiên"
+
+msgid "Tax Rate"
+msgstr "Mức thuế"
+
+msgid "Tax Rates"
+msgstr "Các mức thuế"
+
+#, python-brace-format
+msgid "{name} ({location}) - {rate}%"
+msgstr "{name} ({location}) - {rate}%"
+
+msgid "Europe"
+msgstr "Âuropa"
+
+msgid "North America"
+msgstr "Bắc Mỹ"
+
+msgid "Asia Pacific"
+msgstr "Châu Á - Thái Bình Dương"
+
+msgid "Middle East"
+msgstr "Trung Đông"
+
+msgid "Africa"
+msgstr "Châu Phi"
+
+msgid "Latin America"
+msgstr "Nam Mỹ"
+
+msgid "Oceania"
+msgstr "Đại Dương"
+
+msgid "Unique identifier (e.g., eu_vat, us_sales_tax)"
+msgstr "Mã nhận dạng duy nhất (ví dụ: eu_vat, us_sales_tax)"
+
+msgid "Key"
+msgstr "Khóa"
+
+msgid "Font Awesome icon class"
+msgstr "Lớp biểu tượng Font Awesome"
+
+msgid "Default Tax Type"
+msgstr "Loại thuế mặc định"
+
+msgid "Region"
+msgstr "Khu vực"
+
+msgid "Version for tracking rate updates"
+msgstr "Phiên bản để theo dõi cập nhật tỷ lệ"
+
+msgid "Version"
+msgstr "Phiên bản"
+
+msgid "Last Updated"
+msgstr "Cập nhật lần cuối"
+
+msgid "Tax Preset Group"
+msgstr "Nhóm cài đặt thuế"
+
+msgid "Tax Preset Groups"
+msgstr "Các nhóm cài đặt thuế"
+
+msgid "Preset Group"
+msgstr "Nhóm cài đặt"
+
+msgid "Country Code"
+msgstr "Mã quốc gia"
+
+msgid "Country Name"
+msgstr "Tên quốc gia"
+
+msgid "State/province code (for US/CA presets)"
+msgstr "Mã tỉnh/bang (dành cho cài đặt US/CA)"
+
+msgid "State Code"
+msgstr "Mã tỉnh/bang"
+
+msgid "State Name"
+msgstr "Tên tỉnh/bang"
+
+msgid "Tax rate as decimal (e.g., 0.20 for 20%)"
+msgstr "Mức thuế dưới dạng thập phân (ví dụ: 0.20 cho 20%)"
+
+#, python-format
+msgid "Optional notes (e.g., 'Raised from 22% in July 2025')"
+msgstr "Ghi chú tùy chọn (ví dụ: 'Tăng từ 22% vào tháng 7 năm 2025')"
+
+msgid "Tax Preset Rate"
+msgstr "Tỷ lệ cài đặt thuế"
+
+msgid "Tax Preset Rates"
+msgstr "Các tỷ lệ cài đặt thuế"
+
+msgid "Billing Address"
+msgstr "Địa chỉ thanh toán"
+
+msgid "Billing Same as Shipping"
+msgstr "Địa chỉ thanh toán giống như địa chỉ giao hàng"
+
+msgid "Shipping Address Data"
+msgstr "Dữ liệu địa chỉ vận chuyển"
+
+msgid ""
+"Temporary shipping address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Thông tin tạm thời về địa chỉ giao hàng (chưa lưu vào mô hình Address cho "
+"đến khi đặt hàng)"
+
+msgid "Billing Address Data"
+msgstr "Dữ liệu địa chỉ thanh toán"
+
+msgid ""
+"Temporary billing address data (not saved to Address model until order "
+"placed)"
+msgstr ""
+"Thông tin tạm thời về địa chỉ thanh toán (chưa lưu vào mô hình Address cho "
+"đến khi đặt hàng)"
+
+msgid "Selected Shipping Method"
+msgstr "Phương thức giao hàng đã chọn"
+
+msgid "Cached list of available shipping methods with rates"
+msgstr "Danh sách phương pháp vận chuyển có sẵn với tỷ lệ đã lưu"
+
+msgid "Available Shipping Methods"
+msgstr "Các phương thức giao hàng có sẵn"
+
+msgid "Detailed tax breakdown by jurisdiction"
+msgstr "Phân tích chi tiết thuế theo khu vực"
+
+msgid "Tax Breakdown"
+msgstr "Phân tích thuế"
+
+msgid "Tax Amount"
+msgstr "Số tiền thuế"
+
+msgid "Payment Provider"
+msgstr "Nhà cung cấp thanh toán"
+
+msgid "Subtotal"
+msgstr "Tổng phụ"
+
+msgid "Discount Amount"
+msgstr "Số tiền giảm giá"
+
+msgid "Gift Card Discount"
+msgstr "Giảm giá thẻ quà tặng"
+
+msgid "Total discount from applied gift cards"
+msgstr "Tổng giảm giá từ các thẻ quà tặng đã áp dụng"
+
+msgid "Final total: subtotal + shipping + tax - discounts"
+msgstr "Tổng cuối cùng: tổng phụ + vận chuyển + thuế - giảm giá"
+
+msgid "Total Amount"
+msgstr "Tổng số tiền"
+
+msgid "Cart Review"
+msgstr "Xem lại giỏ hàng"
+
+msgid "Billing Information"
+msgstr "Thông tin thanh toán"
+
+msgid "Payment Method"
+msgstr "Phương thức thanh toán"
+
+msgid "Order Review"
+msgstr "Xem lại đơn hàng"
+
+msgid "Step Completed"
+msgstr "Bước đã hoàn thành"
+
+msgid "Expires At"
+msgstr "Hết hạn vào"
+
+msgid "Metadata"
+msgstr "Thông tin mở rộng"
+
+msgid "Extra metadata (e.g., marketplace purchase info)"
+msgstr ""
+"Thông tin siêu dữ liệu bổ sung (ví dụ: thông tin mua hàng trên thị trường)"
+
+msgid "Checkout Session"
+msgstr "Phiên thanh toán"
+
+msgid "Checkout Sessions"
+msgstr "Các phiên thanh toán"
+
+#, python-brace-format
+msgid "Checkout for {cart}"
+msgstr "Thanh toán cho {cart}"
+
+msgid "Gift Card"
+msgstr "Thẻ quà tặng"
+
+msgid "Amount in base currency (used for cart calculations)"
+msgstr "Số tiền theo tiền tệ cơ sở (dùng để tính toán giỏ hàng)"
+
+msgid "Original Currency Amount"
+msgstr "Số tiền theo tiền tệ gốc"
+
+msgid ""
+"Discount in the gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Giảm giá theo tiền tệ gốc của thẻ quà tặng (áp dụng cho thẻ quà tặng ngoại "
+"tệ)"
+
+msgid "Exchange Rate"
+msgstr "Tỷ giá hối đoái"
+
+msgid "Rate: gift card currency -> base currency at time of application"
+msgstr "Tỷ lệ: tiền tệ thẻ quà tặng -> tiền tệ cơ sở tại thời điểm áp dụng"
+
+msgid "Applied At"
+msgstr "Áp dụng vào"
+
+msgid "Applied Gift Card"
+msgstr "Thẻ quà tặng đã áp dụng"
+
+msgid "Applied Gift Cards"
+msgstr "Các thẻ quà tặng đã áp dụng"
+
+msgid "This gift card cannot be used"
+msgstr "Thẻ quà tặng này không thể được sử dụng"
+
+msgid "Discount amount exceeds gift card balance"
+msgstr "Số tiền giảm giá vượt quá số dư thẻ quà tặng"
+
+msgid "Total customization price (per unit)"
+msgstr "Tổng giá tùy chỉnh (tính theo đơn vị)"
+
+msgid "'instant' for digital items, 'shipping' for physical items"
+msgstr "'instant' cho mặt hàng số, 'shipping' cho mặt hàng vật lý"
+
+msgid "True if this item is a component of a bundle"
+msgstr "Đúng nếu mục này là thành phần của một gói"
+
+msgid "ID of parent bundle CartItem if this is a component"
+msgstr "ID của mục CartItem gói hàng cha nếu đây là thành phần"
+
+msgid "Child items if this is a bundle parent"
+msgstr "Các mục con nếu đây là mục cha của gói hàng"
+
+msgid "Map of bundle_item_id to variant_id for customer-selected variants"
+msgstr ""
+"Bản ánh xạ từ bundle_item_id đến variant_id cho các biến thể được khách hàng "
+"chọn"
+
+msgid ""
+"List of bundle_item_ids to exclude (for optional items customer doesn't want)"
+msgstr ""
+"Danh sách bundle_item_ids cần loại trừ (cho các mục tùy chọn mà khách hàng "
+"không muốn)"
+
+msgid "Map of slot_id to list of selected option_ids for configurable products"
+msgstr ""
+"Bản đồ từ slot_id đến danh sách các option_ids đã chọn cho sản phẩm có thể "
+"cấu hình"
+
+msgid "Configuration preset ID used as starting point"
+msgstr "ID cài đặt trước được sử dụng làm điểm bắt đầu"
+
+msgid ""
+"Booking details: start_datetime, end_datetime, resource_id, persons, timezone"
+msgstr ""
+"Chi tiết đặt chỗ: start_datetime, end_datetime, resource_id, persons, "
+"timezone"
+
+msgid "Quantity must be at least 1"
+msgstr "Số lượng phải ít nhất là 1"
+
+msgid "Subscription plan is required for subscription purchases"
+msgstr "Kế hoạch đăng ký là bắt buộc cho các lần mua hàng đăng ký"
+
+msgid "Payment token is required for subscription purchases"
+msgstr "Token thanh toán là bắt buộc cho các lần mua hàng đăng ký"
+
+msgid "Product not found"
+msgstr "Không tìm thấy sản phẩm"
+
+msgid "This product does not support subscriptions"
+msgstr "Sản phẩm này không hỗ trợ đăng ký"
+
+msgid "Invalid or inactive subscription plan"
+msgstr "Kế hoạch đăng ký không hợp lệ hoặc không còn hoạt động"
+
+msgid "This plan is not available for this product"
+msgstr "Kế hoạch này không khả dụng cho sản phẩm này"
+
+msgid "Invalid or inactive payment token"
+msgstr "Thẻ thanh toán không hợp lệ hoặc không còn hoạt động"
+
+msgid "Pricing tier not found or does not belong to selected plan"
+msgstr "Không tìm thấy cấp giá hoặc cấp giá không thuộc kế hoạch đã chọn"
+
+msgid "No pricing tier available for this plan"
+msgstr "Không có cấp giá khả dụng cho kế hoạch này"
+
+msgid "Quantity cannot be negative"
+msgstr "Số lượng không thể âm"
+
+msgid "Gift card code (e.g., GC-XXXX-XXXX-XXXX)"
+msgstr "Mã thẻ quà tặng (ví dụ: GC-XXXX-XXXX-XXXX)"
+
+msgid "Amount applied from this gift card (in base currency)"
+msgstr "Số tiền được áp dụng từ thẻ quà tặng này (theo tiền tệ cơ sở)"
+
+msgid "Remaining balance on gift card after this application"
+msgstr "Số dư còn lại trên thẻ quà tặng sau khi áp dụng"
+
+msgid "Base currency code"
+msgstr "Mã tiền tệ gốc"
+
+msgid "Gift card's native currency code"
+msgstr "Mã tiền tệ bản địa của thẻ quà tặng"
+
+msgid ""
+"Discount in gift card's native currency (for foreign-currency gift cards)"
+msgstr ""
+"Giảm giá theo tiền tệ gốc của thẻ quà tặng (áp dụng cho thẻ quà tặng ngoại "
+"tệ)"
+
+#, python-brace-format
+msgid ""
+"Either address_id or complete address details are required. Missing: {fields}"
+msgstr ""
+"Đòi hỏi phải có address_id hoặc chi tiết địa chỉ đầy đủ. Thiếu: {fields}"
+
+msgid "This product requires customization"
+msgstr "Sản phẩm này yêu cầu tùy chỉnh"
+
+msgid "Invalid design token"
+msgstr "Token thiết kế không hợp lệ"
+
+msgid "Design not found or expired"
+msgstr "Thiết kế không tìm thấy hoặc đã hết hạn"
+
+msgid "This product does not support customization"
+msgstr "Sản phẩm này không hỗ trợ cá nhân hóa"
+
+msgid "Invalid customization option"
+msgstr "Tùy chọn tùy chỉnh không hợp lệ"
+
+#, python-brace-format
+msgid "Customization '{name}': {error}"
+msgstr "Tùy chỉnh '{name}': {error}"
+
+#, python-brace-format
+msgid "Required customization '{name}' is missing"
+msgstr "Tùy chỉnh bắt buộc '{name}' bị thiếu"
+
+msgid "Insufficient stock"
+msgstr "Hàng tồn kho không đủ"
+
+msgid "Bundle has no components configured"
+msgstr "Gói hàng không có thành phần được cấu hình"
+
+#, python-brace-format
+msgid "Cannot exclude non-optional bundle component: {name}"
+msgstr "Không thể loại bỏ thành phần bắt buộc trong gói: {name}"
+
+#, python-brace-format
+msgid "Variant selection required for: {name}"
+msgstr "Yêu cầu chọn biến thể cho: {name}"
+
+#, python-brace-format
+msgid "Invalid variant selected for: {name}"
+msgstr "Biến thể đã chọn cho: {name} không hợp lệ"
+
+#, python-brace-format
+msgid "Insufficient stock for bundle component: {name}"
+msgstr "Kho hàng không đủ cho thành phần gói: {name}"
+
+msgid "Bundle quantity updated in cart"
+msgstr "Số lượng gói hàng đã được cập nhật trong giỏ hàng"
+
+msgid "Bundle added to cart"
+msgstr "Gói hàng đã được thêm vào giỏ hàng"
+
+#, python-brace-format
+msgid "Required slot '{name}' has no selection."
+msgstr "Khoảng trống bắt buộc '{name}' không có lựa chọn."
+
+#, python-brace-format
+msgid "Slot '{name}' requires at least {min} selection(s)."
+msgstr "Khoảng trống '{name}' yêu cầu ít nhất {min} lựa chọn."
+
+#, python-brace-format
+msgid "Slot '{name}' allows at most {max} selection(s)."
+msgstr "Khoảng trống '{name}' cho phép tối đa {max} lựa chọn."
+
+#, python-brace-format
+msgid "Invalid slot ID: {id}"
+msgstr "ID khoảng trống không hợp lệ: {id}"
+
+#, python-brace-format
+msgid "Option {opt_id} is not valid for slot '{slot}'."
+msgstr "Lựa chọn {opt_id} không hợp lệ cho khoảng trống '{slot}'."
+
+#, python-brace-format
+msgid ""
+"Incompatible selection in slot '{slot}'. Some options are not compatible "
+"with your other choices."
+msgstr ""
+"Lựa chọn không tương thích trong khoảng trống '{slot}'. Một số lựa chọn "
+"không tương thích với các lựa chọn khác của bạn."
+
+#, python-brace-format
+msgid ""
+"Excluded selection in slot '{slot}'. Some options conflict with your other "
+"choices."
+msgstr ""
+"Lựa chọn bị loại trong khoảng trống '{slot}'. Một số lựa chọn xung đột với "
+"các lựa chọn khác của bạn."
+
+#, python-brace-format
+msgid "Insufficient stock for component: {name}"
+msgstr "Số lượng tồn kho không đủ cho thành phần: {name}"
+
+msgid "Configured product added to cart"
+msgstr "Sản phẩm được cấu hình đã được thêm vào giỏ hàng"
+
+msgid "Either user or session_key must be provided"
+msgstr "Phải cung cấp người dùng hoặc session_key"
+
+msgid "This product is no longer available"
+msgstr "Sản phẩm này hiện không còn khả dụng"
+
+msgid "You must be logged in to purchase this product."
+msgstr "Bạn phải đăng nhập để mua sản phẩm này."
+
+#, python-format
+msgid "This product requires you to own \"%(required)s\" first."
+msgstr "Sản phẩm này yêu cầu bạn phải sở hữu \"%(required)s\" trước."
+
+msgid "Product variant not found"
+msgstr "Không tìm thấy biến thể sản phẩm"
+
+msgid "Configuration is required for configurable products"
+msgstr "Cấu hình là cần thiết cho các sản phẩm có thể cấu hình"
+
+msgid "Booking added to cart"
+msgstr "Đặt chỗ đã được thêm vào giỏ hàng"
+
+msgid "Insufficient stock for requested quantity"
+msgstr "Hàng tồn kho không đủ cho số lượng yêu cầu"
+
+msgid "Cart item quantity updated"
+msgstr "Số lượng mục giỏ hàng đã được cập nhật"
+
+msgid "Item added to cart"
+msgstr "Mục đã được thêm vào giỏ hàng"
+
+msgid ""
+"Component quantities cannot be changed directly. Update the parent product "
+"instead."
+msgstr ""
+"Số lượng thành phần không thể thay đổi trực tiếp. Cập nhật sản phẩm mẹ thay "
+"vào đó."
+
+#, python-format
+msgid ""
+"Item removed from cart. Also removed %(names)s (required product no longer "
+"in cart)."
+msgstr ""
+"Sản phẩm đã được xóa khỏi giỏ hàng. Cũng đã xóa %(names)s (sản phẩm cần "
+"thiết không còn trong giỏ hàng)."
+
+msgid "Item removed from cart"
+msgstr "Mục đã được xóa khỏi giỏ hàng"
+
+msgid "Cart item updated"
+msgstr "Mục giỏ hàng đã được cập nhật"
+
+msgid ""
+"Component items cannot be removed directly. Remove the parent product "
+"instead."
+msgstr ""
+"Các mục thành phần không thể xóa trực tiếp. Xóa sản phẩm mẹ thay vào đó."
+
+msgid "Cart cleared"
+msgstr "Giỏ hàng đã được làm trống"
+
+msgid "Voucher removed"
+msgstr "Phiếu giảm giá đã được xóa"
+
+msgid "Voucher not found in cart"
+msgstr "Không tìm thấy phiếu giảm giá trong giỏ hàng"
+
+msgid "Gift card removed"
+msgstr "Thẻ quà tặng đã được xóa"
+
+msgid "Gift card not found in cart"
+msgstr "Thẻ quà tặng không tìm thấy trong giỏ hàng"
+
+#, python-brace-format
+msgid "{count} items merged into cart"
+msgstr "{count} mục đã được hợp nhất vào giỏ hàng"
+
+msgid "Account creation required to proceed"
+msgstr "Yêu cầu tạo tài khoản để tiếp tục"
+
+msgid "Address not found"
+msgstr "Không tìm thấy địa chỉ"
+
+msgid "Either address_id or address_data must be provided"
+msgstr "Phải cung cấp address_id hoặc address_data"
+
+msgid "Shipping address set"
+msgstr "Địa chỉ vận chuyển đã được thiết lập"
+
+msgid "Billing address must be provided"
+msgstr "Phải cung cấp địa chỉ thanh toán"
+
+msgid "Billing address set"
+msgstr "Địa chỉ thanh toán đã được thiết lập"
+
+msgid "Shipping address must be set first"
+msgstr "Địa chỉ vận chuyển phải được thiết lập trước"
+
+msgid "Shipping method not found"
+msgstr "Phương thức vận chuyển không tìm thấy"
+
+msgid "Shipping method selected"
+msgstr "Phương thức vận chuyển đã được chọn"
+
+msgid "Payment provider not found"
+msgstr "Nhà cung cấp thanh toán không tìm thấy"
+
+msgid "Payment provider is not properly configured"
+msgstr "Nhà cung cấp thanh toán không được cấu hình đúng"
+
+msgid "Payment provider is not available for your location or currency"
+msgstr "Nhà cung cấp thanh toán không có sẵn cho vị trí hoặc tiền tệ của bạn"
+
+msgid "Payment method selected"
+msgstr "Phương thức thanh toán đã được chọn"
+
+msgid "Cart is empty"
+msgstr "Giỏ hàng đang trống"
+
+msgid "Shipping address is required"
+msgstr "Địa chỉ vận chuyển là bắt buộc"
+
+msgid "Shipping method is required"
+msgstr "Phương thức vận chuyển là bắt buộc"
+
+msgid "Billing address is required"
+msgstr "Địa chỉ thanh toán là bắt buộc"
+
+msgid "Payment method is required"
+msgstr "Phương thức thanh toán là bắt buộc"
+
+msgid "Checkout session has expired"
+msgstr "Phiên thanh toán đã hết hạn"
+
+#, python-brace-format
+msgid "Insufficient stock for {product}"
+msgstr "Số lượng tồn kho không đủ cho {product}"
+
+#, python-format
+msgid "\"%(product)s\" requires prior ownership of \"%(required)s\"."
+msgstr "\"%(product)s\" yêu cầu bạn phải sở hữu \"%(required)s\" trước."
+
+msgid "Customer email is required"
+msgstr "Email khách hàng là bắt buộc"
+
+msgid "Unable to allocate warehouse for order. Please contact support."
+msgstr "Không thể phân bổ kho cho đơn hàng. Vui lòng liên hệ hỗ trợ."
+
+msgid "Insufficient stock to complete order"
+msgstr "Hàng tồn kho không đủ để hoàn tất đơn hàng"
+
+msgid "Error processing order. Please try again."
+msgstr "Lỗi khi xử lý đơn hàng. Vui lòng thử lại."
+
+msgid "Order created successfully"
+msgstr "Đơn hàng đã được tạo thành công"
+
+msgid "Wishlist item updated"
+msgstr "Mục danh sách yêu thích đã được cập nhật"
+
+msgid "Item added to wishlist"
+msgstr "Mục đã được thêm vào danh sách yêu thích"
+
+msgid "Item removed from wishlist"
+msgstr "Mục đã được xóa khỏi danh sách yêu thích"
+
+msgid "Item moved to cart"
+msgstr "Mục đã được chuyển đến giỏ hàng"
+
+msgid "Wishlist cleared"
+msgstr "Danh sách yêu thích đã được làm trống"
+
+msgid "Wishlist with this name already exists"
+msgstr "Danh sách yêu thích với tên này đã tồn tại"
+
+msgid "Wishlist created"
+msgstr "Danh sách yêu thích đã được tạo"
+
+msgid "Monitor active and abandoned customer carts"
+msgstr "Theo dõi giỏ hàng hoạt động và giỏ hàng bị bỏ lại của khách hàng"
+
+msgid "Add"
+msgstr "Thêm"
+
+msgid "cart"
+msgstr "giỏ hàng"
+
+msgid "Filters"
+msgstr "Lọc"
+
+msgid "Search"
+msgstr "Tìm kiếm"
+
+msgid "Search by user, session, or email..."
+msgstr "Tìm kiếm theo người dùng, phiên, hoặc email..."
+
+msgid "User Type"
+msgstr "Loại người dùng"
+
+msgid "All Carts"
+msgstr "Tất cả giỏ hàng"
+
+msgid "Registered Users"
+msgstr "Người dùng đã đăng ký"
+
+msgid "Guest Carts"
+msgstr "Giỏ hàng khách"
+
+msgid "Cart Status"
+msgstr "Trạng thái giỏ hàng"
+
+msgid "All"
+msgstr "Tất cả"
+
+msgid "Active (< 24h)"
+msgstr "Đang hoạt động (< 24 giờ)"
+
+msgid "Abandoned (> 24h)"
+msgstr "Bỏ qua (> 24 giờ)"
+
+msgid "Empty"
+msgstr "Trống"
+
+msgid "Has Shipping"
+msgstr "Có vận chuyển"
+
+msgid "No Shipping"
+msgstr "Không có phương thức vận chuyển"
+
+msgid "Min Cart Value"
+msgstr "Giá trị giỏ hàng tối thiểu"
+
+msgid "Min value"
+msgstr "Giá trị tối thiểu"
+
+msgid "Max Cart Value"
+msgstr "Giá trị giỏ hàng tối đa"
+
+msgid "Max value"
+msgstr "Giá trị tối đa"
+
+msgid "Created From"
+msgstr "Tạo từ"
+
+msgid "Created To"
+msgstr "Tạo đến"
+
+msgid "Apply Filters"
+msgstr "Áp dụng bộ lọc"
+
+msgid "Clear All"
+msgstr "Xóa tất cả"
+
+msgid "Run the selected action"
+msgstr "Thực hiện hành động đã chọn"
+
+msgid "Go"
+msgstr "Tiến hành"
+
+msgid "of"
+msgstr "của"
+
+#, python-format
+msgid "1 cart"
+msgid_plural "%(counter)s carts"
+msgstr[0] "%(counter)s giỏ hàng"
+msgstr[1] "%(counter)s giỏ hàng"
+
+msgid "carts"
+msgstr "giỏ hàng"
+
+msgid "Show all"
+msgstr "Hiển thị tất cả"
+
+msgid "Save"
+msgstr "Lưu"
+
+msgid "Add Shipping Method"
+msgstr "Thêm phương thức vận chuyển"
+
+msgid "Configure a new shipping method for your store"
+msgstr "Cấu hình phương pháp vận chuyển mới cho cửa hàng của bạn"
+
+msgid "Method Basics"
+msgstr "Thông tin cơ bản phương thức"
+
+msgid "Eligibility"
+msgstr "Điều kiện áp dụng"
+
+msgid "Coverage"
+msgstr "Bao phủ"
+
+msgid "Features"
+msgstr "Tính năng"
+
+msgid "Review"
+msgstr "Xem xét"
+
+msgid "Define the core identity and type of this shipping method."
+msgstr "Định nghĩa bản sắc và loại của phương thức vận chuyển này."
+
+msgid "Method Name"
+msgstr "Tên phương thức"
+
+msgid "e.g., Standard Shipping, Express Delivery"
+msgstr "Ví dụ: Giao hàng tiêu chuẩn, Giao hàng nhanh"
+
+msgid "Customer-facing name for this shipping method"
+msgstr "Tên phương thức vận chuyển hướng đến khách hàng"
+
+msgid "Optional description of this shipping method"
+msgstr "Mô tả tùy chọn cho phương thức vận chuyển này"
+
+msgid "Display Icon"
+msgstr "Biểu tượng hiển thị"
+
+msgid ""
+"Select an image from the media library or choose a Font Awesome icon. Image "
+"takes priority if both are provided."
+msgstr ""
+"Chọn một hình ảnh từ thư viện phương tiện hoặc chọn một biểu tượng Font "
+"Awesome. Hình ảnh sẽ được ưu tiên nếu cả hai đều được cung cấp."
+
+msgid "Custom Image"
+msgstr "Hình ảnh tùy chỉnh"
+
+msgid "Font Awesome Icon"
+msgstr "Biểu tượng Font Awesome"
+
+msgid "Choose an icon from Font Awesome library"
+msgstr "Chọn một biểu tượng từ thư viện Font Awesome"
+
+msgid "Active"
+msgstr "Đang hoạt động"
+
+msgid "Make this method available to customers immediately"
+msgstr "Làm cho phương thức này có sẵn cho khách hàng ngay lập tức"
+
+msgid "Method Type & Pricing"
+msgstr "Loại phương thức và giá cả"
+
+msgid "Select method type..."
+msgstr "Chọn loại phương thức..."
+
+msgid "Flat Rate - Fixed shipping cost"
+msgstr "Giá cố định - Phí vận chuyển cố định"
+
+msgid "Free Shipping - No charge"
+msgstr "Miễn phí vận chuyển - Không tính phí"
+
+msgid "Weight Based - Calculate by cart weight"
+msgstr "Dựa trên trọng lượng - Tính toán theo trọng lượng giỏ hàng"
+
+msgid "Price Based - Calculate by cart subtotal"
+msgstr "Dựa trên giá - Tính toán theo tổng giỏ hàng"
+
+msgid "Real-Time Carrier Rates - Live rates from carriers"
+msgstr ""
+"Giá vận chuyển theo thời gian thực - Giá theo thời gian thực từ các hãng vận "
+"chuyển"
+
+msgid "Local Pickup - Customer picks up at location"
+msgstr "Lấy hàng tại chỗ - Khách hàng tự đến lấy hàng tại địa điểm"
+
+msgid "Table Rate - Complex rules based on weight/price/destination"
+msgstr "Giá theo bảng - Quy tắc phức tạp dựa trên trọng lượng/giá/địa điểm"
+
+msgid "Method Types:"
+msgstr "Loại phương thức:"
+
+msgid "Flat Rate:"
+msgstr "Giá cố định:"
+
+msgid "Fixed shipping cost regardless of order"
+msgstr "Phí vận chuyển cố định bất kể đơn hàng"
+
+msgid "Free Shipping:"
+msgstr "Miễn phí vận chuyển:"
+
+msgid "No shipping charge"
+msgstr "Không tính phí vận chuyển"
+
+msgid "Weight/Price Based:"
+msgstr "Dựa trên trọng lượng/giá:"
+
+msgid "Calculate using rate tables"
+msgstr "Tính toán bằng bảng giá"
+
+msgid "Real-Time:"
+msgstr "Thực thời:"
+
+msgid "Get live rates from USPS, FedEx, UPS, or DHL"
+msgstr "Nhận giá vận chuyển theo thời gian thực từ USPS, FedEx, UPS hoặc DHL"
+
+msgid "Local Pickup:"
+msgstr "Lấy hàng tại chỗ:"
+
+msgid "Customer picks up at your location"
+msgstr "Khách hàng đến lấy hàng tại địa điểm của bạn"
+
+msgid "Fixed shipping cost charged to customer"
+msgstr "Phí vận chuyển cố định được tính cho khách hàng"
+
+msgid "No Configured Providers"
+msgstr "Không có nhà cung cấp được cấu hình"
+
+msgid ""
+"You need to configure at least one shipping provider that supports real-time "
+"rates before you can use this method type."
+msgstr ""
+"Bạn cần cấu hình ít nhất một nhà cung cấp vận chuyển hỗ trợ giá theo thời "
+"gian thực trước khi bạn có thể sử dụng loại phương thức này."
+
+msgid "Connect Provider"
+msgstr "Kết nối nhà cung cấp"
+
+msgid "Manage Providers"
+msgstr "Quản lý nhà cung cấp"
+
+msgid "Select a configured shipping provider"
+msgstr "Chọn nhà cung cấp vận chuyển đã được cấu hình"
+
+msgid "Tip:"
+msgstr "Lưu ý:"
+
+msgid ""
+"Only providers that are configured and support real-time rates are shown "
+"above."
+msgstr ""
+"Chỉ các nhà cung cấp đã được cấu hình và hỗ trợ giá theo thời gian thực mới "
+"được hiển thị ở trên."
+
+msgid "Manage providers"
+msgstr "Quản lý nhà cung cấp"
+
+msgid "Service Code"
+msgstr "Mã dịch vụ"
+
+msgid "Specific service code from carrier (optional)"
+msgstr "Mã dịch vụ cụ thể từ nhà cung cấp (tùy chọn)"
+
+msgid "Cancel"
+msgstr "Hủy"
+
+msgid "Next Step"
+msgstr "Bước tiếp theo"
+
+msgid "Eligibility Conditions"
+msgstr "Điều kiện áp dụng"
+
+msgid ""
+"Define when this shipping method should be available based on cart value and "
+"weight."
+msgstr ""
+"Định nghĩa khi phương thức vận chuyển này nên được sử dụng dựa trên giá trị "
+"và trọng lượng giỏ hàng."
+
+msgid "Order Value Restrictions"
+msgstr "Giới hạn giá trị đơn hàng"
+
+msgid "Set minimum or maximum cart subtotal requirements for this method."
+msgstr "Đặt yêu cầu tổng giỏ hàng tối thiểu hoặc tối đa cho phương thức này."
+
+msgid "Method only available if cart subtotal is at least this amount"
+msgstr "Phương thức chỉ có sẵn nếu tổng giỏ hàng ít nhất là số này"
+
+msgid "No maximum"
+msgstr "Không có giới hạn tối đa"
+
+msgid "Method only available if cart subtotal is below this amount"
+msgstr "Phương thức chỉ có sẵn nếu tổng giỏ hàng thấp hơn số này"
+
+msgid "Examples:"
+msgstr "Ví dụ:"
+
+msgid "Free shipping for orders over $50: Set minimum to 50.00"
+msgstr ""
+"Miễn phí vận chuyển cho đơn hàng trên 50 USD: Đặt giá trị tối thiểu là 50.00"
+
+msgid "Economy shipping for orders under $100: Set maximum to 100.00"
+msgstr ""
+"Vận chuyển tiết kiệm cho đơn hàng dưới 100 USD: Đặt giá trị tối đa là 100.00"
+
+msgid "Standard shipping for $25-$200: Set both minimum and maximum"
+msgstr ""
+"Vận chuyển tiêu chuẩn cho đơn hàng từ 25 USD đến 200 USD: Đặt cả giá trị tối "
+"thiểu và tối đa"
+
+msgid "Weight Restrictions"
+msgstr "Giới hạn trọng lượng"
+
+msgid "Set minimum or maximum total cart weight requirements for this method."
+msgstr ""
+"Đặt yêu cầu trọng lượng tổng giỏ hàng tối thiểu hoặc tối đa cho phương thức "
+"này."
+
+msgid "Minimum Weight (kg)"
+msgstr "Trọng lượng tối thiểu (kg)"
+
+msgid "Method only available if total cart weight is at least this value"
+msgstr ""
+"Phương thức chỉ có sẵn nếu trọng lượng tổng giỏ hàng ít nhất là giá trị này"
+
+msgid "Maximum Weight (kg)"
+msgstr "Trọng lượng tối đa (kg)"
+
+msgid "Method only available if total cart weight is below this value"
+msgstr ""
+"Phương thức chỉ có sẵn nếu trọng lượng tổng giỏ hàng thấp hơn giá trị này"
+
+msgid "Light parcel shipping for packages under 2kg: Set maximum to 2.00"
+msgstr "Vận chuyển gói nhẹ cho các gói dưới 2kg: Đặt giá trị tối đa là 2.00"
+
+msgid "Heavy freight for packages over 20kg: Set minimum to 20.00"
+msgstr ""
+"Vận chuyển hàng nặng cho các gói trên 20kg: Đặt giá trị tối thiểu là 20.00"
+
+msgid "Standard shipping for 0.5kg-10kg: Set both minimum and maximum"
+msgstr ""
+"Vận chuyển tiêu chuẩn cho các gói từ 0.5kg đến 10kg: Đặt cả giá trị tối "
+"thiểu và tối đa"
+
+msgid "Additional Options"
+msgstr "Tùy chọn bổ sung"
+
+msgid "Requires Shipping Address"
+msgstr "Yêu cầu địa chỉ vận chuyển"
+
+msgid ""
+"Customer must provide a shipping address for this method (disable for "
+"digital goods or local pickup)"
+msgstr ""
+"Khách hàng phải cung cấp địa chỉ vận chuyển cho phương thức này (tắt đối với "
+"hàng hóa số hoặc lấy hàng tại chỗ)"
+
+msgid "Previous"
+msgstr "Trước"
+
+msgid "Geographic Coverage"
+msgstr "Phạm vi địa lý"
+
+msgid "Define where this shipping method is available using shipping zones."
+msgstr ""
+"Định nghĩa nơi phương thức vận chuyển này có sẵn bằng cách sử dụng các khu "
+"vực vận chuyển."
+
+msgid "Zone-Based Coverage:"
+msgstr "Bảo hiểm theo khu vực:"
+
+msgid ""
+"Use shipping zones for flexible, rule-based geographic coverage. This "
+"approach works seamlessly with shipping rules and allows precise control "
+"over where your methods are available."
+msgstr ""
+"Sử dụng các khu vực vận chuyển để có phạm vi địa lý linh hoạt dựa trên quy "
+"tắc. Cách tiếp cận này hoạt động mượt mà với các quy tắc vận chuyển và cho "
+"phép kiểm soát chính xác nơi các phương thức của bạn có sẵn."
+
+msgid "Select Shipping Zones"
+msgstr "Chọn khu vực vận chuyển"
+
+msgid ""
+"Choose which shipping zones this method is available for. Leave empty to "
+"make available worldwide."
+msgstr ""
+"Chọn khu vực vận chuyển nào phương thức này có sẵn. Để trống để làm cho "
+"phương thức này có sẵn trên toàn thế giới."
+
+msgid "Available Zones"
+msgstr "Khu vực có sẵn"
+
+msgid "Add selected zones"
+msgstr "Thêm khu vực đã chọn"
+
+msgid "Add all zones"
+msgstr "Thêm tất cả khu vực"
+
+msgid "Remove selected zones"
+msgstr "Xóa khu vực đã chọn"
+
+msgid "Remove all zones"
+msgstr "Xóa tất cả khu vực"
+
+msgid "Selected Zones"
+msgstr "Khu vực đã chọn"
+
+msgid "No shipping zones found!"
+msgstr "Không tìm thấy khu vực vận chuyển nào!"
+
+msgid "You need to create shipping zones first."
+msgstr "Bạn cần tạo các khu vực vận chuyển trước."
+
+msgid "Create a shipping zone"
+msgstr "Tạo khu vực vận chuyển"
+
+msgid "Method Features"
+msgstr "Tính năng phương pháp"
+
+msgid ""
+"Configure delivery estimates, display order, and method-specific features."
+msgstr ""
+"Cấu hình ước tính giao hàng, thứ tự hiển thị và tính năng cụ thể cho phương "
+"thức."
+
+msgid "Select the physical locations where customers can pick up their orders."
+msgstr ""
+"Chọn các địa điểm vật lý nơi khách hàng có thể đến nhận đơn hàng của họ."
+
+msgid "Available Pickup Locations"
+msgstr "Các địa điểm nhận hàng có sẵn"
+
+msgid "Available Locations"
+msgstr "Các địa điểm có sẵn"
+
+msgid "Selected Locations"
+msgstr "Các địa điểm đã chọn"
+
+msgid "No pickup locations found!"
+msgstr "Không tìm thấy địa điểm nhận hàng nào!"
+
+msgid "You need to create pickup locations first for local pickup methods."
+msgstr ""
+"Bạn cần tạo các địa điểm lấy hàng trước cho phương thức lấy hàng tại chỗ."
+
+msgid "Create a pickup location"
+msgstr "Tạo địa điểm nhận hàng"
+
+msgid "Carrier API Status"
+msgstr "Trạng thái API nhà vận chuyển"
+
+msgid "Carrier:"
+msgstr "Nhà vận chuyển:"
+
+msgid "Service Code:"
+msgstr "Mã dịch vụ:"
+
+msgid "API Configuration Status"
+msgstr "Trạng thái cấu hình API"
+
+msgid "Checking API credentials..."
+msgstr "Đang kiểm tra thông tin API..."
+
+msgid ""
+"Ensure your carrier API credentials are configured in the shipping provider "
+"settings."
+msgstr ""
+"Đảm bảo rằng thông tin xác thực API của nhà cung cấp vận chuyển của bạn đã "
+"được cấu hình trong cài đặt nhà cung cấp vận chuyển."
+
+msgid "Enable Rate Caching"
+msgstr "Bật lưu trữ giá vận chuyển"
+
+msgid ""
+"Cache carrier rates for 15 minutes to improve performance and reduce API "
+"calls"
+msgstr ""
+"Chuẩn bị giá vận chuyển của nhà cung cấp trong 15 phút để cải thiện hiệu "
+"suất và giảm số lần gọi API"
+
+msgid "Rate Table Configuration"
+msgstr "Cấu hình bảng giá"
+
+msgid "Weight-Based Rates:"
+msgstr "Giá theo trọng lượng:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart weight after the "
+"method is created."
+msgstr ""
+"Bạn sẽ có thể cấu hình các mức giá theo trọng lượng giỏ hàng sau khi phương "
+"thức được tạo."
+
+msgid "Price-Based Rates:"
+msgstr "Giá theo giá trị đơn hàng:"
+
+msgid ""
+"You'll be able to configure tiered rates based on cart subtotal after the "
+"method is created."
+msgstr ""
+"Bạn sẽ có thể cấu hình các mức giá theo tổng giỏ hàng sau khi phương thức "
+"được tạo."
+
+msgid "Rate tables can be managed from the method's edit page after creation."
+msgstr ""
+"Bảng giá có thể được quản lý từ trang chỉnh sửa phương thức sau khi tạo."
+
+msgid "Delivery Time Estimate"
+msgstr "Ước tính thời gian giao hàng"
+
+msgid "Provide customers with an estimated delivery timeframe."
+msgstr "Cung cấp cho khách hàng khung thời gian giao hàng ước tính."
+
+msgid "Fastest delivery time in business days"
+msgstr "Thời gian giao hàng nhanh nhất theo ngày làm việc"
+
+msgid "Slowest delivery time in business days"
+msgstr "Thời gian giao hàng chậm nhất theo ngày làm việc"
+
+msgid "Standard shipping: 3-5 business days"
+msgstr "Vận chuyển tiêu chuẩn: 3-5 ngày làm việc"
+
+msgid "Express shipping: 1-2 business days"
+msgstr "Vận chuyển nhanh: 1-2 ngày làm việc"
+
+msgid "International shipping: 7-14 business days"
+msgstr "Vận chuyển quốc tế: 7-14 ngày làm việc"
+
+msgid "Display Settings"
+msgstr "Cài đặt hiển thị"
+
+msgid ""
+"Lower numbers appear first. Use this to control the order methods are "
+"displayed to customers."
+msgstr ""
+"Số nhỏ hơn sẽ hiển thị trước. Sử dụng điều này để kiểm soát thứ tự phương "
+"thức được hiển thị cho khách hàng."
+
+msgid ""
+"Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion "
+"of new methods between existing ones."
+msgstr ""
+"Gán thứ tự sắp xếp theo bước 10 (0, 10, 20) để cho phép chèn phương thức mới "
+"dễ dàng giữa các phương thức hiện có."
+
+msgid "Review & Create"
+msgstr "Xem lại & Tạo"
+
+msgid "API credentials verified successfully"
+msgstr "Thông tin API đã được xác minh thành công"
+
+msgid "Review your shipping method configuration and create it."
+msgstr ""
+"Kiểm tra lại cài đặt phương thức vận chuyển của bạn và tạo phương thức."
+
+msgid "Edit"
+msgstr "Chỉnh sửa"
+
+msgid "Name:"
+msgstr "Tên:"
+
+msgid "Method Type:"
+msgstr "Loại phương pháp:"
+
+msgid "Description:"
+msgstr "Mô tả:"
+
+msgid "Display Icon:"
+msgstr "Biểu tượng hiển thị:"
+
+msgid "Status:"
+msgstr "Trạng thái:"
+
+msgid "Inactive"
+msgstr "Không hoạt động"
+
+msgid "Flat Rate Cost:"
+msgstr "Chi phí cố định:"
+
+msgid "Min Order Value:"
+msgstr "Giá trị đơn hàng tối thiểu:"
+
+msgid "Max Order Value:"
+msgstr "Giá trị đơn hàng tối đa:"
+
+msgid "Min Weight:"
+msgstr "Trọng lượng tối thiểu:"
+
+msgid "Max Weight:"
+msgstr "Trọng lượng tối đa:"
+
+msgid "Requires Shipping Address:"
+msgstr "Yêu cầu địa chỉ vận chuyển:"
+
+msgid "Yes"
+msgstr "Có"
+
+msgid "No"
+msgstr "Không"
+
+msgid ""
+"No eligibility conditions set - method available for all cart values and "
+"weights"
+msgstr ""
+"Không có điều kiện đủ điều kiện nào được thiết lập - phương thức có sẵn cho "
+"tất cả giá trị giỏ hàng và trọng lượng"
+
+msgid "Shipping Zones:"
+msgstr "Khu vực vận chuyển:"
+
+msgid "Coverage:"
+msgstr "Bảo hiểm:"
+
+msgid "Worldwide (No zones selected)"
+msgstr "Toàn cầu (Không khu vực nào được chọn)"
+
+msgid "Pickup Locations:"
+msgstr "Địa điểm nhận hàng:"
+
+msgid "location"
+msgstr "địa điểm"
+
+msgid "Delivery Time:"
+msgstr "Thời gian giao hàng:"
+
+msgid "Instant Pickup"
+msgstr "Nhận hàng ngay"
+
+msgid "Delivery Estimate:"
+msgstr "Ước tính giao hàng:"
+
+msgid "business days"
+msgstr "ngày làm việc"
+
+msgid "Sort Order:"
+msgstr "Thứ tự sắp xếp:"
+
+msgid "Rate Caching:"
+msgstr "Caching tỷ lệ:"
+
+msgid "Enabled"
+msgstr "Đã kích hoạt"
+
+msgid "What happens next:"
+msgstr "Điều gì sẽ xảy ra tiếp theo:"
+
+msgid "Your shipping method will be created with the settings above"
+msgstr "Phương thức vận chuyển của bạn sẽ được tạo với các cài đặt trên"
+
+msgid "You'll be redirected to configure rate tables for this method"
+msgstr "Bạn sẽ được chuyển hướng để cấu hình bảng tỷ lệ cho phương thức này"
+
+msgid ""
+"The method will be immediately available to customers (if eligibility "
+"conditions are met)"
+msgstr ""
+"Phương thức sẽ ngay lập tức có sẵn cho khách hàng (nếu đáp ứng điều kiện đủ "
+"điều kiện)"
+
+msgid "The method will be created as inactive - activate it when ready"
+msgstr ""
+"Phương thức sẽ được tạo ở trạng thái không hoạt động - kích hoạt khi sẵn sàng"
+
+msgid "Create Shipping Method"
+msgstr "Tạo phương thức vận chuyển"
+
+msgid "Creating..."
+msgstr "Đang tạo..."
+
+msgid "Session"
+msgstr "Phiên"
+
+msgid "Registered"
+msgstr "Đã đăng ký"
+
+msgid "Guest"
+msgstr "Khách"
+
+msgid "item"
+msgstr "sản phẩm"
+
+msgid "Shipping Set"
+msgstr "Tập phương thức vận chuyển"
+
+msgid "Cart Total"
+msgstr "Tổng giỏ hàng"
+
+msgid "Items"
+msgstr "Sản phẩm"
+
+msgid "Savings"
+msgstr "Tiết kiệm"
+
+msgid "Shipping"
+msgstr "Giao hàng"
+
+msgid "Grand Total"
+msgstr "Tổng cộng"
+
+msgid "Updated"
+msgstr "Đã cập nhật"
+
+msgid "ago"
+msgstr "trước"
+
+msgid "Created"
+msgstr "Được tạo"
+
+msgid "Est. Delivery"
+msgstr "Giao hàng ước tính"
+
+msgid "View cart details"
+msgstr "Xem chi tiết giỏ hàng"
+
+msgid "Edit cart"
+msgstr "Chỉnh sửa giỏ hàng"
+
+msgid "Delete cart"
+msgstr "Xóa giỏ hàng"
+
+msgid "Are you sure you want to clear this cart?"
+msgstr "Bạn có chắc chắn muốn xóa giỏ hàng này?"
+
+msgid "No shopping carts found matching your criteria."
+msgstr "Không tìm thấy giỏ hàng nào phù hợp với tiêu chí của bạn."
+
+msgid "Try adjusting your filters or search terms."
+msgstr "Hãy thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm của bạn."
+
+msgid "Edit Shipping Method"
+msgstr "Chỉnh sửa phương thức vận chuyển"
+
+msgid "Save and continue editing"
+msgstr "Lưu và tiếp tục chỉnh sửa"
+
+msgid "Please correct the errors below"
+msgstr "Vui lòng sửa các lỗi dưới đây"
+
+msgid "Basic"
+msgstr "Cơ bản"
+
+msgid "Pricing"
+msgstr "Giá cả"
+
+msgid "Display"
+msgstr "Hiển thị"
+
+msgid "Optional: Restrict availability based on order value or weight."
+msgstr "Tùy chọn: Hạn chế khả dụng dựa trên giá trị đơn hàng hoặc trọng lượng."
+
+msgid "Delivery Time"
+msgstr "Thời gian giao hàng"
+
+msgid "Display Options"
+msgstr "Tùy chọn hiển thị"
+
+msgid "Carrier Integration"
+msgstr "Tích hợp đơn vị vận chuyển"
+
+msgid "Configure carrier-specific settings for real-time rate lookups."
+msgstr ""
+"Cấu hình cài đặt cụ thể cho từng nhà vận chuyển để tra cứu tỷ lệ thời gian "
+"thực."
+
+msgid "Configure shipping options, rates, and delivery methods"
+msgstr "Cấu hình các tùy chọn vận chuyển, tỷ lệ và phương pháp giao hàng"
+
+msgid "method"
+msgstr "phương thức"
+
+msgid "active"
+msgstr "đang hoạt động"
+
+msgid "Add Method"
+msgstr "Thêm phương thức"
+
+msgid "Bulk Actions"
+msgstr "Hành động theo khối"
+
+msgid "Enable Selected"
+msgstr "Kích hoạt đã chọn"
+
+msgid "Disable Selected"
+msgstr "Tắt đã chọn"
+
+msgid "Delete Selected"
+msgstr "Xóa đã chọn"
+
+msgid "Apply"
+msgstr "Áp dụng"
+
+msgid "selected"
+msgstr "đã chọn"
+
+msgid "All Status"
+msgstr "Tất cả trạng thái"
+
+msgid "All Types"
+msgstr "Tất cả loại"
+
+msgid "Real-Time Rates"
+msgstr "Tỷ lệ thời gian thực"
+
+msgid "Clear all filters"
+msgstr "Xóa tất cả bộ lọc"
+
+msgid "Clear Filters"
+msgstr "Xóa bộ lọc"
+
+msgid "Search methods..."
+msgstr "Tìm phương thức..."
+
+msgid "Select All"
+msgstr "Chọn tất cả"
+
+#, python-format
+msgid "%(counter)s method"
+msgid_plural "%(counter)s methods"
+msgstr[0] "%(counter)s phương thức"
+msgstr[1] "%(counter)s phương thức"
+
+msgid "No shipping methods found"
+msgstr "Không tìm thấy phương thức vận chuyển nào"
+
+msgid "Try adjusting your filters or search query."
+msgstr "Hãy thử điều chỉnh bộ lọc hoặc truy vấn tìm kiếm của bạn."
+
+msgid "Get started by creating your first shipping method."
+msgstr "Bắt đầu bằng cách tạo phương thức vận chuyển đầu tiên của bạn."
+
+msgid "Add First Method"
+msgstr "Thêm phương thức đầu tiên"
+
+msgid "Loading..."
+msgstr "Đang tải..."
+
+msgid "Order Value:"
+msgstr "Giá trị đơn hàng:"
+
+msgid "Weight:"
+msgstr "Trọng lượng:"
+
+msgid "Zones:"
+msgstr "Khu vực:"
+
+msgid "zone"
+msgstr "khu vực"
+
+msgid "Countries:"
+msgstr "Quốc gia:"
+
+msgid "country"
+msgstr "quốc gia"
+
+msgid "Worldwide"
+msgstr "Toàn cầu"
+
+msgid "Pickup:"
+msgstr "Lấy hàng:"
+
+msgid "Delivery:"
+msgstr "Giao hàng:"
+
+msgid "Edit method"
+msgstr "Chỉnh sửa phương thức"
+
+msgid "Toggle active status"
+msgstr "Chuyển đổi trạng thái hoạt động"
+
+msgid "Delete method"
+msgstr "Xóa phương thức"
+
+msgid "Edit Tax Rate"
+msgstr "Chỉnh sửa thuế"
+
+msgid "Add Tax Rate"
+msgstr "Thêm tỷ lệ thuế"
+
+msgid "Geography"
+msgstr "Địa lý"
+
+msgid "Rules"
+msgstr "Quy tắc"
+
+msgid "Exemptions"
+msgstr "Miễn thuế"
+
+msgid ""
+"Define where this tax rate applies. Leave state/city empty for country-wide "
+"rates."
+msgstr ""
+"Xác định nơi áp dụng tỷ lệ thuế này. Để trống tỉnh/thành phố để áp dụng tỷ "
+"lệ thuế trên toàn quốc."
+
+msgid "Exclude specific product types or categories from this tax rate."
+msgstr "Loại bỏ các loại sản phẩm hoặc danh mục cụ thể khỏi tỷ lệ thuế này."
+
+msgid ""
+"Configure tax rules for your store. Tax rates are matched to customer "
+"addresses during checkout."
+msgstr ""
+"Cấu hình quy tắc thuế cho cửa hàng của bạn. Tỷ lệ thuế sẽ được khớp với địa "
+"chỉ khách hàng trong quá trình thanh toán."
+
+msgid "Load Presets"
+msgstr "Tải cài đặt mặc định"
+
+msgid "Total Rules"
+msgstr "Tổng quy tắc"
+
+msgid "Countries"
+msgstr "Quốc gia"
+
+msgid "Tax Types"
+msgstr "Loại thuế"
+
+msgid "Search by name, country, state..."
+msgstr "Tìm theo tên, quốc gia, tỉnh / bang..."
+
+msgid "All Countries"
+msgstr "Tất cả quốc gia"
+
+msgid "Custom"
+msgstr "Tùy chỉnh"
+
+msgid "Status"
+msgstr "Trạng thái"
+
+msgid "Clear"
+msgstr "Xóa"
+
+msgid "Tax Rules"
+msgstr "Quy tắc thuế"
+
+msgid "rules"
+msgstr "Quy tắc"
+
+msgid "Load Tax Rate Presets"
+msgstr "Tải cài đặt thuế mặc định"
+
+msgid ""
+"Quickly add standard tax rates for your region. Existing rates will not be "
+"duplicated."
+msgstr ""
+"Thêm nhanh các tỷ lệ thuế tiêu chuẩn cho khu vực của bạn. Các tỷ lệ hiện có "
+"sẽ không bị trùng lặp."
+
+msgid "rates"
+msgstr "Mức thuế"
+
+msgid "Load"
+msgstr "Tải"
+
+msgid "Close"
+msgstr "Đóng"
+
+msgid "postal codes"
+msgstr "Mã bưu chính"
+
+msgid "Shipping Taxed"
+msgstr "Thuế vận chuyển"
+
+msgid "Compound"
+msgstr "Kết hợp"
+
+msgid "Delete"
+msgstr "Xóa"
+
+msgid "No tax rates configured"
+msgstr "Chưa cấu hình mức thuế nào"
+
+msgid ""
+"Use 'Load Presets' to quickly add standard rates for your region, or add "
+"rates manually."
+msgstr ""
+"Sử dụng 'Tải cài đặt mặc định' để thêm nhanh các tỷ lệ tiêu chuẩn cho khu "
+"vực của bạn, hoặc thêm tỷ lệ thủ công."
+
+msgid "Get current cart"
+msgstr "Lấy giỏ hàng hiện tại"
+
+msgid ""
+"Get the current cart for authenticated user or session. Returns cart items, "
+"subtotal, discounts, taxes, and total. Automatically creates cart if it "
+"doesn't exist."
+msgstr ""
+"Lấy giỏ hàng hiện tại của người dùng đã xác thực hoặc phiên. Trả về các mục "
+"giỏ hàng, thành tiền, chiết khấu, thuế và tổng cộng. Tự động tạo giỏ hàng "
+"nếu chưa tồn tại."
+
+msgid "Add item to cart"
+msgstr "Thêm mặt hàng vào giỏ hàng"
+
+msgid ""
+"Add a product to cart with specified quantity. Optionally include variant "
+"ID, customizations, and notes. Validates stock availability and merges with "
+"existing cart item if same product/variant. For subscription products, "
+"include is_subscription=true with subscription_plan_id, payment_token_id, "
+"and optionally pricing_tier_id."
+msgstr ""
+"Thêm sản phẩm vào giỏ hàng với số lượng đã chỉ định. Có thể chọn thêm ID "
+"biến thể, tùy chỉnh và ghi chú. Kiểm tra tính khả dụng của hàng tồn kho và "
+"hợp nhất với mục giỏ hàng hiện có nếu sản phẩm/biến thể giống nhau. Đối với "
+"sản phẩm đăng ký, hãy bao gồm is_subscription=true cùng với "
+"subscription_plan_id, payment_token_id và tùy chọn pricing_tier_id."
+
+msgid "Update cart item"
+msgstr "Cập nhật mặt hàng giỏ hàng"
+
+msgid ""
+"Update cart item quantity, customizations, or notes. Validates new quantity "
+"against stock availability. Returns updated cart with recalculated totals."
+msgstr ""
+"Cập nhật số lượng, tùy chỉnh hoặc ghi chú của mục giỏ hàng. Kiểm tra số "
+"lượng mới dựa trên tình trạng tồn kho. Trả về giỏ hàng đã cập nhật với tổng "
+"cộng được tính lại."
+
+msgid "Remove cart item"
+msgstr "Xóa mặt hàng giỏ hàng"
+
+msgid ""
+"Remove a specific item from cart. Recalculates cart totals and revalidates "
+"any applied vouchers against new cart total."
+msgstr ""
+"Xóa một mục cụ thể khỏi giỏ hàng. Tính lại tổng giỏ hàng và kiểm tra lại "
+"tính hợp lệ của các phiếu giảm giá đã áp dụng dựa trên tổng giỏ hàng mới."
+
+msgid "Clear cart"
+msgstr "Xóa giỏ hàng"
+
+msgid ""
+"Remove all items from cart. Also removes any applied vouchers. Cart object "
+"persists but becomes empty."
+msgstr ""
+"Xóa tất cả các mục khỏi giỏ hàng. Cũng xóa các phiếu giảm giá đã áp dụng. "
+"Đối tượng giỏ hàng vẫn tồn tại nhưng trở thành rỗng."
+
+msgid "Apply voucher code"
+msgstr "Áp dụng mã phiếu giảm giá"
+
+msgid ""
+"Apply a voucher code to cart. Validates voucher eligibility, minimum "
+"purchase requirements, and usage limits. Calculates and applies discount to "
+"cart total."
+msgstr ""
+"Áp dụng mã phiếu giảm giá vào giỏ hàng. Kiểm tra tính hợp lệ của phiếu giảm "
+"giá, yêu cầu mua hàng tối thiểu và giới hạn sử dụng. Tính toán và áp dụng "
+"giảm giá cho tổng giỏ hàng."
+
+msgid "Remove voucher"
+msgstr "Xóa phiếu giảm giá"
+
+msgid ""
+"Remove a specific voucher from cart by code. Recalculates cart total without "
+"the voucher discount. User can reapply the voucher later if eligible."
+msgstr ""
+"Xóa một phiếu giảm giá cụ thể khỏi giỏ hàng bằng mã. Tính lại tổng giỏ hàng "
+"mà không áp dụng phiếu giảm giá. Người dùng có thể áp dụng lại phiếu giảm "
+"giá sau này nếu đủ điều kiện."
+
+msgid "Apply gift card"
+msgstr "Áp dụng thẻ quà tặng"
+
+msgid ""
+"Apply a gift card code to cart. Validates gift card status, balance, and "
+"currency. Gift cards cannot be used to purchase other gift cards. Amount "
+"applied is limited to gift card balance or remaining cart total."
+msgstr ""
+"Áp dụng mã thẻ quà tặng vào giỏ hàng. Kiểm tra trạng thái, số dư và loại "
+"tiền của thẻ quà tặng. Không thể sử dụng thẻ quà tặng để mua các thẻ quà "
+"tặng khác. Số tiền áp dụng bị giới hạn bởi số dư thẻ quà tặng hoặc tổng giỏ "
+"hàng còn lại."
+
+msgid "Remove gift card"
+msgstr "Xóa thẻ quà tặng"
+
+msgid ""
+"Remove a specific gift card from cart by code. The gift card balance is not "
+"affected until checkout is completed. User can reapply the gift card."
+msgstr ""
+"Xóa một thẻ quà tặng cụ thể khỏi giỏ hàng bằng mã. Số dư của thẻ quà tặng sẽ "
+"không bị ảnh hưởng cho đến khi thanh toán hoàn tất. Người dùng có thể áp "
+"dụng lại thẻ quà tặng."
+
+msgid "Get cart summary"
+msgstr "Lấy tóm tắt giỏ hàng"
+
+msgid ""
+"Get lightweight cart summary with item count, subtotal, and total. Faster "
+"than full cart endpoint. Useful for header cart badge or quick total display."
+msgstr ""
+"Lấy tóm tắt giỏ hàng nhẹ với số lượng mặt hàng, thành tiền và tổng tiền. "
+"Nhanh hơn điểm cuối giỏ hàng đầy đủ. Hữu ích cho nhãn giỏ hàng trên thanh "
+"đầu hoặc hiển thị tổng tiền nhanh."
+
+msgid ""
+"Component items cannot be modified directly. Update the parent product "
+"instead."
+msgstr ""
+"Các mục thành phần không thể được sửa đổi trực tiếp. Cập nhật sản phẩm mẹ "
+"thay vào đó."
+
+msgid "List user wishlists"
+msgstr "Liệt kê danh sách mong muốn của người dùng"
+
+msgid ""
+"Get all wishlists for the authenticated user. Users can have multiple "
+"wishlists for different purposes (e.g., 'Birthday', 'Wedding', 'Ideas'). "
+"Returns wishlist names, item counts, and privacy settings."
+msgstr ""
+"Lấy tất cả danh sách mong muốn của người dùng đã xác thực. Người dùng có thể "
+"có nhiều danh sách mong muốn cho các mục đích khác nhau (ví dụ, 'Sinh nhật', "
+"'Cưới', 'Ý tưởng'). Trả về tên danh sách mong muốn, số lượng mặt hàng và cài "
+"đặt quyền riêng tư."
+
+msgid "Create wishlist"
+msgstr "Tạo danh sách mong muốn"
+
+msgid ""
+"Create a new wishlist for the authenticated user. Specify name, description, "
+"and privacy setting (public/private). Public wishlists can be shared via URL."
+msgstr ""
+"Tạo danh sách mong muốn mới cho người dùng đã xác thực. Chỉ định tên, mô tả "
+"và cài đặt quyền riêng tư (công khai/riêng tư). Các danh sách mong muốn công "
+"khai có thể được chia sẻ qua URL."
+
+msgid "Get wishlist details"
+msgstr "Lấy chi tiết danh sách mong muốn"
+
+msgid ""
+"Get detailed information about a specific wishlist including all items, "
+"prices, availability, and sharing settings. Only accessible to wishlist "
+"owner unless publicly shared."
+msgstr ""
+"Lấy thông tin chi tiết về danh sách mong muốn cụ thể, bao gồm tất cả các "
+"mục, giá cả, tình trạng có sẵn và cài đặt chia sẻ. Chỉ có thể truy cập bởi "
+"chủ sở hữu danh sách mong muốn trừ khi được chia sẻ công khai."
+
+msgid "Update wishlist"
+msgstr "Cập nhật danh sách mong muốn"
+
+msgid ""
+"Update wishlist information including name, description, or privacy "
+"settings. Can make wishlist public or private. Only owner can update."
+msgstr ""
+"Cập nhật thông tin danh sách mong muốn bao gồm tên, mô tả hoặc cài đặt quyền "
+"riêng tư. Có thể thiết lập danh sách mong muốn là công khai hoặc riêng tư. "
+"Chỉ chủ sở hữu mới có thể cập nhật."
+
+msgid "Partially update wishlist"
+msgstr "Cập nhật một phần danh sách mong muốn"
+
+msgid ""
+"Update specific wishlist fields without sending full wishlist data. Useful "
+"for toggling privacy or renaming wishlist."
+msgstr ""
+"Cập nhật các trường cụ thể của danh sách mong muốn mà không cần gửi toàn bộ "
+"dữ liệu danh sách. Hữu ích để bật/tắt quyền riêng tư hoặc đổi tên danh sách "
+"mong muốn."
+
+msgid "Delete wishlist"
+msgstr "Xóa danh sách mong muốn"
+
+msgid ""
+"Permanently delete a wishlist and all its items. Cannot be undone. Only "
+"owner can delete."
+msgstr ""
+"Xóa vĩnh viễn danh sách mong muốn và tất cả các mục trong đó. Không thể hoàn "
+"tác. Chỉ chủ sở hữu mới có thể xóa."
+
+msgid "Add item to wishlist"
+msgstr "Thêm mặt hàng vào danh sách mong muốn"
+
+msgid ""
+"Add a product to wishlist with optional variant, quantity, and notes. "
+"Prevents duplicates. Can add to default wishlist or specify wishlist ID."
+msgstr ""
+"Thêm một sản phẩm vào danh sách yêu thích với biến thể, số lượng và ghi chú "
+"(tùy chọn). Ngăn chặn các bản sao. Có thể thêm vào danh sách yêu thích mặc "
+"định hoặc chỉ định ID danh sách yêu thích."
+
+msgid "Remove item from wishlist"
+msgstr "Xóa mặt hàng khỏi danh sách mong muốn"
+
+msgid ""
+"Remove a specific item from wishlist. Item can be added back later. Does not "
+"affect product availability."
+msgstr ""
+"Xóa một mục cụ thể khỏi danh sách yêu thích. Mục có thể được thêm lại sau "
+"này. Không ảnh hưởng đến tình trạng sẵn có của sản phẩm."
+
+msgid "Move item to cart"
+msgstr "Chuyển mặt hàng vào giỏ hàng"
+
+msgid ""
+"Move a wishlist item directly to shopping cart. Validates stock "
+"availability. Item is removed from wishlist after successful cart addition."
+msgstr ""
+"Chuyển trực tiếp một mục từ danh sách yêu thích sang giỏ hàng. Kiểm tra tính "
+"khả dụng của hàng tồn kho. Mục sẽ bị xóa khỏi danh sách yêu thích sau khi "
+"thêm thành công vào giỏ hàng."
+
+msgid "Get public wishlist by share slug"
+msgstr "Lấy danh sách mong muốn công khai bằng slug chia sẻ"
+
+msgid ""
+"View a public wishlist using its share URL slug. Anyone with the link can "
+"view public wishlists. Useful for gift registries and wish lists shared with "
+"family/friends."
+msgstr ""
+"Xem danh sách mong muốn công khai bằng cách sử dụng slug URL chia sẻ. Người "
+"dùng có liên kết có thể xem các danh sách mong muốn công khai. Hữu ích cho "
+"sổ đăng ký quà tặng và danh sách mong muốn chia sẻ với gia đình/bạn bè."
+
+msgid "ID of the wishlist item to remove"
+msgstr "ID của mục danh sách mong muốn cần xóa"
+
+msgid "ID of the wishlist item to move to cart"
+msgstr "ID của mục danh sách mong muốn để chuyển đến giỏ hàng"
+
+msgid "Share slug of the public wishlist"
+msgstr "Chia sẻ slug của danh sách mong muốn công khai"
+
+msgid "Wishlist not found"
+msgstr "Không tìm thấy danh sách yêu thích"
+
+msgid "Get checkout session"
+msgstr "Lấy phiên thanh toán"
+
+msgid "Set shipping address"
+msgstr "Thiết lập địa chỉ vận chuyển"
+
+msgid "Set billing address"
+msgstr "Thiết lập địa chỉ hóa đơn"
+
+msgid "Get available shipping methods"
+msgstr "Lấy phương thức vận chuyển có sẵn"
+
+msgid "Get available payment providers"
+msgstr "Lấy nhà cung cấp thanh toán có sẵn"
+
+msgid ""
+"Returns payment providers available for the customer's country and currency. "
+"Filters based on shipping countries, provider capabilities, and merchant "
+"configuration."
+msgstr ""
+"Trả về các nhà cung cấp thanh toán có sẵn cho quốc gia và tiền tệ của khách "
+"hàng. Lọc dựa trên quốc gia giao hàng, khả năng của nhà cung cấp và cấu hình "
+"của thương nhân."
+
+msgid "Set shipping method"
+msgstr "Thiết lập phương thức vận chuyển"
+
+msgid "Set payment method"
+msgstr "Thiết lập phương thức thanh toán"
+
+msgid "Validate checkout"
+msgstr "Kiểm tra thanh toán"
+
+msgid "Complete checkout"
+msgstr "Hoàn tất thanh toán"
+
+msgid "Get recently viewed products"
+msgstr "Lấy sản phẩm đã xem gần đây"
+
+msgid "Get recently viewed details"
+msgstr "Lấy chi tiết sản phẩm đã xem gần đây"
+
+msgid "List shipping methods"
+msgstr "Liệt kê phương thức vận chuyển"
+
+msgid "Get shipping method details"
+msgstr "Lấy chi tiết phương thức vận chuyển"
+
+msgid "List tax rates"
+msgstr "Liệt kê thuế suất"
+
+msgid "Get tax rate details"
+msgstr "Lấy chi tiết thuế suất"
+
+msgid "Create tax rate"
+msgstr "Tạo thuế suất"
+
+msgid "Update tax rate"
+msgstr "Cập nhật thuế suất"
+
+msgid "Partial update tax rate"
+msgstr "Cập nhật một phần thuế suất"
+
+msgid "Delete tax rate"
+msgstr "Xóa thuế suất"
+
+msgid "Calculate applicable taxes"
+msgstr "Tính thuế áp dụng"
+
+msgid "Tax rates grouped by country"
+msgstr "Thuế suất được nhóm theo quốc gia"
+
+msgid "Load preset tax rates"
+msgstr "Tải thuế suất mặc định"
+
+msgid "List tax preset groups"
+msgstr "Liệt kê nhóm thuế suất mặc định"
+
+msgid "Get preset group details"
+msgstr "Lấy chi tiết nhóm mặc định"
+
+msgid "List rates in a preset group"
+msgstr "Liệt kê các mức giá trong nhóm mặc định"

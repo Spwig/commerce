@@ -1,0 +1,39 @@
+{% load i18n static merchant_trans %}
+{% mtrans "Enter your email" as default_placeholder %}
+<div class="widget-newsletter {{ widget.css_classes }}"
+     data-success-message="{% mtrans 'Thank you for subscribing!' %}"
+     data-error-message="{% mtrans 'Subscription failed. Please try again.' %}">
+    {% if config.title %}
+    <h3 class="widget-newsletter-title">{{ config.title }}</h3>
+    {% endif %}
+    {% if config.description %}
+    <p class="widget-newsletter-description">{{ config.description }}</p>
+    {% endif %}
+    <form action="{{ config.action_url|default:'/newsletter/subscribe/' }}" method="post" class="widget-newsletter-form">
+        {% csrf_token %}
+        <div class="widget-newsletter-input-group">
+            <input type="email"
+                   name="email"
+                   class="widget-newsletter-input"
+                   placeholder="{{ config.placeholder|default:default_placeholder }}"
+                   required>
+            <button type="submit" class="widget-newsletter-button">
+                {% if config.button_text %}
+                    {{ config.button_text }}
+                {% else %}
+                    {% mtrans "Subscribe" %}
+                {% endif %}
+            </button>
+        </div>
+        {% if config.show_privacy %}
+        <p class="widget-newsletter-privacy">
+            <small>
+                {% mtrans "By subscribing, you agree to our" %}
+                <a href="{{ config.privacy_url|default:'/privacy-policy/' }}">{% mtrans "Privacy Policy" %}</a>
+            </small>
+        </p>
+        {% endif %}
+    </form>
+    <div class="widget-newsletter-message" style="display: none;"></div>
+</div>
+<script src="{% static 'design/js/widgets/newsletter.js' %}"></script>

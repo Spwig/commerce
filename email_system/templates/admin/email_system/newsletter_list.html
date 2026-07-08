@@ -1,0 +1,102 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Newsletters" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/admin/css/newsletter_list.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="newsletter-header">
+    <h1>
+        <i class="fas fa-newspaper"></i>
+        {% trans "Newsletters" %}
+    </h1>
+    <p class="subtitle">
+        {% trans "Create and send newsletters to your customers" %}
+    </p>
+</div>
+
+<div class="newsletter-actions">
+    <form method="get" class="search-box">
+        <input type="text" name="q" placeholder="{% trans 'Search newsletters...' %}" value="{{ search_query }}">
+    </form>
+    <a href="{% url 'email_system:newsletter_create' %}" class="btn-create">
+        <i class="fas fa-plus"></i>
+        {% trans "Create Newsletter" %}
+    </a>
+</div>
+
+{% if newsletter_stats %}
+<table class="newsletter-table">
+    <thead>
+        <tr>
+            <th>{% trans "Subject" %}</th>
+            <th>{% trans "Statistics" %}</th>
+            <th>{% trans "Created" %}</th>
+            <th>{% trans "Actions" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in newsletter_stats %}
+        <tr>
+            <td>
+                <div class="newsletter-subject">{{ item.template.subject }}</div>
+                <div class="newsletter-meta">
+                    {{ item.template.language_code|upper }} •
+                    {% if item.template.is_active %}
+                        <span class="newsletter-status-active">{% trans "Active" %}</span>
+                    {% else %}
+                        <span class="newsletter-status-inactive">{% trans "Inactive" %}</span>
+                    {% endif %}
+                </div>
+            </td>
+            <td>
+                <div class="newsletter-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>{{ item.sent_count }} {% trans "sent" %}</span>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="newsletter-date">
+                    {{ item.template.created_at|date:"M d, Y" }}
+                </div>
+            </td>
+            <td>
+                <div class="newsletter-actions-cell">
+                    <a href="{% url 'email_system:newsletter_edit' item.template.id %}" class="btn-action">
+                        <i class="fas fa-edit"></i> {% trans "Edit" %}
+                    </a>
+                    <a href="{% url 'email_system:newsletter_send' item.template.id %}" class="btn-action">
+                        <i class="fas fa-envelope"></i> {% trans "Send" %}
+                    </a>
+                    <a href="{% url 'email_system:newsletter_duplicate' item.template.id %}" class="btn-action">
+                        <i class="fas fa-copy"></i> {% trans "Duplicate" %}
+                    </a>
+                    <a href="{% url 'email_system:newsletter_delete' item.template.id %}" class="btn-action danger">
+                        <i class="fas fa-trash"></i> {% trans "Delete" %}
+                    </a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-newspaper"></i>
+    <h3>{% trans "No newsletters yet" %}</h3>
+    <p>{% trans "Create your first newsletter to start engaging with your customers" %}</p>
+    <a href="{% url 'email_system:newsletter_create' %}" class="btn-create">
+        <i class="fas fa-plus"></i>
+        {% trans "Create Newsletter" %}
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

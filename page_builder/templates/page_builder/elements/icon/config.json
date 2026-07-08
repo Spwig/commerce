@@ -1,0 +1,148 @@
+{
+  "element_type": "icon",
+  "name": "Icon",
+  "description": "Display FontAwesome icons with customizable styling",
+  "version": "1.1.0",
+  "category": "basic",
+  "icon": "fas fa-star",
+  "author": "Page Builder System",
+  "element_builder_primitive": true,
+  "tags": ["icon", "fontawesome", "symbol", "visual"],
+  "supports_translation": false,
+  "template_file": "template.html",
+  "css_files": ["page_builder/css/elements/icon.css"],
+  "inherit_base": true,
+  "disable_base_properties": ["text_color"],
+  "tabs": {
+    "basic": {
+      "label": "Basic",
+      "icon": "fas fa-sliders-h",
+      "order": 1,
+      "properties": {
+        "icon_group": {
+          "type": "property_group",
+          "label": "Icon Selection",
+          "properties": {
+            "icon": {
+              "type": "icon_picker",
+              "label": "Icon",
+              "default": "fa-star",
+              "required": true
+            },
+            "icon_style": {
+              "type": "select",
+              "label": "Style",
+              "options": [
+                {"value": "solid", "label": "Solid (fas)"},
+                {"value": "regular", "label": "Regular (far)"},
+                {"value": "light", "label": "Light (fal)"},
+                {"value": "duotone", "label": "Duotone (fad)"},
+                {"value": "brands", "label": "Brands (fab)"}
+              ],
+              "default": "solid"
+            }
+          }
+        },
+        "size_group": {
+          "type": "property_group",
+          "label": "Size & Color",
+          "properties": {
+            "size": {
+              "type": "number",
+              "label": "Size",
+              "default": 24,
+              "min": 8,
+              "max": 200
+            },
+            "size_unit": {
+              "type": "select",
+              "label": "Unit",
+              "options": [
+                {"value": "px", "label": "Pixels (px)"},
+                {"value": "rem", "label": "REM"},
+                {"value": "em", "label": "EM"}
+              ],
+              "default": "px"
+            },
+            "color": {
+              "type": "color",
+              "label": "Color",
+              "default": null,
+              "placeholder": "Theme default",
+              "help_text": "Leave empty to use theme color"
+            }
+          }
+        },
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout",
+          "columns": 1,
+          "properties": {
+            "alignment": {
+              "type": "select",
+              "label": "Alignment",
+              "options": [
+                {"value": "left", "label": "Left"},
+                {"value": "center", "label": "Center"},
+                {"value": "right", "label": "Right"}
+              ],
+              "default": "center"
+            }
+          }
+        },
+        "link_group": {
+          "type": "property_group",
+          "label": "Link",
+          "properties": {
+            "link_url": {
+              "type": "link_selector",
+              "label": "URL",
+              "required": false
+            },
+            "link_target": {
+              "type": "select",
+              "label": "Target",
+              "options": [
+                {"value": "_self", "label": "Same Window"},
+                {"value": "_blank", "label": "New Window"}
+              ],
+              "default": "_self"
+            },
+            "aria_label": {
+              "type": "string",
+              "label": "Accessibility Label",
+              "translatable": true,
+              "required": false,
+              "full_width": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "icon": {"type": "icon_picker", "label": "Icon", "default": "fa-star", "required": true},
+    "icon_style": {"type": "select", "label": "Icon Style", "options": [{"value": "solid", "label": "Solid (fas)"}, {"value": "regular", "label": "Regular (far)"}, {"value": "light", "label": "Light (fal)"}, {"value": "duotone", "label": "Duotone (fad)"}, {"value": "brands", "label": "Brands (fab)"}], "default": "solid"},
+    "size": {"type": "number", "label": "Size", "default": 24, "min": 8, "max": 200},
+    "size_unit": {"type": "select", "label": "Size Unit", "options": [{"value": "px", "label": "Pixels (px)"}, {"value": "rem", "label": "REM"}, {"value": "em", "label": "EM"}], "default": "px"},
+    "color": {"type": "color", "label": "Icon Color", "default": null, "placeholder": "Theme default", "help_text": "Leave empty to use theme color"},
+    "alignment": {"type": "select", "label": "Alignment", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}], "default": "center"},
+    "link_url": {"type": "link_selector", "label": "Link URL", "required": false},
+    "link_target": {"type": "select", "label": "Link Target", "options": [{"value": "_self", "label": "Same Window"}, {"value": "_blank", "label": "New Window"}], "default": "_self"},
+    "aria_label": {"type": "string", "label": "Accessibility Label", "translatable": true, "required": false}
+  },
+  "translations": {
+    "en": {"name": "Icon", "description": "Display FontAwesome icons with customizable styling"},
+    "es": {"name": "Icono", "description": "Muestra iconos de FontAwesome con estilo personalizable"},
+    "fr": {"name": "Icone", "description": "Affiche des icones FontAwesome avec un style personnalisable"},
+    "de": {"name": "Symbol", "description": "Zeigt FontAwesome-Symbole mit anpassbarem Stil an"},
+    "ar": {"name": "ayqwnh", "description": "erd ayqwnat FontAwesome me tnsyq qabl lltkysys"}
+  },
+  "defaults": {
+    "icon": "fa-star",
+    "icon_style": "solid",
+    "size": 24,
+    "size_unit": "px",
+    "alignment": "center"
+  }
+}

@@ -1,0 +1,60 @@
+{% extends "admin/cart/method_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-cog"></i> {% trans "Additional Options" %}
+</div>
+<p class="step-description">
+    {% trans "Configure additional options for this shipping method." %}
+</p>
+
+<form method="post" id="method-conditions-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="form-section">
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>{% trans "Eligibility Conditions" %}</strong>
+                <p>{% trans "Order value and weight eligibility conditions are now configured through Shipping Promotions with visibility control. Go to Shipping Promotions to set up conditions that control when this method is shown to customers." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-cog"></i> {% trans "Additional Options" %}
+        </h3>
+
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox"
+                       id="id_requires_shipping_address"
+                       name="requires_shipping_address"
+                       {% if method_data.requires_shipping_address or method_data.requires_shipping_address is None %}checked{% endif %}>
+                {% trans "Requires Shipping Address" %}
+            </label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Customer must provide a shipping address for this method (disable for digital goods or local pickup)" %}
+            </p>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'cart:method_wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="method-conditions-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script src="{% static 'cart/js/wizard_step2.js' %}"></script>
+{% endblock %}

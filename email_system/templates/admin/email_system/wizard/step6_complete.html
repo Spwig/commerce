@@ -1,0 +1,86 @@
+{% extends "admin/email_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <div class="completion-header">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h2 class="step-title">{% trans "Setup Complete!" %}</h2>
+        <p class="step-description">{% trans "Your email provider is ready to use" %}</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>{% trans "Configuration Summary" %}</h3>
+
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Provider:" %}</span>
+            <span class="summary-value">{{ component.name }}</span>
+        </div>
+
+        <div class="summary-row">
+            <span class="summary-label">{% trans "From:" %}</span>
+            <span class="summary-value">{{ wizard_data.from_name }} &lt;{{ wizard_data.from_email }}&gt;</span>
+        </div>
+
+        {% if wizard_data.reply_to %}
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Reply-To:" %}</span>
+            <span class="summary-value">{{ wizard_data.reply_to }}</span>
+        </div>
+        {% endif %}
+
+        <div class="summary-row">
+            <span class="summary-label">{% trans "Status:" %}</span>
+            <span class="summary-value">
+                <span class="badge badge-success">
+                    <i class="fas fa-check"></i> {% trans "Ready" %}
+                </span>
+            </span>
+        </div>
+    </div>
+
+    <form method="post" id="complete-form" class="wizard-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox" name="make_default" id="make_default">
+                <span>{% trans "Make this my default email account" %}</span>
+            </label>
+            <p class="help-text">{% trans "The default account will be used for all outgoing transactional emails unless specified otherwise" %}</p>
+        </div>
+    </form>
+
+    <div class="next-steps">
+        <h3>{% trans "What's Next?" %}</h3>
+        <ul>
+            {% if is_builtin %}
+            <li><i class="fas fa-server"></i> {% trans "SMTP server is configured and ready to start" %}</li>
+            <li><i class="fas fa-shield-alt"></i> {% trans "DKIM keys have been automatically generated and encrypted" %}</li>
+            <li><i class="fas fa-network-wired"></i> {% trans "Configure your DNS records (SPF, DKIM, DMARC) for best deliverability" %}</li>
+            {% else %}
+            <li><i class="fas fa-envelope"></i> {% trans "Your email account is ready to send transactional emails" %}</li>
+            <li><i class="fas fa-cog"></i> {% trans "Configure DNS records for better deliverability (if required)" %}</li>
+            {% endif %}
+            <li><i class="fas fa-file-alt"></i> {% trans "Customize email templates to match your brand" %}</li>
+            <li><i class="fas fa-paper-plane"></i> {% trans "Send a real test email from the Email Accounts page" %}</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:email_system_emailaccount_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-list"></i> {% trans "View All Accounts" %}
+    </a>
+    <button type="submit" form="complete-form" class="btn btn-primary btn-lg">
+        <i class="fas fa-check"></i> {% trans "Finish Setup" %}
+    </button>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+{# Styles moved to provider-wizard.css #}
+{% endblock %}

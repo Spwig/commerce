@@ -1,0 +1,57 @@
+{% load i18n merchant_trans %}
+{# Contact step form fields - shared across checkout templates #}
+
+{% if account_creation_timing == 'before_checkout' and not user.is_authenticated %}
+<!-- Required Account Creation Notice -->
+<div class="checkout-notice checkout-notice--info">
+    <i class="fas fa-info-circle"></i>
+    <span>{{ account_creation_message }}</span>
+</div>
+{% endif %}
+
+<!-- Email Field -->
+<div class="checkout-form-group">
+    <label for="checkout-email">{% mtrans 'Email' %} <span class="required">*</span></label>
+    <input type="email" id="checkout-email" class="checkout-input"
+           value="{{ user_email }}"
+           placeholder="{% mtrans 'your@email.com' %}" required>
+</div>
+
+{% if not user.is_authenticated %}
+    {% if account_creation_timing == 'before_checkout' %}
+    <!-- Required Password Field -->
+    <div class="checkout-form-group">
+        <label for="checkout-password">{% mtrans 'Password' %} <span class="required">*</span></label>
+        <input type="password" id="checkout-password" class="checkout-input"
+               required minlength="8" autocomplete="new-password"
+               placeholder="{% mtrans 'Minimum 8 characters' %}">
+        <div class="checkout-help">{% mtrans 'Minimum 8 characters' %}</div>
+    </div>
+
+    {% elif account_creation_timing == 'during_checkout' %}
+    <!-- Optional Account Creation -->
+    <div class="checkout-account-optional">
+        <label class="checkout-checkbox">
+            <input type="checkbox" id="create-account-checkbox">
+            <span>{{ account_creation_message }}</span>
+        </label>
+
+        <div id="account-fields" class="checkout-account-fields" hidden>
+            <div class="checkout-form-group">
+                <label for="checkout-password">{% mtrans 'Password' %} <span class="required">*</span></label>
+                <input type="password" id="checkout-password" class="checkout-input"
+                       minlength="8" autocomplete="new-password"
+                       placeholder="{% mtrans 'Minimum 8 characters' %}">
+                <div class="checkout-help">{% mtrans 'Minimum 8 characters' %}</div>
+            </div>
+        </div>
+    </div>
+
+    {% elif account_creation_timing == 'post_purchase' %}
+    <!-- Guest Checkout Notice -->
+    <div class="checkout-notice checkout-notice--subtle">
+        <i class="fas fa-check-circle"></i>
+        <span>{% mtrans "You'll be able to create an account after placing your order" %}</span>
+    </div>
+    {% endif %}
+{% endif %}

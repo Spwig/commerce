@@ -1,0 +1,204 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Affiliate Programs Page Styles
+ *
+ * Description: Frontend styles for programs.html
+ * Template: affiliate/templates/affiliate/affiliate/programs.html
+ *
+ * Dependencies:
+ * - affiliate.css (base styles loaded via base.html)
+ * - --theme-* CSS variables (loaded via active theme CSS)
+ */
+
+/* Programs Page Styles */
+.programs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--theme-space-6, 1.5rem);
+}
+
+.program-card {
+    background: var(--theme-color-surface, #ffffff);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-xl, 0.75rem);
+    padding: var(--theme-space-6, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    transition: all var(--theme-transition-duration-slow, 300ms) ease;
+}
+
+.program-card:hover {
+    box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+    transform: translateY(-2px);
+}
+
+.program-card.enrolled {
+    border-color: var(--theme-color-success, #10b981);
+    background: var(--theme-color-success-light, rgba(16, 185, 129, 0.05));
+}
+
+.program-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--theme-radius-xl, 0.75rem);
+    overflow: hidden;
+    margin-bottom: var(--theme-space-4, 1rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--theme-color-background-secondary, #f9fafb);
+}
+
+.program-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.program-logo.placeholder {
+    font-size: 2rem;
+    color: var(--theme-color-text-muted, #9ca3af);
+}
+
+.program-info {
+    flex: 1;
+}
+
+.program-info h3 {
+    margin: 0 0 var(--theme-space-2, 0.5rem) 0;
+    font-size: var(--theme-font-size-xl, 1.25rem);
+    color: var(--theme-color-text, #1f2937);
+}
+
+.program-description {
+    color: var(--theme-color-text-muted, #9ca3af);
+    font-size: 0.9rem;
+    margin-bottom: var(--theme-space-4, 1rem);
+    line-height: var(--theme-line-height-base, 1.5);
+}
+
+.program-stats {
+    display: flex;
+    gap: var(--theme-space-6, 1.5rem);
+    padding: var(--theme-space-4, 1rem) 0;
+    border-top: 1px solid var(--theme-color-border, #e5e7eb);
+    margin-top: auto;
+}
+
+.program-stats .stat {
+    text-align: center;
+}
+
+.program-stats .stat-value {
+    display: block;
+    font-size: var(--theme-font-size-xl, 1.25rem);
+    font-weight: var(--theme-font-weight-bold, 700);
+    color: var(--theme-color-primary, #3b82f6);
+}
+
+.program-stats .stat-label {
+    font-size: 0.75rem;
+    color: var(--theme-color-text-muted, #9ca3af);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.program-actions {
+    margin-top: var(--theme-space-4, 1rem);
+    padding-top: var(--theme-space-4, 1rem);
+    border-top: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.badge-enrolled {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--theme-space-2, 0.5rem);
+    padding: 0.5rem 1rem;
+    background: var(--theme-color-success-light, rgba(16, 185, 129, 0.1));
+    color: var(--theme-color-success, #10b981);
+    border-radius: var(--theme-radius-full, 9999px);
+    font-weight: var(--theme-font-weight-medium, 500);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--theme-space-16, 4rem) var(--theme-space-8, 2rem);
+    background: var(--theme-color-surface, #ffffff);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+    border-radius: var(--theme-radius-xl, 0.75rem);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--theme-color-text-muted, #9ca3af);
+    opacity: 0.5;
+    margin-bottom: var(--theme-space-4, 1rem);
+}
+
+.empty-state h3 {
+    margin: 0 0 var(--theme-space-2, 0.5rem) 0;
+    color: var(--theme-color-text, #1f2937);
+}
+
+.empty-state p {
+    color: var(--theme-color-text-muted, #9ca3af);
+    margin: 0;
+}
+
+/* Pagination */
+.pagination-nav {
+    margin-top: var(--theme-space-8, 2rem);
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: var(--theme-space-2, 0.5rem);
+}
+
+.pagination li a,
+.pagination li.current {
+    padding: 0.5rem 1rem;
+    border-radius: var(--theme-radius-base, 0.375rem);
+    text-decoration: none;
+    color: var(--theme-color-text, #1f2937);
+    background: var(--theme-color-surface, #ffffff);
+    border: 1px solid var(--theme-color-border, #e5e7eb);
+}
+
+.pagination li a:hover {
+    background: var(--theme-color-primary, #3b82f6);
+    color: white;
+    border-color: var(--theme-color-primary, #3b82f6);
+}
+
+.pagination li.current {
+    background: var(--theme-color-background-secondary, #f9fafb);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .programs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .program-stats {
+        flex-wrap: wrap;
+        gap: var(--theme-space-4, 1rem);
+    }
+
+    .program-stats .stat {
+        flex: 1 1 30%;
+    }
+}

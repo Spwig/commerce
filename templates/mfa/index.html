@@ -1,0 +1,116 @@
+{% extends "mfa/base_manage.html" %}
+{% load i18n %}
+{% load allauth %}
+
+{% block head_title %}
+    {% translate "Two-Factor Authentication" %}
+{% endblock head_title %}
+
+{% block body %}
+    <div class="allauth-info-box">
+        <div class="allauth-info-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="allauth-info-content">
+            <h3>{% translate "Protect Your Account" %}</h3>
+            <p>{% translate "Two-factor authentication (2FA) adds an extra layer of security to your account. Even if someone knows your password, they won't be able to access your account without the second factor." %}</p>
+        </div>
+    </div>
+
+    {# TOTP Authenticator Section #}
+    {% if 'totp' in MFA_SUPPORTED_TYPES %}
+        <section class="allauth-mfa-section">
+            <h2>
+                <i class="fas fa-mobile-alt"></i>
+                {% translate "Authenticator App" %}
+            </h2>
+
+            {% if authenticators.totp %}
+                <div class="allauth-status-badge allauth-status-success">
+                    <i class="fas fa-check-circle"></i>
+                    {% translate "Active" %}
+                </div>
+                <p>
+                    {% translate "Authentication using an authenticator app is active." %}
+                </p>
+
+                <div class="allauth-button-group">
+                    <a href="{% url 'mfa_deactivate_totp' %}" class="button deletelink">
+                        <i class="fas fa-times-circle"></i>
+                        {% translate "Deactivate" %}
+                    </a>
+                </div>
+            {% else %}
+                <div class="allauth-status-badge allauth-status-warning">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {% translate "Not Active" %}
+                </div>
+                <p>
+                    {% translate "Set up an authenticator app to secure your account with time-based codes." %}
+                </p>
+
+                <div class="allauth-button-group">
+                    <a href="{% url 'mfa_activate_totp' %}" class="button default">
+                        <i class="fas fa-plus-circle"></i>
+                        {% translate "Activate" %}
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    {# Recovery Codes Section #}
+    {% if 'recovery_codes' in MFA_SUPPORTED_TYPES %}
+        <section class="allauth-mfa-section">
+            <h2>
+                <i class="fas fa-key"></i>
+                {% translate "Recovery Codes" %}
+            </h2>
+
+            {% if authenticators.recovery_codes %}
+                <div class="allauth-status-badge allauth-status-success">
+                    <i class="fas fa-check-circle"></i>
+                    {% translate "Active" %}
+                </div>
+                <p>
+                    {% with unused_count=authenticators.recovery_codes.get_unused_codes|length total_count=10 %}
+                        {% blocktranslate count count=unused_count %}There is {{ count }} out of {{ total_count }} recovery code available.{% plural %}There are {{ count }} out of {{ total_count }} recovery codes available.{% endblocktranslate %}
+                    {% endwith %}
+                </p>
+
+                <div class="allauth-button-group">
+                    <a href="{% url 'mfa_view_recovery_codes' %}" class="button default">
+                        <i class="fas fa-eye"></i>
+                        {% translate "View" %}
+                    </a>
+                    <a href="{% url 'mfa_download_recovery_codes' %}" class="button">
+                        <i class="fas fa-download"></i>
+                        {% translate "Download" %}
+                    </a>
+                    <a href="{% url 'mfa_generate_recovery_codes' %}" class="button secondary">
+                        <i class="fas fa-sync-alt"></i>
+                        {% translate "Generate" %}
+                    </a>
+                </div>
+            {% else %}
+                <div class="allauth-status-badge allauth-status-warning">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {% translate "Not Active" %}
+                </div>
+                <p>
+                    {% translate "Recovery codes provide backup access to your account if you lose your primary authentication method. They will be automatically generated when you activate two-factor authentication." %}
+                </p>
+            {% endif %}
+        </section>
+    {% endif %}
+
+    {% if not is_mfa_enabled %}
+        <div class="allauth-warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{% translate "Enhance Your Security" %}</strong>
+                <p>{% translate "We strongly recommend enabling two-factor authentication to protect your account from unauthorized access. Set up an authenticator app to get started." %}</p>
+            </div>
+        </div>
+    {% endif %}
+{% endblock body %}

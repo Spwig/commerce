@@ -1,0 +1,1997 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static admin_modify core_extras %}
+
+{% block title %}{% trans "Site Settings" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+    <link rel="stylesheet" href="{% static 'utilities/translation_editor/current/translation_editor.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/site_settings.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'domain_ssl/css/domain_ssl.css' %}">
+    <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+    <script src="{% static 'core/admin/js/currency_manager.js' %}" defer></script>
+    <script src="{% static 'domain_ssl/js/domain_ssl.js' %}" defer></script>
+
+{% endblock %}
+
+{% block field_sets %}
+    <!-- Sticky Settings Header -->
+    <div class="site-settings-header" id="site-settings-header">
+        <div class="site-settings-header-info">
+            {% with logo_url=original|get_site_logo_url:'square' %}
+            {% if logo_url %}
+                <img src="{{ logo_url }}" alt="" class="site-settings-header-logo">
+            {% else %}
+                <div class="site-settings-header-logo-placeholder">
+                    <i class="fas fa-store"></i>
+                </div>
+            {% endif %}
+            {% endwith %}
+            <div class="site-settings-header-text">
+                <h2>{{ original.site_name|default:"Site Settings" }}</h2>
+                <div class="site-settings-header-meta">
+                    <span class="status-badge {% if original.maintenance_mode %}maintenance{% else %}active{% endif %}">
+                        {% if original.maintenance_mode %}
+                            <i class="fas fa-exclamation-triangle"></i> {% trans "Maintenance" %}
+                        {% else %}
+                            <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                        {% endif %}
+                    </span>
+                    <span class="site-settings-header-updated">
+                        {% trans "Last updated:" %} {{ original.updated_at|date:"M d, Y g:i A" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="site-settings-header-actions">
+            <input type="submit" value="{% trans 'Save' %}" class="default" name="_continue">
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="admin-tabs" id="settings-tabs" data-field-tab-map='{{ field_tab_mapping_json|default:"{}" }}'>
+        <button type="button" class="admin-tab-btn active" data-tab="general">
+            <i class="fas fa-store"></i>
+            <span class="label">{% trans "General" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="contact">
+            <i class="fas fa-phone"></i>
+            <span class="label">{% trans "Contact" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="locale">
+            <i class="fas fa-globe"></i>
+            <span class="label">{% trans "Locale" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="multicurrency">
+            <i class="fas fa-money-bill-wave"></i>
+            <span class="label">{% trans "Multi-Currency" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="ecommerce">
+            <i class="fas fa-store"></i>
+            <span class="label">{% trans "Commerce" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="shipping">
+            <i class="fas fa-shipping-fast"></i>
+            <span class="label">{% trans "Shipping" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="authentication">
+            <i class="fas fa-user-shield"></i>
+            <span class="label">{% trans "Security" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="advanced">
+            <i class="fas fa-cog"></i>
+            <span class="label">{% trans "Advanced" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="pages">
+            <i class="fas fa-file-alt"></i>
+            <span class="label">{% trans "Pages & SEO" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="cookies">
+            <i class="fas fa-cookie-bite"></i>
+            <span class="label">{% trans "Cookies" %}</span>
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="domain-ssl">
+            <i class="fas fa-lock"></i>
+            <span class="label">{% trans "Domain & SSL" %}</span>
+        </button>
+    </div>
+
+    {# Error Summary Section - Shows all validation errors with links to fields #}
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="site-settings-error-summary" id="error-summary">
+        <div class="error-summary-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-summary-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+
+            {% if adminform.form.non_field_errors %}
+            <div class="error-summary-section">
+                <ul class="error-summary-list">
+                    {% for error in adminform.form.non_field_errors %}
+                        <li class="error-item">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if adminform.form.errors %}
+            <div class="error-summary-section">
+                <ul class="error-summary-list" id="error-list">
+                    {% for field_name, errors in adminform.form.errors.items %}
+                        {% if field_name != '__all__' %}
+                        <li class="error-item" data-field="{{ field_name }}">
+                            <div class="error-field-header">
+                                <a href="#" class="error-link" data-field="{{ field_name }}">
+                                    <strong>{{ adminform.form|get_field_label:field_name }}</strong>
+                                    <span class="error-tab-indicator"></span>
+                                </a>
+                            </div>
+                            <div class="error-message">{{ errors|first|safe }}</div>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="tab-content">
+
+    {# ============================================================ #}
+    {# GENERAL TAB                                                   #}
+    {# ============================================================ #}
+    <div class="tab-panel active" data-panel="general">
+        <div class="form-card">
+            <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-site_name">
+                        {{ adminform.form.site_name.errors }}
+                        <div>
+                            {{ adminform.form.site_name.label_tag }}
+                            {{ adminform.form.site_name }}
+                            {% if adminform.form.site_name.help_text %}
+                                <div class="help">{{ adminform.form.site_name.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-site_url">
+                        {{ adminform.form.site_url.errors }}
+                        <div>
+                            {{ adminform.form.site_url.label_tag }}
+                            {{ adminform.form.site_url }}
+                            {% if adminform.form.site_url.help_text %}
+                                <div class="help">{{ adminform.form.site_url.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-site_description">
+                        {{ adminform.form.site_description.errors }}
+                        <div>
+                            {{ adminform.form.site_description.label_tag }}
+                            {{ adminform.form.site_description }}
+                            {% if adminform.form.site_description.help_text %}
+                                <div class="help">{{ adminform.form.site_description.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-site_tagline">
+                        {{ adminform.form.site_tagline.errors }}
+                        <div>
+                            {{ adminform.form.site_tagline.label_tag }}
+                            {{ adminform.form.site_tagline }}
+                            {% if adminform.form.site_tagline.help_text %}
+                                <div class="help">{{ adminform.form.site_tagline.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-favicon">
+                        {{ adminform.form.favicon.errors }}
+                        <div>
+                            {{ adminform.form.favicon.label_tag }}
+                            {{ adminform.form.favicon }}
+                            {% if adminform.form.favicon.help_text %}
+                                <div class="help">{{ adminform.form.favicon.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-site_logo">
+                        {{ adminform.form.site_logo.errors }}
+                        <div>
+                            {{ adminform.form.site_logo.label_tag }}
+                            {{ adminform.form.site_logo }}
+                            {% if adminform.form.site_logo.help_text %}
+                                <div class="help">{{ adminform.form.site_logo.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="help-card">
+                <h4 class="help-card-title">
+                    <i class="fas fa-info-circle"></i> {% trans "Logo Recommendations" %}
+                </h4>
+                <ul class="help-card-list">
+                    <li>{% trans "Format: PNG with transparency or SVG (recommended)" %}</li>
+                    <li>{% trans "SVG logos scale perfectly to any size" %}</li>
+                    <li>{% trans "For PNG: minimum 400px wide, 2x for retina displays" %}</li>
+                    <li>{% trans "Horizontal logos work best for header/footer placement" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="form-card" id="license-status-card">
+            <h2><i class="fas fa-key"></i> {% trans "Platform License" %}</h2>
+            <div class="license-status-widget" id="license-widget">
+                <div class="license-status-header">
+                    <div class="license-status-info">
+                        <span id="license-badge" class="status-badge license-badge">
+                            {% trans "Loading..." %}
+                        </span>
+                        <span id="license-type" class="license-type-text"></span>
+                    </div>
+                    <a href="{% url 'admin:core_licensestatus_changelist' %}" class="button license-link">
+                        {% trans "Manage License" %} &rarr;
+                    </a>
+                </div>
+                <div id="license-features" class="license-features">
+                    <div class="license-features-grid">
+                        <span id="feature-payment"></span>
+                        <span id="feature-widgets"></span>
+                        <span id="feature-support"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-share-alt"></i> {% trans "Social Media" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-facebook_url">
+                        {{ adminform.form.facebook_url.errors }}
+                        <div>
+                            {{ adminform.form.facebook_url.label_tag }}
+                            {{ adminform.form.facebook_url }}
+                        </div>
+                    </div>
+                    <div class="form-row field-twitter_url">
+                        {{ adminform.form.twitter_url.errors }}
+                        <div>
+                            {{ adminform.form.twitter_url.label_tag }}
+                            {{ adminform.form.twitter_url }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-instagram_url">
+                        {{ adminform.form.instagram_url.errors }}
+                        <div>
+                            {{ adminform.form.instagram_url.label_tag }}
+                            {{ adminform.form.instagram_url }}
+                        </div>
+                    </div>
+                    <div class="form-row field-linkedin_url">
+                        {{ adminform.form.linkedin_url.errors }}
+                        <div>
+                            {{ adminform.form.linkedin_url.label_tag }}
+                            {{ adminform.form.linkedin_url }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# CONTACT TAB                                                   #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="contact">
+        <div class="form-card">
+            <h2><i class="fas fa-phone"></i> {% trans "Contact Information" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-admin_email">
+                        {{ adminform.form.admin_email.errors }}
+                        <div>
+                            {{ adminform.form.admin_email.label_tag }}
+                            {{ adminform.form.admin_email }}
+                            {% if adminform.form.admin_email.help_text %}
+                                <div class="help">{{ adminform.form.admin_email.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-support_email">
+                        {{ adminform.form.support_email.errors }}
+                        <div>
+                            {{ adminform.form.support_email.label_tag }}
+                            {{ adminform.form.support_email }}
+                            {% if adminform.form.support_email.help_text %}
+                                <div class="help">{{ adminform.form.support_email.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-phone_number">
+                        {{ adminform.form.phone_number.errors }}
+                        <div>
+                            {{ adminform.form.phone_number.label_tag }}
+                            {{ adminform.form.phone_number }}
+                            {% if adminform.form.phone_number.help_text %}
+                                <div class="help">{{ adminform.form.phone_number.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-map-marker-alt"></i> {% trans "Business Address" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-address_line_1">
+                        {{ adminform.form.address_line_1.errors }}
+                        <div>
+                            {{ adminform.form.address_line_1.label_tag }}
+                            {{ adminform.form.address_line_1 }}
+                        </div>
+                    </div>
+                    <div class="form-row field-address_line_2">
+                        {{ adminform.form.address_line_2.errors }}
+                        <div>
+                            {{ adminform.form.address_line_2.label_tag }}
+                            {{ adminform.form.address_line_2 }}
+                        </div>
+                    </div>
+                    <div class="form-row field-city">
+                        {{ adminform.form.city.errors }}
+                        <div>
+                            {{ adminform.form.city.label_tag }}
+                            {{ adminform.form.city }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-state_province">
+                        {{ adminform.form.state_province.errors }}
+                        <div>
+                            {{ adminform.form.state_province.label_tag }}
+                            {{ adminform.form.state_province }}
+                        </div>
+                    </div>
+                    <div class="form-row field-postal_code">
+                        {{ adminform.form.postal_code.errors }}
+                        <div>
+                            {{ adminform.form.postal_code.label_tag }}
+                            {{ adminform.form.postal_code }}
+                        </div>
+                    </div>
+                    <div class="form-row field-country">
+                        {{ adminform.form.country.errors }}
+                        <div>
+                            {{ adminform.form.country.label_tag }}
+                            {{ adminform.form.country }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-mail-bulk"></i> {% trans "Email Delivery Mode" %}</h2>
+            <p class="help" style="margin-bottom: 16px;">{% trans "Control how outgoing emails are handled across your entire store." %}</p>
+
+            {% if adminform.form.email_delivery_mode.value != "live" %}
+            <div class="messagelist" style="margin-bottom: 16px;">
+                {% if adminform.form.email_delivery_mode.value == "paused" %}
+                <li class="warning">
+                    <i class="fas fa-pause-circle"></i>
+                    {% trans "Email delivery is currently paused. Emails will be held and released when you switch back to Live." %}
+                    {% if held_email_count %}
+                    <strong>{{ held_email_count }} {% trans "email(s) currently held." %}</strong>
+                    {% endif %}
+                </li>
+                {% elif adminform.form.email_delivery_mode.value == "log_only" %}
+                <li class="warning">
+                    <i class="fas fa-file-alt"></i>
+                    {% trans "Email delivery is in Log Only mode. Emails are recorded in the outbox for review but will never be delivered." %}
+                </li>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-email_delivery_mode">
+                        {{ adminform.form.email_delivery_mode.errors }}
+                        <div>
+                            {{ adminform.form.email_delivery_mode.label_tag }}
+                            {{ adminform.form.email_delivery_mode }}
+                            {% if adminform.form.email_delivery_mode.help_text %}
+                                <div class="help">{{ adminform.form.email_delivery_mode.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-email_test_redirect_address">
+                        {{ adminform.form.email_test_redirect_address.errors }}
+                        <div>
+                            {{ adminform.form.email_test_redirect_address.label_tag }}
+                            {{ adminform.form.email_test_redirect_address }}
+                            {% if adminform.form.email_test_redirect_address.help_text %}
+                                <div class="help">{{ adminform.form.email_test_redirect_address.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if license_status.is_sandbox %}
+        <div class="form-card">
+            <h2><i class="fas fa-shield-alt"></i> {% trans "Sandbox Whitelists" %}</h2>
+            <div class="messagelist" style="margin-bottom: 16px;">
+                <li class="info">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "In sandbox mode, emails and SMS are only delivered to whitelisted addresses. All other messages are logged but never sent. Your admin email is always included automatically." %}
+                </li>
+            </div>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-sandbox_email_whitelist">
+                        {{ adminform.form.sandbox_email_whitelist.errors }}
+                        <div>
+                            {{ adminform.form.sandbox_email_whitelist.label_tag }}
+                            {{ adminform.form.sandbox_email_whitelist }}
+                            <div class="help">{% trans "Enter email addresses as a JSON list, e.g. [\"dev@example.com\", \"test@example.com\"]. Maximum 10 addresses. No wildcards." %}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-sandbox_sms_whitelist">
+                        {{ adminform.form.sandbox_sms_whitelist.errors }}
+                        <div>
+                            {{ adminform.form.sandbox_sms_whitelist.label_tag }}
+                            {{ adminform.form.sandbox_sms_whitelist }}
+                            <div class="help">{% trans "Enter phone numbers in E.164 format as a JSON list, e.g. [\"+12025551234\"]. Maximum 5 numbers. No wildcards." %}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-card">
+            <h2><i class="fas fa-bell"></i> {% trans "Email Notification Settings" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-enable_order_confirmation_emails">
+                        {{ adminform.form.enable_order_confirmation_emails.errors }}
+                        <div>
+                            {{ adminform.form.enable_order_confirmation_emails.label_tag }}
+                            {{ adminform.form.enable_order_confirmation_emails }}
+                            {% if adminform.form.enable_order_confirmation_emails.help_text %}
+                                <div class="help">{{ adminform.form.enable_order_confirmation_emails.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-enable_shipping_notification_emails">
+                        {{ adminform.form.enable_shipping_notification_emails.errors }}
+                        <div>
+                            {{ adminform.form.enable_shipping_notification_emails.label_tag }}
+                            {{ adminform.form.enable_shipping_notification_emails }}
+                            {% if adminform.form.enable_shipping_notification_emails.help_text %}
+                                <div class="help">{{ adminform.form.enable_shipping_notification_emails.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-envelope"></i> {% trans "Email Provider Management" %}</h2>
+            <div class="form-row site-settings-actions-row">
+                <a href="{% url 'admin:email_system_emailaccount_changelist' %}" class="button site-settings-btn-icon">
+                    <i class="fas fa-envelope"></i> {% trans "Manage Email Accounts" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# LOCALE TAB                                                    #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="locale">
+        <div class="form-card">
+            <h2><i class="fas fa-globe"></i> {% trans "Regional & Locale Settings" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-default_currency">
+                        {{ adminform.form.default_currency.errors }}
+                        <div>
+                            {{ adminform.form.default_currency.label_tag }}
+                            {{ adminform.form.default_currency }}
+                            {% if adminform.form.default_currency.help_text %}
+                                <div class="help">{{ adminform.form.default_currency.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-default_timezone">
+                        {{ adminform.form.default_timezone.errors }}
+                        <div>
+                            {{ adminform.form.default_timezone.label_tag }}
+                            {{ adminform.form.default_timezone }}
+                            {% if adminform.form.default_timezone.help_text %}
+                                <div class="help">{{ adminform.form.default_timezone.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-default_language">
+                        {{ adminform.form.default_language.errors }}
+                        <div>
+                            {{ adminform.form.default_language.label_tag }}
+                            {{ adminform.form.default_language }}
+                            {% if adminform.form.default_language.help_text %}
+                                <div class="help">{{ adminform.form.default_language.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-ruler-combined"></i> {% trans "Unit Measurements" %}</h2>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Set your preferred units for product measurements. These units will be used in the admin interface when entering product specifications." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-default_weight_unit">
+                        {{ adminform.form.default_weight_unit.errors }}
+                        <div>
+                            {{ adminform.form.default_weight_unit.label_tag }}
+                            {{ adminform.form.default_weight_unit }}
+                            {% if adminform.form.default_weight_unit.help_text %}
+                                <div class="help">{{ adminform.form.default_weight_unit.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-default_volume_unit">
+                        {{ adminform.form.default_volume_unit.errors }}
+                        <div>
+                            {{ adminform.form.default_volume_unit.label_tag }}
+                            {{ adminform.form.default_volume_unit }}
+                            {% if adminform.form.default_volume_unit.help_text %}
+                                <div class="help">{{ adminform.form.default_volume_unit.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-default_temperature_unit">
+                        {{ adminform.form.default_temperature_unit.errors }}
+                        <div>
+                            {{ adminform.form.default_temperature_unit.label_tag }}
+                            {{ adminform.form.default_temperature_unit }}
+                            {% if adminform.form.default_temperature_unit.help_text %}
+                                <div class="help">{{ adminform.form.default_temperature_unit.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-default_length_unit">
+                        {{ adminform.form.default_length_unit.errors }}
+                        <div>
+                            {{ adminform.form.default_length_unit.label_tag }}
+                            {{ adminform.form.default_length_unit }}
+                            {% if adminform.form.default_length_unit.help_text %}
+                                <div class="help">{{ adminform.form.default_length_unit.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-default_area_unit">
+                        {{ adminform.form.default_area_unit.errors }}
+                        <div>
+                            {{ adminform.form.default_area_unit.label_tag }}
+                            {{ adminform.form.default_area_unit }}
+                            {% if adminform.form.default_area_unit.help_text %}
+                                <div class="help">{{ adminform.form.default_area_unit.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row field-enable_unit_conversion form-section-divider">
+                {{ adminform.form.enable_unit_conversion.errors }}
+                <div class="checkbox-row">
+                    {{ adminform.form.enable_unit_conversion }}
+                    {{ adminform.form.enable_unit_conversion.label_tag }}
+                    {% if adminform.form.enable_unit_conversion.help_text %}
+                        <div class="help mt-8">
+                            {{ adminform.form.enable_unit_conversion.help_text|safe }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-globe"></i> {% trans "GeoIP Configuration" %}</h2>
+            <p class="help-text">
+                {% trans "Automatically detect visitor locations to customize their shopping experience." %}
+            </p>
+            <div class="form-row site-settings-actions-row">
+                <a href="{% url 'admin:geoip_geolocation_changelist' %}" class="button site-settings-btn-icon">
+                    <i class="fas fa-globe"></i> {% trans "GeoIP Dashboard" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# MULTI-CURRENCY TAB                                            #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="multicurrency">
+        <div class="form-card">
+            <h2><i class="fas fa-money-bill-wave"></i> {% trans "Multi-Currency Settings" %}</h2>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Configure multi-currency support to allow customers to view prices and checkout in their preferred currency. Exchange rates can be fetched automatically from providers like Open Exchange Rates or Fixer.io." %}
+            </p>
+
+            <div class="form-row field-enable_multi_currency form-section-enhanced">
+                {{ adminform.form.enable_multi_currency.errors }}
+                <div class="checkbox-row">
+                    {{ adminform.form.enable_multi_currency }}
+                    {{ adminform.form.enable_multi_currency.label_tag }}
+                    {% if adminform.form.enable_multi_currency.help_text %}
+                        <div class="help mt-8">
+                            {{ adminform.form.enable_multi_currency.help_text|safe }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Warning banner - shown when multi-currency is enabled #}
+            <div id="multi-currency-warning" class="multicurrency-warning-banner site-settings-hidden">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>{% trans "Important: Enabling multi-currency is permanent" %}</strong>
+                    <p>{% trans "Once multi-currency is enabled and orders are processed in foreign currencies, this setting cannot be easily reversed. Existing orders will permanently retain their currency and exchange rate data." %}</p>
+                    <a href="#" id="multi-currency-help-link">
+                        {% trans "Learn more about multi-currency" %} <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            {# All options below are hidden when multi-currency is disabled #}
+            <div id="multi-currency-options">
+
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-currency_selection_mode">
+                        {{ adminform.form.currency_selection_mode.errors }}
+                        <div>
+                            {{ adminform.form.currency_selection_mode.label_tag }}
+                            {{ adminform.form.currency_selection_mode }}
+                            {% if adminform.form.currency_selection_mode.help_text %}
+                                <div class="help">{{ adminform.form.currency_selection_mode.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-show_currency_switcher">
+                        {{ adminform.form.show_currency_switcher.errors }}
+                        <div class="checkbox-row">
+                            {{ adminform.form.show_currency_switcher }}
+                            {{ adminform.form.show_currency_switcher.label_tag }}
+                            {% if adminform.form.show_currency_switcher.help_text %}
+                                <div class="help mt-8">
+                                    {{ adminform.form.show_currency_switcher.help_text|safe }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-currency_switcher_position">
+                        {{ adminform.form.currency_switcher_position.errors }}
+                        <div>
+                            {{ adminform.form.currency_switcher_position.label_tag }}
+                            {{ adminform.form.currency_switcher_position }}
+                            {% if adminform.form.currency_switcher_position.help_text %}
+                                <div class="help">{{ adminform.form.currency_switcher_position.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-show_exchange_rate_info">
+                        {{ adminform.form.show_exchange_rate_info.errors }}
+                        <div class="checkbox-row">
+                            {{ adminform.form.show_exchange_rate_info }}
+                            {{ adminform.form.show_exchange_rate_info.label_tag }}
+                            {% if adminform.form.show_exchange_rate_info.help_text %}
+                                <div class="help mt-8">
+                                    {{ adminform.form.show_exchange_rate_info.help_text|safe }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row field-multi_currency_checkout_mode form-section-divider">
+                {{ adminform.form.multi_currency_checkout_mode.errors }}
+                <div>
+                    {{ adminform.form.multi_currency_checkout_mode.label_tag }}
+                    {{ adminform.form.multi_currency_checkout_mode }}
+                    {% if adminform.form.multi_currency_checkout_mode.help_text %}
+                        <div class="help">{{ adminform.form.multi_currency_checkout_mode.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row field-enable_locale_formatting form-section-divider">
+                {{ adminform.form.enable_locale_formatting.errors }}
+                <div class="checkbox-row">
+                    {{ adminform.form.enable_locale_formatting }}
+                    {{ adminform.form.enable_locale_formatting.label_tag }}
+                    {% if adminform.form.enable_locale_formatting.help_text %}
+                        <div class="help mt-8">
+                            {{ adminform.form.enable_locale_formatting.help_text|safe }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-section-divider">
+                <h3 class="settings-section-heading">
+                    <i class="fas fa-percentage"></i> {% trans "Exchange Rate Markup" %}
+                </h3>
+                <p class="help-text help-text-mb-15">
+                    {% trans "Add a percentage markup to exchange rates to cover currency conversion fees and exchange rate fluctuation risks." %}
+                </p>
+                <div class="two-column-layout">
+                    <div class="column">
+                        <div class="form-row field-exchange_rate_markup_enabled">
+                            {{ adminform.form.exchange_rate_markup_enabled.errors }}
+                            <div class="checkbox-row">
+                                {{ adminform.form.exchange_rate_markup_enabled }}
+                                {{ adminform.form.exchange_rate_markup_enabled.label_tag }}
+                                {% if adminform.form.exchange_rate_markup_enabled.help_text %}
+                                    <div class="help mt-8">
+                                        {{ adminform.form.exchange_rate_markup_enabled.help_text|safe }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="form-row field-exchange_rate_markup_percentage">
+                            {{ adminform.form.exchange_rate_markup_percentage.errors }}
+                            <div>
+                                {{ adminform.form.exchange_rate_markup_percentage.label_tag }}
+                                {{ adminform.form.exchange_rate_markup_percentage }}
+                                {% if adminform.form.exchange_rate_markup_percentage.help_text %}
+                                    <div class="help">{{ adminform.form.exchange_rate_markup_percentage.help_text|safe }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row field-exchange_rate_sync_interval form-section-divider">
+                {{ adminform.form.exchange_rate_sync_interval.errors }}
+                <div>
+                    {{ adminform.form.exchange_rate_sync_interval.label_tag }}
+                    {{ adminform.form.exchange_rate_sync_interval }}
+                    {% if adminform.form.exchange_rate_sync_interval.help_text %}
+                        <div class="help">{{ adminform.form.exchange_rate_sync_interval.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-section-divider">
+                <h3 class="settings-section-heading">
+                    <i class="fas fa-filter"></i> {% trans "Rate Selection Strategy" %}
+                </h3>
+                <p class="help-text help-text-mb-15">
+                    {% trans "Control which exchange rates are used when multiple providers are active. This affects pricing consistency and data freshness." %}
+                </p>
+                <div class="form-row field-exchange_rate_selection_strategy">
+                    {{ adminform.form.exchange_rate_selection_strategy.errors }}
+                    <div>
+                        {{ adminform.form.exchange_rate_selection_strategy.label_tag }}
+                        {{ adminform.form.exchange_rate_selection_strategy }}
+                        {% if adminform.form.exchange_rate_selection_strategy.help_text %}
+                            <div class="help">{{ adminform.form.exchange_rate_selection_strategy.help_text|safe }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="strategy-info-boxes">
+                    <div class="strategy-info-box border-primary">
+                        <div class="strategy-info-box-title">
+                            <i class="fas fa-star"></i> {% trans "Primary Provider" %}
+                        </div>
+                        <p class="strategy-info-box-text">
+                            {% trans "Always uses rates from your primary provider (marked with star). Ensures consistent pricing. Falls back to latest if primary has no data." %}
+                        </p>
+                    </div>
+                    <div class="strategy-info-box border-success">
+                        <div class="strategy-info-box-title">
+                            <i class="fas fa-clock"></i> {% trans "Latest Available" %}
+                        </div>
+                        <p class="strategy-info-box-text">
+                            {% trans "Uses the most recently synced rate from any active provider. Provides freshest data but may vary between providers." %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            </div>{# /multi-currency-options #}
+        </div>
+
+        <div id="multi-currency-options-cards">
+        <div class="form-card">
+            <h2><i class="fas fa-plug"></i> {% trans "Exchange Rate Providers" %}</h2>
+            <div class="form-row site-settings-actions-row">
+                <a href="{% url 'admin:exchange_rates_exchangerateprovideraccount_changelist' %}" class="button site-settings-btn-icon">
+                    <i class="fas fa-tachometer-alt"></i> {% trans "Exchange Rates Dashboard" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-card currencies-section">
+            <h2><i class="fas fa-coins"></i> {% trans "Supported Currencies" %}</h2>
+            <p class="section-description">
+                {% trans "Drag currencies between columns to enable or disable them. Drag within the Active column to reorder." %}
+            </p>
+            <div class="currency-manager">
+                <div class="currency-column">
+                    <div class="column-header">
+                        <h4>
+                            <i class="fas fa-list"></i>
+                            {% trans "Available Currencies" %}
+                            <span class="count" id="available-count">(0)</span>
+                        </h4>
+                        <input type="text"
+                               id="currency-search"
+                               class="search-input"
+                               placeholder="{% trans 'Search currencies...' %}">
+                    </div>
+                    <div class="currency-list" id="available-currencies">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>{% trans "Loading currencies..." %}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="currency-column active-column">
+                    <div class="column-header">
+                        <h4>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Active Currencies" %}
+                            <span class="count" id="active-count">(0)</span>
+                        </h4>
+                        <p class="help-text">{% trans "Drag to reorder" %}</p>
+                    </div>
+                    <div class="currency-list sortable" id="active-currencies">
+                        <div class="empty-state">
+                            <i class="fas fa-info-circle"></i>
+                            <p>{% trans "No active currencies. Drag currencies from the left to activate them." %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="currency-actions">
+                <button type="button" id="save-currencies" class="button default">
+                    <i class="fas fa-save"></i> {% trans "Save Currency Configuration" %}
+                </button>
+                <button type="button" id="reset-currencies" class="button">
+                    <i class="fas fa-undo"></i> {% trans "Reset to Saved" %}
+                </button>
+            </div>
+        </div>
+        </div>{# /multi-currency-options-cards #}
+    </div>
+
+    {# ============================================================ #}
+    {# COMMERCE TAB                                                  #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="ecommerce">
+        <div class="form-card">
+            <h2><i class="fas fa-shopping-cart"></i> {% trans "E-Commerce Settings" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-allow_guest_checkout">
+                        {{ adminform.form.allow_guest_checkout.errors }}
+                        <div>
+                            {{ adminform.form.allow_guest_checkout.label_tag }}
+                            {{ adminform.form.allow_guest_checkout }}
+                            {% if adminform.form.allow_guest_checkout.help_text %}
+                                <div class="help">{{ adminform.form.allow_guest_checkout.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-require_phone_for_checkout">
+                        {{ adminform.form.require_phone_for_checkout.errors }}
+                        <div>
+                            {{ adminform.form.require_phone_for_checkout.label_tag }}
+                            {{ adminform.form.require_phone_for_checkout }}
+                            {% if adminform.form.require_phone_for_checkout.help_text %}
+                                <div class="help">{{ adminform.form.require_phone_for_checkout.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-account_creation_timing">
+                        {{ adminform.form.account_creation_timing.errors }}
+                        <div>
+                            {{ adminform.form.account_creation_timing.label_tag }}
+                            {{ adminform.form.account_creation_timing }}
+                            {% if adminform.form.account_creation_timing.help_text %}
+                                <div class="help">{{ adminform.form.account_creation_timing.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-account_creation_message">
+                        {{ adminform.form.account_creation_message.errors }}
+                        <div>
+                            {{ adminform.form.account_creation_message.label_tag }}
+                            {{ adminform.form.account_creation_message }}
+                            {% if adminform.form.account_creation_message.help_text %}
+                                <div class="help">{{ adminform.form.account_creation_message.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-show_social_auth_on_account_creation">
+                        {{ adminform.form.show_social_auth_on_account_creation.errors }}
+                        <div>
+                            {{ adminform.form.show_social_auth_on_account_creation.label_tag }}
+                            {{ adminform.form.show_social_auth_on_account_creation }}
+                            {% if adminform.form.show_social_auth_on_account_creation.help_text %}
+                                <div class="help">{{ adminform.form.show_social_auth_on_account_creation.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-auto_approve_reviews">
+                        {{ adminform.form.auto_approve_reviews.errors }}
+                        <div>
+                            {{ adminform.form.auto_approve_reviews.label_tag }}
+                            {{ adminform.form.auto_approve_reviews }}
+                            {% if adminform.form.auto_approve_reviews.help_text %}
+                                <div class="help">{{ adminform.form.auto_approve_reviews.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-boxes"></i> {% trans "Inventory & Stock" %}</h2>
+            <p class="help-text">
+                {% trans "Control how inventory is tracked across your store" %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-enable_inventory_tracking">
+                        {{ adminform.form.enable_inventory_tracking.errors }}
+                        <div>
+                            {{ adminform.form.enable_inventory_tracking.label_tag }}
+                            {{ adminform.form.enable_inventory_tracking }}
+                            {% if adminform.form.enable_inventory_tracking.help_text %}
+                                <div class="help">{{ adminform.form.enable_inventory_tracking.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-enable_low_stock_alerts">
+                        {{ adminform.form.enable_low_stock_alerts.errors }}
+                        <div>
+                            {{ adminform.form.enable_low_stock_alerts.label_tag }}
+                            {{ adminform.form.enable_low_stock_alerts }}
+                            {% if adminform.form.enable_low_stock_alerts.help_text %}
+                                <div class="help">{{ adminform.form.enable_low_stock_alerts.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-enable_multi_warehouse">
+                        {{ adminform.form.enable_multi_warehouse.errors }}
+                        <div>
+                            {{ adminform.form.enable_multi_warehouse.label_tag }}
+                            {{ adminform.form.enable_multi_warehouse }}
+                            {% if adminform.form.enable_multi_warehouse.help_text %}
+                                <div class="help">{{ adminform.form.enable_multi_warehouse.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-low_stock_threshold">
+                        {{ adminform.form.low_stock_threshold.errors }}
+                        <div>
+                            {{ adminform.form.low_stock_threshold.label_tag }}
+                            {{ adminform.form.low_stock_threshold }}
+                            {% if adminform.form.low_stock_threshold.help_text %}
+                                <div class="help">{{ adminform.form.low_stock_threshold.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help site-settings-warehouse-help">
+                <strong>{% trans "Single-Warehouse Mode (Recommended for most merchants):" %}</strong>
+                <p class="site-settings-help-paragraph">{% trans "When disabled, you'll see simplified stock management fields directly in product forms. All inventory is tracked in your main warehouse location." %}</p>
+                <br>
+                <strong>{% trans "Multi-Warehouse Mode (For advanced needs):" %}</strong>
+                <p class="site-settings-help-paragraph">{% trans "When enabled, you can manage inventory across multiple warehouse locations, set fulfillment priorities, and control stock allocation per location." %}</p>
+            </div>
+
+            {% if adminform.form.instance.enable_multi_warehouse %}
+                <div class="help info-box-blue">
+                    <strong class="site-settings-warehouse-active-title">
+                        <i class="fas fa-warehouse"></i> {% trans "Multi-Warehouse Mode is Active" %}
+                    </strong>
+                    <p class="site-settings-warehouse-links">
+                        <a href="{% url 'admin:catalog_warehouse_changelist' %}" target="_blank" class="site-settings-warehouse-link">
+                            <i class="fas fa-external-link-alt"></i> {% trans "Manage Warehouses" %}
+                        </a>
+                        &nbsp;|&nbsp;
+                        <a href="{% url 'admin:catalog_stockitem_changelist' %}" target="_blank" class="site-settings-warehouse-link">
+                            <i class="fas fa-boxes"></i> {% trans "View Inventory by Warehouse" %}
+                        </a>
+                    </p>
+                    <p class="site-settings-warehouse-note">
+                        <i class="fas fa-info-circle"></i>
+                        <em>{% trans "To disable multi-warehouse mode, you must first consolidate all inventory into the main warehouse (MAIN-WH) and delete all other warehouses." %}</em>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-credit-card"></i> {% trans "Payment Providers" %}</h2>
+            <div class="form-row">
+                {{ payment_methods_html|safe }}
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# SHIPPING TAB                                                  #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="shipping">
+        <div class="form-card">
+            <h2><i class="fas fa-shipping-fast"></i> {% trans "Shipping Configuration" %}</h2>
+            <div class="form-row site-settings-actions-row">
+                <a href="{% url 'admin:shipping_provideraccount_changelist' %}" class="button site-settings-btn-icon">
+                    <i class="fas fa-external-link-alt"></i> {% trans "Shipping Dashboard" %}
+                </a>
+            </div>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-enable_shipping_labels">
+                        {{ adminform.form.enable_shipping_labels.errors }}
+                        <div>
+                            {{ adminform.form.enable_shipping_labels.label_tag }}
+                            {{ adminform.form.enable_shipping_labels }}
+                            {% if adminform.form.enable_shipping_labels.help_text %}
+                                <div class="help">{{ adminform.form.enable_shipping_labels.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-default_shipping_provider">
+                        {{ adminform.form.default_shipping_provider.errors }}
+                        <div>
+                            {{ adminform.form.default_shipping_provider.label_tag }}
+                            {{ adminform.form.default_shipping_provider }}
+                            {% if adminform.form.default_shipping_provider.help_text %}
+                                <div class="help">{{ adminform.form.default_shipping_provider.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-default_manual_carrier">
+                        {{ adminform.form.default_manual_carrier.errors }}
+                        <div>
+                            {{ adminform.form.default_manual_carrier.label_tag }}
+                            {{ adminform.form.default_manual_carrier }}
+                            {% if adminform.form.default_manual_carrier.help_text %}
+                                <div class="help">{{ adminform.form.default_manual_carrier.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-shipping_origin_country">
+                        {{ adminform.form.shipping_origin_country.errors }}
+                        <div>
+                            {{ adminform.form.shipping_origin_country.label_tag }}
+                            {{ adminform.form.shipping_origin_country }}
+                            {% if adminform.form.shipping_origin_country.help_text %}
+                                <div class="help">{{ adminform.form.shipping_origin_country.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# SECURITY TAB                                                  #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="authentication">
+        <div class="form-card">
+            <h2><i class="fas fa-sign-in-alt"></i> {% trans "Customer Authentication" %}</h2>
+            <p class="help-text">
+                {% trans "Configure social login providers to allow customers to sign in with their Google, Apple, or Microsoft accounts" %}
+            </p>
+            <div class="form-row">
+                {{ oauth_providers_html|safe }}
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-key"></i> {% trans "Admin Single Sign-On (SSO)" %}</h2>
+            <p class="help-text">
+                {% trans "Allow staff to sign in to the admin panel using an enterprise identity provider (Microsoft Entra ID, Google Workspace, Okta, etc.) via OpenID Connect." %}
+            </p>
+
+            <div class="form-row field-admin_sso_enabled">
+                {{ adminform.form.admin_sso_enabled.errors }}
+                <div class="checkbox-row">
+                    {{ adminform.form.admin_sso_enabled }}
+                    <label for="id_admin_sso_enabled">{% trans "Enable SSO for admin login" %}</label>
+                </div>
+                <div class="help">{% trans "Shows an SSO button on the admin login page" %}</div>
+            </div>
+
+            <div class="form-row field-admin_password_login_enabled">
+                {{ adminform.form.admin_password_login_enabled.errors }}
+                <div class="checkbox-row">
+                    {{ adminform.form.admin_password_login_enabled }}
+                    <label for="id_admin_password_login_enabled">{% trans "Allow password login on admin page" %}</label>
+                </div>
+                <div class="help">{% trans "Disable to enforce SSO-only access. Recovery: append ?password=1 to the login URL." %}</div>
+            </div>
+
+            {% load enterprise_sso_tags %}
+            {% get_sso_config_status as sso_status %}
+            <div class="sso-config-status">
+                {% if sso_status.is_configured %}
+                <span class="text-success"><i class="fas fa-check-circle"></i> {% blocktranslate with name=sso_status.provider_name %}SSO provider "{{ name }}" is configured{% endblocktranslate %}</span>
+                {% else %}
+                <span class="text-warning"><i class="fas fa-exclamation-triangle"></i> {% trans "No SSO provider configured" %}</span>
+                {% endif %}
+                <br>
+                <a href="{% url 'admin:enterprise_sso_ssoproviderconfig_changelist' %}" class="button">
+                    <i class="fas fa-cog"></i> {% trans "Configure SSO Provider" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-shield-alt"></i> {% trans "Staff Two-Factor Authentication Policy" %}</h2>
+            <p class="help-text">
+                {% trans "Configure 2FA requirements for all staff members accessing the admin panel" %}
+            </p>
+
+            <div class="form-row field-staff_2fa_enforcement">
+                {{ adminform.form.staff_2fa_enforcement.errors }}
+                <div>
+                    <label>{% trans "Enforcement Level" %}</label>
+                    <div class="enforcement-level-cards">
+                        {% for choice in adminform.form.staff_2fa_enforcement.field.choices %}
+                        <label class="enforcement-card {% if adminform.form.staff_2fa_enforcement.value == choice.0 %}selected{% endif %}" data-value="{{ choice.0 }}">
+                            <input type="radio" name="staff_2fa_enforcement" value="{{ choice.0 }}" {% if adminform.form.staff_2fa_enforcement.value == choice.0 %}checked{% endif %}>
+                            <div class="card-icon">
+                                {% if choice.0 == 'disabled' %}
+                                <i class="fas fa-unlock"></i>
+                                {% elif choice.0 == 'recommended' %}
+                                <i class="fas fa-thumbs-up"></i>
+                                {% else %}
+                                <i class="fas fa-lock"></i>
+                                {% endif %}
+                            </div>
+                            <div class="card-title">
+                                {% if choice.0 == 'disabled' %}{% trans "Optional" %}
+                                {% elif choice.0 == 'recommended' %}{% trans "Recommended" %}
+                                {% else %}{% trans "Required" %}{% endif %}
+                            </div>
+                            <div class="card-description">
+                                {% if choice.0 == 'disabled' %}{% trans "Staff can choose to enable 2FA" %}
+                                {% elif choice.0 == 'recommended' %}{% trans "Staff see prompts to enable 2FA" %}
+                                {% else %}{% trans "Staff must have 2FA to access admin" %}{% endif %}
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row field-staff_2fa_grace_period_days grace-period-row {% if adminform.form.staff_2fa_enforcement.value != 'required' %}site-settings-hidden{% endif %}" id="grace-period-row">
+                {{ adminform.form.staff_2fa_grace_period_days.errors }}
+                <div>
+                    {{ adminform.form.staff_2fa_grace_period_days.label_tag }}
+                    {{ adminform.form.staff_2fa_grace_period_days }}
+                    <div class="help">{% trans "Days allowed for staff to set up 2FA after enforcement is enabled. Set to 0 for immediate enforcement." %}</div>
+                </div>
+            </div>
+
+            <div class="compliance-status-card">
+                <h4><i class="fas fa-users"></i> {% trans "Compliance Status" %}</h4>
+                <div class="compliance-content">
+                    <div class="compliance-stats">
+                        <div class="compliance-bar-container">
+                            <div class="compliance-bar" data-width="{{ staff_2fa_compliance_percent|default:0 }}"></div>
+                        </div>
+                        <div class="compliance-text">
+                            <strong>{{ staff_with_2fa|default:0 }}</strong> {% trans "of" %} <strong>{{ total_staff|default:0 }}</strong> {% trans "staff have 2FA enabled" %}
+                        </div>
+                    </div>
+                    <a href="{% url 'admin:auth_user_changelist' %}?is_staff__exact=1" class="button compliance-link">
+                        <i class="fas fa-external-link-alt"></i> {% trans "View Staff List" %}
+                    </a>
+                </div>
+            </div>
+
+            <div class="trusted-device-settings">
+                <h4><i class="fas fa-laptop"></i> {% trans "Trusted Devices" %}</h4>
+                <div class="form-row field-allow_trusted_devices">
+                    {{ adminform.form.allow_trusted_devices.errors }}
+                    <div class="checkbox-row">
+                        {{ adminform.form.allow_trusted_devices }}
+                        <label for="id_allow_trusted_devices">{% trans "Allow 'Remember this device' option during 2FA login" %}</label>
+                    </div>
+                </div>
+                <div class="form-row field-trusted_device_duration_days" id="trusted-device-duration-row">
+                    {{ adminform.form.trusted_device_duration_days.errors }}
+                    <div>
+                        {{ adminform.form.trusted_device_duration_days.label_tag }}
+                        {{ adminform.form.trusted_device_duration_days }}
+                        <div class="help">{% trans "How long a device stays trusted (in days)" %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-mobile-alt"></i> {% trans "Mobile App Security" %}</h2>
+            <p class="help-text">
+                {% trans "Control how many mobile devices each staff member can use to access the admin app simultaneously." %}
+            </p>
+
+            <div class="form-row field-max_devices_per_user">
+                {{ adminform.form.max_devices_per_user.errors }}
+                <div>
+                    {{ adminform.form.max_devices_per_user.label_tag }}
+                    {{ adminform.form.max_devices_per_user }}
+                    <div class="help">{% trans "Maximum number of mobile devices per staff member. Set to 0 for unlimited." %}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# ADVANCED TAB                                                  #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="advanced">
+        <div class="form-card">
+            <h2><i class="fas fa-wrench"></i> {% trans "Maintenance Settings" %}</h2>
+            <p class="help-text">
+                {% trans "Control site availability during maintenance periods. Staff members can always access the site." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-maintenance_mode">
+                        {{ adminform.form.maintenance_mode.errors }}
+                        <div>
+                            {{ adminform.form.maintenance_mode.label_tag }}
+                            {{ adminform.form.maintenance_mode }}
+                            {% if adminform.form.maintenance_mode.help_text %}
+                                <div class="help">{{ adminform.form.maintenance_mode.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-maintenance_page">
+                        {{ adminform.form.maintenance_page.errors }}
+                        <div>
+                            {{ adminform.form.maintenance_page.label_tag }}
+                            {{ adminform.form.maintenance_page }}
+                            {% if adminform.form.maintenance_page.help_text %}
+                                <div class="help">{{ adminform.form.maintenance_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-maintenance_message">
+                        {{ adminform.form.maintenance_message.errors }}
+                        <div>
+                            {{ adminform.form.maintenance_message.label_tag }}
+                            {{ adminform.form.maintenance_message }}
+                            {% if adminform.form.maintenance_message.help_text %}
+                                <div class="help">{{ adminform.form.maintenance_message.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row site-settings-actions-row">
+                <div class="flex-button-group">
+                    <a href="{% url 'maintenance_preview' %}"
+                       target="_blank"
+                       class="button site-settings-btn-icon">
+                        <i class="fas fa-eye"></i> {% trans "Preview Maintenance Page" %}
+                    </a>
+                    {% if original.maintenance_page %}
+                    <a href="{% url 'admin:page_builder_page_change' original.maintenance_page.pk %}"
+                       class="button site-settings-btn-icon">
+                        <i class="fas fa-edit"></i> {% trans "Edit Maintenance Page" %}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-bug"></i> {% trans "Error Reporting" %}</h2>
+            <p class="help-text">
+                {% trans "Help improve Spwig by sending anonymized error reports. All personal data is automatically stripped before transmission." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-error_reporting_enabled">
+                        {{ adminform.form.error_reporting_enabled.errors }}
+                        <div>
+                            {{ adminform.form.error_reporting_enabled.label_tag }}
+                            {{ adminform.form.error_reporting_enabled }}
+                            {% if adminform.form.error_reporting_enabled.help_text %}
+                                <div class="help">{{ adminform.form.error_reporting_enabled.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-error_reporting_include_js">
+                        {{ adminform.form.error_reporting_include_js.errors }}
+                        <div>
+                            {{ adminform.form.error_reporting_include_js.label_tag }}
+                            {{ adminform.form.error_reporting_include_js }}
+                            {% if adminform.form.error_reporting_include_js.help_text %}
+                                <div class="help">{{ adminform.form.error_reporting_include_js.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row site-settings-actions-row">
+                <a href="{% url 'admin:core_errorreport_changelist' %}" class="button site-settings-btn-icon">
+                    <i class="fas fa-clipboard-list"></i> {% trans "Review Error Reports" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-image"></i> {% trans "Image Processing" %}</h2>
+            <p class="help-text">
+                {% trans "Configure default image resize behavior. For thumbnail management, go to the Image Processing page." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-default_image_resize_mode">
+                        {{ adminform.form.default_image_resize_mode.errors }}
+                        <div>
+                            {{ adminform.form.default_image_resize_mode.label_tag }}
+                            {{ adminform.form.default_image_resize_mode }}
+                            {% if adminform.form.default_image_resize_mode.help_text %}
+                                <div class="help">{{ adminform.form.default_image_resize_mode.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-logo_resize_mode">
+                        {{ adminform.form.logo_resize_mode.errors }}
+                        <div>
+                            {{ adminform.form.logo_resize_mode.label_tag }}
+                            {{ adminform.form.logo_resize_mode }}
+                            {% if adminform.form.logo_resize_mode.help_text %}
+                                <div class="help">{{ adminform.form.logo_resize_mode.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-default_padding_color">
+                        {{ adminform.form.default_padding_color.errors }}
+                        <div>
+                            {{ adminform.form.default_padding_color.label_tag }}
+                            {{ adminform.form.default_padding_color }}
+                            {% if adminform.form.default_padding_color.help_text %}
+                                <div class="help">{{ adminform.form.default_padding_color.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-logo_padding_color">
+                        {{ adminform.form.logo_padding_color.errors }}
+                        <div>
+                            {{ adminform.form.logo_padding_color.label_tag }}
+                            {{ adminform.form.logo_padding_color }}
+                            {% if adminform.form.logo_padding_color.help_text %}
+                                <div class="help">{{ adminform.form.logo_padding_color.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row site-settings-actions-row">
+                <a href="{% url 'media_library_admin:image_processing' %}" class="button site-settings-btn-icon">
+                    <i class="fas fa-images"></i> {% trans "Manage Thumbnails & Regeneration" %}
+                </a>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-server"></i> {% trans "System Information" %}</h2>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row">
+                        <label>{% trans "Created:" %}</label>
+                        <div class="py-8">{{ original.created_at|date:"M d, Y g:i A" }}</div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row">
+                        <label>{% trans "Last Updated:" %}</label>
+                        <div class="py-8">{{ original.updated_at|date:"M d, Y g:i A" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# PAGES & SEO TAB                                               #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="pages">
+        <div class="form-card">
+            <h2><i class="fas fa-search"></i> {% trans "Search Engine Optimization" %}</h2>
+            <div class="form-row field-meta_title">
+                {{ adminform.form.meta_title.errors }}
+                <div>
+                    {{ adminform.form.meta_title.label_tag }}
+                    {{ adminform.form.meta_title }}
+                    {% if adminform.form.meta_title.help_text %}
+                        <div class="help">{{ adminform.form.meta_title.help_text|safe }}</div>
+                    {% endif %}
+                    <div class="char-counter" id="meta_title_counter"></div>
+                </div>
+            </div>
+            <div class="form-row field-meta_description">
+                {{ adminform.form.meta_description.errors }}
+                <div>
+                    {{ adminform.form.meta_description.label_tag }}
+                    {{ adminform.form.meta_description }}
+                    {% if adminform.form.meta_description.help_text %}
+                        <div class="help">{{ adminform.form.meta_description.help_text|safe }}</div>
+                    {% endif %}
+                    <div class="char-counter" id="meta_description_counter"></div>
+                </div>
+            </div>
+            <div class="form-row field-meta_keywords">
+                {{ adminform.form.meta_keywords.errors }}
+                <div>
+                    {{ adminform.form.meta_keywords.label_tag }}
+                    {{ adminform.form.meta_keywords }}
+                    {% if adminform.form.meta_keywords.help_text %}
+                        <div class="help">{{ adminform.form.meta_keywords.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-home"></i> {% trans "System Pages" %}</h2>
+            <p class="help-text">
+                {% trans "Select which pages are used for core store functions. These pages handle essential functionality like checkout and shopping cart." %}
+            </p>
+            <div class="form-row field-home_page">
+                {{ adminform.form.home_page.errors }}
+                <div>
+                    {{ adminform.form.home_page.label_tag }}
+                    {{ adminform.form.home_page }}
+                    {% if adminform.form.home_page.help_text %}
+                        <div class="help">{{ adminform.form.home_page.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-balance-scale"></i> {% trans "Legal Pages" %}</h2>
+            <p class="help-text">
+                {% trans "Assign pages for legal content. These will automatically appear in your store's footer." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-privacy_page">
+                        {{ adminform.form.privacy_page.errors }}
+                        <div>
+                            {{ adminform.form.privacy_page.label_tag }}
+                            {{ adminform.form.privacy_page }}
+                            {% if adminform.form.privacy_page.help_text %}
+                                <div class="help">{{ adminform.form.privacy_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-cookie_page">
+                        {{ adminform.form.cookie_page.errors }}
+                        <div>
+                            {{ adminform.form.cookie_page.label_tag }}
+                            {{ adminform.form.cookie_page }}
+                            {% if adminform.form.cookie_page.help_text %}
+                                <div class="help">{{ adminform.form.cookie_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-returns_page">
+                        {{ adminform.form.returns_page.errors }}
+                        <div>
+                            {{ adminform.form.returns_page.label_tag }}
+                            {{ adminform.form.returns_page }}
+                            {% if adminform.form.returns_page.help_text %}
+                                <div class="help">{{ adminform.form.returns_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-terms_page">
+                        {{ adminform.form.terms_page.errors }}
+                        <div>
+                            {{ adminform.form.terms_page.label_tag }}
+                            {{ adminform.form.terms_page }}
+                            {% if adminform.form.terms_page.help_text %}
+                                <div class="help">{{ adminform.form.terms_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row field-shipping_page">
+                        {{ adminform.form.shipping_page.errors }}
+                        <div>
+                            {{ adminform.form.shipping_page.label_tag }}
+                            {{ adminform.form.shipping_page }}
+                            {% if adminform.form.shipping_page.help_text %}
+                                <div class="help">{{ adminform.form.shipping_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-exclamation-triangle"></i> {% trans "Error Pages" %}</h2>
+            <p class="help-text">
+                {% trans "Customize the pages shown when errors occur. Leave empty to use default error pages." %}
+            </p>
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-error_404_page">
+                        {{ adminform.form.error_404_page.errors }}
+                        <div>
+                            {{ adminform.form.error_404_page.label_tag }}
+                            {{ adminform.form.error_404_page }}
+                            {% if adminform.form.error_404_page.help_text %}
+                                <div class="help">{{ adminform.form.error_404_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-error_500_page">
+                        {{ adminform.form.error_500_page.errors }}
+                        <div>
+                            {{ adminform.form.error_500_page.label_tag }}
+                            {{ adminform.form.error_500_page }}
+                            {% if adminform.form.error_500_page.help_text %}
+                                <div class="help">{{ adminform.form.error_500_page.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-plus-circle"></i> {% trans "Manage Pages" %}</h2>
+            <div class="flex-button-group-padded">
+                <a href="{% url 'admin:page_builder_page_changelist' %}" class="button">
+                    <i class="fas fa-list"></i> {% trans "View All Pages" %}
+                </a>
+                <a href="{% url 'admin:page_builder_page_add' %}" class="button default">
+                    <i class="fas fa-plus"></i> {% trans "Create New Page" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# COOKIES TAB                                                   #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="cookies">
+        <div class="form-card">
+            <h2><i class="fas fa-cookie-bite"></i> {% trans "Cookie Consent Banner" %}</h2>
+            <p class="help-text">
+                {% trans "Configure a GDPR-compliant cookie consent banner. When enabled, visitors are asked for their consent before any non-essential cookies are set." %}
+            </p>
+
+            <div class="form-row field-cookie_consent_enabled form-section-enhanced">
+                {{ adminform.form.cookie_consent_enabled.errors }}
+                <div class="checkbox-row">
+                    {{ adminform.form.cookie_consent_enabled }}
+                    {{ adminform.form.cookie_consent_enabled.label_tag }}
+                    {% if adminform.form.cookie_consent_enabled.help_text %}
+                        <div class="help mt-8">{{ adminform.form.cookie_consent_enabled.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="two-column-layout">
+                <div class="column">
+                    <div class="form-row field-cookie_banner_position">
+                        {{ adminform.form.cookie_banner_position.errors }}
+                        <div>
+                            {{ adminform.form.cookie_banner_position.label_tag }}
+                            {{ adminform.form.cookie_banner_position }}
+                            {% if adminform.form.cookie_banner_position.help_text %}
+                                <div class="help">{{ adminform.form.cookie_banner_position.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="form-row field-cookie_consent_mode">
+                        {{ adminform.form.cookie_consent_mode.errors }}
+                        <div>
+                            {{ adminform.form.cookie_consent_mode.label_tag }}
+                            {{ adminform.form.cookie_consent_mode }}
+                            {% if adminform.form.cookie_consent_mode.help_text %}
+                                <div class="help">{{ adminform.form.cookie_consent_mode.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-align-left"></i> {% trans "Banner Text" %}</h2>
+            <p class="help-text">
+                {% trans "Customise the text shown on the cookie banner. Use the translate button to add translations for each active language. Leave empty to use defaults." %}
+            </p>
+            <div class="form-row field-cookie_banner_title">
+                {{ adminform.form.cookie_banner_title.errors }}
+                <div>
+                    {{ adminform.form.cookie_banner_title.label_tag }}
+                    {{ adminform.form.cookie_banner_title }}
+                    {% if adminform.form.cookie_banner_title.help_text %}
+                        <div class="help">{{ adminform.form.cookie_banner_title.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row field-cookie_banner_text">
+                {{ adminform.form.cookie_banner_text.errors }}
+                <div>
+                    {{ adminform.form.cookie_banner_text.label_tag }}
+                    {{ adminform.form.cookie_banner_text }}
+                    {% if adminform.form.cookie_banner_text.help_text %}
+                        <div class="help">{{ adminform.form.cookie_banner_text.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-list"></i> {% trans "Cookie Category Descriptions" %}</h2>
+            <p class="help-text">
+                {% trans "These descriptions are shown when visitors click 'Manage Preferences' in granular mode. Necessary cookies are always enabled and use a built-in description. Leave empty to use defaults." %}
+            </p>
+            <div class="form-row field-cookie_analytics_description">
+                {{ adminform.form.cookie_analytics_description.errors }}
+                <div>
+                    {{ adminform.form.cookie_analytics_description.label_tag }}
+                    {{ adminform.form.cookie_analytics_description }}
+                    {% if adminform.form.cookie_analytics_description.help_text %}
+                        <div class="help">{{ adminform.form.cookie_analytics_description.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row field-cookie_marketing_description">
+                {{ adminform.form.cookie_marketing_description.errors }}
+                <div>
+                    {{ adminform.form.cookie_marketing_description.label_tag }}
+                    {{ adminform.form.cookie_marketing_description }}
+                    {% if adminform.form.cookie_marketing_description.help_text %}
+                        <div class="help">{{ adminform.form.cookie_marketing_description.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row field-cookie_functional_description">
+                {{ adminform.form.cookie_functional_description.errors }}
+                <div>
+                    {{ adminform.form.cookie_functional_description.label_tag }}
+                    {{ adminform.form.cookie_functional_description }}
+                    {% if adminform.form.cookie_functional_description.help_text %}
+                        <div class="help">{{ adminform.form.cookie_functional_description.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2><i class="fas fa-link"></i> {% trans "Cookie Policy Page" %}</h2>
+            <p class="help-text">
+                {% trans "The cookie policy link in the banner is taken from the Cookie Policy Page assigned in the Pages tab." %}
+            </p>
+            {% if original.cookie_page %}
+                <p class="cookie-consent-policy-status cookie-policy-status-ok">
+                    <i class="fas fa-check-circle"></i>
+                    {% blocktrans with name=original.cookie_page.title %}Cookie Policy page is set: "{{ name }}"{% endblocktrans %}
+                    &mdash;
+                    <a href="{% url 'admin:page_builder_page_change' original.cookie_page.pk %}">{% trans "Edit page" %}</a>
+                </p>
+            {% else %}
+                <p class="cookie-consent-policy-status cookie-policy-status-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% trans "No Cookie Policy page assigned. Go to the Pages tab to assign one." %}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    {# ============================================================ #}
+    {# DOMAIN & SSL TAB                                             #}
+    {# ============================================================ #}
+    <div class="tab-panel" data-panel="domain-ssl">
+        {% if license_status.is_hosted %}
+        <div class="license-notice-banner license-banner-info" style="margin-bottom: 16px;">
+            <div class="license-banner-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="license-banner-content">
+                <strong>{% trans "Spwig Hosted:" %}</strong>
+                {% trans "Your store includes a secure subdomain. To use your own domain, enter it below and update your DNS records." %}
+            </div>
+        </div>
+        {% endif %}
+        {# Status Card — shows current domain and cert info #}
+        <div class="form-card" id="domain-ssl-status-card">
+            <h2><i class="fas fa-globe"></i> {% trans "Current Configuration" %}</h2>
+            <div class="domain-ssl-status" id="domain-ssl-status">
+                <div class="domain-ssl-status-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    {% trans "Loading configuration..." %}
+                </div>
+            </div>
+        </div>
+
+        {# Configure Wizard #}
+        <div class="form-card" id="domain-ssl-wizard-card">
+            <h2><i class="fas fa-magic"></i> {% trans "Configure Domain & SSL" %}</h2>
+            <p class="help-text">
+                {% trans "Set up your custom domain and SSL certificate. Your site will be briefly inaccessible (a few seconds) while the web server reloads." %}
+            </p>
+
+            {# Step 1: Domain #}
+            <div class="domain-ssl-step" id="domain-ssl-step-domain">
+                <h3 class="settings-section-heading">
+                    <span class="domain-ssl-step-number">1</span>
+                    {% trans "Domain Name" %}
+                </h3>
+                <div class="two-column-layout">
+                    <div class="column">
+                        <div class="form-row">
+                            <label for="domain-ssl-domain">{% trans "Domain" %}</label>
+                            <input type="text"
+                                   id="domain-ssl-domain"
+                                   class="vTextField"
+                                   placeholder="shop.example.com"
+                                   data-current-domain="{{ domain_ssl_config.domain|default:'' }}"
+                                   data-site-url="{{ original.site_url|default:'' }}">
+                            <div class="help">{% trans "Enter your fully qualified domain name (e.g., shop.example.com)" %}</div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="form-row">
+                            <label>&nbsp;</label>
+                            <button type="button" class="button" id="domain-ssl-check-dns">
+                                <i class="fas fa-search"></i> {% trans "Check DNS" %}
+                            </button>
+                            <div id="domain-ssl-dns-result" class="domain-ssl-dns-result"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Step 2: SSL Mode #}
+            <div class="domain-ssl-step" id="domain-ssl-step-ssl">
+                <h3 class="settings-section-heading">
+                    <span class="domain-ssl-step-number">2</span>
+                    {% trans "SSL Certificate" %}
+                </h3>
+                <div class="domain-ssl-modes" id="domain-ssl-modes">
+                    <label class="domain-ssl-mode-card" data-mode="letsencrypt">
+                        <input type="radio" name="domain-ssl-mode" value="letsencrypt">
+                        <div class="domain-ssl-mode-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="domain-ssl-mode-title">{% trans "Let's Encrypt" %}</div>
+                        <div class="domain-ssl-mode-desc">{% trans "Free, automatic SSL. Recommended for most stores." %}</div>
+                    </label>
+                    <label class="domain-ssl-mode-card" data-mode="self_signed">
+                        <input type="radio" name="domain-ssl-mode" value="self_signed">
+                        <div class="domain-ssl-mode-icon"><i class="fas fa-flask"></i></div>
+                        <div class="domain-ssl-mode-title">{% trans "Self-Signed" %}</div>
+                        <div class="domain-ssl-mode-desc">{% trans "For development and testing only." %}</div>
+                    </label>
+                    <label class="domain-ssl-mode-card" data-mode="cloudflare_origin">
+                        <input type="radio" name="domain-ssl-mode" value="cloudflare_origin">
+                        <div class="domain-ssl-mode-icon"><i class="fab fa-cloudflare"></i></div>
+                        <div class="domain-ssl-mode-title">{% trans "Cloudflare Origin CA" %}</div>
+                        <div class="domain-ssl-mode-desc">{% trans "For sites using Cloudflare proxy. Paste your Origin CA certificate." %}</div>
+                    </label>
+                    <label class="domain-ssl-mode-card" data-mode="custom">
+                        <input type="radio" name="domain-ssl-mode" value="custom">
+                        <div class="domain-ssl-mode-icon"><i class="fas fa-upload"></i></div>
+                        <div class="domain-ssl-mode-title">{% trans "Custom Certificate" %}</div>
+                        <div class="domain-ssl-mode-desc">{% trans "Upload your own SSL certificate." %}</div>
+                    </label>
+                    <label class="domain-ssl-mode-card" data-mode="managed_externally">
+                        <input type="radio" name="domain-ssl-mode" value="managed_externally">
+                        <div class="domain-ssl-mode-icon"><i class="fas fa-cloud"></i></div>
+                        <div class="domain-ssl-mode-title">{% trans "Managed Externally" %}</div>
+                        <div class="domain-ssl-mode-desc">{% trans "SSL is handled by Cloudflare, a load balancer, or another reverse proxy." %}</div>
+                    </label>
+                    <label class="domain-ssl-mode-card" data-mode="none">
+                        <input type="radio" name="domain-ssl-mode" value="none">
+                        <div class="domain-ssl-mode-icon"><i class="fas fa-unlock"></i></div>
+                        <div class="domain-ssl-mode-title">{% trans "None (HTTP)" %}</div>
+                        <div class="domain-ssl-mode-desc">{% trans "No SSL. Not recommended for production." %}</div>
+                    </label>
+                </div>
+            </div>
+
+            {# Step 2a: Let's Encrypt email #}
+            <div class="domain-ssl-step domain-ssl-conditional" id="domain-ssl-step-email" data-show-for="letsencrypt">
+                <div class="form-row">
+                    <label for="domain-ssl-email">{% trans "Admin Email" %}</label>
+                    <input type="email"
+                           id="domain-ssl-email"
+                           class="vTextField"
+                           placeholder="admin@example.com"
+                           data-current-email="{{ domain_ssl_config.admin_email|default:'' }}">
+                    <div class="help">{% trans "Required for Let's Encrypt certificate notifications." %}</div>
+                </div>
+            </div>
+
+            {# Step 2b: Cloudflare Origin CA guidance #}
+            <div class="domain-ssl-step domain-ssl-conditional" data-show-for="cloudflare_origin">
+                <div class="help domain-ssl-help">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Paste the Origin CA certificate and private key from your Cloudflare dashboard. Set your Cloudflare SSL/TLS mode to Full (Strict)." %}
+                </div>
+            </div>
+
+            {# Step 2b: Custom certificate upload #}
+            <div class="domain-ssl-step domain-ssl-conditional" id="domain-ssl-step-custom" data-show-for="custom,cloudflare_origin">
+                <div class="two-column-layout">
+                    <div class="column">
+                        <div class="form-row">
+                            <label for="domain-ssl-cert-pem">{% trans "Certificate (PEM)" %}</label>
+                            <textarea id="domain-ssl-cert-pem" class="vLargeTextField" rows="6"
+                                      placeholder="-----BEGIN CERTIFICATE-----"></textarea>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="form-row">
+                            <label for="domain-ssl-key-pem">{% trans "Private Key (PEM)" %}</label>
+                            <textarea id="domain-ssl-key-pem" class="vLargeTextField" rows="6"
+                                      placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Action buttons #}
+            <div class="domain-ssl-actions" id="domain-ssl-actions">
+                <button type="button" class="button default" id="domain-ssl-configure">
+                    <i class="fas fa-rocket"></i> {% trans "Apply Configuration" %}
+                </button>
+            </div>
+
+            {# Progress indicator #}
+            <div class="domain-ssl-progress" id="domain-ssl-progress">
+                <div class="domain-ssl-progress-bar">
+                    <div class="domain-ssl-progress-fill" id="domain-ssl-progress-fill"></div>
+                </div>
+                <div class="domain-ssl-progress-status" id="domain-ssl-progress-status">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span id="domain-ssl-progress-text">{% trans "Starting..." %}</span>
+                </div>
+            </div>
+
+            {# Result #}
+            <div class="domain-ssl-result" id="domain-ssl-result"></div>
+        </div>
+    </div>
+
+    </div>{# end .tab-content #}
+
+    <script type="text/javascript" src="{% static 'core/admin/js/site_settings_tabs.js' %}"></script>
+
+    {# Domain & SSL — data island read by domain_ssl.js #}
+    {% trans "Email is required for Let's Encrypt" as email_required_label %}
+    <script type="application/json" id="domain-ssl-config-data" nonce="{{ request.csp_nonce }}">
+    {
+        "statusUrl": "/api/domain-ssl/status/",
+        "validateDnsUrl": "/api/domain-ssl/validate-dns/",
+        "configureUrl": "/api/domain-ssl/configure/",
+        "progressUrl": "/api/domain-ssl/progress/",
+        "uploadCertUrl": "/api/domain-ssl/upload-cert/",
+        "translations": {
+            "idle": "{% trans 'Ready' %}",
+            "validating_dns": "{% trans 'Validating DNS...' %}",
+            "configuring": "{% trans 'Configuring web server...' %}",
+            "obtaining_cert": "{% trans 'Obtaining SSL certificate...' %}",
+            "reloading": "{% trans 'Reloading web server...' %}",
+            "error": "{% trans 'Error' %}",
+            "success": "{% trans 'Configuration complete!' %}",
+            "noDomain": "{% trans 'No domain configured' %}",
+            "noSsl": "{% trans 'No SSL' %}",
+            "validDns": "{% trans 'DNS resolves correctly' %}",
+            "invalidDns": "{% trans 'DNS does not resolve' %}",
+            "ipMatch": "{% trans 'IP matches this server' %}",
+            "ipMismatch": "{% trans 'IP does not match this server' %}",
+            "ipMismatchHint": "{% trans 'This is normal if you use Cloudflare or a load balancer.' %}",
+            "checking": "{% trans 'Checking...' %}",
+            "certExpires": "{% trans 'Expires' %}",
+            "certIssuer": "{% trans 'Issued by' %}",
+            "daysRemaining": "{% trans 'days remaining' %}",
+            "domainRequired": "{% trans 'Please enter a domain name' %}",
+            "emailRequired": "{{ email_required_label }}",
+            "siteInaccessible": "{% trans 'Your site may be briefly inaccessible for a few seconds.' %}"
+        }
+    }
+    </script>
+
+    {# License Status Widget — data island read by site_settings.js #}
+    <script type="application/json" id="site-settings-license-data" nonce="{{ request.csp_nonce }}">
+    {
+        "apiUrl": "{% url 'admin:core_licensestatus_api' %}",
+        "translations": {
+            "licensed": "{% trans 'Licensed' %}",
+            "paymentProcessing": "{% trans 'Payment Processing' %}",
+            "premiumWidgets": "{% trans 'Premium Widgets' %}",
+            "prioritySupport": "{% trans 'Priority Support' %}",
+            "trialMode": "{% trans 'Trial Mode' %}",
+            "paymentDisabled": "{% trans 'Payment processing disabled' %}",
+            "unknown": "{% trans 'Unknown' %}"
+        }
+    }
+    </script>
+
+    {# Translation Editor Initialization #}
+    {% include "admin/includes/translation_editor_init.html" %}
+{% endblock %}

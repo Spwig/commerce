@@ -1,0 +1,123 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Add Remote Storage" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/provider-wizard.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='management' %}">{% trans 'Management' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_system_dashboard' %}">{% trans 'System Dashboard' %}</a>
+    &rsaquo; <a href="{% url 'admin:management_storage_destinations' %}">{% trans 'Remote Storage' %}</a>
+    &rsaquo; {% trans 'Add Destination' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <div class="wizard-header">
+        <h1>{% trans "Add Remote Storage Destination" %}</h1>
+        <p class="wizard-subtitle">{% trans "Back up your store data to secure off-site storage" %}</p>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="wizard-steps">
+        <div class="step active">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Select Provider" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Configure" %}</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Review & Save" %}</div>
+        </div>
+    </div>
+
+    <div class="wizard-content">
+        <div class="wizard-step-content">
+            <h2 class="step-title">{% trans "Choose a Storage Provider" %}</h2>
+            <p class="step-description">{% trans "Select where you want to store your backup files. You can add multiple destinations later." %}</p>
+
+            <form method="post" id="step1-form">
+                {% csrf_token %}
+                <div class="providers-grid">
+                    {% for provider in providers %}
+                    <label class="provider-card">
+                        <input type="radio" name="provider_type" value="{{ provider.type }}" required>
+                        <div class="provider-card-content">
+                            <div class="provider-logo">
+                                <div class="provider-logo-placeholder">
+                                    {% if provider.type == 's3' %}
+                                    <i class="fas fa-cloud"></i>
+                                    {% elif provider.type == 'sftp' %}
+                                    <i class="fas fa-server"></i>
+                                    {% elif provider.type == 'google_drive' %}
+                                    <i class="fab fa-google-drive"></i>
+                                    {% elif provider.type == 'dropbox' %}
+                                    <i class="fab fa-dropbox"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="provider-name">{{ provider.name }}</div>
+                            <div class="provider-description">
+                                {% if provider.type == 's3' %}
+                                {% trans "AWS S3, Backblaze B2, Wasabi, DigitalOcean Spaces, Cloudflare R2, MinIO, and more" %}
+                                {% elif provider.type == 'sftp' %}
+                                {% trans "Upload backups to any server via secure SSH file transfer" %}
+                                {% elif provider.type == 'google_drive' %}
+                                {% trans "Store backups in your Google Drive with 15 GB free storage" %}
+                                {% elif provider.type == 'dropbox' %}
+                                {% trans "Simple backup storage with Dropbox cloud sync" %}
+                                {% endif %}
+                            </div>
+                            <div class="provider-capabilities">
+                                {% if provider.type == 's3' %}
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "Scalable" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "Low Cost" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "7+ Providers" %}</span>
+                                {% elif provider.type == 'sftp' %}
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "Encrypted" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "SSH Keys" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "Any Server" %}</span>
+                                {% elif provider.type == 'google_drive' %}
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "15 GB Free" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "Popular" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "OAuth" %}</span>
+                                {% elif provider.type == 'dropbox' %}
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "2 GB Free" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "Easy Setup" %}</span>
+                                <span class="capability-badge"><i class="fas fa-check"></i> {% trans "OAuth" %}</span>
+                                {% endif %}
+                            </div>
+                            <div class="provider-check">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <div class="wizard-actions">
+                    <a href="{% url 'admin:management_storage_destinations' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> {% trans "Cancel" %}
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

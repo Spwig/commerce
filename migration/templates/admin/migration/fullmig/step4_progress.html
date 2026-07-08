@@ -1,0 +1,167 @@
+{% extends "admin/migration/sync/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="safe-to-leave-notice{% if job.status != 'running' and job.status != 'pending' and job.status != 'awaiting_confirmation' %} sync-hidden{% endif %}" id="safe-to-leave">
+    <i class="fas fa-info-circle"></i>
+    {% trans "You can safely navigate away from this page. The migration will continue in the background." %}
+</div>
+
+<div class="content-box">
+    <h3>
+        <i class="fas fa-tasks"></i>
+        {% trans "Migration Progress" %}
+    </h3>
+    <p id="progress-status-text">
+        {% if job.status == 'completed' %}
+            {% trans "Migration completed." %}
+        {% elif job.status == 'failed' %}
+            {% trans "Migration encountered errors." %}
+        {% else %}
+            {% trans "Migrating data from source instance..." %}
+        {% endif %}
+    </p>
+</div>
+
+<!-- Overall Progress -->
+<div class="content-box">
+    <h3><i class="fas fa-chart-line"></i> {% trans "Overall Progress" %}</h3>
+    <div class="import-progress-header">
+        <span id="progress-label">{{ job.current_step|default:"Starting..." }}</span>
+        <span id="progress-percent">{{ job.progress_percent }}%</span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill gradient-fill" id="overall-progress-bar"
+             data-initial-width="{{ job.progress_percent }}"></div>
+    </div>
+
+    <div class="progress-time-info sync-hidden" id="progress-time-info">
+        <span id="elapsed-time"><i class="fas fa-clock"></i> {% trans "Elapsed:" %} --</span>
+        <span id="eta-time"><i class="fas fa-hourglass-half"></i> {% trans "Remaining:" %} --</span>
+    </div>
+
+    <div class="progress-connection-status" id="connection-status"></div>
+
+    <div class="stats-grid" id="sync-stats">
+        <div class="stat-card">
+            <div class="stat-number" id="stat-synced">{{ job.items_synced }}</div>
+            <div class="stat-label">{% trans "Migrated" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-skipped">{{ job.items_skipped }}</div>
+            <div class="stat-label">{% trans "Skipped" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-failed">{{ job.items_failed }}</div>
+            <div class="stat-label">{% trans "Failed" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-total">{{ job.items_total }}</div>
+            <div class="stat-label">{% trans "Total" %}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Per-Step Progress -->
+<div class="content-box">
+    <h3><i class="fas fa-layer-group"></i> {% trans "Category Progress" %}</h3>
+    <div id="step-items-container">
+        {% for step in steps %}
+        <div class="step-item-container" id="step-{{ step.category }}" data-category="{{ step.category }}">
+            <div class="step-icon-circle step-icon-{{ step.status }}">
+                {% if step.status == 'completed' %}
+                    <i class="fas fa-check"></i>
+                {% elif step.status == 'running' %}
+                    <i class="fas fa-spinner fa-spin"></i>
+                {% elif step.status == 'failed' %}
+                    <i class="fas fa-times"></i>
+                {% else %}
+                    <i class="fas fa-circle"></i>
+                {% endif %}
+            </div>
+            <div class="step-item-content">
+                <div class="step-header-row">
+                    <strong class="step-item-label">{{ step.category }}</strong>
+                    <span class="step-percentage-text">
+                        {% if step.status == 'completed' %}100%{% elif step.status == 'running' %}{{ step.progress_percent }}%{% endif %}
+                    </span>
+                </div>
+                {% if step.status == 'running' or step.status == 'completed' %}
+                <div class="step-progress-bar-container">
+                    <div class="step-progress-bar-fill"
+                         data-initial-width="{% if step.status == 'completed' %}100{% else %}{{ step.progress_percent }}{% endif %}"></div>
+                </div>
+                {% endif %}
+                <div class="step-stats-text">
+                    {% if step.items_total > 0 %}
+                        {{ step.items_synced }} {% trans "migrated" %} / {{ step.items_failed }} {% trans "failed" %} / {{ step.items_total }} {% trans "total" %}
+                    {% endif %}
+                    {% if step.error_message %}
+                        <span class="step-error-text">{{ step.error_message }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Activity Log -->
+<div class="content-box">
+    <h3 class="log-toggle" id="log-toggle">
+        <i class="fas fa-terminal"></i> {% trans "Activity Log" %}
+        <i class="fas fa-chevron-down log-chevron"></i>
+    </h3>
+    <div class="activity-log-container sync-hidden" id="activity-log">
+        <div class="activity-log-entries" id="log-entries">
+            <div class="activity-log-empty" id="log-empty">{% trans "Waiting for activity..." %}</div>
+        </div>
+    </div>
+</div>
+
+<div class="wizard-actions" id="progress-actions">
+    {% if job.status == 'completed' %}
+    <a href="{% url 'admin:fullmig_wizard_step5' job.pk %}" class="btn btn-primary">
+        {% trans "View Results" %}
+        <i class="fas fa-arrow-right"></i>
+    </a>
+    {% elif job.status == 'failed' %}
+    <a href="{% url 'admin:migration_syncjob_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        {% trans "Back to Dashboard" %}
+    </a>
+    {% endif %}
+</div>
+
+<script type="application/json" id="sync-progress-config">
+{
+    "jobId": "{{ job.pk }}",
+    "progressUrl": "{% url 'admin:sync_api_progress' job.pk %}",
+    "startUrl": "{% url 'admin:sync_api_start' job.pk %}",
+    "status": "{{ job.status }}",
+    "csrfToken": "{{ csrf_token }}",
+    "wizardType": "fullmig",
+    "resultsUrl": "{% url 'admin:fullmig_wizard_step5' job.pk %}",
+    "translations": {
+        "synced": "{% trans 'migrated' as t %}{{ t|escapejs }}",
+        "failed": "{% trans 'failed' as t %}{{ t|escapejs }}",
+        "total": "{% trans 'total' as t %}{{ t|escapejs }}",
+        "completed": "{% trans 'Migration completed.' as t %}{{ t|escapejs }}",
+        "failedMsg": "{% trans 'Migration encountered errors.' as t %}{{ t|escapejs }}",
+        "running": "{% trans 'Migrating data from source instance...' as t %}{{ t|escapejs }}",
+        "backToDashboard": "{% trans 'Back to Dashboard' as t %}{{ t|escapejs }}",
+        "rollback": "{% trans 'Rollback Migration' as t %}{{ t|escapejs }}",
+        "confirmRollback": "{% trans 'Are you sure you want to rollback this migration? This will delete all migrated data.' as t %}{{ t|escapejs }}",
+        "elapsed": "{% trans 'Elapsed:' as t %}{{ t|escapejs }}",
+        "remaining": "{% trans 'Remaining:' as t %}{{ t|escapejs }}",
+        "calculating": "{% trans 'calculating...' as t %}{{ t|escapejs }}",
+        "connectionLost": "{% trans 'Connection lost, retrying...' as t %}{{ t|escapejs }}",
+        "reconnected": "{% trans 'Reconnected' as t %}{{ t|escapejs }}"
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'migration/js/sync_progress.js' %}" defer></script>
+{% endblock %}

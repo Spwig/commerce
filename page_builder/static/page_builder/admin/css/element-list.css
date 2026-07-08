@@ -1,0 +1,217 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Element List - Grouped by Page
+ * Uses CSS variables from admin themes
+ */
+
+.elements-by-page {
+    margin: 20px 0;
+}
+
+.page-group {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.page-group-header {
+    background: var(--darkened-bg);
+    padding: 15px 20px;
+    border-bottom: 2px solid var(--accent);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-group-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.page-group-title i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.page-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+.page-badge {
+    background: var(--accent);
+    color: var(--body-fg);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.page-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.page-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--primary);
+    color: var(--button-fg);
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.page-action-btn:hover {
+    background: var(--accent);
+    color: var(--button-fg);
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.page-action-btn.secondary {
+    background: var(--darkened-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--border-color);
+}
+
+.page-action-btn.secondary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.elements-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.elements-table thead {
+    background: var(--darkened-bg);
+}
+
+.elements-table th {
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--body-quiet-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.elements-table tbody tr {
+    border-bottom: 1px solid var(--hairline-color);
+    transition: background-color 0.15s;
+}
+
+.elements-table tbody tr:hover {
+    background: var(--darkened-bg);
+}
+
+.elements-table td {
+    padding: 12px 15px;
+    font-size: 14px;
+}
+
+.element-name {
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.element-name a {
+    color: var(--link-fg);
+    text-decoration: none;
+}
+
+.element-name a:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
+
+.element-type-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: var(--primary);
+    color: var(--button-fg);
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.element-order {
+    background: var(--darkened-bg);
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--body-quiet-color);
+}
+
+.element-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-active {
+    color: var(--success-fg);
+}
+
+.status-inactive {
+    color: var(--error-fg);
+}
+
+.visibility-rules-badge {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.no-elements {
+    padding: 40px;
+    text-align: center;
+    color: var(--body-quiet-color);
+    font-style: italic;
+}
+
+.no-pages {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.no-pages i {
+    font-size: 64px;
+    color: var(--border-color);
+    margin-bottom: 20px;
+}
+
+.no-pages h3 {
+    color: var(--body-fg);
+    margin-bottom: 10px;
+}
+
+.no-pages p {
+    color: var(--body-quiet-color);
+    margin-bottom: 20px;
+}

@@ -1,0 +1,48 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Transaction Cards
+ *
+ * Description: Card layout styles for loyalty transaction_cards
+ * Template: loyalty/templates/admin/loyalty/partials/transaction_cards.html
+ * Extracted: 2026-02-13
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css (list-row-card system)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Transaction-specific card styles */
+.transaction-card {
+    transition: all 0.2s ease;
+}
+
+.transaction-positive {
+    border-left: 3px solid var(--success-fg);
+}
+
+.transaction-negative {
+    border-left: 3px solid var(--error-fg);
+}
+
+.list-row-card-stat-value.success {
+    color: var(--success-fg);
+}
+
+.list-row-card-stat-value.error {
+    color: var(--error-fg);
+}
+
+.list-row-card-icon.success {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.list-row-card-icon.error {
+    background: var(--error-bg);
+    color: var(--error-fg);
+}
+

@@ -1,0 +1,93 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/** 500 Error Page Styles
+ *  Standalone page — does not extend base.html.
+ *  Uses its own :root vars since theme CSS may not be available during server errors.
+ */
+
+:root {
+    --color-primary: #2563eb;
+    --color-primary-light: #dbeafe;
+    --color-text: #1f2937;
+    --color-text-muted: #6b7280;
+    --color-error: #ef4444;
+    --color-error-light: #fee2e2;
+    --color-background: #ffffff;
+    --color-border: #e5e7eb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background);
+    padding: 2rem;
+}
+
+.error-page {
+    text-align: center;
+    max-width: 32rem;
+}
+
+.error-page__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 6rem;
+    height: 6rem;
+    margin-bottom: 1rem;
+    background: var(--color-error-light);
+    border-radius: 9999px;
+    color: var(--color-error);
+    font-size: 2.5rem;
+}
+
+.error-page__code {
+    font-size: 6rem;
+    font-weight: 700;
+    color: var(--color-error);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.error-page__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+}
+
+.error-page__text {
+    color: var(--color-text-muted);
+    line-height: 1.625;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 150ms ease;
+}
+
+.btn:hover {
+    background: #1d4ed8;
+}

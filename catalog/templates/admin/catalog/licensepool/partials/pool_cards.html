@@ -1,0 +1,186 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for pool in pools %}
+    <div class="list-row-card{% if pool.status == 'depleted' or pool.status == 'expired' %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ pool.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-database text-primary icon-large"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:catalog_licensepool_change' pool.pk %}">
+                    {{ pool.name }}
+                </a>
+            </h3>
+
+            {% if pool.description %}
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-info-circle"></i> {{ pool.description|truncatewords:20 }}
+            </p>
+            {% endif %}
+
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-box"></i> {{ pool.product.name }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if pool.status == 'ready' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Ready" %}
+                    </span>
+                {% elif pool.status == 'generating' %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-spinner fa-spin"></i> {% trans "Generating" %}
+                    </span>
+                {% elif pool.status == 'depleted' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Depleted" %}
+                    </span>
+                {% elif pool.status == 'expired' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-clock"></i> {% trans "Expired" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge list-row-card-badge-info">
+                    <i class="fas fa-tag"></i> {{ pool.get_key_type_display }}
+                </span>
+
+                {% if pool.sync_to_provider %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-sync"></i> {% trans "Synced to" %} {{ pool.sync_to_provider.name }}
+                    </span>
+                {% endif %}
+
+                {% if pool.pool_expires_at %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-calendar-times"></i> {% trans "Pool Expires" %}: {{ pool.pool_expires_at|date:"M d, Y" }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Key Statistics -->
+            <div class="list-row-card-description progress-container">
+                <div class="progress-header">
+                    <div class="progress-header-label">
+                        {% trans "Key Distribution" %}:
+                    </div>
+                    <div class="progress-header-value">
+                        {{ pool.keys_generated }}/{{ pool.total_keys }} {% trans "generated" %}
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                {% widthratio pool.keys_generated 100 pool.total_keys as progress_percent %}
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" data-status="{% if pool.keys_distributed >= pool.total_keys %}full{% elif pool.keys_generated >= pool.total_keys %}active{% else %}normal{% endif %}" style="--progress-width: {{ progress_percent }}%"></div>
+                </div>
+
+                <div class="progress-footer">
+                    <span>
+                        <i class="fas fa-check"></i> {{ pool.keys_distributed }} {% trans "distributed" %}
+                    </span>
+                    <span>
+                        <i class="fas fa-box-open"></i> {{ pool.keys_generated|add:"-"|add:pool.keys_distributed }} {% trans "available" %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Total Keys" %}</span>
+                    <span class="list-row-card-stat-value" data-status="{% if pool.keys_generated >= pool.total_keys %}complete{% else %}default{% endif %}">
+                        {{ pool.total_keys }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Activations" %}</span>
+                    <span class="list-row-card-stat-value">{{ pool.max_activations }}{% if pool.max_activations == 1 %} {% trans "device" %}{% else %} {% trans "devices" %}{% endif %}</span>
+                </div>
+                {% if pool.expires_after_days %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Expires After" %}</span>
+                    <span class="list-row-card-stat-value">{{ pool.expires_after_days }} {% trans "days" %}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if pool.created_by %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{% trans "Created by" %}: {{ pool.created_by.get_full_name|default:pool.created_by.email }}</span>
+                </div>
+                {% endif %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Created" %}: {{ pool.created_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if pool.generation_completed_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-check-double"></i>
+                    <span>{% trans "Generation completed" %}: {{ pool.generation_completed_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% elif pool.generation_started_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>{% trans "Generating since" %}: {{ pool.generation_started_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+                {% if pool.generation_error %}
+                <div class="list-row-card-meta-item text-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>{% trans "Error" %}: {{ pool.generation_error|truncatewords:10 }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:catalog_licensepool_change' pool.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit pool' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:catalog_licensekey_changelist' %}?pool__id__exact={{ pool.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View keys in this pool' %}">
+                <i class="fas fa-key"></i>
+            </a>
+            {% if pool.license_template %}
+            <a href="{% url 'admin:catalog_licensekeytemplate_change' pool.license_template.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View template' %}">
+                <i class="fas fa-file-code"></i>
+            </a>
+            {% endif %}
+            {% if pool.status == 'ready' and pool.keys_generated < pool.total_keys %}
+            <a href="{% url 'admin:catalog_licensepool_change' pool.pk %}?action=generate"
+               class="list-row-card-action"
+               title="{% trans 'Generate more keys' %}">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-database"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No license pools found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Create a pool to pre-generate batches of license keys." %}
+        </p>
+        <a href="{% url 'admin:catalog_licensepool_add' %}" class="button mt-small">
+            <i class="fas fa-plus"></i> {% trans "Create Pool" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

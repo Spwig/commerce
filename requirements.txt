@@ -1,0 +1,134 @@
+# Core Django Framework
+Django==5.1.4                  # Main Django framework
+gunicorn==23.0.0               # WSGI HTTP server for production
+uvicorn[standard]==0.32.1      # ASGI server for Django async support
+daphne==4.1.2                  # ASGI server with WebSocket support (Django Channels)
+channels==4.1.0                # Django Channels for WebSocket handling
+channels-redis==4.2.1          # Redis channel layer for Django Channels
+
+# Database & Caching
+psycopg2-binary==2.9.10        # PostgreSQL adapter
+redis==5.2.1                   # Redis server for caching/sessions
+hiredis==3.0.0                 # High-performance Redis parser
+django-redis==5.4.0            # Django Redis cache backend
+
+# Task Queue
+celery==5.5.3                  # Distributed task queue
+django-celery-beat==2.7.0      # Database-backed periodic tasks
+tqdm==4.67.1                   # Progress bars for management commands
+
+# Content Management
+django-modeltranslation==0.19.17  # Model field translations for admin interface
+django-ckeditor-5==0.2.18      # Modern rich text editor for product descriptions
+bleach==6.3.0                  # HTML sanitization for user content
+
+# Django Extensions & Utilities
+django-environ==0.11.2         # Environment variable management
+django-extensions==3.2.3       # Useful Django extensions
+django-cors-headers==4.6.0     # CORS handling for APIs
+
+# E-commerce Core Features
+Pillow==11.0.0                 # Image processing for product photos
+python-slugify==8.0.4          # URL-friendly slugs for products
+django-money==3.5.0            # Multi-currency support
+django-countries==7.6.1        # Country field for forms and models
+Babel==2.13.1                  # Locale-aware currency formatting
+packaging==24.0                # Version comparison for updates
+semver==3.0.4                  # Semantic versioning for theme compatibility
+Pint==0.25                     # Physical unit conversions for product dimensions
+pycountry==24.6.1              # Country/subdivision lookups for shipping
+
+# Data Validation & Serialization
+jsonschema==4.25.1             # JSON schema validation for manifests/props
+PyYAML==6.0.2                  # YAML parsing for help packages
+
+# Media Processing
+python-magic==0.4.27           # File type validation via magic bytes
+qrcode[pil]==8.2               # QR code generation for referrals
+reportlab==4.4.4               # PDF generation for shipping documents
+
+# Object Storage (MinIO/S3) & Remote Backup
+boto3==1.35.82                 # AWS SDK for Python (S3-compatible APIs)
+django-storages==1.14.4        # Django storage backends for S3/MinIO
+minio==7.2.18                  # MinIO Python client for object storage
+paramiko>=3.0.0                # SSH/SFTP client for remote backup uploads
+dropbox>=12.0.0                # Dropbox API for remote backup storage
+
+# REST API Framework
+djangorestframework==3.15.2    # Django REST framework
+drf-spectacular==0.28.0        # OpenAPI schema generation for DRF
+django-filter==24.3            # API filtering capabilities
+django-allauth==0.63.6         # Social authentication (OAuth)
+dj-rest-auth==6.0.0            # REST API wrapper for allauth
+
+# Authentication & Security
+PyJWT==2.10.1                  # JWT encode/decode for license and API auth
+cryptography==46.0.2           # Encryption/signing for secure integrations
+fido2==2.1.1                   # WebAuthn/FIDO2 for biometric POS unlock
+mozilla-django-oidc==5.0.2     # Enterprise SSO via OpenID Connect (OIDC)
+
+# Development Tools (moved to requirements-dev.txt: ipython, django-debug-toolbar)
+
+# Production Optimizations
+whitenoise==6.8.2              # Static file serving
+Brotli==1.1.0                  # Brotli compression for WhiteNoise pre-compressed static files
+django-compressor==4.5.1       # CSS/JS compression and optimization
+
+# Security & Rate Limiting
+django-csp==4.0                # Content-Security-Policy header enforcement
+django-ratelimit==4.1.0        # Rate limiting for views and APIs
+
+# Monitoring & Error Tracking
+sentry-sdk==2.19.2             # Error tracking and performance monitoring
+
+# Advanced Management Tools
+psutil==6.1.0                  # System monitoring (CPU, memory, disk)
+docker==7.1.0                  # Docker SDK for log viewer container access
+sqlparse==0.5.3                # SQL query parsing and formatting
+tablib==3.6.1                  # Data export (CSV, JSON, XLSX, YAML)
+django-parler==2.3             # Multi-language support for models
+httpx==0.28.1                  # HTTP client for translation service
+requests==2.32.5
+tenacity==9.0.0                # Retry logic for address autocomplete geocoder
+python-dateutil==2.9.0.post0   # Advanced date parsing for shipping providers
+user-agents==2.2.0             # User agent parsing for GeoIP middleware
+
+# Customer Analytics & LTV
+pandas==2.3.3                  # Data analysis library required for LTV calculations
+lifetimes==0.11.3              # Customer lifetime value modeling (BG/NBD, Gamma-Gamma)
+lifelines==0.29.0              # Survival analysis for customer retention curves
+
+# Payment Providers
+stripe==11.4.1                 # Stripe payment integration
+squareup==43.2.0.20251016      # Square payment integration
+
+# Email System
+dnspython==2.8.0               # DNS queries for email deliverability (SPF/DKIM/DMARC)
+mjml==0.11.1                   # MJML email template rendering
+google-auth==2.41.1            # Google OAuth authentication
+google-auth-oauthlib==1.2.2    # Google OAuth flow helpers
+google-auth-httplib2==0.2.0    # Google API HTTP library integration
+google-api-python-client==2.185.0  # Google APIs (Gmail)
+msal==1.34.0                   # Microsoft Authentication Library (Office 365)
+aiosmtpd==1.4.6                # Asyncio SMTP server for built-in email sending
+dkimpy==1.1.8                  # DKIM email signing and verification
+
+# SMS/WhatsApp Messaging
+twilio>=8.0.0                  # Twilio SMS and WhatsApp messaging API
+
+# Mobile App Push Notifications
+# Push notifications are sent via push.spwig.com service (no direct APNs library needed)
+
+# 3D Product Configurator
+pygltflib==1.16.2                 # GLB/glTF parser for 3D scene graph extraction
+
+# Search & Document Processing
+rapidfuzz>=3.0.0                  # Fuzzy string matching for typo tolerance
+PyPDF2>=3.0.0                     # PDF text extraction for document indexing
+python-docx>=0.8.11               # Word document text extraction
+openpyxl>=3.1.0                   # Excel file text extraction
+onnxruntime==1.21.1               # ONNX Runtime for help search query encoding (replaces sentence-transformers + torch)
+tokenizers>=0.15.0                # HuggingFace fast tokenizer for help search encoding
+pgvector==0.2.4                   # PostgreSQL vector similarity search
+
+# Build Tools (moved to requirements-dev.txt: pip-licenses)

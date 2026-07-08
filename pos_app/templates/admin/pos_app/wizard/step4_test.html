@@ -1,0 +1,95 @@
+{% extends "admin/pos_app/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_header %}
+<h1>
+    <div class="wizard-icon-large">
+        <i class="fas fa-plug"></i>
+    </div>
+    {% trans "Test Connection" %}
+</h1>
+<p class="wizard-subtitle">{% blocktrans with name=provider.component.name %}Verifying your connection to {{ name }}.{% endblocktrans %}</p>
+{% endblock %}
+
+{% block wizard_content %}
+<div class="test-container">
+    <div id="test-status" class="test-status {% if test_result.success %}success{% elif test_result %}error{% else %}pending{% endif %}">
+        {% if test_result.success %}
+        <div class="test-icon success">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>{% trans "Connection Successful!" %}</h3>
+        <p>{{ test_result.message }}</p>
+        {% elif test_result %}
+        <div class="test-icon error">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <h3>{% trans "Connection Failed" %}</h3>
+        <p>{{ test_result.message }}</p>
+        {% else %}
+        <div class="test-icon pending" id="loading-icon">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <h3 id="test-title">{% trans "Testing Connection..." %}</h3>
+        <p id="test-message">{% trans "Please wait while we verify your credentials." %}</p>
+        {% endif %}
+    </div>
+
+    {% if test_result.success %}
+    <div class="test-details">
+        <div class="detail-item">
+            <i class="fas fa-check"></i>
+            <span>{% trans "API credentials verified" %}</span>
+        </div>
+        <div class="detail-item">
+            <i class="fas fa-check"></i>
+            <span>{% trans "Account access confirmed" %}</span>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<form method="post" id="test-form">
+    {% csrf_token %}
+    <div class="wizard-actions">
+        <a href="{% url 'pos_admin:wizard_step3' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+        </a>
+
+        {% if test_result.success %}
+        <a href="{% url 'pos_admin:wizard_step5' %}" class="btn btn-primary">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </a>
+        {% elif test_result %}
+        <button type="button" class="btn btn-secondary" data-action="run-test">
+            <i class="fas fa-redo"></i> {% trans "Retry Test" %}
+        </button>
+        <a href="{% url 'pos_admin:wizard_step3' %}" class="btn btn-primary">
+            {% trans "Update Credentials" %} <i class="fas fa-arrow-right"></i>
+        </a>
+        {% else %}
+        <button type="button" class="btn btn-primary" disabled id="continue-btn">
+            {% trans "Continue" %} <i class="fas fa-arrow-right"></i>
+        </button>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<div id="pos-wizard-config"
+     data-step4-url="{% url 'pos_admin:wizard_step4' %}"
+     data-csrf-token="{{ csrf_token }}"
+     data-auto-run="{% if not test_result %}true{% else %}false{% endif %}"
+     hidden></div>
+<script type="application/json" id="pos-wizard-translations">
+{
+    "testingConnection": "{% trans 'Testing Connection...' %}",
+    "pleaseWait": "{% trans 'Please wait while we verify your credentials.' %}",
+    "connectionFailed": "{% trans 'Connection Failed' %}",
+    "checkCredentials": "{% trans 'Unable to connect. Please check your credentials.' %}",
+    "unexpectedError": "{% trans 'An unexpected error occurred. Please try again.' %}"
+}
+</script>
+<script src="{% static 'pos_app/admin/js/pos-wizard.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,778 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ============================================================
+   Staff Roles Management Styles
+   Consistent with Spwig admin design patterns
+   ============================================================ */
+
+/* Role icon in list */
+.role-icon-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.role-icon-name i {
+    font-size: 16px;
+    color: var(--primary);
+    width: 20px;
+    text-align: center;
+}
+
+/* Access badges in list */
+.role-access-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.role-access-badge--admin {
+    background: rgba(65, 118, 144, 0.12);
+    color: var(--primary);
+}
+
+.role-access-badge--pos {
+    background: rgba(40, 167, 69, 0.12);
+    color: var(--success-fg, #28a745);
+}
+
+/* Predefined badge */
+.role-predefined-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+/* Role badge component */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    border-left: 3px solid;
+}
+
+.role-badge--primary {
+    background: rgba(65, 118, 144, 0.1);
+    border-left-color: var(--primary);
+    color: var(--primary);
+}
+
+.role-badge--success {
+    background: rgba(40, 167, 69, 0.1);
+    border-left-color: var(--success-fg, #28a745);
+    color: var(--success-fg, #28a745);
+}
+
+.role-badge--warning {
+    background: rgba(255, 193, 7, 0.15);
+    border-left-color: var(--warning-fg, #e6a800);
+    color: var(--warning-fg, #e6a800);
+}
+
+.role-badge--error {
+    background: rgba(220, 53, 69, 0.1);
+    border-left-color: var(--error-fg, #dc3545);
+    color: var(--error-fg, #dc3545);
+}
+
+.role-badge--info {
+    background: rgba(23, 162, 184, 0.1);
+    border-left-color: #17a2b8;
+    color: #17a2b8;
+}
+
+.role-badge--default {
+    background: var(--darkened-bg);
+    border-left-color: var(--body-quiet-color);
+    color: var(--body-quiet-color);
+}
+
+/* ============================================================
+   Change Form: Tab panel content
+   Uses AdminTabs (.admin-tabs / .admin-tab-btn) for switching.
+   ============================================================ */
+
+/* Dimmed state for tab buttons when access is toggled off */
+.admin-tab-btn.role-tab-dimmed {
+    opacity: 0.4;
+}
+
+.role-tab-panel {
+    display: none;
+    padding: 24px;
+}
+
+.role-tab-panel.active {
+    display: block;
+}
+
+/* ============================================================
+   CSP-safe utility classes (replace inline styles)
+   ============================================================ */
+
+.role-error-summary {
+    margin-bottom: 20px;
+}
+
+.role-input-narrow {
+    width: 80px;
+}
+
+.role-section-hint {
+    color: var(--body-quiet-color);
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.role-percent-suffix {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+.role-submit-row {
+    margin-top: 20px;
+}
+
+.role-clone-action {
+    margin-left: 10px;
+}
+
+.role-add-bar {
+    margin-bottom: 16px;
+}
+
+/* Dynamic icon color for role cards in list view */
+.list-row-card-icon[data-color="primary"] { color: var(--primary); }
+.list-row-card-icon[data-color="success"] { color: var(--success-fg, #28a745); }
+.list-row-card-icon[data-color="warning"] { color: var(--warning-fg, #e6a800); }
+.list-row-card-icon[data-color="error"] { color: var(--error-fg, #dc3545); }
+.list-row-card-icon[data-color="info"] { color: #17a2b8; }
+.list-row-card-icon[data-color="default"] { color: var(--body-quiet-color); }
+
+/* Empty state for role list */
+.role-empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--body-quiet-color);
+}
+
+.role-empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.role-empty-state p {
+    margin: 0 0 16px 0;
+}
+
+/* List display utility classes */
+.role-text-quiet {
+    color: var(--body-quiet-color);
+}
+
+.role-text-bold {
+    font-weight: 600;
+}
+
+/* ============================================================
+   General Tab
+   ============================================================ */
+
+.role-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.role-form-group {
+    margin-bottom: 16px;
+}
+
+.role-form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: var(--body-fg);
+}
+
+.role-form-group .help-text {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin-top: 4px;
+}
+
+.role-form-group input[type="text"],
+.role-form-group textarea,
+.role-form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.role-form-group input[type="text"]:focus,
+.role-form-group textarea:focus,
+.role-form-group select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(65, 118, 144, 0.15);
+}
+
+.role-form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.role-form-full {
+    grid-column: 1 / -1;
+}
+
+/* Access toggle switches */
+.access-toggles {
+    display: flex;
+    gap: 24px;
+    padding: 16px 0;
+}
+
+.access-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--body-bg);
+}
+
+.access-toggle:hover {
+    border-color: var(--primary);
+}
+
+.access-toggle.active {
+    border-color: var(--primary);
+    background: rgba(65, 118, 144, 0.06);
+}
+
+.access-toggle input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.access-toggle .toggle-icon {
+    font-size: 20px;
+    color: var(--body-quiet-color);
+    width: 24px;
+    text-align: center;
+}
+
+.access-toggle.active .toggle-icon {
+    color: var(--primary);
+}
+
+.access-toggle .toggle-label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.access-toggle .toggle-desc {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+/* Icon selector */
+.icon-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.icon-option {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--body-quiet-color);
+    background: var(--body-bg);
+    transition: all 0.15s ease;
+}
+
+.icon-option:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.icon-option.selected {
+    border-color: var(--primary);
+    background: rgba(65, 118, 144, 0.1);
+    color: var(--primary);
+}
+
+/* Color selector */
+.color-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.color-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected {
+    border-color: var(--body-fg);
+    box-shadow: 0 0 0 2px var(--body-bg), 0 0 0 4px var(--body-fg);
+}
+
+.color-option[data-color="primary"] { background: #417690; }
+.color-option[data-color="success"] { background: #28a745; }
+.color-option[data-color="warning"] { background: #e6a800; }
+.color-option[data-color="error"] { background: #dc3545; }
+.color-option[data-color="info"] { background: #17a2b8; }
+.color-option[data-color="default"] { background: #6c757d; }
+
+/* ============================================================
+   Permission Categories Grid
+   ============================================================ */
+
+.categories-grid {
+    display: grid;
+    gap: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.category-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--hairline-color, #e9ecef);
+    transition: background 0.15s ease;
+}
+
+.category-row:last-child {
+    border-bottom: none;
+}
+
+.category-row:hover {
+    background: var(--darkened-bg, #f5f5f5);
+}
+
+.category-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(65, 118, 144, 0.1);
+    color: var(--primary);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.category-details {
+    min-width: 0;
+}
+
+.category-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+.category-desc {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin-top: 2px;
+}
+
+.category-level-selector {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.level-option {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: var(--body-bg);
+    color: var(--body-quiet-color);
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-right: 1px solid var(--border-color);
+}
+
+.level-option:last-child {
+    border-right: none;
+}
+
+.level-option:hover {
+    background: var(--darkened-bg);
+}
+
+.level-option.active {
+    color: white;
+}
+
+.level-option.active[data-level="none"] {
+    background: var(--body-quiet-color);
+}
+
+.level-option.active[data-level="view"] {
+    background: #17a2b8;
+}
+
+.level-option.active[data-level="full"] {
+    background: var(--success-fg, #28a745);
+}
+
+.no-admin-notice {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--body-quiet-color);
+}
+
+.no-admin-notice i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.4;
+}
+
+.no-admin-notice p {
+    font-size: 14px;
+}
+
+/* ============================================================
+   POS Permissions Panel
+   ============================================================ */
+
+.pos-perms-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.pos-perm-group {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pos-perm-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--accent-bg, #f9f9f9);
+    border-bottom: 1px solid var(--hairline-color, #e9ecef);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--body-fg);
+}
+
+.pos-perm-group-header i {
+    color: var(--primary);
+    font-size: 14px;
+}
+
+.pos-perm-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--hairline-color, #e9ecef);
+    transition: background 0.15s ease;
+}
+
+.pos-perm-row:last-child {
+    border-bottom: none;
+}
+
+.pos-perm-row:hover {
+    background: var(--darkened-bg, #f5f5f5);
+}
+
+.pos-perm-info {
+    flex: 1;
+}
+
+.pos-perm-label {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+.pos-perm-desc {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin-top: 2px;
+}
+
+.pos-perm-control {
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.pos-perm-control input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.pos-perm-control input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 14px;
+    text-align: center;
+}
+
+.pos-perm-control input[type="number"]:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.no-pos-notice {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--body-quiet-color);
+}
+
+.no-pos-notice i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.4;
+}
+
+/* ============================================================
+   Members Tab
+   ============================================================ */
+
+.members-section {
+    max-width: 800px;
+}
+
+.member-add-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--accent-bg, #f9f9f9);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.member-add-bar select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 14px;
+}
+
+.member-add-bar button {
+    padding: 10px 20px;
+    background: var(--primary, #417690);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.member-add-bar button:hover {
+    opacity: 0.9;
+}
+
+.members-list {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--hairline-color, #e9ecef);
+}
+
+.member-row:last-child {
+    border-bottom: none;
+}
+
+.member-row:hover {
+    background: var(--darkened-bg, #f5f5f5);
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.member-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary, #417690);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.member-details .member-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+.member-details .member-email {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+}
+
+.member-remove-btn {
+    padding: 6px 12px;
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--body-quiet-color);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.15s ease;
+}
+
+.member-remove-btn:hover {
+    border-color: var(--error-fg, #dc3545);
+    color: var(--error-fg, #dc3545);
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.members-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--body-quiet-color);
+}
+
+.members-empty i {
+    font-size: 36px;
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0.3;
+}
+
+/* ============================================================
+   Change List: Clone Button
+   ============================================================ */
+
+.role-clone-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.role-clone-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .role-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .access-toggles {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .category-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .category-level-selector {
+        justify-self: start;
+    }
+}

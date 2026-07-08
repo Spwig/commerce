@@ -1,0 +1,140 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{{ product.name }} - {{ site_settings.site_name|default:'Shop' }}{% endblock %}
+
+{% block extra_head %}
+<meta property="og:title" content="{{ product.name }}">
+<meta property="og:description" content="{{ product.short_description|default:product.full_description|striptags|truncatewords:30 }}">
+{% if product.primary_image_url %}
+<meta property="og:image" content="{{ product.primary_image_url }}">
+{% endif %}
+<link rel="stylesheet" href="{% static 'catalog/css/configurator.css' %}">
+<link rel="stylesheet" href="{% static 'page_builder/css/product-base.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <div class="container">
+        <ol class="breadcrumb__list">
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:home' %}" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+            </li>
+            {% if product.category %}
+            <li class="breadcrumb__item">
+                <a href="{% url 'page_builder:category_detail' category_slug=product.category.slug %}" class="breadcrumb__link">{{ product.category.name }}</a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                {{ product.name }}
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Configurator Section -->
+<section class="configurator-section">
+    <div class="container">
+
+        <!-- Product Header -->
+        <div class="configurator-header">
+            <div class="configurator-header__info">
+                {% if product.brand %}
+                <p class="configurator-header__brand">{{ product.brand.name }}</p>
+                {% endif %}
+                <h1 class="configurator-header__title">{{ product.name }}</h1>
+                {% if product.short_description %}
+                <div class="configurator-header__description">{{ product.short_description|safe }}</div>
+                {% endif %}
+            </div>
+            {% if images %}
+            <div class="configurator-header__image">
+                <img src="{{ images.0.media_asset.get_display_url }}" alt="{{ product.name }}">
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Presets Section (rendered by JS if presets exist) -->
+        <div class="configurator-presets" id="presets-section" style="display: none;">
+            <h2 class="configurator-presets__title">
+                <i class="fas fa-magic"></i>
+                {% mtrans 'Start with a preset' %}
+            </h2>
+            <p class="configurator-presets__subtitle">{% mtrans 'Choose a starting configuration or build from scratch.' %}</p>
+            <div class="configurator-presets__grid" id="presets-grid"></div>
+            <button type="button" class="configurator-presets__scratch" id="start-scratch">
+                <i class="fas fa-tools"></i>
+                {% mtrans 'Build from scratch' %}
+            </button>
+        </div>
+
+        <div class="configurator-layout">
+            <!-- Main Wizard -->
+            <div class="configurator-wizard">
+
+                <!-- Step Navigation -->
+                <div class="configurator-steps" id="steps-nav"></div>
+
+                <!-- Panel Container -->
+                <div class="configurator-panels" id="panels-container"></div>
+
+                <!-- Navigation Buttons -->
+                <div class="configurator-nav" id="wizard-nav">
+                    <button type="button" class="btn btn--outline" id="btn-back" style="display: none;">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>{% mtrans 'Back' %}</span>
+                    </button>
+                    <div class="configurator-nav__spacer"></div>
+                    <button type="button" class="btn btn--primary btn--lg" id="btn-next">
+                        <span>{% mtrans 'Next' %}</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="button" class="btn btn--primary btn--lg" id="btn-add-to-cart" style="display: none;">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>{% mtrans 'Add to Cart' %}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary Sidebar -->
+            <aside class="configurator-summary" id="config-summary">
+                <div class="configurator-summary__header">
+                    <h3 class="configurator-summary__title">{% mtrans 'Your Configuration' %}</h3>
+                </div>
+                <div class="configurator-summary__slots" id="summary-slots"></div>
+                <div class="configurator-summary__divider"></div>
+                <div class="configurator-summary__total">
+                    <span class="configurator-summary__total-label">{% mtrans 'Total' %}</span>
+                    <span class="configurator-summary__total-price" id="summary-total">-</span>
+                </div>
+                <button type="button" class="btn btn--primary btn--lg configurator-summary__cta" id="summary-add-to-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>{% mtrans 'Add to Cart' %}</span>
+                </button>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- Mobile Bottom Bar -->
+<div class="configurator-mobile-bar" id="mobile-bar">
+    <div class="configurator-mobile-bar__price">
+        <span class="configurator-mobile-bar__label">{% mtrans 'Total' %}</span>
+        <span class="configurator-mobile-bar__amount" id="mobile-total">-</span>
+    </div>
+    <button type="button" class="btn btn--primary" id="mobile-add-to-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span>{% mtrans 'Add to Cart' %}</span>
+    </button>
+</div>
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script id="configurator-data" type="application/json">{{ configurator_json|safe }}</script>
+<script src="{% static 'catalog/js/product_configurator.js' %}" defer></script>
+<script src="{% static 'page_builder/js/product-base.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,319 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Browse Product Feed Providers" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'providers_common/css/provider_browse.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/provider_modal.css' %}">
+<link rel="stylesheet" href="{% static 'providers_common/css/version-history.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/logo-contrast.js' %}" defer></script>
+<script src="{% static 'providers_common/js/provider_modal.js' %}" defer></script>
+<script src="{% static 'providers_common/js/provider_confirm.js' %}" defer></script>
+<script src="{% static 'providers_common/js/version-history.js' %}" defer></script>
+<script src="{% static 'product_feeds/js/provider_browse.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:product_feeds_feedprovideraccount_changelist' %}">{% trans 'Feed Accounts' %}</a>
+    &rsaquo; {% trans 'Browse Providers' %}
+</div>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="provider-browse-container">
+    <!-- Header -->
+    <div class="provider-browse-header">
+        <h1>{% trans "Browse Product Feed Providers" %}</h1>
+        <p class="provider-browse-description">
+            {% trans "Choose a product feed provider to syndicate your products to shopping platforms and marketplaces." %}
+        </p>
+
+        {% if not has_update_server %}
+        <div class="provider-browse-notice notice-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="notice-content">
+                <strong>{% trans "Update Server Unavailable" %}</strong>
+                <p>{% trans "Could not connect to the update server. Showing locally installed providers only." %}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Information Card -->
+    <div class="provider-info-card" id="providerInfoCard">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-info-circle"></i>
+                {% trans "Product Feed Marketplace" %}
+            </h2>
+            <button type="button"
+                    class="collapse-toggle"
+                    aria-expanded="true"
+                    aria-controls="cardBody">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="card-body" id="cardBody">
+            <p class="card-intro">
+                {% trans "Here you can discover and install product feed providers to syndicate your products to shopping platforms, marketplaces, and advertising networks." %}
+            </p>
+
+            <div class="card-content">
+                <div class="features-section">
+                    <h3>
+                        <i class="fas fa-sparkles"></i>
+                        {% trans "What you can do:" %}
+                    </h3>
+                    <ul class="features-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Browse available feed providers by platform type" %}
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Install new providers with one click" %}
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Update installed providers to the latest versions" %}
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            {% trans "Configure feed settings and attribute mapping" %}
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="getting-started-section">
+                    <h3>
+                        <i class="fas fa-rocket"></i>
+                        {% trans "Getting Started:" %}
+                    </h3>
+                    <ol class="steps-list">
+                        <li>{% trans "Browse providers below and find your platform" %}</li>
+                        <li>{% trans "Click 'Install' to add the provider to your store" %}</li>
+                        <li>{% trans "Configure API credentials and feed settings" %}</li>
+                        <li>{% trans "Generate and sync your product feed" %}</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <i class="fas fa-chart-bar"></i>
+                {% blocktrans count counter=providers|length %}
+                    Currently: {{ counter }} provider available
+                {% plural %}
+                    Currently: {{ counter }} providers available
+                {% endblocktrans %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Providers Grid -->
+    {% if providers %}
+    <div class="provider-grid">
+        {% for provider in providers %}
+        <div class="provider-card {% if provider.is_installed %}configured{% endif %} {% if provider.has_update %}has-update{% endif %}"
+             data-provider-slug="{{ provider.slug }}">
+
+            <!-- Update Badge -->
+            {% if provider.has_update %}
+            <div class="update-badge">
+                <i class="fas fa-arrow-circle-up"></i>
+                {% trans "Update Available" %}
+            </div>
+            {% endif %}
+
+            <!-- Card Header -->
+            <div class="provider-header">
+                <!-- Logo -->
+                <div class="provider-icon provider-logo">
+                    {% if provider.thumbnail_url %}
+                    <div class="logo-plate" data-auto-contrast>
+                        <img src="{{ provider.thumbnail_url }}"
+                             alt="{{ provider.name }}"
+                             loading="lazy"
+                             crossorigin="anonymous">
+                    </div>
+                    {% else %}
+                    <i class="fas fa-rss"></i>
+                    {% endif %}
+                </div>
+
+                <!-- Provider Title & Status -->
+                <div class="provider-title">
+                    <h3>{{ provider.name }}</h3>
+                    <div class="provider-status-info">
+                        {% if provider.is_installed %}
+                        <span class="status-badge status-installed">
+                            <i class="fas fa-check-circle"></i> {% trans "Installed" %}
+                        </span>
+                        {% if provider.has_update %}
+                        <span class="version-info">
+                            <span class="current-version">{{ provider.current_version }}</span>
+                            <i class="fas fa-arrow-right"></i>
+                            <span class="latest-version">{{ provider.latest_version }}</span>
+                        </span>
+                        {% elif provider.current_version %}
+                        <span class="version-info">
+                            <span class="current-version">v{{ provider.current_version }}</span>
+                        </span>
+                        {% endif %}
+                        {% else %}
+                        <span class="status-badge status-available">
+                            <i class="fas fa-download"></i> {% trans "Available" %}
+                        </span>
+                        {% if provider.version or provider.latest_version %}
+                        <span class="version-info">
+                            <span class="available-version">v{{ provider.latest_version|default:provider.version }}</span>
+                        </span>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="provider-body">
+                {% if provider.description %}
+                <p class="provider-description">{{ provider.description }}</p>
+                {% endif %}
+
+                <!-- Capabilities -->
+                {% if provider.capabilities %}
+                <div class="feature-badges">
+                    {% if provider.capabilities.push_feed %}
+                    <span class="feature-badge">
+                        <i class="fas fa-upload"></i> {% trans "Push Feed" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.hosted_feed %}
+                    <span class="feature-badge">
+                        <i class="fas fa-globe"></i> {% trans "Hosted Feed" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.xml_format %}
+                    <span class="feature-badge">
+                        <i class="fas fa-file-code"></i> {% trans "XML" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.csv_format %}
+                    <span class="feature-badge">
+                        <i class="fas fa-file-csv"></i> {% trans "CSV" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.api_sync %}
+                    <span class="feature-badge">
+                        <i class="fas fa-sync"></i> {% trans "API Sync" %}
+                    </span>
+                    {% endif %}
+                    {% if provider.capabilities.inventory_updates %}
+                    <span class="feature-badge">
+                        <i class="fas fa-boxes"></i> {% trans "Inventory" %}
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Category Badge -->
+                {% if provider.category %}
+                <div class="provider-card-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-folder"></i> {{ provider.category }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Card Footer -->
+            <div class="provider-footer">
+                <div class="provider-footer-actions">
+                    {% if provider.is_installed %}
+                        {% if provider.has_update %}
+                        <!-- Update Button -->
+                        <button class="button btn-update"
+                                data-slug="{{ provider.slug }}"
+                                data-name="{{ provider.name }}"
+                                data-version="{{ provider.latest_version }}">
+                            <i class="fas fa-sync-alt"></i> {% trans "Update" %}
+                        </button>
+                        {% else %}
+                        <!-- Configure Button -->
+                        <a href="{% url 'product_feeds:wizard_step1' %}?provider={{ provider.slug }}"
+                           class="button btn-primary">
+                            <i class="fas fa-cog"></i> {% trans "Configure" %}
+                        </a>
+                        {% endif %}
+                    {% else %}
+                    <!-- Install Button -->
+                    <button class="button btn-install"
+                            data-provider-slug="{{ provider.slug }}"
+                            data-provider-name="{{ provider.name }}">
+                        <i class="fas fa-download"></i> {% trans "Install" %}
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div class="provider-footer-links">
+                    <!-- View Details Link -->
+                    <button type="button"
+                            class="provider-details-link"
+                            data-provider-data="{{ provider|escapejs }}">
+                        <i class="fas fa-info-circle"></i> {% trans "View Details" %}
+                    </button>
+
+                    <!-- Learn More Link -->
+                    {% if provider.homepage_url or provider.documentation_url %}
+                    <a href="{% if provider.documentation_url %}{{ provider.documentation_url }}{% else %}{{ provider.homepage_url }}{% endif %}"
+                       class="provider-learn-more"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        {% trans "Learn More" %} <i class="fas fa-external-link-alt"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="provider-browse-empty">
+        <div class="empty-icon">
+            <i class="fas fa-inbox"></i>
+        </div>
+        <h2>{% trans "No Providers Available" %}</h2>
+        <p>{% trans "No product feed providers are currently available. Please check your update server connection or contact support." %}</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Loading Overlay -->
+<div id="provider-install-loading" class="provider-install-overlay d-none">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p class="loading-message">{% trans "Installing provider..." %}</p>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="provider-notification-container" class="notification-container"></div>
+
+<!-- Provider Detail Modal -->
+{% include "providers_common/modals/provider_detail_modal.html" %}
+{% include "providers_common/includes/modal_i18n.html" %}
+{% include "providers_common/includes/version_history_i18n.html" %}
+
+<!-- Provider Data for JavaScript -->
+{{ providers_json|json_script:"provider-data" }}
+{% endblock %}

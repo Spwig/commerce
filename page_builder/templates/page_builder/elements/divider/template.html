@@ -1,0 +1,10 @@
+{% load i18n element_tags %}
+{% with style=element.content.style|default:"solid" alignment=element.content.alignment|default:"center" %}
+<div class="pb-divider pb-divider--{{ style }}"
+     {% hover_animation_attrs element %}
+     style="{% if element.content.margin_top is not None %}margin-top: {{ element.content.margin_top }}px;{% endif %}{% if element.content.margin_bottom is not None %}margin-bottom: {{ element.content.margin_bottom }}px;{% endif %}justify-content: {% if alignment == 'left' %}flex-start{% elif alignment == 'right' %}flex-end{% else %}center{% endif %};{% base_styles element exclude='box_shadow' %}">
+    <span class="pb-divider__line"
+          style="{% if element.content.line_color %}--divider-color: {{ element.content.line_color }};{% endif %}{% if element.content.thickness %}height: {{ element.content.thickness }}px;{% endif %}{% if element.content.width %}width: {{ element.content.width }};{% endif %}{% if element.content.box_shadow %}box-shadow: {{ element.content.box_shadow }};{% endif %}"
+          aria-hidden="true"></span>
+</div>
+{% endwith %}

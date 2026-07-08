@@ -1,0 +1,93 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {% trans "Spwig Sync" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'migration/css/sync-wizard.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <div class="wizard-header">
+        <a href="{% url 'admin:migration_syncjob_changelist' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> {% trans "Back to Sync Dashboard" %}
+        </a>
+        {% block wizard_header %}
+        <h1>
+            <div class="migration-icon-large themed">
+                {% if wizard_type == 'fullmig' %}
+                <i class="fas fa-truck-moving"></i>
+                {% else %}
+                <i class="fas fa-sync-alt"></i>
+                {% endif %}
+            </div>
+            {% if wizard_type == 'fullmig' %}
+                {% trans "Full System Migration" %}
+            {% else %}
+                {% trans "Settings Sync" %}
+            {% endif %}
+        </h1>
+        {% endblock %}
+    </div>
+
+    <!-- Wizard Progress -->
+    {% block wizard_progress %}
+    <div class="wizard-progress">
+        {% if wizard_type == 'fullmig' %}
+        <div class="progress-step {% if current_step == 1 %}active{% elif current_step > 1 %}completed{% endif %}">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Connection" %}</div>
+        </div>
+        <div class="progress-step {% if current_step == 2 %}active{% elif current_step > 2 %}completed{% endif %}">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Scope" %}</div>
+        </div>
+        <div class="progress-step {% if current_step == 3 %}active{% elif current_step > 3 %}completed{% endif %}">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Pre-flight" %}</div>
+        </div>
+        <div class="progress-step {% if current_step == 4 %}active{% elif current_step > 4 %}completed{% endif %}">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Progress" %}</div>
+        </div>
+        <div class="progress-step {% if current_step == 5 %}active{% endif %}">
+            <div class="step-number">5</div>
+            <div class="step-label">{% trans "Results" %}</div>
+        </div>
+        {% else %}
+        <div class="progress-step {% if current_step == 1 %}active{% elif current_step > 1 %}completed{% endif %}">
+            <div class="step-number">1</div>
+            <div class="step-label">{% trans "Connection" %}</div>
+        </div>
+        <div class="progress-step {% if current_step == 2 %}active{% elif current_step > 2 %}completed{% endif %}">
+            <div class="step-number">2</div>
+            <div class="step-label">{% trans "Categories" %}</div>
+        </div>
+        <div class="progress-step {% if current_step == 3 %}active{% elif current_step > 3 %}completed{% endif %}">
+            <div class="step-number">3</div>
+            <div class="step-label">{% trans "Preview" %}</div>
+        </div>
+        <div class="progress-step {% if current_step == 4 %}active{% endif %}">
+            <div class="step-number">4</div>
+            <div class="step-label">{% trans "Progress" %}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        {% block wizard_content %}
+        {% endblock %}
+    </div>
+</div>
+
+{% block extra_js %}{% endblock %}
+{% endblock %}

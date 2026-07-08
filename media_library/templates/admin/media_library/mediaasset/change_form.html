@@ -1,0 +1,376 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block title %}{% if original %}{% trans "Edit Media Asset" %}: {{ original }}{% else %}{% trans "Add Media Asset" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        /* Media preview styles */
+        .media-preview-section {
+            background: var(--body-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .media-preview-container {
+            display: inline-block;
+            position: relative;
+            max-width: 100%;
+        }
+
+        .media-preview-container img,
+        .media-preview-container video {
+            max-width: 100%;
+            max-height: 400px;
+            height: auto;
+            border: 1px solid var(--hairline-color);
+            border-radius: 4px;
+            background: var(--darkened-bg);
+        }
+
+        .media-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--hairline-color);
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .media-info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .media-info-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--body-quiet-color);
+            font-weight: 600;
+        }
+
+        .media-info-value {
+            font-size: 14px;
+            color: var(--body-fg);
+        }
+
+        /* Tab styles using admin-tabs classes */
+        .admin-tabs {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            gap: 0;
+        }
+
+        .admin-tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--body-quiet-color);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+            top: 2px;
+        }
+
+        .admin-tab-btn:hover {
+            color: var(--body-fg);
+            background: var(--darkened-bg);
+        }
+
+        .admin-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--body-bg);
+        }
+
+        /* Tab content visibility is handled by admin-base.css */
+
+        /* Hide the default fieldset legends when using tabs */
+        .tabbed-fieldsets fieldset h2 {
+            display: none;
+        }
+
+        /* Translatable field indicator */
+        .translatable-field {
+            position: relative;
+        }
+
+        .translation-trigger {
+            margin-left: 8px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if original %}
+        <!-- Media Preview Section -->
+        <div class="media-preview-section">
+            <div class="media-preview-container">
+                {% if original.is_video %}
+                    {% if original.poster_image %}
+                        <video controls poster="{{ original.poster_image.url }}">
+                    {% else %}
+                        <video controls>
+                    {% endif %}
+                        {% if original.converted_video %}
+                            <source src="{{ original.converted_video.url }}" type="video/webm">
+                        {% endif %}
+                        <source src="{{ original.original_file.url }}" type="{{ original.mime_type }}">
+                        Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                    {% if original.webp_file %}
+                        <img src="{{ original.webp_file.url }}" alt="{{ original.title }}">
+                    {% else %}
+                        <img src="{{ original.original_file.url }}" alt="{{ original.title }}">
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="media-info">
+                <div class="media-info-item">
+                    <span class="media-info-label">{% trans "Type" %}</span>
+                    <span class="media-info-value">{{ original.mime_type }}</span>
+                </div>
+                <div class="media-info-item">
+                    <span class="media-info-label">{% trans "Dimensions" %}</span>
+                    <span class="media-info-value">{{ original.width }} × {{ original.height }}</span>
+                </div>
+                <div class="media-info-item">
+                    <span class="media-info-label">{% trans "Size" %}</span>
+                    <span class="media-info-value">{{ original.file_size|filesizeformat }}</span>
+                </div>
+                {% if original.is_video and original.duration %}
+                <div class="media-info-item">
+                    <span class="media-info-label">{% trans "Duration" %}</span>
+                    <span class="media-info-value">{{ original.duration|floatformat:1 }}s</span>
+                </div>
+                {% endif %}
+                {% if original.created_at %}
+                <div class="media-info-item">
+                    <span class="media-info-label">{% trans "Uploaded" %}</span>
+                    <span class="media-info-value">{{ original.created_at|date:"SHORT_DATE_FORMAT" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tabbed Interface -->
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="general">
+                <i class="fas fa-info-circle"></i> {% trans "General" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="technical">
+                <i class="fas fa-cog"></i> {% trans "Technical" %}
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="organization">
+                <i class="fas fa-folder"></i> {% trans "Organization" %}
+            </button>
+            {% if not original.is_video %}
+            <button type="button" class="admin-tab-btn" data-tab="advanced">
+                <i class="fas fa-sliders-h"></i> {% trans "Advanced" %}
+            </button>
+            {% endif %}
+        </div>
+
+        <form method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}
+            {% block form_top %}{% endblock %}
+
+            <div class="tab-container">
+                <!-- General Tab -->
+                <div class="admin-tab-content active" id="tab-general">
+                    <fieldset class="module aligned">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == "Basic Information" %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        <div class="form-row field-{{ field.field.name }}">
+                                            {{ field.errors }}
+                                            {{ field.label_tag }}
+                                            {{ field.field }}
+                                            {% if field.field.help_text %}
+                                                <div class="help">{{ field.field.help_text|safe }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </fieldset>
+                </div>
+
+                <!-- Technical Tab -->
+                <div class="admin-tab-content" id="tab-technical">
+                    <fieldset class="module aligned">
+                        {% if original.is_video %}
+                            <!-- Video technical details -->
+                            <div class="form-row">
+                                <label>{% trans "Video Codec" %}:</label>
+                                <div class="readonly">{{ original.video_codec|default:"-" }}</div>
+                            </div>
+                            <div class="form-row">
+                                <label>{% trans "Audio Codec" %}:</label>
+                                <div class="readonly">{{ original.audio_codec|default:"-" }}</div>
+                            </div>
+                            <div class="form-row">
+                                <label>{% trans "Frame Rate" %}:</label>
+                                <div class="readonly">{{ original.frame_rate|default:"-" }} fps</div>
+                            </div>
+                            <div class="form-row">
+                                <label>{% trans "Bitrate" %}:</label>
+                                <div class="readonly">{{ original.bitrate|default:"-" }}</div>
+                            </div>
+                        {% endif %}
+
+                        <div class="form-row">
+                            <label>{% trans "File ID" %}:</label>
+                            <div class="readonly">{{ original.id }}</div>
+                        </div>
+                        <div class="form-row">
+                            <label>{% trans "Original File" %}:</label>
+                            <div class="readonly">
+                                <a href="{{ original.original_file.url }}" target="_blank">
+                                    {{ original.original_file.name }}
+                                </a>
+                            </div>
+                        </div>
+                        {% if original.webp_file %}
+                        <div class="form-row">
+                            <label>{% trans "WebP Version" %}:</label>
+                            <div class="readonly">
+                                <a href="{{ original.webp_file.url }}" target="_blank">
+                                    {{ original.webp_file.name }}
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if original.metadata %}
+                        <div class="form-row">
+                            <label>{% trans "Metadata" %}:</label>
+                            <div class="readonly">
+                                <pre style="background: var(--darkened-bg); padding: 10px; border-radius: 4px; overflow: auto;">{{ original.metadata|pprint }}</pre>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </fieldset>
+                </div>
+
+                <!-- Organization Tab -->
+                <div class="admin-tab-content" id="tab-organization">
+                    <fieldset class="module aligned">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == "Organization" %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        <div class="form-row field-{{ field.field.name }}">
+                                            {{ field.errors }}
+                                            {{ field.label_tag }}
+                                            {{ field.field }}
+                                            {% if field.field.help_text %}
+                                                <div class="help">{{ field.field.help_text|safe }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == "Permissions" %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'is_public' %}
+                                            <div class="form-row field-{{ field.field.name }}">
+                                                {{ field.errors }}
+                                                {{ field.label_tag }}
+                                                {{ field.field }}
+                                                {% if field.field.help_text %}
+                                                    <div class="help">{{ field.field.help_text|safe }}</div>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </fieldset>
+                </div>
+
+                <!-- Advanced Tab (Images Only) -->
+                {% if not original.is_video %}
+                <div class="admin-tab-content" id="tab-advanced">
+                    <fieldset class="module aligned">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == "Focal Point" %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        <div class="form-row field-{{ field.field.name }}">
+                                            {{ field.errors }}
+                                            {{ field.label_tag }}
+                                            {{ field.field }}
+                                            {% if field.field.help_text %}
+                                                <div class="help">{{ field.field.help_text|safe }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="form-row">
+                            <label>{% trans "Usage Count" %}:</label>
+                            <div class="readonly">{{ original.usage_count }}</div>
+                        </div>
+                        {% if original.last_used_at %}
+                        <div class="form-row">
+                            <label>{% trans "Last Used" %}:</label>
+                            <div class="readonly">{{ original.last_used_at|date:"DATETIME_FORMAT" }}</div>
+                        </div>
+                        {% endif %}
+                    </fieldset>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Hidden fields and management form -->
+            {% for hidden in adminform.form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            <!-- Submit row -->
+            <div class="submit-row">
+                <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+                <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+            </div>
+        </form>
+
+        <!-- Inline formsets (thumbnails, usage) -->
+        {% if inline_admin_formsets %}
+            <div style="margin-top: 30px;">
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% include inline_admin_formset.opts.template %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>{% trans "The media asset does not exist." %}</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+{# Tab switching and translation functionality handled by media-asset-admin.js #}
+{% endblock %}

@@ -1,0 +1,336 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Button Element Styles
+ *
+ * Theme tokens provide defaults. Merchant overrides are applied as
+ * direct inline styles on the button element.
+ *
+ * Theme Element Tokens (from tokens.json elements.button):
+ *   --element-button-radius      Border radius
+ *   --element-button-padding-x-* Horizontal padding per size
+ *   --element-button-padding-y-* Vertical padding per size
+ *   --element-button-font-weight Font weight
+ *   --element-button-font-size   Font size
+ */
+
+/* ==========================================================================
+   Base Button Styles
+   ========================================================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--theme-space-2, 0.5rem);
+
+    /* Padding from theme tokens */
+    padding: var(--element-button-padding-y-md, var(--theme-space-2, 0.5rem))
+             var(--element-button-padding-x-md, var(--theme-space-4, 1rem));
+
+    /* Typography */
+    font-family: inherit;
+    font-size: var(--element-button-font-size, var(--theme-font-size-base, 1rem));
+    font-weight: var(--element-button-font-weight, var(--theme-font-weight-medium, 500));
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+
+    /* Border */
+    border: 2px solid transparent;
+    border-radius: var(--element-button-radius, var(--theme-radius-md, 0.375rem));
+
+    /* Interaction */
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease),
+                border-color var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease),
+                color var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease),
+                box-shadow var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease),
+                transform var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--theme-color-primary-light, rgba(37, 99, 235, 0.3));
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* Disabled state */
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Icon styling within buttons */
+.btn i,
+.btn svg {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+}
+
+/* ==========================================================================
+   Button Style Variants
+   ========================================================================== */
+
+/* Primary Button */
+.btn--primary {
+    background-color: var(--theme-color-primary, #2563eb);
+    color: var(--theme-color-text-inverse, #ffffff);
+    border-color: var(--theme-color-primary, #2563eb);
+}
+
+.btn--primary:hover {
+    background-color: var(--theme-color-primary-hover, #1d4ed8);
+    border-color: var(--theme-color-primary-hover, #1d4ed8);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+/* Secondary Button */
+.btn--secondary {
+    background-color: var(--theme-color-secondary, #64748b);
+    color: var(--theme-color-text-inverse, #ffffff);
+    border-color: var(--theme-color-secondary, #64748b);
+}
+
+.btn--secondary:hover {
+    background-color: var(--theme-color-secondary-hover, #475569);
+    border-color: var(--theme-color-secondary-hover, #475569);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+/* Success Button */
+.btn--success {
+    background-color: var(--theme-color-success, #10b981);
+    color: var(--theme-color-text-inverse, #ffffff);
+    border-color: var(--theme-color-success, #10b981);
+}
+
+.btn--success:hover {
+    background-color: var(--theme-color-success-hover, #059669);
+    border-color: var(--theme-color-success-hover, #059669);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+/* Danger Button */
+.btn--danger {
+    background-color: var(--theme-color-error, #ef4444);
+    color: var(--theme-color-text-inverse, #ffffff);
+    border-color: var(--theme-color-error, #ef4444);
+}
+
+.btn--danger:hover {
+    background-color: var(--theme-color-error-hover, #dc2626);
+    border-color: var(--theme-color-error-hover, #dc2626);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+/* Warning Button */
+.btn--warning {
+    background-color: var(--theme-color-warning, #f59e0b);
+    color: var(--theme-color-text, #1f2937);
+    border-color: var(--theme-color-warning, #f59e0b);
+}
+
+.btn--warning:hover {
+    background-color: var(--theme-color-warning-hover, #d97706);
+    border-color: var(--theme-color-warning-hover, #d97706);
+    color: var(--theme-color-text, #1f2937);
+}
+
+/* Info Button */
+.btn--info {
+    background-color: var(--theme-color-info, #3b82f6);
+    color: var(--theme-color-text-inverse, #ffffff);
+    border-color: var(--theme-color-info, #3b82f6);
+}
+
+.btn--info:hover {
+    background-color: var(--theme-color-info-hover, #2563eb);
+    border-color: var(--theme-color-info-hover, #2563eb);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+/* ==========================================================================
+   Outline Variants
+   ========================================================================== */
+
+.btn--outline {
+    background-color: transparent;
+    color: var(--theme-color-primary, #2563eb);
+    border-color: var(--theme-color-primary, #2563eb);
+}
+
+.btn--outline:hover {
+    background-color: var(--theme-color-primary, #2563eb);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+/* Outline with style variants */
+.btn--outline.btn--secondary {
+    color: var(--theme-color-secondary, #64748b);
+    border-color: var(--theme-color-secondary, #64748b);
+}
+
+.btn--outline.btn--secondary:hover {
+    background-color: var(--theme-color-secondary, #64748b);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+.btn--outline.btn--success {
+    color: var(--theme-color-success, #10b981);
+    border-color: var(--theme-color-success, #10b981);
+}
+
+.btn--outline.btn--success:hover {
+    background-color: var(--theme-color-success, #10b981);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+.btn--outline.btn--danger {
+    color: var(--theme-color-error, #ef4444);
+    border-color: var(--theme-color-error, #ef4444);
+}
+
+.btn--outline.btn--danger:hover {
+    background-color: var(--theme-color-error, #ef4444);
+    color: var(--theme-color-text-inverse, #ffffff);
+}
+
+/* Ghost Button (no border) */
+.btn--ghost {
+    background-color: transparent;
+    color: var(--theme-color-primary, #2563eb);
+    border-color: transparent;
+}
+
+.btn--ghost:hover {
+    background-color: var(--theme-color-surface-hover, #f3f4f6);
+}
+
+/* ==========================================================================
+   Size Variants
+   ========================================================================== */
+
+.btn--sm {
+    padding: var(--element-button-padding-y-sm, var(--theme-space-1, 0.25rem))
+             var(--element-button-padding-x-sm, var(--theme-space-3, 0.75rem));
+    font-size: var(--theme-font-size-sm, 0.875rem);
+}
+
+.btn--lg {
+    padding: var(--element-button-padding-y-lg, var(--theme-space-3, 0.75rem))
+             var(--element-button-padding-x-lg, var(--theme-space-6, 1.5rem));
+    font-size: var(--theme-font-size-lg, 1.125rem);
+}
+
+.btn--xl {
+    padding: var(--element-button-padding-y-xl, var(--theme-space-4, 1rem))
+             var(--element-button-padding-x-xl, var(--theme-space-8, 2rem));
+    font-size: var(--theme-font-size-xl, 1.25rem);
+}
+
+/* ==========================================================================
+   Layout Modifiers
+   ========================================================================== */
+
+/* Full width button */
+.btn--full {
+    width: 100%;
+}
+
+/* Rounded (pill) button */
+.btn--rounded {
+    border-radius: var(--theme-radius-full, 9999px);
+}
+
+/* ==========================================================================
+   Button Group
+   ========================================================================== */
+
+.btn-group {
+    display: inline-flex;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: var(--element-button-radius, var(--theme-radius-md, 0.375rem));
+    border-bottom-left-radius: var(--element-button-radius, var(--theme-radius-md, 0.375rem));
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: var(--element-button-radius, var(--theme-radius-md, 0.375rem));
+    border-bottom-right-radius: var(--element-button-radius, var(--theme-radius-md, 0.375rem));
+}
+
+.btn-group .btn:not(:last-child) {
+    border-right-width: 0;
+}
+
+/* ==========================================================================
+   Loading State
+   ========================================================================== */
+
+.btn--loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.btn--loading::after {
+    content: '';
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Full Width Utility
+   ========================================================================== */
+
+.btn--full {
+  width: 100%;
+  display: flex;
+}
+
+/* ==========================================================================
+   Mobile Responsive
+   ========================================================================== */
+
+/* Mobile: Reduce padding and font sizes */
+@media (max-width: 640px) {
+  .btn {
+    font-size: var(--element-button-font-size-mobile-md, 0.875rem);
+    padding: 0.375rem 0.75rem;
+  }
+
+  .btn--sm {
+    font-size: var(--element-button-font-size-mobile-sm, 0.8125rem);
+    padding: 0.25rem 0.5rem;
+  }
+
+  .btn--lg {
+    font-size: var(--element-button-font-size-mobile-lg, 1rem);
+    padding: 0.5rem 1rem;
+  }
+}

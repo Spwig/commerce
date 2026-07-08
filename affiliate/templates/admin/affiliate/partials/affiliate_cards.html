@@ -1,0 +1,226 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'affiliate/admin/css/affiliate_cards.css' %}">
+
+<div class="list-row-cards">
+    {% for affiliate in affiliates %}
+    <div class="list-row-card affiliate-card {% if affiliate.status == 'suspended' or affiliate.status == 'rejected' %}inactive{% endif %}">
+        <!-- Affiliate Icon -->
+        <div class="list-row-card-icon affiliate {{ affiliate.status }}">
+            <i class="fas fa-user-tie"></i>
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:affiliate_affiliate_change' affiliate.id %}"
+                   title="{% trans 'Edit affiliate' %}">
+                    {{ affiliate.user.get_full_name|default:affiliate.user.username }}
+                </a>
+                <span class="affiliate-code">{{ affiliate.affiliate_code }}</span>
+            </h3>
+
+            <!-- Subtitle with email -->
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-envelope"></i> {{ affiliate.user.email }}
+                {% if affiliate.company_name %}
+                    <span class="company-separator">|</span>
+                    <i class="fas fa-building"></i> {{ affiliate.company_name }}
+                {% endif %}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Status Badge -->
+                {% if affiliate.status == 'active' %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'Affiliate is active' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% elif affiliate.status == 'pending' %}
+                    <span class="list-row-card-badge warning"
+                          title="{% trans 'Awaiting approval' %}">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif affiliate.status == 'suspended' %}
+                    <span class="list-row-card-badge error"
+                          title="{% trans 'Affiliate is suspended' %}">
+                        <i class="fas fa-ban"></i> {% trans "Suspended" %}
+                    </span>
+                {% elif affiliate.status == 'rejected' %}
+                    <span class="list-row-card-badge affiliate-status-rejected"
+                          title="{% trans 'Application rejected' %}">
+                        <i class="fas fa-times-circle"></i> {% trans "Rejected" %}
+                    </span>
+                {% endif %}
+
+                <!-- Programs Count -->
+                {% if affiliate.programs_count > 0 %}
+                    <span class="list-row-card-badge primary"
+                          title="{% trans 'Enrolled programs' %}">
+                        <i class="fas fa-briefcase"></i> {{ affiliate.programs_count }} {% trans "programs" %}
+                    </span>
+                {% endif %}
+
+                <!-- Payment Method -->
+                <span class="list-row-card-badge"
+                      title="{% trans 'Payment method' %}">
+                    {% if affiliate.payment_method == 'paypal' %}
+                        <i class="fab fa-paypal"></i> PayPal
+                    {% elif affiliate.payment_method == 'bank_transfer' %}
+                        <i class="fas fa-university"></i> {% trans "Bank" %}
+                    {% else %}
+                        <i class="fas fa-money-check"></i> {{ affiliate.payment_method|title }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <!-- Total Earned -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Total Earned" %}</span>
+                    <span class="list-row-card-stat-value affiliate-stat-earned">
+                        <i class="fas fa-dollar-sign"></i> ${{ affiliate.total_earned|floatformat:2|default:"0.00" }}
+                    </span>
+                </div>
+
+                <!-- Outstanding Balance -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Balance" %}</span>
+                    <span class="list-row-card-stat-value {% if affiliate.outstanding_balance > 0 %}affiliate-stat-balance{% endif %}">
+                        ${{ affiliate.outstanding_balance|floatformat:2|default:"0.00" }}
+                    </span>
+                </div>
+
+                <!-- Total Paid -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Paid Out" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <i class="fas fa-check"></i> ${{ affiliate.total_paid|floatformat:2|default:"0.00" }}
+                    </span>
+                </div>
+
+                <!-- Links Count -->
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Links" %}</span>
+                    <span class="list-row-card-stat-value">
+                        <i class="fas fa-link"></i> {{ affiliate.links_count|default:0 }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Meta Information -->
+            <div class="list-row-card-meta">
+                <!-- Website -->
+                {% if affiliate.website %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Website' %}">
+                    <i class="fas fa-globe"></i>
+                    <a href="{{ affiliate.website }}" target="_blank" rel="noopener">
+                        {{ affiliate.website|truncatechars:30 }}
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Joined Date -->
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Date joined' %}">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{{ affiliate.created_at|date:"M d, Y" }}</span>
+                </div>
+
+                <!-- Last Updated -->
+                {% if affiliate.updated_at %}
+                <div class="list-row-card-meta-item"
+                     title="{% trans 'Last updated' %}">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ affiliate.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:affiliate_affiliate_change' affiliate.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit affiliate' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+
+            {% if affiliate.status == 'pending' %}
+            <button type="button"
+                    class="list-row-card-action success"
+                    data-action="toggle-affiliate-status"
+                    data-pk="{{ affiliate.pk }}"
+                    data-status="approve"
+                    data-confirm="{% trans 'Are you sure you want to approve this affiliate?' %}"
+                    title="{% trans 'Approve affiliate' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            {% elif affiliate.status == 'active' %}
+            <button type="button"
+                    class="list-row-card-action warning"
+                    data-action="toggle-affiliate-status"
+                    data-pk="{{ affiliate.pk }}"
+                    data-status="suspend"
+                    data-confirm="{% trans 'Are you sure you want to suspend this affiliate?' %}"
+                    title="{% trans 'Suspend affiliate' %}">
+                <i class="fas fa-ban"></i>
+            </button>
+            {% elif affiliate.status == 'suspended' %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="toggle-affiliate-status"
+                    data-pk="{{ affiliate.pk }}"
+                    data-status="activate"
+                    data-confirm="{% trans 'Are you sure you want to activate this affiliate?' %}"
+                    title="{% trans 'Reactivate affiliate' %}">
+                <i class="fas fa-play"></i>
+            </button>
+            {% endif %}
+
+            <a href="{% url 'admin:affiliate_link_changelist' %}?affiliate__id__exact={{ affiliate.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View links' %}">
+                <i class="fas fa-link"></i>
+            </a>
+
+            <a href="{% url 'admin:affiliate_commission_changelist' %}?affiliate__id__exact={{ affiliate.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View commissions' %}">
+                <i class="fas fa-coins"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <!-- Empty State -->
+    <div class="affiliate-empty-state">
+        <div class="affiliate-empty-state-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h2 class="affiliate-empty-state-title">{% trans "No Affiliates Yet" %}</h2>
+        <p class="affiliate-empty-state-subtitle">
+            {% trans "Once affiliates sign up for your programs, they'll appear here." %}
+        </p>
+        <ul class="affiliate-empty-state-benefits">
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Review and approve affiliate applications" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Track affiliate performance and earnings" %}
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                {% trans "Manage payouts and commission status" %}
+            </li>
+        </ul>
+        <a href="{% url 'admin:affiliate_affiliate_add' %}" class="affiliate-empty-state-cta">
+            <i class="fas fa-plus"></i>
+            {% trans "Add Affiliate Manually" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>

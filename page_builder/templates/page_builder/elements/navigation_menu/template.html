@@ -1,0 +1,115 @@
+{% load i18n static element_tags merchant_trans %}
+{% mtrans "Menu not available" as default_menu_fallback %}
+{# Navigation Menu Element Template #}
+{# Renders a menu with items from the menu builder #}
+
+{% with menu=element_context.menu menu_items=element_context.menu_items %}
+{% if menu %}
+{% with display_type=content.display_type_override|default:menu.display_type|default:"horizontal" %}
+{% with style_preset=content.style_preset|default:"default" %}
+{% with alignment=content.alignment|default:"left" %}
+{% with item_spacing=content.item_spacing|default:"normal" %}
+{% with mobile_toggle=content.mobile_toggle|default:True %}
+{% with mobile_behavior=content.mobile_behavior|default:"accordion" %}
+{% with mobile_breakpoint=content.mobile_breakpoint|default:"768" %}
+{% with show_icons=content.show_icons|default:True %}
+{% with icon_position=content.icon_position|default:"left" %}
+{% with dropdown_icon=content.dropdown_icon|default:"fa-chevron-down" %}
+{% with dropdown_icon_style=content.dropdown_icon_style|default:"solid" %}
+
+<nav class="pb-nav-menu
+            pb-nav-menu--{{ display_type }}
+            pb-nav-menu--{{ style_preset }}
+            pb-nav-menu--align-{{ alignment }}
+            pb-nav-menu--spacing-{{ item_spacing }}"
+     data-mobile-toggle="{{ mobile_toggle|yesno:'true,false' }}"
+     data-mobile-behavior="{{ mobile_behavior }}"
+     data-mobile-breakpoint="{{ mobile_breakpoint }}"
+     {% hover_animation_attrs element %}
+     aria-label="{% if menu %}{{ menu.name }}{% else %}{% mtrans 'Navigation' %}{% endif %}">
+
+    {% if menu and menu_items %}
+        {# Mobile Toggle Button #}
+        {% if mobile_toggle %}
+        <button class="pb-nav-menu__toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="pb-nav-menu-{{ menu.id }}"
+                aria-label="{% mtrans 'Toggle navigation menu' %}">
+            <span class="pb-nav-menu__toggle-icon">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </span>
+            <span class="pb-nav-menu__toggle-text sr-only">{% mtrans "Menu" %}</span>
+        </button>
+        {% endif %}
+
+        {# Menu Items List #}
+        <ul class="pb-nav-menu__list" id="pb-nav-menu-{{ menu.id }}">
+            {% for item in menu_items %}
+                {% include "page_builder/elements/navigation_menu/partials/menu_item.html" with item=item depth=0 show_icons=show_icons icon_position=icon_position dropdown_icon=dropdown_icon dropdown_icon_style=dropdown_icon_style %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        {# Fallback when no menu selected #}
+        <p class="pb-nav-menu__empty">
+            {{ content.fallback_text|default:default_menu_fallback }}
+        </p>
+    {% endif %}
+</nav>
+
+<style>
+{# Dynamic mobile breakpoint - requires inline style for CSP nonce (future) #}
+@media (max-width: {{ mobile_breakpoint }}px) {
+    .pb-nav-menu__toggle {
+        display: block;
+    }
+
+    .pb-nav-menu__list {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: var(--theme-color-surface, #fff);
+        border: 1px solid var(--theme-color-border, #e5e5e5);
+        border-radius: var(--theme-radius-sm, 0.375rem);
+        box-shadow: var(--theme-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
+        z-index: 1000;
+    }
+
+    .pb-nav-menu__list--open {
+        display: flex;
+    }
+
+    .pb-nav-menu--horizontal .pb-nav-menu__submenu {
+        position: static;
+        box-shadow: none;
+        border: none;
+        border-top: 1px solid var(--theme-color-border, #e5e5e5);
+    }
+}
+</style>
+
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% else %}
+{# No menu selected - show placeholder #}
+<nav class="pb-nav-menu pb-nav-menu--horizontal pb-nav-menu--default">
+    <p class="pb-nav-menu__empty">
+        {% mtrans "No menu selected. Configure this element to select a menu." %}
+    </p>
+</nav>
+{% endif %}
+{% endwith %}

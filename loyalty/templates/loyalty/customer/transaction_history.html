@@ -1,0 +1,143 @@
+{% extends "themes/base.html" %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% mtrans "Transaction History" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'loyalty/css/customer.css' %}">
+<link rel="stylesheet" href="{% static 'loyalty/css/customer/transaction_history.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-dashboard">
+    <div class="container">
+        {# Breadcrumb #}
+        <nav class="breadcrumb">
+            <a href="{% url 'loyalty:customer_dashboard' %}">{% mtrans "Loyalty Dashboard" %}</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>{% mtrans "Transaction History" %}</span>
+        </nav>
+
+        {# Header #}
+        <div class="txn-page-header">
+            <h1>{% mtrans "Transaction History" %}</h1>
+            <p>{% mtrans "View all your points activity" %}</p>
+        </div>
+
+        {# Filter Section #}
+        <div class="dashboard-section">
+            <form method="get" class="txn-filter-form">
+                <div class="txn-filter-group">
+                    <label for="type-filter">
+                        {% mtrans "Transaction Type" %}
+                    </label>
+                    <select id="type-filter" name="type">
+                        {% for type in transaction_types %}
+                        <option value="{{ type.value }}" {% if type.value == selected_type %}selected{% endif %}>
+                            {{ type.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="txn-filter-btn">
+                    {% mtrans "Filter" %}
+                </button>
+
+                {% if selected_type %}
+                <a href="{% url 'loyalty:customer_history' %}" class="txn-filter-clear">
+                    {% mtrans "Clear Filter" %}
+                </a>
+                {% endif %}
+            </form>
+        </div>
+
+        {# Transactions Table #}
+        <div class="dashboard-section">
+            {% if page_obj %}
+            <div class="txn-table-wrapper">
+                <table class="txn-table">
+                    <thead>
+                        <tr>
+                            <th>{% mtrans "Date" %}</th>
+                            <th>{% mtrans "Type" %}</th>
+                            <th>{% mtrans "Description" %}</th>
+                            <th class="text-right">{% mtrans "Points" %}</th>
+                            <th class="text-right">{% mtrans "Balance After" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for txn in page_obj %}
+                        <tr>
+                            <td class="txn-date-cell">
+                                {{ txn.created_at|date:"M d, Y" }}<br>
+                                <small>{{ txn.created_at|date:"g:i A" }}</small>
+                            </td>
+                            <td>
+                                <span class="txn-type-badge">
+                                    {% if txn.transaction_type == 'earn' or txn.transaction_type == 'bonus' %}
+                                    <i class="fas fa-plus-circle txn-type-icon-earn"></i>
+                                    {% elif txn.transaction_type == 'redeem' %}
+                                    <i class="fas fa-minus-circle txn-type-icon-redeem"></i>
+                                    {% else %}
+                                    <i class="fas fa-circle"></i>
+                                    {% endif %}
+                                    {{ txn.get_transaction_type_display }}
+                                </span>
+                            </td>
+                            <td class="txn-description-cell">
+                                {{ txn.description|default:"-" }}
+                            </td>
+                            <td class="txn-points-cell">
+                                <span class="{% if txn.points > 0 %}txn-points-positive{% else %}txn-points-negative{% endif %}">
+                                    {% if txn.points > 0 %}+{% endif %}{{ txn.points }}
+                                </span>
+                            </td>
+                            <td class="txn-balance-cell">
+                                {{ txn.balance_after }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {# Pagination #}
+            {% if page_obj.has_other_pages %}
+            <div class="txn-pagination">
+                {% if page_obj.has_previous %}
+                <a href="?{% if selected_type %}type={{ selected_type }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                    <i class="fas fa-chevron-left"></i> {% mtrans "Previous" %}
+                </a>
+                {% endif %}
+
+                <span class="txn-pagination-info">
+                    {% mtrans "Page" %} {{ page_obj.number }} {% mtrans "of" %} {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                <a href="?{% if selected_type %}type={{ selected_type }}&{% endif %}page={{ page_obj.next_page_number }}">
+                    {% mtrans "Next" %} <i class="fas fa-chevron-right"></i>
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% else %}
+            {# Empty State #}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <h3>{% mtrans "No Transactions Yet" %}</h3>
+                <p>{% mtrans "Your transaction history will appear here once you start earning and redeeming points." %}</p>
+                <a href="{% url 'loyalty:customer_dashboard' %}" class="txn-empty-action">
+                    {% mtrans "Back to Dashboard" %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

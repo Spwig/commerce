@@ -1,0 +1,36 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Loyaltybadge List
+ *
+ * Description: Changelist styles for loyalty loyaltybadge
+ * Template: loyalty/templates/admin/loyalty/loyaltybadge/change_list.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ * - core/static/core/admin/css/changelist-utilities.css (shared changelist patterns)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Badge-specific card styles */
+.badge-card {
+    transition: all 0.2s ease;
+}
+
+.badge-card.inactive {
+    opacity: 0.7;
+}
+
+.list-row-card-icon.badge {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #fff;
+}
+
+/* Hide default table view */
+#result_list {
+    display: none;
+}

@@ -1,0 +1,455 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Campaign Builder Styles
+ * Admin interface for building loyalty campaigns with journey steps and actions
+ */
+
+/* ============================================
+   Section Containers
+   ============================================ */
+
+.journey-builder-section,
+.action-builder-section,
+.conditions-builder-section {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+}
+
+.journey-builder-section h2,
+.action-builder-section h2,
+.conditions-builder-section h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--body-fg);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.journey-builder-section .help,
+.action-builder-section .help,
+.conditions-builder-section .help {
+    color: var(--body-quiet-color);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   Journey Steps List
+   ============================================ */
+
+.journey-steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.journey-step-card {
+    background: var(--darkened-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.journey-step-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.journey-step-card.collapsed {
+    padding: 12px 20px;
+}
+
+.journey-step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.journey-step-card.collapsed .journey-step-header {
+    margin-bottom: 0;
+}
+
+.journey-step-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.step-number {
+    background: var(--primary);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.step-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.step-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.step-control-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--body-fg);
+    transition: all 0.2s;
+}
+
+.step-control-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.step-control-btn.delete-btn:hover {
+    background: var(--error-fg);
+    border-color: var(--error-fg);
+}
+
+.journey-step-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.journey-step-card.collapsed .journey-step-body {
+    display: none;
+}
+
+.step-section {
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.step-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+/* ============================================
+   Actions List
+   ============================================ */
+
+.actions-list,
+.conditions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.action-item,
+.condition-item {
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.action-icon,
+.condition-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.action-icon {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.condition-icon {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+.action-content,
+.condition-content {
+    flex: 1;
+}
+
+.action-type,
+.condition-type {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--body-fg);
+    margin-bottom: 4px;
+}
+
+.action-details,
+.condition-details {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+}
+
+.action-controls,
+.condition-controls {
+    display: flex;
+    gap: 8px;
+}
+
+/* ============================================
+   Form Fields within Builder
+   ============================================ */
+
+.builder-form-group {
+    margin-bottom: 16px;
+}
+
+.builder-form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--body-fg);
+    margin-bottom: 6px;
+}
+
+.builder-form-group input[type="text"],
+.builder-form-group input[type="number"],
+.builder-form-group select,
+.builder-form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--body-bg);
+    color: var(--body-fg);
+    font-size: 14px;
+}
+
+.builder-form-group input:focus,
+.builder-form-group select:focus,
+.builder-form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.builder-form-group .help-text {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    margin-top: 4px;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button .icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.button-secondary {
+    background: var(--secondary);
+    color: var(--body-fg);
+}
+
+.button-secondary:hover {
+    background: var(--secondary-hover);
+}
+
+.button-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* ============================================
+   Branch Builder
+   ============================================ */
+
+.branch-list {
+    margin-top: 12px;
+    padding-left: 20px;
+    border-left: 3px solid var(--primary-bg);
+}
+
+.branch-item {
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+.branch-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+/* ============================================
+   Modal / Dialog
+   ============================================ */
+
+.builder-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.builder-modal-content {
+    background: var(--body-bg);
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.builder-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.builder-modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0;
+}
+
+.builder-modal-close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--body-quiet-color);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.builder-modal-close:hover {
+    background: var(--close-button-bg);
+    color: var(--body-fg);
+}
+
+.builder-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--body-quiet-color);
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--body-fg);
+}
+
+.empty-state-text {
+    font-size: 14px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .journey-step-body {
+        grid-template-columns: 1fr;
+    }
+
+    .journey-step-header {
+        flex-wrap: wrap;
+    }
+
+    .step-controls {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+}

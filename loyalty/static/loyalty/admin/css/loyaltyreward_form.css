@@ -1,0 +1,203 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Loyaltyreward Form
+ *
+ * Description: Styles for change_form.html
+ * Template: loyalty/templates/admin/loyalty/loyaltyreward/change_form.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Force overflow visible on ALL potential parent containers that could break sticky */
+html, body, #container, #content, #content-main, .main-content, form, .form-row {
+    overflow: visible !important;
+}
+
+/* Floating Preview Card Container */
+.reward-preview-float {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+    margin: 0 0 30px 0;
+}
+
+/* Ensure parent form containers don't block sticky */
+.submit-row {
+    position: relative;
+    z-index: 999;
+}
+
+.reward-preview-card {
+    background: var(--body-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.reward-preview-card:hover {
+    box-shadow: 0 8px 24px var(--shadow-light);
+    border-color: var(--primary);
+}
+
+.reward-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.reward-preview-header-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-bg);
+    color: var(--primary);
+    border-radius: 8px;
+    font-size: 20px;
+}
+
+.reward-preview-header-title {
+    flex: 1;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-fg);
+}
+
+.reward-preview-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.reward-preview-image-container {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.reward-preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.reward-preview-icon-placeholder {
+    font-size: 80px;
+    color: var(--primary);
+}
+
+.reward-preview-details {
+    flex: 1;
+}
+
+.reward-preview-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--body-fg);
+    margin: 0 0 8px 0;
+}
+
+.reward-preview-description {
+    font-size: 14px;
+    color: var(--body-quiet-color);
+    margin: 0 0 16px 0;
+    line-height: 1.6;
+}
+
+.reward-preview-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.reward-preview-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.reward-preview-badge.primary {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.reward-preview-badge.success {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.reward-preview-badge.warning {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+.reward-preview-badge.error {
+    background: var(--error-bg);
+    color: var(--error-fg);
+}
+
+.reward-preview-points {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+}
+
+.reward-preview-points-label {
+    font-size: 14px;
+    color: var(--body-quiet-color);
+    margin-left: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .reward-preview-content {
+        grid-template-columns: 1fr;
+    }
+
+    .reward-preview-image-container {
+        width: 100%;
+        height: 150px;
+    }
+}
+
+/* Update preview on form change */
+.form-row input,
+.form-row select,
+.form-row textarea {
+    transition: border-color 0.2s ease;
+}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-bg) !important;
+}

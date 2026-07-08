@@ -1,0 +1,137 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Page Elements" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'page_builder/admin/css/element-list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-th-large"></i>
+            {% trans "Page Elements" %}
+        </h1>
+        <p class="subtitle">{% trans "Manage page builder elements and components" %}</p>
+    </div>
+
+{% block result_list %}
+    {% if pages_with_elements %}
+    <div class="elements-by-page">
+        {% for page_data in pages_with_elements %}
+        <div class="page-group">
+            <div class="page-group-header">
+                <div class="page-group-title">
+                    <i class="fas fa-file-alt"></i>
+                    <span>{{ page_data.page.title|default:_("Untitled Page") }}</span>
+                    <span class="page-badge">
+                        {{ page_data.element_count }} {% if page_data.element_count == 1 %}{% trans "element" %}{% else %}{% trans "elements" %}{% endif %}
+                    </span>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'admin:page_builder_page_change' page_data.page.id %}"
+                       class="page-action-btn secondary"
+                       title="{% trans 'Edit Page' %}">
+                        <i class="fas fa-edit"></i>
+                        {% trans "Edit Page" %}
+                    </a>
+                    {% comment %}
+                    <a href="{% url 'page_builder:edit' page_data.page.id %}"
+                       class="page-action-btn"
+                       title="{% trans 'Open Page Builder' %}">
+                        <i class="fas fa-hammer"></i>
+                        {% trans "Page Builder" %}
+                    </a>
+                    {% endcomment %}
+                </div>
+            </div>
+
+            {% if page_data.elements %}
+            <table class="elements-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Element Name" %}</th>
+                        <th>{% trans "Type" %}</th>
+                        <th>{% trans "Order" %}</th>
+                        <th>{% trans "Visibility Rules" %}</th>
+                        <th>{% trans "Devices" %}</th>
+                        <th>{% trans "Status" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for element in page_data.elements %}
+                    <tr>
+                        <td>
+                            <div class="element-name">
+                                <a href="{% url 'admin:page_builder_element_change' element.id %}">
+                                    {{ element.name }}
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="element-type-badge">
+                                {{ element.get_element_type_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="element-order">#{{ element.order }}</span>
+                        </td>
+                        <td>
+                            {% with rule_count=element.visibility_rules.count %}
+                            {% if rule_count > 0 %}
+                                <span class="visibility-rules-badge">
+                                    <i class="fas fa-eye"></i>
+                                    {{ rule_count }} {% if rule_count == 1 %}{% trans "rule" %}{% else %}{% trans "rules" %}{% endif %}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <span class="element-devices">
+                                {% if element.show_on_mobile %}<i class="fas fa-mobile-alt" title="{% trans 'Mobile' %}"></i>{% endif %}
+                                {% if element.show_on_tablet %}<i class="fas fa-tablet-alt" title="{% trans 'Tablet' %}"></i>{% endif %}
+                                {% if element.show_on_desktop %}<i class="fas fa-desktop" title="{% trans 'Desktop' %}"></i>{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="element-status">
+                                {% if element.is_active %}
+                                    <i class="fas fa-check-circle status-active"></i>
+                                    <span class="status-active">{% trans "Active" %}</span>
+                                {% else %}
+                                    <i class="fas fa-times-circle status-inactive"></i>
+                                    <span class="status-inactive">{% trans "Inactive" %}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-elements">
+                {% trans "No elements found for this page" %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-pages">
+        <i class="fas fa-inbox"></i>
+        <h3>{% trans "No Pages Found" %}</h3>
+        <p>{% trans "Create a page first, then you can add elements to it." %}</p>
+        <a href="{% url 'admin:page_builder_page_add' %}" class="button default">
+            <i class="fas fa-plus"></i> {% trans "Create Page" %}
+        </a>
+    </div>
+    {% endif %}
+{% endblock %}
+</div>
+{% endblock %}

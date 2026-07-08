@@ -1,0 +1,125 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Product Feeds - Product Feeds Dashboard
+ *
+ * Description: Admin interface styles for product_feeds_dashboard.html
+ * Template: product_feeds/templates/admin/product_feeds/product_feeds_dashboard.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Additional styles for product feeds dashboard */
+.stat-warning {
+    border-left: 4px solid var(--warning-color, #f59e0b) !important;
+}
+.stat-warning .icon {
+    color: var(--warning-color, #f59e0b) !important;
+}
+.stat-info {
+    border-left: 4px solid var(--info-color, #3b82f6) !important;
+}
+.stat-info .icon {
+    color: var(--info-color, #3b82f6) !important;
+}
+.stat-active {
+    border-left: 4px solid var(--success-color, #10b981) !important;
+}
+.stat-active .icon {
+    color: var(--success-color, #10b981) !important;
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.status-success {
+    background: var(--success-bg, #d1fae5);
+    color: var(--success-fg, #065f46);
+}
+.status-error {
+    background: var(--error-bg, #fee2e2);
+    color: var(--error-fg, #991b1b);
+}
+.status-warning {
+    background: var(--warning-bg, #fef3c7);
+    color: var(--warning-fg, #92400e);
+}
+.status-pending {
+    background: var(--neutral-bg, #e5e7eb);
+    color: var(--neutral-fg, #374151);
+}
+.status-active {
+    background: var(--info-bg, #dbeafe);
+    color: var(--info-fg, #1e40af);
+}
+
+.provider-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--admin-bg-secondary, #f3f4f6);
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.error-text {
+    color: var(--error-color, #dc2626);
+    font-size: 13px;
+}
+.warning-text {
+    color: var(--warning-color, #d97706);
+    font-size: 13px;
+}
+
+.btn-sync {
+    background: var(--admin-primary, #007bff);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-sync:hover {
+    background: var(--admin-primary-hover, #0056b3);
+}
+
+.btn-small {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.no-data-box {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--admin-bg-secondary, #f9fafb);
+    border-radius: 8px;
+}
+.no-data-box i {
+    font-size: 48px;
+    color: var(--success-color, #10b981);
+    margin-bottom: 12px;
+}
+.no-data-box p {
+    color: var(--admin-text-secondary, #6b7280);
+    margin: 0;
+}
+
+.text-muted {
+    color: var(--admin-text-secondary, #6b7280);
+    font-size: 12px;
+}

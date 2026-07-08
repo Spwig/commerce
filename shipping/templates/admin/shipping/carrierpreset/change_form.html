@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block title %}{% if original %}{% trans "Edit Carrier Preset" %}: {{ original }}{% else %}{% trans "Add Carrier Preset" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block content %}
+<div class="carrier-preset-form">
+    {{ block.super }}
+</div>
+{% endblock %}

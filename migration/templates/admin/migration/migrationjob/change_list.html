@@ -1,0 +1,241 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_urls %}
+
+{% block title %}{% trans "Data Import & Export" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'migration/js/migration_list.js' %}" defer></script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'migration/admin/css/migration_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="migration-dashboard">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-exchange-alt"></i>
+                {% trans "Data Import & Export" %}
+            </h1>
+            <p class="subtitle">{% trans "Migrate from WooCommerce, Shopify, Magento, or import/export via CSV files" %}</p>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card total">
+            <div class="icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="value">{{ stats.total }}</div>
+            <div class="label">{% trans "Total Migrations" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card completed">
+            <div class="icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="value">{{ stats.completed }}</div>
+            <div class="label">{% trans "Completed" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card running">
+            <div class="icon">
+                <i class="fas fa-spinner fa-pulse"></i>
+            </div>
+            <div class="value">{{ stats.running }}</div>
+            <div class="label">{% trans "In Progress" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card failed">
+            <div class="icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="value">{{ stats.failed }}</div>
+            <div class="label">{% trans "Failed" %}</div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="migration-actions">
+        <a href="{% url 'admin:migration_wizard_start' %}" class="migration-btn migration-btn-primary">
+            <i class="fas fa-rocket"></i>
+            {% trans "Start New Migration" %}
+        </a>
+
+        <a href="{% url 'admin:migration_migrationlog_changelist' %}" class="migration-btn migration-btn-secondary">
+            <i class="fas fa-list"></i>
+            {% trans "View Logs" %}
+        </a>
+
+        <a href="{% url 'admin:migration_migrationmapping_changelist' %}" class="migration-btn migration-btn-secondary">
+            <i class="fas fa-project-diagram"></i>
+            {% trans "Field Mappings" %}
+        </a>
+    </div>
+
+    <!-- Migration Cards -->
+    {% if migrations %}
+        <div class="migrations-grid">
+            {% for migration in migrations %}
+            <div class="migration-card">
+                <!-- Platform Icon -->
+                <div class="migration-platform">
+                    <div class="platform-icon-large {{ migration.platform }}">
+                        {% if migration.platform == 'woocommerce' %}
+                            <i class="fab fa-wordpress"></i>
+                        {% elif migration.platform == 'shopify' %}
+                            <i class="fab fa-shopify"></i>
+                        {% elif migration.platform == 'magento' %}
+                            <i class="fab fa-magento"></i>
+                        {% elif migration.platform == 'csv' %}
+                            <i class="fas fa-file-csv"></i>
+                        {% endif %}
+                    </div>
+                    <div class="platform-name">{{ migration.get_platform_display }}</div>
+                </div>
+
+                <!-- Migration Details -->
+                <div class="migration-details">
+                    <div class="migration-header-row">
+                        <span class="migration-id">{{ migration.id|slice:":8" }}</span>
+                        <span class="migration-status {{ migration.status }}">
+                            {% if migration.status == 'pending' %}
+                                <i class="fas fa-clock"></i>
+                            {% elif migration.status == 'running' %}
+                                <i class="fas fa-spinner fa-spin"></i>
+                            {% elif migration.status == 'completed' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif migration.status == 'failed' %}
+                                <i class="fas fa-times-circle"></i>
+                            {% endif %}
+                            {{ migration.get_status_display }}
+                        </span>
+                    </div>
+
+                    {% if migration.status in 'running,paused,completed' %}
+                    <div class="migration-progress">
+                        <div class="migration-progress-bar {% if migration.progress_percent == 100 %}completed{% endif %}"
+                             data-width="{{ migration.progress_percent }}"></div>
+                    </div>
+                    {% endif %}
+
+                    <div class="migration-meta">
+                        <div class="migration-meta-item">
+                            <i class="fas fa-calendar"></i>
+                            {{ migration.created_at|date:"M d, Y g:i A" }}
+                        </div>
+                        <div class="migration-meta-item">
+                            <i class="fas fa-user"></i>
+                            {{ migration.created_by.username }}
+                        </div>
+                        {% if migration.completed_at and migration.duration_seconds %}
+                        <div class="migration-meta-item">
+                            <i class="fas fa-clock"></i>
+                            {% if migration.duration_seconds >= 60 %}
+                                {{ migration.duration_seconds|floatformat:"0"|add:"0"|divisibleby:"60" }}m {{ migration.duration_seconds|floatformat:"0"|add:"0"|divisibleby:"60"|add:"-1" }}s
+                            {% else %}
+                                {{ migration.duration_seconds }}s
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if migration.total_items > 0 %}
+                    <div class="migration-stats-row">
+                        <div class="migration-stat-item">
+                            <div class="migration-stat-value">{{ migration.total_items }}</div>
+                            <div class="migration-stat-label">{% trans "Total" %}</div>
+                        </div>
+                        <div class="migration-stat-item">
+                            <div class="migration-stat-value success">{{ migration.total_imported }}</div>
+                            <div class="migration-stat-label">{% trans "Imported" %}</div>
+                        </div>
+                        <div class="migration-stat-item">
+                            <div class="migration-stat-value warning">{{ migration.total_skipped }}</div>
+                            <div class="migration-stat-label">{% trans "Skipped" %}</div>
+                        </div>
+                        <div class="migration-stat-item">
+                            <div class="migration-stat-value error">{{ migration.total_failed }}</div>
+                            <div class="migration-stat-label">{% trans "Failed" %}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="migration-actions-col">
+                    {% if migration.status == 'pending' %}
+                        <a href="{% url 'admin:migration_wizard_step2' migration.id %}" class="action-btn resume">
+                            <i class="fas fa-play"></i> {% trans "Resume" %}
+                        </a>
+                    {% endif %}
+
+                    {% if migration.status == 'failed' %}
+                        <a href="{% url 'admin:migration_job_retry' migration.id %}" class="action-btn retry">
+                            <i class="fas fa-redo"></i> {% trans "Retry" %}
+                        </a>
+                    {% endif %}
+
+                    {% if migration.status == 'running' %}
+                        <a href="{% url 'admin:migration_job_cancel' migration.id %}"
+                           class="action-btn delete"
+                           data-action="confirm-navigate"
+                           data-confirm-msg="{% trans 'Are you sure you want to cancel this migration?' %}">
+                            <i class="fas fa-stop"></i> {% trans "Cancel" %}
+                        </a>
+                    {% endif %}
+
+                    {% if migration.status == 'pending' %}
+                        <a href="{% url 'admin:migration_wizard_step2' migration.id %}" class="action-btn view">
+                            <i class="fas fa-eye"></i> {% trans "View" %}
+                        </a>
+                    {% elif migration.status == 'running' %}
+                        <a href="{% url 'admin:migration_wizard_step5' migration.id %}" class="action-btn view">
+                            <i class="fas fa-eye"></i> {% trans "View" %}
+                        </a>
+                    {% else %}
+                        <a href="{% url 'admin:migration_wizard_step6' migration.id %}" class="action-btn view">
+                            <i class="fas fa-eye"></i> {% trans "View" %}
+                        </a>
+                    {% endif %}
+
+                    {% if migration.is_rollbackable %}
+                        <a href="{% url 'admin:migration_job_rollback' migration.id %}"
+                           class="action-btn rollback"
+                           data-action="confirm-navigate"
+                           data-confirm-msg="{% trans 'Are you sure you want to rollback this migration? This will delete all imported data.' %}">
+                            <i class="fas fa-undo"></i> {% trans "Rollback" %}
+                        </a>
+                    {% endif %}
+
+                    {% if migration.status in 'pending,failed,running' %}
+                        <a href="{% url 'admin:migration_job_delete' migration.id %}"
+                           class="action-btn delete"
+                           data-action="confirm-navigate"
+                           data-confirm-msg="{% trans 'Are you sure you want to force delete this migration? This cannot be undone.' %}">
+                            <i class="fas fa-trash"></i> {% trans "Delete" %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>{% trans "No Migrations Yet" %}</h3>
+            <p>{% trans "Get started by creating your first data migration" %}</p>
+            <a href="{% url 'admin:migration_wizard_start' %}" class="migration-btn migration-btn-primary">
+                <i class="fas fa-plus"></i>
+                {% trans "Create First Migration" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

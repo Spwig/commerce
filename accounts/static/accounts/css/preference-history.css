@@ -1,0 +1,170 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Accounts Frontend - Preference History
+ *
+ * Description: Styles for the communication preference history timeline page
+ * Template: accounts/templates/accounts/preference_history.html
+ */
+
+/* Timeline container */
+.timeline-container {
+    position: relative;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Vertical timeline line */
+.timeline-line {
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--theme-color-border, #d1d5db);
+}
+
+/* Timeline item */
+.timeline-item {
+    position: relative;
+    padding-left: 70px;
+    margin-bottom: 30px;
+}
+
+/* Timeline marker (colored dot) */
+.timeline-marker {
+    position: absolute;
+    left: 20px;
+    top: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid var(--theme-color-surface, white);
+    box-shadow: var(--theme-shadow-base, 0 2px 4px rgba(0,0,0,0.1));
+    z-index: 2;
+}
+
+.timeline-marker.user { background: var(--theme-color-primary, #3b82f6); }
+.timeline-marker.admin { background: var(--theme-color-warning, #f59e0b); }
+.timeline-marker.system { background: var(--theme-color-text-muted, #6b7280); }
+.timeline-marker.verification { background: var(--theme-color-success, #10b981); }
+.timeline-marker.registration { background: #8b5cf6; }
+.timeline-marker.checkout { background: #ec4899; }
+.timeline-marker.api { background: #06b6d4; }
+.timeline-marker.unsubscribe { background: var(--theme-color-error, #ef4444); }
+
+/* Timeline content card */
+.timeline-content {
+    background: var(--theme-color-surface, #fff);
+    border-radius: var(--theme-radius-lg, 8px);
+    box-shadow: var(--theme-shadow-base, 0 2px 4px rgba(0,0,0,0.1));
+    padding: var(--theme-space-5, 20px);
+}
+
+.timeline-action {
+    font-size: var(--theme-font-size-lg, 1.125rem);
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text, #1f2937);
+    margin-bottom: var(--theme-space-2, 8px);
+}
+
+.timeline-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--theme-space-4, 16px);
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    margin-top: var(--theme-space-3, 12px);
+    padding-top: var(--theme-space-3, 12px);
+    border-top: 1px solid var(--theme-color-bg-muted, #f3f4f6);
+}
+
+.timeline-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.timeline-meta-item svg {
+    width: 14px;
+    height: 14px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state svg {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    color: var(--theme-color-border, #d1d5db);
+}
+
+.empty-state h2 {
+    font-size: 1.5rem;
+    font-weight: var(--theme-font-weight-semibold, 600);
+    color: var(--theme-color-text-secondary, #374151);
+    margin-bottom: var(--theme-space-3, 12px);
+}
+
+.empty-state p {
+    font-size: var(--theme-font-size-base, 1rem);
+    color: var(--theme-color-text-muted, #6b7280);
+    margin-bottom: var(--theme-space-6, 24px);
+}
+
+.empty-state-button {
+    display: inline-block;
+    padding: var(--theme-space-3, 12px) var(--theme-space-6, 24px);
+    background: var(--theme-color-primary, #3b82f6);
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--theme-radius-base, 6px);
+    font-weight: var(--theme-font-weight-medium, 500);
+    transition: background var(--theme-transition-duration-fast, 0.2s);
+}
+
+.empty-state-button:hover {
+    background: var(--theme-color-primary-dark, #2563eb);
+    color: #fff;
+}
+
+/* Pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--theme-space-3, 12px);
+    margin-top: 40px;
+    padding: var(--theme-space-5, 20px);
+}
+
+.pagination-button {
+    padding: var(--theme-space-2, 8px) var(--theme-space-4, 16px);
+    background: var(--theme-color-surface, #fff);
+    color: var(--theme-color-text-secondary, #374151);
+    border: 1px solid var(--theme-color-border, #d1d5db);
+    border-radius: var(--theme-radius-base, 6px);
+    text-decoration: none;
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    transition: all var(--theme-transition-duration-fast, 0.2s);
+}
+
+.pagination-button:hover {
+    background: var(--theme-color-bg-muted, #f9fafb);
+    border-color: var(--theme-color-text-light, #9ca3af);
+}
+
+.pagination-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.pagination-info {
+    font-size: var(--theme-font-size-sm, 0.875rem);
+    color: var(--theme-color-text-muted, #6b7280);
+}

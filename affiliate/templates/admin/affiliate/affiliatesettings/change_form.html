@@ -1,0 +1,119 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% trans "Affiliate Settings" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{# Include translation editor assets #}
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+<link rel="stylesheet" href="{% static 'utilities/translation_editor/current/translation_editor.css' %}">
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'affiliate/admin/css/affiliatesettings_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="affiliate-settings-layout">
+
+    <div class="settings-panel">
+        {{ block.super }}
+    </div>
+
+    <div class="preview-panel">
+        <div class="preview-header">
+            <h3><i class="fas fa-eye"></i> {% trans "Live Preview" %}</h3>
+            <div class="preview-header-actions">
+                <span class="preview-badge">{% trans "Simplified" %}</span>
+                <a href="{% url 'affiliate:portal' %}" target="_blank" class="preview-link-btn" title="{% trans 'View with full styling' %}">
+                    <i class="fas fa-external-link-alt"></i> {% trans "View Portal" %}
+                </a>
+            </div>
+        </div>
+        <p class="preview-note">
+            <i class="fas fa-info-circle"></i>
+            {% trans "This is a simplified preview. Save changes and click 'View Portal' to see with your theme styling." %}
+        </p>
+
+        <div class="preview-content">
+            <!-- Hero Section Preview -->
+            <div class="preview-hero">
+                <h1 id="preview-hero-title">{{ original.hero_title|default:"Join Our Affiliate Program" }}</h1>
+                <p id="preview-hero-subtitle">{{ original.hero_subtitle|default:"Earn commissions by promoting our products." }}</p>
+            </div>
+
+            <!-- Features Section Preview -->
+            <div class="preview-section">
+                <h2 id="preview-features-title">{{ original.features_title|default:"Why Join Our Affiliate Program?" }}</h2>
+                <div class="preview-features-grid" id="preview-features-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- How It Works Preview -->
+            <div class="preview-section">
+                <h2 id="preview-steps-title">{{ original.how_it_works_title|default:"How It Works" }}</h2>
+                <div class="preview-steps" id="preview-steps-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- CTA Section Preview -->
+            <div class="preview-cta">
+                <h2 id="preview-cta-title">{{ original.cta_title|default:"Ready to Start Earning?" }}</h2>
+                <p id="preview-cta-description">{{ original.cta_description|default:"Join our affiliate program today!" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="affiliatesettings-translations">
+{
+    "feature": "{% trans 'Feature' %}",
+    "step": "{% trans 'Step' %}",
+    "moveUp": "{% trans 'Move up' %}",
+    "moveDown": "{% trans 'Move down' %}",
+    "delete": "{% trans 'Delete' %}",
+    "icon": "{% trans 'Icon' %}",
+    "title": "{% trans 'Title' %}",
+    "description": "{% trans 'Description' %}",
+    "translate": "{% trans 'Translate' %}",
+    "addFeature": "{% trans 'Add Feature' %}",
+    "addStep": "{% trans 'Add Step' %}",
+    "saveBeforeTranslating": "{% trans 'Please save the record before translating.' %}",
+    "noLanguagesConfigured": "{% trans 'No target languages available. Please configure languages in settings.' %}",
+    "sourceText": "{% trans 'Source Text' %}",
+    "targetLanguages": "{% trans 'Target Languages' %}",
+    "coverage": "{% trans 'Coverage' %}",
+    "translated": "{% trans 'Translated' %}",
+    "cancel": "{% trans 'Cancel' %}",
+    "saveEdits": "{% trans 'Save Edits' %}",
+    "saving": "{% trans 'Saving...' %}",
+    "saveFailed": "{% trans 'Save failed' %}",
+    "savedSuccessfully": "{% trans 'Translations saved successfully!' %}",
+    "translating": "{% trans 'Translating...' %}",
+    "processingTranslation": "{% trans 'Processing translation...' %}",
+    "translationFailed": "{% trans 'Translation failed' %}",
+    "translatedTo": "{% trans 'Translated to' %}",
+    "languages": "{% trans 'language(s)!' %}",
+    "selectLanguage": "{% trans 'Please select at least one language to translate to.' %}",
+    "enterTextFirst": "{% trans 'Please enter some text before translating.' %}",
+    "noFeaturesAdded": "{% trans 'No features added' %}",
+    "noStepsAdded": "{% trans 'No steps added' %}",
+    "heroTitleDefault": "{% trans 'Join Our Affiliate Program' %}",
+    "heroSubtitleDefault": "{% trans 'Earn commissions by promoting our products.' %}",
+    "featuresTitleDefault": "{% trans 'Why Join Our Affiliate Program?' %}",
+    "howItWorksTitleDefault": "{% trans 'How It Works' %}",
+    "ctaTitleDefault": "{% trans 'Ready to Start Earning?' %}",
+    "ctaDescriptionDefault": "{% trans 'Join our affiliate program today!' %}"
+}
+</script>
+
+{# Include the translation editor initialization #}
+{% include "admin/includes/translation_editor_init.html" %}
+<script src="{% static 'affiliate/admin/js/affiliatesettings-admin.js' %}" defer></script>
+{% endblock %}
+
+{% block admin_change_form_document_ready %}{{ block.super }}{% endblock %}

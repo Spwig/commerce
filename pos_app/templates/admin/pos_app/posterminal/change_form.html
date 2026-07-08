@@ -1,0 +1,573 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_urls %}
+
+{% block title %}{% if original %}{% trans "Edit POS Terminal" %} - {{ original.name }}{% else %}{% trans "Add POS Terminal" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'pos_app/admin/css/posterminal_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'pos_app/admin/js/posterminal_form.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="posterminal-change-form" id="posterminal-change-form">
+
+{% if errors %}
+<div class="form-errors-banner">
+    <div class="error-icon">
+        <i class="fas fa-exclamation-circle"></i>
+    </div>
+    <div class="error-content">
+        <h3>{% trans "Please correct the errors below." %}</h3>
+        {{ adminform.form.non_field_errors }}
+    </div>
+</div>
+{% endif %}
+
+{% if original %}
+{# ============================================= #}
+{# EDIT MODE: Dashboard header + tabs             #}
+{# ============================================= #}
+
+<div class="dashboard-header">
+    <div class="dashboard-header-row">
+        <div class="dashboard-header-info">
+            <h1>
+                <i class="fas fa-cash-register"></i>
+                {% trans "Edit POS Terminal:" %} {{ original.name }}
+            </h1>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <i class="fas fa-warehouse"></i>
+                    <span>{{ original.warehouse.pos_display_name|default:original.warehouse.name }}</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-key"></i>
+                    <span class="pairing-code-inline">{{ original.pairing_code }}</span>
+                </div>
+                <div class="meta-item">
+                    {% if is_online %}
+                    <span class="status-badge online">
+                        <i class="fas fa-circle"></i> {% trans "Online" %}
+                    </span>
+                    {% else %}
+                    <span class="status-badge offline">
+                        <i class="fas fa-circle"></i> {% trans "Offline" %}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="meta-item">
+                    {% if original.is_active %}
+                    <span class="status-badge active">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                    {% else %}
+                    <span class="status-badge inactive">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Created" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-header-actions">
+            <button type="button" class="button default" id="term-save-continue-btn">
+                <i class="fas fa-edit"></i> {% trans "Save and Continue" %}
+            </button>
+            <button type="button" class="button primary" id="term-save-btn">
+                <i class="fas fa-save"></i> {% trans "Save" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="posterminal_form" novalidate>
+{% csrf_token %}
+
+{# Tabs Navigation #}
+<div class="admin-tabs">
+    <button type="button" class="admin-tab-btn active" data-tab="basic">
+        <i class="fas fa-info-circle"></i>
+        <span class="label">{% trans "Basic" %}</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="device">
+        <i class="fas fa-microchip"></i>
+        <span class="label">{% trans "Device" %}</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="sync">
+        <i class="fas fa-sync-alt"></i>
+        <span class="label">{% trans "Sync & Cache" %}</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="staff">
+        <i class="fas fa-users"></i>
+        <span class="label">{% trans "Staff" %}</span>
+    </button>
+    <button type="button" class="admin-tab-btn" data-tab="status">
+        <i class="fas fa-heartbeat"></i>
+        <span class="label">{% trans "Status" %}</span>
+    </button>
+</div>
+
+{# Tab: Basic #}
+<div class="admin-tab-content active" id="tab-basic">
+    <div class="form-card">
+        <h2><i class="fas fa-info-circle"></i> {% trans "Basic Information" %}</h2>
+        {% for fieldset in adminform %}
+            {% if "tab-basic" in fieldset.classes %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                    <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                        {% if not field.field.is_hidden %}
+                        <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}
+                               class="{% if field.field.field.required %}required{% endif %}">
+                            {{ field.field.label }}
+                        </label>
+                        {% endif %}
+                        {% if field.is_readonly %}
+                            {{ field.contents }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help">{{ field.field.help_text }}</p>
+                        {% endif %}
+                        {% if field.field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.field.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{# Tab: Device #}
+<div class="admin-tab-content" id="tab-device">
+    <div class="form-card">
+        <h2><i class="fas fa-fingerprint"></i> {% trans "Device Pairing" %}</h2>
+        <p class="card-description">{% trans "Share the pairing code with the device to register it." %}</p>
+        {% for fieldset in adminform %}
+            {% if "tab-device" in fieldset.classes %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                    <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                        {% if not field.field.is_hidden %}
+                        <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}
+                               class="{% if field.field.field.required %}required{% endif %}">
+                            {{ field.field.label }}
+                        </label>
+                        {% endif %}
+                        {% if field.field.name == "pairing_code" %}
+                            <div class="pairing-code-display">{{ field.field.value|default:"" }}</div>
+                            {{ field.field }}
+                        {% elif field.is_readonly %}
+                            {{ field.contents }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help">{{ field.field.help_text }}</p>
+                        {% endif %}
+                        {% if field.field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.field.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="form-card">
+        <h2><i class="fas fa-cogs"></i> {% trans "Hardware Configuration" %}</h2>
+        <p class="card-description">{% trans "JSON configuration for connected hardware (printer, scanner, etc.)." %}</p>
+        {% for fieldset in adminform %}
+            {% if "tab-device-hw" in fieldset.classes %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                    <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                        {% if not field.field.is_hidden %}
+                        <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}
+                               class="{% if field.field.field.required %}required{% endif %}">
+                            {{ field.field.label }}
+                        </label>
+                        {% endif %}
+                        {% if field.is_readonly %}
+                            {{ field.contents }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help">{{ field.field.help_text }}</p>
+                        {% endif %}
+                        {% if field.field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.field.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{# Tab: Sync & Cache #}
+<div class="admin-tab-content" id="tab-sync">
+    <div class="form-card">
+        <h2><i class="fas fa-sync-alt"></i> {% trans "Sync & Cache" %}</h2>
+        <p class="card-description">{% trans "Configure how many orders are cached on the terminal for offline viewing. POS orders from this terminal are always synced first. Remaining slots are filled with recent web orders." %}</p>
+        {% for fieldset in adminform %}
+            {% if "tab-sync" in fieldset.classes %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                    <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                        {% if not field.field.is_hidden %}
+                        <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}
+                               class="{% if field.field.field.required %}required{% endif %}">
+                            {{ field.field.label }}
+                        </label>
+                        {% endif %}
+                        {% if field.is_readonly %}
+                            {{ field.contents }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help">{{ field.field.help_text }}</p>
+                        {% endif %}
+                        {% if field.field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.field.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{# Tab: Staff #}
+<div class="admin-tab-content" id="tab-staff">
+    <div class="form-card">
+        <h2><i class="fas fa-users"></i> {% trans "Staff Assignment" %}</h2>
+        <p class="card-description">{% trans "Assign staff members who are authorized to use this terminal." %}</p>
+        {% for fieldset in adminform %}
+            {% if "tab-staff" in fieldset.classes %}
+                {% for line in fieldset %}
+                    {% for field in line %}
+                    <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                        {% if not field.field.is_hidden %}
+                        <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}>
+                            {{ field.field.label }}
+                        </label>
+                        {% endif %}
+                        {% if field.is_readonly %}
+                            {{ field.contents }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help">{{ field.field.help_text }}</p>
+                        {% endif %}
+                        {% if field.field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.field.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{# Tab: Status (edit-only) #}
+<div class="admin-tab-content" id="tab-status">
+    <div class="form-card">
+        <h2><i class="fas fa-heartbeat"></i> {% trans "Status" %}</h2>
+        {% for fieldset in adminform %}
+            {% if "tab-status" in fieldset.classes %}
+                <div class="two-column-layout">
+                {% for line in fieldset %}
+                    {% for field in line %}
+                    <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                        {% if not field.field.is_hidden %}
+                        <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}>
+                            {{ field.field.label }}
+                        </label>
+                        {% endif %}
+                        {% if field.is_readonly %}
+                            {{ field.contents }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help">{{ field.field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{# Hidden fieldsets div for Django form processing #}
+<div class="hidden-fieldsets" aria-hidden="true">
+    {% for fieldset in adminform %}
+        {% for line in fieldset %}
+            {% for field in line %}
+                {% if field.field.is_hidden %}
+                    {{ field.field }}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+</div>
+
+{# Hidden submit row for form processing #}
+<div class="submit-row" id="hidden-submit-row">
+    <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+    <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+    {% if show_delete_link %}
+    <p class="deletelink-box">
+        <a href="{% url opts|admin_urlname:'delete' original.pk %}" class="deletelink">{% trans "Delete" %}</a>
+    </p>
+    {% endif %}
+</div>
+
+</form>
+
+{% else %}
+{# ============================================= #}
+{# ADD MODE: Clean sequential cards (no tabs)     #}
+{# ============================================= #}
+
+<div class="dashboard-header add-mode">
+    <div class="dashboard-header-row">
+        <div class="dashboard-header-info">
+            <h1>
+                <i class="fas fa-plus-circle"></i>
+                {% trans "Add POS Terminal" %}
+            </h1>
+        </div>
+        <div class="dashboard-header-actions">
+            <button type="button" class="button primary" id="term-save-btn">
+                <i class="fas fa-save"></i> {% trans "Save" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="posterminal_form" novalidate>
+{% csrf_token %}
+
+{# Card: Terminal Information #}
+<div class="form-card">
+    <h2><i class="fas fa-info-circle"></i> {% trans "Terminal Information" %}</h2>
+    {% for fieldset in adminform %}
+        {% if "tab-basic" in fieldset.classes %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                    {% if not field.field.is_hidden %}
+                    <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}
+                           class="{% if field.field.field.required %}required{% endif %}">
+                        {{ field.field.label }}
+                    </label>
+                    {% endif %}
+                    {% if field.is_readonly %}
+                        {{ field.contents }}
+                    {% else %}
+                        {{ field.field }}
+                    {% endif %}
+                    {% if field.field.help_text %}
+                    <p class="help">{{ field.field.help_text }}</p>
+                    {% endif %}
+                    {% if field.field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.field.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+{# Card: Device Pairing #}
+<div class="form-card">
+    <h2><i class="fas fa-fingerprint"></i> {% trans "Device Pairing" %}</h2>
+    <p class="card-description">{% trans "The pairing code will be generated automatically. You can share it with the device after saving." %}</p>
+    {% for fieldset in adminform %}
+        {% if "tab-device" in fieldset.classes %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {# Skip UUID in add mode - auto generated #}
+                    {% if field.field.name != "uuid" %}
+                    <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                        {% if not field.field.is_hidden %}
+                        <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}
+                               class="{% if field.field.field.required %}required{% endif %}">
+                            {{ field.field.label }}
+                        </label>
+                        {% endif %}
+                        {% if field.is_readonly %}
+                            {{ field.contents }}
+                        {% else %}
+                            {{ field.field }}
+                        {% endif %}
+                        {% if field.field.help_text %}
+                        <p class="help">{{ field.field.help_text }}</p>
+                        {% endif %}
+                        {% if field.field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.field.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+{# Card: Sync Settings #}
+<div class="form-card">
+    <h2><i class="fas fa-sync-alt"></i> {% trans "Sync Settings" %}</h2>
+    <p class="card-description">{% trans "Configure how many orders are cached on the terminal for offline viewing." %}</p>
+    {% for fieldset in adminform %}
+        {% if "tab-sync" in fieldset.classes %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                    {% if not field.field.is_hidden %}
+                    <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}
+                           class="{% if field.field.field.required %}required{% endif %}">
+                        {{ field.field.label }}
+                    </label>
+                    {% endif %}
+                    {% if field.is_readonly %}
+                        {{ field.contents }}
+                    {% else %}
+                        {{ field.field }}
+                    {% endif %}
+                    {% if field.field.help_text %}
+                    <p class="help">{{ field.field.help_text }}</p>
+                    {% endif %}
+                    {% if field.field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.field.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+{# Card: Staff Assignment #}
+<div class="form-card">
+    <h2><i class="fas fa-users"></i> {% trans "Staff Assignment" %}</h2>
+    <p class="card-description">{% trans "Assign staff members who are authorized to use this terminal." %}</p>
+    {% for fieldset in adminform %}
+        {% if "tab-staff" in fieldset.classes %}
+            {% for line in fieldset %}
+                {% for field in line %}
+                <div class="form-row{% if field.field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                    {% if not field.field.is_hidden %}
+                    <label{% if field.field.id_for_label %} for="{{ field.field.id_for_label }}"{% endif %}>
+                        {{ field.field.label }}
+                    </label>
+                    {% endif %}
+                    {% if field.is_readonly %}
+                        {{ field.contents }}
+                    {% else %}
+                        {{ field.field }}
+                    {% endif %}
+                    {% if field.field.help_text %}
+                    <p class="help">{{ field.field.help_text }}</p>
+                    {% endif %}
+                    {% if field.field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.field.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+{# Hidden fieldsets div for Django form processing #}
+<div class="hidden-fieldsets" aria-hidden="true">
+    {% for fieldset in adminform %}
+        {% for line in fieldset %}
+            {% for field in line %}
+                {% if field.field.is_hidden %}
+                    {{ field.field }}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+</div>
+
+{# Hidden submit row for form processing #}
+<div class="submit-row" id="hidden-submit-row">
+    <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+    <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+    <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+</div>
+
+</form>
+
+{% endif %}
+
+{# Popup support #}
+{% if is_popup %}
+<input type="hidden" name="_popup" value="1">
+{% endif %}
+
+</div>
+{% endblock %}

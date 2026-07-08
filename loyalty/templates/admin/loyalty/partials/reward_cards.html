@@ -1,0 +1,210 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/reward_cards.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for reward in rewards %}
+    <div class="list-row-card reward-card {% if reward.featured %}featured{% endif %} {% if reward.quantity_total and reward.quantity_remaining == 0 %}out-of-stock{% endif %}">
+        <!-- Reward Type Icon -->
+        <div class="list-row-card-icon {{ reward.reward_type }}">
+            {% if reward.reward_type == 'discount' %}
+                <i class="fas fa-percent"></i>
+            {% elif reward.reward_type == 'product' %}
+                <i class="fas fa-box"></i>
+            {% elif reward.reward_type == 'shipping' %}
+                <i class="fas fa-truck"></i>
+            {% elif reward.reward_type == 'experience' %}
+                <i class="fas fa-star"></i>
+            {% else %}
+                <i class="fas fa-gift"></i>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:loyalty_loyaltyreward_change' reward.id %}"
+                   title="{% trans 'Edit reward' %}">
+                    {{ reward.name }}
+                </a>
+            </h3>
+
+            <!-- Description -->
+            <p class="list-row-card-subtitle">
+                {% if reward.description|length > 100 %}
+                    {{ reward.description|truncatewords:15 }}
+                {% else %}
+                    {{ reward.description }}
+                {% endif %}
+            </p>
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Type Badge -->
+                <span class="list-row-card-badge primary">
+                    {{ reward.get_reward_type_display }}
+                </span>
+
+                <!-- Status Badge -->
+                {% if reward.is_active %}
+                    <span class="list-row-card-badge success"
+                          title="{% trans 'This reward is active and can be redeemed' %}">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge error"
+                          title="{% trans 'This reward is inactive and cannot be redeemed' %}">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <!-- Featured Badge -->
+                {% if reward.featured %}
+                    <span class="list-row-card-badge warning"
+                          title="{% trans 'This reward is featured on the rewards page' %}">
+                        <i class="fas fa-star"></i> {% trans "Featured" %}
+                    </span>
+                {% endif %}
+
+                <!-- Availability Badge -->
+                {% if reward.is_active %}
+                    {% if reward.is_available %}
+                        <span class="list-row-card-badge success"
+                              title="{% trans 'This reward is currently available for redemption' %}">
+                            <i class="fas fa-check"></i> {% trans "Available" %}
+                        </span>
+                    {% else %}
+                        <span class="list-row-card-badge error"
+                              title="{% trans 'This reward is currently unavailable' %}">
+                            <i class="fas fa-times"></i> {% trans "Unavailable" %}
+                        </span>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Out of Stock Badge -->
+                {% if reward.quantity_total and reward.quantity_remaining == 0 %}
+                    <span class="list-row-card-badge error"
+                          title="{% trans 'This reward is out of stock' %}">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Out of Stock" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Points Cost" %}</span>
+                    <span class="list-row-card-stat-value" class="text-primary">
+                        {{ reward.points_cost }}
+                    </span>
+                </div>
+
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Quantity" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if reward.quantity_total %}
+                            {% if reward.quantity_remaining == 0 %}
+                                <span class="text-error">0 / {{ reward.quantity_total }}</span>
+                            {% elif reward.quantity_remaining < reward.quantity_total|floatformat:0|add:"*0.2"|floatformat:0 %}
+                                <span class="text-warning">{{ reward.quantity_remaining }} / {{ reward.quantity_total }}</span>
+                            {% else %}
+                                {{ reward.quantity_remaining }} / {{ reward.quantity_total }}
+                            {% endif %}
+                        {% else %}
+                            <i class="fas fa-infinity"></i> {% trans "Unlimited" %}
+                        {% endif %}
+                    </span>
+                </div>
+
+                {% if reward.max_redemptions_per_member %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Max per Member" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ reward.max_redemptions_per_member }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Meta Information -->
+        <div class="list-row-card-meta">
+            {% if reward.start_date or reward.end_date %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Date range when this reward is available' %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>
+                    {% if reward.start_date %}
+                        {{ reward.start_date|date:"M d, Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                    →
+                    {% if reward.end_date %}
+                        {{ reward.end_date|date:"M d, Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+
+            {% if reward.required_tier %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Minimum tier required to redeem this reward' %}">
+                <i class="fas fa-layer-group"></i>
+                <span>{{ reward.required_tier.name }}</span>
+            </div>
+            {% endif %}
+
+            {% if reward.reward_type == 'discount' %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Discount details' %}">
+                <i class="fas fa-tag"></i>
+                <span>
+                    {% if reward.discount_type == 'percentage' %}
+                        {{ reward.discount_value }}%
+                    {% else %}
+                        {{ reward.discount_value|floatformat:2 }}
+                    {% endif %}
+                    {% trans "off" %}
+                </span>
+            </div>
+            {% endif %}
+
+            {% if reward.reward_type == 'product' and reward.product %}
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Linked product' %}">
+                <i class="fas fa-link"></i>
+                <a href="{% url 'admin:catalog_product_change' reward.product.id %}"
+                   class="no-decoration">
+                    {{ reward.product.name }}
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Internal reward ID' %}">
+                <i class="fas fa-key"></i>
+                <code class="code-small">{{ reward.id }}</code>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltyreward_change' reward.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit reward' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-gift"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No rewards found." %}</p>
+    </div>
+    {% endfor %}
+</div>

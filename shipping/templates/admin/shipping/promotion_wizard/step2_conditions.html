@@ -1,0 +1,181 @@
+{% extends "admin/shipping/promotion_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-shopping-cart"></i> {% trans "Cart Conditions" %}
+</div>
+<p class="step-description">
+    {% trans "Define when this promotion applies based on cart value, weight, and item count. Leave fields empty to skip a condition." %}
+</p>
+
+<form method="post" id="rule-conditions-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>{% trans "About Conditions:" %}</strong>
+            <p class="promotion-wizard-info-text">
+                {% trans "All conditions you specify must be met for the promotion to apply. If you don't specify any conditions, the promotion will apply to all orders (subject to other restrictions)." %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-dollar-sign"></i> {% trans "Cart Value" %}
+        </h3>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_min_cart_value">{% trans "Minimum Cart Value" %}</label>
+                <input type="number"
+                       id="id_min_cart_value"
+                       name="min_cart_value"
+                       class="form-control"
+                       value="{{ rule_data.min_cart_value|default:'' }}"
+                       step="0.01"
+                       min="0"
+                       placeholder="0.00">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion applies if cart subtotal is at least this amount" %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="id_max_cart_value">{% trans "Maximum Cart Value" %}</label>
+                <input type="number"
+                       id="id_max_cart_value"
+                       name="max_cart_value"
+                       class="form-control"
+                       value="{{ rule_data.max_cart_value|default:'' }}"
+                       step="0.01"
+                       min="0"
+                       placeholder="0.00">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion applies if cart subtotal is at most this amount" %}
+                </p>
+            </div>
+        </div>
+
+        <div class="example-box">
+            <strong>{% trans "Example:" %}</strong> {% trans "For free shipping over $50, set Minimum Cart Value to 50.00" %}
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-weight-hanging"></i> {% trans "Cart Weight" %}
+        </h3>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_min_cart_weight">{% trans "Minimum Cart Weight (kg)" %}</label>
+                <input type="number"
+                       id="id_min_cart_weight"
+                       name="min_cart_weight"
+                       class="form-control"
+                       value="{{ rule_data.min_cart_weight|default:'' }}"
+                       step="0.01"
+                       min="0"
+                       placeholder="0.00">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion applies if total cart weight is at least this amount" %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="id_max_cart_weight">{% trans "Maximum Cart Weight (kg)" %}</label>
+                <input type="number"
+                       id="id_max_cart_weight"
+                       name="max_cart_weight"
+                       class="form-control"
+                       value="{{ rule_data.max_cart_weight|default:'' }}"
+                       step="0.01"
+                       min="0"
+                       placeholder="0.00">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion applies if total cart weight is at most this amount" %}
+                </p>
+            </div>
+        </div>
+
+        <div class="example-box">
+            <strong>{% trans "Example:" %}</strong> {% trans "For a surcharge on heavy items over 10kg, set Minimum Cart Weight to 10.00" %}
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-boxes"></i> {% trans "Item Count" %}
+        </h3>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_min_item_count">{% trans "Minimum Item Count" %}</label>
+                <input type="number"
+                       id="id_min_item_count"
+                       name="min_item_count"
+                       class="form-control"
+                       value="{{ rule_data.min_item_count|default:'' }}"
+                       min="1"
+                       step="1"
+                       placeholder="1">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion applies if cart has at least this many items" %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="id_max_item_count">{% trans "Maximum Item Count" %}</label>
+                <input type="number"
+                       id="id_max_item_count"
+                       name="max_item_count"
+                       class="form-control"
+                       value="{{ rule_data.max_item_count|default:'' }}"
+                       min="1"
+                       step="1"
+                       placeholder="1">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion applies if cart has at most this many items" %}
+                </p>
+            </div>
+        </div>
+
+        <div class="example-box">
+            <strong>{% trans "Example:" %}</strong> {% trans "For a discount on bulk orders of 5+ items, set Minimum Item Count to 5" %}
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:promotion_wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="rule-conditions-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script type="application/json" id="promotion-wizard-step2-config">
+{
+    "i18n": {
+        "minCartValueError": "{% trans 'Minimum cart value cannot be greater than maximum cart value' %}",
+        "minCartWeightError": "{% trans 'Minimum cart weight cannot be greater than maximum cart weight' %}",
+        "minItemCountError": "{% trans 'Minimum item count cannot be greater than maximum item count' %}"
+    }
+}
+</script>
+<script src="{% static 'shipping/js/promotion-wizard-step2.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,280 @@
+{% extends "admin/cart/method_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-star"></i> {% trans "Method Features" %}
+</div>
+<p class="step-description">
+    {% trans "Configure delivery estimates, display order, and method-specific features." %}
+</p>
+
+<form method="post" id="method-features-form" class="credentials-form">
+    {% csrf_token %}
+
+    <!-- Pickup Locations (Only for local_pickup) -->
+    {% if method_data.method_type == 'local_pickup' %}
+    <div class="form-section" id="pickup-locations-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-map-marker-alt"></i> {% trans "Pickup Locations" %}
+        </h3>
+        <p class="help-text">
+            <i class="fas fa-info-circle"></i>
+            {% trans "Select the physical locations where customers can pick up their orders." %}
+        </p>
+
+        <div class="form-group">
+            <label>{% trans "Available Pickup Locations" %}</label>
+
+            <!-- Dual Listbox for Pickup Locations -->
+            <div class="dual-listbox">
+                <div class="listbox-panel">
+                    <label>{% trans "Available Locations" %}</label>
+                    <select id="available-locations" class="dual-select" multiple size="8">
+                        {% for location in all_pickup_locations %}
+                            {% if location.id not in method_data.pickup_locations %}
+                                <option value="{{ location.id }}">
+                                    {{ location.name }} - {{ location.address }}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="listbox-controls">
+                    <button type="button" class="btn btn-secondary btn-sm" id="add-locations">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="add-all-locations">
+                        <i class="fas fa-angle-double-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="remove-locations">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="remove-all-locations">
+                        <i class="fas fa-angle-double-left"></i>
+                    </button>
+                </div>
+
+                <div class="listbox-panel">
+                    <label>{% trans "Selected Locations" %}</label>
+                    <select id="selected-locations" name="pickup_locations" class="dual-select" multiple size="8">
+                        {% for location_id in method_data.pickup_locations %}
+                            {% for location in all_pickup_locations %}
+                                {% if location.id == location_id %}
+                                    <option value="{{ location.id }}">
+                                        {{ location.name }} - {{ location.address }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            {% if not all_pickup_locations %}
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>{% trans "No pickup locations found!" %}</strong>
+                        {% trans "You need to create pickup locations first for local pickup methods." %}
+                        <a href="{% url 'admin:shipping_location_add' %}" target="_blank">
+                            {% trans "Create a pickup location" %}
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Real-Time Carrier Status (Only for real_time) -->
+    {% if method_data.method_type == 'real_time' %}
+    <div class="form-section" id="carrier-status-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-plug"></i> {% trans "Carrier API Status" %}
+        </h3>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>{% trans "Carrier:" %}</strong> {{ method_data.carrier|upper }}
+                {% if method_data.carrier_service_code %}
+                    <br><strong>{% trans "Service Code:" %}</strong> {{ method_data.carrier_service_code }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>{% trans "API Configuration Status" %}</label>
+            <div class="status-check-box">
+                <div class="status-item">
+                    <i class="fas fa-spinner fa-spin status-icon"></i>
+                    <span>{% trans "Checking API credentials..." %}</span>
+                </div>
+                <div id="api-status-result"></div>
+            </div>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Ensure your carrier API credentials are configured in the shipping provider settings." %}
+            </p>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox"
+                       id="id_enable_rate_caching"
+                       name="enable_rate_caching"
+                       {% if method_data.enable_rate_caching or method_data.enable_rate_caching is None %}checked{% endif %}>
+                {% trans "Enable Rate Caching" %}
+            </label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Cache carrier rates for 15 minutes to improve performance and reduce API calls" %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Table Rate Configuration Note (Only for table_rate) -->
+    {% if method_data.method_type == 'table_rate' %}
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-table"></i> {% trans "Rate Table Configuration" %}
+        </h3>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Table Rates:" %}</strong>
+                {% trans "You'll be able to configure tiered rates based on weight, price, or destination after the method is created." %}
+            </div>
+        </div>
+
+        <p class="help-text">
+            <i class="fas fa-arrow-right"></i>
+            {% trans "Rate tables can be managed from the method's edit page after creation." %}
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Delivery Time Estimates (All types except local_pickup) -->
+    {% if method_data.method_type != 'local_pickup' %}
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-clock"></i> {% trans "Delivery Time Estimate" %}
+        </h3>
+        <p class="help-text">
+            <i class="fas fa-info-circle"></i>
+            {% trans "Provide customers with an estimated delivery timeframe." %}
+        </p>
+
+        <div class="form-row">
+            <!-- Minimum Delivery Days -->
+            <div class="form-group">
+                <label for="id_min_delivery_days">
+                    {% trans "Minimum Delivery Days" %} <span class="required">*</span>
+                </label>
+                <input type="number"
+                       id="id_min_delivery_days"
+                       name="min_delivery_days"
+                       class="form-control"
+                       value="{{ method_data.min_delivery_days|default:'1' }}"
+                       min="0"
+                       required>
+                <p class="help-text">
+                    {% trans "Fastest delivery time in business days" %}
+                </p>
+            </div>
+
+            <!-- Maximum Delivery Days -->
+            <div class="form-group">
+                <label for="id_max_delivery_days">
+                    {% trans "Maximum Delivery Days" %} <span class="required">*</span>
+                </label>
+                <input type="number"
+                       id="id_max_delivery_days"
+                       name="max_delivery_days"
+                       class="form-control"
+                       value="{{ method_data.max_delivery_days|default:'5' }}"
+                       min="1"
+                       required>
+                <p class="help-text">
+                    {% trans "Slowest delivery time in business days" %}
+                </p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Examples:" %}</strong>
+                <ul>
+                    <li>{% trans "Standard shipping: 3-5 business days" %}</li>
+                    <li>{% trans "Express shipping: 1-2 business days" %}</li>
+                    <li>{% trans "International shipping: 7-14 business days" %}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Local Pickup - No delivery time needed -->
+    <input type="hidden" name="min_delivery_days" value="0">
+    <input type="hidden" name="max_delivery_days" value="0">
+    {% endif %}
+
+    <!-- Display Settings (All types) -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-sort"></i> {% trans "Display Settings" %}
+        </h3>
+
+        <div class="form-group">
+            <label for="id_sort_order">
+                {% trans "Sort Order" %} <span class="required">*</span>
+            </label>
+            <input type="number"
+                   id="id_sort_order"
+                   name="sort_order"
+                   class="form-control"
+                   value="{{ method_data.sort_order|default:'0' }}"
+                   min="0"
+                   required>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Lower numbers appear first. Use this to control the order methods are displayed to customers." %}
+            </p>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Tip:" %}</strong>
+                {% trans "Assign sort orders in increments of 10 (0, 10, 20) to allow easy insertion of new methods between existing ones." %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'cart:method_wizard_step3' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="method-features-form" class="btn btn-primary">
+        {% trans "Review & Create" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script type="application/json" id="cart-wizard-step4-data">
+{
+    "translations": {
+        "apiVerified": "{% trans 'API credentials verified successfully' %}"
+    }
+}
+</script>
+<script src="{% static 'cart/js/wizard_step4.js' %}"></script>
+{% endblock %}

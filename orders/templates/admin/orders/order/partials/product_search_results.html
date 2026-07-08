@@ -1,0 +1,61 @@
+{% load i18n %}
+{% if results %}
+    <div class="product-results-list">
+        {% for result in results %}
+            <div class="product-result-item"
+                 data-product-id="{{ result.product_id }}"
+                 data-variant-id="{{ result.variant_id|default:'' }}"
+                 data-price="{{ result.price }}"
+                 data-track-inventory="{{ result.track_inventory }}"
+                 data-available-stock="{{ result.available_stock|default:'' }}">
+                <div class="product-image">
+                    {% if result.image %}
+                        <img src="{{ result.image }}" alt="{{ result.name }}">
+                    {% else %}
+                        <div class="no-image"><i class="fas fa-box"></i></div>
+                    {% endif %}
+                </div>
+
+                <div class="product-info">
+                    <div class="product-name">{{ result.name }}</div>
+                    <div class="product-sku">{% trans "SKU:" %} {{ result.sku }}</div>
+
+                    {# Stock information #}
+                    {% if result.track_inventory %}
+                        {% if result.available_stock == 0 %}
+                            <div class="stock-badge out-of-stock">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                {% trans "Out of Stock" %}
+                            </div>
+                        {% elif result.available_stock and result.available_stock <= 5 %}
+                            <div class="stock-badge low-stock">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% trans "Low Stock:" %} {{ result.available_stock }}
+                            </div>
+                        {% else %}
+                            <div class="stock-badge in-stock">
+                                <i class="fas fa-check-circle"></i>
+                                {% trans "In Stock:" %} {{ result.available_stock }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="product-price">
+                    {{ result.price }}
+                </div>
+
+                <div class="product-actions">
+                    <button type="button" class="btn btn-sm btn-primary btn-select-product" data-id="{{ result.id }}">
+                        {% trans "Add" %}
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="no-results">
+        <i class="fas fa-search"></i>
+        <p>{% trans "No products found matching" %} "{{ search_term }}"</p>
+    </div>
+{% endif %}

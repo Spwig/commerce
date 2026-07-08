@@ -1,0 +1,43 @@
+{% load i18n %}
+{% if setup_progress %}
+<div class="admin-modal-overlay" id="setup-wizard-overlay"
+     data-auto-open="{% if setup_auto_open %}true{% else %}false{% endif %}">
+    <div class="admin-modal admin-modal--lg">
+
+        {# Header #}
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title">
+                <i class="fas fa-rocket"></i>
+                {% trans "Store Setup" %}
+            </h2>
+
+            <div class="wizard-step-indicators">
+                {% for group in setup_groups %}
+                <button type="button"
+                        class="wizard-step-dot{% if group.completed %} completed{% endif %}"
+                        title="{{ group.title }}"
+                        data-group="{{ group.key }}"></button>
+                {% endfor %}
+            </div>
+
+            <button type="button" class="admin-modal-close" aria-label="{% trans 'Close' %}">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        {# Body (populated via AJAX) #}
+        <div class="admin-modal-body wizard-modal-body">
+            <div class="wizard-loading">
+                <div class="wizard-spinner"></div>
+            </div>
+        </div>
+
+        {# Footer #}
+        <div class="admin-modal-footer wizard-modal-footer">
+            <div class="wizard-nav-left"></div>
+            <div class="wizard-nav-right"></div>
+        </div>
+
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,41 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Messages stats grid - compact version */
+.messages-stats-grid {
+    margin-bottom: 20px;
+}
+
+/* Unread message card emphasis */
+.list-row-card.message-unread {
+    border-left: 3px solid var(--warning-fg);
+}
+
+.list-row-card.message-unread .list-row-card-icon {
+    color: var(--warning-fg);
+}
+
+/* Message preview text */
+.message-preview {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Empty state refinement */
+.card-empty-state-subtitle {
+    font-size: 14px;
+    margin-top: 8px;
+    color: var(--body-quiet-color);
+}
+
+@media (max-width: 768px) {
+    .messages-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

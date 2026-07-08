@@ -1,0 +1,71 @@
+{% load i18n %}
+{# Rule Card Template - Rendered via JavaScript #}
+{# This template shows the structure; actual rendering is done in JS #}
+
+<div class="rule-card" data-rule-id="{{ rule.id }}" data-rule-type="{{ rule.rule_type }}">
+    <div class="rule-card-drag-handle">
+        <i class="fas fa-grip-vertical"></i>
+    </div>
+
+    <div class="rule-card-content">
+        <div class="rule-card-header">
+            <div class="rule-card-icon">
+                {% if rule.rule_type|slice:":3" == "geo" %}
+                    <i class="fas fa-globe"></i>
+                {% elif rule.rule_type|slice:":4" == "user" %}
+                    <i class="fas fa-user"></i>
+                {% elif rule.rule_type|slice:":6" == "device" %}
+                    <i class="fas fa-mobile-alt"></i>
+                {% elif rule.rule_type in "date_range,time_range,day_of_week,business_hours" %}
+                    <i class="fas fa-clock"></i>
+                {% elif rule.rule_type in "cart_value,cart_items,has_purchased,abandoned_cart,wishlist_items" %}
+                    <i class="fas fa-shopping-cart"></i>
+                {% else %}
+                    <i class="fas fa-filter"></i>
+                {% endif %}
+            </div>
+            <div class="rule-card-title">
+                <span class="rule-name">{{ rule.name }}</span>
+                <span class="rule-type-badge">{{ rule.get_rule_type_display }}</span>
+            </div>
+        </div>
+
+        <div class="rule-card-condition">
+            <span class="condition-type">{{ rule.get_rule_type_display }}</span>
+            <span class="condition-operator operator-{{ rule.operator }}">{{ rule.get_operator_display }}</span>
+            <span class="condition-value">
+                {% if rule.value.display %}
+                    {{ rule.value.display }}
+                {% elif rule.value.values %}
+                    {{ rule.value.values|join:", " }}
+                {% else %}
+                    {{ rule.value }}
+                {% endif %}
+            </span>
+        </div>
+
+        {% if rule.description %}
+        <div class="rule-card-description">
+            {{ rule.description|truncatewords:15 }}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="rule-card-actions">
+        <button class="rule-card-action" data-action="toggle" title="{% if rule.is_active %}{% trans 'Disable Rule' %}{% else %}{% trans 'Enable Rule' %}{% endif %}">
+            <i class="fas {% if rule.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+        </button>
+        <button class="rule-card-action" data-action="edit" title="{% trans 'Edit Rule' %}">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button class="rule-card-action rule-card-action-danger" data-action="delete" title="{% trans 'Remove Rule' %}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    {% if not rule.is_active %}
+    <div class="rule-card-disabled-overlay">
+        <span>{% trans "Disabled" %}</span>
+    </div>
+    {% endif %}
+</div>

@@ -1,0 +1,192 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for rule in rules %}
+    <div class="list-row-card{% if not rule.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ rule.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if rule.rule_type|slice:":3" == "geo" %}
+                <i class="fas fa-globe text-primary icon-size-32"></i>
+            {% elif rule.rule_type|slice:":4" == "user" %}
+                <i class="fas fa-user text-primary icon-size-32"></i>
+            {% elif rule.rule_type == "device_type" or rule.rule_type == "screen_size" %}
+                <i class="fas fa-desktop text-primary icon-size-32"></i>
+            {% elif rule.rule_type == "browser" or rule.rule_type == "operating_system" or rule.rule_type == "connection_speed" %}
+                <i class="fas fa-laptop text-primary icon-size-32"></i>
+            {% elif rule.rule_type|slice:":4" == "date" or rule.rule_type|slice:":4" == "time" or rule.rule_type == "day_of_week" or rule.rule_type == "business_hours" %}
+                <i class="fas fa-clock text-primary icon-size-32"></i>
+            {% elif rule.rule_type == "first_visit" or rule.rule_type == "visit_count" or rule.rule_type == "page_views" or rule.rule_type == "time_on_site" or rule.rule_type == "referrer" or rule.rule_type == "utm_campaign" %}
+                <i class="fas fa-chart-line text-primary icon-size-32"></i>
+            {% elif rule.rule_type|slice:":4" == "cart" or rule.rule_type == "has_purchased" or rule.rule_type == "abandoned_cart" or rule.rule_type == "wishlist_items" %}
+                <i class="fas fa-shopping-cart text-primary icon-size-32"></i>
+            {% elif rule.rule_type|slice:":8" == "browser_" or rule.rule_type|slice:":9" == "selected_" %}
+                <i class="fas fa-language text-primary icon-size-32"></i>
+            {% else %}
+                <i class="fas fa-filter text-primary icon-size-32"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:page_builder_visibilityrule_change' rule.pk %}">
+                    {{ rule.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-cog"></i> {{ rule.get_rule_type_display }}
+                &nbsp;&bull;&nbsp;
+                <i class="fas fa-equals"></i> {{ rule.get_operator_display }}
+            </p>
+
+            <div class="list-row-card-badges">
+                {% if rule.is_active %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <!-- Rule Type Category Badge -->
+                {% if rule.rule_type|slice:":3" == "geo" %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-globe"></i> {% trans "Geographic" %}
+                    </span>
+                {% elif rule.rule_type|slice:":4" == "user" %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-user"></i> {% trans "User" %}
+                    </span>
+                {% elif rule.rule_type == "device_type" or rule.rule_type == "browser" or rule.rule_type == "operating_system" or rule.rule_type == "screen_size" or rule.rule_type == "connection_speed" %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-desktop"></i> {% trans "Device" %}
+                    </span>
+                {% elif rule.rule_type|slice:":4" == "date" or rule.rule_type|slice:":4" == "time" or rule.rule_type == "day_of_week" or rule.rule_type == "business_hours" %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-clock"></i> {% trans "Time" %}
+                    </span>
+                {% elif rule.rule_type == "first_visit" or rule.rule_type == "visit_count" or rule.rule_type == "page_views" or rule.rule_type == "time_on_site" or rule.rule_type == "referrer" or rule.rule_type == "utm_campaign" %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-chart-line"></i> {% trans "Behavioral" %}
+                    </span>
+                {% elif rule.rule_type|slice:":4" == "cart" or rule.rule_type == "has_purchased" or rule.rule_type == "abandoned_cart" or rule.rule_type == "wishlist_items" %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-shopping-cart"></i> {% trans "E-commerce" %}
+                    </span>
+                {% elif rule.rule_type == "browser_language" or rule.rule_type == "selected_language" or rule.rule_type == "selected_currency" %}
+                    <span class="list-row-card-badge list-row-card-badge-info">
+                        <i class="fas fa-language"></i> {% trans "Language" %}
+                    </span>
+                {% endif %}
+
+                <!-- Priority Badge -->
+                {% if rule.priority <= 3 %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-arrow-up"></i> {% trans "High Priority" %}
+                    </span>
+                {% elif rule.priority >= 8 %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-arrow-down"></i> {% trans "Low Priority" %}
+                    </span>
+                {% endif %}
+
+                <!-- Cache Badge -->
+                {% if rule.cache_duration > 0 %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-database"></i> {% trans "Cached" %} {{ rule.cache_duration }}s
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if rule.description %}
+            <div class="list-row-card-description">
+                {{ rule.description|truncatewords:20 }}
+            </div>
+            {% endif %}
+
+            <!-- Value Display -->
+            {% if rule.value %}
+            <div class="list-row-card-meta info-box-value">
+                <span class="info-box-label">{% trans "Value:" %}</span>
+                <code class="info-box-code">{{ rule.value|truncatechars:60 }}</code>
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Priority" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-600">
+                        {{ rule.priority }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Cache" %}</span>
+                    <span class="list-row-card-stat-value">{{ rule.cache_duration }}s</span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ rule.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ rule.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:page_builder_visibilityrule_change' rule.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit rule' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if rule.is_active %}
+            <button type="button"
+               class="list-row-card-action"
+               data-action="toggle-rule-status"
+               data-pk="{{ rule.pk }}"
+               data-activate="false"
+               title="{% trans 'Deactivate rule' %}">
+                <i class="fas fa-toggle-on"></i>
+            </button>
+            {% else %}
+            <button type="button"
+               class="list-row-card-action"
+               data-action="toggle-rule-status"
+               data-pk="{{ rule.pk }}"
+               data-activate="true"
+               title="{% trans 'Activate rule' %}">
+                <i class="fas fa-toggle-off"></i>
+            </button>
+            {% endif %}
+            <a href="{% url 'admin:page_builder_visibilityrule_delete' rule.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete rule' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-filter"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No visibility rules found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or create a new rule." %}
+        </p>
+        <a href="{% url 'admin:page_builder_visibilityrule_add' %}" class="button mt-16">
+            <i class="fas fa-plus"></i> {% trans "Create Rule" %}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+

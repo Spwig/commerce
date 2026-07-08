@@ -1,0 +1,646 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Custom Fields Management Page & Admin Tab Styles
+   All management page selectors scoped under .cf-management */
+
+/* ═══════════════════════════════════════════
+   Utility Classes
+   ═══════════════════════════════════════════ */
+
+.cf-hidden {
+    display: none !important;
+}
+
+/* ═══════════════════════════════════════════
+   Management Page — Tab badge
+   ═══════════════════════════════════════════ */
+
+.cf-management .tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--primary, #417690);
+    color: #fff;
+    margin-left: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   Tab panel
+   ═══════════════════════════════════════════ */
+
+.cf-management .tab-panel {
+    display: none;
+}
+
+.cf-management .tab-panel.active {
+    display: block;
+}
+
+.cf-management .tab-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.cf-management .tab-panel-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ═══════════════════════════════════════════
+   Field Group Cards
+   ═══════════════════════════════════════════ */
+
+.cf-management .field-group-card {
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--hairline-color, #ddd);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.cf-management .field-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--darkened-bg, #f8f8f8);
+    border-bottom: 1px solid var(--hairline-color, #ddd);
+}
+
+.cf-management .field-group-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cf-management .field-group-header-left h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.cf-management .field-group-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   Field Rows
+   ═══════════════════════════════════════════ */
+
+.cf-management .field-list {
+    padding: 0;
+}
+
+.cf-management .field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--hairline-color, #eee);
+    transition: background-color 0.15s ease;
+}
+
+.cf-management .field-row:last-child {
+    border-bottom: none;
+}
+
+.cf-management .field-row:hover {
+    background: var(--darkened-bg, #f8f8f8);
+}
+
+.cf-management .field-row-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.cf-management .field-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cf-management .field-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.cf-management .field-slug {
+    font-size: 0.75rem;
+    color: var(--body-quiet-color, #999);
+    font-family: monospace;
+}
+
+.cf-management .field-row-center {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+}
+
+.cf-management .field-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--darkened-bg, #eee);
+    color: var(--body-fg, #333);
+}
+
+.cf-management .field-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cf-management .field-list-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    color: var(--body-quiet-color, #999);
+}
+
+.cf-management .field-list-empty i {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   Badges
+   ═══════════════════════════════════════════ */
+
+.cf-management .cf-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.cf-management .cf-badge-info {
+    background: var(--selected-bg, #e3f2fd);
+    color: var(--link-fg, #1565c0);
+}
+
+.cf-management .cf-badge-warning {
+    background: var(--message-warning-bg, #fff3e0);
+    color: var(--body-fg, #e65100);
+}
+
+.cf-management .cf-badge-primary {
+    background: var(--darkened-bg, #e8eaf6);
+    color: var(--primary, #283593);
+}
+
+/* ═══════════════════════════════════════════
+   Buttons
+   ═══════════════════════════════════════════ */
+
+.cf-management .cf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid var(--hairline-color, #ddd);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+    transition: all 0.15s ease;
+}
+
+.cf-management .cf-btn:hover {
+    background: var(--darkened-bg, #f0f0f0);
+}
+
+.cf-management .cf-btn-primary {
+    background: var(--primary, #417690);
+    color: #fff;
+    border-color: var(--primary, #417690);
+}
+
+.cf-management .cf-btn-primary:hover {
+    opacity: 0.9;
+}
+
+.cf-management .cf-btn-secondary {
+    background: var(--body-bg, #fff);
+}
+
+.cf-management .cf-btn-sm {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+}
+
+.cf-management .cf-btn-icon {
+    padding: 6px 8px;
+    border: none;
+    background: transparent;
+    color: var(--body-quiet-color, #999);
+}
+
+.cf-management .cf-btn-icon:hover {
+    color: var(--body-fg, #333);
+    background: var(--darkened-bg, #f0f0f0);
+}
+
+.cf-management .cf-btn-delete-group:hover,
+.cf-management .cf-btn-delete-field:hover {
+    color: var(--delete-button-bg, #ba2121);
+}
+
+.cf-management .cf-btn-add-choice {
+    margin-top: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   Empty State
+   ═══════════════════════════════════════════ */
+
+.cf-management .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.cf-management .empty-state-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--darkened-bg, #f0f0f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.cf-management .empty-state-icon i {
+    font-size: 1.5rem;
+    color: var(--body-quiet-color, #999);
+}
+
+.cf-management .empty-state h3 {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+}
+
+.cf-management .empty-state p {
+    color: var(--body-quiet-color, #666);
+    margin: 0 0 16px;
+}
+
+/* ═══════════════════════════════════════════
+   Recycle Bin Link
+   ═══════════════════════════════════════════ */
+
+.cf-management .cf-recycle-bin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--body-quiet-color, #999);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.cf-management .cf-recycle-bin-link:hover {
+    color: var(--body-fg, #333);
+}
+
+.cf-management .cf-recycle-bin-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--delete-button-bg, #ba2121);
+    color: #fff;
+}
+
+/* ═══════════════════════════════════════════
+   Modals
+   ═══════════════════════════════════════════ */
+
+.cf-management .cf-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.cf-management .cf-modal-dialog {
+    background: var(--body-bg, #fff);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.cf-management .cf-modal-dialog.cf-modal-lg {
+    max-width: 650px;
+}
+
+.cf-management .cf-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--hairline-color, #ddd);
+}
+
+.cf-management .cf-modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.cf-management .cf-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--body-quiet-color, #999);
+    padding: 0;
+    line-height: 1;
+}
+
+.cf-management .cf-modal-close:hover {
+    color: var(--body-fg, #333);
+}
+
+.cf-management .cf-modal-body {
+    padding: 20px;
+}
+
+.cf-management .cf-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--hairline-color, #ddd);
+}
+
+/* ═══════════════════════════════════════════
+   Form Elements in Modals
+   ═══════════════════════════════════════════ */
+
+.cf-management .cf-form-group {
+    margin-bottom: 16px;
+}
+
+.cf-management .cf-form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+}
+
+.cf-management .cf-form-group label .required {
+    color: var(--delete-button-bg, #ba2121);
+}
+
+.cf-management .cf-form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--hairline-color, #ccc);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+    box-sizing: border-box;
+}
+
+.cf-management .cf-form-control:focus {
+    outline: none;
+    border-color: var(--primary, #417690);
+    box-shadow: 0 0 0 2px rgba(65, 118, 144, 0.15);
+}
+
+.cf-management .cf-form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.cf-management .cf-form-row-3col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+}
+
+.cf-management .cf-form-group-row {
+    display: flex;
+    gap: 20px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.cf-management .cf-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 400 !important;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.cf-management .cf-help-text {
+    font-size: 0.8rem;
+    color: var(--body-quiet-color, #999);
+    margin: 4px 0 0;
+}
+
+/* Choices editor */
+.cf-management .cf-choices-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cf-management .cf-choice-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cf-management .cf-choice-row input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid var(--hairline-color, #ccc);
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.cf-management .cf-choice-row .cf-btn-remove-choice {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--body-quiet-color, #999);
+    padding: 4px;
+}
+
+.cf-management .cf-choice-row .cf-btn-remove-choice:hover {
+    color: var(--delete-button-bg, #ba2121);
+}
+
+/* ═══════════════════════════════════════════
+   Custom Fields Tab in Change Forms
+   (Not scoped under .cf-management — used in model admin forms)
+   ═══════════════════════════════════════════ */
+
+.custom-fields-tab-content {
+    padding: 0;
+}
+
+.custom-field-group {
+    margin-bottom: 16px;
+    border: 1px solid var(--hairline-color, #ddd);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.custom-field-group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: var(--darkened-bg, #f8f8f8);
+    border-bottom: 1px solid var(--hairline-color, #ddd);
+}
+
+.custom-field-row {
+    padding: 10px 16px !important;
+}
+
+.custom-field-row label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.translatable-indicator {
+    color: var(--primary, #417690);
+    font-size: 0.85em;
+}
+
+.color-field-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-field-wrapper input[type="color"] {
+    width: 40px;
+    height: 32px;
+    border: 1px solid var(--hairline-color, #ccc);
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.color-hex-display {
+    width: 100px;
+    padding: 6px 10px;
+    border: 1px solid var(--hairline-color, #ccc);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.custom-fields-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--body-quiet-color, #999);
+}
+
+.custom-fields-empty a {
+    color: var(--primary, #417690);
+}
+
+/* ═══════════════════════════════════════════
+   Dark Theme Support
+   ═══════════════════════════════════════════ */
+
+[data-theme="dark"] .cf-management .cf-badge-info {
+    background: rgba(21, 101, 192, 0.2);
+    color: #64b5f6;
+}
+
+[data-theme="dark"] .cf-management .cf-badge-warning {
+    background: rgba(230, 81, 0, 0.2);
+    color: #ffb74d;
+}
+
+[data-theme="dark"] .cf-management .cf-badge-primary {
+    background: rgba(40, 53, 147, 0.2);
+    color: #9fa8da;
+}
+
+[data-theme="dark"] .cf-management .cf-modal-dialog {
+    background: var(--body-bg, #1a1a2e);
+}
+
+/* ═══════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .cf-management .field-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .cf-management .field-row-center {
+        padding: 0;
+        order: 3;
+        width: 100%;
+    }
+
+    .cf-management .cf-form-row-2col,
+    .cf-management .cf-form-row-3col {
+        grid-template-columns: 1fr;
+    }
+
+    .cf-management .cf-form-group-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

@@ -1,0 +1,123 @@
+{% extends "page_builder/category/_base.html" %}
+{% load i18n static merchant_trans currency_tags %}
+
+{% block template_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/category-list.css' %}">
+{% endblock %}
+
+{% block product_display %}
+<div class="cat-list-products">
+    {% for product in products %}
+    <article class="cat-list-row{% if template_options.image_position == 'right' %} cat-list-row--img-right{% endif %}"
+             data-product-id="{{ product.id }}"
+             data-product-type="{{ product.product_type }}"
+             data-product-slug="{{ product.slug }}">
+
+        {# --- Image Section with badge overlay --- #}
+        <div class="cat-list-row__image">
+            <a href="{{ product.get_absolute_url }}" class="cat-list-row__image-link"
+               aria-label="{{ product.name }}">
+                {% if product.primary_image_listing_url %}
+                <img src="{{ product.primary_image_listing_url }}"
+                     alt="{{ product.name }}"
+                     class="cat-list-row__img"
+                     loading="lazy"
+                     width="400" height="400">
+                {% else %}
+                <div class="cat-list-row__placeholder"><i class="fas fa-box"></i></div>
+                {% endif %}
+            </a>
+
+            {# Badge overlay #}
+            <div class="product-card__badges">
+                {% if not product.is_in_stock %}
+                <span class="product-card__badge product-card__badge--soldout">{% mtrans "Sold Out" %}</span>
+                {% elif product.is_on_sale %}
+                <span class="product-card__badge product-card__badge--sale">{% mtrans "Sale" %}</span>
+                {% endif %}
+                {% if product.product_type == 'bundle' %}
+                <span class="product-card__badge product-card__badge--bundle">{% mtrans "Bundle" %}</span>
+                {% endif %}
+            </div>
+
+            {# Hover overlay #}
+            <div class="cat-list-row__overlay"></div>
+        </div>
+
+        {# --- Info Section --- #}
+        <div class="cat-list-row__info">
+            <h3 class="cat-list-row__title">
+                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+            </h3>
+
+            {% if template_options.show_short_description and product.short_description %}
+            <p class="cat-list-row__desc">{{ product.short_description|striptags|truncatewords:30 }}</p>
+            {% endif %}
+
+            {# Price with proper multi-currency support #}
+            <div class="cat-list-row__price">
+                {% if product.is_on_sale %}
+                <span class="cat-list-row__price-current cat-list-row__price-current--sale">
+                    {{ product|product_price:current_currency.code }}
+                </span>
+                <span class="cat-list-row__price-original">
+                    {{ product|product_compare_price:current_currency.code }}
+                </span>
+                {% else %}
+                <span class="cat-list-row__price-current">
+                    {{ product|product_price:current_currency.code }}
+                </span>
+                {% endif %}
+            </div>
+
+            {# --- Action Buttons --- #}
+            <div class="cat-list-row__actions">
+                {# Wishlist button - reuses product-card class for JS binding #}
+                <button class="product-card__action-btn product-card__action-btn--wishlist cat-list-row__wishlist-btn"
+                        data-product-id="{{ product.id }}"
+                        aria-label="{% mtrans 'Add to wishlist' %}"
+                        type="button">
+                    <i class="far fa-heart"></i>
+                </button>
+
+                {# Product type-specific action button #}
+                {% if product.product_type == 'simple' or product.product_type == 'digital' %}
+                <button class="product-card__add-btn cat-list-row__cart-btn"
+                        data-product-id="{{ product.id }}"
+                        type="button"
+                        {% if not product.is_in_stock and not product.allow_backorders %}disabled{% endif %}>
+                    {% if product.is_in_stock or product.allow_backorders %}
+                    <span class="spinner"></span>
+                    <span class="btn-text">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% mtrans "Add to Cart" %}
+                    </span>
+                    {% else %}
+                    <span class="btn-text">{% mtrans "Sold Out" %}</span>
+                    {% endif %}
+                </button>
+                {% elif product.product_type == 'variable' %}
+                <button class="product-card__quickview-btn cat-list-row__quickview-btn"
+                        data-product-slug="{{ product.slug }}"
+                        type="button">
+                    <i class="fas fa-eye"></i>
+                    <span>{% mtrans "Quick View" %}</span>
+                </button>
+                {% else %}
+                <a href="{{ product.get_absolute_url }}"
+                   class="product-card__options-link cat-list-row__options-btn">
+                    <span>{% mtrans "View Options" %}</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="cat-list-empty">
+        <i class="fas fa-box-open"></i>
+        <p>{% mtrans 'No products in this category yet.' %}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Payment Transactions" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+    <script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-credit-card"></i>
+            {% trans "Payment Transactions" %}
+        </h1>
+        <p class="subtitle">{% trans "View and track all payment transactions" %}</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-card">
+        <h3><i class="fas fa-chart-bar"></i> {% trans "Overview" %}</h3>
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-credit-card"></i></div>
+                <div class="value">{{ total_transactions|default:"0" }}</div>
+                <div class="label">{% trans "Total Transactions" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="value">{{ successful_count|default:"0" }}</div>
+                <div class="label">{% trans "Successful" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-times-circle"></i></div>
+                <div class="value">{{ failed_count|default:"0" }}</div>
+                <div class="label">{% trans "Failed" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <div class="value">{{ refunded_count|default:"0" }}</div>
+                <div class="label">{% trans "Refunded" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Transaction ID" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Search by transaction ID...' %}">
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-info-circle"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Transaction Type -->
+            <div class="filter-field">
+                <label for="filter-type">
+                    <i class="fas fa-exchange-alt"></i> {% trans "Type" %}
+                </label>
+                <select id="filter-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for value, label in type_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Provider Account -->
+            <div class="filter-field">
+                <label for="filter-provider">
+                    <i class="fas fa-plug"></i> {% trans "Provider" %}
+                </label>
+                <select id="filter-provider">
+                    <option value="">{% trans "All Providers" %}</option>
+                    {% for acct in provider_accounts %}
+                    <option value="{{ acct.pk }}">{{ acct.display_name|default:acct.component.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Transactions" %}</h2>
+        <span class="results-count" id="results-count-info">
+            <i class="fas fa-credit-card"></i>
+            <span id="results-count">{{ total_transactions|default:"0" }}</span> {% trans "entries" %}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="transaction-results">
+        <div class="list-row-cards">
+            <div class="list-row-card loading-state">
+                <i class="fas fa-spinner fa-spin icon-size-24 mb-12"></i>
+                <p class="m-0">{% trans "Loading transactions..." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="list-filter-config"
+     class="pp-hidden"
+     data-filter-url="{% url 'payment_providers:transactions_filter' %}"
+     data-results-container="transaction-results"
+     data-results-count="results-count"></div>
+</div>
+{% endblock %}

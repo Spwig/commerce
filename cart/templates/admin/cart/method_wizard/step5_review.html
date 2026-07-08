@@ -1,0 +1,245 @@
+{% extends "admin/cart/method_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-check-circle"></i> {% trans "Review & Create" %}
+</div>
+<p class="step-description">
+    {% trans "Review your shipping method configuration and create it." %}
+</p>
+
+<form method="post" id="method-review-form">
+    {% csrf_token %}
+
+    <!-- Method Basics Summary -->
+    <div class="review-section">
+        <div class="review-header">
+            <h3><i class="fas fa-info-circle"></i> {% trans "Method Basics" %}</h3>
+            <a href="{% url 'cart:method_wizard_step1' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-edit"></i> {% trans "Edit" %}
+            </a>
+        </div>
+        <div class="review-content">
+            <div class="review-grid">
+                <div class="review-item">
+                    <span class="review-label">{% trans "Name:" %}</span>
+                    <span class="review-value">{{ method_data.name }}</span>
+                </div>
+                <div class="review-item">
+                    <span class="review-label">{% trans "Method Type:" %}</span>
+                    <span class="review-value">
+                        <span class="method-type-badge {{ method_data.method_type }}">
+                            {{ method_data.method_type|title }}
+                        </span>
+                    </span>
+                </div>
+                {% if method_data.description %}
+                <div class="review-item full-width">
+                    <span class="review-label">{% trans "Description:" %}</span>
+                    <span class="review-value">{{ method_data.description }}</span>
+                </div>
+                {% endif %}
+                {% if method_image %}
+                <div class="review-item">
+                    <span class="review-label">{% trans "Display Icon:" %}</span>
+                    <span class="review-value">
+                        <img src="{{ method_image_url }}" alt="{{ method_image.title }}">
+                        <span class="review-image-label">{% trans "Custom Image" %}</span>
+                    </span>
+                </div>
+                {% elif method_data.icon %}
+                <div class="review-item">
+                    <span class="review-label">{% trans "Display Icon:" %}</span>
+                    <span class="review-value"><i class="fas {{ method_data.icon }}"></i> {{ method_data.icon }}</span>
+                </div>
+                {% endif %}
+                <div class="review-item">
+                    <span class="review-label">{% trans "Status:" %}</span>
+                    <span class="review-value">
+                        {% if method_data.is_active %}
+                            <span class="status-badge status-active">
+                                <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-inactive">
+                                <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                            </span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% if method_data.flat_rate_cost %}
+                <div class="review-item">
+                    <span class="review-label">{% trans "Flat Rate Cost:" %}</span>
+                    <span class="review-value cost-highlight">{{ method_data.flat_rate_cost }}</span>
+                </div>
+                {% endif %}
+                {% if method_data.carrier %}
+                <div class="review-item">
+                    <span class="review-label">{% trans "Carrier:" %}</span>
+                    <span class="review-value">
+                        {{ method_data.carrier|upper }}
+                        {% if method_data.carrier_service_code %}({{ method_data.carrier_service_code }}){% endif %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Options Summary -->
+    <div class="review-section">
+        <div class="review-header">
+            <h3><i class="fas fa-cog"></i> {% trans "Additional Options" %}</h3>
+            <a href="{% url 'cart:method_wizard_step2' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-edit"></i> {% trans "Edit" %}
+            </a>
+        </div>
+        <div class="review-content">
+            <div class="review-grid">
+                <div class="review-item">
+                    <span class="review-label">{% trans "Requires Shipping Address:" %}</span>
+                    <span class="review-value">
+                        {% if method_data.requires_shipping_address %}
+                            <i class="fas fa-check review-icon-yes"></i> {% trans "Yes" %}
+                        {% else %}
+                            <i class="fas fa-times review-icon-no"></i> {% trans "No" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Geographic Coverage Summary -->
+    <div class="review-section">
+        <div class="review-header">
+            <h3><i class="fas fa-globe"></i> {% trans "Geographic Coverage" %}</h3>
+            <a href="{% url 'cart:method_wizard_step3' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-edit"></i> {% trans "Edit" %}
+            </a>
+        </div>
+        <div class="review-content">
+            <div class="review-grid">
+                {% if method_data.zones %}
+                <div class="review-item full-width">
+                    <span class="review-label">{% trans "Shipping Zones:" %}</span>
+                    <span class="review-value">
+                        <div class="zone-badges">
+                            {% for zone_id in method_data.zones %}
+                                {% for zone in all_zones %}
+                                    {% if zone.id|stringformat:"s" == zone_id %}
+                                        <span class="zone-badge">{{ zone.name }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </span>
+                </div>
+                {% else %}
+                <div class="review-item full-width">
+                    <span class="review-label">{% trans "Coverage:" %}</span>
+                    <span class="review-value">
+                        <i class="fas fa-globe-americas"></i> {% trans "Worldwide (No zones selected)" %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Method Features Summary -->
+    <div class="review-section">
+        <div class="review-header">
+            <h3><i class="fas fa-star"></i> {% trans "Method Features" %}</h3>
+            <a href="{% url 'cart:method_wizard_step4' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-edit"></i> {% trans "Edit" %}
+            </a>
+        </div>
+        <div class="review-content">
+            <div class="review-grid">
+                {% if method_data.method_type == 'local_pickup' %}
+                    {% if method_data.pickup_locations %}
+                    <div class="review-item full-width">
+                        <span class="review-label">{% trans "Pickup Locations:" %}</span>
+                        <span class="review-value">
+                            {{ method_data.pickup_locations|length }}
+                            {% trans "location" %}{% if method_data.pickup_locations|length != 1 %}s{% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    <div class="review-item">
+                        <span class="review-label">{% trans "Delivery Time:" %}</span>
+                        <span class="review-value">
+                            <i class="fas fa-bolt"></i> {% trans "Instant Pickup" %}
+                        </span>
+                    </div>
+                {% else %}
+                    <div class="review-item">
+                        <span class="review-label">{% trans "Delivery Estimate:" %}</span>
+                        <span class="review-value">
+                            {{ method_data.min_delivery_days }}-{{ method_data.max_delivery_days }}
+                            {% trans "business days" %}
+                        </span>
+                    </div>
+                {% endif %}
+
+                <div class="review-item">
+                    <span class="review-label">{% trans "Sort Order:" %}</span>
+                    <span class="review-value">{{ method_data.sort_order }}</span>
+                </div>
+
+                {% if method_data.method_type == 'real_time' and method_data.enable_rate_caching %}
+                <div class="review-item">
+                    <span class="review-label">{% trans "Rate Caching:" %}</span>
+                    <span class="review-value">
+                        <i class="fas fa-check review-icon-yes"></i> {% trans "Enabled" %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Note -->
+    <div class="info-box">
+        <i class="fas fa-lightbulb"></i>
+        <div>
+            <strong>{% trans "What happens next:" %}</strong>
+            <ul>
+                <li>{% trans "Your shipping method will be created with the settings above" %}</li>
+                {% if method_data.method_type == 'table_rate' %}
+                <li>{% trans "You'll be redirected to configure rate tables for this method" %}</li>
+                {% endif %}
+                {% if method_data.is_active %}
+                <li>{% trans "The method will be immediately available to customers (if eligibility conditions are met)" %}</li>
+                {% else %}
+                <li>{% trans "The method will be created as inactive - activate it when ready" %}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'cart:method_wizard_step4' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="method-review-form" class="btn btn-primary btn-large">
+        <i class="fas fa-check"></i> {% trans "Create Shipping Method" %}
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script type="application/json" id="cart-wizard-step5-data">
+{
+    "translations": {
+        "creating": "{% trans 'Creating...' %}"
+    }
+}
+</script>
+<script src="{% static 'cart/js/wizard_step5.js' %}"></script>
+{% endblock %}

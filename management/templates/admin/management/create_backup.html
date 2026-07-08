@@ -1,0 +1,78 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/create-backup.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:management_databasebackup_changelist' %}">{% trans 'Database backups' %}</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<div class="module aligned">
+    <h1>{{ title }}</h1>
+    
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        
+        <fieldset class="module">
+            <h2>{% trans 'Backup Configuration' %}</h2>
+            
+            <div class="form-row field-name">
+                <div>
+                    <label for="id_name" class="required">{% trans 'Backup Name:' %}</label>
+                    <input type="text" name="name" id="id_name" class="vTextField" required>
+                    <div class="help">{% trans 'A descriptive name for this backup' %}</div>
+                </div>
+            </div>
+            
+            <div class="form-row field-description">
+                <div>
+                    <label for="id_description">{% trans 'Description:' %}</label>
+                    <textarea name="description" id="id_description" class="vLargeTextField" rows="3"></textarea>
+                    <div class="help">{% trans 'Optional description of what this backup contains' %}</div>
+                </div>
+            </div>
+            
+            <div class="form-row field-backup_type">
+                <div>
+                    <label for="id_backup_type" class="required">{% trans 'Backup Type:' %}</label>
+                    <select name="backup_type" id="id_backup_type" class="vSelectField">
+                        <option value="full" selected>{% trans 'Full Database' %}</option>
+                        <option value="schema">{% trans 'Schema Only' %}</option>
+                        <option value="data">{% trans 'Data Only' %}</option>
+                    </select>
+                    <div class="help">{% trans 'Choose what to include in the backup' %}</div>
+                </div>
+            </div>
+            
+            <div class="form-row field-compression">
+                <div>
+                    <label for="id_compression" class="required">{% trans 'Compression:' %}</label>
+                    <select name="compression" id="id_compression" class="vSelectField">
+                        <option value="gzip" selected>{% trans 'Gzip' %}</option>
+                        <option value="none">{% trans 'None' %}</option>
+                    </select>
+                    <div class="help">{% trans 'Compression format for the backup file' %}</div>
+                </div>
+            </div>
+        </fieldset>
+        
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Create Backup' %}" class="default" name="_save">
+            <a href="{% url 'admin:management_databasebackup_changelist' %}" class="button cancel-link">{% trans 'Cancel' %}</a>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

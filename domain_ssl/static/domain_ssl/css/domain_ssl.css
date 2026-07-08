@@ -1,0 +1,297 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Domain & SSL Admin Tab Styles
+ * Wizard-style configuration UI within the Site Settings change form.
+ * Uses CSS variables from admin themes for consistency.
+ */
+
+/* ── Status Card ─────────────────────────────────────── */
+
+.domain-ssl-status {
+    min-height: 80px;
+}
+
+.domain-ssl-status-loading {
+    color: var(--body-quiet-color);
+    padding: var(--space-6, 15px) 0;
+}
+
+.domain-ssl-status-loading i {
+    margin-right: 8px;
+}
+
+.domain-ssl-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-6, 15px);
+}
+
+.domain-ssl-status-item {
+    padding: var(--space-4, 10px) var(--space-6, 15px);
+    background: var(--darkened-bg);
+    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--border-color);
+}
+
+.domain-ssl-status-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--body-quiet-color);
+    margin-bottom: 4px;
+}
+
+.domain-ssl-status-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--body-fg);
+    word-break: break-all;
+}
+
+.domain-ssl-status-value .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm, 4px);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.domain-ssl-status-value .status-badge.active {
+    background: var(--message-success-bg);
+    color: var(--success-fg);
+}
+
+.domain-ssl-status-value .status-badge.warning {
+    background: var(--message-warning-bg);
+    color: var(--warning-fg);
+}
+
+.domain-ssl-status-value .status-badge.none {
+    background: var(--hairline-color);
+    color: var(--body-quiet-color);
+}
+
+.domain-ssl-status-value .status-badge.error {
+    background: var(--message-error-bg, #fce4ec);
+    color: var(--error-fg, #c62828);
+}
+
+/* ── Steps ───────────────────────────────────────────── */
+
+.domain-ssl-step {
+    margin-bottom: var(--space-8, 20px);
+    padding-bottom: var(--space-6, 15px);
+    border-bottom: 1px solid var(--hairline-color);
+}
+
+.domain-ssl-step:last-of-type {
+    border-bottom: none;
+}
+
+.domain-ssl-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+/* ── SSL Mode Cards ──────────────────────────────────── */
+
+.domain-ssl-modes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4, 10px);
+}
+
+.domain-ssl-mode-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-6, 15px) var(--space-4, 10px);
+    background: var(--darkened-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md, 6px);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.domain-ssl-mode-card:hover {
+    border-color: var(--primary);
+}
+
+.domain-ssl-mode-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.domain-ssl-mode-card.selected,
+.domain-ssl-mode-card:has(input:checked) {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+    background: var(--selected-bg, var(--darkened-bg));
+}
+
+.domain-ssl-mode-icon {
+    font-size: 24px;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.domain-ssl-mode-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.domain-ssl-mode-desc {
+    font-size: 12px;
+    color: var(--body-quiet-color);
+    line-height: 1.4;
+}
+
+/* ── Conditional Steps ───────────────────────────────── */
+
+.domain-ssl-conditional {
+    display: none;
+}
+
+.domain-ssl-conditional.visible {
+    display: block;
+}
+
+/* ── DNS Result ──────────────────────────────────────── */
+
+.domain-ssl-dns-result {
+    margin-top: 8px;
+    font-size: 13px;
+    min-height: 20px;
+}
+
+.domain-ssl-dns-result .messagelist {
+    margin: 4px 0 0 !important;
+}
+
+.domain-ssl-dns-result .messagelist li i {
+    margin-right: 4px;
+}
+
+/* ── Actions ─────────────────────────────────────────── */
+
+.domain-ssl-actions {
+    padding-top: var(--space-6, 15px);
+}
+
+.domain-ssl-actions .button {
+    min-width: 200px;
+}
+
+.domain-ssl-actions .button i {
+    margin-right: 6px;
+}
+
+/* ── Progress ────────────────────────────────────────── */
+
+.domain-ssl-progress {
+    display: none;
+    margin-top: var(--space-6, 15px);
+    padding: var(--space-6, 15px);
+    background: var(--darkened-bg);
+    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--border-color);
+}
+
+.domain-ssl-progress.active {
+    display: block;
+}
+
+.domain-ssl-progress-bar {
+    height: 6px;
+    background: var(--hairline-color);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: var(--space-4, 10px);
+}
+
+.domain-ssl-progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 3px;
+    width: 0;
+    transition: width 0.5s ease;
+}
+
+.domain-ssl-progress-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+.domain-ssl-progress-status i {
+    color: var(--primary);
+}
+
+/* ── Result ──────────────────────────────────────────── */
+
+.domain-ssl-result {
+    display: none;
+    margin-top: var(--space-6, 15px);
+    padding: var(--space-6, 15px);
+    border-radius: var(--radius-md, 6px);
+    font-size: 14px;
+}
+
+.domain-ssl-result.visible {
+    display: block;
+}
+
+.domain-ssl-result.success {
+    background: var(--message-success-bg);
+    color: var(--success-fg);
+    border: 1px solid var(--success-fg);
+}
+
+.domain-ssl-result.error {
+    background: var(--message-error-bg, #fce4ec);
+    color: var(--error-fg, #c62828);
+    border: 1px solid var(--error-fg, #c62828);
+}
+
+.domain-ssl-result.warning {
+    background: var(--message-warning-bg, #fff3e0);
+    color: var(--warning-fg, #e65100);
+    border: 1px solid var(--warning-fg, #e65100);
+}
+
+.domain-ssl-result i {
+    margin-right: 6px;
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .domain-ssl-modes {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .domain-ssl-status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .domain-ssl-modes {
+        grid-template-columns: 1fr;
+    }
+}

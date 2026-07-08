@@ -1,0 +1,246 @@
+{% extends "admin/shipping/promotion_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-check-circle"></i> {% trans "Advanced Settings & Review" %}
+</div>
+<p class="step-description">
+    {% trans "Configure advanced options and review your promotion before creating it." %}
+</p>
+
+<form method="post" id="rule-review-form" class="credentials-form">
+    {% csrf_token %}
+
+    <!-- Advanced Settings -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-sliders-h"></i> {% trans "Advanced Settings" %}
+        </h3>
+
+        <!-- Priority -->
+        <div class="form-group">
+            <label for="id_priority">
+                {% trans "Priority" %} <span class="required">*</span>
+            </label>
+            <input type="number"
+                   id="id_priority"
+                   name="priority"
+                   class="form-control"
+                   value="{{ rule_data.priority|default:0 }}"
+                   required>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Promotions are evaluated in priority order. Higher numbers = higher priority (evaluated first)" %}
+            </p>
+            <div class="info-box">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>{% trans "Priority Guidelines:" %}</strong>
+                    <ul class="promotion-wizard-info-list">
+                        <li>{% trans "100+: Highest priority rules (very specific conditions)" %}</li>
+                        <li>{% trans "50-99: High priority rules (targeted promotions)" %}</li>
+                        <li>{% trans "0-49: Medium priority rules (standard discounts)" %}</li>
+                        <li>{% trans "Negative: Low priority rules (fallback/default rules)" %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stop Further Rules -->
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox"
+                       id="id_stop_further_promotions"
+                       name="stop_further_promotions"
+                       {% if rule_data.stop_further_promotions %}checked{% endif %}>
+                {% trans "Stop evaluating lower priority promotions" %}
+            </label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "If this promotion matches, don't evaluate any lower priority promotions" %}
+            </p>
+        </div>
+
+        <!-- Time Restrictions -->
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_start_date">{% trans "Start Date & Time" %}</label>
+                <input type="datetime-local"
+                       id="id_start_date"
+                       name="start_date"
+                       class="form-control"
+                       value="">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion is active starting from this date/time (optional)" %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="id_end_date">{% trans "End Date & Time" %}</label>
+                <input type="datetime-local"
+                       id="id_end_date"
+                       name="end_date"
+                       class="form-control"
+                       value="">
+                <p class="help-text">
+                    <i class="fas fa-info-circle"></i>
+                    {% trans "Promotion is active until this date/time (optional)" %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Summary -->
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-eye"></i> {% trans "Review Your Promotion" %}
+        </h3>
+
+        <div class="review-summary">
+            <!-- Rule Basics -->
+            <div class="review-section">
+                <h4><i class="fas fa-clipboard-list"></i> {% trans "Promotion Basics" %}</h4>
+                <dl>
+                    <dt>{% trans "Name:" %}</dt>
+                    <dd>{{ rule_data.name }}</dd>
+
+                    {% if rule_data.description %}
+                        <dt>{% trans "Description:" %}</dt>
+                        <dd>{{ rule_data.description }}</dd>
+                    {% endif %}
+
+                    <dt>{% trans "Type:" %}</dt>
+                    <dd>{{ rule_data.rule_type }}</dd>
+
+                    {% if rule_data.rule_value and rule_data.rule_type != 'free_shipping' %}
+                        <dt>{% trans "Value:" %}</dt>
+                        <dd>{{ rule_data.rule_value }}{% if 'percentage' in rule_data.rule_type %}%{% endif %}</dd>
+                    {% endif %}
+
+                    <dt>{% trans "Status:" %}</dt>
+                    <dd>{% if rule_data.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</dd>
+                </dl>
+            </div>
+
+            <!-- Cart Conditions -->
+            {% if rule_data.min_cart_value or rule_data.max_cart_value or rule_data.min_cart_weight or rule_data.max_cart_weight or rule_data.min_item_count or rule_data.max_item_count %}
+                <div class="review-section">
+                    <h4><i class="fas fa-shopping-cart"></i> {% trans "Cart Conditions" %}</h4>
+                    <dl>
+                        {% if rule_data.min_cart_value %}
+                            <dt>{% trans "Min Cart Value:" %}</dt>
+                            <dd>${{ rule_data.min_cart_value }}</dd>
+                        {% endif %}
+                        {% if rule_data.max_cart_value %}
+                            <dt>{% trans "Max Cart Value:" %}</dt>
+                            <dd>${{ rule_data.max_cart_value }}</dd>
+                        {% endif %}
+                        {% if rule_data.min_cart_weight %}
+                            <dt>{% trans "Min Weight:" %}</dt>
+                            <dd>{{ rule_data.min_cart_weight }} kg</dd>
+                        {% endif %}
+                        {% if rule_data.max_cart_weight %}
+                            <dt>{% trans "Max Weight:" %}</dt>
+                            <dd>{{ rule_data.max_cart_weight }} kg</dd>
+                        {% endif %}
+                        {% if rule_data.min_item_count %}
+                            <dt>{% trans "Min Items:" %}</dt>
+                            <dd>{{ rule_data.min_item_count }}</dd>
+                        {% endif %}
+                        {% if rule_data.max_item_count %}
+                            <dt>{% trans "Max Items:" %}</dt>
+                            <dd>{{ rule_data.max_item_count }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            {% endif %}
+
+            <!-- Geographic & Method Restrictions -->
+            {% if selected_zones or selected_methods %}
+                <div class="review-section">
+                    <h4><i class="fas fa-globe-americas"></i> {% trans "Geographic & Method Restrictions" %}</h4>
+                    <dl>
+                        {% if selected_zones %}
+                            <dt>{% trans "Zones:" %}</dt>
+                            <dd>
+                                {% for zone in selected_zones %}
+                                    {{ zone.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </dd>
+                        {% endif %}
+                        {% if selected_methods %}
+                            <dt>{% trans "Methods:" %}</dt>
+                            <dd>
+                                {% for method in selected_methods %}
+                                    {{ method.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            {% endif %}
+
+            <!-- Product & Customer Restrictions -->
+            {% if requires_products or requires_categories or excludes_products or excludes_categories or customer_groups or rule_data.first_time_customers_only %}
+                <div class="review-section">
+                    <h4><i class="fas fa-users"></i> {% trans "Product & Customer Restrictions" %}</h4>
+                    <dl>
+                        {% if requires_products %}
+                            <dt>{% trans "Requires Products:" %}</dt>
+                            <dd>{{ requires_products.count }} product{% if requires_products.count != 1 %}s{% endif %}</dd>
+                        {% endif %}
+                        {% if requires_categories %}
+                            <dt>{% trans "Requires Categories:" %}</dt>
+                            <dd>{{ requires_categories.count }} categor{% if requires_categories.count != 1 %}ies{% else %}y{% endif %}</dd>
+                        {% endif %}
+                        {% if excludes_products %}
+                            <dt>{% trans "Excludes Products:" %}</dt>
+                            <dd>{{ excludes_products.count }} product{% if excludes_products.count != 1 %}s{% endif %}</dd>
+                        {% endif %}
+                        {% if excludes_categories %}
+                            <dt>{% trans "Excludes Categories:" %}</dt>
+                            <dd>{{ excludes_categories.count }} categor{% if excludes_categories.count != 1 %}ies{% else %}y{% endif %}</dd>
+                        {% endif %}
+                        {% if customer_groups %}
+                            <dt>{% trans "Customer Groups:" %}</dt>
+                            <dd>
+                                {% for group in customer_groups %}
+                                    {{ group.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </dd>
+                        {% endif %}
+                        {% if rule_data.first_time_customers_only %}
+                            <dt>{% trans "First-time Customers:" %}</dt>
+                            <dd>{% trans "Yes" %}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'shipping:promotion_wizard_step4' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Previous" %}
+    </a>
+    <button type="submit" form="rule-review-form" class="btn btn-success btn-lg">
+        <i class="fas fa-check"></i> {% trans "Create Promotion" %}
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script type="application/json" id="promotion-wizard-step5-config">
+{
+    "i18n": {
+        "endDateError": "{% trans 'End date must be after start date' %}"
+    }
+}
+</script>
+<script src="{% static 'shipping/js/promotion-wizard-step5.js' %}"></script>
+{% endblock %}

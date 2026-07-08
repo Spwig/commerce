@@ -1,0 +1,103 @@
+{% load i18n %}
+<div class="customer-info-content">
+    <div class="info-row">
+        <span class="info-label"><i class="fas fa-user"></i> {% trans "Customer:" %}</span>
+        <span class="info-value">
+            {% if order.user %}
+                {% if order.user.first_name or order.user.last_name %}
+                    {{ order.user.get_full_name }}
+                {% else %}
+                    {{ order.user.username }}
+                {% endif %}
+            {% else %}
+                {% trans "Guest" %}
+            {% endif %}
+            <button type="button" class="btn-edit-inline" data-action="edit-customer" title="{% trans 'Change customer' %}">
+                <i class="fas fa-edit"></i>
+            </button>
+        </span>
+    </div>
+
+    <div class="info-row">
+        <span class="info-label"><i class="fas fa-envelope"></i> {% trans "Email:" %}</span>
+        <span class="info-value">
+            {{ order.email }}
+        </span>
+    </div>
+
+    {% if order.phone %}
+    <div class="info-row">
+        <span class="info-label"><i class="fas fa-phone"></i> {% trans "Phone:" %}</span>
+        <span class="info-value">
+            {{ order.phone }}
+        </span>
+    </div>
+    {% elif order.user and order.user.profile.phone %}
+    <div class="info-row">
+        <span class="info-label"><i class="fas fa-phone"></i> {% trans "Phone:" %}</span>
+        <span class="info-value">
+            {{ order.user.profile.phone }}
+        </span>
+    </div>
+    {% endif %}
+</div>
+
+{# Hidden customer change form (shown via JS) #}
+<div class="customer-change-form d-none">
+    <form id="customer-change-form" data-order-id="{{ order.id }}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>
+                <input type="radio" name="customer_type" value="existing" checked>
+                {% trans "Existing Customer" %}
+            </label>
+            <label>
+                <input type="radio" name="customer_type" value="guest">
+                {% trans "Guest" %}
+            </label>
+        </div>
+
+        <div class="form-group existing-customer-group">
+            <label for="customer-search-input">{% trans "Search Customer:" %}</label>
+            <input
+                type="text"
+                name="customer_search"
+                id="customer-search-input"
+                class="form-control"
+                placeholder="{% trans 'Search by name, email...' %}"
+                autocomplete="off"
+            >
+            <input type="hidden" name="user" id="selected-customer-id" value="">
+
+            {# Customer search results container #}
+            <div id="customer-search-results" class="customer-search-results-container d-none">
+                {# Results will be populated here via AJAX #}
+            </div>
+
+            {# Selected customer display #}
+            <div id="selected-customer-display" class="selected-customer-display d-none">
+                <div class="selected-customer-info">
+                    <i class="fas fa-user"></i>
+                    <span id="selected-customer-name"></span>
+                    <span id="selected-customer-email" class="text-muted"></span>
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary" id="clear-customer-selection">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group guest-customer-group d-none">
+            <label for="guest-email">{% trans "Guest Email:" %}</label>
+            <input type="email" name="guest_email" id="guest-email" class="form-control">
+
+            <label for="guest-phone">{% trans "Guest Phone:" %}</label>
+            <input type="text" name="guest_phone" id="guest-phone" class="form-control">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">{% trans "Update Customer" %}</button>
+            <button type="button" class="btn btn-secondary" data-action="cancel-customer-edit">{% trans "Cancel" %}</button>
+        </div>
+    </form>
+</div>

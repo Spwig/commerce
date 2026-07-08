@@ -1,0 +1,598 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list geoip_tags %}
+
+{% block title %}{% trans "GeoIP Dashboard" %} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'geoip/admin/css/dashboard.css' %}">
+    <script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-globe"></i>
+            {% trans "GeoIP Dashboard" %}
+        </h1>
+        <p class="subtitle">{% trans "Location detection, provider management, and analytics" %}</p>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="geoip-dashboard">
+
+        <!-- Setup Alert if no providers configured -->
+        {% if not providers %}
+        <div class="setup-alert">
+            <h4><i class="fas fa-exclamation-triangle"></i> {% trans "No GeoIP Providers Configured" %}</h4>
+            <p>{% trans "To start using GeoIP location detection, you need to configure at least one provider. Click 'Setup Providers' below to get started." %}</p>
+        </div>
+        {% endif %}
+
+        <!-- Main Statistics -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-chart-bar"></i> {% trans "Overview" %}</h3>
+            <div class="dashboard-stats-grid">
+                <div class="dashboard-stat-card">
+                    <div class="icon"><i class="fas fa-globe"></i></div>
+                    <div class="value">{{ total_locations|default:"0" }}</div>
+                    <div class="label">{% trans "Cached Locations" %}</div>
+                </div>
+                <div class="dashboard-stat-card">
+                    <div class="icon"><i class="fas fa-clock"></i></div>
+                    <div class="value">{{ recent_24h|default:"0" }}</div>
+                    <div class="label">{% trans "Last 24 Hours" %}</div>
+                </div>
+                <div class="dashboard-stat-card">
+                    <div class="icon"><i class="fas fa-calendar-week"></i></div>
+                    <div class="value">{{ recent_7d|default:"0" }}</div>
+                    <div class="label">{% trans "Last 7 Days" %}</div>
+                </div>
+                <div class="dashboard-stat-card">
+                    <div class="icon"><i class="fas fa-hourglass-end"></i></div>
+                    <div class="value">{{ expired_locations|default:"0" }}</div>
+                    <div class="label">{% trans "Expired Entries" %}</div>
+                </div>
+                <div class="dashboard-stat-card">
+                    <div class="icon"><i class="fas fa-crosshairs"></i></div>
+                    <div class="value">{{ accuracy_rate|floatformat:0 }}%</div>
+                    <div class="label">{% trans "Accuracy Rate" %}</div>
+                </div>
+                <div class="dashboard-stat-card">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <div class="value">{{ recent_visitors|default:"0" }}</div>
+                    <div class="label">{% trans "Recent Visitors" %}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid-2">
+            <!-- Top Countries -->
+            <div class="dashboard-card">
+                <h3><i class="fas fa-map-marked-alt"></i> {% trans "Top Countries" %}</h3>
+                {% if top_countries %}
+                <ul class="country-list">
+                    {% for country in top_countries %}
+                    <li class="country-item">
+                        <span class="country-name">
+                            <span class="country-flag">
+                                {% if country.country_code %}
+                                    {{ country.country_code|country_flag }}
+                                {% else %}
+                                    <i class="fas fa-flag"></i>
+                                {% endif %}
+                            </span>
+                            <span>{{ country.country_name|default:country.country_code|default:"Unknown" }}</span>
+                        </span>
+                        <span class="country-count">{{ country.count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="no-data-message">
+                    {% trans "No location data yet" %}
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- Threat Detection -->
+            <div class="dashboard-card">
+                <h3><i class="fas fa-shield-alt"></i> {% trans "Threat Detection" %}</h3>
+                <div class="dashboard-stats-grid">
+                    <div class="dashboard-stat-card">
+                        <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="value">{{ vpn_count|default:"0" }}</div>
+                        <div class="label">{% trans "VPN" %}</div>
+                    </div>
+                    <div class="dashboard-stat-card">
+                        <div class="icon"><i class="fas fa-server"></i></div>
+                        <div class="value">{{ proxy_count|default:"0" }}</div>
+                        <div class="label">{% trans "Proxy" %}</div>
+                    </div>
+                    <div class="dashboard-stat-card">
+                        <div class="icon"><i class="fas fa-user-secret"></i></div>
+                        <div class="value">{{ tor_count|default:"0" }}</div>
+                        <div class="label">{% trans "Tor" %}</div>
+                    </div>
+                </div>
+                {% if vpn_count or proxy_count or tor_count %}
+                <div class="threat-alert">
+                    <small>
+                        <i class="fas fa-info-circle"></i>
+                        {% trans "Some visitors are using privacy tools. Consider this when making location-based decisions." %}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Provider Configuration -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-cogs"></i> {% trans "Provider Configuration" %}</h3>
+
+            <div class="provider-grid">
+                <!-- Spwig GeoIP Provider (DEFAULT) -->
+                <div class="provider-card configured">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{% static 'images/favicon.png' %}" alt="Spwig" width="50" height="50" class="provider-logo">
+                        </div>
+                        <div class="provider-title">
+                            <h3>Spwig GeoIP</h3>
+                            <span class="status-badge configured status-badge-default">
+                                {% trans "DEFAULT" %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Production GeoIP service with BGP routing data for 98% accuracy" %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-check-circle"></i> {% trans "98% Accuracy" %}</span>
+                            <span class="feature-badge"><i class="fas fa-database"></i> {% trans "458K+ IP Ranges" %}</span>
+                            <span class="feature-badge"><i class="fas fa-network-wired"></i> {% trans "135K+ BGP Prefixes" %}</span>
+                            <span class="feature-badge"><i class="fas fa-bolt"></i> {% trans "No Setup Required" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <span class="text-success"><i class="fas fa-check-circle"></i> {% trans "Active & Default Provider" %}</span>
+                    </div>
+                </div>
+
+                <!-- Edge Header Provider (Built-in) -->
+                <div class="provider-card configured">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <div class="provider-title">
+                            <h3>Edge Headers</h3>
+                            <span class="status-badge configured">
+                                {% trans "Fallback" %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Reads location from CDN headers (Cloudflare, CloudFront, etc.)" %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-check-circle"></i> {% trans "Built-in" %}</span>
+                            <span class="feature-badge"><i class="fas fa-bolt"></i> {% trans "No Config" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <span class="text-muted">{% trans "Always enabled as fallback" %}</span>
+                    </div>
+                </div>
+
+                <!-- MaxMind GeoLite2 -->
+                <div class="provider-card {% if 'maxmind' in configured_providers %}configured{% endif %}">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{% static 'geoip/images/maxmind_logo.png' %}" alt="MaxMind" width="50" height="50">
+                        </div>
+                        <div class="provider-title">
+                            <h3>MaxMind GeoLite2</h3>
+                            <span class="status-badge {% if 'maxmind' in configured_providers %}configured{% else %}not-configured{% endif %}">
+                                {% if 'maxmind' in configured_providers %}{% trans "Active" %}{% else %}{% trans "Not Configured" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Free database with excellent accuracy. Weekly updates." %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-gift"></i> {% trans "Free Forever" %}</span>
+                            <span class="feature-badge"><i class="fas fa-database"></i> {% trans "Offline" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <a href="{% url 'geoip_admin:provider_wizard' 'maxmind' %}" class="button {% if 'maxmind' in configured_providers %}secondary{% else %}default{% endif %}">
+                            <i class="fas fa-{% if 'maxmind' in configured_providers %}cog{% else %}magic{% endif %}"></i>
+                            {% if 'maxmind' in configured_providers %}{% trans "Configure" %}{% else %}{% trans "Setup Wizard" %}{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- IPinfo -->
+                <div class="provider-card {% if 'ipinfo' in configured_providers %}configured{% endif %}">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{% static 'geoip/images/ipinfo.png' %}" alt="IPinfo" width="50" height="50">
+                        </div>
+                        <div class="provider-title">
+                            <h3>IPinfo</h3>
+                            <span class="status-badge {% if 'ipinfo' in configured_providers %}configured{% else %}not-configured{% endif %}">
+                                {% if 'ipinfo' in configured_providers %}{% trans "Active" %}{% else %}{% trans "Not Configured" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Fast API with ASN and company data. 50k free requests/month." %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-rocket"></i> {% trans "50k Free" %}</span>
+                            <span class="feature-badge"><i class="fas fa-building"></i> {% trans "Company Data" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <a href="{% url 'geoip_admin:provider_wizard' 'ipinfo' %}" class="button {% if 'ipinfo' in configured_providers %}secondary{% else %}default{% endif %}">
+                            <i class="fas fa-{% if 'ipinfo' in configured_providers %}cog{% else %}magic{% endif %}"></i>
+                            {% if 'ipinfo' in configured_providers %}{% trans "Configure" %}{% else %}{% trans "Setup Wizard" %}{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ipapi -->
+                <div class="provider-card {% if 'ipapi' in configured_providers %}configured{% endif %}">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                        <div class="provider-title">
+                            <h3>ipapi</h3>
+                            <span class="status-badge {% if 'ipapi' in configured_providers %}configured{% else %}not-configured{% endif %}">
+                                {% if 'ipapi' in configured_providers %}{% trans "Active" %}{% else %}{% trans "Not Configured" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Simple REST API with currency data. 1k free requests/month." %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-dollar-sign"></i> {% trans "Currency" %}</span>
+                            <span class="feature-badge"><i class="fas fa-clock"></i> {% trans "Real-time" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <a href="{% url 'geoip_admin:provider_wizard' 'ipapi' %}" class="button {% if 'ipapi' in configured_providers %}secondary{% else %}default{% endif %}">
+                            <i class="fas fa-{% if 'ipapi' in configured_providers %}cog{% else %}magic{% endif %}"></i>
+                            {% if 'ipapi' in configured_providers %}{% trans "Configure" %}{% else %}{% trans "Setup Wizard" %}{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ipgeolocation.io -->
+                <div class="provider-card {% if 'ipgeolocation' in configured_providers %}configured{% endif %}">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{% static 'geoip/images/ipgeolocation.png' %}" alt="ipgeolocation.io" width="50" height="50">
+                        </div>
+                        <div class="provider-title">
+                            <h3>ipgeolocation.io</h3>
+                            <span class="status-badge {% if 'ipgeolocation' in configured_providers %}configured{% else %}not-configured{% endif %}">
+                                {% if 'ipgeolocation' in configured_providers %}{% trans "Active" %}{% else %}{% trans "Not Configured" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Timezone and currency API. 30k free requests/month." %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-globe"></i> {% trans "30k Free" %}</span>
+                            <span class="feature-badge"><i class="fas fa-clock"></i> {% trans "Timezone" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <a href="{% url 'geoip_admin:provider_wizard' 'ipgeolocation' %}" class="button {% if 'ipgeolocation' in configured_providers %}secondary{% else %}default{% endif %}">
+                            <i class="fas fa-{% if 'ipgeolocation' in configured_providers %}cog{% else %}magic{% endif %}"></i>
+                            {% if 'ipgeolocation' in configured_providers %}{% trans "Configure" %}{% else %}{% trans "Setup Wizard" %}{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- IP2Location -->
+                <div class="provider-card {% if 'ip2location' in configured_providers %}configured{% endif %}">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <img src="{% static 'geoip/images/ip2location.png' %}" alt="IP2Location" width="50" height="50">
+                        </div>
+                        <div class="provider-title">
+                            <h3>IP2Location</h3>
+                            <span class="status-badge {% if 'ip2location' in configured_providers %}configured{% else %}not-configured{% endif %}">
+                                {% if 'ip2location' in configured_providers %}{% trans "Active" %}{% else %}{% trans "Not Configured" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Comprehensive database with mobile carrier data." %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-mobile-alt"></i> {% trans "Mobile Info" %}</span>
+                            <span class="feature-badge"><i class="fas fa-database"></i> {% trans "LITE Free" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <a href="{% url 'geoip_admin:provider_wizard' 'ip2location' %}" class="button {% if 'ip2location' in configured_providers %}secondary{% else %}default{% endif %}">
+                            <i class="fas fa-{% if 'ip2location' in configured_providers %}cog{% else %}magic{% endif %}"></i>
+                            {% if 'ip2location' in configured_providers %}{% trans "Configure" %}{% else %}{% trans "Setup Wizard" %}{% endif %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Abstract API -->
+                <div class="provider-card {% if 'abstractapi' in configured_providers %}configured{% endif %}">
+                    <div class="provider-header">
+                        <div class="provider-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="provider-title">
+                            <h3>Abstract API</h3>
+                            <span class="status-badge {% if 'abstractapi' in configured_providers %}configured{% else %}not-configured{% endif %}">
+                                {% if 'abstractapi' in configured_providers %}{% trans "Active" %}{% else %}{% trans "Not Configured" %}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="provider-body">
+                        <p class="provider-description">
+                            {% trans "Modern API with VPN detection. 1k free requests/month." %}
+                        </p>
+                        <div class="feature-badges">
+                            <span class="feature-badge"><i class="fas fa-shield-alt"></i> {% trans "VPN Detection" %}</span>
+                            <span class="feature-badge"><i class="fas fa-lock"></i> {% trans "Security" %}</span>
+                        </div>
+                    </div>
+                    <div class="provider-footer">
+                        <a href="{% url 'geoip_admin:provider_wizard' 'abstractapi' %}" class="button {% if 'abstractapi' in configured_providers %}secondary{% else %}default{% endif %}">
+                            <i class="fas fa-{% if 'abstractapi' in configured_providers %}cog{% else %}magic{% endif %}"></i>
+                            {% if 'abstractapi' in configured_providers %}{% trans "Configure" %}{% else %}{% trans "Setup Wizard" %}{% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="provider-help">
+                <p><i class="fas fa-info-circle"></i> {% trans "Configure multiple providers for redundancy. Providers are queried in priority order." %}</p>
+            </div>
+        </div>
+
+        <!-- Source Distribution -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-database"></i> {% trans "Data Sources" %}</h3>
+            {% if source_stats %}
+            <table class="data-source-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Source" %}</th>
+                        <th>{% trans "Count" %}</th>
+                        <th>{% trans "Avg Confidence" %}</th>
+                        <th>{% trans "Usage" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source in source_stats %}
+                    <tr>
+                        <td>{{ source.source|default:"default" }}</td>
+                        <td>{{ source.count }}</td>
+                        <td>
+                            {% if source.avg_confidence %}
+                                {{ source.avg_confidence|floatformat:2|floatformat:0 }}%
+                            {% else %}
+                                0%
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {% widthratio source.count total_locations 100 %}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="no-data-message">
+                {% trans "No source data available" %}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-bolt"></i> {% trans "Quick Actions" %}</h3>
+            <div class="quick-actions">
+                <a href="{% url 'admin:geoip_geoipprovider_add' %}" class="button default">
+                    <i class="fas fa-plus"></i> {% trans "Add Provider" %}
+                </a>
+                <a href="{% url 'admin:geoip_countrymapping_changelist' %}" class="button">
+                    <i class="fas fa-flag"></i> {% trans "Manage Countries" %}
+                </a>
+                <a href="{% url 'admin:geoip_visitorlocation_changelist' %}" class="button">
+                    <i class="fas fa-users"></i> {% trans "View Visitors" %}
+                </a>
+                <a href="{% url 'admin:geoip_businessrule_changelist' %}" class="button">
+                    <i class="fas fa-gavel"></i> {% trans "Business Rules" %}
+                </a>
+                <button type="button" data-action="clear-expired-cache" class="button secondary">
+                    <i class="fas fa-trash"></i> {% trans "Clear Expired" %} ({{ expired_locations }})
+                </button>
+                <button type="button" data-action="test-ip-resolution" class="button secondary">
+                    <i class="fas fa-vial"></i> {% trans "Test IP" %}
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- IP Search -->
+            <div class="filter-field">
+                <label for="filter-ip">
+                    <i class="fas fa-network-wired"></i> {% trans "IP Address" %}
+                </label>
+                <input type="text" id="filter-ip" placeholder="{% trans 'Search by IP...' %}">
+            </div>
+
+            <!-- Country -->
+            <div class="filter-field">
+                <label for="filter-country">
+                    <i class="fas fa-flag"></i> {% trans "Country" %}
+                </label>
+                <input type="text" id="filter-country" placeholder="{% trans 'Country code (e.g., US)' %}" maxlength="2" class="filter-uppercase">
+            </div>
+
+            <!-- Source -->
+            <div class="filter-field">
+                <label for="filter-source">
+                    <i class="fas fa-database"></i> {% trans "Source" %}
+                </label>
+                <select id="filter-source">
+                    <option value="">{% trans "All Sources" %}</option>
+                    {% for source in source_stats %}
+                    <option value="{{ source.source }}">{{ source.source }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Expired Status -->
+            <div class="filter-field">
+                <label for="filter-expired">
+                    <i class="fas fa-clock"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-expired">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="false">{% trans "Valid" %}</option>
+                    <option value="true">{% trans "Expired" %}</option>
+                </select>
+            </div>
+
+            <!-- VPN -->
+            <div class="filter-field">
+                <label for="filter-is_vpn">
+                    <i class="fas fa-shield-alt"></i> {% trans "VPN" %}
+                </label>
+                <select id="filter-is_vpn">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "VPN Detected" %}</option>
+                    <option value="false">{% trans "No VPN" %}</option>
+                </select>
+            </div>
+
+            <!-- Proxy -->
+            <div class="filter-field">
+                <label for="filter-is_proxy">
+                    <i class="fas fa-server"></i> {% trans "Proxy" %}
+                </label>
+                <select id="filter-is_proxy">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Proxy Detected" %}</option>
+                    <option value="false">{% trans "No Proxy" %}</option>
+                </select>
+            </div>
+
+            <!-- Tor -->
+            <div class="filter-field">
+                <label for="filter-is_tor">
+                    <i class="fas fa-user-secret"></i> {% trans "Tor" %}
+                </label>
+                <select id="filter-is_tor">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Tor Detected" %}</option>
+                    <option value="false">{% trans "No Tor" %}</option>
+                </select>
+            </div>
+
+            <!-- Mobile -->
+            <div class="filter-field">
+                <label for="filter-is_mobile">
+                    <i class="fas fa-mobile-alt"></i> {% trans "Mobile" %}
+                </label>
+                <select id="filter-is_mobile">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Mobile" %}</option>
+                    <option value="false">{% trans "Not Mobile" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Cached Locations" %}</h2>
+        <span class="results-count" id="results-count-info">
+            <i class="fas fa-globe"></i>
+            <span id="results-count">{{ total_locations }}</span> {% trans "entries" %}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="geolocation-results">
+        <div class="list-row-cards">
+            <div class="list-row-card geoip-loading-card">
+                <i class="fas fa-spinner fa-spin geoip-loading-icon"></i>
+                <p class="geoip-loading-text">{% trans "Loading locations..." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- GeoIP translations for JS (dashboard actions) -->
+    <script type="application/json" id="geoip-translations">
+    {
+        "confirm_clear_cache": "{% trans 'Clear all expired cache entries?' %}",
+        "cache_coming_soon": "{% trans 'Feature coming soon. Use management command: python manage.py geoip_cleanup' %}",
+        "enter_test_ip": "{% trans 'Enter IP address to test:' %}"
+    }
+    </script>
+
+    <div id="list-filter-config"
+         data-filter-url="{% url 'geoip_admin:geolocations_filter' %}"
+         data-results-container="geolocation-results"
+         data-results-count="results-count"
+         data-auto-load="true"
+         class="geoip-hidden"></div>
+
+    <script src="{% static 'geoip/admin/js/geoip-admin.js' %}"></script>
+    <script src="{% static 'geoip/admin/js/geolocation-filters.js' %}"></script>
+{% endblock %}

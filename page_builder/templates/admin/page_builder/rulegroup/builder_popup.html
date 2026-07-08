@@ -1,0 +1,163 @@
+{% load i18n static core_extras %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+
+    <!-- Favicon -->
+    {% favicon_meta %}
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- SortableJS -->
+    <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+
+    <!-- Rule Builder CSS -->
+    <link rel="stylesheet" href="{% static 'page_builder/css/rule-builder.css' %}">
+    <link rel="stylesheet" href="{% static 'page_builder/admin/css/rule-builder-popup.css' %}">
+</head>
+<body>
+    <div class="rule-builder-popup" id="ruleBuilderPopup">
+        <!-- Header -->
+        <div class="popup-header">
+            <h2><i class="fas fa-project-diagram"></i> {{ title }}</h2>
+            <div class="popup-header-actions">
+                <button type="button" class="btn btn-secondary btn-sm" data-action="close-rule-popup">
+                    <i class="fas fa-times"></i> {% trans "Cancel" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="popup-body">
+            <!-- Sidebar: Saved Groups & Quick Add -->
+            <div class="popup-sidebar">
+                <div class="popup-sidebar-section">
+                    <h4>{% trans "Saved Rule Groups" %}</h4>
+                    {% if all_groups %}
+                        {% for group in all_groups %}
+                            <div class="saved-group-item" data-group-id="{{ group.id }}">
+                                <div class="group-icon">
+                                    <i class="fas fa-layer-group"></i>
+                                </div>
+                                <div class="group-info">
+                                    <div class="group-name">{{ group.name }}</div>
+                                    <div class="group-meta">{{ group.logic_operator }} - {{ group.rules.count }} {% trans "rules" %}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="font-size: 12px; color: var(--rb-muted-text);">{% trans "No saved groups yet" %}</p>
+                    {% endif %}
+                </div>
+
+                <div class="popup-sidebar-scroll">
+                    <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; color: var(--rb-muted-text);">{% trans "Quick Add Rules" %}</h4>
+
+                    {% for category_key, category in rule_types.items %}
+                        <div class="rule-category">
+                            <div class="category-header" data-category="{{ category_key }}">
+                                <i class="fas fa-chevron-down toggle"></i>
+                                <i class="{{ category.icon }}"></i>&nbsp;
+                                {{ category.label }}
+                            </div>
+                            <div class="category-items">
+                                {% for rule_type in category.types %}
+                                    <div class="quick-rule-item"
+                                         draggable="true"
+                                         data-rule-type="{{ rule_type.id }}"
+                                         data-category="{{ category_key }}">
+                                        <i class="{{ category.icon }}"></i>
+                                        {{ rule_type.label }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Main Canvas -->
+            <div class="popup-canvas">
+                <div class="popup-canvas-toolbar">
+                    <span style="font-weight: 500;">{% trans "Selected Configuration" %}</span>
+                    <div style="flex: 1;"></div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnClearSelection">
+                        <i class="fas fa-eraser"></i> {% trans "Clear" %}
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btnCreateNewGroup">
+                        <i class="fas fa-plus"></i> {% trans "New Group" %}
+                    </button>
+                </div>
+
+                <div class="popup-canvas-content" id="canvasContent">
+                    {% if rule_group %}
+                        <!-- Show existing group -->
+                        <div class="rule-preview-card group-card {{ rule_group.logic_operator|lower }}-group">
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span class="logic-badge {{ rule_group.logic_operator|lower }}">{{ rule_group.logic_operator }}</span>
+                                <strong style="margin-left: 8px;">{{ rule_group.name }}</strong>
+                            </div>
+                            <div id="rulesContainer" class="rules-list">
+                                <!-- Rules will be loaded here -->
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Empty state -->
+                        <div class="empty-state" id="emptyState">
+                            <i class="fas fa-filter"></i>
+                            <p>{% trans "No visibility rules selected" %}</p>
+                            <p style="font-size: 12px;">{% trans "Select a saved group from the left, or drag rules to build a new configuration." %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="popup-footer">
+            <div class="popup-footer-info">
+                <span id="selectionInfo">{% trans "No rules selected" %}</span>
+            </div>
+            <div class="popup-footer-actions">
+                <button type="button" class="btn btn-secondary" data-action="close-rule-popup">
+                    {% trans "Cancel" %}
+                </button>
+                <button type="button" class="btn btn-success" id="btnApplyRules">
+                    <i class="fas fa-check"></i> {% trans "Apply Rules" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/json" id="rule-builder-popup-config">
+    {
+        "groupId": {{ rule_group.id|default:"null" }},
+        "initialRulesTree": {{ rules_tree_json|safe }},
+        "ruleTypes": {{ rule_types_json|safe }},
+        "operators": {{ operators_json|safe }},
+        "isPopup": true,
+        "apiUrls": {
+            "ruleGroups": "/api/page-builder/rule-groups/",
+            "rules": "/api/page-builder/rules/",
+            "ruleTypesConfig": "/api/page-builder/rules/config/"
+        },
+        "translations": {
+            "newRule": "{% trans "New Rule" %}",
+            "newGroup": "{% trans "New Group" %}",
+            "confirmDelete": "{% trans "Are you sure you want to delete this?" %}",
+            "saved": "{% trans "Saved successfully" %}",
+            "error": "{% trans "An error occurred" %}",
+            "noRulesSelected": "{% trans "No rules selected" %}",
+            "rulesSelected": "{% trans "rules selected" %}",
+            "groupSelected": "{% trans "Group selected" %}"
+        }
+    }
+    </script>
+
+    <script src="{% static 'page_builder/js/rule-builder-popup.js' %}"></script>
+</body>
+</html>

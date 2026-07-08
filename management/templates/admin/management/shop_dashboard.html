@@ -1,0 +1,2159 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static humanize currency_tags %}
+
+{% block title %}{% trans "Shop Dashboard" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'management/css/shop_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'setup_wizard/admin/css/wizard_modal.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/vendor/js/chart.umd.min.js' %}"></script>
+<script src="{% static 'setup_wizard/js/wizard_modal.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {% trans 'Shop Dashboard' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+{# Dashboard Header #}
+<div>
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-chart-line"></i>
+            {% trans "Shop Dashboard" %}
+        </h1>
+        <div class="subtitle">
+            {% trans "Monitor your shop's performance and key metrics" %}
+        </div>
+    </div>
+</div>
+
+{# Setup Wizard Progress Banner #}
+{% include "setup_wizard/partials/progress_banner.html" %}
+
+{# Translation Setup Banner #}
+{% include "admin/translations/partials/dashboard_banner.html" %}
+
+{# Filters Section #}
+    <div class="dashboard-filters">
+        <div class="filter-group">
+            <label for="period-select">
+                <i class="fas fa-calendar-alt"></i>
+                {% trans "Period" %}:
+            </label>
+            <select id="period-select" class="dashboard-select">
+                {% for value, label in period_options %}
+                <option value="{{ value }}" {% if value == current_period %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group custom-date-range {% if current_period == 'custom' %}custom-date-display-flex{% else %}custom-date-display-none{% endif %}">
+            <label for="start-date">
+                <i class="fas fa-calendar"></i>
+                {% trans "From" %}:
+            </label>
+            <input type="date" id="start-date" class="dashboard-input" value="{{ start_date|date:'Y-m-d' }}">
+
+            <label for="end-date">
+                <i class="fas fa-calendar"></i>
+                {% trans "To" %}:
+            </label>
+            <input type="date" id="end-date" class="dashboard-input" value="{{ end_date|date:'Y-m-d' }}">
+        </div>
+
+        <div class="filter-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="compare-toggle" {% if compare_enabled %}checked{% endif %}>
+                <i class="fas fa-chart-line"></i>
+                {% trans "Compare with previous period" %}
+            </label>
+        </div>
+
+        <button id="refresh-dashboard" class="dashboard-button">
+            <i class="fas fa-sync-alt"></i>
+            {% trans "Refresh" %}
+        </button>
+    </div>
+
+{# Jump To Navigation #}
+<div class="jump-to-nav">
+    <label for="jump-to-select">
+        <i class="fas fa-compass"></i>
+        {% trans "Quick Navigation" %}:
+    </label>
+    <select id="jump-to-select" class="jump-to-select">
+        <option value="">{% trans "Jump to section..." %}</option>
+        <option value="actions-required">{% trans "Actions Required" %}</option>
+        <option value="sales-revenue">{% trans "Sales Revenue Over Time" %}</option>
+        <option value="sales-performance">{% trans "Sales Performance" %}</option>
+        <option value="profit-analysis">{% trans "Profit Analysis" %}</option>
+        <option value="abandoned-cart">{% trans "Abandoned Cart Recovery" %}</option>
+        <option value="voucher-performance">{% trans "Voucher Performance" %}</option>
+        <option value="customer-segmentation">{% trans "Customer Segmentation" %}</option>
+        <option value="affiliate-program">{% trans "Affiliate Program" %}</option>
+        <option value="loyalty-program">{% trans "Loyalty Program" %}</option>
+        <option value="email-campaign">{% trans "Email Campaign Performance" %}</option>
+        <option value="sales-channel">{% trans "Sales by Channel" %}</option>
+        <option value="conversion-funnel">{% trans "Conversion Funnel" %}</option>
+        <option value="customer-messages">{% trans "Customer Messages" %}</option>
+        <option value="shipment-status">{% trans "Shipment Status" %}</option>
+        <option value="top-products">{% trans "Top Selling Products" %}</option>
+        <option value="traffic-analytics">{% trans "Traffic & Visitor Analytics" %}</option>
+        <option value="traffic-sources">{% trans "Traffic Sources" %}</option>
+        <option value="traffic-trends">{% trans "Traffic Trends" %}</option>
+        <option value="device-breakdown">{% trans "Device Breakdown" %}</option>
+        <option value="top-referrers">{% trans "Top Referrers" %}</option>
+        <option value="utm-campaigns">{% trans "UTM Campaigns" %}</option>
+        <option value="most-viewed">{% trans "Most Viewed Products" %}</option>
+        <option value="visitor-geography">{% trans "Visitor Geography" %}</option>
+    </select>
+</div>
+
+{# Actions Required - Moved from bottom to top for prominence #}
+<div id="actions-required" class="dashboard-section">
+    <h2 class="section-title">
+        <i class="fas fa-exclamation-circle"></i>
+        {% trans "Actions Required" %}
+    </h2>
+    <div class="action-cards">
+        <div class="action-card">
+            <div class="action-card-icon incomplete-orders">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="action-card-content">
+                <div class="action-card-value">{{ action_cards.incomplete_orders }}</div>
+                <div class="action-card-label">{% trans "Incomplete Orders" %}</div>
+            </div>
+            <a href="{% url 'admin:orders_order_changelist' %}?status__in=pending,processing" class="action-card-link">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-card-icon abandoned-carts">
+                <i class="fas fa-cart-arrow-down"></i>
+            </div>
+            <div class="action-card-content">
+                <div class="action-card-value">{{ action_cards.abandoned_carts }}</div>
+                <div class="action-card-label">{% trans "Abandoned Carts" %}</div>
+            </div>
+            <a href="{% url 'admin:customers_abandonedcart_changelist' %}?recovered=false" class="action-card-link">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-card-icon low-stock">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="action-card-content">
+                <div class="action-card-value">{{ action_cards.low_stock_products }}</div>
+                <div class="action-card-label">{% trans "Low Stock Products" %}</div>
+            </div>
+            <a href="{% url 'admin:catalog_product_changelist' %}?track_inventory=True&quantity__lte=5" class="action-card-link">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-card-icon out-of-stock">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="action-card-content">
+                <div class="action-card-value">{{ action_cards.out_of_stock_products }}</div>
+                <div class="action-card-label">{% trans "Out of Stock" %}</div>
+            </div>
+            <a href="{% url 'admin:catalog_product_changelist' %}?quantity=0" class="action-card-link">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-card-icon" class="gradient-purple">
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <div class="action-card-content">
+                <div class="action-card-value">{{ action_cards.pending_reviews }}</div>
+                <div class="action-card-label">{% trans "Pending Reviews" %}</div>
+            </div>
+            <a href="{% url 'admin:catalog_productreview_changelist' %}?is_approved__exact=0" class="action-card-link">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        {% if action_cards.component_updates > 0 %}
+        <div class="action-card">
+            <div class="action-card-icon gradient-info">
+                <i class="fas fa-cloud-download-alt"></i>
+            </div>
+            <div class="action-card-content">
+                <div class="action-card-value">{{ action_cards.component_updates }}</div>
+                <div class="action-card-label">{% trans "Updates Available" %}</div>
+            </div>
+            <a href="{% url 'admin:component_updates_componentregistry_changelist' %}" class="action-card-link">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+
+        {% if referral_stats.program_active and referral_stats.pending_attributions > 0 %}
+        <div class="action-card">
+            <div class="action-card-icon gradient-orange-dark">
+                <i class="fas fa-link"></i>
+            </div>
+            <div class="action-card-content">
+                <div class="action-card-value">{{ referral_stats.pending_attributions }}</div>
+                <div class="action-card-label">{% trans "Pending Attributions" %}</div>
+            </div>
+            <a href="{% url 'admin:referrals_referralattribution_changelist' %}?status=pending" class="action-card-link">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+    {# PRIMARY CHART: Sales Revenue Over Time - MERCHANTS SEE THIS FIRST! #}
+    <div id="sales-revenue" class="dashboard-section">
+        <div class="section-header-flex">
+            <h2 class="section-title section-title-no-margin">
+                <i class="fas fa-chart-area"></i>
+                {% trans "Sales Revenue Over Time" %}
+            </h2>
+            <div class="grouping-selector">
+                <span class="text-14 text-quiet mr-10">
+                    <i class="fas fa-layer-group"></i> {% trans "Group by" %}:
+                </span>
+                <button class="grouping-btn {% if current_grouping == 'day' %}active{% endif %}" data-grouping="day">
+                    {% trans "Day" %}
+                </button>
+                <button class="grouping-btn {% if current_grouping == 'week' %}active{% endif %}" data-grouping="week">
+                    {% trans "Week" %}
+                </button>
+                <button class="grouping-btn {% if current_grouping == 'month' %}active{% endif %}" data-grouping="month">
+                    {% trans "Month" %}
+                </button>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="sales-chart"></canvas>
+        </div>
+    </div>
+
+    {# Sales Performance #}
+    <div id="sales-performance" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-chart-line"></i>
+            {% trans "Sales Performance" %}
+        </h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Revenue" %}</div>
+                </div>
+                <div class="metric-value">{{ sales_performance.current.revenue|format_currency:default_currency }}</div>
+                {% if compare_enabled and sales_performance.changes.revenue is not None %}
+                <div class="metric-change {% if sales_performance.changes.revenue >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if sales_performance.changes.revenue >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ sales_performance.changes.revenue|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon orders">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Total Orders" %}</div>
+                </div>
+                <div class="metric-value">{{ sales_performance.current.orders }}</div>
+                {% if compare_enabled and sales_performance.changes.orders is not None %}
+                <div class="metric-change {% if sales_performance.changes.orders >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if sales_performance.changes.orders >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ sales_performance.changes.orders|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon aov">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Average Order Value" %}</div>
+                </div>
+                <div class="metric-value">{{ sales_performance.current.aov|format_currency:default_currency }}</div>
+                {% if compare_enabled and sales_performance.changes.aov is not None %}
+                <div class="metric-change {% if sales_performance.changes.aov >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if sales_performance.changes.aov >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ sales_performance.changes.aov|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# Profit Analysis Section #}
+    <div id="profit-analysis" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-chart-line"></i>
+            {% trans "Profit Analysis" %}
+        </h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-success-theme">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Gross Profit" %}</div>
+                </div>
+                <div class="metric-value">{{ profit_metrics.current.profit|format_currency:default_currency }}</div>
+                {% if compare_enabled and profit_metrics.changes.profit is not None %}
+                <div class="metric-change {% if profit_metrics.changes.profit >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if profit_metrics.changes.profit >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ profit_metrics.changes.profit|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-info-theme">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Profit Margin" %}</div>
+                </div>
+                <div class="metric-value">{{ profit_metrics.current.margin_percentage|floatformat:1 }}%</div>
+                {% if compare_enabled and profit_metrics.changes.margin_percentage is not None %}
+                <div class="metric-change {% if profit_metrics.changes.margin_percentage <= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if profit_metrics.changes.margin_percentage <= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ profit_metrics.changes.margin_percentage|floatformat:1 }}pp
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-warning-theme">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Cost of Goods Sold" %}</div>
+                </div>
+                <div class="metric-value">{{ profit_metrics.current.cogs|format_currency:default_currency }}</div>
+                {% if compare_enabled and profit_metrics.changes.cogs is not None %}
+                <div class="metric-change {% if profit_metrics.changes.cogs <= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if profit_metrics.changes.cogs <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                    {{ profit_metrics.changes.cogs|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-error-theme">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Refunds" %}</div>
+                </div>
+                <div class="metric-value">{{ profit_metrics.current.refunds|format_currency:default_currency }}</div>
+                {% if compare_enabled and profit_metrics.changes.refunds is not None %}
+                <div class="metric-change {% if profit_metrics.changes.refunds <= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if profit_metrics.changes.refunds <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                    {{ profit_metrics.changes.refunds|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Top Profitable Products Table #}
+        {% if profit_metrics.by_product %}
+        <div class="mt-30">
+            <h3 class="text-16-bold">
+                <i class="fas fa-trophy"></i>
+                {% trans "Top Profitable Products" %}
+            </h3>
+            <div class="table-container-overflow">
+                <table class="dashboard-table-rounded">
+                    <thead>
+                        <tr class="table-row-dark">
+                            <th class="table-th-left">
+                                {% trans "Product" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Units Sold" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Revenue" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "COGS" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Profit" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Margin %" %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in profit_metrics.by_product %}
+                        <tr class="border-bottom">
+                            <td class="table-td-center">
+                                {{ product.product_name }}
+                            </td>
+                            <td class="table-td-right-light">
+                                {{ product.units_sold }}
+                            </td>
+                            <td class="table-td-right-light">
+                                {{ product.revenue|format_currency:default_currency }}
+                            </td>
+                            <td class="table-td-right-light text-quiet">
+                                {{ product.cogs|format_currency:default_currency }}
+                            </td>
+                            <td class="table-td-right text-bold text-success-fg">
+                                {{ product.profit|format_currency:default_currency }}
+                            </td>
+                            <td class="table-td-right text-bold text-success-fg">
+                                {{ product.margin_pct|floatformat:1 }}%
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Abandoned Cart Recovery Section #}
+    <div id="abandoned-cart" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-cart-arrow-down"></i>
+            {% trans "Abandoned Cart Recovery" %}
+        </h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-warning-theme">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Total Abandoned" %}</div>
+                </div>
+                <div class="metric-value">{{ abandoned_cart_metrics.current.total_abandoned }}</div>
+                {% if compare_enabled and abandoned_cart_metrics.changes.total_abandoned is not None %}
+                <div class="metric-change {% if abandoned_cart_metrics.changes.total_abandoned <= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if abandoned_cart_metrics.changes.total_abandoned <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                    {{ abandoned_cart_metrics.changes.total_abandoned|floatformat:1|default:"0.0" }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-error-theme">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Unrecovered Value" %}</div>
+                </div>
+                <div class="metric-value">{{ abandoned_cart_metrics.current.unrecovered_value|format_currency:default_currency }}</div>
+                {% if compare_enabled and abandoned_cart_metrics.changes.unrecovered_value is not None %}
+                <div class="metric-change {% if abandoned_cart_metrics.changes.unrecovered_value <= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if abandoned_cart_metrics.changes.unrecovered_value <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                    {{ abandoned_cart_metrics.changes.unrecovered_value|floatformat:1|default:"0.0" }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-success-theme">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Recovery Rate" %}</div>
+                </div>
+                <div class="metric-value">{{ abandoned_cart_metrics.current.recovery_rate|floatformat:1 }}%</div>
+                {% if compare_enabled and abandoned_cart_metrics.changes.recovery_rate is not None %}
+                <div class="metric-change {% if abandoned_cart_metrics.changes.recovery_rate >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if abandoned_cart_metrics.changes.recovery_rate >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ abandoned_cart_metrics.changes.recovery_rate|floatformat:1|default:"0.0" }}pp
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-info-theme">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Avg Cart Value" %}</div>
+                </div>
+                <div class="metric-value">{{ abandoned_cart_metrics.current.avg_cart_value|format_currency:default_currency }}</div>
+                {% if compare_enabled and abandoned_cart_metrics.changes.avg_cart_value is not None %}
+                <div class="metric-change {% if abandoned_cart_metrics.changes.avg_cart_value >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if abandoned_cart_metrics.changes.avg_cart_value >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ abandoned_cart_metrics.changes.avg_cart_value|floatformat:1|default:"0.0" }}%
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Recent Abandoned Carts Table #}
+        {% if abandoned_cart_metrics.recent_carts %}
+        <div class="mt-30">
+            <h3 class="text-16-bold">
+                <i class="fas fa-clock"></i>
+                {% trans "Recent Abandoned Carts" %}
+            </h3>
+            <div class="table-container-overflow">
+                <table class="dashboard-table-rounded">
+                    <thead>
+                        <tr class="table-row-dark">
+                            <th class="table-th-left">
+                                {% trans "Customer" %}
+                            </th>
+                            <th class="table-th-left">
+                                {% trans "Items Preview" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Cart Value" %}
+                            </th>
+                            <th class="table-th-center">
+                                {% trans "Days Ago" %}
+                            </th>
+                            <th class="table-th-center">
+                                {% trans "Emails Sent" %}
+                            </th>
+                            <th class="table-th-left">
+                                {% trans "Reason" %}
+                            </th>
+                            <th class="table-th-center">
+                                {% trans "Actions" %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cart in abandoned_cart_metrics.recent_carts %}
+                        <tr class="border-bottom">
+                            <td class="table-td-center">
+                                <div class="text-bold">{{ cart.user_name }}</div>
+                                <div class="text-tiny text-quiet">{{ cart.user_email }}</div>
+                            </td>
+                            <td class="table-td-center">
+                                <div class="text-tiny max-w-250">
+                                    {% for item in cart.items_preview %}
+                                        <div class="mb-4">
+                                            {{ item.quantity }}x {{ item.product_name|truncatechars:30 }}
+                                        </div>
+                                    {% endfor %}
+                                    {% if cart.total_items > 3 %}
+                                        <div class="text-quiet text-italic">
+                                            +{{ cart.total_items|add:"-3" }} {% trans "more items" %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="table-td-right text-bold">
+                                {{ cart.total_value|format_currency:default_currency }}
+                            </td>
+                            <td class="table-td-center">
+                                <span class="status-badge {% if cart.days_since_abandonment <= 1 %}status-badge-success{% elif cart.days_since_abandonment <= 3 %}status-badge-warning{% else %}status-badge-error{% endif %}">
+                                    {{ cart.days_since_abandonment }} {% if cart.days_since_abandonment == 1 %}{% trans "day" %}{% else %}{% trans "days" %}{% endif %}
+                                </span>
+                            </td>
+                            <td class="table-td-center">
+                                {{ cart.recovery_emails_sent }}
+                            </td>
+                            <td class="table-td-center text-13 text-quiet">
+                                {{ cart.estimated_reason }}
+                            </td>
+                            <td class="table-td-center">
+                                <a href="{% url 'admin:auth_user_change' cart.user_id %}"
+                                   class="link-primary-mr-8"
+                                   title="{% trans 'View Customer' %}">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                                <a href="mailto:{{ cart.user_email }}"
+                                   class="link-primary"
+                                   title="{% trans 'Send Email' %}">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Voucher Performance Section #}
+    <div id="voucher-performance" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-ticket-alt"></i>
+            {% trans "Voucher Performance" %}
+        </h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-primary-theme">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Total Uses" %}</div>
+                </div>
+                <div class="metric-value">{{ voucher_performance.current.total_uses }}</div>
+                {% if compare_enabled and voucher_performance.changes.total_uses is not None %}
+                <div class="metric-change {% if voucher_performance.changes.total_uses >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if voucher_performance.changes.total_uses >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ voucher_performance.changes.total_uses|floatformat:1|default:"0.0" }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-warning-theme">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Total Discount Given" %}</div>
+                </div>
+                <div class="metric-value">{{ voucher_performance.current.total_discount|format_currency:default_currency }}</div>
+                {% if compare_enabled and voucher_performance.changes.total_discount is not None %}
+                <div class="metric-change {% if voucher_performance.changes.total_discount <= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if voucher_performance.changes.total_discount <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                    {{ voucher_performance.changes.total_discount|floatformat:1|default:"0.0" }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-info-theme">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Discount Rate" %}</div>
+                </div>
+                <div class="metric-value">{{ voucher_performance.current.discount_rate|floatformat:1 }}%</div>
+                {% if compare_enabled and voucher_performance.changes.discount_rate is not None %}
+                <div class="metric-change {% if voucher_performance.changes.discount_rate <= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if voucher_performance.changes.discount_rate <= 0 %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                    {{ voucher_performance.changes.discount_rate|floatformat:1|default:"0.0" }}pp
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon bg-success-theme">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Active Vouchers" %}</div>
+                </div>
+                <div class="metric-value">{{ voucher_performance.current.active_vouchers }}</div>
+                <div class="text-small-muted">
+                    {% trans "of" %} {{ voucher_performance.current.total_vouchers }} {% trans "total" %}
+                </div>
+            </div>
+        </div>
+
+        {# Top Performing Vouchers Table #}
+        {% if voucher_performance.top_vouchers %}
+        <div class="mt-30">
+            <h3 class="text-16-bold">
+                <i class="fas fa-star"></i>
+                {% trans "Top Performing Vouchers" %}
+            </h3>
+            <div class="table-container-overflow">
+                <table class="dashboard-table-rounded">
+                    <thead>
+                        <tr class="table-row-dark">
+                            <th class="table-th-left">
+                                {% trans "Voucher Code" %}
+                            </th>
+                            <th class="table-th-left">
+                                {% trans "Name" %}
+                            </th>
+                            <th class="table-th-center">
+                                {% trans "Type" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Uses" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Total Discount" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Revenue" %}
+                            </th>
+                            <th class="table-th-right">
+                                {% trans "Discount %" %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voucher in voucher_performance.top_vouchers %}
+                        <tr class="border-bottom">
+                            <td class="table-td-center text-bold text-primary-fg">
+                                {{ voucher.code }}
+                            </td>
+                            <td class="table-td-center">
+                                {{ voucher.name|truncatechars:40 }}
+                            </td>
+                            <td class="table-td-center">
+                                <span class="status-badge {% if voucher.discount_type == 'percentage' %}status-badge-info{% elif voucher.discount_type == 'fixed' %}status-badge-success{% else %}status-badge-warning{% endif %}">
+                                    {% if voucher.discount_type == 'percentage' %}
+                                        %
+                                    {% elif voucher.discount_type == 'fixed' %}
+                                        $
+                                    {% else %}
+                                        {% trans "Gift" %}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="table-td-right-light">
+                                {{ voucher.use_count }}
+                            </td>
+                            <td class="table-td-right text-bold text-warning-fg">
+                                {{ voucher.total_discount|format_currency:default_currency }}
+                            </td>
+                            <td class="table-td-right-light">
+                                {{ voucher.total_revenue|format_currency:default_currency }}
+                            </td>
+                            <td class="table-td-right text-bold text-quiet">
+                                {{ voucher.discount_rate|floatformat:1 }}%
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Customer Segmentation Section #}
+    {% if customer_segmentation.segments %}
+    <div id="customer-segmentation" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-users"></i>
+            {% trans "Customer Segmentation" %}
+        </h2>
+
+        {# Summary Stats #}
+        <div class="metrics-grid mb-24">
+            <div class="metric-card border-left-primary">
+                <div class="metric-content">
+                    <div class="metric-label">{% trans "Total Customers" %}</div>
+                    <div class="metric-value">{{ customer_segmentation.total_customers }}</div>
+                </div>
+            </div>
+            <div class="metric-card border-left-success">
+                <div class="metric-content">
+                    <div class="metric-label">{% trans "Total Lifetime Value" %}</div>
+                    <div class="metric-value text-success-fg">{{ customer_segmentation.total_lifetime_value|format_currency:default_currency }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Segment Cards Grid #}
+        <div class="provider-grid">
+            {% for segment in customer_segmentation.segments %}
+            {% if segment.customer_count > 0 %}
+            <div class="provider-card" style="border-top: 4px solid {{ segment.color }};">
+                <div class="provider-header">
+                    <div class="provider-title">
+                        <h3>{{ segment.display_name }}</h3>
+                    </div>
+                    <span class="status-badge" style="background: {{ segment.color }}; color: white;">
+                        {{ segment.percentage|floatformat:1 }}%
+                    </span>
+                </div>
+
+                <div class="provider-body">
+                    <p class="provider-description">
+                        {{ segment.description|truncatechars:80 }}
+                    </p>
+
+                    <div class="provider-stats">
+                        <div class="stat">
+                            <span class="stat-label">{% trans "Customers" %}</span>
+                            <span class="stat-value">{{ segment.customer_count }}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">{% trans "Total LTV" %}</span>
+                            <span class="stat-value" style="color: {{ segment.color }};">{{ segment.total_ltv|format_currency:default_currency }}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">{% trans "Avg LTV" %}</span>
+                            <span class="stat-value">{{ segment.avg_ltv|format_currency:default_currency }}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">{% trans "Avg AOV" %}</span>
+                            <span class="stat-value">{{ segment.avg_aov|format_currency:default_currency }}</span>
+                        </div>
+                    </div>
+
+                    {% if segment.total_orders > 0 %}
+                    <div class="mt-12 pt-12 border-top-thin">
+                        <div class="help">
+                            <i class="fas fa-shopping-bag"></i>
+                            {{ segment.total_orders }} {% trans "total orders" %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Affiliate Program Summary #}
+    {% if affiliate_summary.active_affiliates > 0 or affiliate_summary.pending_commissions_count > 0 %}
+    <div id="affiliate-program" class="dashboard-section">
+        <div class="section-header-flex mb-20">
+            <h2 class="section-title section-title-no-margin">
+                <i class="fas fa-users"></i>
+                {% trans "Affiliate Program" %}
+            </h2>
+            {% url 'affiliate:merchant_dashboard' as affiliate_url %}
+            <a href="{{ affiliate_url }}" class="button">
+                <i class="fas fa-external-link-alt"></i>
+                {% trans "View Full Dashboard" %}
+            </a>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon gradient-info">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Active Affiliates" %}</div>
+                    <div class="metric-value">{{ affiliate_summary.active_affiliates }}</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon gradient-warning">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Pending Approval" %}</div>
+                    <div class="metric-value">{{ affiliate_summary.pending_commissions_amount|format_currency:default_currency }}</div>
+                    <div class="metric-subtitle">
+                        {{ affiliate_summary.pending_commissions_count }} {% trans "commission(s)" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon gradient-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Approved Commissions" %}</div>
+                    <div class="metric-value">{{ affiliate_summary.approved_commissions_amount|format_currency:default_currency }}</div>
+                    <div class="metric-subtitle">
+                        {{ affiliate_summary.approved_commissions_count }} {% trans "ready for payout" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon gradient-purple">
+                    <i class="fas fa-money-check-alt"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Pending Payouts" %}</div>
+                    <div class="metric-value">{{ affiliate_summary.pending_payouts_amount|format_currency:default_currency }}</div>
+                    <div class="metric-subtitle">
+                        {{ affiliate_summary.pending_payouts_count }} {% trans "payout(s)" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Loyalty Program Summary #}
+    {% if loyalty_summary.active_members > 0 %}
+    <div id="loyalty-program" class="dashboard-section">
+        <div class="section-header-flex mb-20">
+            <h2 class="section-title section-title-no-margin">
+                <i class="fas fa-award"></i>
+                {% trans "Loyalty Program" %}
+            </h2>
+            {% url 'loyalty:dashboard' as loyalty_url %}
+            <a href="{{ loyalty_url }}" class="button">
+                <i class="fas fa-external-link-alt"></i>
+                {% trans "View Full Dashboard" %}
+            </a>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-danger">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Active Members" %}</div>
+                    <div class="metric-value">{{ loyalty_summary.active_members|floatformat:0 }}</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-info">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Points Issued" %}</div>
+                    <div class="metric-value">{{ loyalty_summary.points_issued|floatformat:0 }}</div>
+                    <div class="metric-subtitle">
+                        {% trans "in selected period" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-warning">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Points Redeemed" %}</div>
+                    <div class="metric-value">{{ loyalty_summary.points_redeemed|floatformat:0 }}</div>
+                    <div class="metric-subtitle">
+                        {{ loyalty_summary.redemptions_count }} {% trans "redemption(s)" %}
+                    </div>
+                </div>
+            </div>
+
+            {% if loyalty_summary.tier_distribution %}
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-purple">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Tier Distribution" %}</div>
+                    <div class="mt-12">
+                        {% for tier in loyalty_summary.tier_distribution %}
+                        <div class="display-flex flex-align-center-gap-6 mb-4 flex-between">
+                            <div class="display-flex flex-align-center-gap-6">
+                                <div class="color-indicator-12" style="background: {{ tier.color }};"></div>
+                                <span class="text-small">{{ tier.name }}</span>
+                            </div>
+                            <span class="text-11 text-semibold">{{ tier.member_count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Email Campaign Performance #}
+    {% if email_campaign_roi.overall.total_sent > 0 %}
+    <div id="email-campaign" class="dashboard-section">
+        <div class="section-header-flex mb-20">
+            <h2 class="section-title" class="mb-0">
+                <i class="fas fa-envelope"></i>
+                {% trans "Email Campaign Performance" %}
+            </h2>
+            <a href="{% url 'admin:email_system_emailoutbox_changelist' %}" class="button">
+                <i class="fas fa-chart-line"></i>
+                {% trans "View Email Outbox" %}
+            </a>
+        </div>
+
+        {# Overall Metrics Cards #}
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-info">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Emails Sent" %}</div>
+                    <div class="metric-value">{{ email_campaign_roi.overall.total_sent|floatformat:0 }}</div>
+                    <div class="metric-subtitle">
+                        {% trans "in selected period" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-success">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Open Rate" %}</div>
+                    <div class="metric-value">{{ email_campaign_roi.overall.open_rate|floatformat:1 }}%</div>
+                    <div class="metric-subtitle">
+                        {{ email_campaign_roi.overall.total_opened }} {% trans "opens" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-purple">
+                    <i class="fas fa-mouse-pointer"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Click Rate" %}</div>
+                    <div class="metric-value">{{ email_campaign_roi.overall.click_rate|floatformat:1 }}%</div>
+                    <div class="metric-subtitle">
+                        {{ email_campaign_roi.overall.total_clicked }} {% trans "clicks" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-warning">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Conversions" %}</div>
+                    <div class="metric-value">{{ email_campaign_roi.overall.total_conversions|floatformat:0 }}</div>
+                    <div class="metric-subtitle">
+                        {{ email_campaign_roi.overall.conversion_rate|floatformat:2 }}% {% trans "conversion rate" %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-danger">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Revenue Generated" %}</div>
+                    <div class="metric-value">${{ email_campaign_roi.overall.total_revenue|floatformat:2 }}</div>
+                    <div class="metric-subtitle">
+                        ${{ email_campaign_roi.overall.revenue_per_email|floatformat:2 }} {% trans "per email" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Per-Template Performance Table #}
+        {% if email_campaign_roi.by_template %}
+        <div class="mt-30">
+            <h3 class="text-14 text-semibold mb-12">
+                <i class="fas fa-table"></i>
+                {% trans "Performance by Template" %}
+            </h3>
+            <div class="content-container">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr class="table-row-body-bg table-row-border-top">
+                            <th class="table-th">{% trans "Template" %}</th>
+                            <th class="table-th-right">{% trans "Sent" %}</th>
+                            <th class="table-th-right">{% trans "Opened" %}</th>
+                            <th class="table-th-right">{% trans "Clicked" %}</th>
+                            <th class="table-th-right">{% trans "Conversions" %}</th>
+                            <th class="table-th-right">{% trans "Revenue" %}</th>
+                            <th class="table-th-right">{% trans "ROI per Email" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for template in email_campaign_roi.by_template %}
+                        <tr class="border-bottom">
+                            <td class="table-td-center">
+                                <div class="text-13 text-medium-500">{{ template.template_name }}</div>
+                                <div class="text-11 text-body-quiet mt-2">{{ template.template_id }}</div>
+                            </td>
+                            <td class="table-td-right-light">{{ template.sent }}</td>
+                            <td class="table-td-right-light">
+                                {{ template.opened }}
+                                <span class="text-11 text-body-quiet ml-4">
+                                    ({% widthratio template.opened template.sent 100 %}%)
+                                </span>
+                            </td>
+                            <td class="table-td-right-light">
+                                {{ template.clicked }}
+                                <span class="text-11 text-body-quiet ml-4">
+                                    ({% widthratio template.clicked template.sent 100 %}%)
+                                </span>
+                            </td>
+                            <td class="table-td-right-light">
+                                {{ template.conversions }}
+                            </td>
+                            <td class="table-td-12-right text-13 text-semibold text-success-fg">
+                                ${{ template.revenue|floatformat:2 }}
+                            </td>
+                            <td class="table-td-12-right text-13 text-semibold icon-color-blue">
+                                ${{ template.roi|floatformat:2 }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="info-box">
+                <div class="info-box-content">
+                    <i class="fas fa-info-circle" class="icon-blue"></i>
+                    <div>
+                        <strong>{% trans "Attribution Window:" %}</strong> {% trans "Orders are attributed to emails if they occur within 7 days of email being sent." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {# Sales Channel Performance #}
+    {% if sales_channel_performance.by_channel %}
+    <div id="sales-channel" class="dashboard-section">
+        <div class="section-header-flex mb-20">
+            <h2 class="section-title" class="mb-0">
+                <i class="fas fa-broadcast-tower"></i>
+                {% trans "Sales by Channel" %}
+            </h2>
+        </div>
+        <div class="metrics-grid" class="mb-24">
+            <div class="metric-card">
+                <div class="metric-icon gradient-purple-alt">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">{% trans "Total Channel Revenue" %}</div>
+                    <div class="metric-value">${{ sales_channel_performance.total_revenue|floatformat:2 }}</div>
+                    {% if sales_channel_performance.changes %}
+                        {% if sales_channel_performance.changes.total_revenue_change > 0 %}
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            {{ sales_channel_performance.changes.total_revenue_change|floatformat:1 }}%
+                        </div>
+                        {% elif sales_channel_performance.changes.total_revenue_change < 0 %}
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            {{ sales_channel_performance.changes.total_revenue_change|floatformat:1 }}%
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon gradient-pink">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">{% trans "Total Orders" %}</div>
+                    <div class="metric-value">{{ sales_channel_performance.total_orders|floatformat:0 }}</div>
+                    {% if sales_channel_performance.changes %}
+                        {% if sales_channel_performance.changes.total_orders_change > 0 %}
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            {{ sales_channel_performance.changes.total_orders_change|floatformat:1 }}%
+                        </div>
+                        {% elif sales_channel_performance.changes.total_orders_change < 0 %}
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            {{ sales_channel_performance.changes.total_orders_change|floatformat:1 }}%
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon gradient-blue-alt">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">{% trans "Active Channels" %}</div>
+                    <div class="metric-value">{{ sales_channel_performance.by_channel|length }}</div>
+                    <div class="metric-subtitle">
+                        {% trans "With sales activity" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-grid mb-24 grid-template-2">
+            {# Revenue Distribution Pie Chart #}
+            <div class="chart-box">
+                <h3 class="text-14 text-semibold mb-16">
+                    <i class="fas fa-chart-pie"></i>
+                    {% trans "Revenue Distribution" %}
+                </h3>
+                <canvas id="channelRevenueChart" class="max-h-250"></canvas>
+            </div>
+
+            {# Orders by Channel Bar Chart #}
+            <div class="chart-box">
+                <h3 class="text-14 text-semibold mb-16">
+                    <i class="fas fa-chart-bar"></i>
+                    {% trans "Orders by Channel" %}
+                </h3>
+                <canvas id="channelOrdersChart" class="max-h-250"></canvas>
+            </div>
+        </div>
+
+        <div class="table-container-overflow">
+            <table class="dashboard-table">
+                <thead class="bg-darkened">
+                    <tr>
+                        <th class="table-th">
+                            {% trans "Channel" %}
+                        </th>
+                        <th class="table-th-right">
+                            {% trans "Revenue" %}
+                        </th>
+                        <th class="table-th-right">
+                            {% trans "Orders" %}
+                        </th>
+                        <th class="table-th-right">
+                            {% trans "AOV" %}
+                        </th>
+                        <th class="table-th-right">
+                            {% trans "Share" %}
+                        </th>
+                        {% if sales_channel_performance.changes %}
+                        <th class="table-th-right">
+                            {% trans "Change" %}
+                        </th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for channel in sales_channel_performance.by_channel %}
+                    <tr class="table-row-border-top">
+                        <td class="table-td-center">
+                            <div class="flex-center-8">
+                                {% if channel.source == 'email' %}
+                                    <i class="fas fa-envelope icon-sm-20 icon-color-blue"></i>
+                                {% elif channel.source == 'referral' %}
+                                    <i class="fas fa-users icon-sm-20 icon-color-purple"></i>
+                                {% elif channel.source == 'social' %}
+                                    <i class="fas fa-share-alt icon-sm-20 icon-color-red"></i>
+                                {% elif channel.source == 'direct' %}
+                                    <i class="fas fa-globe icon-sm-20 icon-color-green"></i>
+                                {% elif channel.source == 'organic' %}
+                                    <i class="fas fa-search icon-sm-20 icon-color-orange"></i>
+                                {% elif channel.source == 'loyalty' %}
+                                    <i class="fas fa-star icon-sm-20 icon-color-dark-orange"></i>
+                                {% elif channel.source == 'utm_tracked' %}
+                                    <i class="fas fa-link icon-sm-20 icon-color-teal"></i>
+                                {% elif channel.source == 'web' %}
+                                    <i class="fas fa-desktop icon-sm-20 icon-color-blue"></i>
+                                {% elif channel.source == 'mobile' %}
+                                    <i class="fas fa-mobile-alt icon-sm-20 icon-color-pink"></i>
+                                {% else %}
+                                    <i class="fas fa-question-circle icon-sm-20 icon-color-gray"></i>
+                                {% endif %}
+                                <div>
+                                    <div class="text-13 text-medium-500">
+                                        {{ channel.source_display }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="table-td-12-right text-13 text-semibold">
+                            ${{ channel.revenue|floatformat:2 }}
+                        </td>
+                        <td class="table-td-right-light">
+                            {{ channel.orders }}
+                        </td>
+                        <td class="table-td-right-light">
+                            ${{ channel.aov|floatformat:2 }}
+                        </td>
+                        <td class="table-td-right">
+                            <div class="flex-end">
+                                <div class="progress-bar-container">
+                                    <div class="progress-fill-gradient-purple" style="width: {{ channel.percentage }}%;"></div>
+                                </div>
+                                <span class="text-12 text-medium-500 w-40 text-right">
+                                    {{ channel.percentage|floatformat:1 }}%
+                                </span>
+                            </div>
+                        </td>
+                        {% if sales_channel_performance.changes %}
+                        <td class="table-td-right">
+                            {% if channel.revenue_change != None %}
+                                {% if channel.revenue_change > 0 %}
+                                <span class="change-badge-success">
+                                    <i class="fas fa-arrow-up"></i>
+                                    {{ channel.revenue_change|floatformat:1 }}%
+                                </span>
+                                {% elif channel.revenue_change < 0 %}
+                                <span class="change-badge-error">
+                                    <i class="fas fa-arrow-down"></i>
+                                    {{ channel.revenue_change|floatformat:1 }}%
+                                </span>
+                                {% else %}
+                                <span class="change-badge-neutral">
+                                    <i class="fas fa-minus"></i>
+                                    0%
+                                </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="change-badge-neutral">
+                                    <i class="fas fa-minus"></i>
+                                    —
+                                </span>
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-content">
+                <i class="fas fa-info-circle" class="icon-blue"></i>
+                <div>
+                    <strong>{% trans "Channel Attribution:" %}</strong> {% trans "Sales are attributed to channels based on how customers arrived at your store (direct traffic, email campaigns, affiliate referrals, social media, loyalty program, organic search, or UTM-tracked campaigns)." %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Conversion Funnel Visualization #}
+    {% if conversion_funnel and conversion_funnel.stages %}
+    <div id="conversion-funnel" class="dashboard-section">
+        <div class="section-header-flex mb-20">
+            <h2 class="section-title" class="mb-0">
+                <i class="fas fa-filter"></i>
+                {% trans "Conversion Funnel" %}
+            </h2>
+        </div>
+
+        {# Metric Cards: Overall Conversion Rate and Biggest Drop-off #}
+        <div class="metrics-grid" class="metrics-grid-2">
+            {# Overall Conversion Rate #}
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">{% trans "Overall Conversion Rate" %}</div>
+                    <div class="metric-value">{{ conversion_funnel.overall_conversion_rate|floatformat:2 }}%</div>
+                    <div class="mt-4 text-12 text-body-quiet">
+                        {% trans "Views to Orders" %}
+                    </div>
+                </div>
+            </div>
+
+            {# Biggest Drop-off #}
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">{% trans "Biggest Drop-off" %}</div>
+                    <div class="metric-value">{{ conversion_funnel.biggest_drop_off_percentage|floatformat:1 }}%</div>
+                    <div class="mt-4 text-12 text-body-quiet">
+                        {{ conversion_funnel.biggest_drop_off_stage }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Funnel Visualization #}
+        <div class="chart-container">
+            <canvas id="conversionFunnelChart" class="chart-canvas"></canvas>
+        </div>
+
+        {# Detailed Funnel Table #}
+        <div class="table-container-overflow">
+            <table class="dashboard-table">
+                <thead class="bg-darkened">
+                    <tr>
+                        <th class="table-th table-th-uppercase border-bottom">
+                            {% trans "Stage" %}
+                        </th>
+                        <th class="table-th-right border-bottom">
+                            {% trans "Count" %}
+                        </th>
+                        <th class="table-th-right border-bottom">
+                            {% trans "% of Total" %}
+                        </th>
+                        <th class="table-th-right border-bottom">
+                            {% trans "Drop-off" %}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stage in conversion_funnel.stages %}
+                    <tr class="{% if forloop.counter == 1 %}table-row-body-bg{% else %}table-row-alt-bg{% endif %}">
+                        <td class="table-td-14-16">
+                            <div class="flex-center">
+                                {% if stage.name == "Product Views" %}
+                                    <i class="fas fa-eye icon-16 icon-color-blue"></i>
+                                {% elif stage.name == "Add to Cart" %}
+                                    <i class="fas fa-cart-plus icon-16 icon-color-purple"></i>
+                                {% elif stage.name == "Checkout Started" %}
+                                    <i class="fas fa-shopping-bag icon-16 icon-color-orange"></i>
+                                {% elif stage.name == "Payment" %}
+                                    <i class="fas fa-credit-card icon-16 icon-color-dark-orange"></i>
+                                {% elif stage.name == "Order Complete" %}
+                                    <i class="fas fa-check-circle icon-16 icon-color-green"></i>
+                                {% endif %}
+                                <span class="text-medium-500 text-14">
+                                    {{ stage.name }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="table-td-14-16-right text-semibold">
+                            {{ stage.count|floatformat:0 }}
+                        </td>
+                        <td class="table-td-14-16-right">
+                            <div class="flex-end">
+                                <div class="progress-bar-container">
+                                    <div class="progress-fill-gradient-blue-green" style="width: {{ stage.percentage }}%;"></div>
+                                </div>
+                                <span class="text-medium">{{ stage.percentage|floatformat:1 }}%</span>
+                            </div>
+                        </td>
+                        <td class="table-td-14-16-right">
+                            {% if stage.drop_off > 0 %}
+                                <span class="text-medium-500 {% if stage.drop_off > 50 %}text-conditional-error{% elif stage.drop_off > 25 %}text-conditional-warning{% else %}text-conditional-gray{% endif %}">
+                                    <i class="fas fa-arrow-down"></i>
+                                    {{ stage.drop_off|floatformat:1 }}%
+                                </span>
+                            {% else %}
+                                <span class="text-body-quiet">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# Info Box #}
+        <div class="info-box">
+            <div class="info-box-content">
+                <i class="fas fa-info-circle" class="icon-blue"></i>
+                <div>
+                    <strong>{% trans "About Conversion Funnel:" %}</strong> {% trans "This funnel tracks how many visitors progress through each stage of the purchase process, helping you identify where customers drop off." %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Customer Messages Inbox #}
+    {% if customer_messages %}
+    <div id="customer-messages" class="dashboard-section">
+        <div class="section-header-flex mb-20">
+            <h2 class="section-title" class="mb-0">
+                <i class="fas fa-inbox"></i>
+                {% trans "Customer Messages" %}
+                {% if unread_messages_count > 0 %}
+                <span class="notification-badge ml-8">
+                    {{ unread_messages_count }}
+                </span>
+                {% endif %}
+            </h2>
+            <a href="{% url 'admin:orders_ordernote_changelist' %}?is_customer_note__exact=1" class="button">
+                <i class="fas fa-comments"></i>
+                {% trans "View All Messages" %}
+            </a>
+        </div>
+
+        <div class="content-container">
+            {% for message in customer_messages %}
+            <div class="customer-message-item{% if not message.is_read %} unread{% endif %}">
+                <div class="avatar-circle gradient-blue-primary">
+                    <i class="fas fa-user icon-color-white icon-14"></i>
+                </div>
+
+                <div class="customer-message-content">
+                    <div class="customer-message-header">
+                        <span class="customer-message-name">
+                            {{ message.customer_name }}
+                        </span>
+                        {% if not message.is_read %}
+                        <span class="customer-note-badge">
+                            {% trans "New" %}
+                        </span>
+                        {% endif %}
+                        <span class="customer-message-order">
+                            <i class="fas fa-receipt icon-9"></i>
+                            #{{ message.order_number }}
+                        </span>
+                        {% if message.customer_email %}
+                        <span class="customer-message-email show-on-desktop">
+                            • {{ message.customer_email }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="customer-message-text">
+                        {{ message.message }}
+                    </div>
+                </div>
+
+                <div class="customer-message-actions">
+                    <div class="customer-message-date">
+                        {% if message.days_ago == 0 %}
+                            {% trans "Today" %}
+                        {% elif message.days_ago == 1 %}
+                            {% trans "Yesterday" %}
+                        {% else %}
+                            {{ message.days_ago }} {% trans "days ago" %}
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'admin:orders_order_change' message.order_id %}" class="button">
+                        <i class="fas fa-reply"></i>
+                        <span class="show-on-desktop">{% trans "Respond" %}</span>
+                        <span class="hide-on-desktop">{% trans "Reply" %}</span>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if customer_messages|length == 10 %}
+        <div class="text-center mt-12">
+            <a href="{% url 'admin:orders_ordernote_changelist' %}?is_customer_note__exact=1" class="link-primary-simple-13">
+                {% trans "View all customer messages" %} <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {# Shipment Status Summary #}
+    {% if shipment_summary.in_transit_count > 0 or shipment_summary.out_for_delivery_count > 0 or shipment_summary.delivered_today_count > 0 or shipment_summary.exception_count > 0 or shipment_summary.late_shipments_count > 0 %}
+    <div id="shipment-status" class="dashboard-section">
+        <div class="section-header-flex mb-20">
+            <h2 class="section-title" class="mb-0">
+                <i class="fas fa-truck"></i>
+                {% trans "Shipment Status" %}
+                {% if shipment_summary.late_shipments_count > 0 %}
+                <span class="notification-badge ml-8">
+                    {{ shipment_summary.late_shipments_count }} {% trans "Late" %}
+                </span>
+                {% endif %}
+            </h2>
+            <a href="{% url 'admin:shipping_shipment_changelist' %}" class="button">
+                <i class="fas fa-shipping-fast"></i>
+                {% trans "Manage Shipments" %}
+            </a>
+        </div>
+
+        <div class="metrics-grid">
+            {# In Transit #}
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-info">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "In Transit" %}</div>
+                    <div class="metric-value">{{ shipment_summary.in_transit_count|floatformat:0 }}</div>
+                </div>
+            </div>
+
+            {# Out for Delivery #}
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-warning">
+                    <i class="fas fa-truck-loading"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Out for Delivery" %}</div>
+                    <div class="metric-value">{{ shipment_summary.out_for_delivery_count|floatformat:0 }}</div>
+                </div>
+            </div>
+
+            {# Delivered Today #}
+            <div class="metric-card">
+                <div class="metric-icon gradient-green-dark">
+                    <i class="fas fa-box-check"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Delivered Today" %}</div>
+                    <div class="metric-value">{{ shipment_summary.delivered_today_count|floatformat:0 }}</div>
+                </div>
+            </div>
+
+            {# Exceptions #}
+            <div class="metric-card">
+                <div class="metric-icon" class="gradient-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="metric-info">
+                    <div class="metric-label">{% trans "Exceptions" %}</div>
+                    <div class="metric-value">{{ shipment_summary.exception_count|floatformat:0 }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Late Shipments Alert #}
+        {% if shipment_summary.late_shipments %}
+        <div class="alert-error-box mt-24 p-16 rounded-8">
+            <div class="display-flex flex-align-center-gap-12 mb-12">
+                <i class="fas fa-exclamation-triangle text-error-fg icon-20"></i>
+                <div>
+                    <div class="text-semibold text-14 text-error-fg">
+                        {% trans "Late Shipments Alert" %}
+                    </div>
+                    <div class="text-12 text-body-quiet mt-2">
+                        {% blocktrans count counter=shipment_summary.late_shipments_count %}
+                            {{ counter }} shipment is past its estimated delivery date
+                        {% plural %}
+                            {{ counter }} shipments are past their estimated delivery dates
+                        {% endblocktrans %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-darkened rounded-6 border-thin overflow-hidden">
+                {% for late in shipment_summary.late_shipments %}
+                <div class="p-12 border-bottom-thin flex-between">
+                    <div class="flex-1">
+                        <div class="display-flex flex-align-center-gap-8 mb-4">
+                            <span class="text-semibold text-13">
+                                {% trans "Order" %} #{{ late.order_number }}
+                            </span>
+                            <span class="status-badge-error text-10">
+                                {{ late.days_late }} {% trans "days late" %}
+                            </span>
+                        </div>
+                        <div class="text-small">
+                            {{ late.customer_name }} • {{ late.carrier }}
+                            {% if late.tracking_number != 'N/A' %}
+                            • {% trans "Tracking" %}: {{ late.tracking_number }}
+                            {% endif %}
+                        </div>
+                        <div class="text-11 text-body-quiet mt-2">
+                            {% trans "Expected" %}: {{ late.estimated_delivery|date:"M d, Y" }} • {% trans "Status" %}: {{ late.status }}
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{% url 'admin:orders_order_change' late.order_id %}" class="button">
+                            <i class="fas fa-eye"></i>
+                            {% trans "View Order" %}
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if shipment_summary.late_shipments_count > shipment_summary.late_shipments|length %}
+            <div class="text-center mt-12">
+                <a href="{% url 'admin:shipping_shipment_changelist' %}?status__in=in_transit,out_for_delivery,exception" class="link-primary-simple text-12">
+                    {% trans "View all late shipments" %} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+
+    {# Top Products #}
+    <div id="top-products" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-star"></i>
+            {% trans "Top Selling Products" %}
+        </h2>
+        <div class="products-table-container">
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Product" %}</th>
+                        <th class="text-right">{% trans "Units Sold" %}</th>
+                        <th class="text-right">{% trans "Revenue" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in top_products %}
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                {% if product.image_url %}
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                                {% else %}
+                                <div class="product-image-placeholder">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                {% endif %}
+                                <span class="product-name">{{ product.name }}</span>
+                            </div>
+                        </td>
+                        <td class="text-right">{{ product.units_sold }}</td>
+                        <td class="text-right">${{ product.revenue|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            {% trans "No sales data for this period" %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {# Traffic & Visitor Analytics - Combined Section #}
+    <div id="traffic-analytics" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-chart-line"></i>
+            {% trans "Traffic & Visitor Analytics" %}
+            <a href="{% url 'geoip_admin:visitor_analytics' %}" class="section-action-link" title="{% trans 'View detailed page-level analytics' %}">
+                <i class="fas fa-external-link-alt"></i> {% trans "Detailed Analytics" %}
+            </a>
+        </h2>
+
+        {# Summary Metrics - Combine key visitor and traffic metrics #}
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon visitors">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Total Visitors" %}</div>
+                </div>
+                <div class="metric-value">{{ traffic_source_analytics.summary.total_visitors|intcomma }}</div>
+                {% if compare_enabled and visitor_analytics.changes.unique_visitors is not None %}
+                <div class="metric-change {% if visitor_analytics.changes.unique_visitors >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if visitor_analytics.changes.unique_visitors >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ visitor_analytics.changes.unique_visitors|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon conversion">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Conversion Rate" %}</div>
+                </div>
+                <div class="metric-value">{{ traffic_source_analytics.summary.conversion_rate|floatformat:2 }}%</div>
+                {% if compare_enabled and visitor_analytics.changes.conversion_rate is not None %}
+                <div class="metric-change {% if visitor_analytics.changes.conversion_rate >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if visitor_analytics.changes.conversion_rate >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ visitor_analytics.changes.conversion_rate|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon pageviews">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Page Views" %}</div>
+                </div>
+                <div class="metric-value">{{ visitor_analytics.current.page_views|intcomma }}</div>
+                {% if compare_enabled and visitor_analytics.changes.page_views is not None %}
+                <div class="metric-change {% if visitor_analytics.changes.page_views >= 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-{% if visitor_analytics.changes.page_views >= 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                    {{ visitor_analytics.changes.page_views|floatformat:1 }}%
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Revenue per Visitor" %}</div>
+                </div>
+                <div class="metric-value">${{ traffic_source_analytics.summary.revenue_per_visitor|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+
+    {# Automated Traffic (Bots & Admin) - Separate metrics #}
+    {% if visitor_analytics.automated_traffic %}
+    <div class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-robot"></i>
+            {% trans "Automated & Admin Traffic" %}
+            <span class="section-subtitle" style="font-size: 0.75em; color: var(--text-muted); font-weight: normal; margin-left: 8px;">{% trans "Excluded from visitor metrics above" %}</span>
+        </h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: rgba(149, 165, 166, 0.15); color: #95a5a6;">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Bot Visitors" %}</div>
+                </div>
+                <div class="metric-value">{{ visitor_analytics.automated_traffic.bot_visitors|intcomma }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: rgba(149, 165, 166, 0.15); color: #95a5a6;">
+                        <i class="fas fa-spider"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Bot Page Views" %}</div>
+                </div>
+                <div class="metric-value">{{ visitor_analytics.automated_traffic.bot_page_views|intcomma }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: rgba(149, 165, 166, 0.15); color: #95a5a6;">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Admin Sessions" %}</div>
+                </div>
+                <div class="metric-value">{{ visitor_analytics.automated_traffic.admin_visitors|intcomma }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: rgba(149, 165, 166, 0.15); color: #95a5a6;">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="metric-title">{% trans "Admin Page Views" %}</div>
+                </div>
+                <div class="metric-value">{{ visitor_analytics.automated_traffic.admin_page_views|intcomma }}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Two-Column Chart Layout: Traffic Type & Page Views #}
+    <div class="dashboard-two-column">
+        {# Traffic by Type Pie Chart #}
+        <div id="traffic-sources" class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-pie"></i>
+                {% trans "Traffic Sources" %}
+            </h2>
+            <div class="chart-container max-h-350">
+                <canvas id="traffic-type-chart"></canvas>
+            </div>
+        </div>
+
+        {# Page Views Over Time Chart #}
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                {% trans "Page Views Over Time" %}
+            </h2>
+            <div class="chart-container max-h-350">
+                <canvas id="views-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {# Traffic Trends Chart - Full Width #}
+    <div id="traffic-trends" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-chart-area"></i>
+            {% trans "Traffic Trends" %}
+        </h2>
+        <div class="chart-container">
+            <canvas id="traffic-trends-chart"></canvas>
+        </div>
+    </div>
+
+    {# Top Pages & Landing Pages - Two Column #}
+    {% if top_pages %}
+    <div class="dashboard-two-column">
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-ranking-star"></i>
+                {% trans "Top Pages" %}
+            </h2>
+            <div class="table-container-overflow">
+                <table class="dashboard-table">
+                    <thead class="bg-darkened">
+                        <tr>
+                            <th class="table-th table-th-uppercase border-bottom">{% trans "Page" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Views" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Visitors" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for page in top_pages %}
+                        <tr class="{% cycle 'table-row-body-bg' 'table-row-alt-bg' %}">
+                            <td class="table-td-14-16">
+                                <span class="text-truncate-250 text-monospace" title="{{ page.url_path }}">{{ page.url_path }}</span>
+                            </td>
+                            <td class="table-td-right">{{ page.views|intcomma }}</td>
+                            <td class="table-td-right">{{ page.unique_visitors|intcomma }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-door-open"></i>
+                {% trans "Landing Pages" %}
+            </h2>
+            <div class="table-container-overflow">
+                <table class="dashboard-table">
+                    <thead class="bg-darkened">
+                        <tr>
+                            <th class="table-th table-th-uppercase border-bottom">{% trans "Page" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Entries" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Visitors" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for page in landing_pages %}
+                        <tr class="{% cycle 'table-row-body-bg' 'table-row-alt-bg' %}">
+                            <td class="table-td-14-16">
+                                <span class="text-truncate-250 text-monospace" title="{{ page.url_path }}">{{ page.url_path }}</span>
+                            </td>
+                            <td class="table-td-right">{{ page.entries|intcomma }}</td>
+                            <td class="table-td-right">{{ page.unique_visitors|intcomma }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Device Breakdown #}
+    <div id="device-breakdown" class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-mobile-alt"></i>
+            {% trans "Device Breakdown" %}
+        </h2>
+        <div class="metrics-grid" class="metrics-grid-200">
+            {% for device in traffic_source_analytics.device_breakdown %}
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: {{ device.color }}20; color: {{ device.color }};">
+                        <i class="fas fa-{{ device.icon }}"></i>
+                    </div>
+                    <div class="metric-title">{{ device.type|title }}</div>
+                </div>
+                <div class="metric-value">{{ device.count|intcomma }}</div>
+                <div class="metric-subtitle">
+                    {{ device.percentage|floatformat:1 }}% of traffic
+                    {% if device.conversion_rate %}
+                    &middot; {{ device.conversion_rate|floatformat:1 }}% CVR
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# Two-Column Layout: Top Referrers & UTM Campaigns #}
+    <div class="dashboard-two-column">
+        {# Top Referrers #}
+        <div id="top-referrers" class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-link"></i>
+                {% trans "Top Referrers" %}
+            </h2>
+            <div class="table-container-overflow">
+                <table class="dashboard-table">
+                    <thead class="bg-darkened">
+                        <tr>
+                            <th class="table-th table-th-uppercase border-bottom">{% trans "Source" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Visitors" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Conversions" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Revenue" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ref in traffic_source_analytics.top_referrers %}
+                        <tr class="{% cycle 'table-row-body-bg' 'table-row-alt-bg' %}">
+                            <td class="table-td-14-16">
+                                <div class="flex-center">
+                                    <i class="fas fa-external-link-alt icon-muted-small"></i>
+                                    <span class="text-truncate-250" title="{{ ref.domain }}">
+                                        {{ ref.domain }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="table-td-14-16-right text-semibold">{{ ref.visitors|intcomma }}</td>
+                            <td class="table-td-14-16-right">{{ ref.conversions|intcomma }}</td>
+                            <td class="table-td-14-16-right text-primary">${{ ref.revenue|floatformat:2|intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                {% trans "No referrer data available" %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {# UTM Campaigns #}
+        <div id="utm-campaigns" class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-bullhorn"></i>
+                {% trans "UTM Campaigns" %}
+            </h2>
+            <div class="table-container-overflow">
+                <table class="dashboard-table">
+                    <thead class="bg-darkened">
+                        <tr>
+                            <th class="table-th table-th-uppercase border-bottom">{% trans "Campaign" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Visitors" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "CVR" %}</th>
+                            <th class="table-th-right border-bottom">{% trans "Revenue" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for campaign in traffic_source_analytics.utm_campaigns %}
+                        <tr class="{% cycle 'table-row-body-bg' 'table-row-alt-bg' %}">
+                            <td class="table-td-14-16">
+                                <div class="campaign-info">
+                                    <div class="campaign-name">{{ campaign.campaign }}</div>
+                                    <div class="campaign-source">
+                                        {{ campaign.source }} / {{ campaign.medium }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="table-td-14-16-right text-semibold">{{ campaign.visitors|intcomma }}</td>
+                            <td class="table-td-14-16-right">{{ campaign.conversion_rate|floatformat:1 }}%</td>
+                            <td class="table-td-14-16-right text-primary">${{ campaign.revenue|floatformat:2|intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                {% trans "No UTM campaign data available" %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# Two Column Layout for Product Views and Geography #}
+    <div class="dashboard-two-column">
+        {# Most Viewed Products #}
+        <div id="most-viewed" class="dashboard-section">
+            <h2 class="section-title">
+                <i class="fas fa-fire"></i>
+                {% trans "Most Viewed Products" %}
+            </h2>
+            <div class="list-container">
+                <ul class="data-list">
+                    {% for product in most_viewed_products %}
+                    <li class="data-list-item">
+                        <div class="list-item-content">
+                            {% if product.image_url %}
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="list-item-image">
+                            {% else %}
+                            <div class="list-item-image-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            {% endif %}
+                            <span class="list-item-label">{{ product.name }}</span>
+                        </div>
+                        <span class="list-item-value">{{ product.views }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        {% trans "No view data available" %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {# Visitor Geography #}
+        <div id="visitor-geography" class="dashboard-section">
+            <div class="display-flex flex-align-center-gap-12 mb-15 flex-between">
+                <h2 class="section-title" class="mb-0">
+                    <i class="fas fa-globe"></i>
+                    {% if drill_down_country %}
+                        {% trans "Visitors from" %} {{ drill_down_country }}
+                    {% else %}
+                        {% trans "Visitors by Country" %}
+                    {% endif %}
+                </h2>
+                {% if drill_down_country %}
+                <button id="back-to-countries" class="dashboard-button-small">
+                    <i class="fas fa-arrow-left"></i>
+                    {% trans "Back to Countries" %}
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="list-container">
+                <ul class="data-list geography-accordion">
+                    {% for item in visitor_geography %}
+                    <li class="geography-country-item" data-country-code="{{ item.country_code }}">
+                        <div class="data-list-item geography-country-header">
+                            <div class="list-item-content">
+                                <span class="country-flag text-24 mr-10">{{ item.flag }}</span>
+                                <span class="list-item-label" class="text-medium">
+                                    {{ item.country_name }}
+                                    <span class="text-12 ml-5 text-body-quiet">({{ item.country_code }})</span>
+                                </span>
+                            </div>
+                            <div class="flex-center">
+                                <span class="list-item-value">{{ item.visitors }}</span>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                        </div>
+                        <ul class="geography-cities-list display-none pl-40 mt-5">
+                            {# Cities will be loaded here via AJAX #}
+                            <li class="loading-cities p-10 text-13 text-body-quiet">
+                                <i class="fas fa-spinner fa-spin"></i> {% trans "Loading cities..." %}
+                            </li>
+                        </ul>
+                    </li>
+                    {% empty %}
+                    <li class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        {% trans "No geography data available" %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Pass data to JavaScript #}
+<script type="application/json" id="dashboard-data" nonce="{{ request.csp_nonce }}">
+{
+    "sales_over_time": {{ sales_over_time_json|safe }},
+    "views_over_time": {{ views_over_time_json|safe }},
+    "sales_channel_performance": {{ sales_channel_performance_json|safe }},
+    "conversion_funnel": {{ conversion_funnel_json|safe }},
+    "traffic_source_analytics": {{ traffic_source_analytics_json|safe }},
+    "compare_enabled": {{ compare_enabled|lower }},
+    "current_grouping": "{{ current_grouping }}",
+    "api_url": "{% url 'admin:management_shop_dashboard_api' %}"
+}
+</script>
+
+<script src="{% static 'management/js/shop_dashboard.js' %}"></script>
+
+{# Setup Wizard Modal #}
+{% include "setup_wizard/partials/wizard_modal.html" %}
+
+{% endblock %}

@@ -1,0 +1,132 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * SSO Provider Configuration Change Form
+ *
+ * Inherits from admin-base.css:
+ *   .admin-page-header, .header-content, .header-actions, .util-btn
+ *   .admin-tabs, .admin-tab-btn, .admin-tab-content
+ *   .form-card, .form-card h2, .form-card .help-text
+ *   .two-column-layout, .column
+ *   .form-row (padding, border, hover, label)
+ *   .status-badge.configured, .status-badge.not-configured
+ *   .checkbox-row
+ *   .button, .button.default
+ *   All input/select/textarea styling
+ *
+ * Only SSO-specific components below.
+ */
+
+/* ============================================
+   Discovery Row (URL input + button side-by-side)
+   ============================================ */
+
+.sso-discovery-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.sso-discovery-row .discovery-input {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ============================================
+   Quick Setup Guide (info box)
+   ============================================ */
+
+.sso-setup-guide {
+    padding: 16px 20px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.sso-setup-guide .guide-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sso-setup-guide .guide-item {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.sso-setup-guide .guide-item:last-child {
+    margin-bottom: 0;
+}
+
+.sso-setup-guide .guide-item strong {
+    color: var(--body-fg);
+}
+
+.sso-setup-guide code {
+    font-size: 12px;
+    padding: 2px 6px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--primary);
+    word-break: break-all;
+}
+
+/* ============================================
+   Secret Status Indicator
+   ============================================ */
+
+.secret-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.secret-status.configured {
+    color: var(--success-fg);
+}
+
+.secret-status.not-configured {
+    color: var(--warning-fg);
+}
+
+/* ============================================
+   Discovery Flash Animation
+   ============================================ */
+
+.field-discovered {
+    border-color: var(--success-fg) !important;
+    transition: border-color 0.3s ease;
+}
+
+/* ============================================
+   Hidden Fields & Submit Row
+   ============================================ */
+
+.submit-row.hidden {
+    display: none;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .sso-discovery-row {
+        flex-direction: column;
+    }
+
+    .sso-discovery-row .button {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}

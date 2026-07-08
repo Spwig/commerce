@@ -1,0 +1,166 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.metric-card {
+    background: var(--darkened-bg, #fff);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.metric-card h3 {
+    margin: 0 0 15px 0;
+    color: var(--body-fg, #333);
+    border-bottom: 2px solid var(--primary, #417690);
+    padding-bottom: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-value {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--primary, #417690);
+    margin: 15px 0;
+    line-height: 1;
+}
+
+.metric-unit {
+    font-size: 0.4em;
+    color: var(--body-quiet-color, #666);
+    margin-left: 8px;
+}
+
+.metric-bar {
+    background: var(--body-bg, #f5f5f5);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.metric-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.cpu-bar { background: linear-gradient(90deg, #ff6b6b, #ff5252); }
+.memory-bar { background: linear-gradient(90deg, #4ecdc4, #26a69a); }
+.disk-bar { background: linear-gradient(90deg, #45b7d1, #2196f3); }
+
+.metric-details {
+    font-size: 13px;
+    color: var(--body-quiet-color, #666);
+    line-height: 1.6;
+}
+
+.metric-details div {
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Chart containers with fixed height */
+.chart-container {
+    width: 100%;
+    height: 250px !important;
+    position: relative;
+    margin: 20px 0;
+}
+
+.chart-container canvas {
+    max-height: 250px !important;
+    height: 250px !important;
+}
+
+/* Status indicators */
+.status-good { color: #4caf50; font-weight: 600; }
+.status-warning { color: #ff9800; font-weight: 600; }
+.status-danger { color: #f44336; font-weight: 600; }
+
+/* Controls */
+.dashboard-controls {
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--darkened-bg, #f8f9fa);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 8px 16px;
+    background: var(--primary, #417690);
+    color: var(--body-fg);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s ease;
+}
+
+.control-btn:hover {
+    background: var(--primary-fg, #2c5aa0);
+}
+
+.auto-refresh-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--body-fg, #333);
+    font-size: 13px;
+}
+
+.last-updated {
+    color: var(--body-quiet-color, #666);
+    font-size: 12px;
+    margin-left: auto;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .metric-card {
+    box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .control-btn {
+    background: var(--purple-accent, #aa88ff);
+}
+
+[data-theme="dark"] .control-btn:hover {
+    background: var(--primary, #9977ee);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .metric-card {
+        padding: 15px;
+    }
+    
+    .metric-value {
+        font-size: 2em;
+    }
+}

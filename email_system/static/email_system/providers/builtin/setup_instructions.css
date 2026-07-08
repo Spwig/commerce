@@ -1,0 +1,208 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Email System Frontend
+ *
+ * Description: Frontend styles for setup_instructions.html
+ * Template: email_system/providers/builtin/setup_instructions.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - Theme CSS variables (loaded via page_builder/base.html or admin base)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Inline CSS for setup instructions - uses theme CSS variables for dark/light mode support */
+.setup-instructions-content {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--body-fg);
+}
+
+.instruction-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.instruction-header i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: var(--success-color);
+}
+
+.instruction-header h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: var(--body-loud-color);
+}
+
+.instruction-header .lead {
+    font-size: 16px;
+    color: var(--body-quiet-color);
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: var(--message-success-bg);
+    border-color: var(--success-color);
+    color: var(--body-fg);
+}
+
+.alert-info {
+    background: var(--blue-subtle);
+    border-color: var(--info-color);
+    color: var(--body-fg);
+}
+
+.alert-warning {
+    background: var(--message-warning-bg);
+    border-color: var(--warning-color);
+    color: var(--body-fg);
+}
+
+.alert i {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.benefits-section {
+    margin: 30px 0;
+}
+
+.benefits-section h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--body-loud-color);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.benefit-card {
+    padding: 20px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.benefit-card i {
+    font-size: 32px;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.benefit-card h5 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: var(--body-loud-color);
+}
+
+.benefit-card p {
+    font-size: 14px;
+    color: var(--body-quiet-color);
+    margin: 0;
+}
+
+.how-it-works-section {
+    margin: 40px 0;
+}
+
+.how-it-works-section h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--body-loud-color);
+}
+
+.workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.workflow-step {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    background: var(--darkened-bg);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.workflow-number {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.workflow-content h5 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+}
+
+.workflow-content p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--body-quiet-color);
+}
+
+.technical-note {
+    margin: 30px 0;
+    padding: 20px;
+    background: var(--darkened-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.technical-note h5 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+}
+
+.technical-note ul {
+    margin: 0;
+    padding-left: 25px;
+}
+
+.technical-note li {
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--body-fg);
+}
+
+@media (max-width: 768px) {
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,371 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}
+    {% if original %}
+        {% blocktrans with code=original.code %}Gift Card: {{ code }}{% endblocktrans %}
+    {% else %}
+        {% trans "Add Gift Card" %}
+    {% endif %}
+    | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/css/admin_gift_card.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/giftcard_change_form.css' %}">
+{{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="giftcard-change-form" {% if original %}data-card-id="{{ original.pk }}"{% endif %}>
+
+{% if original %}
+    {%comment%}EDIT MODE — Dashboard + Tabs{%endcomment%}
+    <div class="dashboard-header">
+        <div class="dashboard-header-row">
+            <div class="dashboard-header-info">
+                <h1>
+                    <i class="fas fa-gift"></i>
+                    <span class="gc-code">{{ original.code }}</span>
+                </h1>
+                <div class="header-meta">
+                    {% if original.product %}
+                    <span class="meta-item">
+                        <i class="fas fa-box"></i>
+                        {{ original.product.name }}
+                    </span>
+                    {% endif %}
+                    <span class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        {% blocktrans with date=original.created_at|date:"N j, Y" %}Created {{ date }}{% endblocktrans %}
+                    </span>
+                    <span class="gc-status-badge {{ gc_status }}">
+                        {% if gc_status == 'active' %}
+                            <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                        {% elif gc_status == 'expired' %}
+                            <i class="fas fa-clock"></i> {% trans "Expired" %}
+                        {% elif gc_status == 'redeemed' %}
+                            <i class="fas fa-check-double"></i> {% trans "Fully Redeemed" %}
+                        {% elif gc_status == 'partial' %}
+                            <i class="fas fa-chart-pie"></i> {% trans "Partially Used" %}
+                        {% elif gc_status == 'issued' %}
+                            <i class="fas fa-envelope"></i> {% trans "Issued" %}
+                        {% else %}
+                            <i class="fas fa-ban"></i> {% trans "Inactive" %}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="dashboard-header-actions">
+                <button type="button" class="util-btn" id="gc-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="button" class="util-btn" id="gc-save-btn" title="{% trans 'Save and return to list' %}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-wallet"></i></div>
+                <div class="value">{{ original.current_balance }}</div>
+                <div class="label">{% trans "Current Balance" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-coins"></i></div>
+                <div class="value">{{ original.initial_value }}</div>
+                <div class="label">{% trans "Initial Value" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-chart-pie"></i></div>
+                <div class="value">{{ redemption_pct }}%</div>
+                <div class="label">{% trans "Redeemed" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-exchange-alt"></i></div>
+                <div class="value">{{ transaction_count }}</div>
+                <div class="label">{% trans "Transactions" %}</div>
+            </div>
+        </div>
+
+    <!-- Error Banner -->
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+            {% if adminform.form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in adminform.form.errors.items %}
+                        {% if field != '__all__' %}<li><strong>{{ field|capfirst }}:</strong> {{ errors|first }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="giftcard_form" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" role="tablist">
+            <button type="button" class="admin-tab-btn active" data-tab="details" role="tab" aria-selected="true">
+                <i class="fas fa-info-circle"></i>
+                <span class="label">{% trans "Details" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="recipient" role="tab" aria-selected="false">
+                <i class="fas fa-user"></i>
+                <span class="label">{% trans "Recipient" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="status" role="tab" aria-selected="false">
+                <i class="fas fa-toggle-on"></i>
+                <span class="label">{% trans "Status" %}</span>
+            </button>
+            <button type="button" class="admin-tab-btn" data-tab="transactions" role="tab" aria-selected="false">
+                <i class="fas fa-exchange-alt"></i>
+                <span class="label">{% trans "Transactions" %}</span>
+            </button>
+        </div>
+
+        <!-- Details Tab -->
+        <div class="admin-tab-content active" id="tab-details" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-details' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-gift"></i> {% trans "Gift Card Information" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-balance' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-wallet"></i> {% trans "Balance" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Recipient Tab -->
+        <div class="admin-tab-content" id="tab-recipient" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-recipient' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-user"></i> {% trans "Recipient Information" %}</h2>
+                    <p class="form-card-description">{% trans "Details about who receives this gift card." %}</p>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}{% if not field.is_readonly and field.field.errors %} errors{% endif %}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.errors }}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                    {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Status Tab -->
+        <div class="admin-tab-content" id="tab-status" role="tabpanel">
+            {% for fieldset in adminform %}
+                {% if 'tab-status' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-toggle-on"></i> {% trans "Status & Expiration" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            {% if not field.is_readonly and field.field.name == 'is_active' %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                <label class="checkbox-label">
+                                    {{ field.field }} {{ field.label_tag }}
+                                </label>
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% elif field.is_readonly %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {{ field.label_tag }}
+                                <div class="readonly">{{ field.contents }}</div>
+                            </div>
+                            {% else %}
+                            <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                                {{ field.errors }}
+                                {{ field.label_tag }}
+                                {{ field.field }}
+                                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if 'tab-timestamps' in fieldset.classes %}
+                <div class="form-card">
+                    <h2><i class="fas fa-clock"></i> {% trans "Timestamps" %}</h2>
+                    {% for line in fieldset %}
+                        {% for field in line %}
+                            <div class="form-row field-{{ field.field.name }}">
+                                {% if field.is_readonly %}
+                                    {{ field.label_tag }}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                    {{ field.field }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Transactions Tab -->
+        <div class="admin-tab-content" id="tab-transactions" role="tabpanel">
+            {% for inline_admin_formset in inline_admin_formsets %}
+                {% if inline_admin_formset.opts.verbose_name|lower == 'gift card transaction' %}
+                <div class="form-card">
+                    <h2><i class="fas fa-exchange-alt"></i> {% trans "Transaction History" %}</h2>
+                    <p class="form-card-description">{% trans "All balance changes for this gift card." %}</p>
+                    {% include inline_admin_formset.opts.template with inline_admin_formset=inline_admin_formset %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% if not transaction_count %}
+            <div class="form-card info-message">
+                <p><i class="fas fa-info-circle"></i> {% trans "No transactions recorded yet." %}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Hidden submit row -->
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+
+{% else %}
+    {%comment%}ADD MODE — Clean sequential form{%endcomment%}
+    <div class="add-mode-header">
+        <h1><i class="fas fa-plus"></i> {% trans "Add New Gift Card" %}</h1>
+        <div class="header-actions">
+            <button type="button" class="util-btn" id="gc-save-continue-btn" title="{% trans 'Save and continue editing' %}">
+                <i class="fas fa-check"></i>
+            </button>
+            <button type="button" class="util-btn" id="gc-save-btn" title="{% trans 'Save and return to list' %}">
+                <i class="fas fa-check-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    {% if adminform.form.errors or adminform.form.non_field_errors %}
+    <div class="form-errors-banner">
+        <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="error-content">
+            <h3>{% trans "Please correct the errors below" %}</h3>
+            {% if adminform.form.non_field_errors %}
+                <ul class="errorlist">
+                    {% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" id="giftcard_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for fieldset in adminform %}
+        <div class="form-card">
+            <h2>
+                {% if 'tab-details' in fieldset.classes %}
+                    <i class="fas fa-gift"></i> {% trans "Gift Card Information" %}
+                {% elif 'tab-recipient' in fieldset.classes %}
+                    <i class="fas fa-user"></i> {% trans "Recipient" %}
+                {% elif 'tab-status' in fieldset.classes %}
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                {% else %}
+                    <i class="fas fa-cog"></i> {{ fieldset.name }}
+                {% endif %}
+            </h2>
+            {% for line in fieldset %}
+                {% for field in line %}
+                    {% if not field.is_readonly and field.field.name == 'is_active' %}
+                    <div class="form-row field-{{ field.field.name }}">
+                        <label class="checkbox-label">
+                            {{ field.field }} {{ field.label_tag }}
+                        </label>
+                    </div>
+                    {% elif field.is_readonly %}
+                    <div class="form-row field-{{ field.field.name }}">
+                        {{ field.label_tag }}
+                        <div class="readonly">{{ field.contents }}</div>
+                    </div>
+                    {% else %}
+                    <div class="form-row field-{{ field.field.name }}{% if field.field.errors %} errors{% endif %}">
+                        {{ field.errors }}
+                        {{ field.label_tag }}
+                        {{ field.field }}
+                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="submit-row hidden">
+            <input type="submit" value="{% trans 'Save' %}" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+        </div>
+    </form>
+{% endif %}
+
+</div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'catalog/js/giftcard_change_form.js' %}"></script>
+{% endblock %}

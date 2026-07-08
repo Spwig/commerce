@@ -1,0 +1,49 @@
+{% extends "admin/sms_system/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_title_tag %}{% trans "Setup Instructions" %}{% endblock %}
+{% block wizard_title %}{% trans "Setup Instructions" %}{% endblock %}
+
+{% block wizard_content %}
+<div class="wizard-step-content">
+    <h2 class="step-title">{% trans "Setup Instructions" %}</h2>
+    <p class="step-description">{% trans "Follow these instructions to set up your provider account." %}</p>
+
+    <div class="setup-instructions-content">
+        <div class="instruction-header">
+            <i class="fas fa-sms"></i>
+            <h3>{{ provider.name }}</h3>
+            <p class="header-subtitle">{{ provider.description }}</p>
+        </div>
+
+        {% if instructions_html %}
+        <div class="instruction-steps">
+            {{ instructions_html|safe }}
+        </div>
+        {% else %}
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>{% trans "No specific setup instructions available" %}</strong>
+                <p>{% trans "Please proceed to enter your credentials." %}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include "providers_common/includes/manifest_i18n.html" %}
+{% endblock %}
+
+{% block wizard_navigation %}
+<form method="post" id="continue-form">
+    {% csrf_token %}
+</form>
+<div class="nav-buttons">
+    <a href="{% url 'sms_system:wizard_step1' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {% trans "Back" %}
+    </a>
+    <button type="submit" form="continue-form" class="btn btn-primary">
+        {% trans "Next" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}

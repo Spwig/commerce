@@ -1,0 +1,174 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/transaction_cards.css' %}">
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for transaction in transactions %}
+    <div class="list-row-card transaction-card {% if transaction.points > 0 %}transaction-positive{% else %}transaction-negative{% endif %}">
+        <!-- Transaction Type Icon -->
+        <div class="list-row-card-icon {% if transaction.points > 0 %}success{% else %}error{% endif %}">
+            {% if transaction.transaction_type == 'earn' %}
+                <i class="fas fa-plus-circle"></i>
+            {% elif transaction.transaction_type == 'redeem' %}
+                <i class="fas fa-minus-circle"></i>
+            {% elif transaction.transaction_type == 'expire' %}
+                <i class="fas fa-clock"></i>
+            {% elif transaction.transaction_type == 'revoke' %}
+                <i class="fas fa-ban"></i>
+            {% elif transaction.transaction_type == 'adjustment' %}
+                <i class="fas fa-edit"></i>
+            {% elif transaction.transaction_type == 'bonus' %}
+                <i class="fas fa-gift"></i>
+            {% else %}
+                <i class="fas fa-exchange-alt"></i>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                {{ transaction.description }}
+            </h3>
+
+            <!-- Member Information -->
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-user"></i>
+                <a href="{% url 'admin:loyalty_loyaltymember_change' transaction.member.id %}"
+                   title="{% trans 'View member details' %}">
+                    {{ transaction.member.customer.get_full_name|default:transaction.member.customer.username }}
+                </a>
+                {% if transaction.member.customer.email %}
+                    <span class="text-muted-small">
+                        ({{ transaction.member.customer.email }})
+                    </span>
+                {% endif %}
+            </p>
+
+            {% if transaction.reason %}
+            <p class="list-row-card-subtitle" class="mt-small">
+                <i class="fas fa-info-circle"></i> {{ transaction.reason }}
+            </p>
+            {% endif %}
+
+            <!-- Badges -->
+            <div class="list-row-card-badges">
+                <!-- Type Badge -->
+                <span class="list-row-card-badge {% if transaction.points > 0 %}success{% else %}error{% endif %}">
+                    {{ transaction.get_transaction_type_display }}
+                </span>
+
+                <!-- Status Badge - Only show for meaningful states -->
+                {% if transaction.status == 'pending' %}
+                <span class="list-row-card-badge warning"
+                      title="{% trans 'Points are pending and not yet available for use' %}">
+                    <i class="fas fa-clock"></i> {% trans "Pending" %}
+                </span>
+                {% elif transaction.status == 'expired' %}
+                <span class="list-row-card-badge error"
+                      title="{% trans 'These points have expired and are no longer usable' %}">
+                    <i class="fas fa-times-circle"></i> {% trans "Expired" %}
+                </span>
+                {% elif transaction.status == 'redeemed' %}
+                <span class="list-row-card-badge info"
+                      title="{% trans 'These earned points were later redeemed/spent' %}">
+                    <i class="fas fa-check"></i> {% trans "Used" %}
+                </span>
+                {% elif transaction.status == 'revoked' %}
+                <span class="list-row-card-badge error"
+                      title="{% trans 'These points were revoked by an administrator' %}">
+                    <i class="fas fa-ban"></i> {% trans "Revoked" %}
+                </span>
+                {% endif %}
+
+                <!-- Member Tier Badge -->
+                {% if transaction.member.current_tier %}
+                <span class="list-row-card-badge tier-color-badge"
+                      data-tier-color="{{ transaction.member.current_tier.color|default:'' }}"
+                      title="{% trans 'Member tier at time of transaction' %}">
+                    <i class="fas fa-layer-group"></i> {{ transaction.member.current_tier.name }}
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Stats -->
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Points" %}</span>
+                    <span class="list-row-card-stat-value {% if transaction.points > 0 %}success{% else %}error{% endif %}">
+                        {% if transaction.points > 0 %}+{% endif %}{{ transaction.points }}
+                    </span>
+                </div>
+                {% if transaction.expires_at %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Expires" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {{ transaction.expires_at|date:"M d, Y" }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Meta Information -->
+        <div class="list-row-card-meta">
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'When this transaction was created' %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>{{ transaction.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+
+            {% if transaction.related_object_type %}
+            <div class="list-row-card-meta-item">
+                {% if transaction.related_object_type == 'order' %}
+                    <i class="fas fa-shopping-cart"></i>
+                    <a href="{% url 'admin:orders_order_change' transaction.related_object_id %}"
+                       title="{% trans 'Click to view the customer order that triggered this points transaction. Customers earn points when they place orders.' %}"
+                       class="no-decoration">
+                        {% trans "Order" %} #{{ transaction.related_object_id }}
+                    </a>
+                {% elif transaction.related_object_type == 'redemption' %}
+                    <i class="fas fa-gift"></i>
+                    <a href="{% url 'admin:loyalty_loyaltyredemption_change' transaction.related_object_id %}"
+                       title="{% trans 'Click to view the reward redemption where these points were spent. Shows what reward the customer claimed.' %}"
+                       class="no-decoration">
+                        {% trans "Redemption" %} #{{ transaction.related_object_id }}
+                    </a>
+                {% elif transaction.related_object_type == 'campaign' %}
+                    <i class="fas fa-bullhorn"></i>
+                    <span title="{% trans 'The loyalty campaign that triggered this bonus points award' %}">
+                        {% trans "Campaign" %} #{{ transaction.related_object_id }}
+                    </span>
+                {% else %}
+                    <i class="fas fa-link"></i>
+                    <span title="{% trans 'Reference to the related system object that triggered this transaction' %}">
+                        {{ transaction.related_object_type|capfirst }} #{{ transaction.related_object_id }}
+                    </span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="list-row-card-meta-item"
+                 title="{% trans 'Internal transaction ID - use this number when referencing this transaction in support tickets or admin actions' %}">
+                <i class="fas fa-key"></i>
+                <code class="code-small">{{ transaction.id }}</code>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltytransaction_change' transaction.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View transaction' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No transactions found." %}</p>
+    </div>
+    {% endfor %}
+</div>

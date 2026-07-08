@@ -1,0 +1,82 @@
+{% load i18n static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+{% if engines %}
+<div class="list-row-cards">
+    {% for engine in engines %}
+    <div class="list-row-card{% if not engine.is_active %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ engine.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            <i class="fas fa-search"></i>
+        </div>
+
+        <div class="list-row-card-content">
+            <div class="list-row-card-title">
+                <a href="{% url 'admin:search_searchengine_change' engine.pk %}">{{ engine.name }}</a>
+            </div>
+            <div class="list-row-card-subtitle">
+                <code>{{ engine.slug }}</code>
+            </div>
+            <div class="list-row-card-badges">
+                {% if engine.is_active %}
+                <span class="list-row-card-badge list-row-card-badge-success">{% trans "Active" %}</span>
+                {% else %}
+                <span class="list-row-card-badge list-row-card-badge-secondary">{% trans "Inactive" %}</span>
+                {% endif %}
+                {% if engine.content_types %}
+                    {% for content_type in engine.content_types %}
+                    <span class="list-row-card-badge list-row-card-badge-info">{{ content_type }}</span>
+                    {% endfor %}
+                {% else %}
+                <span class="list-row-card-badge list-row-card-badge-primary">{% trans "All Types" %}</span>
+                {% endif %}
+            </div>
+            <div class="list-row-card-meta">
+                {% if engine.weight_overrides %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-sliders-h"></i> {% trans "Custom Weights" %}
+                </span>
+                {% endif %}
+                {% if engine.excluded_categories_count %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-folder-minus"></i> {{ engine.excluded_categories_count }} {% trans "excluded categories" %}
+                </span>
+                {% endif %}
+                {% if engine.excluded_brands_count %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-tag"></i> {{ engine.excluded_brands_count }} {% trans "excluded brands" %}
+                </span>
+                {% endif %}
+                <span class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i> {% trans "Updated" %} {{ engine.updated_at|date:"SHORT_DATE_FORMAT" }}
+                </span>
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:search_searchengine_change' engine.pk %}" class="list-row-card-action" title="{% trans 'Edit' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:search_searchengine_delete' engine.pk %}" class="list-row-card-action danger" title="{% trans 'Delete' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="list-row-cards">
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon opacity-50">
+            <i class="fas fa-search"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No search engines found." %}</p>
+        <a href="{% url 'search_admin:engine_wizard_step1' %}" class="button mt-small">
+            <i class="fas fa-magic"></i> {% trans "Create your first engine with the wizard" %}
+        </a>
+    </div>
+</div>
+{% endif %}

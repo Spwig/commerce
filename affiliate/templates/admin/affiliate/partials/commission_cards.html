@@ -1,0 +1,174 @@
+{% load i18n humanize %}
+
+<div class="list-row-cards">
+    {% for commission in commissions %}
+    <div class="list-row-card{% if commission.status == 'rejected' or commission.status == 'reversed' %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ commission.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if commission.status == 'pending' %}
+                <i class="fas fa-clock icon-warning"></i>
+            {% elif commission.status == 'approved' %}
+                <i class="fas fa-check-circle icon-info"></i>
+            {% elif commission.status == 'paid' %}
+                <i class="fas fa-money-bill-wave icon-success"></i>
+            {% elif commission.status == 'rejected' %}
+                <i class="fas fa-times-circle icon-error"></i>
+            {% else %}
+                <i class="fas fa-undo icon-muted"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:affiliate_commission_change' commission.pk %}">
+                    {{ commission.affiliate.user.get_full_name|default:commission.affiliate.user.username }}
+                </a>
+                <span class="affiliate-code">
+                    ({{ commission.affiliate.affiliate_code }})
+                </span>
+            </h3>
+
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-shopping-cart"></i>
+                {% trans "Order" %} #{{ commission.order.id }}
+                {% if commission.order.order_number %}
+                    - {{ commission.order.order_number }}
+                {% endif %}
+                <span class="program-info">
+                    <i class="fas fa-project-diagram"></i>
+                    {{ commission.program.name }}
+                </span>
+            </p>
+
+            <div class="list-row-card-badges">
+                {# Status Badge #}
+                {% if commission.status == 'pending' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif commission.status == 'approved' %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-check"></i> {% trans "Approved" %}
+                    </span>
+                {% elif commission.status == 'paid' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Paid" %}
+                    </span>
+                {% elif commission.status == 'rejected' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times"></i> {% trans "Rejected" %}
+                    </span>
+                {% elif commission.status == 'reversed' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-undo"></i> {% trans "Reversed" %}
+                    </span>
+                {% endif %}
+
+                {# Commission Amount Badge #}
+                <span class="list-row-card-badge list-row-card-badge-success">
+                    <i class="fas fa-dollar-sign"></i>
+                    {{ commission.amount|floatformat:2 }}
+                </span>
+
+                {# Order Total Badge #}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-receipt"></i>
+                    {% trans "Order" %}: ${{ commission.order.total|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Commission" %}</span>
+                    <span class="list-row-card-stat-value stat-value-success">
+                        ${{ commission.amount|floatformat:2 }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Order Total" %}</span>
+                    <span class="list-row-card-stat-value">
+                        ${{ commission.order.total|floatformat:2 }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Program" %}</span>
+                    <span class="list-row-card-stat-value">
+                        {% if commission.program.commission_type == 'percentage' %}
+                            {{ commission.program.commission_value|floatformat:0 }}%
+                        {% else %}
+                            ${{ commission.program.commission_value|floatformat:2 }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>{% trans "Created" %}: {{ commission.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if commission.approved_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-check"></i>
+                    <span>{% trans "Approved" %}: {{ commission.approved_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+                {% if commission.paid_at %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>{% trans "Paid" %}: {{ commission.paid_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            {% if commission.status == 'pending' %}
+                <a href="{% url 'admin:affiliate_commission_change' commission.pk %}"
+                   class="list-row-card-action action-success"
+                   title="{% trans 'Approve commission' %}">
+                    <i class="fas fa-check"></i>
+                </a>
+                <a href="{% url 'admin:affiliate_commission_change' commission.pk %}"
+                   class="list-row-card-action action-error"
+                   title="{% trans 'Reject commission' %}">
+                    <i class="fas fa-times"></i>
+                </a>
+            {% elif commission.status == 'approved' %}
+                <a href="{% url 'admin:affiliate_payout_add' %}?commissions={{ commission.pk }}"
+                   class="list-row-card-action action-success"
+                   title="{% trans 'Create payout' %}">
+                    <i class="fas fa-dollar-sign"></i>
+                </a>
+            {% endif %}
+            <a href="{% url 'admin:affiliate_commission_change' commission.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View details' %}">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'admin:orders_order_change' commission.order.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View order' %}"
+               target="_blank">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <a href="{% url 'admin:affiliate_affiliate_change' commission.affiliate.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'View affiliate' %}">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-inbox"></i>
+        </div>
+        <h2>{% trans "No Commissions Found" %}</h2>
+        <p>{% trans "Commission records will appear here once orders are completed with affiliate tracking." %}</p>
+    </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,59 @@
+{% load i18n %}
+{# Nested Group Card Template - Rendered via JavaScript #}
+{# This template shows the structure; actual rendering is done in JS #}
+
+<div class="nested-group-card" data-group-id="{{ group.id }}" data-logic="{{ group.logic_operator }}">
+    <div class="nested-group-header">
+        <div class="nested-group-drag-handle">
+            <i class="fas fa-grip-vertical"></i>
+        </div>
+
+        <div class="nested-group-info">
+            <span class="nested-group-name">{{ group.name|default:"Nested Group" }}</span>
+            <span class="logic-badge {% if group.logic_operator == 'OR' %}logic-or{% else %}logic-and{% endif %}">
+                {{ group.logic_operator }}
+            </span>
+            <span class="nested-group-count">
+                {{ group.rules.count }} {% trans "rules" %}
+            </span>
+        </div>
+
+        <div class="nested-group-actions">
+            <button class="nested-group-action" data-action="toggle-collapse" title="{% trans 'Expand/Collapse' %}">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <button class="nested-group-action" data-action="toggle-logic" title="{% trans 'Toggle AND/OR' %}">
+                <i class="fas fa-random"></i>
+            </button>
+            <button class="nested-group-action" data-action="edit" title="{% trans 'Edit Group' %}">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="nested-group-action nested-group-action-danger" data-action="delete" title="{% trans 'Delete Group' %}">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="nested-group-content">
+        <div class="nested-group-rules" id="nested-rules-{{ group.id }}">
+            {# Child rules and nested groups will be rendered here #}
+            {% for member in group.rulegroupmember_set.all %}
+                {% include "admin/page_builder/rulegroup/partials/rule_card.html" with rule=member.rule %}
+            {% endfor %}
+
+            {% for child in group.child_groups.all %}
+                {% include "admin/page_builder/rulegroup/partials/group_card.html" with group=child %}
+            {% endfor %}
+        </div>
+
+        <div class="nested-group-dropzone" data-drop-target="group-{{ group.id }}">
+            <span><i class="fas fa-plus"></i> {% trans "Drop rules here" %}</span>
+        </div>
+    </div>
+
+    {% if not group.is_active %}
+    <div class="nested-group-disabled-overlay">
+        <span>{% trans "Group Disabled" %}</span>
+    </div>
+    {% endif %}
+</div>

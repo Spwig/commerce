@@ -1,0 +1,302 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Custom Fields" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'custom_fields/css/custom_fields_admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="cf-management"
+     data-base-url="{{ base_url }}">
+
+    {# ── i18n strings for JS ── #}
+    <div id="cf-i18n" class="cf-hidden"
+         data-add-group="{% trans 'Add Field Group' %}"
+         data-edit-group="{% trans 'Edit Field Group' %}"
+         data-add-field="{% trans 'Add Custom Field' %}"
+         data-edit-field="{% trans 'Edit Custom Field' %}"
+         data-confirm-delete-group="{% trans 'Are you sure you want to delete this group and all its fields? The group will be moved to the recycle bin.' %}"
+         data-confirm-delete-field="{% trans 'Are you sure you want to delete this field? It will be moved to the recycle bin.' %}"
+         data-error-generic="{% trans 'An error occurred. Please try again.' %}"
+         data-success-saved="{% trans 'Changes saved successfully.' %}"
+         data-success-deleted="{% trans 'Item moved to recycle bin.' %}">
+    </div>
+
+    <div class="dashboard-header">
+        <div>
+            <h1><i class="fas fa-sliders-h"></i> {% trans "Custom Fields" %}</h1>
+            <p class="subtitle">{% trans "Define custom fields for your store objects. These fields allow you to store additional data on products, categories, orders, and customers." %}</p>
+        </div>
+        {% if deleted_count %}
+        <a href="{% url 'custom_fields:recycle_bin' %}" class="cf-recycle-bin-link">
+            <i class="fas fa-trash-alt"></i>
+            {% trans "Recycle Bin" %}
+            <span class="cf-recycle-bin-count">{{ deleted_count }}</span>
+        </a>
+        {% endif %}
+    </div>
+
+    {# ── Model Tabs ── #}
+    <div class="admin-tabs" id="modelTabs">
+        {% for tab in model_tabs %}
+        <button class="admin-tab-btn {% if forloop.first %}active{% endif %}"
+                data-tab="{{ tab.id }}"
+                data-content-type-id="{{ tab.content_type_id }}">
+            {{ tab.label }}
+            {% if tab.field_count %}
+            <span class="tab-badge">{{ tab.field_count }}</span>
+            {% endif %}
+        </button>
+        {% endfor %}
+    </div>
+
+    {# ── Tab Content ── #}
+    {% for tab in model_tabs %}
+    <div class="tab-panel {% if forloop.first %}active{% endif %}" id="panel-{{ tab.id }}" data-content-type-id="{{ tab.content_type_id }}">
+        <div class="tab-panel-header">
+            <h2>{{ tab.label }} {% trans "Custom Fields" %}</h2>
+            <button class="cf-btn cf-btn-primary cf-btn-add-group" data-content-type-id="{{ tab.content_type_id }}">
+                <i class="fas fa-plus"></i> {% trans "Add Group" %}
+            </button>
+        </div>
+
+        {% if tab.groups %}
+        <div class="field-groups" id="groups-{{ tab.id }}">
+            {% for group in tab.groups %}
+            <div class="field-group-card"
+                 data-group-id="{{ group.pk }}"
+                 data-show-storefront="{{ group.show_on_storefront|yesno:'true,false' }}">
+                <div class="field-group-header">
+                    <div class="field-group-header-left">
+                        <h3>{{ group.name }}</h3>
+                        {% if group.show_on_storefront %}
+                        <span class="cf-badge cf-badge-info" title="{% trans 'Visible on storefront' %}">
+                            <i class="fas fa-eye"></i> {% trans "Storefront" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="field-group-header-actions">
+                        <button class="cf-btn cf-btn-sm cf-btn-add-field" data-group-id="{{ group.pk }}" data-content-type-id="{{ tab.content_type_id }}" title="{% trans 'Add field' %}">
+                            <i class="fas fa-plus"></i> {% trans "Add Field" %}
+                        </button>
+                        <button class="cf-btn cf-btn-sm cf-btn-icon cf-btn-edit-group" data-group-id="{{ group.pk }}" title="{% trans 'Edit group' %}">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button class="cf-btn cf-btn-sm cf-btn-icon cf-btn-delete-group" data-group-id="{{ group.pk }}" title="{% trans 'Delete group' %}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="field-list">
+                    {% for field in group.fields.all %}
+                    {% if field.is_active %}
+                    <div class="field-row" data-field-id="{{ field.pk }}">
+                        <div class="field-row-left">
+                            <div class="field-info">
+                                <span class="field-name">{{ field.name }}</span>
+                                <span class="field-slug">{{ field.slug }}</span>
+                            </div>
+                        </div>
+                        <div class="field-row-center">
+                            <span class="field-type-badge">{{ field.get_field_type_display }}</span>
+                            {% if field.is_required %}
+                            <span class="cf-badge cf-badge-warning" title="{% trans 'Required' %}">{% trans "Required" %}</span>
+                            {% endif %}
+                            {% if field.show_on_storefront %}
+                            <span class="cf-badge cf-badge-info" title="{% trans 'Visible on storefront' %}"><i class="fas fa-eye"></i></span>
+                            {% endif %}
+                            {% if field.is_translatable %}
+                            <span class="cf-badge cf-badge-primary" title="{% trans 'Translatable' %}"><i class="fas fa-language"></i></span>
+                            {% endif %}
+                        </div>
+                        <div class="field-row-actions">
+                            <button class="cf-btn cf-btn-sm cf-btn-icon cf-btn-edit-field" data-field-id="{{ field.pk }}" title="{% trans 'Edit field' %}">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button class="cf-btn cf-btn-sm cf-btn-icon cf-btn-delete-field" data-field-id="{{ field.pk }}" title="{% trans 'Delete field' %}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% empty %}
+                    <div class="field-list-empty">
+                        <i class="fas fa-inbox"></i>
+                        <p>{% trans "No fields in this group yet." %}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state" id="empty-{{ tab.id }}">
+            <div class="empty-state-icon">
+                <i class="fas fa-sliders-h"></i>
+            </div>
+            <h3>{% trans "No custom fields defined" %}</h3>
+            <p>{% trans "Create a group to start adding custom fields to" %} {{ tab.label|lower }}.</p>
+            <button class="cf-btn cf-btn-primary cf-btn-add-group" data-content-type-id="{{ tab.content_type_id }}">
+                <i class="fas fa-plus"></i> {% trans "Create First Group" %}
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{# ── Add/Edit Group Modal ── #}
+<div class="cf-modal-overlay cf-hidden" id="groupModal">
+    <div class="cf-modal-dialog">
+        <div class="cf-modal-header">
+            <h3 id="groupModalTitle">{% trans "Add Field Group" %}</h3>
+            <button class="cf-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
+        </div>
+        <div class="cf-modal-body">
+            <input type="hidden" id="groupModalId" value="">
+            <input type="hidden" id="groupModalContentTypeId" value="">
+            <div class="cf-form-group">
+                <label for="groupName">{% trans "Group Name" %} <span class="required">*</span></label>
+                <input type="text" id="groupName" class="cf-form-control" placeholder="{% trans 'e.g., Shipping Info, External IDs' %}" required>
+            </div>
+            <div class="cf-form-group">
+                <label class="cf-checkbox-label">
+                    <input type="checkbox" id="groupShowStorefront">
+                    {% trans "Show on storefront" %}
+                </label>
+                <p class="cf-help-text">{% trans "Make this group visible on customer-facing pages" %}</p>
+            </div>
+        </div>
+        <div class="cf-modal-footer">
+            <button class="cf-btn cf-btn-secondary cf-modal-cancel">{% trans "Cancel" %}</button>
+            <button class="cf-btn cf-btn-primary" id="groupModalSave">{% trans "Save Group" %}</button>
+        </div>
+    </div>
+</div>
+
+{# ── Add/Edit Field Modal ── #}
+<div class="cf-modal-overlay cf-hidden" id="fieldModal">
+    <div class="cf-modal-dialog cf-modal-lg">
+        <div class="cf-modal-header">
+            <h3 id="fieldModalTitle">{% trans "Add Custom Field" %}</h3>
+            <button class="cf-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
+        </div>
+        <div class="cf-modal-body">
+            <input type="hidden" id="fieldModalId" value="">
+            <input type="hidden" id="fieldModalGroupId" value="">
+            <input type="hidden" id="fieldModalContentTypeId" value="">
+
+            <div class="cf-form-row-2col">
+                <div class="cf-form-group">
+                    <label for="fieldName">{% trans "Field Name" %} <span class="required">*</span></label>
+                    <input type="text" id="fieldName" class="cf-form-control" placeholder="{% trans 'e.g., Warehouse Location' %}" required>
+                </div>
+                <div class="cf-form-group">
+                    <label for="fieldType">{% trans "Field Type" %} <span class="required">*</span></label>
+                    <select id="fieldType" class="cf-form-control">
+                        {% for value, label in field_type_choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="cf-form-group">
+                <label for="fieldHelpText">{% trans "Help Text" %}</label>
+                <input type="text" id="fieldHelpText" class="cf-form-control" placeholder="{% trans 'Hint shown below the field' %}">
+            </div>
+
+            <div class="cf-form-group">
+                <label for="fieldDefault">{% trans "Default Value" %}</label>
+                <input type="text" id="fieldDefault" class="cf-form-control" placeholder="{% trans 'Optional default for new records' %}">
+            </div>
+
+            {# ── Type-specific validation ── #}
+            <div id="validationSection">
+                <div id="textValidation" class="validation-fields cf-hidden">
+                    <div class="cf-form-row-2col">
+                        <div class="cf-form-group">
+                            <label for="fieldMinLength">{% trans "Min Length" %}</label>
+                            <input type="number" id="fieldMinLength" class="cf-form-control" min="0">
+                        </div>
+                        <div class="cf-form-group">
+                            <label for="fieldMaxLength">{% trans "Max Length" %}</label>
+                            <input type="number" id="fieldMaxLength" class="cf-form-control" min="0">
+                        </div>
+                    </div>
+                    <div class="cf-form-group">
+                        <label for="fieldRegex">{% trans "Regex Pattern" %}</label>
+                        <input type="text" id="fieldRegex" class="cf-form-control" placeholder="{% trans 'e.g., ^[A-Z].*' %}">
+                    </div>
+                </div>
+
+                <div id="numberValidation" class="validation-fields cf-hidden">
+                    <div class="cf-form-row-2col">
+                        <div class="cf-form-group">
+                            <label for="fieldMin">{% trans "Minimum" %}</label>
+                            <input type="number" id="fieldMin" class="cf-form-control">
+                        </div>
+                        <div class="cf-form-group">
+                            <label for="fieldMax">{% trans "Maximum" %}</label>
+                            <input type="number" id="fieldMax" class="cf-form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="decimalValidation" class="validation-fields cf-hidden">
+                    <div class="cf-form-row-3col">
+                        <div class="cf-form-group">
+                            <label for="fieldDecMin">{% trans "Minimum" %}</label>
+                            <input type="number" id="fieldDecMin" class="cf-form-control" step="any">
+                        </div>
+                        <div class="cf-form-group">
+                            <label for="fieldDecMax">{% trans "Maximum" %}</label>
+                            <input type="number" id="fieldDecMax" class="cf-form-control" step="any">
+                        </div>
+                        <div class="cf-form-group">
+                            <label for="fieldDecPlaces">{% trans "Decimal Places" %}</label>
+                            <input type="number" id="fieldDecPlaces" class="cf-form-control" min="0" max="10" value="2">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="choicesValidation" class="validation-fields cf-hidden">
+                    <div class="cf-form-group">
+                        <label>{% trans "Choices" %}</label>
+                        <div id="choicesList" class="cf-choices-editor">
+                            {# Dynamic choice rows added by JS #}
+                        </div>
+                        <button class="cf-btn cf-btn-sm cf-btn-add-choice" type="button">
+                            <i class="fas fa-plus"></i> {% trans "Add Choice" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cf-form-group-row">
+                <label class="cf-checkbox-label">
+                    <input type="checkbox" id="fieldRequired">
+                    {% trans "Required" %}
+                </label>
+                <label class="cf-checkbox-label">
+                    <input type="checkbox" id="fieldStorefront">
+                    {% trans "Show on storefront" %}
+                </label>
+                <label class="cf-checkbox-label cf-hidden" id="translatableOption">
+                    <input type="checkbox" id="fieldTranslatable">
+                    {% trans "Translatable" %}
+                </label>
+            </div>
+        </div>
+        <div class="cf-modal-footer">
+            <button class="cf-btn cf-btn-secondary cf-modal-cancel">{% trans "Cancel" %}</button>
+            <button class="cf-btn cf-btn-primary" id="fieldModalSave">{% trans "Save Field" %}</button>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'custom_fields/js/custom_fields_admin.js' %}"></script>
+{% endblock %}

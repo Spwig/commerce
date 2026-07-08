@@ -1,0 +1,345 @@
+{% extends "admin/migration/wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="content-box">
+    <h3>
+        <i class="fas fa-exchange-alt"></i>
+        {% trans "Configure Field Mapping" %}
+    </h3>
+    <p>{% trans "Review and customize how data from" %} {{ job.get_platform_display }} {% trans "maps to your platform. Most fields are mapped automatically." %}</p>
+</div>
+
+<form method="post" action="{% url 'admin:migration_wizard_step4' job.id %}" id="mapping-form">
+    {% csrf_token %}
+
+    <!-- CSV Column Mapping -->
+    {% if csv_column_mappings %}
+    <div class="content-box">
+        <h3>
+            <i class="fas fa-columns"></i>
+            {% trans "CSV Column Mapping" %}
+        </h3>
+        <p>{% trans "Map the columns in your CSV files to the expected fields. We've auto-detected some matches — review and adjust as needed." %}</p>
+
+        {% for file_mapping in csv_column_mappings %}
+        <div class="mapping-section-header" style="margin-top: 16px;">
+            <i class="fas fa-file-csv"></i>
+            {{ file_mapping.file_type_label }}
+        </div>
+
+        <table class="mapping-table" style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+            <thead>
+                <tr>
+                    <th style="text-align: left; padding: 8px; border-bottom: 2px solid var(--border-color, #ddd);">{% trans "CSV Column" %}</th>
+                    <th style="text-align: left; padding: 8px; border-bottom: 2px solid var(--border-color, #ddd);">{% trans "Maps To" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for header in file_mapping.csv_headers %}
+                <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid var(--border-color, #eee);">
+                        <code>{{ header }}</code>
+                    </td>
+                    <td style="padding: 8px; border-bottom: 1px solid var(--border-color, #eee);">
+                        <select name="csv_map_{{ file_mapping.file_type }}_{{ forloop.counter0 }}" class="csv-mapping-select">
+                            <option value="__skip__">— {% trans "Skip this column" %} —</option>
+                            {% for field in file_mapping.expected_fields %}
+                            <option value="{{ field }}"
+                                {% if file_mapping.auto_detected %}
+                                    {% for auto_header, auto_field in file_mapping.auto_detected.items %}
+                                        {% if auto_header == header and auto_field == field %}selected{% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            >{{ field }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Auto-detected mappings -->
+    <div class="content-box">
+        <h3>
+            <i class="fas fa-magic"></i>
+            {% trans "Automatic Mappings" %}
+        </h3>
+        <p>{% trans "These fields will be mapped automatically based on standard field names:" %}</p>
+
+        <div class="mapping-content-wrapper">
+            {% regroup auto_mappings by source_type as mappings_by_type %}
+
+            {% for mapping_group in mappings_by_type %}
+                <!-- Section Header -->
+                <div class="mapping-section-header">
+                    {% if mapping_group.grouper == 'category' %}
+                        <i class="fas fa-folder"></i>
+                        {% trans "Categories" %}
+                    {% elif mapping_group.grouper == 'product' %}
+                        <i class="fas fa-box"></i>
+                        {% trans "Products" %}
+                    {% elif mapping_group.grouper == 'customer' %}
+                        <i class="fas fa-user"></i>
+                        {% trans "Customers" %}
+                    {% elif mapping_group.grouper == 'order' %}
+                        <i class="fas fa-shopping-cart"></i>
+                        {% trans "Orders" %}
+                    {% elif mapping_group.grouper == 'review' %}
+                        <i class="fas fa-star"></i>
+                        {% trans "Reviews" %}
+                    {% elif mapping_group.grouper == 'coupon' %}
+                        <i class="fas fa-tag"></i>
+                        {% trans "Coupons" %}
+                    {% elif mapping_group.grouper == 'blog_post' %}
+                        <i class="fas fa-blog"></i>
+                        {% trans "Blog Posts" %}
+                    {% elif mapping_group.grouper == 'blog_category' %}
+                        <i class="fas fa-folder-open"></i>
+                        {% trans "Blog Categories" %}
+                    {% elif mapping_group.grouper == 'blog_tag' %}
+                        <i class="fas fa-hashtag"></i>
+                        {% trans "Blog Tags" %}
+                    {% else %}
+                        {{ mapping_group.grouper|title }}
+                    {% endif %}
+                </div>
+
+                <!-- Column Headers -->
+                <div class="mapping-column-headers">
+                    <div>{% trans "Source" %} ({{ job.get_platform_display }})</div>
+                    <div></div>
+                    <div>{% trans "Destination" %} (Spwig)</div>
+                </div>
+
+                <!-- Mapping Rows -->
+                <div class="mapping-rows">
+                    {% for mapping in mapping_group.list %}
+                    <div class="mapping-row">
+                        <div>
+                            <strong class="mapping-field-name">{% if mapping.source_field_label %}{{ mapping.source_field_label }}{% else %}{{ mapping.source_field }}{% endif %}</strong>
+                            {% if mapping.source_field_label %}
+                            <div class="mapping-field-sub">{{ mapping.source_field }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mapping-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div>
+                            <strong class="mapping-field-name">{% if mapping.dest_field_label %}{{ mapping.dest_field_label }}{% else %}{{ mapping.dest_field }}{% endif %}</strong>
+                            <div class="mapping-field-sub">
+                                {{ mapping.dest_model }}
+                                {% if mapping.dest_field_label %} &bull; {{ mapping.dest_field }}{% endif %}
+                                {% if mapping.transform_type %} &bull; <span class="mapping-transform-badge">{{ mapping.transform_type }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% empty %}
+            <p class="mapping-empty-text">{% trans "No automatic mappings available." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Custom field mappings -->
+    {% if custom_fields %}
+    <div class="content-box">
+        <h3>
+            <i class="fas fa-wrench"></i>
+            {% trans "Custom Fields" %}
+        </h3>
+        <p>{% trans "We detected custom fields in your source data. Map them to your platform's fields or skip them:" %}</p>
+
+        <div class="custom-fields-wrapper">
+            {% regroup custom_fields by source_type_label as fields_by_type %}
+            {% for group in fields_by_type %}
+
+            <!-- Source type header -->
+            <div class="mapping-section-header small">
+                {% if group.grouper == 'Product' %}
+                    <i class="fas fa-box"></i>
+                {% elif group.grouper == 'Customer' %}
+                    <i class="fas fa-user"></i>
+                {% elif group.grouper == 'Order' %}
+                    <i class="fas fa-shopping-cart"></i>
+                {% endif %}
+                {{ group.grouper }} {% trans "Meta Fields" %}
+            </div>
+
+            <div class="mapping-rows">
+            {% for field in group.list %}
+            <div class="custom-field-item">
+                <div class="custom-field-header">
+                    <div>
+                        <strong class="custom-field-name">{{ field.name }}</strong>
+                        <div class="custom-field-meta">
+                            {% trans "Type:" %} {{ field.type }}
+                            {% if field.sample_value %}
+                            | {% trans "Example:" %} <code class="custom-field-sample">{{ field.sample_value }}</code>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row custom-field-form-row">
+                    <label for="mapping_{{ field.id }}">{% trans "Map to:" %}</label>
+                    <select name="mapping_{{ field.id }}" id="mapping_{{ field.id }}" class="custom-field-select">
+                        <option value="">{% trans "— Skip this field —" %}</option>
+                        {% if field.source_type == 'product' %}
+                        <optgroup label="{% trans 'Product Fields' %}">
+                            <option value="product.custom_field_1">{% trans "Custom Field 1" %}</option>
+                            <option value="product.custom_field_2">{% trans "Custom Field 2" %}</option>
+                            <option value="product.custom_field_3">{% trans "Custom Field 3" %}</option>
+                            <option value="product.meta_data">{% trans "Meta Data (JSON)" %}</option>
+                        </optgroup>
+                        {% elif field.source_type == 'customer' %}
+                        <optgroup label="{% trans 'Customer Fields' %}">
+                            <option value="customer.custom_field_1">{% trans "Custom Field 1" %}</option>
+                            <option value="customer.custom_field_2">{% trans "Custom Field 2" %}</option>
+                            <option value="customer.meta_data">{% trans "Meta Data (JSON)" %}</option>
+                        </optgroup>
+                        {% elif field.source_type == 'order' %}
+                        <optgroup label="{% trans 'Order Fields' %}">
+                            <option value="order.custom_field_1">{% trans "Custom Field 1" %}</option>
+                            <option value="order.custom_field_2">{% trans "Custom Field 2" %}</option>
+                            <option value="order.meta_data">{% trans "Meta Data (JSON)" %}</option>
+                        </optgroup>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-row custom-field-form-row">
+                    <label for="transform_{{ field.id }}">{% trans "Transform:" %}</label>
+                    <select name="transform_{{ field.id }}" id="transform_{{ field.id }}" class="custom-field-select">
+                        <option value="string">{% trans "As Text (String)" %}</option>
+                        <option value="integer">{% trans "As Number (Integer)" %}</option>
+                        <option value="decimal">{% trans "As Decimal" %}</option>
+                        <option value="boolean">{% trans "As True/False (Boolean)" %}</option>
+                        <option value="json">{% trans "As JSON" %}</option>
+                        <option value="date">{% trans "As Date" %}</option>
+                        <option value="url">{% trans "As URL" %}</option>
+                        <option value="email">{% trans "As Email" %}</option>
+                    </select>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="info-box">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong>{% trans "No custom fields detected" %}</strong>
+            <p>{% trans "All fields in your source data can be mapped automatically. You can proceed to the import step." %}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Category mapping -->
+    {% if category_mapping_needed %}
+    <div class="content-box">
+        <h3>
+            <i class="fas fa-folder-tree"></i>
+            {% trans "Category Mapping" %}
+        </h3>
+        <p>{% trans "Some categories from your source don't have direct matches. Choose how to handle them:" %}</p>
+
+        <div class="form-row">
+            <label>
+                <input type="radio" name="unmapped_category_action" value="create" checked>
+                {% trans "Create new categories" %}
+            </label>
+            <div class="help">{% trans "Create new categories in your platform for unmapped categories" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="radio" name="unmapped_category_action" value="default">
+                {% trans "Assign to default category" %}
+            </label>
+            <div class="help">{% trans "Put all unmapped items in a default 'Uncategorized' category" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="radio" name="unmapped_category_action" value="skip">
+                {% trans "Skip items with unmapped categories" %}
+            </label>
+            <div class="help">{% trans "Don't import items that belong to unmapped categories" %}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tax and shipping mapping -->
+    <div class="content-box">
+        <h3>
+            <i class="fas fa-calculator"></i>
+            {% trans "Tax & Shipping Settings" %}
+        </h3>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_tax_settings" checked>
+                {% trans "Import tax settings" %}
+            </label>
+            <div class="help">{% trans "Import tax rates and rules from your source platform" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="import_shipping_settings" checked>
+                {% trans "Import shipping zones and methods" %}
+            </label>
+            <div class="help">{% trans "Import shipping configuration from your source platform" %}</div>
+        </div>
+
+        <div class="form-row">
+            <label for="price_adjustment">{% trans "Price adjustment" %}</label>
+            <div class="price-adjustment-row">
+                <select name="price_adjustment_type" id="price_adjustment_type" class="price-adjustment-type">
+                    <option value="none">{% trans "None" %}</option>
+                    <option value="percentage">{% trans "Percentage" %}</option>
+                    <option value="fixed">{% trans "Fixed Amount" %}</option>
+                </select>
+                <input type="text"
+                       name="price_adjustment_value"
+                       id="price_adjustment_value"
+                       placeholder="0.00"
+                       class="price-adjustment-value"
+                       disabled>
+                <span class="price-adjustment-hint">{% trans "(e.g., +10 for 10% increase or -5 for 5% decrease)" %}</span>
+            </div>
+            <div class="help">{% trans "Optionally adjust all prices during import" %}</div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <i class="fas fa-lightbulb"></i>
+        <div>
+            <strong>{% trans "Pro Tip" %}</strong>
+            <p>{% trans "Field mappings are saved and can be reused for future migrations. You can also edit mappings after the import is complete." %}</p>
+        </div>
+    </div>
+
+    <div class="wizard-nav">
+        <a href="{% url 'admin:migration_wizard_step3' job.id %}" class="button secondary">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back" %}
+        </a>
+        <button type="submit" class="button success">
+            {% trans "Start Import" %}
+            <i class="fas fa-play"></i>
+        </button>
+    </div>
+</form>
+
+<script src="{% static 'migration/js/wizard_step4.js' %}"></script>
+{% endblock %}

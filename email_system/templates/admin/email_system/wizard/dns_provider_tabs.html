@@ -1,0 +1,194 @@
+{% load i18n %}
+
+<!-- Cloudflare Instructions -->
+<div id="cloudflare" class="registrar-content">
+    <div class="registrar-step">
+        <h5>1. {% trans "Log in to Cloudflare" %}</h5>
+        <p>{% trans "Go to" %} <a href="https://dash.cloudflare.com" target="_blank">dash.cloudflare.com</a> {% trans "and select your domain" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>2. {% trans "Navigate to DNS" %}</h5>
+        <p>{% trans "Click" %} <code>DNS</code> {% trans "in the left sidebar" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>3. {% trans "Add MX Record" %}</h5>
+        <p>{% trans "Click" %} <code>Add record</code>, {% trans "select" %} <code>MX</code> {% trans "type:" %}</p>
+        <ul>
+            <li><strong>{% trans "Type:" %}</strong> <code>MX</code></li>
+            <li><strong>{% trans "Name:" %}</strong> <code>@</code></li>
+            <li><strong>{% trans "Priority:" %}</strong> <code>10</code></li>
+            <li><strong>{% trans "Mail server:" %}</strong> <code>{{ mx_hostname }}</code></li>
+        </ul>
+        <p class="help-text">{% trans "This directs incoming email to your server" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>4. {% trans "Add TXT Records" %}</h5>
+        <p>{% trans "Click" %} <code>Add record</code> {% trans "and add each TXT record from Step 2 (Verify DNS Records) below:" %}</p>
+        <ul>
+            <li><strong>SPF:</strong> {% trans "Type:" %} <code>TXT</code>, {% trans "Name:" %} <code>@</code>, {% trans "Content:" %} <em>(see SPF record in Step 2 below)</em></li>
+            <li><strong>DKIM:</strong> {% trans "Type:" %} <code>TXT</code>, {% trans "Name:" %} <code>{{ dkim_selector }}._domainkey</code>, {% trans "Content:" %} <em>(see DKIM record in Step 2 below)</em></li>
+            <li><strong>DMARC:</strong> {% trans "Type:" %} <code>TXT</code>, {% trans "Name:" %} <code>_dmarc</code>, {% trans "Content:" %} <em>(see DMARC record in Step 2 below)</em></li>
+        </ul>
+    </div>
+    <div class="registrar-step">
+        <h5>5. {% trans "Save Changes" %}</h5>
+        <p>{% trans "Click" %} <code>Save</code> {% trans "for each record. DNS propagation typically takes 5-15 minutes." %}</p>
+    </div>
+</div>
+
+<!-- GoDaddy Instructions -->
+<div id="godaddy" class="registrar-content">
+    <div class="registrar-step">
+        <h5>1. {% trans "Log in to GoDaddy" %}</h5>
+        <p>{% trans "Go to" %} <a href="https://dcc.godaddy.com" target="_blank">dcc.godaddy.com</a></p>
+    </div>
+    <div class="registrar-step">
+        <h5>2. {% trans "Manage DNS" %}</h5>
+        <p>{% trans "Click your domain, then" %} <code>DNS</code> → <code>Manage Zones</code></p>
+    </div>
+    <div class="registrar-step">
+        <h5>3. {% trans "Add MX Record" %}</h5>
+        <p>{% trans "Click" %} <code>Add</code>, {% trans "select" %} <code>MX</code> {% trans "type:" %}</p>
+        <ul>
+            <li><strong>{% trans "Type:" %}</strong> <code>MX</code></li>
+            <li><strong>{% trans "Host:" %}</strong> <code>@</code></li>
+            <li><strong>{% trans "Priority:" %}</strong> <code>10</code></li>
+            <li><strong>{% trans "Points to:" %}</strong> <code>{{ mx_hostname }}</code></li>
+        </ul>
+        <p class="help-text">{% trans "This directs incoming email to your server" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>4. {% trans "Add TXT Records" %}</h5>
+        <p>{% trans "Click" %} <code>Add</code> {% trans "and select" %} <code>TXT</code> {% trans "record type. Copy values from Step 2 below:" %}</p>
+        <ul>
+            <li><strong>SPF:</strong> {% trans "Host:" %} <code>@</code>, {% trans "TXT Value:" %} <em>(see SPF in Step 2 below)</em></li>
+            <li><strong>DKIM:</strong> {% trans "Host:" %} <code>{{ dkim_selector }}._domainkey</code>, {% trans "TXT Value:" %} <em>(see DKIM in Step 2 below)</em></li>
+            <li><strong>DMARC:</strong> {% trans "Host:" %} <code>_dmarc</code>, {% trans "TXT Value:" %} <em>(see DMARC in Step 2 below)</em></li>
+        </ul>
+    </div>
+    <div class="registrar-step">
+        <h5>5. {% trans "Save Changes" %}</h5>
+        <p>{% trans "Click" %} <code>Save</code>. {% trans "DNS propagation can take up to 48 hours with GoDaddy." %}</p>
+    </div>
+</div>
+
+<!-- Namecheap Instructions -->
+<div id="namecheap" class="registrar-content">
+    <div class="registrar-step">
+        <h5>1. {% trans "Log in to Namecheap" %}</h5>
+        <p>{% trans "Go to" %} <a href="https://ap.www.namecheap.com" target="_blank">ap.www.namecheap.com</a></p>
+    </div>
+    <div class="registrar-step">
+        <h5>2. {% trans "Manage Domain" %}</h5>
+        <p>{% trans "Click" %} <code>Domain List</code> → {% trans "click" %} <code>Manage</code> {% trans "next to your domain" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>3. {% trans "Advanced DNS" %}</h5>
+        <p>{% trans "Click" %} <code>Advanced DNS</code> {% trans "tab" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>4. {% trans "Add MX Record" %}</h5>
+        <p>{% trans "Click" %} <code>Add New Record</code> → <code>MX Record</code>:</p>
+        <ul>
+            <li><strong>{% trans "Type:" %}</strong> <code>MX Record</code></li>
+            <li><strong>{% trans "Host:" %}</strong> <code>@</code></li>
+            <li><strong>{% trans "Priority:" %}</strong> <code>10</code></li>
+            <li><strong>{% trans "Value:" %}</strong> <code>{{ mx_hostname }}</code></li>
+        </ul>
+        <p class="help-text">{% trans "This directs incoming email to your server" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>5. {% trans "Add TXT Records" %}</h5>
+        <p>{% trans "Click" %} <code>Add New Record</code> → <code>TXT Record</code>. {% trans "Copy values from Step 2 below:" %}</p>
+        <ul>
+            <li><strong>SPF:</strong> {% trans "Host:" %} <code>@</code>, {% trans "Value:" %} <em>(see SPF in Step 2 below)</em></li>
+            <li><strong>DKIM:</strong> {% trans "Host:" %} <code>{{ dkim_selector }}._domainkey</code>, {% trans "Value:" %} <em>(see DKIM in Step 2 below)</em></li>
+            <li><strong>DMARC:</strong> {% trans "Host:" %} <code>_dmarc</code>, {% trans "Value:" %} <em>(see DMARC in Step 2 below)</em></li>
+        </ul>
+    </div>
+    <div class="registrar-step">
+        <h5>6. {% trans "Save Changes" %}</h5>
+        <p>{% trans "Click the green checkmark to save. Propagation takes 30 minutes to 48 hours." %}</p>
+    </div>
+</div>
+
+<!-- AWS Route 53 Instructions -->
+<div id="route53" class="registrar-content">
+    <div class="registrar-step">
+        <h5>1. {% trans "Log in to AWS Console" %}</h5>
+        <p>{% trans "Go to" %} <a href="https://console.aws.amazon.com/route53" target="_blank">AWS Route 53</a></p>
+    </div>
+    <div class="registrar-step">
+        <h5>2. {% trans "Select Hosted Zone" %}</h5>
+        <p>{% trans "Click" %} <code>Hosted zones</code> → {% trans "select your domain" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>3. {% trans "Create MX Record" %}</h5>
+        <p>{% trans "Click" %} <code>Create record</code>:</p>
+        <ul>
+            <li><strong>{% trans "Record name:" %}</strong> <em>(leave blank for root domain)</em></li>
+            <li><strong>{% trans "Record type:" %}</strong> <code>MX</code></li>
+            <li><strong>{% trans "Value:" %}</strong> <code>10 {{ mx_hostname }}</code></li>
+        </ul>
+        <p class="help-text">{% trans "This directs incoming email to your server" %}</p>
+    </div>
+    <div class="registrar-step">
+        <h5>4. {% trans "Create TXT Records" %}</h5>
+        <p>{% trans "Click" %} <code>Create record</code> {% trans "and add. Copy values from Step 2 below:" %}</p>
+        <ul>
+            <li><strong>SPF:</strong> {% trans "Record name:" %} <code>{{ domain }}</code>, {% trans "Type:" %} <code>TXT</code>, {% trans "Value:" %} <em>(see SPF in Step 2 below)</em></li>
+            <li><strong>DKIM:</strong> {% trans "Record name:" %} <code>{{ dkim_dns_hostname }}</code>, {% trans "Type:" %} <code>TXT</code>, {% trans "Value:" %} <em>(see DKIM in Step 2 below)</em></li>
+            <li><strong>DMARC:</strong> {% trans "Record name:" %} <code>_dmarc.{{ domain }}</code>, {% trans "Type:" %} <code>TXT</code>, {% trans "Value:" %} <em>(see DMARC in Step 2 below)</em></li>
+        </ul>
+    </div>
+    <div class="registrar-step">
+        <h5>5. {% trans "Create Records" %}</h5>
+        <p>{% trans "Click" %} <code>Create records</code>. {% trans "Route 53 propagates changes within 60 seconds." %}</p>
+    </div>
+</div>
+
+<!-- Generic/Other Instructions -->
+<div id="generic" class="registrar-content">
+    {% if dns_nameservers %}
+    <div class="info-box">
+        <h5><i class="fas fa-server"></i> {% trans "Your DNS Nameservers" %}</h5>
+        <p>{% trans "Your domain uses the following nameservers:" %}</p>
+        <ul class="dns-provider-tabs">
+            {% for ns in dns_nameservers %}
+            <li><code>{{ ns }}</code></li>
+            {% endfor %}
+        </ul>
+        <p class="help-text">
+            <strong>{% trans "Tip:" %}</strong> {% trans "Search for your DNS provider's documentation using your nameserver names above." %}
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="registrar-step">
+        <h5>{% trans "General Instructions" %}</h5>
+        <p>{% trans "Most DNS providers follow a similar process:" %}</p>
+        <ol>
+            <li>{% trans "Log in to your DNS provider's control panel" %}</li>
+            <li>{% trans "Navigate to DNS management for your domain" %}</li>
+            <li>
+                <strong>{% trans "Add MX Record:" %}</strong>
+                <ul class="verification-steps">
+                    <li>{% trans "Type:" %} <code>MX</code></li>
+                    <li>{% trans "Name/Host:" %} <code>@</code></li>
+                    <li>{% trans "Priority:" %} <code>10</code></li>
+                    <li>{% trans "Value/Points to:" %} <code>{{ mx_hostname }}</code></li>
+                </ul>
+            </li>
+            <li>{% trans "Add TXT records with the values shown in Step 2 below" %}</li>
+            <li>{% trans "Wait for DNS propagation (15 minutes to 48 hours)" %}</li>
+        </ol>
+    </div>
+    <div class="info-box warning">
+        <h5><i class="fas fa-info-circle"></i> {% trans "Important Notes" %}</h5>
+        <ul>
+            <li>{% trans "Some providers use" %} <code>@</code> {% trans "for the root domain, others require the full domain name" %}</li>
+            <li>{% trans "DKIM and DMARC records must use the exact hostnames shown above" %}</li>
+            <li>{% trans "If you have existing SPF records, you must merge them (only one SPF record allowed)" %}</li>
+        </ul>
+    </div>
+</div>

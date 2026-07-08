@@ -1,0 +1,46 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Skip Setup Wizard" %} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'setup_wizard/admin/css/skip_confirm_wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="setup-skip-container">
+    <h1>{% trans "Skip Setup Wizard" %}</h1>
+
+    <div class="skip-warning">
+        <h3><i class="fas fa-exclamation-triangle"></i> {% trans "Are you sure you want to skip the setup wizard?" %}</h3>
+        <p>{% trans "Skipping the wizard means your store will not be properly configured for customers to use." %}</p>
+    </div>
+
+    <p><strong>{% trans "Without completing setup, the following features won't work properly:" %}</strong></p>
+
+    <ul class="skip-consequences">
+        <li><i class="fas fa-exclamation-triangle"></i> {% trans "Customer payments (no payment methods configured)" %}</li>
+        <li><i class="fas fa-exclamation-triangle"></i> {% trans "Order processing and notifications" %}</li>
+        <li><i class="fas fa-exclamation-triangle"></i> {% trans "Site branding and customization" %}</li>
+        <li><i class="fas fa-exclamation-triangle"></i> {% trans "Contact information and support channels" %}</li>
+        <li><i class="fas fa-exclamation-triangle"></i> {% trans "Currency and localization settings" %}</li>
+    </ul>
+
+    <p><strong>{% trans "You can always return to complete the setup later from the dashboard." %}</strong></p>
+
+    <div class="skip-button-group">
+        <form method="post" class="skip-form-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-forward"></i> {% trans "Yes, Skip Setup" %}
+            </button>
+        </form>
+
+        <a href="{% url 'setup_wizard:start' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans "No, Continue Setup" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

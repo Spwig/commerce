@@ -1,0 +1,634 @@
+{% load static i18n core_extras %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" data-theme="{{ admin_theme|default:'light' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Menu Builder" %} - {{ menu.name }}</title>
+    {% favicon_meta %}
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- Core Admin Theme Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+
+    <!-- Admin Base Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Menu Builder Styles -->
+    <link rel="stylesheet" href="{% static 'design/css/menu-builder.css' %}">
+
+    <!-- Utility Base Styles (required for all utilities) -->
+    <link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+
+    <!-- ColorPicker Utility Styles -->
+    <link rel="stylesheet" href="{% static 'utilities/color_picker/current/color_picker.css' %}">
+
+    <!-- Scoped Theme CSS Placeholders (populated by JavaScript) -->
+    <style id="scoped-base-css"></style>
+    <style id="scoped-theme-css"></style>
+    <style id="scoped-brand-css"></style>
+    <style id="scoped-menu-widget-css"></style>
+</head>
+<body data-theme="{{ admin_theme|default:'light' }}">
+
+    <div class="menu-builder-container">
+        <!-- Left Sidebar - Quick Add Library -->
+        <div class="menu-sidebar-left">
+            <div class="menu-sidebar-header">
+                <h2><i class="fas fa-plus-circle"></i> {% trans "Add Items" %}</h2>
+                <div class="menu-search-box">
+                    <input type="text" id="library-search" placeholder="{% trans 'Search...' %}">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="menu-sidebar-content" id="quick-add-library">
+                <!-- Item Types Section -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="item-types">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Item Types" %}</span>
+                    </div>
+                    <div class="library-section-content" id="item-types">
+                        {% for type in item_type_choices %}
+                        <div class="library-item draggable-item" data-type="{{ type.value }}" draggable="true">
+                            <i class="fas {{ type.icon }}"></i>
+                            <span>{{ type.label }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Widget Items Section -->
+                <div class="library-section">
+                    <div class="library-section-header" data-toggle="widget-items">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Widgets" %}</span>
+                    </div>
+                    <div class="library-section-content" id="widget-items">
+                        {% for widget in widget_type_choices %}
+                        <div class="library-item draggable-item" data-type="widget" data-widget-type="{{ widget.value }}" draggable="true">
+                            <i class="fas {{ widget.icon }}"></i>
+                            <span>{{ widget.label }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Pages Section -->
+                <div class="library-section{% if pages_use_ajax %} ajax-mode{% endif %}">
+                    <div class="library-section-header" data-toggle="pages-list">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Pages" %}</span>
+                        <span class="item-count" id="pages-count">{{ pages_count }}</span>
+                    </div>
+                    {% if pages_use_ajax %}
+                    <div class="library-search">
+                        <input type="text" id="pages-search" placeholder="{% trans 'Search pages...' %}" class="library-search-input">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    {% endif %}
+                    <div class="library-section-content" id="pages-list">
+                        {% if pages_use_ajax %}
+                        <p class="library-prompt">{% trans "Type to search..." %}</p>
+                        {% else %}
+                        <div class="loading-spinner-small"></div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Categories Section -->
+                <div class="library-section{% if categories_use_ajax %} ajax-mode{% endif %}">
+                    <div class="library-section-header" data-toggle="categories-list">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>{% trans "Categories" %}</span>
+                        <span class="item-count" id="categories-count">{{ categories_count }}</span>
+                    </div>
+                    {% if categories_use_ajax %}
+                    <div class="library-search">
+                        <input type="text" id="categories-search" placeholder="{% trans 'Search categories...' %}" class="library-search-input">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    {% endif %}
+                    <div class="library-section-content" id="categories-list">
+                        {% if categories_use_ajax %}
+                        <p class="library-prompt">{% trans "Type to search..." %}</p>
+                        {% else %}
+                        <div class="loading-spinner-small"></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Canvas - Menu Tree -->
+        <div class="menu-canvas-center">
+            <!-- Toolbar -->
+            <div class="menu-toolbar">
+                <div class="menu-toolbar-left">
+                    <button class="toolbar-btn" id="back-btn" data-url="{% url 'design:dashboard' %}">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="btn-text">{% trans "Back" %}</span>
+                    </button>
+
+                    <select id="menu-selector" class="property-select">
+                        {% for m in all_menus %}
+                            <option value="{{ m.id }}" {% if m.id == menu.id %}selected{% endif %}>{{ m.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <button class="toolbar-btn" id="new-menu-btn" title="{% trans 'Create New Menu' %}">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="menu-toolbar-center">
+                    <div class="device-toggle-group">
+                        <button class="device-toggle" data-device="mobile" title="{% trans 'Mobile Preview' %}">
+                            <i class="fas fa-mobile-alt"></i>
+                        </button>
+                        <button class="device-toggle" data-device="tablet" title="{% trans 'Tablet Preview' %}">
+                            <i class="fas fa-tablet-alt"></i>
+                        </button>
+                        <button class="device-toggle active" data-device="desktop" title="{% trans 'Desktop Preview' %}">
+                            <i class="fas fa-desktop"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-toolbar-right">
+                    <button class="toolbar-btn" id="expand-all-btn" title="{% trans 'Expand All' %}">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                    <button class="toolbar-btn" id="collapse-all-btn" title="{% trans 'Collapse All' %}">
+                        <i class="fas fa-compress-alt"></i>
+                    </button>
+                    <button class="toolbar-btn" id="undo-btn" disabled title="{% trans 'Undo' %}">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="toolbar-btn" id="redo-btn" disabled title="{% trans 'Redo' %}">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="toolbar-btn btn-success" id="save-btn">
+                        <i class="fas fa-save"></i>
+                        <span class="btn-text">{% trans "Save" %}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="menu-canvas-area">
+                <!-- Menu Info Bar -->
+                <div class="menu-info-bar">
+                    <div class="menu-info-left">
+                        <span class="menu-name-display">{{ menu.name }}</span>
+                        <span class="menu-location-badge">{{ menu.get_location_display }}</span>
+                        <span class="menu-type-badge">{{ menu.get_display_type_display }}</span>
+                    </div>
+                    <div class="menu-info-right">
+                        <button class="btn-text-link" id="menu-settings-btn">
+                            <i class="fas fa-cog"></i> {% trans "Menu Settings" %}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Tree Container -->
+                <div class="menu-tree-container" id="menu-tree-container">
+                    <!-- Menu Header - Click to select menu root for menu-level styling -->
+                    <div class="menu-tree-header" id="menu-tree-header" tabindex="0">
+                        <div class="menu-tree-header-content">
+                            <i class="fas fa-bars menu-icon"></i>
+                            <span class="menu-name">{{ menu.name }}</span>
+                            <span class="menu-type-indicator">{{ menu.get_display_type_display }}</span>
+                        </div>
+                        <span class="menu-header-hint">{% trans "Click to style menu" %}</span>
+                    </div>
+
+                    <div class="menu-tree" id="menu-tree">
+                        <!-- Menu items tree will be rendered here via JavaScript -->
+                        <div class="menu-tree-empty" id="menu-tree-empty">
+                            <i class="fas fa-list"></i>
+                            <p>{% trans "No menu items yet" %}</p>
+                            <p class="hint">{% trans "Drag items from the left panel or click the button below" %}</p>
+                            <button class="btn-primary" id="add-first-item-btn">
+                                <i class="fas fa-plus"></i> {% trans "Add First Item" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Item Button (shown when items exist) -->
+                <div class="add-item-footer" id="add-item-footer" style="display: none;">
+                    <button class="btn-add-item" id="add-item-btn">
+                        <i class="fas fa-plus"></i> {% trans "Add Item" %}
+                    </button>
+                </div>
+
+                <!-- Live Preview Toggle -->
+                <div class="preview-toggle">
+                    <button class="btn-preview-toggle" id="toggle-preview-btn">
+                        <i class="fas fa-eye"></i> {% trans "Preview" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Preview Panel with Device Frames -->
+        <div class="preview-panel hidden" id="preview-panel">
+            <div class="preview-toolbar">
+                <div class="preview-toolbar-left">
+                    <div class="zoom-control">
+                        <i class="fas fa-search"></i>
+                        <input type="range" id="preview-zoom" min="25" max="100" value="75">
+                        <span class="zoom-value">75%</span>
+                    </div>
+                </div>
+
+                <div class="preview-toolbar-center">
+                    <div class="device-buttons">
+                        <button data-device="desktop" class="active" title="{% trans 'Desktop' %} (1)">
+                            <i class="fas fa-desktop"></i>
+                        </button>
+                        <button data-device="tablet" title="{% trans 'Tablet' %} (2)">
+                            <i class="fas fa-tablet-alt"></i>
+                        </button>
+                        <button data-device="mobile" title="{% trans 'Mobile' %} (3)">
+                            <i class="fas fa-mobile-alt"></i>
+                        </button>
+                        <button class="orientation-toggle" title="{% trans 'Rotate' %} (R)">
+                            <i class="fas fa-rotate"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-toolbar-right">
+                    <button class="preview-close-btn" id="close-preview-btn" title="{% trans 'Close Preview' %}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button class="preview-expand-btn" id="expand-preview-btn" title="{% trans 'Open in New Window' %}">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="preview-frame-wrapper" id="preview-frame-wrapper">
+                <div class="device-frame desktop" id="device-frame">
+                    <div class="loading-indicator" id="preview-loading">
+                        <div class="loading-spinner"></div>
+                    </div>
+
+                    <!-- Menu preview content renders here -->
+                    <div class="preview-content" id="menu-preview-content">
+                        <!-- Populated by JavaScript -->
+                    </div>
+
+                    <!-- Glass sheen overlay -->
+                    <div class="glass-sheen"></div>
+
+                    <!-- Device label -->
+                    <div class="device-label"></div>
+
+                    <!-- Desktop elements -->
+                    <div class="monitor-stand"></div>
+                    <div class="monitor-base"></div>
+
+                    <!-- Tablet elements -->
+                    <div class="volume-buttons">
+                        <div class="volume-up"></div>
+                        <div class="volume-down"></div>
+                    </div>
+
+                    <!-- Mobile elements -->
+                    <div class="notch"></div>
+                    <div class="mute-switch"></div>
+
+                    <!-- Shared power button -->
+                    <div class="power-button"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Properties Panel -->
+        <div class="menu-sidebar-right">
+            <div class="menu-sidebar-header">
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" data-tab="item-props">
+                        <i class="fas fa-sliders-h"></i>
+                        {% trans "Item" %}
+                    </button>
+                    <button class="admin-tab-btn" data-tab="style-props">
+                        <i class="fas fa-palette"></i>
+                        {% trans "Style" %}
+                    </button>
+                    <button class="admin-tab-btn" data-tab="visibility-props">
+                        <i class="fas fa-eye"></i>
+                        {% trans "Visibility" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Item Properties Tab -->
+            <div class="admin-tab-content active" id="item-props-tab">
+                <div class="properties-panel" id="item-properties-panel">
+                    <div class="properties-empty">
+                        <i class="fas fa-hand-pointer"></i>
+                        <p>{% trans "Select a menu item to edit its properties" %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Properties Tab -->
+            <div class="admin-tab-content" id="style-props-tab">
+                <div class="properties-panel" id="style-properties-panel">
+                    <div class="properties-empty">
+                        <i class="fas fa-palette"></i>
+                        <p>{% trans "Select a menu item to customize its styling" %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visibility Properties Tab -->
+            <div class="admin-tab-content" id="visibility-props-tab">
+                <div class="properties-panel" id="visibility-properties-panel">
+                    <div class="properties-empty">
+                        <i class="fas fa-eye"></i>
+                        <p>{% trans "Select a menu item to configure visibility rules" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Settings Modal -->
+    <div class="modal-overlay hidden" id="menu-settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> {% trans "Menu Settings" %}</h2>
+                <button class="modal-close-btn" id="close-settings-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="menu-name">{% trans "Menu Name" %}</label>
+                    <input type="text" id="menu-name" value="{{ menu.name }}" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="menu-location">{% trans "Location" %}</label>
+                    <select id="menu-location" class="form-control">
+                        {% for loc in location_choices %}
+                            <option value="{{ loc.value }}" {% if menu.location == loc.value %}selected{% endif %}>{{ loc.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="menu-display-type">{% trans "Display Type" %}</label>
+                    <select id="menu-display-type" class="form-control">
+                        {% for dt in display_type_choices %}
+                            <option value="{{ dt.value }}" {% if menu.display_type == dt.value %}selected{% endif %}>{{ dt.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="menu-description">{% trans "Description" %}</label>
+                    <textarea id="menu-description" class="form-control" rows="2">{{ menu.description }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="menu-is-active" {% if menu.is_active %}checked{% endif %}>
+                        {% trans "Active" %}
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-settings-btn">{% trans "Cancel" %}</button>
+                <button class="btn-primary" id="save-settings-btn">{% trans "Save Settings" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal-overlay hidden" id="add-item-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> {% trans "Add Menu Item" %}</h2>
+                <button class="modal-close-btn" id="close-add-item-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-item-type">{% trans "Item Type" %}</label>
+                    <select id="new-item-type" class="form-control">
+                        {% for type in item_type_choices %}
+                            <option value="{{ type.value }}">{{ type.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group" id="new-item-title-group">
+                    <label for="new-item-title">{% trans "Title" %}</label>
+                    <input type="text" id="new-item-title" class="form-control" placeholder="{% trans 'Menu item title' %}">
+                </div>
+
+                <div class="form-group" id="new-item-url-group">
+                    <label for="new-item-url">{% trans "URL" %}</label>
+                    <input type="text" id="new-item-url" class="form-control" placeholder="https://...">
+                </div>
+
+                <div class="form-group hidden" id="new-item-page-group">
+                    <label for="new-item-page">{% trans "Select Page" %}</label>
+                    <select id="new-item-page" class="form-control">
+                        <option value="">{% trans "-- Select a page --" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-group hidden" id="new-item-category-group">
+                    <label for="new-item-category">{% trans "Select Category" %}</label>
+                    <select id="new-item-category" class="form-control">
+                        <option value="">{% trans "-- Select a category --" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-group hidden" id="new-item-widget-group">
+                    <label for="new-item-widget-type">{% trans "Widget Type" %}</label>
+                    <select id="new-item-widget-type" class="form-control">
+                        {% for widget in widget_type_choices %}
+                            <option value="{{ widget.value }}">{{ widget.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-add-item-btn">{% trans "Cancel" %}</button>
+                <button class="btn-primary" id="confirm-add-item-btn">{% trans "Add Item" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Menu Modal -->
+    <div class="modal-overlay hidden" id="new-menu-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> {% trans "Create New Menu" %}</h2>
+                <button class="modal-close-btn" id="close-new-menu-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="create-menu-name">{% trans "Menu Name" %}</label>
+                    <input type="text" id="create-menu-name" class="form-control" placeholder="{% trans 'e.g., Main Navigation' %}">
+                </div>
+
+                <div class="form-group">
+                    <label for="create-menu-location">{% trans "Location" %}</label>
+                    <select id="create-menu-location" class="form-control">
+                        {% for loc in location_choices %}
+                            <option value="{{ loc.value }}">{{ loc.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="create-menu-display-type">{% trans "Display Type" %}</label>
+                    <select id="create-menu-display-type" class="form-control">
+                        {% for dt in display_type_choices %}
+                            <option value="{{ dt.value }}">{{ dt.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancel-new-menu-btn">{% trans "Cancel" %}</button>
+                <button class="btn-primary" id="confirm-new-menu-btn">{% trans "Create Menu" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Icon Picker Modal -->
+    <div class="modal-overlay hidden" id="icon-picker-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2><i class="fas fa-icons"></i> {% trans "Choose Icon" %}</h2>
+                <button class="modal-close-btn" id="close-icon-picker">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="icon-search-box">
+                    <input type="text" id="icon-search" placeholder="{% trans 'Search icons...' %}">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="icon-categories">
+                    <button class="icon-category active" data-category="all">{% trans "All" %}</button>
+                    <button class="icon-category" data-category="solid">{% trans "Solid" %}</button>
+                    <button class="icon-category" data-category="regular">{% trans "Regular" %}</button>
+                    <button class="icon-category" data-category="brands">{% trans "Brands" %}</button>
+                </div>
+                <div class="icon-grid" id="icon-grid">
+                    <!-- Icons will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="clear-icon-btn">{% trans "No Icon" %}</button>
+                <button class="btn-secondary" id="cancel-icon-btn">{% trans "Cancel" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- JavaScript Configuration -->
+    <script type="application/json" id="menu-builder-config">
+    {
+        "menuId": {{ menu.id }},
+        "menuName": "{{ menu.name|escapejs }}",
+        "apiBaseUrl": "{{ api_base_url }}",
+        "apiMenuUrl": "{{ api_menu_url }}",
+        "apiItemsUrl": "{{ api_items_url }}",
+        "apiReorderUrl": "{{ api_reorder_url }}",
+        "apiSourcesUrl": "{{ api_sources_url }}",
+        "apiPreviewUrl": "{{ api_preview_url }}",
+        "apiSaveStructureUrl": "{{ api_save_structure_url }}",
+        "csrfToken": "{{ csrf_token }}",
+        "themeCssUrl": {% if theme_css_url %}"{{ theme_css_url }}"{% else %}null{% endif %},
+        "brandCssUrl": {% if brand_css_url %}"{{ brand_css_url }}"{% else %}null{% endif %},
+        "baseCssUrl": {% if base_css_url %}"{{ base_css_url }}"{% else %}null{% endif %},
+        "menuWidgetCssUrl": {% if menu_widget_css_url %}"{{ menu_widget_css_url }}"{% else %}null{% endif %},
+        "brandingId": {% if branding_id %}{{ branding_id }}{% else %}null{% endif %},
+        "menuTokens": {{ menu_tokens|safe }},
+        "menuTokensCustom": {{ menu_tokens_custom|safe }},
+        "menuTokensDefaults": {{ menu_tokens_defaults|safe }},
+        "apiMenuTokensUrl": "{{ api_menu_tokens_url }}",
+        "initialItemsTree": {{ items_tree|safe }},
+        "availablePages": {{ available_pages|safe }},
+        "availableCategories": {{ available_categories|safe }},
+        "pagesUseAjax": {{ pages_use_ajax|yesno:"true,false" }},
+        "categoriesUseAjax": {{ categories_use_ajax|yesno:"true,false" }},
+        "pagesCount": {{ pages_count }},
+        "categoriesCount": {{ categories_count }},
+        "ajaxThreshold": {{ ajax_threshold }},
+        "translations": {
+            "save": "{% trans 'Save' %}",
+            "saving": "{% trans 'Saving...' %}",
+            "saved": "{% trans 'Saved!' %}",
+            "error": "{% trans 'Error' %}",
+            "deleteConfirm": "{% trans 'Are you sure you want to delete this menu item and all its children?' %}",
+            "selectItem": "{% trans 'Select an item to edit' %}",
+            "itemAdded": "{% trans 'Item added' %}",
+            "itemRemoved": "{% trans 'Item removed' %}",
+            "itemUpdated": "{% trans 'Item updated' %}",
+            "menuCreated": "{% trans 'Menu created' %}",
+            "menuUpdated": "{% trans 'Menu settings updated' %}",
+            "noIcon": "{% trans 'No icon selected' %}",
+            "untitled": "{% trans 'Untitled Item' %}",
+            "dragHere": "{% trans 'Drag items here' %}",
+            "typeToSearch": "{% trans 'Type to search...' %}",
+            "searching": "{% trans 'Searching...' %}",
+            "noResults": "{% trans 'No results found' %}",
+            "moreResults": "{% trans 'More results available. Refine your search.' %}",
+            "searchPages": "{% trans 'Search pages...' %}",
+            "searchCategories": "{% trans 'Search categories...' %}",
+            "menuStylesSaved": "{% trans 'Menu styles saved' %}",
+            "menuStylesReset": "{% trans 'Menu styles reset to defaults' %}",
+            "confirmResetStyles": "{% trans 'Reset all menu styles to theme defaults?' %}",
+            "selectMenuOrItem": "{% trans 'Select a menu item or click the menu header to edit styles' %}",
+            "menuStylesTitle": "{% trans 'Menu Styles' %}",
+            "colorsSection": "{% trans 'Colors' %}",
+            "spacingSection": "{% trans 'Spacing' %}",
+            "typographySection": "{% trans 'Typography' %}",
+            "animationSection": "{% trans 'Animation' %}"
+        },
+        "itemTypeLabels": {
+            "link": "{% trans 'Link' %}",
+            "page": "{% trans 'Page' %}",
+            "category": "{% trans 'Category' %}",
+            "category_tree": "{% trans 'Categories' %}",
+            "custom_url": "{% trans 'Custom URL' %}",
+            "divider": "{% trans 'Divider' %}",
+            "header": "{% trans 'Header' %}",
+            "widget": "{% trans 'Widget' %}"
+        },
+        "currentTheme": "{{ admin_theme|default:'light' }}"
+    }
+    </script>
+
+    <!-- SortableJS for drag and drop with nested support -->
+    <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+
+    <!-- ColorPicker Utility -->
+    <script src="{% static 'utilities/color_picker/current/color_picker.js' %}"></script>
+
+    <!-- Menu Builder JavaScript -->
+    <script src="{% static 'design/js/menu-builder.js' %}"></script>
+</body>
+</html>

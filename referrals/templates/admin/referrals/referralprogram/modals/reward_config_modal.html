@@ -1,0 +1,110 @@
+{% load i18n %}
+
+<!-- Reward Configuration Modal -->
+<div class="admin-modal-overlay" id="reward-config-modal">
+    <div class="admin-modal">
+        <div class="admin-modal-header">
+            <h2 class="admin-modal-title"><i class="fas fa-gift"></i> {% trans "Configure Rewards" %}</h2>
+            <button type="button" class="admin-modal-close" data-modal="reward-config-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <div class="admin-modal-section">
+                <h3>{% trans "Referrer Rewards" %} <span class="hint">({% trans "Person who shares the referral link" %})</span></h3>
+
+                <div class="form-row">
+                    <label for="reward-referrer-enabled">
+                        <input type="checkbox" id="reward-referrer-enabled" checked>
+                        {% trans "Enable referrer rewards" %}
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label for="reward-referrer-type">{% trans "Reward Type" %}</label>
+                    <select id="reward-referrer-type">
+                        <option value="credit">{% trans "Store Credit" %}</option>
+                        <option value="discount">{% trans "Discount Code" %}</option>
+                        <option value="cash">{% trans "Cash/Payment" %}</option>
+                        <option value="points">{% trans "Loyalty Points" %}</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="reward-referrer-amount">{% trans "Reward Amount" %}</label>
+                    <div class="input-group">
+                        <input type="number" id="reward-referrer-amount" step="0.01" min="0" placeholder="10.00">
+                        <span class="input-addon" id="reward-referrer-unit">$</span>
+                    </div>
+                    <p class="help">{% trans "Amount of reward to give the referrer" %}</p>
+                </div>
+
+                <div class="form-row" id="reward-referrer-percent-row" class="referrals-hidden">
+                    <label for="reward-referrer-percent">{% trans "Is Percentage?" %}</label>
+                    <input type="checkbox" id="reward-referrer-percent">
+                    <p class="help">{% trans "Check if reward amount is a percentage" %}</p>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Referee Rewards" %} <span class="hint">({% trans "New customer who uses the referral link" %})</span></h3>
+
+                <div class="form-row">
+                    <label for="reward-referee-enabled">
+                        <input type="checkbox" id="reward-referee-enabled" checked>
+                        {% trans "Enable referee rewards (double-sided program)" %}
+                    </label>
+                </div>
+
+                <div id="referee-rewards-config">
+                    <div class="form-row">
+                        <label for="reward-referee-type">{% trans "Reward Type" %}</label>
+                        <select id="reward-referee-type">
+                            <option value="credit">{% trans "Store Credit" %}</option>
+                            <option value="discount">{% trans "Discount Code" %}</option>
+                            <option value="cash">{% trans "Cash/Payment" %}</option>
+                            <option value="points">{% trans "Loyalty Points" %}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="reward-referee-amount">{% trans "Reward Amount" %}</label>
+                        <div class="input-group">
+                            <input type="number" id="reward-referee-amount" step="0.01" min="0" placeholder="10.00">
+                            <span class="input-addon" id="reward-referee-unit">$</span>
+                        </div>
+                        <p class="help">{% trans "Amount of reward to give the new customer" %}</p>
+                    </div>
+
+                    <div class="form-row" id="reward-referee-percent-row" class="referrals-hidden">
+                        <label for="reward-referee-percent">{% trans "Is Percentage?" %}</label>
+                        <input type="checkbox" id="reward-referee-percent">
+                        <p class="help">{% trans "Check if reward amount is a percentage" %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-modal-section">
+                <h3>{% trans "Reward Delivery" %}</h3>
+
+                <div class="form-row">
+                    <label for="reward-auto-apply">
+                        <input type="checkbox" id="reward-auto-apply">
+                        {% trans "Automatically apply rewards" %}
+                    </label>
+                    <p class="help">{% trans "If unchecked, customers must manually apply their reward codes" %}</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="reward-expiry-days">{% trans "Reward Expiry (Days)" %}</label>
+                    <input type="number" id="reward-expiry-days" min="0" placeholder="90">
+                    <p class="help">{% trans "Number of days before rewards expire (0 = never expire)" %}</p>
+                </div>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="referral-modal-btn-secondary" data-modal="reward-config-modal">{% trans "Cancel" %}</button>
+            <button type="button" class="referral-modal-btn-primary" id="save-reward-config">{% trans "Save Configuration" %}</button>
+        </div>
+    </div>
+</div>

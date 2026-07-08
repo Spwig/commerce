@@ -1,0 +1,61 @@
+{% load i18n %}
+<div class="icon-picker"
+     data-icon-picker
+     data-widget-name="{{ widget.name }}"
+     data-widget-id="{{ widget.attrs.id|default:widget.name }}"
+     data-style-prefix="{{ widget.style_prefix|yesno:'true,false' }}"
+     data-translations="{{ widget.translations_json }}">
+
+    {# Hidden input for form submission #}
+    <input type="hidden"
+           name="{{ widget.name }}"
+           id="{{ widget.attrs.id|default:widget.name }}"
+           value="{{ widget.icon_value }}">
+
+    {# Selected icon preview #}
+    <div class="icon-picker-selected">
+        <div class="icon-picker-preview" data-icon-picker-preview>
+            {% if widget.icon_value %}
+                <i class="{% if widget.style_prefix %}{{ widget.icon_value }}{% else %}fas {{ widget.icon_value }}{% endif %}"></i>
+            {% else %}
+                <span class="icon-picker-preview-empty">
+                    <i class="fas fa-icons"></i>
+                </span>
+            {% endif %}
+        </div>
+        <div class="icon-picker-selected-info">
+            <span class="icon-picker-selected-label" data-icon-picker-label>{% if widget.icon_value %}{{ widget.icon_display_label }}{% else %}{% trans "No icon selected" %}{% endif %}</span>
+            <button type="button" class="icon-picker-clear" data-icon-picker-clear
+                    {% if not widget.icon_value %}hidden{% endif %}>
+                <i class="fas fa-times"></i> {% trans "Clear" %}
+            </button>
+        </div>
+    </div>
+
+    {# Priority icons grid (0-10 items rendered server-side) #}
+    {% if widget.priority_icons %}
+    <div class="icon-picker-priority" data-icon-picker-priority>
+        <span class="icon-picker-priority-label">{% trans "Suggested" %}</span>
+        <div class="icon-picker-priority-grid">
+            {% for icon in widget.priority_icons %}
+            <button type="button"
+                    class="icon-picker-grid-item{% if icon.is_selected %} selected{% endif %}"
+                    data-icon-class="{{ icon.class }}"
+                    data-icon-style="{{ icon.style }}"
+                    data-icon-label="{{ icon.label }}"
+                    title="{{ icon.label }}">
+                <i class="{{ icon.style }} {{ icon.class }}"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Browse all button #}
+    <button type="button" class="icon-picker-browse" data-icon-picker-browse>
+        <i class="fas fa-th"></i> {% trans "Browse all icons" %}
+    </button>
+</div>
+
+{# Registry JSON loaded lazily by JS via a script tag with type=application/json #}
+<script type="application/json" data-icon-picker-registry="{{ widget.name }}">{{ widget.icon_registry_json }}</script>

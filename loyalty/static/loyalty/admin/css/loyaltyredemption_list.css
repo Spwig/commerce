@@ -1,0 +1,65 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Loyalty - Loyaltyredemption List
+ *
+ * Description: Changelist styles for loyalty loyaltyredemption
+ * Template: loyalty/templates/admin/loyalty/loyaltyredemption/change_list.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ * - core/static/core/admin/css/changelist-utilities.css (shared changelist patterns)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Redemption-specific card styles */
+.redemption-card {
+    transition: all 0.2s ease;
+}
+
+.redemption-card.pending {
+    border-left: 3px solid var(--info-fg);
+}
+
+.redemption-card.fulfilled {
+    border-left: 3px solid var(--success-fg);
+}
+
+.redemption-card.cancelled {
+    border-left: 3px solid var(--body-quiet-color);
+    opacity: 0.7;
+}
+
+.redemption-card.expired {
+    border-left: 3px solid var(--error-fg);
+    opacity: 0.7;
+}
+
+.list-row-card-icon.pending {
+    background: var(--info-bg);
+    color: var(--info-fg);
+}
+
+.list-row-card-icon.fulfilled {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.list-row-card-icon.cancelled {
+    background: var(--body-quiet-color);
+    color: var(--body-bg);
+}
+
+.list-row-card-icon.expired {
+    background: var(--error-bg);
+    color: var(--error-fg);
+}
+
+/* Hide default table view */
+#result_list {
+    display: none;
+}

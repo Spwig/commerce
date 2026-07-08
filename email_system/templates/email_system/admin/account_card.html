@@ -1,0 +1,122 @@
+{% load i18n static %}
+
+<div class="provider-card" data-account-id="{{ account.id }}" data-provider-slug="{{ account.component.slug }}">
+    <!-- Checkbox for bulk select -->
+    <div class="provider-checkbox">
+        <input type="checkbox" class="account-select" value="{{ account.id }}" id="account-{{ account.id }}">
+    </div>
+
+    <!-- Provider Logo/Icon -->
+    <div class="provider-logo">
+        <a href="{% url 'admin:email_system_emailaccount_change' account.id %}">
+            {% if account.logo_url %}
+                <div class="logo-plate" data-auto-contrast>
+                    <img src="{{ account.logo_url }}" alt="{{ account.component.name }}" loading="lazy" crossorigin="anonymous">
+                </div>
+            {% else %}
+                <div class="provider-logo-placeholder">
+                    <i class="fas fa-envelope"></i>
+                </div>
+            {% endif %}
+        </a>
+        {% if account.is_default %}
+            <span class="primary-badge" title="{% trans 'Default Account' %}">
+                <i class="fas fa-star"></i>
+            </span>
+        {% endif %}
+    </div>
+
+    <!-- Account Info -->
+    <div class="provider-info">
+        <h3 class="provider-name">
+            <a href="{% url 'admin:email_system_emailaccount_change' account.id %}">
+                {{ account.from_email }}
+            </a>
+        </h3>
+
+        <div class="provider-component">
+            <span class="component-label">{% trans "Provider:" %}</span>
+            <span class="component-value">{{ account.component.name }}</span>
+        </div>
+
+        <div class="provider-meta">
+            {% if account.last_tested_at %}
+                <span class="meta-item">
+                    <i class="fas fa-plug"></i>
+                    <span class="sync-time">{% trans "Last tested:" %} {{ account.last_tested_at|timesince }} {% trans "ago" %}</span>
+                </span>
+            {% else %}
+                <span class="meta-item">
+                    <i class="fas fa-plug"></i>
+                    <span class="sync-time">{% trans "Never tested" %}</span>
+                </span>
+            {% endif %}
+        </div>
+
+        <!-- Connection Status -->
+        <div class="sync-status">
+            {% if account.connection_status == 'connected' %}
+                <span class="status-badge status-success">
+                    <i class="fas fa-check-circle"></i> {% trans "Connected" %}
+                </span>
+            {% elif account.connection_status == 'error' %}
+                <span class="status-badge status-error" title="{{ account.connection_error }}">
+                    <i class="fas fa-exclamation-triangle"></i> {% trans "Error" %}
+                </span>
+            {% else %}
+                <span class="status-badge status-pending">
+                    <i class="fas fa-clock"></i> {% trans "Pending" %}
+                </span>
+            {% endif %}
+        </div>
+
+        <div class="provider-badges">
+            <!-- Active/Inactive Badge -->
+            {% if account.is_active %}
+                <span class="badge badge-status badge-active">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+            {% else %}
+                <span class="badge badge-status badge-inactive">
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                </span>
+            {% endif %}
+
+            <!-- Default Badge -->
+            {% if account.is_default %}
+                <span class="badge badge-primary">
+                    <i class="fas fa-star"></i> {% trans "Default" %}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="provider-actions">
+        <a href="{% url 'admin:email_system_emailaccount_change' account.id %}"
+           class="action-btn edit-btn"
+           title="{% trans 'Edit' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <button class="action-btn test-btn"
+                data-account-id="{{ account.id }}"
+                title="{% trans 'Test Connection' %}">
+            <i class="fas fa-plug"></i>
+        </button>
+        <button class="action-btn account-toggle-btn {% if account.is_active %}active{% else %}inactive{% endif %}"
+                data-account-id="{{ account.id }}"
+                data-is-active="{{ account.is_active|yesno:'true,false' }}"
+                title="{% if account.is_active %}{% trans 'Disable' %}{% else %}{% trans 'Enable' %}{% endif %}">
+            {% if account.is_active %}
+                <i class="fas fa-toggle-on"></i>
+            {% else %}
+                <i class="fas fa-toggle-off"></i>
+            {% endif %}
+        </button>
+        <button class="action-btn delete-btn"
+                data-account-id="{{ account.id }}"
+                title="{% trans 'Delete' %}">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,163 @@
+{% load i18n merchant_trans %}
+{# Recursive Menu Item Partial #}
+{# Renders a single menu item and its children recursively #}
+
+{% with has_children=item.children|length %}
+{% with item_classes="pb-nav-menu__item" %}
+
+{% if item.item_type == 'divider' %}
+    {# Divider #}
+    <li class="pb-nav-menu__divider" role="separator" aria-hidden="true"></li>
+
+{% elif item.item_type == 'header' %}
+    {# Section Header #}
+    <li class="pb-nav-menu__header-item">
+        <span class="pb-nav-menu__header">
+            {% if show_icons and item.icon %}
+                <i class="fas {{ item.icon }}"></i>
+            {% endif %}
+            {{ item.title }}
+        </span>
+    </li>
+
+{% else %}
+    {# Regular menu item (link, page, category, custom_url, widget) #}
+    <li class="{{ item_classes }}{% if has_children %} pb-nav-menu__item--has-children{% endif %}{% if item.is_active and request.path == item.resolved_url %} pb-nav-menu__item--active{% endif %}{% if icon_position == 'right' %} pb-nav-menu__item--icon-right{% elif icon_position == 'above' %} pb-nav-menu__item--icon-above{% endif %}"
+        {% if item.css_classes %}class="{{ item.css_classes }}"{% endif %}>
+
+        {% if item.item_type == 'widget' %}
+            {# Widget items render special content #}
+            {% with widget_type=item.widget_config.widget_type %}
+                <div class="pb-nav-menu__widget pb-nav-menu__widget--{{ widget_type }}">
+                    {% if widget_type == 'login_toggle' %}
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'account_logout' %}" class="pb-nav-menu__link">
+                                {% if show_icons and item.icon %}
+                                    <i class="fas {{ item.icon }}"></i>
+                                {% elif show_icons %}
+                                    <i class="fas fa-sign-out-alt"></i>
+                                {% endif %}
+                                <span>{% mtrans "Logout" %}</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'account_login' %}" class="pb-nav-menu__link">
+                                {% if show_icons and item.icon %}
+                                    <i class="fas {{ item.icon }}"></i>
+                                {% elif show_icons %}
+                                    <i class="fas fa-sign-in-alt"></i>
+                                {% endif %}
+                                <span>{% mtrans "Login" %}</span>
+                            </a>
+                        {% endif %}
+
+                    {% elif widget_type == 'cart' %}
+                        <a href="{% url 'cart:view' %}" class="pb-nav-menu__link">
+                            {% if show_icons and item.icon %}
+                                <i class="fas {{ item.icon }}"></i>
+                            {% elif show_icons %}
+                                <i class="fas fa-shopping-cart"></i>
+                            {% endif %}
+                            <span>{% mtrans "Cart" %}</span>
+                            {% if cart_item_count %}
+                                <span class="pb-nav-menu__badge" style="background-color: {{ item.badge_color|default:'#ef4444' }};">
+                                    {{ cart_item_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+
+                    {% elif widget_type == 'account' %}
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'accounts:dashboard' %}" class="pb-nav-menu__link">
+                                {% if show_icons and item.icon %}
+                                    <i class="fas {{ item.icon }}"></i>
+                                {% elif show_icons %}
+                                    <i class="fas fa-user"></i>
+                                {% endif %}
+                                <span>{% mtrans "My Account" %}</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'account_login' %}" class="pb-nav-menu__link">
+                                {% if show_icons and item.icon %}
+                                    <i class="fas {{ item.icon }}"></i>
+                                {% elif show_icons %}
+                                    <i class="fas fa-user"></i>
+                                {% endif %}
+                                <span>{% mtrans "Login" %}</span>
+                            </a>
+                        {% endif %}
+
+                    {% elif widget_type == 'wishlist' %}
+                        <a href="{% url 'cart:wishlist' %}" class="pb-nav-menu__link">
+                            {% if show_icons and item.icon %}
+                                <i class="fas {{ item.icon }}"></i>
+                            {% elif show_icons %}
+                                <i class="fas fa-heart"></i>
+                            {% endif %}
+                            <span>{% mtrans "Wishlist" %}</span>
+                            {% if wishlist_count %}
+                                <span class="pb-nav-menu__badge" style="background-color: {{ item.badge_color|default:'#ef4444' }};">
+                                    {{ wishlist_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+
+                    {% elif widget_type == 'search' %}
+                        <button type="button" class="pb-nav-menu__link pb-nav-menu__search-trigger" aria-label="{% mtrans 'Search' %}">
+                            {% if show_icons and item.icon %}
+                                <i class="fas {{ item.icon }}"></i>
+                            {% elif show_icons %}
+                                <i class="fas fa-search"></i>
+                            {% endif %}
+                            <span>{% mtrans "Search" %}</span>
+                        </button>
+
+                    {% else %}
+                        {# Unknown widget type - show title #}
+                        <span class="pb-nav-menu__link">{{ item.title }}</span>
+                    {% endif %}
+                </div>
+            {% endwith %}
+
+        {% else %}
+            {# Regular link items #}
+            <a href="{{ item.resolved_url|default:item.url|default:'#' }}"
+               class="pb-nav-menu__link"
+               {% if item.target == '_blank' %}target="_blank" rel="noopener noreferrer"{% endif %}
+               {% if item.style_config.text_color %}style="color: {{ item.style_config.text_color }};"{% endif %}>
+
+                {# Icon #}
+                {% if show_icons and item.icon %}
+                    <i class="fas {{ item.icon }} pb-nav-menu__icon"></i>
+                {% endif %}
+
+                {# Title #}
+                <span class="pb-nav-menu__text">{{ item.resolved_title|default:item.title }}</span>
+
+                {# Badge #}
+                {% if item.badge_text %}
+                    <span class="pb-nav-menu__badge"
+                          style="background-color: {{ item.badge_color|default:'#ef4444' }}; color: white;">
+                        {{ item.badge_text }}
+                    </span>
+                {% endif %}
+
+                {# Dropdown indicator for items with children #}
+                {% if has_children %}
+                    <i class="{% if dropdown_icon_style == 'brands' %}fab{% elif dropdown_icon_style == 'regular' %}far{% elif dropdown_icon_style == 'light' %}fal{% elif dropdown_icon_style == 'duotone' %}fad{% else %}fas{% endif %} {{ dropdown_icon }} pb-nav-menu__dropdown-icon"></i>
+                {% endif %}
+            </a>
+
+            {# Render children if any #}
+            {% if has_children %}
+                <ul class="pb-nav-menu__submenu">
+                    {% for child in item.children %}
+                        {% include "page_builder/elements/navigation_menu/partials/menu_item.html" with item=child depth=depth|add:1 show_icons=show_icons icon_position=icon_position dropdown_icon=dropdown_icon dropdown_icon_style=dropdown_icon_style %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    </li>
+{% endif %}
+
+{% endwith %}
+{% endwith %}

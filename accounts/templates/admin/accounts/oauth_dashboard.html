@@ -1,0 +1,109 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "OAuth Dashboard" %} | {{ site_title|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'accounts/admin/css/oauth_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="oauth-dashboard">
+    <div class="dashboard-header">
+        <h1><i class="fas fa-shield-alt"></i> {% trans "OAuth Provider Dashboard" %}</h1>
+        <p>{% trans "Configure social login providers to allow customers to sign in with Google, Apple, or Microsoft accounts" %}</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_providers }}</div>
+            <div class="stat-label">{% trans "Total Providers" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ active_providers }}</div>
+            <div class="stat-label">{% trans "Active Providers" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ configured_providers }}</div>
+            <div class="stat-label">{% trans "Configured" %}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ enabled_providers }}</div>
+            <div class="stat-label">{% trans "Enabled" %}</div>
+        </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="info-section">
+        <h3><i class="fas fa-info-circle"></i> {% trans "About OAuth Social Login" %}</h3>
+        <p>{% trans "OAuth providers allow your customers to sign in using their existing accounts from Google, Apple, or Microsoft. This provides several benefits:" %}</p>
+        <ul>
+            <li>{% trans "Faster checkout - no need to create new accounts" %}</li>
+            <li>{% trans "Increased trust - customers use verified accounts" %}</li>
+            <li>{% trans "Better conversion rates - reduce registration friction" %}</li>
+            <li>{% trans "Automatic email verification" %}</li>
+            <li>{% trans "Enhanced security - leverage provider authentication" %}</li>
+        </ul>
+        <p><strong>{% trans "Important:" %}</strong> {% trans "Email/password registration is always available. OAuth providers are optional enhancements." %}</p>
+    </div>
+
+    <!-- Provider Cards -->
+    <div class="providers-section">
+        <h2>{% trans "Available Providers" %}</h2>
+        <div class="provider-grid">
+            {% for card in provider_cards %}
+            <div class="provider-card {% if card.is_active %}active{% elif card.is_configured %}configured{% endif %}">
+                <div class="provider-header">
+                    <div class="provider-icon" data-color="{{ card.config.color }}">
+                        <i class="{{ card.config.icon }}"></i>
+                    </div>
+                    <div class="provider-info">
+                        <h3>{{ card.config.display_name }}</h3>
+                        {% if card.is_active %}
+                            <span class="provider-status active">
+                                <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                            </span>
+                        {% elif card.is_configured %}
+                            <span class="provider-status configured">
+                                <i class="fas fa-exclamation-triangle"></i> {% trans "Configured" %}
+                            </span>
+                        {% else %}
+                            <span class="provider-status disabled">
+                                <i class="fas fa-circle"></i> {% trans "Not Configured" %}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="provider-description">
+                    {{ card.config.description }}
+                </div>
+
+                <ul class="provider-benefits">
+                    {% for benefit in card.config.benefits|slice:":3" %}
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>{{ benefit }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="provider-actions">
+                    <a href="{{ card.wizard_url }}" class="button {% if card.is_configured %}secondary{% else %}primary{% endif %}">
+                        <i class="fas fa-magic"></i>
+                        {% if card.is_configured %}
+                            {% trans "Reconfigure" %}
+                        {% else %}
+                            {% trans "Setup Wizard" %}
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'accounts/admin/js/oauth_dashboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Slot Options" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/configurator_slot_options.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="configurator-container">
+    <div class="configurator-header">
+        <div>
+            <h1><i class="fas fa-cogs"></i> {% trans "Slot Options" %}</h1>
+            <div class="breadcrumb">
+                <a href="{% url 'admin:catalog_product_change' product.pk %}">{{ product.name }}</a>
+                &rsaquo; {{ slot.name }}
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'admin:catalog_product_change' product.pk %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Product" %}
+            </a>
+            <a href="{% url 'catalog_admin:compatibility_matrix' product_id=product.pk %}" class="button default">
+                <i class="fas fa-project-diagram"></i> {% trans "Compatibility Matrix" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="slot-info">
+        <div class="slot-info-grid">
+            <div class="slot-info-item">
+                <span class="slot-info-label">{% trans "Slot Name" %}</span>
+                <span class="slot-info-value">{% if slot.icon %}<i class="{{ slot.icon }}"></i> {% endif %}{{ slot.name }}</span>
+            </div>
+            <div class="slot-info-item">
+                <span class="slot-info-label">{% trans "Required" %}</span>
+                <span class="slot-info-value">{% if slot.is_required %}<i class="fas fa-check-circle" style="color: var(--success-fg);"></i> {% trans "Yes" %}{% else %}<i class="fas fa-times-circle" style="color: var(--body-quiet-color);"></i> {% trans "No" %}{% endif %}</span>
+            </div>
+            <div class="slot-info-item">
+                <span class="slot-info-label">{% trans "Selections" %}</span>
+                <span class="slot-info-value">{{ slot.min_selections }} - {{ slot.max_selections }}</span>
+            </div>
+            <div class="slot-info-item">
+                <span class="slot-info-label">{% trans "Options" %}</span>
+                <span class="slot-info-value">{{ options|length }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="messagelist"><li class="{{ message.tags }}">{{ message }}</li></div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="search-section">
+        <h3><i class="fas fa-search"></i> {% trans "Add Products to Slot" %}</h3>
+        <div class="search-input-row">
+            <input type="text" id="product-search" placeholder="{% trans 'Search products by name or SKU...' %}">
+            <button type="button" class="button default" data-action="search-products">
+                <i class="fas fa-search"></i> {% trans "Search" %}
+            </button>
+        </div>
+        <div class="search-results" id="search-results"></div>
+    </div>
+
+    <div class="results-info">
+        <h2>{% trans "Current Options" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-puzzle-piece"></i> {{ options|length }} {% trans "option" %}{{ options|length|pluralize }}
+        </span>
+    </div>
+
+    <div class="list-row-cards" id="options-list">
+        {% for option in options %}
+        <div class="list-row-card">
+            <div class="list-row-card-content">
+                <h3 class="list-row-card-title">
+                    {{ option.option_product.name }}
+                    {% if option.option_variant %}<span style="color: var(--body-quiet-color);">({{ option.option_variant.name }})</span>{% endif %}
+                </h3>
+                <p class="list-row-card-subtitle">
+                    {% trans "SKU" %}: {{ option.option_product.sku }}
+                    {% if option.option_product.price %} | {% trans "Price" %}: {{ option.option_product.price }}{% endif %}
+                </p>
+                <div class="list-row-card-badges">
+                    {% if option.is_default %}
+                    <span class="list-row-card-badge primary"><i class="fas fa-check"></i> {% trans "Default" %}</span>
+                    {% endif %}
+                    {% if option.is_popular %}
+                    <span class="list-row-card-badge success"><i class="fas fa-star"></i> {% trans "Popular" %}</span>
+                    {% endif %}
+                    {% if option.compatibility_tags %}
+                    {% for tag in option.compatibility_tags %}
+                    <span class="list-row-card-badge"><i class="fas fa-tag"></i> {{ tag }}</span>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="list-row-card-stats">
+                    <div class="list-row-card-stat">
+                        <span class="list-row-card-stat-label">{% trans "Sort Order" %}</span>
+                        <span class="list-row-card-stat-value">{{ option.sort_order }}</span>
+                    </div>
+                    <div class="list-row-card-stat">
+                        <span class="list-row-card-stat-label">{% trans "Quantity" %}</span>
+                        <span class="list-row-card-stat-value">{{ option.quantity }}</span>
+                    </div>
+                    <div class="list-row-card-stat">
+                        <span class="list-row-card-stat-label">{% trans "Price Adj." %}</span>
+                        <span class="list-row-card-stat-value">{{ option.price_adjustment }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="list-row-card-actions">
+                <a href="{% url 'admin:catalog_configurationslotoption_change' option.pk %}"
+                   class="list-row-card-action" title="{% trans 'Edit option details' %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="remove_option">
+                    <input type="hidden" name="option_id" value="{{ option.pk }}">
+                    <button type="submit" class="list-row-card-action" title="{% trans 'Remove from slot' %}"
+                            data-confirm="{% trans 'Remove this option from the slot?' %}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <div class="list-row-card" style="text-align: center; padding: 40px; color: var(--body-quiet-color);">
+            <div style="font-size: 48px; margin-bottom: 16px;">
+                <i class="fas fa-puzzle-piece"></i>
+            </div>
+            <p style="font-size: 16px; margin: 0;">{% trans "No options added to this slot yet." %}</p>
+            <p style="font-size: 14px; margin-top: 10px;">{% trans "Use the search above to find and add products." %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script type="application/json" id="slot-options-config">
+{"slotId": "{{ slot.pk }}"}
+</script>
+<script src="{% static 'catalog/admin/js/configurator_slot_options.js' %}"></script>
+{% endblock %}

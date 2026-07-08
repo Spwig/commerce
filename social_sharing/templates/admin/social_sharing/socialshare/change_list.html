@@ -1,0 +1,145 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Social Shares" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'social_sharing/css/admin-shares.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-share-nodes"></i>
+                {% trans "Social Shares" %}
+            </h1>
+            <p class="subtitle">{% trans "Monitor individual share events and user engagement" %}</p>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <!-- Header -->
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i>
+                {% trans "Filters" %}
+            </h3>
+            <button class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+                {% trans "Toggle Filters" %}
+            </button>
+        </div>
+
+        <!-- Filter Fields -->
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label>
+                    <i class="fas fa-search"></i>
+                    {% trans "Search" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Search by user, URL...' %}">
+            </div>
+
+            <div class="filter-field">
+                <label>
+                    <i class="fas fa-share-nodes"></i>
+                    {% trans "Platform" %}
+                </label>
+                <select id="filter-platform">
+                    <option value="">{% trans "All Platforms" %}</option>
+                    <option value="facebook">{% trans "Facebook" %}</option>
+                    <option value="twitter">{% trans "Twitter/X" %}</option>
+                    <option value="linkedin">{% trans "LinkedIn" %}</option>
+                    <option value="pinterest">{% trans "Pinterest" %}</option>
+                    <option value="whatsapp">{% trans "WhatsApp" %}</option>
+                    <option value="telegram">{% trans "Telegram" %}</option>
+                    <option value="email">{% trans "Email" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label>
+                    <i class="fas fa-file-alt"></i>
+                    {% trans "Content Type" %}
+                </label>
+                <select id="filter-content-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for ct in content_types %}
+                    <option value="{{ ct.id }}">{{ ct.model|title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label>
+                    <i class="fas fa-mobile-alt"></i>
+                    {% trans "Device" %}
+                </label>
+                <select id="filter-device">
+                    <option value="">{% trans "All Devices" %}</option>
+                    <option value="desktop">{% trans "Desktop" %}</option>
+                    <option value="mobile">{% trans "Mobile" %}</option>
+                    <option value="tablet">{% trans "Tablet" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label>
+                    <i class="fas fa-calendar"></i>
+                    {% trans "Date From" %}
+                </label>
+                <input type="date" id="filter-date-from">
+            </div>
+
+            <div class="filter-field">
+                <label>
+                    <i class="fas fa-calendar"></i>
+                    {% trans "Date To" %}
+                </label>
+                <input type="date" id="filter-date-to">
+            </div>
+        </div>
+
+        <!-- Footer with active filters and actions -->
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters">
+                <span class="active-filters-label">{% trans "Active:" %}</span>
+                <!-- Active filter tags inserted here via JS -->
+            </div>
+
+            <div class="filters-panel-actions">
+                <button class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i>
+                    {% trans "Clear All" %}
+                </button>
+                <button class="button default" data-action="apply-filters">
+                    <i class="fas fa-check"></i>
+                    {% trans "Apply Filters" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results summary -->
+    <div class="filter-results-summary" id="results-summary">
+        <i class="fas fa-info-circle"></i>
+        {% trans "Showing" %} <span class="filter-results-count" id="results-count">{{ shares.count }}</span> {% trans "results" %}
+    </div>
+
+    <!-- List content -->
+    <div id="results-container">
+        {% include "admin/social_sharing/partials/share_cards.html" %}
+    </div>
+</div>
+<div id="list-filter-config"
+     data-filter-url="{% url 'social_sharing:filter_shares' %}"
+     data-results-container="results-container"
+     data-results-count="results-count"
+     class="social-hidden"></div>
+{% endblock %}

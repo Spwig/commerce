@@ -1,0 +1,516 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% translate "Webhook Developer Documentation" %} | {{ block.super }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'webhooks/css/webhook_docs.css' %}">
+<!-- Prism.js for code highlighting -->
+<link rel="stylesheet" href="{% static 'core/vendor/css/prism-tomorrow.min.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'webhooks/js/webhook_docs.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate "Home" %}</a>
+    &rsaquo; <a href="{% url 'admin:webhooks_webhookendpoint_changelist' %}">{% translate "Webhook Endpoints" %}</a>
+    &rsaquo; {% translate "Developer Documentation" %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="webhook-docs">
+    <!-- Header -->
+    <div class="docs-header">
+        <div class="docs-title">
+            <i class="fas fa-book"></i>
+            <h1>{% translate "Webhook Developer Documentation" %}</h1>
+        </div>
+        <div class="docs-version">
+            <span class="version-label">{% translate "API Version" %}</span>
+            <span class="version-number">{{ version }}</span>
+        </div>
+    </div>
+
+    <!-- Quick Navigation -->
+    <div class="docs-nav">
+        <a href="#overview" class="nav-item">{% translate "Overview" %}</a>
+        <a href="#authentication" class="nav-item">{% translate "Authentication" %}</a>
+        <a href="#events" class="nav-item">{% translate "Events" %}</a>
+        <a href="#payloads" class="nav-item">{% translate "Payloads" %}</a>
+        <a href="#signature" class="nav-item">{% translate "Signature Verification" %}</a>
+        <a href="#retry" class="nav-item">{% translate "Retry Policy" %}</a>
+        <a href="#examples" class="nav-item">{% translate "Code Examples" %}</a>
+    </div>
+
+    <!-- Overview Section -->
+    <section id="overview" class="docs-section">
+        <h2><i class="fas fa-info-circle"></i> {% translate "Overview" %}</h2>
+        <div class="section-content">
+            <p>{% translate "Spwig webhooks allow you to receive real-time HTTP notifications when events occur in your store. This enables you to build integrations, sync data with external systems, and automate workflows." %}</p>
+
+            <div class="info-cards">
+                <div class="info-card">
+                    <i class="fas fa-bolt"></i>
+                    <h4>{% translate "Real-time" %}</h4>
+                    <p>{% translate "Receive instant notifications when events occur" %}</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>{% translate "Secure" %}</h4>
+                    <p>{% translate "HMAC-SHA256 signed payloads for verification" %}</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-redo"></i>
+                    <h4>{% translate "Reliable" %}</h4>
+                    <p>{% translate "Automatic retries with exponential backoff" %}</p>
+                </div>
+            </div>
+
+            <h3>{% translate "Getting Started" %}</h3>
+            <ol class="steps-list">
+                <li>
+                    <strong>{% translate "Create an endpoint" %}</strong>
+                    <p>{% translate "Configure a webhook endpoint in your admin dashboard with the URL where you want to receive webhooks." %}</p>
+                </li>
+                <li>
+                    <strong>{% translate "Subscribe to events" %}</strong>
+                    <p>{% translate "Choose which events you want to receive notifications for." %}</p>
+                </li>
+                <li>
+                    <strong>{% translate "Implement verification" %}</strong>
+                    <p>{% translate "Use HMAC-SHA256 to verify that webhooks are authentic." %}</p>
+                </li>
+                <li>
+                    <strong>{% translate "Handle payloads" %}</strong>
+                    <p>{% translate "Process the JSON payloads in your application." %}</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Headers Section -->
+    <section id="authentication" class="docs-section">
+        <h2><i class="fas fa-key"></i> {% translate "Headers" %}</h2>
+        <div class="section-content">
+            <p>{% translate "Every webhook request includes the following headers:" %}</p>
+
+            <div class="table-container">
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>{% translate "Header" %}</th>
+                            <th>{% translate "Description" %}</th>
+                            <th>{% translate "Example" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>X-Spwig-Signature</code></td>
+                            <td>{% translate "HMAC-SHA256 signature for verification" %}</td>
+                            <td><code>t=1234567890,v1=abc123...</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>X-Spwig-Event</code></td>
+                            <td>{% translate "The event type" %}</td>
+                            <td><code>order.created</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>X-Spwig-Delivery-Id</code></td>
+                            <td>{% translate "Unique delivery identifier (UUID)" %}</td>
+                            <td><code>550e8400-e29b-41d4-a716...</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>X-Spwig-Timestamp</code></td>
+                            <td>{% translate "Unix timestamp when sent" %}</td>
+                            <td><code>1234567890</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>Content-Type</code></td>
+                            <td>{% translate "Content type" %}</td>
+                            <td><code>application/json; charset=utf-8</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>User-Agent</code></td>
+                            <td>{% translate "Webhook user agent" %}</td>
+                            <td><code>Spwig-Webhooks/1.0</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="docs-section">
+        <h2><i class="fas fa-calendar-alt"></i> {% translate "Available Events" %}</h2>
+        <div class="section-content">
+            <p>{% translate "Subscribe to any of the following events. You can use" %} <code>*</code> {% translate "to subscribe to all events." %}</p>
+
+            <div class="events-grid">
+                {% for category, events in events_by_category.items %}
+                <div class="event-category">
+                    <div class="category-header">
+                        <i class="fas {{ category_icons|default_if_none:'' }}"></i>
+                        <h3>{{ category|title }}</h3>
+                        <span class="event-count">{{ events|length }} {% translate "events" %}</span>
+                    </div>
+                    <div class="events-list">
+                        {% for event in events %}
+                        <div class="event-item">
+                            <code class="event-name">{{ event.event }}</code>
+                            <span class="event-description">{{ event.description }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Payloads Section -->
+    <section id="payloads" class="docs-section">
+        <h2><i class="fas fa-file-code"></i> {% translate "Payload Structure" %}</h2>
+        <div class="section-content">
+            <p>{% translate "All webhook payloads follow this structure:" %}</p>
+
+            <pre><code class="language-json">{
+    "event": "order.created",
+    "created_at": "2025-01-15T10:30:00Z",
+    "data": {
+        // Event-specific data
+    }
+}</code></pre>
+
+            <h3>{% translate "Example: Order Created" %}</h3>
+            <pre><code class="language-json">{
+    "event": "order.created",
+    "created_at": "2025-01-15T10:30:00Z",
+    "data": {
+        "id": 12345,
+        "order_number": "ORD-2025-00001",
+        "status": "pending",
+        "total": "99.99",
+        "currency": "USD",
+        "customer_email": "customer@example.com",
+        "customer_id": 789,
+        "items_count": 3,
+        "created_at": "2025-01-15T10:30:00Z",
+        "updated_at": "2025-01-15T10:30:00Z"
+    }
+}</code></pre>
+
+            <h3>{% translate "Payload Schemas by Category" %}</h3>
+
+            <div class="schema-tabs">
+                <div class="tab-headers">
+                    {% for schema_name, schema in payload_schemas.items %}
+                    <button class="tab-header {% if forloop.first %}active{% endif %}" data-tab="{{ schema_name }}">
+                        {{ schema_name|title }}
+                    </button>
+                    {% endfor %}
+                </div>
+                <div class="tab-contents">
+                    {% for schema_name, schema in payload_schemas.items %}
+                    <div class="tab-content {% if forloop.first %}active{% endif %}" id="tab-{{ schema_name }}">
+                        <p>{{ schema.description }}</p>
+                        <table class="schema-table">
+                            <thead>
+                                <tr>
+                                    <th>{% translate "Field" %}</th>
+                                    <th>{% translate "Type" %}</th>
+                                    <th>{% translate "Description" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for field_name, field_info in schema.fields.items %}
+                                <tr>
+                                    <td><code>{{ field_name }}</code></td>
+                                    <td>
+                                        <span class="type-badge">{{ field_info.type }}</span>
+                                        {% if field_info.nullable %}<span class="nullable-badge">nullable</span>{% endif %}
+                                    </td>
+                                    <td>{{ field_info.description|default:"-" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signature Verification Section -->
+    <section id="signature" class="docs-section">
+        <h2><i class="fas fa-fingerprint"></i> {% translate "Signature Verification" %}</h2>
+        <div class="section-content">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>{% translate "Important:" %}</strong> {% translate "Always verify webhook signatures before processing payloads to ensure they are authentic and haven't been tampered with." %}
+            </div>
+
+            <h3>{% translate "Verification Steps" %}</h3>
+            <ol class="steps-list">
+                <li>
+                    <strong>{% translate "Extract the timestamp and signature" %}</strong>
+                    <p>{% translate "Parse the" %} <code>X-Spwig-Signature</code> {% translate "header:" %}</p>
+                    <pre><code class="language-text">X-Spwig-Signature: t=1234567890,v1=abc123def456...</code></pre>
+                </li>
+                <li>
+                    <strong>{% translate "Compute the expected signature" %}</strong>
+                    <p>{% translate "Create the signature payload and compute HMAC-SHA256:" %}</p>
+                    <pre><code class="language-text">signature_payload = "{timestamp}.{raw_request_body}"
+expected = hmac_sha256(your_secret, signature_payload)</code></pre>
+                </li>
+                <li>
+                    <strong>{% translate "Compare signatures" %}</strong>
+                    <p>{% translate "Use constant-time comparison to prevent timing attacks." %}</p>
+                </li>
+                <li>
+                    <strong>{% translate "Verify timestamp" %}</strong>
+                    <p>{% translate "Ensure the timestamp is within 5 minutes to prevent replay attacks." %}</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Retry Policy Section -->
+    <section id="retry" class="docs-section">
+        <h2><i class="fas fa-sync-alt"></i> {% translate "Retry Policy" %}</h2>
+        <div class="section-content">
+            <p>{% translate "Failed webhook deliveries are automatically retried with exponential backoff:" %}</p>
+
+            <div class="table-container">
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>{% translate "Attempt" %}</th>
+                            <th>{% translate "Delay" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>{% translate "Immediate" %}</td></tr>
+                        <tr><td>2</td><td>{% translate "1 minute" %}</td></tr>
+                        <tr><td>3</td><td>{% translate "2 minutes" %}</td></tr>
+                        <tr><td>4</td><td>{% translate "4 minutes" %}</td></tr>
+                        <tr><td>5</td><td>{% translate "8 minutes" %}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <h4><i class="fas fa-info-circle"></i> {% translate "Important Notes" %}</h4>
+                <ul>
+                    <li>{% translate "Webhooks are considered successful if they return a 2xx status code." %}</li>
+                    <li>{% translate "Your endpoint should respond within 30 seconds." %}</li>
+                    <li>{% translate "After 5 failed attempts, the delivery is marked as failed." %}</li>
+                    <li>{% translate "After 10 consecutive failures, the endpoint is automatically disabled." %}</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Examples Section -->
+    <section id="examples" class="docs-section">
+        <h2><i class="fas fa-code"></i> {% translate "Code Examples" %}</h2>
+        <div class="section-content">
+            <h3>Python</h3>
+            <pre><code class="language-python">import hmac
+import hashlib
+import time
+
+def verify_webhook(payload: str, signature_header: str, secret: str) -> bool:
+    """Verify a Spwig webhook signature."""
+    # Parse the signature header
+    parts = dict(p.split('=', 1) for p in signature_header.split(','))
+    timestamp = parts['t']
+    signature = parts['v1']
+
+    # Check timestamp is within 5 minutes
+    if abs(time.time() - int(timestamp)) > 300:
+        return False
+
+    # Compute expected signature
+    expected = hmac.new(
+        secret.encode(),
+        f"{timestamp}.{payload}".encode(),
+        hashlib.sha256
+    ).hexdigest()
+
+    # Constant-time comparison
+    return hmac.compare_digest(signature, expected)
+
+
+# Flask example
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+WEBHOOK_SECRET = "your_webhook_secret"
+
+@app.route('/webhook', methods=['POST'])
+def handle_webhook():
+    signature = request.headers.get('X-Spwig-Signature')
+    payload = request.get_data(as_text=True)
+
+    if not verify_webhook(payload, signature, WEBHOOK_SECRET):
+        return jsonify({'error': 'Invalid signature'}), 401
+
+    data = request.json
+    event_type = data['event']
+
+    # Handle different event types
+    if event_type == 'order.created':
+        handle_new_order(data['data'])
+    elif event_type == 'order.paid':
+        handle_order_payment(data['data'])
+
+    return jsonify({'received': True}), 200</code></pre>
+
+            <h3>Node.js</h3>
+            <pre><code class="language-javascript">const crypto = require('crypto');
+const express = require('express');
+
+const WEBHOOK_SECRET = 'your_webhook_secret';
+
+function verifyWebhook(payload, signatureHeader, secret) {
+    // Parse the signature header
+    const parts = Object.fromEntries(
+        signatureHeader.split(',').map(p => p.split('='))
+    );
+    const timestamp = parts.t;
+    const signature = parts.v1;
+
+    // Check timestamp is within 5 minutes
+    const now = Math.floor(Date.now() / 1000);
+    if (Math.abs(now - parseInt(timestamp)) > 300) {
+        return false;
+    }
+
+    // Compute expected signature
+    const expected = crypto
+        .createHmac('sha256', secret)
+        .update(`${timestamp}.${payload}`)
+        .digest('hex');
+
+    // Constant-time comparison
+    return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expected)
+    );
+}
+
+const app = express();
+app.use(express.raw({ type: 'application/json' }));
+
+app.post('/webhook', (req, res) => {
+    const signature = req.headers['x-spwig-signature'];
+    const payload = req.body.toString();
+
+    if (!verifyWebhook(payload, signature, WEBHOOK_SECRET)) {
+        return res.status(401).json({ error: 'Invalid signature' });
+    }
+
+    const data = JSON.parse(payload);
+    const eventType = data.event;
+
+    // Handle different event types
+    switch (eventType) {
+        case 'order.created':
+            handleNewOrder(data.data);
+            break;
+        case 'order.paid':
+            handleOrderPayment(data.data);
+            break;
+    }
+
+    res.json({ received: true });
+});
+
+app.listen(3000);</code></pre>
+
+            <h3>PHP</h3>
+            <pre><code class="language-php">&lt;?php
+
+function verifyWebhook($payload, $signatureHeader, $secret) {
+    // Parse the signature header
+    $parts = [];
+    foreach (explode(',', $signatureHeader) as $part) {
+        list($key, $value) = explode('=', $part, 2);
+        $parts[$key] = $value;
+    }
+    $timestamp = $parts['t'];
+    $signature = $parts['v1'];
+
+    // Check timestamp is within 5 minutes
+    if (abs(time() - intval($timestamp)) > 300) {
+        return false;
+    }
+
+    // Compute expected signature
+    $expected = hash_hmac('sha256', $timestamp . '.' . $payload, $secret);
+
+    // Constant-time comparison
+    return hash_equals($signature, $expected);
+}
+
+// Usage
+$payload = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_SPWIG_SIGNATURE'] ?? '';
+$secret = 'your_webhook_secret';
+
+if (!verifyWebhook($payload, $signature, $secret)) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Invalid signature']);
+    exit;
+}
+
+$data = json_decode($payload, true);
+$eventType = $data['event'];
+
+// Handle different event types
+switch ($eventType) {
+    case 'order.created':
+        handleNewOrder($data['data']);
+        break;
+    case 'order.paid':
+        handleOrderPayment($data['data']);
+        break;
+}
+
+echo json_encode(['received' => true]);</code></pre>
+        </div>
+    </section>
+
+    <!-- API Reference Link -->
+    <section class="docs-section">
+        <h2><i class="fas fa-external-link-alt"></i> {% translate "API Reference" %}</h2>
+        <div class="section-content">
+            <p>{% translate "For programmatic access to this documentation, use the Webhook Documentation API:" %}</p>
+            <pre><code class="language-bash">GET /api/webhooks/docs/</code></pre>
+            <p>{% translate "This returns the complete documentation as JSON, including all event types and payload schemas." %}</p>
+
+            <a href="{% url 'swagger-ui' %}" class="btn btn-primary" target="_blank">
+                <i class="fas fa-book-open"></i> {% translate "View Full API Documentation" %}
+            </a>
+        </div>
+    </section>
+</div>
+
+<script src="{% static 'core/vendor/js/prism.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-markup.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-clike.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-markup-templating.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-python.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-javascript.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-json.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-php.min.js' %}"></script>
+<script src="{% static 'core/vendor/js/prism-bash.min.js' %}"></script>
+{% endblock %}

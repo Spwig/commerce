@@ -1,0 +1,171 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* Utility class for hidden config elements */
+.stockitem-list-hidden { display: none; }
+
+/* Stock Inventory List Styles */
+
+.stock-summary-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+    padding: 20px;
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.stock-summary-dashboard .summary-card {
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stock-summary-dashboard .summary-card .card-label {
+    font-size: 12px;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.stock-summary-dashboard .summary-card .card-value {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+/* Individual card colors */
+.summary-card.total-items {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.summary-card.on-hand {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+}
+
+.summary-card.allocated {
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+}
+
+.summary-card.available {
+    background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+}
+
+.summary-card.low-stock {
+    background: linear-gradient(135deg, #FFC107 0%, #FFA000 100%);
+}
+
+.summary-card.out-of-stock {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+}
+
+/* Stock item cards */
+.stock-item-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s;
+}
+
+.stock-item-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.stock-item-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hairline-color);
+}
+
+.stock-item-card .product-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.stock-item-card .product-info .sku {
+    color: #666;
+    font-size: 13px;
+}
+
+.stock-item-card .stock-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stock-item-card .stock-status.status-ok {
+    background: #d4edda;
+    color: #155724;
+}
+
+.stock-item-card .stock-status.status-low {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.stock-item-card .stock-status.status-out {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.stock-item-card .card-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.stock-item-card .stock-metric {
+    text-align: center;
+}
+
+.stock-item-card .stock-metric .metric-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.stock-item-card .stock-metric .metric-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--body-fg);
+}
+
+.stock-item-card .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline-color);
+}
+
+.stock-item-card .warehouse-info {
+    font-size: 13px;
+    color: #666;
+}
+
+.stock-item-card .warehouse-info i {
+    margin-right: 4px;
+}
+
+.stock-item-card .card-actions a {
+    margin-left: 8px;
+    color: var(--link-fg);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.stock-item-card .card-actions a:hover {
+    text-decoration: underline;
+}

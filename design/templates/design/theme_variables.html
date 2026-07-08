@@ -1,0 +1,14 @@
+{% comment %}
+Template for rendering CSS variables
+Used by {% theme_variables %} template tag
+{% endcomment %}
+
+{% if variables %}
+<style>
+:root {
+    {% for key, value in variables.items %}
+    --{{ key|slugify }}: {{ value }};
+    {% endfor %}
+}
+</style>
+{% endif %}

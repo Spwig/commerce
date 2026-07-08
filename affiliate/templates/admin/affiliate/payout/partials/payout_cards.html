@@ -1,0 +1,175 @@
+{% load static %}
+{% load i18n humanize %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for payout in payouts %}
+    <div class="list-row-card{% if payout.status == 'failed' or payout.status == 'cancelled' %} disabled{% endif %}">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ payout.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if payout.method == 'paypal' or payout.method == 'PayPal' %}
+                <i class="fab fa-paypal text-primary icon-large"></i>
+            {% elif payout.method == 'airwallex' or payout.method == 'Airwallex' %}
+                <i class="fas fa-credit-card text-primary icon-large"></i>
+            {% elif 'bank' in payout.method|lower or 'wire' in payout.method|lower %}
+                <i class="fas fa-university text-primary icon-large"></i>
+            {% else %}
+                <i class="fas fa-money-check-alt text-primary icon-large"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:affiliate_payout_change' payout.pk %}">
+                    {% trans "Payout" %} #{{ payout.id }} - {{ payout.affiliate.affiliate_code }}
+                </a>
+            </h3>
+
+            <p class="list-row-card-subtitle">
+                <i class="fas fa-user"></i>
+                {{ payout.affiliate.user.get_full_name|default:payout.affiliate.user.username }}
+                <span class="text-muted"> ({{ payout.affiliate.user.email }})</span>
+            </p>
+
+            <div class="list-row-card-badges">
+                {# Status Badge #}
+                {% if payout.status == 'pending' %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-clock"></i> {% trans "Pending" %}
+                    </span>
+                {% elif payout.status == 'processing' %}
+                    <span class="list-row-card-badge list-row-card-badge-primary">
+                        <i class="fas fa-sync"></i> {% trans "Processing" %}
+                    </span>
+                {% elif payout.status == 'completed' %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-check-circle"></i> {% trans "Completed" %}
+                    </span>
+                {% elif payout.status == 'failed' %}
+                    <span class="list-row-card-badge list-row-card-badge-error">
+                        <i class="fas fa-times-circle"></i> {% trans "Failed" %}
+                    </span>
+                {% elif payout.status == 'cancelled' %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-ban"></i> {% trans "Cancelled" %}
+                    </span>
+                {% endif %}
+
+                {# Method Badge #}
+                <span class="list-row-card-badge">
+                    {% if payout.method == 'paypal' or payout.method == 'PayPal' %}
+                        <i class="fab fa-paypal"></i> PayPal
+                    {% elif payout.method == 'airwallex' or payout.method == 'Airwallex' %}
+                        <i class="fas fa-credit-card"></i> Airwallex
+                    {% elif 'bank' in payout.method|lower %}
+                        <i class="fas fa-university"></i> {% trans "Bank Transfer" %}
+                    {% else %}
+                        <i class="fas fa-money-check"></i> {{ payout.method|capfirst }}
+                    {% endif %}
+                </span>
+
+                {# Commission Count Badge #}
+                <span class="list-row-card-badge">
+                    <i class="fas fa-wallet"></i>
+                    {{ payout.commissions.count }} {% trans "commission" %}{{ payout.commissions.count|pluralize }}
+                </span>
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Amount" %}</span>
+                    <span class="list-row-card-stat-value text-primary font-weight-semibold">
+                        ${{ payout.amount|floatformat:2 }} {{ payout.currency }}
+                    </span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Commissions" %}</span>
+                    <span class="list-row-card-stat-value">{{ payout.commissions.count }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Created" %}</span>
+                    <span class="list-row-card-stat-value">{{ payout.created_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if payout.completed_at %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Completed" %}</span>
+                    <span class="list-row-card-stat-value">{{ payout.completed_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% else %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Completed" %}</span>
+                    <span class="list-row-card-stat-value text-muted">{% trans "Pending" %}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                {% if payout.provider_account %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-building"></i>
+                    <span>{% trans "Provider" %}: {{ payout.provider_account.name }}</span>
+                </div>
+                {% endif %}
+                {% if payout.reference %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-hashtag"></i>
+                    <span>{% trans "Reference" %}: {{ payout.reference }}</span>
+                </div>
+                {% endif %}
+                {% if payout.provider_reference %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>{% trans "Provider Ref" %}: {{ payout.provider_reference }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:affiliate_payout_change' payout.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit payout' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:affiliate_commission_changelist' %}?payout__id__exact={{ payout.pk }}"
+               class="list-row-card-action"
+               title="{% trans 'View commissions in this payout' %}">
+                <i class="fas fa-wallet"></i>
+            </a>
+            {% if payout.status == 'pending' or payout.status == 'failed' %}
+            <a href="#"
+               class="list-row-card-action"
+               title="{% trans 'Process payout' %}"
+               data-action="confirm-navigate"
+               data-url="{% url 'admin:affiliate_payout_change' payout.pk %}"
+               data-confirm="{% trans 'Process this payout?' %}">
+                <i class="fas fa-play"></i>
+            </a>
+            {% endif %}
+            {% if payout.status == 'processing' %}
+            <a href="#"
+               class="list-row-card-action"
+               title="{% trans 'Mark as completed' %}"
+               data-action="confirm-navigate"
+               data-url="{% url 'admin:affiliate_payout_change' payout.pk %}"
+               data-confirm="{% trans 'Mark this payout as completed?' %}">
+                <i class="fas fa-check"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-credit-card"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No payouts found matching your criteria." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Try adjusting your filters or search terms." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

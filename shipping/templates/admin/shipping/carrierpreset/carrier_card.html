@@ -1,0 +1,133 @@
+{% load i18n static %}
+
+<div class="carrier-card"
+     data-carrier-id="{{ carrier.id }}"
+     data-slug="{{ carrier.slug }}"
+     data-name="{{ carrier.name }}"
+     data-country="{% if carrier.country_of_operation %}{{ carrier.country_of_operation }}{% else %}NONE{% endif %}"
+     data-is-active="{{ carrier.is_active|yesno:'true,false' }}"
+     data-is-system="{{ carrier.is_system|yesno:'true,false' }}">
+    <!-- Checkbox for bulk select -->
+    <div class="carrier-checkbox">
+        <input type="checkbox" class="carrier-select" value="{{ carrier.id }}" id="carrier-{{ carrier.id }}">
+    </div>
+
+    <!-- Carrier Logo -->
+    <div class="carrier-logo">
+        <a href="{% url 'admin:shipping_carrierpreset_change' carrier.id %}">
+            {% with logo_info=carrier.logo_with_fallback %}
+                {% if logo_info.type == 'image' %}
+                    <img src="{{ logo_info.url }}" alt="{{ carrier.name }}" loading="lazy">
+                {% else %}
+                    <div class="carrier-logo-placeholder">
+                        <i class="{{ logo_info.class }}"></i>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </a>
+        {% if carrier.is_default %}
+            <span class="default-badge" title="{% trans 'Default Carrier' %}">
+                <i class="fas fa-star"></i>
+            </span>
+        {% endif %}
+    </div>
+
+    <!-- Carrier Info -->
+    <div class="carrier-info">
+        <h3 class="carrier-name">
+            <a href="{% url 'admin:shipping_carrierpreset_change' carrier.id %}">{{ carrier.name }}</a>
+        </h3>
+
+        <div class="carrier-slug">
+            <span class="slug-label">{% trans "Slug:" %}</span>
+            <span class="slug-value">{{ carrier.slug }}</span>
+        </div>
+
+        <div class="carrier-meta">
+            {% if carrier.country_of_operation %}
+                <span class="meta-item country-meta">
+                    <img src="{{ carrier.country_of_operation.flag }}"
+                         alt="{{ carrier.country_of_operation.code }}"
+                         class="country-flag">
+                    <span class="country-code">{{ carrier.country_of_operation.code }}</span>
+                    <span class="country-name">{{ carrier.country_of_operation.name }}</span>
+                </span>
+            {% else %}
+                <span class="meta-item country-meta">
+                    <i class="fas fa-globe"></i>
+                    <span class="country-name">{% trans "International" %}</span>
+                </span>
+            {% endif %}
+        </div>
+
+        <div class="tracking-url-status">
+            {% with status=carrier.get_url_status %}
+                {% if status.type == 'override' %}
+                    <span class="url-badge url-override">
+                        <i class="fas fa-check-circle"></i> {% trans "Custom URL" %}
+                    </span>
+                {% else %}
+                    <span class="url-badge url-system">
+                        <i class="fas fa-link"></i> {% trans "System URL" %}
+                    </span>
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="carrier-badges">
+            <!-- Active/Inactive Badge -->
+            {% if carrier.is_active %}
+                <span class="badge badge-status badge-active">
+                    <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                </span>
+            {% else %}
+                <span class="badge badge-status badge-inactive">
+                    <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                </span>
+            {% endif %}
+
+            <!-- System/Custom Badge -->
+            {% if carrier.is_system %}
+                <span class="badge badge-type badge-system">
+                    <i class="fas fa-cog"></i> {% trans "System" %}
+                </span>
+            {% else %}
+                <span class="badge badge-type badge-custom">
+                    <i class="fas fa-user"></i> {% trans "Custom" %}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="carrier-actions">
+        <a href="{% url 'admin:shipping_carrierpreset_change' carrier.id %}"
+           class="action-btn edit-btn"
+           title="{% trans 'Edit' %}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <button class="action-btn carrier-toggle-btn {% if carrier.is_active %}active{% else %}inactive{% endif %}"
+                data-carrier-id="{{ carrier.id }}"
+                data-is-active="{{ carrier.is_active|yesno:'true,false' }}"
+                title="{% if carrier.is_active %}{% trans 'Disable' %}{% else %}{% trans 'Enable' %}{% endif %}">
+            {% if carrier.is_active %}
+                <i class="fas fa-toggle-on"></i>
+            {% else %}
+                <i class="fas fa-toggle-off"></i>
+            {% endif %}
+        </button>
+        <button class="action-btn default-btn {% if carrier.is_default %}is-default{% endif %}"
+                data-carrier-id="{{ carrier.id }}"
+                data-is-default="{{ carrier.is_default|yesno:'true,false' }}"
+                title="{% trans 'Set as Default' %}">
+            <i class="fas fa-star"></i>
+        </button>
+        {% if not carrier.is_system %}
+            <button class="action-btn delete-btn"
+                    data-carrier-id="{{ carrier.id }}"
+                    title="{% trans 'Delete' %}">
+                <i class="fas fa-trash"></i>
+            </button>
+        {% endif %}
+    </div>
+</div>

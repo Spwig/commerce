@@ -1,0 +1,20 @@
+{% load i18n element_tags %}
+<!-- Icon Element -->
+{% with icon=element.content.icon|default:"fa-star" icon_style=element.content.icon_style|default:"solid" alignment=element.content.alignment|default:"center" %}
+<div class="pb-icon pb-icon--{{ alignment }}"
+     {% hover_animation_attrs element %}
+     style="{% if element.content.alignment %}text-align: {{ element.content.alignment }};{% endif %}{% base_styles element %}">
+    {% if element.content.link_url %}
+    <a href="{{ element.content.link_url }}"
+       target="{{ element.content.link_target|default:'_self' }}"
+       {% if element.content.aria_label %}aria-label="{{ element.content.aria_label }}"{% endif %}>
+    {% endif %}
+        <i class="{% if icon_style == 'brands' %}fab{% elif icon_style == 'regular' %}far{% elif icon_style == 'light' %}fal{% elif icon_style == 'duotone' %}fad{% else %}fas{% endif %} {{ icon }}"
+           style="{% if element.content.size %}font-size: {{ element.content.size }}{{ element.content.size_unit|default:'px' }};{% endif %}{% if element.content.color %}color: {{ element.content.color }};{% endif %}"
+           {% if element.content.aria_label %}aria-label="{{ element.content.aria_label }}"{% else %}aria-hidden="true"{% endif %}>
+        </i>
+    {% if element.content.link_url %}
+    </a>
+    {% endif %}
+</div>
+{% endwith %}

@@ -1,0 +1,77 @@
+{% extends "blog/blog_base.html" %}
+{% load i18n merchant_trans %}
+
+{% block blog_title %}{% mtrans "Subscription Preferences" %}{% endblock %}
+
+{% block blog_breadcrumb %}
+<nav class="blog-breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <ol class="blog-breadcrumb__list">
+        <li class="blog-breadcrumb__item">
+            <a href="/" class="blog-breadcrumb__link">{% mtrans "Home" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item">
+            <a href="{% url 'blog:list' %}" class="blog-breadcrumb__link">{% mtrans "Blog" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item blog-breadcrumb__item--active">{% mtrans "Preferences" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block blog_sidebar_wrapper %}{% endblock %}
+
+{% block blog_content %}
+<form class="blog-prefs-form" method="post" action="{% url 'blog:preferences' token=subscriber.unsubscribe_token %}">
+    {% csrf_token %}
+
+    <h1 class="blog-prefs-form__title">{% mtrans "Subscription Preferences" %}</h1>
+
+    <p class="blog-prefs-form__email-info">
+        {% blocktrans with email=subscriber.email %}Managing preferences for {{ email }}{% endblocktrans %}
+    </p>
+
+    <!-- Frequency -->
+    <div class="blog-prefs-form__group">
+        <label class="blog-prefs-form__label">{% mtrans "Notification Frequency" %}</label>
+        <label class="blog-prefs-form__radio">
+            <input type="radio" name="frequency" value="immediate"
+                   {% if subscriber.notification_frequency == 'immediate' %}checked{% endif %}>
+            {% mtrans "Immediately" %} &mdash; <small class="blog-prefs-form__option-desc">{% mtrans "Get notified for every new post" %}</small>
+        </label>
+        <label class="blog-prefs-form__radio">
+            <input type="radio" name="frequency" value="weekly"
+                   {% if subscriber.notification_frequency == 'weekly' %}checked{% endif %}>
+            {% mtrans "Weekly Digest" %} &mdash; <small class="blog-prefs-form__option-desc">{% mtrans "A summary of new posts each week" %}</small>
+        </label>
+        <label class="blog-prefs-form__radio">
+            <input type="radio" name="frequency" value="monthly"
+                   {% if subscriber.notification_frequency == 'monthly' %}checked{% endif %}>
+            {% mtrans "Monthly Digest" %} &mdash; <small class="blog-prefs-form__option-desc">{% mtrans "A monthly roundup of posts" %}</small>
+        </label>
+    </div>
+
+    <!-- Category Preferences -->
+    {% if categories %}
+    <div class="blog-prefs-form__group">
+        <label class="blog-prefs-form__label">{% mtrans "Categories" %}</label>
+        <p class="blog-prefs-form__category-help">
+            {% mtrans "Select categories you're interested in. Leave all unchecked to receive posts from all categories." %}
+        </p>
+        {% for cat in categories %}
+        <label class="blog-prefs-form__checkbox">
+            <input type="checkbox" name="categories" value="{{ cat.pk }}"
+                   {% if cat in subscriber.subscribed_categories.all %}checked{% endif %}>
+            {{ cat.name }}
+        </label>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="blog-prefs-form__submit">
+        {% mtrans "Save Preferences" %}
+    </button>
+
+    <div class="blog-prefs-form__footer">
+        <a href="{% url 'blog:unsubscribe' token=subscriber.unsubscribe_token %}">{% mtrans "Unsubscribe from all notifications" %}</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,853 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Provider Detail Modal Styles
+ * ============================
+ * Reusable modal styles for payment, shipping, email, and exchange rate providers
+ */
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.provider-modal-hidden {
+    display: none !important;
+}
+
+.provider-modal-body-locked {
+    overflow: hidden !important;
+}
+
+/* ============================================
+   MODAL OVERLAY & CONTAINER
+   ============================================ */
+
+.provider-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.provider-modal-overlay.active {
+    opacity: 1;
+}
+
+.provider-modal {
+    background: var(--body-bg);
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.provider-modal-overlay.active .provider-modal {
+    transform: translateY(0);
+}
+
+/* ============================================
+   MODAL HEADER
+   ============================================ */
+
+.provider-modal-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--hairline-color);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.provider-modal-title-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
+}
+
+.provider-modal-logo {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--primary);
+}
+
+.provider-modal-logo .logo-plate {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 12px;
+    background: var(--darkened-bg);
+}
+
+.provider-modal-logo .logo-plate img,
+.provider-modal-logo .logo-plate svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.provider-modal-title-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.provider-modal-title-info h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.provider-modal-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.status-badge.status-installed {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+}
+
+.status-badge.status-available {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1565c0;
+}
+
+.version-badge {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+.provider-modal-close {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--body-quiet-color);
+    font-size: 20px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.provider-modal-close:hover {
+    background: var(--selected-bg);
+    color: var(--body-loud-color);
+}
+
+/* ============================================
+   MODAL BODY
+   ============================================ */
+
+.provider-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+}
+
+.provider-modal-section {
+    margin-bottom: 32px;
+}
+
+.provider-modal-section:last-child {
+    margin-bottom: 0;
+}
+
+.provider-modal-description {
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--body-quiet-color);
+}
+
+.provider-modal-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+}
+
+.provider-modal-section-title i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+/* ============================================
+   PAYMENT METHODS GRID
+   ============================================ */
+
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+}
+
+.payment-brand-card {
+    aspect-ratio: 3/2;
+    min-width: 80px; /* Ensure cards don't collapse */
+    max-width: 150px; /* Prevent cards from growing too large */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    transition: all 0.2s ease;
+}
+
+.payment-brand-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+    transform: translateY(-2px);
+}
+
+.payment-brand-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.payment-brand-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.payment-brand-icon i {
+    font-size: 24px;
+    color: var(--primary);
+}
+
+.payment-brand-icon span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--body-quiet-color);
+}
+
+/* ============================================
+   PAYMENT METHODS CAROUSEL
+   ============================================ */
+
+.payment-methods-carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: block; /* Override parent grid */
+    grid-column: 1 / -1; /* Span all columns if in grid */
+}
+
+.payment-methods-carousel-track {
+    display: flex;
+    transition: transform 0.4s ease-in-out;
+}
+
+.payment-methods-carousel-page {
+    min-width: 100%;
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns = 12 items in 3 rows */
+    grid-auto-rows: minmax(80px, auto); /* Auto-size rows */
+    gap: 12px;
+}
+
+.payment-methods-carousel-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.carousel-nav-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--body-fg);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.carousel-nav-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+.carousel-nav-btn:active {
+    transform: scale(0.95);
+}
+
+.carousel-indicators {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.carousel-indicator {
+    width: 8px;
+    height: 8px;
+    border: none;
+    background: var(--hairline-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.carousel-indicator:hover {
+    background: var(--body-quiet-color);
+    transform: scale(1.2);
+}
+
+.carousel-indicator.active {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--primary);
+}
+
+/* ============================================
+   CURRENCY PILLS
+   ============================================ */
+
+.provider-modal-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.currency-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--darkened-bg);
+    color: var(--body-fg);
+    border: 1px solid var(--hairline-color);
+}
+
+.currency-pill-more {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1565c0;
+    border-color: #90caf9;
+}
+
+/* ============================================
+   FEATURES GRID
+   ============================================ */
+
+.provider-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.feature-check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+    border: 1px solid #c8e6c9;
+}
+
+.feature-check-item i {
+    color: #43a047;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.feature-check-item span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2e7d32;
+}
+
+/* ============================================
+   GEOGRAPHIC COVERAGE
+   ============================================ */
+
+.provider-modal-info {
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--darkened-bg);
+}
+
+.region-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.region-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    width: fit-content;
+}
+
+.region-badge.global {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1565c0;
+    border-color: #90caf9;
+}
+
+.region-badge.highlight {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+    border-color: #81c784;
+    font-weight: 600;
+}
+
+.region-badge.more {
+    background: var(--hairline-color);
+    color: var(--body-quiet-color);
+    font-style: italic;
+}
+
+.region-badge i {
+    color: var(--primary);
+}
+
+.region-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.region-compat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 8px 0;
+}
+
+.region-compat.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #81c784;
+}
+
+.region-compat.partial {
+    background: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffb74d;
+}
+
+.region-compat.warning {
+    background: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffb74d;
+}
+
+.region-compat.error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef5350;
+}
+
+.region-compat i {
+    font-size: 16px;
+}
+
+.region-notes {
+    margin: 8px 0 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--body-quiet-color);
+}
+
+/* ============================================
+   COMPLIANCE BADGES
+   ============================================ */
+
+.compliance-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.compliance-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 1px solid #ffcc80;
+}
+
+.compliance-badge i {
+    color: #f57c00;
+    font-size: 18px;
+}
+
+.compliance-badge span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #e65100;
+}
+
+/* ============================================
+   PRICING INFORMATION
+   ============================================ */
+
+.pricing-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pricing-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+}
+
+.pricing-item i {
+    color: var(--primary);
+    font-size: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.pricing-item div {
+    flex: 1;
+}
+
+.pricing-item strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--body-loud-color);
+}
+
+.pricing-item span {
+    font-size: 14px;
+    color: var(--body-quiet-color);
+}
+
+.pricing-notes {
+    margin: 8px 0 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--body-quiet-color);
+    font-style: italic;
+}
+
+/* ============================================
+   MODAL FOOTER
+   ============================================ */
+
+.provider-modal-footer {
+    padding: 20px 28px;
+    border-top: 1px solid var(--hairline-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.provider-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.provider-modal-actions .button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.provider-modal-actions .btn-install {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: #ffffff;
+}
+
+.provider-modal-actions .btn-install:hover {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    transform: translateY(-1px);
+}
+
+.provider-modal-actions .btn-update {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: #ffffff;
+}
+
+.provider-modal-actions .btn-update:hover {
+    background: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.provider-modal-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.provider-modal-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--link-fg);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.provider-modal-links a:hover {
+    background: var(--selected-bg);
+    color: var(--link-hover-color);
+}
+
+.provider-modal-links a i {
+    font-size: 12px;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .provider-modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .provider-modal {
+        max-height: 95vh;
+        border-radius: 16px 16px 0 0;
+        max-width: 100%;
+    }
+
+    .provider-modal-header {
+        padding: 20px;
+    }
+
+    .provider-modal-title-section {
+        gap: 16px;
+    }
+
+    .provider-modal-logo {
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+    }
+
+    .provider-modal-title-info h2 {
+        font-size: 20px;
+    }
+
+    .provider-modal-body {
+        padding: 20px;
+    }
+
+    .payment-methods-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+    }
+
+    /* Carousel adjustments for tablet */
+    .payment-methods-carousel-page {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns = 8 items in 2 rows */
+        grid-auto-rows: minmax(70px, auto);
+        gap: 10px;
+    }
+
+    .payment-brand-card {
+        min-width: 70px;
+        max-width: 130px;
+    }
+
+    /* Touch-friendly navigation buttons */
+    .carousel-nav-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+    }
+
+    /* Larger touch targets for indicators */
+    .carousel-indicator {
+        width: 10px;
+        height: 10px;
+    }
+
+    .carousel-indicator.active {
+        width: 28px;
+    }
+
+    .provider-features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .provider-modal-footer {
+        padding: 16px 20px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .provider-modal-actions {
+        width: 100%;
+    }
+
+    .provider-modal-actions .button {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .provider-modal-links {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .provider-modal-title-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .provider-modal-logo {
+        align-self: center;
+    }
+
+    .payment-methods-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 8px;
+    }
+
+    /* Carousel adjustments for mobile */
+    .payment-methods-carousel-page {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns = 6 items in 2 rows */
+        grid-auto-rows: minmax(60px, auto);
+        gap: 8px;
+    }
+
+    .payment-brand-card {
+        min-width: 60px;
+        max-width: 110px;
+    }
+
+    /* Extra touch-friendly navigation */
+    .carousel-nav-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+    }
+
+    /* Larger indicators for small screens */
+    .carousel-indicator {
+        width: 12px;
+        height: 12px;
+    }
+
+    .carousel-indicator.active {
+        width: 32px;
+    }
+
+    .provider-modal-section {
+        margin-bottom: 24px;
+    }
+}
+
+/* ============================================
+   THEME SUPPORT
+   ============================================
+
+   Dark mode and theme switching is handled automatically by Django admin's
+   CSS variables. All colors use CSS variables that change based on the active theme.
+   No media queries needed - the theme system handles everything.
+   ============================================ */

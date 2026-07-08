@@ -1,0 +1,712 @@
+{
+  "element_type": "product_grid",
+  "name": "Product Grid",
+  "description": "Display products in multiple layouts with dynamic or manual selection",
+  "version": "2.0.0",
+  "category": "ecommerce",
+  "icon": "fas fa-th-large",
+  "author": "Spwig",
+  "tags": [
+    "products",
+    "grid",
+    "ecommerce",
+    "shopping",
+    "catalog",
+    "carousel",
+    "masonry",
+    "featured"
+  ],
+  "supports_translation": true,
+  "translation_domain": "product_grid_element",
+  "template_file": "template.html",
+  "inherit_base": true,
+  "disable_base_properties": [
+    "text_color",
+    "spacing"
+  ],
+  "css_files": [
+    "page_builder/css/elements/product-grid.css",
+    "page_builder/css/category-grid.css",
+    "page_builder/css/category-list.css",
+    "page_builder/css/category-carousel.css",
+    "page_builder/css/category-masonry.css",
+    "page_builder/css/category-featured.css"
+  ],
+  "tabs": {
+    "content": {
+      "label": "Content",
+      "icon": "fas fa-shopping-bag",
+      "order": 1,
+      "properties": {
+        "header_group": {
+          "type": "property_group",
+          "label": "Section Header",
+          "columns": 1,
+          "properties": {
+            "title": {
+              "type": "string",
+              "label": "Section Title",
+              "default": "Our Products",
+              "translatable": true
+            },
+            "subtitle": {
+              "type": "textarea",
+              "label": "Section Subtitle",
+              "default": "",
+              "translatable": true,
+              "rows": 2,
+              "full_width": true
+            }
+          }
+        },
+        "source_group": {
+          "type": "property_group",
+          "label": "Product Source",
+          "columns": 1,
+          "properties": {
+            "data_source": {
+              "type": "select",
+              "label": "Data Source",
+              "default": "dynamic",
+              "options": [
+                {
+                  "value": "dynamic",
+                  "label": "Live from store"
+                },
+                {
+                  "value": "static",
+                  "label": "Manual selection"
+                }
+              ]
+            },
+            "source_type": {
+              "type": "select",
+              "label": "Product Source",
+              "default": "all",
+              "show_if": {
+                "data_source": "dynamic"
+              },
+              "options": [
+                {
+                  "value": "all",
+                  "label": "All Products"
+                },
+                {
+                  "value": "category",
+                  "label": "From Category"
+                },
+                {
+                  "value": "on_sale",
+                  "label": "On Sale"
+                },
+                {
+                  "value": "featured",
+                  "label": "Featured Products"
+                },
+                {
+                  "value": "collection",
+                  "label": "From Collection"
+                },
+                {
+                  "value": "new_arrivals",
+                  "label": "New Arrivals"
+                }
+              ]
+            },
+            "category_id": {
+              "type": "entity_picker",
+              "entity_type": "category",
+              "label": "Category",
+              "show_if": {
+                "source_type": "category"
+              }
+            },
+            "collection_id": {
+              "type": "entity_picker",
+              "entity_type": "collection",
+              "label": "Collection",
+              "show_if": {
+                "source_type": "collection"
+              }
+            },
+            "max_products": {
+              "type": "number",
+              "label": "Maximum Products",
+              "default": 12,
+              "min": 2,
+              "max": 48,
+              "show_if": {
+                "data_source": "dynamic"
+              }
+            },
+            "sort_order": {
+              "type": "select",
+              "label": "Sort Order",
+              "default": "newest",
+              "show_if": {
+                "data_source": "dynamic"
+              },
+              "options": [
+                {
+                  "value": "newest",
+                  "label": "Newest First"
+                },
+                {
+                  "value": "price_low",
+                  "label": "Price: Low to High"
+                },
+                {
+                  "value": "price_high",
+                  "label": "Price: High to Low"
+                },
+                {
+                  "value": "name_az",
+                  "label": "Name: A to Z"
+                },
+                {
+                  "value": "bestselling",
+                  "label": "Best Selling"
+                }
+              ]
+            }
+          }
+        },
+        "manual_products_group": {
+          "type": "property_group",
+          "label": "Selected Products",
+          "columns": 1,
+          "show_if": {
+            "data_source": "static"
+          },
+          "properties": {
+            "product_ids": {
+              "type": "product_picker",
+              "label": "Products",
+              "full_width": true
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "label": "Layout",
+      "icon": "fas fa-th",
+      "order": 2,
+      "properties": {
+        "layout_group": {
+          "type": "property_group",
+          "label": "Layout Style",
+          "columns": 1,
+          "properties": {
+            "layout": {
+              "type": "select",
+              "label": "Layout",
+              "default": "grid",
+              "options": [
+                {
+                  "value": "grid",
+                  "label": "Grid"
+                },
+                {
+                  "value": "list",
+                  "label": "List"
+                },
+                {
+                  "value": "carousel",
+                  "label": "Carousel"
+                },
+                {
+                  "value": "masonry",
+                  "label": "Masonry"
+                },
+                {
+                  "value": "featured",
+                  "label": "Featured"
+                }
+              ]
+            }
+          }
+        },
+        "grid_settings_group": {
+          "type": "property_group",
+          "label": "Grid Settings",
+          "show_if": {
+            "layout": "grid"
+          },
+          "properties": {
+            "columns": {
+              "type": "select",
+              "label": "Columns",
+              "default": "4",
+              "options": [
+                { "value": "2", "label": "2 Columns" },
+                { "value": "3", "label": "3 Columns" },
+                { "value": "4", "label": "4 Columns" },
+                { "value": "5", "label": "5 Columns" }
+              ]
+            },
+            "spacing": {
+              "type": "select",
+              "label": "Spacing",
+              "default": "normal",
+              "options": [
+                { "value": "tight", "label": "Tight" },
+                { "value": "normal", "label": "Normal" },
+                { "value": "loose", "label": "Loose" }
+              ]
+            }
+          }
+        },
+        "list_settings_group": {
+          "type": "property_group",
+          "label": "List Settings",
+          "show_if": {
+            "layout": "list"
+          },
+          "properties": {
+            "image_position": {
+              "type": "select",
+              "label": "Image Position",
+              "default": "left",
+              "options": [
+                { "value": "left", "label": "Left" },
+                { "value": "right", "label": "Right" }
+              ]
+            },
+            "show_description": {
+              "type": "boolean",
+              "label": "Show Description",
+              "default": true
+            }
+          }
+        },
+        "carousel_settings_group": {
+          "type": "property_group",
+          "label": "Carousel Settings",
+          "show_if": {
+            "layout": "carousel"
+          },
+          "properties": {
+            "slides_per_view": {
+              "type": "select",
+              "label": "Products Per View",
+              "default": "4",
+              "options": [
+                { "value": "3", "label": "3 Products" },
+                { "value": "4", "label": "4 Products" },
+                { "value": "5", "label": "5 Products" }
+              ]
+            },
+            "autoplay": {
+              "type": "boolean",
+              "label": "Auto Play",
+              "default": false
+            },
+            "autoplay_speed": {
+              "type": "select",
+              "label": "Auto Play Speed",
+              "default": "5000",
+              "show_if": {
+                "autoplay": true
+              },
+              "options": [
+                { "value": "3000", "label": "3 seconds" },
+                { "value": "5000", "label": "5 seconds" },
+                { "value": "7000", "label": "7 seconds" }
+              ]
+            },
+            "show_arrows": {
+              "type": "boolean",
+              "label": "Show Arrows",
+              "default": true
+            },
+            "show_dots": {
+              "type": "boolean",
+              "label": "Show Progress",
+              "default": true
+            },
+            "infinite_loop": {
+              "type": "boolean",
+              "label": "Infinite Loop",
+              "default": true
+            }
+          }
+        },
+        "masonry_settings_group": {
+          "type": "property_group",
+          "label": "Masonry Settings",
+          "show_if": {
+            "layout": "masonry"
+          },
+          "properties": {
+            "masonry_columns": {
+              "type": "select",
+              "label": "Columns",
+              "default": "3",
+              "options": [
+                { "value": "2", "label": "2 Columns" },
+                { "value": "3", "label": "3 Columns" },
+                { "value": "4", "label": "4 Columns" }
+              ]
+            },
+            "gap_size": {
+              "type": "select",
+              "label": "Gap Size",
+              "default": "md",
+              "options": [
+                { "value": "sm", "label": "Small" },
+                { "value": "md", "label": "Medium" },
+                { "value": "lg", "label": "Large" }
+              ]
+            }
+          }
+        },
+        "featured_settings_group": {
+          "type": "property_group",
+          "label": "Featured Settings",
+          "show_if": {
+            "layout": "featured"
+          },
+          "properties": {
+            "featured_count": {
+              "type": "select",
+              "label": "Hero Products",
+              "default": "1",
+              "options": [
+                { "value": "1", "label": "1 Hero Product" },
+                { "value": "2", "label": "2 Hero Products" },
+                { "value": "3", "label": "3 Hero Products" }
+              ]
+            },
+            "hero_layout": {
+              "type": "select",
+              "label": "Hero Layout",
+              "default": "full_width",
+              "options": [
+                { "value": "full_width", "label": "Full Width" },
+                { "value": "split", "label": "Split View" }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "display": {
+      "label": "Display",
+      "icon": "fas fa-eye",
+      "order": 3,
+      "properties": {
+        "visibility_group": {
+          "type": "property_group",
+          "label": "Show / Hide",
+          "properties": {
+            "show_badges": {
+              "type": "boolean",
+              "label": "Show Badges",
+              "default": true
+            },
+            "show_quick_actions": {
+              "type": "boolean",
+              "label": "Show Quick Actions",
+              "default": true
+            },
+            "show_add_to_cart": {
+              "type": "boolean",
+              "label": "Show Add to Cart",
+              "default": true
+            }
+          }
+        },
+        "filter_group": {
+          "type": "property_group",
+          "label": "Product Filters",
+          "columns": 1,
+          "properties": {
+            "hide_out_of_stock": {
+              "type": "boolean",
+              "label": "Hide Out of Stock",
+              "default": false
+            },
+            "hide_gift_cards": {
+              "type": "boolean",
+              "label": "Hide Gift Cards",
+              "default": false
+            },
+            "hide_digital": {
+              "type": "boolean",
+              "label": "Hide Digital Products",
+              "default": false
+            },
+            "hide_booking": {
+              "type": "boolean",
+              "label": "Hide Booking Products",
+              "default": false
+            },
+            "hide_bundles": {
+              "type": "boolean",
+              "label": "Hide Bundles",
+              "default": false
+            },
+            "min_price": {
+              "type": "number",
+              "label": "Minimum Price",
+              "default": null,
+              "min": 0,
+              "placeholder": "No minimum"
+            },
+            "max_price": {
+              "type": "number",
+              "label": "Maximum Price",
+              "default": null,
+              "min": 0,
+              "placeholder": "No maximum"
+            }
+          }
+        }
+      }
+    },
+    "buttons": {
+      "label": "Buttons",
+      "icon": "fas fa-hand-pointer",
+      "order": 4,
+      "properties": {
+        "view_all_group": {
+          "type": "property_group",
+          "label": "View All Button",
+          "columns": 1,
+          "properties": {
+            "view_all_link": {
+              "type": "link_selector",
+              "label": "Link URL",
+              "default": "/products/"
+            },
+            "view_all_text": {
+              "type": "string",
+              "label": "Button Text",
+              "default": "View All Products",
+              "translatable": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "title": {
+      "type": "string",
+      "label": "Section Title",
+      "default": "Our Products",
+      "translatable": true
+    },
+    "subtitle": {
+      "type": "textarea",
+      "label": "Section Subtitle",
+      "default": "",
+      "translatable": true
+    },
+    "data_source": {
+      "type": "select",
+      "label": "Data Source",
+      "default": "dynamic"
+    },
+    "source_type": {
+      "type": "select",
+      "label": "Product Source",
+      "default": "all"
+    },
+    "category_id": {
+      "type": "number",
+      "label": "Category ID",
+      "default": null
+    },
+    "collection_id": {
+      "type": "number",
+      "label": "Collection ID",
+      "default": null
+    },
+    "max_products": {
+      "type": "number",
+      "label": "Maximum Products",
+      "default": 12
+    },
+    "sort_order": {
+      "type": "select",
+      "label": "Sort Order",
+      "default": "newest"
+    },
+    "product_ids": {
+      "type": "array",
+      "label": "Product IDs",
+      "default": []
+    },
+    "layout": {
+      "type": "select",
+      "label": "Layout",
+      "default": "grid"
+    },
+    "columns": {
+      "type": "select",
+      "label": "Grid Columns",
+      "default": "4"
+    },
+    "spacing": {
+      "type": "select",
+      "label": "Grid Spacing",
+      "default": "normal"
+    },
+    "image_position": {
+      "type": "select",
+      "label": "Image Position",
+      "default": "left"
+    },
+    "slides_per_view": {
+      "type": "select",
+      "label": "Products Per View",
+      "default": "4"
+    },
+    "autoplay": {
+      "type": "boolean",
+      "label": "Auto Play",
+      "default": false
+    },
+    "autoplay_speed": {
+      "type": "select",
+      "label": "Auto Play Speed",
+      "default": "5000"
+    },
+    "show_arrows": {
+      "type": "boolean",
+      "label": "Show Arrows",
+      "default": true
+    },
+    "show_dots": {
+      "type": "boolean",
+      "label": "Show Progress",
+      "default": true
+    },
+    "infinite_loop": {
+      "type": "boolean",
+      "label": "Infinite Loop",
+      "default": true
+    },
+    "masonry_columns": {
+      "type": "select",
+      "label": "Masonry Columns",
+      "default": "3"
+    },
+    "gap_size": {
+      "type": "select",
+      "label": "Gap Size",
+      "default": "md"
+    },
+    "featured_count": {
+      "type": "select",
+      "label": "Hero Products",
+      "default": "1"
+    },
+    "hero_layout": {
+      "type": "select",
+      "label": "Hero Layout",
+      "default": "full_width"
+    },
+    "show_badges": {
+      "type": "boolean",
+      "label": "Show Badges",
+      "default": true
+    },
+    "show_quick_actions": {
+      "type": "boolean",
+      "label": "Show Quick Actions",
+      "default": true
+    },
+    "show_add_to_cart": {
+      "type": "boolean",
+      "label": "Show Add to Cart",
+      "default": true
+    },
+    "show_description": {
+      "type": "boolean",
+      "label": "Show Description",
+      "default": true
+    },
+    "view_all_link": {
+      "type": "link_selector",
+      "label": "View All Link",
+      "default": "/products/"
+    },
+    "view_all_text": {
+      "type": "string",
+      "label": "View All Button Text",
+      "default": "View All Products",
+      "translatable": true
+    },
+    "hide_out_of_stock": {
+      "type": "boolean",
+      "label": "Hide Out of Stock",
+      "default": false
+    },
+    "hide_gift_cards": {
+      "type": "boolean",
+      "label": "Hide Gift Cards",
+      "default": false
+    },
+    "hide_digital": {
+      "type": "boolean",
+      "label": "Hide Digital Products",
+      "default": false
+    },
+    "hide_booking": {
+      "type": "boolean",
+      "label": "Hide Booking Products",
+      "default": false
+    },
+    "hide_bundles": {
+      "type": "boolean",
+      "label": "Hide Bundles",
+      "default": false
+    },
+    "min_price": {
+      "type": "number",
+      "label": "Minimum Price",
+      "default": null
+    },
+    "max_price": {
+      "type": "number",
+      "label": "Maximum Price",
+      "default": null
+    }
+  },
+  "scripts": [
+    "/static/page_builder/js/elements/product-grid.js"
+  ],
+  "translations": {
+    "en": {
+      "name": "Product Grid",
+      "description": "Display products in multiple layouts with dynamic or manual selection"
+    },
+    "es": {
+      "name": "Cuadr\u00edcula de Productos",
+      "description": "Mostrar productos en m\u00faltiples dise\u00f1os con selecci\u00f3n din\u00e1mica o manual"
+    },
+    "fr": {
+      "name": "Grille de Produits",
+      "description": "Afficher les produits dans plusieurs mises en page avec s\u00e9lection dynamique ou manuelle"
+    },
+    "de": {
+      "name": "Produktraster",
+      "description": "Produkte in verschiedenen Layouts mit dynamischer oder manueller Auswahl anzeigen"
+    },
+    "pt": {
+      "name": "Grade de Produtos",
+      "description": "Exibir produtos em v\u00e1rios layouts com sele\u00e7\u00e3o din\u00e2mica ou manual"
+    },
+    "zh-hans": {
+      "name": "\u4ea7\u54c1\u7f51\u683c",
+      "description": "\u4ee5\u591a\u79cd\u5e03\u5c40\u5c55\u793a\u4ea7\u54c1\uff0c\u652f\u6301\u52a8\u6001\u6216\u624b\u52a8\u9009\u62e9"
+    },
+    "ja": {
+      "name": "\u5546\u54c1\u30b0\u30ea\u30c3\u30c9",
+      "description": "\u8907\u6570\u306e\u30ec\u30a4\u30a2\u30a6\u30c8\u3067\u5546\u54c1\u3092\u8868\u793a\u3001\u52d5\u7684\u307e\u305f\u306f\u624b\u52d5\u9078\u629e\u5bfe\u5fdc"
+    }
+  }
+}

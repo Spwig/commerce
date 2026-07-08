@@ -1,0 +1,222 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Webhook Endpoints" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'webhooks/css/webhook_admin.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'webhooks/js/webhook_admin.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {% trans 'Webhook Endpoints' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="webhook-container" id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-broadcast-tower"></i>
+                {% trans "Webhook Endpoints" %}
+            </h1>
+            <p class="subtitle">{% trans "Configure webhook endpoints to receive real-time notifications when events occur in your store." %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'webhooks:documentation' %}" class="button change-list-action-button secondary">
+                <i class="fas fa-book"></i> {% trans "Developer Docs" %}
+            </a>
+            <a href="{% url 'webhooks:endpoint_wizard' %}" class="button change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Endpoint" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-server"></i></div>
+            <div class="value">{{ total_endpoints }}</div>
+            <div class="label">{% trans "Total Endpoints" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon" style="color: var(--success-fg);"><i class="fas fa-check-circle"></i></div>
+            <div class="value" style="color: var(--success-fg);">{{ active_endpoints }}</div>
+            <div class="label">{% trans "Active" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon" style="color: var(--warning-fg);"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="value" style="color: var(--warning-fg);">{{ unhealthy_endpoints }}</div>
+            <div class="label">{% trans "Unhealthy" %}</div>
+        </div>
+        <div class="dashboard-stat-card">
+            <div class="icon" style="color: var(--primary);"><i class="fas fa-paper-plane"></i></div>
+            <div class="value">{{ deliveries_24h }}</div>
+            <div class="label">{% trans "Deliveries (24h)" %}</div>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="webhook-info-card" id="webhookInfoCard">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-info-circle"></i>
+                {% trans "Webhook System" %}
+            </h2>
+            <button type="button" class="collapse-toggle" aria-expanded="true" aria-controls="webhookCardBody">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="card-body" id="webhookCardBody">
+            <p class="card-intro">
+                {% trans "Webhooks allow external systems to receive real-time HTTP notifications when events occur in your store, such as new orders, payments, or shipments." %}
+            </p>
+            <div class="card-content">
+                <div class="features-section">
+                    <h3><i class="fas fa-bolt"></i> {% trans "Features:" %}</h3>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-circle"></i> {% trans "HMAC-SHA256 signed payloads for security" %}</li>
+                        <li><i class="fas fa-check-circle"></i> {% trans "Automatic retries with exponential backoff" %}</li>
+                        <li><i class="fas fa-check-circle"></i> {% trans "40+ event types across orders, products, customers, and more" %}</li>
+                        <li><i class="fas fa-check-circle"></i> {% trans "Detailed delivery logs and statistics" %}</li>
+                    </ul>
+                </div>
+                <div class="getting-started-section">
+                    <h3><i class="fas fa-rocket"></i> {% trans "Getting Started:" %}</h3>
+                    <ol class="steps-list">
+                        <li>{% trans "Create an endpoint with your receiver URL" %}</li>
+                        <li>{% trans "Select the events you want to receive" %}</li>
+                        <li>{% trans "Implement signature verification using the secret" %}</li>
+                        <li>{% trans "Test the endpoint with a test webhook" %}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Search by name or URL...' %}" value="">
+            </div>
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="inactive">{% trans "Inactive" %}</option>
+                    <option value="disabled">{% trans "Disabled by Failures" %}</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filter-health">
+                    <i class="fas fa-heartbeat"></i> {% trans "Health" %}
+                </label>
+                <select id="filter-health">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="healthy">{% trans "Healthy" %}</option>
+                    <option value="degraded">{% trans "Degraded" %}</option>
+                    <option value="unhealthy">{% trans "Unhealthy" %}</option>
+                </select>
+            </div>
+        </div>
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Endpoints" %}</h2>
+        <span class="results-count" id="results-count">
+            <i class="fas fa-server"></i>
+            <span id="endpoint-count">{{ cl.result_count }}</span> {% trans "endpoint" %}{{ cl.result_count|pluralize:"s" }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="endpoint-results">
+        {% include "admin/webhooks/partials/endpoint_cards.html" with endpoints=cl.result_list %}
+    </div>
+
+    <!-- Pagination -->
+    {% if cl.result_count %}
+    <p class="paginator">
+        {% if cl.result_count == 1 %}
+            {% blocktrans count counter=cl.result_count %}1 endpoint{% plural %}{{ counter }} endpoints{% endblocktrans %}
+        {% else %}
+            {{ cl.result_count }} {% trans 'endpoints' %}
+        {% endif %}
+
+        {% if show_all_url %}
+            <a href="{{ show_all_url }}">{% trans 'Show all' %}</a>
+        {% endif %}
+    </p>
+    {% endif %}
+</div>
+
+<!-- Test Webhook Modal -->
+<div id="test-webhook-modal" class="webhook-modal" style="display: none;">
+    <div class="webhook-modal-content">
+        <div class="webhook-modal-header">
+            <h3><i class="fas fa-flask"></i> {% trans "Test Webhook" %}</h3>
+            <button type="button" class="webhook-modal-close" data-action="close-test-modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="webhook-modal-body">
+            <p>{% trans "Sending test webhook to endpoint..." %}</p>
+            <div class="test-result" id="test-result" style="display: none;">
+                <div class="test-result-icon"></div>
+                <div class="test-result-details">
+                    <div class="test-result-status"></div>
+                    <div class="test-result-code"></div>
+                    <div class="test-result-time"></div>
+                    <div class="test-result-error"></div>
+                </div>
+            </div>
+            <div class="test-loading" id="test-loading">
+                <div class="loading-spinner"></div>
+                <p>{% trans "Sending test webhook..." %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="webhook-notification-container" class="notification-container"></div>
+
+</div>
+{% endblock %}

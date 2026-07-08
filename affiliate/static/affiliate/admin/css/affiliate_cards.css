@@ -1,0 +1,185 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Affiliate - Affiliate Cards
+ *
+ * Description: Card layout styles for affiliate affiliate_cards
+ * Template: affiliate/templates/admin/affiliate/partials/affiliate_cards.html
+ * Extracted: 2026-02-13
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css (list-row-card system)
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+/* Affiliate card styles using CSS variables */
+.affiliate-card {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Affiliate code styling */
+.affiliate-code {
+    font-family: monospace;
+    font-size: 12px;
+    padding: 2px 8px;
+    background: var(--darkened-bg);
+    border-radius: 4px;
+    color: var(--body-quiet-color);
+    margin-left: 8px;
+}
+
+/* Company separator */
+.company-separator {
+    margin: 0 8px;
+    color: var(--border-color);
+}
+
+/* Quiet text helper */
+.quiet-text {
+    color: var(--body-quiet-color);
+}
+
+/* Affiliate icon colors based on status */
+.list-row-card-icon.affiliate {
+    color: var(--button-fg);
+}
+
+.list-row-card-icon.affiliate.active {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-fg) 100%);
+}
+
+.list-row-card-icon.affiliate.pending {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-fg) 100%);
+}
+
+.list-row-card-icon.affiliate.suspended {
+    background: linear-gradient(135deg, var(--error-fg) 0%, #c82333 100%);
+}
+
+.list-row-card-icon.affiliate.rejected {
+    background: linear-gradient(135deg, var(--body-quiet-color) 0%, var(--darkened-bg) 100%);
+}
+
+/* Status badge variants */
+.affiliate-status-rejected {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+    border: 1px solid var(--border-color);
+}
+
+/* Stats highlighting */
+.affiliate-stat-earned {
+    color: var(--success-fg);
+    font-weight: 600;
+}
+
+.affiliate-stat-balance {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+/* Action button variants */
+.list-row-card-action.success {
+    color: var(--success-fg);
+}
+
+.list-row-card-action.success:hover {
+    background: var(--success-color, #d4edda);
+}
+
+.list-row-card-action.warning {
+    color: var(--warning-color);
+}
+
+.list-row-card-action.warning:hover {
+    background: var(--warning-bg, #fff3cd);
+}
+
+/* Empty state styling */
+.affiliate-empty-state {
+    text-align: center;
+    padding: 60px 40px;
+    background: var(--darkened-bg);
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+}
+
+.affiliate-empty-state-icon {
+    font-size: 64px;
+    color: var(--body-quiet-color);
+    margin-bottom: 24px;
+}
+
+.affiliate-empty-state-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--body-fg);
+    margin: 0 0 12px 0;
+}
+
+.affiliate-empty-state-subtitle {
+    font-size: 16px;
+    color: var(--body-quiet-color);
+    margin: 0 0 24px 0;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.affiliate-empty-state-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px 0;
+    display: inline-block;
+    text-align: left;
+}
+
+.affiliate-empty-state-benefits li {
+    padding: 8px 0;
+    color: var(--body-fg);
+    font-size: 14px;
+}
+
+.affiliate-empty-state-benefits li i {
+    color: var(--success-fg);
+    margin-right: 10px;
+    width: 16px;
+}
+
+.affiliate-empty-state-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--default-button-bg);
+    color: var(--button-fg);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s ease;
+}
+
+.affiliate-empty-state-cta:hover {
+    background: var(--default-button-hover-bg);
+    color: var(--button-fg);
+}
+
+/* Responsive - Affiliate-specific empty state rules only */
+@media (max-width: 768px) {
+    .affiliate-empty-state {
+        padding: 40px 20px;
+    }
+
+    .affiliate-empty-state-icon {
+        font-size: 48px;
+    }
+
+    .affiliate-empty-state-title {
+        font-size: 20px;
+    }
+}

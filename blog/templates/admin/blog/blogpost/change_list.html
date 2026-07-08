@@ -1,0 +1,183 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Blog Posts" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'blog/admin/css/blog_admin_list.css' %}">
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-blog"></i>
+                {% trans "Blog Posts" %}
+            </h1>
+            <p class="subtitle">{% trans "Create and manage blog content for your store" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:blog_blogpost_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Post" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filter Tabs -->
+    <div class="admin-tabs">
+        <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if not request.GET.status and not request.GET.is_featured %}active{% endif %}"
+           data-filter="all">
+            <i class="fas fa-th"></i>
+            <span class="label">{% trans "All" %}<br>({{ all_count }})</span>
+        </a>
+        <a href="?status=published{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.status == 'published' %}active{% endif %}"
+           data-filter="published">
+            <i class="fas fa-check-circle"></i>
+            <span class="label">{% trans "Published" %}<br>({{ published_count }})</span>
+        </a>
+        <a href="?status=draft{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.status == 'draft' %}active{% endif %}"
+           data-filter="draft">
+            <i class="fas fa-file-alt"></i>
+            <span class="label">{% trans "Draft" %}<br>({{ draft_count }})</span>
+        </a>
+        <a href="?status=scheduled{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.status == 'scheduled' %}active{% endif %}"
+           data-filter="scheduled">
+            <i class="fas fa-clock"></i>
+            <span class="label">{% trans "Scheduled" %}<br>({{ scheduled_count }})</span>
+        </a>
+        <a href="?is_featured=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.is_featured == '1' %}active{% endif %}"
+           data-filter="featured">
+            <i class="fas fa-star"></i>
+            <span class="label">{% trans "Featured" %}<br>({{ featured_count }})</span>
+        </a>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="blog-toolbar">
+        <div class="toolbar-left">
+            <!-- Bulk Actions -->
+            <select id="bulk-action-selector" class="bulk-action-select">
+                <option value="">{% trans "Bulk Actions" %}</option>
+                <option value="make_published">{% trans "Publish Selected" %}</option>
+                <option value="make_draft">{% trans "Move to Draft" %}</option>
+                <option value="make_featured">{% trans "Mark as Featured" %}</option>
+                <option value="remove_featured">{% trans "Remove Featured" %}</option>
+                <option value="delete_selected">{% trans "Delete Selected" %}</option>
+            </select>
+            <button id="apply-bulk-action" class="button default" disabled>
+                <i class="fas fa-check"></i> {% trans "Apply" %}
+            </button>
+            <span id="selected-count" class="selected-count"></span>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- Category Filter -->
+            <select id="category-filter" class="category-filter">
+                <option value="">{% trans "All Categories" %}</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:'d' %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <form method="get" action="" class="search-form">
+                    {% for key, value in request.GET.items %}
+                        {% if key != 'q' %}
+                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endif %}
+                    {% endfor %}
+                    <input type="text"
+                           name="q"
+                           value="{{ request.GET.q }}"
+                           placeholder="{% trans 'Search posts...' %}"
+                           class="search-input"
+                           id="post-search">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Posts Container -->
+    {% if cl.result_list %}
+        <div id="posts-container" class="list-row-cards">
+            {% for post in cl.result_list %}
+                {% include "admin/blog/blogpost/partials/post_card.html" with post=post %}
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if cl.result_count > 0 and cl.result_count > cl.list_per_page %}
+        <div class="pagination-container">
+            <p class="paginator">
+                <span class="small quiet">{{ cl.result_count }} {% trans "posts" %}</span>
+                {% if cl.show_all_url %}
+                    | <a href="{{ cl.show_all_url }}">{% trans 'Show all' %}</a>
+                {% endif %}
+            </p>
+            {% if cl.multi_page %}
+                <p class="paginator">
+                    {% if cl.page_num > 0 %}
+                        <a href="?p={{ cl.page_num|add:'-1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Previous" %}</a>
+                    {% endif %}
+                    <span class="this-page">{% trans "Page" %} {{ cl.page_num|add:'1' }} {% trans "of" %} {{ cl.paginator.num_pages }}</span>
+                    {% if cl.page_num < cl.paginator.num_pages|add:'-1' %}
+                        <a href="?p={{ cl.page_num|add:'1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Next" %}</a>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="posts-empty-state">
+            <i class="fas fa-newspaper"></i>
+            <h2>{% trans "No Blog Posts Found" %}</h2>
+            <p>
+                {% if request.GET.q %}
+                    {% trans "No posts match your search query." %}
+                {% else %}
+                    {% trans "Start creating content for your blog!" %}
+                {% endif %}
+            </p>
+            <a href="{% url 'admin:blog_blogpost_add' %}" class="button default">
+                <i class="fas fa-plus"></i> {% trans "Create Your First Post" %}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="application/json" id="blogpost-list-data">
+{
+    "selected": "{% trans 'selected' %}",
+    "confirmDelete": "{% trans 'Are you sure you want to delete the selected posts?' %}",
+    "changelistUrl": "{% url 'admin:blog_blogpost_changelist' %}"
+}
+</script>
+<script src="{% static 'blog/admin/js/blogpost_list.js' %}" defer></script>
+{% endblock %}

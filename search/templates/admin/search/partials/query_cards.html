@@ -1,0 +1,49 @@
+{% load i18n %}
+
+{% if queries %}
+<div class="card-grid">
+    {% for query in queries %}
+    <div class="card card--search-query {% if query.zero_rate > 50 %}card--warning{% endif %}">
+        <div class="card__header">
+            <h3 class="card__title">{{ query.query }}</h3>
+            <span class="badge {% if query.zero_rate == 0 %}badge--success{% elif query.zero_rate > 50 %}badge--danger{% else %}badge--warning{% endif %}">
+                {{ query.search_count }} {% trans "searches" %}
+            </span>
+        </div>
+        <div class="card__body">
+            <div class="card__stats">
+                <div class="stat">
+                    <span class="stat__label">{% trans "Avg Results" %}</span>
+                    <span class="stat__value">{{ query.avg_results }}</span>
+                </div>
+                <div class="stat">
+                    <span class="stat__label">{% trans "Zero Results" %}</span>
+                    <span class="stat__value {% if query.zero_rate > 50 %}text-danger{% endif %}">{{ query.zero_rate }}%</span>
+                </div>
+                <div class="stat">
+                    <span class="stat__label">{% trans "CTR" %}</span>
+                    <span class="stat__value">{{ query.ctr }}%</span>
+                </div>
+                <div class="stat">
+                    <span class="stat__label">{% trans "Avg Response" %}</span>
+                    <span class="stat__value">{{ query.avg_response }}ms</span>
+                </div>
+            </div>
+        </div>
+        <div class="card__footer">
+            <a href="{% url 'admin:search_synonym_add' %}?term={{ query.query|urlencode }}" class="btn btn--sm btn--outline">
+                <i class="fas fa-plus"></i> {% trans "Add Synonym" %}
+            </a>
+            <a href="{% url 'admin:search_searchredirect_add' %}?term={{ query.query|urlencode }}" class="btn btn--sm btn--outline">
+                <i class="fas fa-directions"></i> {% trans "Add Redirect" %}
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-search empty-state__icon"></i>
+    <p class="empty-state__text">{% trans "No search queries found matching your filters." %}</p>
+</div>
+{% endif %}

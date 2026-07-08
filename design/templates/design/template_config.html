@@ -1,0 +1,417 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'design:dashboard' %}">{% trans 'Design' %}</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'design/css/template_config.css' %}">
+
+<div class="change-list-header">
+    <div>
+        <h1>
+            <i class="fas fa-layer-group"></i>
+            {% trans "Template Configuration" %}
+        </h1>
+        <p class="subtitle">{% trans "Choose and configure page templates for your storefront" %}</p>
+    </div>
+    <div class="change-list-header-actions">
+        <button type="button" class="button change-list-action-button save-config-btn" id="save-config-top">
+            <i class="fas fa-save"></i> {% trans "Save Configuration" %}
+        </button>
+    </div>
+</div>
+
+<div class="template-config" id="template-config"
+     data-checkout-cards="{{ checkout_cards_json }}"
+     data-product-cards="{{ product_cards_json }}"
+     data-category-cards="{{ category_cards_json }}"
+     data-blog-post-cards="{{ blog_post_cards_json }}"
+     data-blog-list-cards="{{ blog_list_cards_json }}"
+     data-checkout-trust-badges="{{ checkout_trust_badges_json }}"
+     data-product-trust-badges="{{ product_trust_badges_json }}"
+     data-digital-trust-badges="{{ digital_trust_badges_json }}"
+     data-current-checkout="{{ config.checkout_template }}"
+     data-current-product="{{ config.product_template }}"
+     data-current-category="{{ config.category_template }}"
+     data-current-blog-post="{{ config.blog_post_template }}"
+     data-current-blog-list="{{ config.blog_list_template }}"
+     data-save-url="{% url 'design:template_config_save' %}">
+
+    <!-- Save Status Bar -->
+    <div class="template-config__status" id="save-status" hidden>
+        <span id="save-status-text"></span>
+    </div>
+
+    <!-- ===== Checkout Templates ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-cash-register"></i>
+                    {% trans 'Checkout Template' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Choose how your checkout page looks and feels. This affects all customers.' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="template-cards" id="checkout-cards">
+            {% for card in checkout_cards %}
+            <div class="template-card {% if card.is_active %}template-card--active{% endif %}"
+                 data-key="{{ card.key }}" data-type="checkout">
+                <div class="template-card__preview">
+                    {% if card.preview_image %}
+                        <img src="{% static card.preview_image %}"
+                             alt="{{ card.name }}"
+                             class="template-card__preview-img"
+                             data-img-fallback="hide">
+                        <i class="fas {{ card.icon }}" style="display: none;"></i>
+                    {% else %}
+                        <i class="fas {{ card.icon }}"></i>
+                    {% endif %}
+                </div>
+                <div class="template-card__body">
+                    <h3 class="template-card__name">{{ card.name }}</h3>
+                    <p class="template-card__desc">{{ card.description }}</p>
+                </div>
+                <div class="template-card__badge">
+                    {% if card.is_active %}
+                    <span class="badge badge--primary">{% trans 'Active' %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Checkout Options Panel -->
+        <div class="template-options" id="checkout-options" {% if not config.checkout_template %}hidden{% endif %}>
+            <h3 class="template-options__title">
+                <i class="fas fa-sliders-h"></i>
+                <span id="checkout-options-title">{% trans 'Options' %}</span>
+            </h3>
+            <div class="template-options__grid" id="checkout-options-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Checkout Trust Badges ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-shield-alt"></i>
+                    {% trans 'Checkout Trust Badges' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Configure the trust badges displayed during checkout. These appear on all checkout templates when trust badges are enabled.' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="trust-badge-editor" id="trust-badge-editor" data-max-badges="6">
+            <div class="trust-badge-editor__list" id="trust-badge-list">
+                <!-- Populated by JS -->
+            </div>
+            <button type="button" class="trust-badge-editor__add" id="add-trust-badge">
+                <i class="fas fa-plus"></i>
+                {% trans 'Add Badge' %}
+            </button>
+            <p class="trust-badge-editor__hint">
+                {% trans 'Drag to reorder. Maximum 6 badges.' %}
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== Product Templates ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-shopping-bag"></i>
+                    {% trans 'Product Page Template' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Choose the default product page layout. Individual products can override this in their settings.' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="template-cards" id="product-cards">
+            {% for card in product_cards %}
+            <div class="template-card {% if card.is_active %}template-card--active{% endif %}"
+                 data-key="{{ card.key }}" data-type="product">
+                <div class="template-card__preview">
+                    {% if card.preview_image %}
+                        <img src="{% static card.preview_image %}"
+                             alt="{{ card.name }}"
+                             class="template-card__preview-img"
+                             data-img-fallback="hide">
+                        <i class="fas {{ card.icon }}" style="display: none;"></i>
+                    {% else %}
+                        <i class="fas {{ card.icon }}"></i>
+                    {% endif %}
+                </div>
+                <div class="template-card__body">
+                    <h3 class="template-card__name">{{ card.name }}</h3>
+                    <p class="template-card__desc">{{ card.description }}</p>
+                </div>
+                <div class="template-card__badge">
+                    {% if card.is_active %}
+                    <span class="badge badge--primary">{% trans 'Active' %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Product Options Panel -->
+        <div class="template-options" id="product-options" {% if not config.product_template %}hidden{% endif %}>
+            <h3 class="template-options__title">
+                <i class="fas fa-sliders-h"></i>
+                <span id="product-options-title">{% trans 'Options' %}</span>
+            </h3>
+            <div class="template-options__grid" id="product-options-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Product Trust Badges ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-shopping-bag"></i>
+                    {% trans 'Product Trust Badges' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Configure trust badges for physical product pages (Classic, Full Width, Gallery Focus templates).' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="trust-badge-editor" id="product-badge-editor" data-max-badges="6">
+            <div class="trust-badge-editor__list" id="product-badge-list">
+                <!-- Populated by JS -->
+            </div>
+            <button type="button" class="trust-badge-editor__add" id="add-product-badge">
+                <i class="fas fa-plus"></i>
+                {% trans 'Add Badge' %}
+            </button>
+            <p class="trust-badge-editor__hint">
+                {% trans 'Drag to reorder. Maximum 6 badges.' %}
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== Digital Product Trust Badges ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-download"></i>
+                    {% trans 'Digital Product Trust Badges' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Configure trust badges for digital product pages (software, ebooks, courses, digital downloads).' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="trust-badge-editor" id="digital-badge-editor" data-max-badges="6">
+            <div class="trust-badge-editor__list" id="digital-badge-list">
+                <!-- Populated by JS -->
+            </div>
+            <button type="button" class="trust-badge-editor__add" id="add-digital-badge">
+                <i class="fas fa-plus"></i>
+                {% trans 'Add Badge' %}
+            </button>
+            <p class="trust-badge-editor__hint">
+                {% trans 'Drag to reorder. Maximum 6 badges.' %}
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== Category Page Template ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-th-large"></i>
+                    {% trans 'Category Page Template' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Choose the default category page layout. Individual categories can override this in their Display settings.' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="template-cards" id="category-cards">
+            {% for card in category_cards %}
+            <div class="template-card {% if card.is_active %}template-card--active{% endif %}"
+                 data-key="{{ card.key }}" data-type="category">
+                <div class="template-card__preview">
+                    {% if card.preview_image %}
+                        <img src="{% static card.preview_image %}"
+                             alt="{{ card.name }}"
+                             class="template-card__preview-img"
+                             data-img-fallback="hide">
+                        <i class="fas {{ card.icon }}" style="display: none;"></i>
+                    {% else %}
+                        <i class="fas {{ card.icon }}"></i>
+                    {% endif %}
+                </div>
+                <div class="template-card__body">
+                    <h3 class="template-card__name">{{ card.name }}</h3>
+                    <p class="template-card__desc">{{ card.description }}</p>
+                </div>
+                <div class="template-card__badge">
+                    {% if card.is_active %}
+                    <span class="badge badge--primary">{% trans 'Active' %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Category Options Panel -->
+        <div class="template-options" id="category-options" {% if not config.category_template %}hidden{% endif %}>
+            <h3 class="template-options__title">
+                <i class="fas fa-sliders-h"></i>
+                <span id="category-options-title">{% trans 'Category Page Options' %}</span>
+            </h3>
+            <div class="template-options__grid" id="category-options-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Blog Post Template ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-newspaper"></i>
+                    {% trans 'Blog Post Template' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Choose the default blog post layout. Individual posts can override this in their Design tab.' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="template-cards" id="blog-post-cards">
+            {% for card in blog_post_cards %}
+            <div class="template-card {% if card.is_active %}template-card--active{% endif %}"
+                 data-key="{{ card.key }}" data-type="blog_post">
+                <div class="template-card__preview">
+                    {% if card.preview_image %}
+                        <img src="{% static card.preview_image %}"
+                             alt="{{ card.name }}"
+                             class="template-card__preview-img"
+                             data-img-fallback="hide">
+                        <i class="fas {{ card.icon }}" style="display: none;"></i>
+                    {% else %}
+                        <i class="fas {{ card.icon }}"></i>
+                    {% endif %}
+                </div>
+                <div class="template-card__body">
+                    <h3 class="template-card__name">{{ card.name }}</h3>
+                    <p class="template-card__desc">{{ card.description }}</p>
+                </div>
+                <div class="template-card__badge">
+                    {% if card.is_active %}
+                    <span class="badge badge--primary">{% trans 'Active' %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Blog Post Options Panel -->
+        <div class="template-options" id="blog_post-options" {% if not config.blog_post_template %}hidden{% endif %}>
+            <h3 class="template-options__title">
+                <i class="fas fa-sliders-h"></i>
+                <span id="blog_post-options-title">{% trans 'Options' %}</span>
+            </h3>
+            <div class="template-options__grid" id="blog_post-options-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Blog List Template ===== -->
+    <section class="template-config__section">
+        <div class="template-config__section-header">
+            <div>
+                <h2 class="template-config__section-title">
+                    <i class="fas fa-th-list"></i>
+                    {% trans 'Blog List Template' %}
+                </h2>
+                <p class="template-config__section-desc">
+                    {% trans 'Choose the layout for the blog index page where all posts are listed.' %}
+                </p>
+            </div>
+        </div>
+
+        <div class="template-cards" id="blog-list-cards">
+            {% for card in blog_list_cards %}
+            <div class="template-card {% if card.is_active %}template-card--active{% endif %}"
+                 data-key="{{ card.key }}" data-type="blog_list">
+                <div class="template-card__preview">
+                    {% if card.preview_image %}
+                        <img src="{% static card.preview_image %}"
+                             alt="{{ card.name }}"
+                             class="template-card__preview-img"
+                             data-img-fallback="hide">
+                        <i class="fas {{ card.icon }}" style="display: none;"></i>
+                    {% else %}
+                        <i class="fas {{ card.icon }}"></i>
+                    {% endif %}
+                </div>
+                <div class="template-card__body">
+                    <h3 class="template-card__name">{{ card.name }}</h3>
+                    <p class="template-card__desc">{{ card.description }}</p>
+                </div>
+                <div class="template-card__badge">
+                    {% if card.is_active %}
+                    <span class="badge badge--primary">{% trans 'Active' %}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Blog List Options Panel -->
+        <div class="template-options" id="blog_list-options" {% if not config.blog_list_template %}hidden{% endif %}>
+            <h3 class="template-options__title">
+                <i class="fas fa-sliders-h"></i>
+                <span id="blog_list-options-title">{% trans 'Options' %}</span>
+            </h3>
+            <div class="template-options__grid" id="blog_list-options-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Save Button -->
+    <div class="template-config__actions">
+        <button type="button" class="btn-admin btn-admin--primary save-config-btn" id="save-config">
+            <i class="fas fa-save"></i>
+            {% trans 'Save Configuration' %}
+        </button>
+    </div>
+</div>
+
+<script src="{% static 'design/js/template_config.js' %}"></script>
+{% endblock %}

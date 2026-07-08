@@ -1,0 +1,188 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Shipping Promotions" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<link rel="stylesheet" href="{% static 'shipping/css/admin_shipping_promotion.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-clipboard-list"></i>
+                {% trans "Shipping Promotions" %}
+            </h1>
+            <p class="subtitle">{% trans "Configure shipping discounts, surcharges, and pricing promotions" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'shipping:promotion_wizard_step1' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Promotion" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Toolbar -->
+    <div class="rule-toolbar">
+        <div class="toolbar-left">
+            <!-- Bulk Actions -->
+            <div class="bulk-actions">
+                <select id="bulk-action-select" class="bulk-action-dropdown">
+                    <option value="">{% trans "Bulk Actions" %}</option>
+                    <option value="enable">{% trans "Enable Selected" %}</option>
+                    <option value="disable">{% trans "Disable Selected" %}</option>
+                    <option value="delete">{% trans "Delete Selected" %}</option>
+                </select>
+                <button id="apply-bulk-action" class="button" disabled>{% trans "Apply" %}</button>
+                <span id="selected-count" class="selected-count shipping-rule-hidden">
+                    <span id="selected-number">0</span> {% trans "selected" %}
+                </span>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <!-- Filters -->
+            <div class="filter-group">
+                <!-- Status Filter -->
+                <select id="status-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Status" %}</option>
+                    <option value="active" {% if request.GET.is_active == '1' %}selected{% endif %}>
+                        {% trans "Active" %} ({{ active_count }})
+                    </option>
+                    <option value="inactive" {% if request.GET.is_active == '0' %}selected{% endif %}>
+                        {% trans "Inactive" %} ({{ inactive_count }})
+                    </option>
+                </select>
+
+                <!-- Rule Type Filter -->
+                <select id="type-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="free_shipping" {% if request.GET.promotion_type == 'free_shipping' %}selected{% endif %}>
+                        {% trans "Free Shipping" %} ({{ free_shipping_count }})
+                    </option>
+                    <option value="discount_percentage" {% if request.GET.promotion_type == 'discount_percentage' %}selected{% endif %}>
+                        {% trans "Percentage Discount" %} ({{ discount_percentage_count }})
+                    </option>
+                    <option value="discount_fixed" {% if request.GET.promotion_type == 'discount_fixed' %}selected{% endif %}>
+                        {% trans "Fixed Discount" %} ({{ discount_fixed_count }})
+                    </option>
+                    <option value="override_cost" {% if request.GET.promotion_type == 'override_cost' %}selected{% endif %}>
+                        {% trans "Override Cost" %} ({{ override_cost_count }})
+                    </option>
+                    <option value="surcharge_fixed" {% if request.GET.promotion_type == 'surcharge_fixed' %}selected{% endif %}>
+                        {% trans "Fixed Surcharge" %} ({{ surcharge_fixed_count }})
+                    </option>
+                    <option value="surcharge_percentage" {% if request.GET.promotion_type == 'surcharge_percentage' %}selected{% endif %}>
+                        {% trans "Percentage Surcharge" %} ({{ surcharge_percentage_count }})
+                    </option>
+                </select>
+
+                <!-- Priority Filter -->
+                <select id="priority-filter" class="filter-dropdown">
+                    <option value="">{% trans "All Priorities" %}</option>
+                    <option value="high" {% if request.GET.priority == 'high' %}selected{% endif %}>
+                        {% trans "High Priority" %} ({{ high_priority_count }})
+                    </option>
+                    <option value="medium" {% if request.GET.priority == 'medium' %}selected{% endif %}>
+                        {% trans "Medium Priority" %} ({{ medium_priority_count }})
+                    </option>
+                    <option value="low" {% if request.GET.priority == 'low' %}selected{% endif %}>
+                        {% trans "Low Priority" %} ({{ low_priority_count }})
+                    </option>
+                </select>
+
+                <!-- Clear Filters Button -->
+                <button type="button" id="clear-filters-btn" class="button secondary clear-filters-btn" title="{% trans 'Clear all filters' %}">
+                    <i class="fas fa-times-circle"></i> {% trans "Clear Filters" %}
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="admin-search-input">
+                <input type="text"
+                       id="rule-search"
+                       placeholder="{% trans 'Search promotions...' %}"
+                       value="{{ request.GET.q|default:'' }}">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Select All -->
+    <div class="select-all-bar">
+        <label>
+            <input type="checkbox" id="select-all-rules">
+            {% trans "Select All" %}
+        </label>
+    </div>
+
+    <!-- Rules List -->
+    <div class="rules-container">
+        {% if cl.result_list %}
+            <div class="rules-list">
+                {% for rule in cl.result_list %}
+                    {% include "admin/shipping/shippingpromotion/rule_card.html" %}
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if cl.result_count > 20 %}
+                <div class="pagination-container">
+                    {% if cl.result_count %}
+                        <p class="pagination-info">
+                            {% blocktrans count counter=cl.result_count %}{{ counter }} promotion{% plural %}{{ counter }} promotions{% endblocktrans %}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <i class="fas fa-clipboard-list"></i>
+                <h2>{% trans "No shipping promotions found" %}</h2>
+                <p>
+                    {% if request.GET.q or request.GET.is_active or request.GET.promotion_type or request.GET.priority %}
+                        {% trans "Try adjusting your filters or search query." %}
+                    {% else %}
+                        {% trans "Get started by creating your first shipping promotion." %}
+                    {% endif %}
+                </p>
+                {% if not request.GET.q %}
+                    <a href="{% url 'shipping:promotion_wizard_step1' %}" class="button default">
+                        <i class="fas fa-plus"></i> {% trans "Add First Promotion" %}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay shipping-rule-hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>{% trans "Loading..." %}</p>
+        </div>
+    </div>
+
+<!-- Notification Container -->
+<div id="notification-container" class="notification-container"></div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'shipping/js/admin_shipping_promotion.js' %}" defer></script>
+{% endblock %}

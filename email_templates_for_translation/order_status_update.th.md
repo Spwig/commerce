@@ -1,0 +1,66 @@
+---
+template_type: order_status_update
+category: Core E-commerce
+---
+
+# Email Template: order_status_update
+
+## Subject
+อัปเดตสถานะการสั่งซื้อ #{{ order_number }}
+
+## HTML Content
+<mjml>
+  <mj-body>
+    <mj-section background-color="{{ theme.color.surface|default:'#f9fafb' }}">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold" color="{{ theme.color.text|default:'#1f2937' }}">
+          อัปเดตสถานะการสั่งซื้อ
+        </mj-text>
+        <mj-text font-size="14px" color="{{ theme.color.text|default:'#6b7280' }}">
+          Order #{{ order_number }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="16px" line-height="1.6" color="{{ theme.color.text|default:'#4b5563' }}">
+          Hi {{ customer_name }},
+        </mj-text>
+
+        <mj-text font-size="16px" line-height="1.6" color="{{ theme.color.text|default:'#4b5563' }}">
+          Your order <strong>#{{ order_number }}</strong> status has been updated.
+        </mj-text>
+
+        <mj-section background-color="{{ theme.color.surface|default:'#f9fafb' }}" border-radius="8px" padding="20px">
+          <mj-column>
+            <mj-text font-size="15px" line-height="1.8" color="{{ theme.color.text|default:'#4b5563' }}">
+              <strong>Previous Status:</strong> {{ old_status_display }}<br/>
+              <strong>New Status:</strong> {{ new_status_display }}
+            </mj-text>
+          </mj-column>
+        </mj-section>
+
+        <mj-spacer height="20px" />
+
+        {% if order_url %}
+        <mj-button href="{{ order_url }}" background-color="{{ theme.color.primary|default:'#2563eb' }}" color="#ffffff" font-size="16px" font-weight="bold" border-radius="6px" padding="15px 40px">
+          View Order Details
+        </mj-button>
+        {% endif %}
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+
+## Text Content
+อัปเดตสถานะการสั่งซื้อ - Order #{{ order_number }}
+
+Hi {{ customer_name }},
+
+Your order #{{ order_number }} status has been updated.
+
+Previous Status: {{ old_status_display }}
+New Status: {{ new_status_display }}
+
+{% if order_url %}View order details: {{ order_url }}{% endif %}

@@ -1,0 +1,31 @@
+<!-- Element Wrapper -->
+<div class="page-element element-{{ element.element_type }}
+           {% if element.template_variant %}variant-{{ element.template_variant }}{% endif %}
+           {% if element.get_css_classes %}{{ element.get_css_classes }}{% endif %}
+           {% if not element.show_on_mobile %}hide-mobile{% endif %}
+           {% if not element.show_on_tablet %}hide-tablet{% endif %}
+           {% if not element.show_on_desktop %}hide-desktop{% endif %}"
+     data-element-id="{{ element.id }}"
+     data-element-type="{{ element.element_type }}"
+     {% if use_modular %}data-modular="true"{% endif %}
+     {% if error %}data-error="true"{% endif %}
+     style="
+         {% if element.text_align %}text-align: {{ element.text_align }};{% endif %}
+         {% for property, value in element.style_overrides.items %}
+         {{ property }}: {{ value }};
+         {% endfor %}
+     ">
+
+    <!-- Element Content -->
+    {{ rendered_content }}
+
+    <!-- Development Debug Info -->
+    {% if settings.DEBUG and error %}
+    <div class="element-debug element-debug--error">
+        <strong>Element Render Error:</strong><br>
+        Type: {{ element.element_type }}<br>
+        Template: {{ template_path }}<br>
+        Error: {{ error }}
+    </div>
+    {% endif %}
+</div>

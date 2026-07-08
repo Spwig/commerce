@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans 'Form Builder' %} - {{ form.name }}</title>
+
+    <!-- Favicon -->
+    {% load core_extras %}
+    {% favicon_meta %}
+
+    <!-- Core Admin Theme Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/light.css' %}">
+    <link rel="stylesheet" href="{% static 'core/admin/css/themes/dark.css' %}">
+
+    <!-- Admin Base Styles -->
+    <link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+
+    <!-- Page Builder Utility Base Styles -->
+    <link rel="stylesheet" href="{% static 'utilities/base/current/utility_base.css' %}">
+
+    <!-- Form Builder Visual Builder Styles -->
+    <link rel="stylesheet" href="{% static 'form_builder/css/visual_builder.css' %}">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <!-- Sortable.js for drag and drop -->
+    <script src="{% static 'core/vendor/js/sortable.min.js' %}"></script>
+</head>
+<body class="form-builder-body" data-theme="{{ admin_theme|default:'light' }}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <!-- Admin Interface Wrapper -->
+    <div class="fb-admin-interface">
+
+        <!-- Top Toolbar -->
+        <div class="fb-toolbar">
+            <div class="toolbar-left">
+                <a href="{% url 'admin:form_builder_form_changelist' %}" class="back-btn" title="{% trans 'Back to Forms' %}">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="form-info">
+                    <input type="text" class="form-name-input" id="form-name" value="{{ form.name }}" placeholder="{% trans 'Form Name' %}">
+                    <span class="form-slug">{{ form.slug }}</span>
+                </div>
+            </div>
+
+            <div class="toolbar-center">
+                <div class="status-indicator">
+                    <span class="status-badge {% if form.is_active %}status-active{% else %}status-inactive{% endif %}">
+                        {% if form.is_active %}
+                        <i class="fas fa-check-circle"></i>
+                        <span class="status-text">{% trans 'Active' %}</span>
+                        {% else %}
+                        <i class="fas fa-pause-circle"></i>
+                        <span class="status-text">{% trans 'Inactive' %}</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="toolbar-tools">
+                    <button class="tool-btn" id="undo-btn" data-action="fb-undo" disabled title="{% trans 'Undo' %} (Ctrl+Z)">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="tool-btn" id="redo-btn" data-action="fb-redo" disabled title="{% trans 'Redo' %} (Ctrl+Y)">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="toolbar-right">
+                <span id="auto-save-indicator" class="auto-save-indicator fb-hidden">
+                    <i class="fas fa-sync fa-spin"></i>
+                    <span class="save-text">{% trans 'Saving...' %}</span>
+                </span>
+                <button class="btn btn-outline" data-action="fb-preview">
+                    <i class="fas fa-eye"></i>
+                    <span>{% trans 'Preview' %}</span>
+                </button>
+                <div class="save-dropdown-wrapper">
+                    <button class="save-btn primary" data-action="fb-save">
+                        <i class="fas fa-save"></i>
+                        <span>{% trans 'Save' %}</span>
+                    </button>
+                    <button class="save-dropdown-toggle" data-action="fb-toggle-save-dropdown">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="save-dropdown-menu" id="saveDropdownMenu">
+                        <button class="dropdown-item" data-action="fb-save-and-close">
+                            <i class="fas fa-save"></i>
+                            <span>{% trans 'Save & Close' %}</span>
+                        </button>
+                        <button class="dropdown-item" data-action="fb-duplicate-form">
+                            <i class="fas fa-copy"></i>
+                            <span>{% trans 'Duplicate Form' %}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Builder Layout -->
+        <div class="fb-layout">
+
+            <!-- Left Sidebar - Field Library -->
+            <div class="fb-sidebar left-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-plus-circle"></i> {% trans 'Add Fields' %}</h3>
+                    <input type="search" class="field-search" id="field-search" placeholder="{% trans 'Search fields...' %}">
+                </div>
+
+                <div class="field-library" id="field-library">
+                    <!-- Basic Inputs -->
+                    <div class="field-group" data-category="basic">
+                        <h4><i class="fas fa-keyboard"></i> {% trans 'Basic Inputs' %}</h4>
+                        <div class="field-item" draggable="true" data-field-type="text">
+                            <div class="field-icon"><i class="fas fa-font"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Text' %}</strong>
+                                <small>{% trans 'Single line text' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="textarea">
+                            <div class="field-icon"><i class="fas fa-align-left"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Text Area' %}</strong>
+                                <small>{% trans 'Multi-line text' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="email">
+                            <div class="field-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Email' %}</strong>
+                                <small>{% trans 'Email address' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="phone">
+                            <div class="field-icon"><i class="fas fa-phone"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Phone' %}</strong>
+                                <small>{% trans 'Phone number' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="number">
+                            <div class="field-icon"><i class="fas fa-hashtag"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Number' %}</strong>
+                                <small>{% trans 'Numeric input' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="url">
+                            <div class="field-icon"><i class="fas fa-link"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'URL' %}</strong>
+                                <small>{% trans 'Web address' %}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="field-group" data-category="datetime">
+                        <h4><i class="fas fa-calendar"></i> {% trans 'Date & Time' %}</h4>
+                        <div class="field-item" draggable="true" data-field-type="date">
+                            <div class="field-icon"><i class="fas fa-calendar-day"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Date' %}</strong>
+                                <small>{% trans 'Date picker' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="time">
+                            <div class="field-icon"><i class="fas fa-clock"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Time' %}</strong>
+                                <small>{% trans 'Time picker' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="datetime">
+                            <div class="field-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Date & Time' %}</strong>
+                                <small>{% trans 'Combined picker' %}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selection -->
+                    <div class="field-group" data-category="selection">
+                        <h4><i class="fas fa-list"></i> {% trans 'Selection' %}</h4>
+                        <div class="field-item" draggable="true" data-field-type="select">
+                            <div class="field-icon"><i class="fas fa-caret-square-down"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Dropdown' %}</strong>
+                                <small>{% trans 'Select one option' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="radio">
+                            <div class="field-icon"><i class="fas fa-dot-circle"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Radio Buttons' %}</strong>
+                                <small>{% trans 'Single choice' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="checkbox">
+                            <div class="field-icon"><i class="fas fa-check-square"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Checkbox' %}</strong>
+                                <small>{% trans 'Yes/No toggle' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="checkbox_group">
+                            <div class="field-icon"><i class="fas fa-tasks"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Checkbox Group' %}</strong>
+                                <small>{% trans 'Multiple choices' %}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ratings & Feedback -->
+                    <div class="field-group" data-category="ratings">
+                        <h4><i class="fas fa-star"></i> {% trans 'Ratings & Feedback' %}</h4>
+                        <div class="field-item" draggable="true" data-field-type="rating_stars">
+                            <div class="field-icon"><i class="fas fa-star"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Star Rating' %}</strong>
+                                <small>{% trans '1-5 stars' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="rating_likert">
+                            <div class="field-icon"><i class="fas fa-sliders-h"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Likert Scale' %}</strong>
+                                <small>{% trans 'Agreement scale' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="rating_nps">
+                            <div class="field-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'NPS Score' %}</strong>
+                                <small>{% trans '0-10 promoter' %}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced -->
+                    <div class="field-group" data-category="advanced">
+                        <h4><i class="fas fa-cogs"></i> {% trans 'Advanced' %}</h4>
+                        <div class="field-item" draggable="true" data-field-type="file">
+                            <div class="field-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'File Upload' %}</strong>
+                                <small>{% trans 'Attach files' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="product_select">
+                            <div class="field-icon"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Product Select' %}</strong>
+                                <small>{% trans 'Choose products' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="hidden">
+                            <div class="field-icon"><i class="fas fa-eye-slash"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Hidden Field' %}</strong>
+                                <small>{% trans 'Invisible data' %}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Layout -->
+                    <div class="field-group" data-category="layout">
+                        <h4><i class="fas fa-th-large"></i> {% trans 'Layout' %}</h4>
+                        <div class="field-item" draggable="true" data-field-type="heading">
+                            <div class="field-icon"><i class="fas fa-heading"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Heading' %}</strong>
+                                <small>{% trans 'Section title' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="paragraph">
+                            <div class="field-icon"><i class="fas fa-paragraph"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Paragraph' %}</strong>
+                                <small>{% trans 'Description text' %}</small>
+                            </div>
+                        </div>
+                        <div class="field-item" draggable="true" data-field-type="divider">
+                            <div class="field-icon"><i class="fas fa-minus"></i></div>
+                            <div class="field-info">
+                                <strong>{% trans 'Divider' %}</strong>
+                                <small>{% trans 'Horizontal line' %}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conditional Logic Section -->
+                <div class="logic-management">
+                    <div class="logic-management-header">
+                        <h4><i class="fas fa-code-branch"></i> {% trans 'Conditional Logic' %}</h4>
+                    </div>
+                    <button class="manage-rules-btn" data-action="fb-open-rules-modal">
+                        <i class="fas fa-cog"></i>
+                        <span>{% trans 'Manage Rules' %}</span>
+                        <span class="rule-count-badge fb-hidden" id="rule-count-badge">0</span>
+                    </button>
+                    <p class="logic-help-text">{% trans 'Create branching logic based on user responses' %}</p>
+                </div>
+
+                <!-- Step Management (Multi-step forms) -->
+                <div class="step-management{% if not form.is_multi_step %} fb-hidden{% endif %}" id="step-management">
+                    <div class="step-management-header">
+                        <h4><i class="fas fa-layer-group"></i> {% trans 'Form Steps' %}</h4>
+                        <button class="add-step-btn" data-action="fb-add-step" title="{% trans 'Add Step' %}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="step-list" id="step-list">
+                        {% for step in form.steps.all %}
+                        <div class="step-item {% if forloop.first %}active{% endif %}" data-step-id="{{ step.id }}" data-step-order="{{ step.order }}">
+                            <span class="step-number">{{ forloop.counter }}</span>
+                            <span class="step-title">{{ step.title }}</span>
+                            <div class="step-actions">
+                                <button class="step-btn" data-action="fb-edit-step" data-step-id="{{ step.id }}" title="{% trans 'Edit' %}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="step-btn danger" data-action="fb-delete-step" data-step-id="{{ step.id }}" title="{% trans 'Delete' %}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="no-steps-message">
+                            <p>{% trans 'No steps yet. Add a step to get started.' %}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Canvas - Form Preview -->
+            <div class="fb-canvas">
+                <div class="canvas-container">
+                    <!-- Step Navigation Tabs (Multi-step) -->
+                    <div class="step-tabs{% if not form.is_multi_step %} fb-hidden{% endif %}" id="step-tabs">
+                        {% for step in form.steps.all %}
+                        <button class="step-tab {% if forloop.first %}active{% endif %}" data-step-id="{{ step.id }}">
+                            <span class="step-tab-number">{{ forloop.counter }}</span>
+                            <span class="step-tab-title">{{ step.title }}</span>
+                        </button>
+                        {% empty %}
+                        <button class="step-tab active" data-step-id="0">
+                            <span class="step-tab-number">1</span>
+                            <span class="step-tab-title">{% trans 'All Fields' %}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Form Preview Frame -->
+                    <div class="canvas-frame" id="form-canvas">
+                        <!-- Form Header -->
+                        <div class="form-header-preview">
+                            <h1 class="form-title-preview" id="form-title-preview" contenteditable="true">{{ form.title }}</h1>
+                            <p class="form-description-preview" id="form-description-preview" contenteditable="true">{{ form.description|default:'' }}</p>
+                        </div>
+
+                        <!-- Fields Container (drop zone) -->
+                        <div class="fields-container" id="fields-container">
+                            {% for field in form.fields.all %}
+                            <div class="field-wrapper" data-field-id="{{ field.id }}" data-field-type="{{ field.field_type }}" data-field-step="{{ field.step_id|default:'' }}" data-field-width="{{ field.width }}">
+                                <div class="field-controls">
+                                    <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
+                                    <div class="field-actions">
+                                        <button class="control-btn duplicate-btn" data-action="fb-duplicate-field" data-field-id="{{ field.id }}" title="{% trans 'Duplicate' %}">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <button class="control-btn delete-btn" data-action="fb-delete-field" data-field-id="{{ field.id }}" title="{% trans 'Delete' %}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="field-content" data-action="fb-select-field" data-field-id="{{ field.id }}">
+                                    {% include 'form_builder/admin/field_preview.html' with field=field %}
+                                </div>
+                                <div class="width-indicator">{{ field.width }}</div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-drop-zone" id="empty-drop-zone">
+                                <i class="fas fa-plus-circle"></i>
+                                <p>{% trans 'Drag fields here to start building your form' %}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Submit Button Preview -->
+                        <div class="form-submit-preview">
+                            <button type="button" class="submit-btn-preview" id="submit-btn-preview">
+                                {{ form.submit_button_text }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Properties Panel -->
+            <div class="fb-sidebar right-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-cogs"></i> {% trans 'Properties' %}</h3>
+                </div>
+
+                <div class="properties-panel" id="properties-panel">
+                    <!-- No Selection State -->
+                    <div class="no-selection" id="no-selection">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <p>{% trans 'Select a field to edit its properties' %}</p>
+                    </div>
+
+                    <!-- Field Properties (shown when field selected) -->
+                    <div class="field-properties fb-hidden" id="field-properties">
+                        <div class="panel-header">
+                            <span class="field-type-badge" id="field-type-badge">
+                                <i class="fas fa-font"></i> <span id="field-type-name">Text Field</span>
+                            </span>
+                            <button class="close-panel" data-action="fb-deselect-field">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <!-- Tabbed Interface -->
+                        <div class="property-tabs">
+                            <button class="property-tab active" data-tab="content">{% trans 'Content' %}</button>
+                            <button class="property-tab" data-tab="validation">{% trans 'Validation' %}</button>
+                            <button class="property-tab" data-tab="style">{% trans 'Style' %}</button>
+                            <button class="property-tab" data-tab="advanced">{% trans 'Advanced' %}</button>
+                        </div>
+
+                        <!-- Content Tab -->
+                        <div class="tab-content active" data-tab-content="content">
+                            <div class="property-group">
+                                <label for="prop-label">{% trans 'Label' %}</label>
+                                <div class="translatable-input">
+                                    <input type="text" id="prop-label" placeholder="{% trans 'Field label' %}">
+                                    <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="label" data-model-type="form_builder.formfield" title="{% trans 'Translate' %}">
+                                        <i class="fas fa-globe"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="property-group">
+                                <label for="prop-placeholder">{% trans 'Placeholder' %}</label>
+                                <div class="translatable-input">
+                                    <input type="text" id="prop-placeholder" placeholder="{% trans 'Placeholder text' %}">
+                                    <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="placeholder" data-model-type="form_builder.formfield" title="{% trans 'Translate' %}">
+                                        <i class="fas fa-globe"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="property-group">
+                                <label for="prop-help-text">{% trans 'Help Text' %}</label>
+                                <div class="translatable-input">
+                                    <textarea id="prop-help-text" rows="2" placeholder="{% trans 'Additional instructions' %}"></textarea>
+                                    <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="help_text" data-model-type="form_builder.formfield" title="{% trans 'Translate' %}">
+                                        <i class="fas fa-globe"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="property-group">
+                                <label for="prop-default-value">{% trans 'Default Value' %}</label>
+                                <input type="text" id="prop-default-value">
+                            </div>
+
+                            <!-- Options Editor (for select, radio, checkbox_group) -->
+                            <div class="property-group options-editor fb-hidden" id="options-editor">
+                                <label>{% trans 'Options' %}</label>
+                                <div class="options-list" id="options-list">
+                                    <!-- Dynamically populated -->
+                                </div>
+                                <button class="add-option-btn" data-action="fb-add-option">
+                                    <i class="fas fa-plus"></i> {% trans 'Add Option' %}
+                                </button>
+                            </div>
+
+                            <!-- Rating Config (for rating fields) -->
+                            <div class="property-group rating-config fb-hidden" id="rating-config">
+                                <label>{% trans 'Rating Settings' %}</label>
+                                <div class="rating-settings">
+                                    <div class="setting-row">
+                                        <label for="prop-max-stars">{% trans 'Max Stars' %}</label>
+                                        <input type="number" id="prop-max-stars" min="3" max="10" value="5">
+                                    </div>
+                                    <div class="setting-row">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="prop-allow-half">
+                                            <span>{% trans 'Allow Half Stars' %}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- File Config (for file upload) -->
+                            <div class="property-group file-config fb-hidden" id="file-config">
+                                <label>{% trans 'File Upload Settings' %}</label>
+                                <div class="file-settings">
+                                    <div class="setting-row">
+                                        <label for="prop-max-size">{% trans 'Max Size (MB)' %}</label>
+                                        <input type="number" id="prop-max-size" min="1" max="100" value="5">
+                                    </div>
+                                    <div class="setting-row">
+                                        <label for="prop-max-files">{% trans 'Max Files' %}</label>
+                                        <input type="number" id="prop-max-files" min="1" max="20" value="1">
+                                    </div>
+                                    <div class="setting-row">
+                                        <label for="prop-allowed-types">{% trans 'Allowed Types' %}</label>
+                                        <input type="text" id="prop-allowed-types" placeholder="pdf, jpg, png">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Validation Tab -->
+                        <div class="tab-content" data-tab-content="validation">
+                            <div class="property-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="prop-required">
+                                    <span>{% trans 'Required Field' %}</span>
+                                </label>
+                            </div>
+
+                            <div class="property-group text-validation" id="text-validation">
+                                <label for="prop-min-length">{% trans 'Minimum Length' %}</label>
+                                <input type="number" id="prop-min-length" min="0">
+                            </div>
+
+                            <div class="property-group text-validation" id="text-validation-max">
+                                <label for="prop-max-length">{% trans 'Maximum Length' %}</label>
+                                <input type="number" id="prop-max-length" min="0">
+                            </div>
+
+                            <div class="property-group number-validation fb-hidden" id="number-validation">
+                                <label for="prop-min-value">{% trans 'Minimum Value' %}</label>
+                                <input type="number" id="prop-min-value" step="any">
+                            </div>
+
+                            <div class="property-group number-validation fb-hidden" id="number-validation-max">
+                                <label for="prop-max-value">{% trans 'Maximum Value' %}</label>
+                                <input type="number" id="prop-max-value" step="any">
+                            </div>
+
+                            <div class="property-group">
+                                <label for="prop-regex">{% trans 'Validation Pattern (Regex)' %}</label>
+                                <input type="text" id="prop-regex" placeholder="^[a-zA-Z]+$">
+                            </div>
+
+                            <div class="property-group">
+                                <label for="prop-validation-message">{% trans 'Validation Error Message' %}</label>
+                                <input type="text" id="prop-validation-message" placeholder="{% trans 'Custom error message' %}">
+                            </div>
+                        </div>
+
+                        <!-- Style Tab -->
+                        <div class="tab-content" data-tab-content="style">
+                            <div class="property-group">
+                                <label>{% trans 'Field Width' %}</label>
+                                <div class="width-selector">
+                                    <button class="width-btn active" data-width="full" title="{% trans 'Full Width' %}">
+                                        <div class="width-preview full"></div>
+                                    </button>
+                                    <button class="width-btn" data-width="half" title="{% trans 'Half Width' %}">
+                                        <div class="width-preview half"></div>
+                                    </button>
+                                    <button class="width-btn" data-width="third" title="{% trans 'One Third' %}">
+                                        <div class="width-preview third"></div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="property-group">
+                                <label for="prop-css-class">{% trans 'CSS Class' %}</label>
+                                <input type="text" id="prop-css-class" placeholder="custom-class">
+                            </div>
+                        </div>
+
+                        <!-- Advanced Tab -->
+                        <div class="tab-content" data-tab-content="advanced">
+                            <div class="property-group">
+                                <label for="prop-field-name">{% trans 'Field Name (ID)' %}</label>
+                                <input type="text" id="prop-field-name" placeholder="field_name">
+                                <small>{% trans 'Used for form submission data' %}</small>
+                            </div>
+
+                            <div class="property-group{% if not form.is_multi_step %} fb-hidden{% endif %}" id="step-assignment">
+                                <label for="prop-step">{% trans 'Assign to Step' %}</label>
+                                <select id="prop-step">
+                                    <option value="">{% trans 'All Steps (Single Page)' %}</option>
+                                    {% for step in form.steps.all %}
+                                    <option value="{{ step.id }}">{{ step.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Conditional Logic -->
+                            <div class="property-group">
+                                <label>{% trans 'Conditional Display' %}</label>
+                                <button class="add-condition-btn" data-action="fb-open-condition-editor">
+                                    <i class="fas fa-code-branch"></i> {% trans 'Add Condition' %}
+                                </button>
+                                <div class="conditions-list" id="conditions-list">
+                                    <!-- Existing conditions displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Settings Button -->
+                <div class="form-settings-trigger">
+                    <button class="settings-btn" data-action="fb-open-form-settings">
+                        <i class="fas fa-cog"></i> {% trans 'Form Settings' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Settings Modal -->
+    <div class="modal-overlay fb-hidden" id="form-settings-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> {% trans 'Form Settings' %}</h3>
+                <button class="modal-close" data-action="fb-close-form-settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" data-modal-tab="general">{% trans 'General' %}</button>
+                    <button class="modal-tab" data-modal-tab="messages">{% trans 'Messages' %}</button>
+                    <button class="modal-tab" data-modal-tab="behavior">{% trans 'Behavior' %}</button>
+                    <button class="modal-tab" data-modal-tab="spam">{% trans 'Spam Protection' %}</button>
+                </div>
+
+                <!-- General Tab -->
+                <div class="modal-tab-content active" data-modal-tab-content="general">
+                    <div class="form-group">
+                        <label for="setting-name">{% trans 'Form Name' %}</label>
+                        <input type="text" id="setting-name" value="{{ form.name }}">
+                        <small>{% trans 'Internal name for identification' %}</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="setting-slug">{% trans 'Slug' %}</label>
+                        <input type="text" id="setting-slug" value="{{ form.slug }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="setting-title">{% trans 'Form Title' %}</label>
+                        <div class="translatable-input">
+                            <input type="text" id="setting-title" value="{{ form.title }}">
+                            <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="title" data-model-type="form_builder.form" title="{% trans 'Translate' %}">
+                                <i class="fas fa-globe"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="setting-description">{% trans 'Description' %}</label>
+                        <div class="translatable-input">
+                            <textarea id="setting-description" rows="3">{{ form.description }}</textarea>
+                            <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="description" data-model-type="form_builder.form" title="{% trans 'Translate' %}">
+                                <i class="fas fa-globe"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="setting-submit-text">{% trans 'Submit Button Text' %}</label>
+                        <div class="translatable-input">
+                            <input type="text" id="setting-submit-text" value="{{ form.submit_button_text }}">
+                            <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="submit_button_text" data-model-type="form_builder.form" title="{% trans 'Translate' %}">
+                                <i class="fas fa-globe"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Tab -->
+                <div class="modal-tab-content" data-modal-tab-content="messages">
+                    <div class="form-group">
+                        <label for="setting-success">{% trans 'Success Message' %}</label>
+                        <div class="translatable-input">
+                            <textarea id="setting-success" rows="3">{{ form.success_message }}</textarea>
+                            <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="success_message" data-model-type="form_builder.form" title="{% trans 'Translate' %}">
+                                <i class="fas fa-globe"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="setting-error">{% trans 'Error Message' %}</label>
+                        <div class="translatable-input">
+                            <textarea id="setting-error" rows="3">{{ form.error_message }}</textarea>
+                            <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="error_message" data-model-type="form_builder.form" title="{% trans 'Translate' %}">
+                                <i class="fas fa-globe"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Behavior Tab -->
+                <div class="modal-tab-content" data-modal-tab-content="behavior">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="setting-active" {% if form.is_active %}checked{% endif %}>
+                            <span>{% trans 'Form is Active' %}</span>
+                        </label>
+                        <small>{% trans 'Only active forms can receive submissions' %}</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="setting-multi-step" {% if form.is_multi_step %}checked{% endif %}>
+                            <span>{% trans 'Enable Multi-Step Form' %}</span>
+                        </label>
+                        <small>{% trans 'Split form into multiple steps/sections' %}</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="setting-require-login" {% if form.require_login %}checked{% endif %}>
+                            <span>{% trans 'Require Login to Submit' %}</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="setting-save-partial" {% if form.save_partial_responses %}checked{% endif %}>
+                            <span>{% trans 'Save Partial Responses' %}</span>
+                        </label>
+                        <small>{% trans 'Allow users to save progress and continue later' %}</small>
+                    </div>
+                </div>
+
+                <!-- Spam Tab -->
+                <div class="modal-tab-content" data-modal-tab-content="spam">
+                    <div class="form-group">
+                        <label for="setting-spam-protection">{% trans 'Spam Protection' %}</label>
+                        <select id="setting-spam-protection">
+                            <option value="none" {% if form.spam_protection == 'none' %}selected{% endif %}>{% trans 'None' %}</option>
+                            <option value="honeypot" {% if form.spam_protection == 'honeypot' %}selected{% endif %}>{% trans 'Honeypot Field' %}</option>
+                            <option value="recaptcha" {% if form.spam_protection == 'recaptcha' %}selected{% endif %}>{% trans 'Google reCAPTCHA' %}</option>
+                        </select>
+                    </div>
+                    <div class="recaptcha-settings{% if form.spam_protection != 'recaptcha' %} fb-hidden{% endif %}" id="recaptcha-settings">
+                        <div class="form-group">
+                            <label for="setting-recaptcha-site">{% trans 'reCAPTCHA Site Key' %}</label>
+                            <input type="text" id="setting-recaptcha-site" value="{{ form.recaptcha_site_key }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="setting-recaptcha-secret">{% trans 'reCAPTCHA Secret Key' %}</label>
+                            <input type="password" id="setting-recaptcha-secret" value="{{ form.recaptcha_secret_key }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" data-action="fb-close-form-settings">{% trans 'Cancel' %}</button>
+                <button class="btn btn-primary" data-action="fb-save-form-settings">{% trans 'Save Settings' %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step Editor Modal -->
+    <div class="modal-overlay fb-hidden" id="step-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-layer-group"></i> <span id="step-modal-title">{% trans 'Edit Step' %}</span></h3>
+                <button class="modal-close" data-action="fb-close-step-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="step-edit-id">
+                <div class="form-group">
+                    <label for="step-title">{% trans 'Step Title' %}</label>
+                    <div class="translatable-input">
+                        <input type="text" id="step-title" placeholder="{% trans 'Step title' %}">
+                        <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="title" data-model-type="form_builder.formstep" title="{% trans 'Translate' %}">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="step-description">{% trans 'Step Description' %}</label>
+                    <div class="translatable-input">
+                        <textarea id="step-description" rows="2" placeholder="{% trans 'Optional description' %}"></textarea>
+                        <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="description" data-model-type="form_builder.formstep" title="{% trans 'Translate' %}">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="step-skippable">
+                        <span>{% trans 'Allow users to skip this step' %}</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="step-next-text">{% trans 'Next Button Text' %}</label>
+                    <div class="translatable-input">
+                        <input type="text" id="step-next-text" value="Next">
+                        <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="next_button_text" data-model-type="form_builder.formstep" title="{% trans 'Translate' %}">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="step-back-text">{% trans 'Back Button Text' %}</label>
+                    <div class="translatable-input">
+                        <input type="text" id="step-back-text" value="Back">
+                        <button class="translate-btn" data-action="fb-open-translation-editor" data-field-key="back_button_text" data-model-type="form_builder.formstep" title="{% trans 'Translate' %}">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" data-action="fb-close-step-modal">{% trans 'Cancel' %}</button>
+                <button class="btn btn-primary" data-action="fb-save-step">{% trans 'Save Step' %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conditional Rules Manager Modal -->
+    <div class="modal-overlay fb-hidden" id="rules-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-code-branch"></i> {% trans 'Conditional Rules' %}</h3>
+                <button class="modal-close" data-action="fb-close-rules-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="rules-help">{% trans 'Create rules to show/hide fields, skip steps, or change requirements based on user input.' %}</p>
+
+                <!-- Rules List -->
+                <div class="rules-list" id="rules-list">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <button class="add-rule-btn" data-action="fb-open-rule-editor">
+                    <i class="fas fa-plus"></i> {% trans 'Add Rule' %}
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" data-action="fb-close-rules-modal">{% trans 'Close' %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rule Editor Modal -->
+    <div class="modal-overlay fb-hidden" id="rule-editor-modal">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">
+                <h3><i class="fas fa-code-branch"></i> <span id="rule-editor-title">{% trans 'Add Rule' %}</span></h3>
+                <button class="modal-close" data-action="fb-close-rule-editor">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="rule-edit-id">
+
+                <div class="form-group">
+                    <label for="rule-name">{% trans 'Rule Name' %} <small>({% trans 'optional' %})</small></label>
+                    <input type="text" id="rule-name" placeholder="{% trans 'Describe what this rule does' %}">
+                </div>
+
+                <div class="rule-condition-section">
+                    <h4>{% trans 'IF' %}</h4>
+
+                    <div class="form-row">
+                        <div class="form-group flex-2">
+                            <label for="rule-source-field">{% trans 'Source Field' %}</label>
+                            <select id="rule-source-field">
+                                <option value="">{% trans '-- Select Field --' %}</option>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="rule-operator">{% trans 'Operator' %}</label>
+                            <select id="rule-operator">
+                                <option value="equals">{% trans 'Equals' %}</option>
+                                <option value="not_equals">{% trans 'Does Not Equal' %}</option>
+                                <option value="contains">{% trans 'Contains' %}</option>
+                                <option value="not_contains">{% trans 'Does Not Contain' %}</option>
+                                <option value="greater_than">{% trans 'Greater Than' %}</option>
+                                <option value="less_than">{% trans 'Less Than' %}</option>
+                                <option value="is_empty">{% trans 'Is Empty' %}</option>
+                                <option value="is_not_empty">{% trans 'Is Not Empty' %}</option>
+                                <option value="in_list">{% trans 'Is One Of' %}</option>
+                                <option value="starts_with">{% trans 'Starts With' %}</option>
+                                <option value="ends_with">{% trans 'Ends With' %}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="rule-value-group">
+                        <label for="rule-value">{% trans 'Value' %}</label>
+                        <input type="text" id="rule-value" placeholder="{% trans 'Enter comparison value' %}">
+                        <small id="rule-value-help" class="help-text"></small>
+                    </div>
+
+                    <!-- For select/radio fields, show options dropdown -->
+                    <div class="form-group fb-hidden" id="rule-value-select-group">
+                        <label for="rule-value-select">{% trans 'Value' %}</label>
+                        <select id="rule-value-select">
+                            <!-- Populated based on source field options -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="rule-action-section">
+                    <h4>{% trans 'THEN' %}</h4>
+
+                    <div class="form-group">
+                        <label for="rule-action">{% trans 'Action' %}</label>
+                        <select id="rule-action">
+                            <option value="show_field">{% trans 'Show Field' %}</option>
+                            <option value="hide_field">{% trans 'Hide Field' %}</option>
+                            <option value="require_field">{% trans 'Make Field Required' %}</option>
+                            <option value="unrequire_field">{% trans 'Make Field Optional' %}</option>
+                            <option value="skip_to_step">{% trans 'Skip to Step' %}</option>
+                            <option value="show_step">{% trans 'Show Step' %}</option>
+                            <option value="hide_step">{% trans 'Hide Step' %}</option>
+                            <option value="set_value">{% trans 'Set Field Value' %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Target Field (for field actions) -->
+                    <div class="form-group" id="rule-target-field-group">
+                        <label for="rule-target-field">{% trans 'Target Field' %}</label>
+                        <select id="rule-target-field">
+                            <option value="">{% trans '-- Select Field --' %}</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <!-- Target Step (for step actions) -->
+                    <div class="form-group fb-hidden" id="rule-target-step-group">
+                        <label for="rule-target-step">{% trans 'Target Step' %}</label>
+                        <select id="rule-target-step">
+                            <option value="">{% trans '-- Select Step --' %}</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <!-- Action Value (for set_value action) -->
+                    <div class="form-group fb-hidden" id="rule-action-value-group">
+                        <label for="rule-action-value">{% trans 'Value to Set' %}</label>
+                        <input type="text" id="rule-action-value" placeholder="{% trans 'Enter value' %}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rule-is-active" checked>
+                        <span>{% trans 'Rule is Active' %}</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="rule-priority">{% trans 'Priority' %}</label>
+                    <input type="number" id="rule-priority" value="0" min="0">
+                    <small>{% trans 'Higher priority rules are evaluated first' %}</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" data-action="fb-close-rule-editor">{% trans 'Cancel' %}</button>
+                <button class="btn btn-primary" data-action="fb-save-rule">{% trans 'Save Rule' %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay fb-hidden" id="delete-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> {% trans 'Confirm Delete' %}</h3>
+                <button class="modal-close" data-action="fb-close-delete-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="delete-modal-message">{% trans 'Are you sure you want to delete this item?' %}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" data-action="fb-close-delete-modal">{% trans 'Cancel' %}</button>
+                <button class="btn btn-danger" data-action="fb-confirm-delete">{% trans 'Delete' %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Builder JavaScript -->
+    <!-- JSON data islands for CSP compliance -->
+    <script type="application/json" id="fb-csrf-token">"{{ csrf_token }}"</script>
+    <script type="application/json" id="fb-form-data">{{ form_data_json|safe }}</script>
+    <script type="application/json" id="fb-fields-data">{{ fields_data_json|safe }}</script>
+    <script type="application/json" id="fb-steps-data">{{ steps_data_json|safe }}</script>
+    <script type="application/json" id="fb-rules-data">{{ rules_data_json|safe }}</script>
+    <script type="application/json" id="fb-languages">{{ languages_json|safe }}</script>
+    <script type="application/json" id="fb-primary-language">{"code": "{{ primary_language|escapejs }}", "name": "{{ primary_language_name|escapejs }}"}</script>
+    <script type="application/json" id="fb-lock-endpoint">"{% url 'translations_api:toggle_lock' %}"</script>
+    <script type="application/json" id="fb-field-types">{
+        "text": {"icon": "fa-font", "name": "{% trans 'Text' %}", "category": "basic"},
+        "textarea": {"icon": "fa-align-left", "name": "{% trans 'Text Area' %}", "category": "basic"},
+        "email": {"icon": "fa-envelope", "name": "{% trans 'Email' %}", "category": "basic"},
+        "phone": {"icon": "fa-phone", "name": "{% trans 'Phone' %}", "category": "basic"},
+        "number": {"icon": "fa-hashtag", "name": "{% trans 'Number' %}", "category": "basic"},
+        "url": {"icon": "fa-link", "name": "{% trans 'URL' %}", "category": "basic"},
+        "date": {"icon": "fa-calendar-day", "name": "{% trans 'Date' %}", "category": "datetime"},
+        "time": {"icon": "fa-clock", "name": "{% trans 'Time' %}", "category": "datetime"},
+        "datetime": {"icon": "fa-calendar-alt", "name": "{% trans 'Date & Time' %}", "category": "datetime"},
+        "select": {"icon": "fa-caret-square-down", "name": "{% trans 'Dropdown' %}", "category": "selection", "hasOptions": true},
+        "radio": {"icon": "fa-dot-circle", "name": "{% trans 'Radio Buttons' %}", "category": "selection", "hasOptions": true},
+        "checkbox": {"icon": "fa-check-square", "name": "{% trans 'Checkbox' %}", "category": "selection"},
+        "checkbox_group": {"icon": "fa-tasks", "name": "{% trans 'Checkbox Group' %}", "category": "selection", "hasOptions": true},
+        "rating_stars": {"icon": "fa-star", "name": "{% trans 'Star Rating' %}", "category": "ratings", "hasRatingConfig": true},
+        "rating_likert": {"icon": "fa-sliders-h", "name": "{% trans 'Likert Scale' %}", "category": "ratings", "hasRatingConfig": true},
+        "rating_nps": {"icon": "fa-chart-line", "name": "{% trans 'NPS Score' %}", "category": "ratings", "hasRatingConfig": true},
+        "file": {"icon": "fa-cloud-upload-alt", "name": "{% trans 'File Upload' %}", "category": "advanced", "hasFileConfig": true},
+        "product_select": {"icon": "fa-shopping-bag", "name": "{% trans 'Product Select' %}", "category": "advanced"},
+        "hidden": {"icon": "fa-eye-slash", "name": "{% trans 'Hidden Field' %}", "category": "advanced"},
+        "heading": {"icon": "fa-heading", "name": "{% trans 'Heading' %}", "category": "layout", "isLayout": true},
+        "paragraph": {"icon": "fa-paragraph", "name": "{% trans 'Paragraph' %}", "category": "layout", "isLayout": true},
+        "divider": {"icon": "fa-minus", "name": "{% trans 'Divider' %}", "category": "layout", "isLayout": true}
+    }</script>
+    <script type="application/json" id="fb-translations">{
+        "confirmDelete": "{% trans 'Are you sure you want to delete this field?' %}",
+        "confirmDeleteStep": "{% trans 'Are you sure you want to delete this step? All fields in this step will be unassigned.' %}",
+        "confirmDeleteRule": "{% trans 'Are you sure you want to delete this rule?' %}",
+        "fieldDeleted": "{% trans 'Field deleted successfully' %}",
+        "fieldAdded": "{% trans 'Field added successfully' %}",
+        "fieldUpdated": "{% trans 'Field updated successfully' %}",
+        "fieldNotFound": "{% trans 'Field not found. It may have been deleted.' %}",
+        "stepNotFound": "{% trans 'Step not found. It may have been deleted.' %}",
+        "formSaved": "{% trans 'Form saved successfully' %}",
+        "saveFailed": "{% trans 'Failed to save. Please try again.' %}",
+        "option": "{% trans 'Option' %}",
+        "newStep": "{% trans 'New Step' %}",
+        "ruleCreated": "{% trans 'Rule created successfully' %}",
+        "ruleUpdated": "{% trans 'Rule updated successfully' %}",
+        "ruleDeleted": "{% trans 'Rule deleted successfully' %}",
+        "ruleAdded": "{% trans 'Rule added successfully' %}",
+        "selectSourceField": "{% trans 'Please select a source field' %}",
+        "selectTargetField": "{% trans 'Please select a target field' %}",
+        "selectTargetStep": "{% trans 'Please select a target step' %}",
+        "enterValue": "{% trans 'Please enter a comparison value' %}",
+        "selectField": "{% trans 'Select a field...' %}",
+        "selectStep": "{% trans 'Select a step...' %}",
+        "noRules": "{% trans 'No conditional rules defined yet. Add a rule to create branching logic.' %}",
+        "noConditions": "{% trans 'No conditions set' %}",
+        "edit": "{% trans 'Edit' %}",
+        "delete": "{% trans 'Delete' %}",
+        "addRule": "{% trans 'Add Rule' %}",
+        "editRule": "{% trans 'Edit Rule' %}"
+    }</script>
+    <script type="application/json" id="fb-operators">{
+        "equals": "{% trans 'Equals' %}",
+        "not_equals": "{% trans 'Does Not Equal' %}",
+        "contains": "{% trans 'Contains' %}",
+        "not_contains": "{% trans 'Does Not Contain' %}",
+        "greater_than": "{% trans 'Greater Than' %}",
+        "less_than": "{% trans 'Less Than' %}",
+        "greater_than_or_equal": "{% trans 'Greater Than or Equal' %}",
+        "less_than_or_equal": "{% trans 'Less Than or Equal' %}",
+        "is_empty": "{% trans 'Is Empty' %}",
+        "is_not_empty": "{% trans 'Is Not Empty' %}",
+        "in_list": "{% trans 'Is One Of' %}",
+        "not_in_list": "{% trans 'Is Not One Of' %}",
+        "starts_with": "{% trans 'Starts With' %}",
+        "ends_with": "{% trans 'Ends With' %}"
+    }</script>
+    <script type="application/json" id="fb-actions">{
+        "show_field": "{% trans 'Show Field' %}",
+        "hide_field": "{% trans 'Hide Field' %}",
+        "require_field": "{% trans 'Make Field Required' %}",
+        "unrequire_field": "{% trans 'Make Field Optional' %}",
+        "skip_to_step": "{% trans 'Skip to Step' %}",
+        "show_step": "{% trans 'Show Step' %}",
+        "hide_step": "{% trans 'Hide Step' %}",
+        "set_value": "{% trans 'Set Field Value' %}"
+    }</script>
+
+    <!-- Form Builder Main Script -->
+    <script src="{% static 'form_builder/js/visual_builder.js' %}"></script>
+</body>
+</html>

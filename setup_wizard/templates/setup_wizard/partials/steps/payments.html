@@ -1,0 +1,81 @@
+{% load i18n %}
+<div class="wizard-step-header">
+    <div class="wizard-step-icon">
+        <i class="fas fa-credit-card"></i>
+    </div>
+    <h3 class="wizard-step-title">{% trans "Payments" %}</h3>
+    <p class="wizard-step-description">{% trans "You'll need at least one payment provider to accept orders." %}</p>
+</div>
+
+<form id="wizard-form-payments" style="display:none;">
+    {% csrf_token %}
+</form>
+
+{% if configured_providers %}
+<div class="wizard-providers-list">
+    <div class="wizard-providers-header">
+        <i class="fas fa-check-circle" style="color: var(--success-fg);"></i>
+        <span>{% blocktrans count count=provider_count %}{{ count }} payment provider configured{% plural %}{{ count }} payment providers configured{% endblocktrans %}</span>
+    </div>
+    {% for provider in configured_providers %}
+    <div class="wizard-provider-item">
+        <div class="wizard-provider-icon">
+            <i class="fas fa-credit-card"></i>
+        </div>
+        <div class="wizard-provider-info">
+            <span class="wizard-provider-name">{{ provider.display_name|default:provider.component.name }}</span>
+            <span class="wizard-provider-status wizard-provider-status--{{ provider.connection_status }}">
+                {% if provider.connection_status == 'connected' %}
+                <i class="fas fa-circle" style="font-size: 0.5em; vertical-align: middle;"></i> {% trans "Connected" %}
+                {% elif provider.connection_status == 'error' %}
+                <i class="fas fa-exclamation-circle"></i> {% trans "Error" %}
+                {% else %}
+                <i class="fas fa-circle" style="font-size: 0.5em; vertical-align: middle;"></i> {{ provider.get_connection_status_display }}
+                {% endif %}
+            </span>
+        </div>
+        {% if provider.is_default %}
+        <span class="wizard-provider-badge">{% trans "Default" %}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="payments-info-card">
+    <div class="payments-info-icon">
+        <i class="fas fa-shield-alt"></i>
+    </div>
+
+    <p class="payments-info-text">
+        {% if configured_providers %}
+        {% trans "You can manage your payment providers or add new ones in the dedicated settings area below." %}
+        {% else %}
+        {% trans "Payment providers (Stripe, PayPal, etc.) are configured in a dedicated settings area with secure credential management. Click below to set up your payment provider." %}
+        {% endif %}
+    </p>
+
+    <a href="{% url 'admin:payment_providers_paymentprovideraccount_changelist' %}"
+       target="_blank"
+       rel="noopener"
+       class="btn btn-primary">
+        <i class="fas fa-external-link-alt"></i>
+        {% if configured_providers %}
+        {% trans "Manage Payment Providers" %}
+        {% else %}
+        {% trans "Open Payment Providers" %}
+        {% endif %}
+    </a>
+
+    <div style="margin-top: var(--space-4);">
+        <label class="payments-ack-label">
+            <input type="checkbox" id="payments-ack"
+                   {% if progress.payment_methods_configured or configured_providers %}checked{% endif %}>
+            {% if configured_providers %}
+            {% trans "I've reviewed my payment provider configuration" %}
+            {% else %}
+            {% trans "I understand - I'll configure payment providers" %}
+            {% endif %}
+        </label>
+    </div>
+</div>

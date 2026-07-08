@@ -1,0 +1,263 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Compatibility Matrix" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'catalog/admin/css/configurator_compatibility_matrix.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="configurator-container">
+    <div class="configurator-header">
+        <div>
+            <h1><i class="fas fa-project-diagram"></i> {% trans "Compatibility Matrix" %}</h1>
+            <div class="breadcrumb">
+                <a href="{% url 'admin:catalog_product_change' product.pk %}">{{ product.name }}</a>
+                &rsaquo; {% trans "Compatibility Matrix" %}
+            </div>
+        </div>
+        <div class="header-actions">
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="generate_from_tags">
+                <button type="submit" class="button default"
+                        title="{% trans 'Auto-generate rules from matching compatibility tags across slots' %}">
+                    <i class="fas fa-magic"></i> {% trans "Generate from Tags" %}
+                </button>
+            </form>
+            <a href="{% url 'admin:catalog_product_change' product.pk %}" class="button">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Product" %}
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="messagelist"><li class="{{ message.tags }}">{{ message }}</li></div>
+    {% endfor %}
+    {% endif %}
+
+    {% if slots|length < 2 %}
+    <div class="empty-state">
+        <i class="fas fa-project-diagram"></i>
+        <p style="font-size: 16px; margin: 0;">{% trans "At least 2 slots are needed for compatibility rules." %}</p>
+        <p style="font-size: 14px; margin-top: 10px;">
+            <a href="{% url 'admin:catalog_product_change' product.pk %}">{% trans "Add configuration slots to this product first." %}</a>
+        </p>
+    </div>
+    {% else %}
+
+    <div id="status-bar" class="status-bar"></div>
+
+    <!-- Slot Tabs: Select Source Slot -->
+    <div class="slot-tabs" id="slot-tabs">
+        {% for slot in slots %}
+        <div class="slot-tab {% if forloop.first %}active{% endif %}"
+             data-slot-id="{{ slot.pk }}"
+             data-action="switch-slot">
+            {% if slot.icon %}<i class="{{ slot.icon }}"></i> {% endif %}{{ slot.name }}
+            <span style="font-size: 11px; color: var(--body-quiet-color); margin-left: 4px;">
+                ({{ slot.options.count }})
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- One panel per source slot -->
+    {% for source_slot in slots %}
+    <div class="matrix-panel {% if forloop.first %}active{% endif %}" id="panel-{{ source_slot.pk }}">
+
+        {% if source_slot.options.count == 0 %}
+        <div class="empty-state">
+            <i class="fas fa-puzzle-piece"></i>
+            <p>{% trans "This slot has no options." %}</p>
+            <a href="{% url 'catalog_admin:slot_options_manager' slot_id=source_slot.pk %}" class="button default" style="margin-top: 12px;">
+                <i class="fas fa-plus"></i> {% trans "Add Options" %}
+            </a>
+        </div>
+        {% else %}
+
+        <!-- Source Option Selector -->
+        <div class="source-selector">
+            <label><i class="fas fa-crosshairs"></i> {% trans "When this option is selected:" %}</label>
+            <select id="source-select-{{ source_slot.pk }}" data-slot-id="{{ source_slot.pk }}" data-action="load-rule-editor">
+                <option value="">— {% trans "Select an option" %} —</option>
+                {% for option in source_slot.options.all %}
+                <option value="{{ option.pk }}">
+                    {{ option.option_product.name }}{% if option.option_variant %} ({{ option.option_variant.name }}){% endif %}
+                    {% if option.compatibility_tags %} [{{ option.compatibility_tags|join:", " }}]{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Target Slots Rule Editor (shown when source selected) -->
+        <div id="rule-editor-{{ source_slot.pk }}" style="display: none;">
+            {% for target_slot in slots %}
+            {% if target_slot.pk != source_slot.pk %}
+            <div style="margin-bottom: 24px; padding: 16px; background: var(--darkened-bg); border-radius: 8px;">
+                <h4 style="margin: 0 0 12px; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-arrow-right" style="color: var(--primary);"></i>
+                    {% trans "Filter options in" %}: <strong>{% if target_slot.icon %}<i class="{{ target_slot.icon }}"></i> {% endif %}{{ target_slot.name }}</strong>
+                </h4>
+
+                {% if target_slot.options.count == 0 %}
+                <p style="color: var(--body-quiet-color); font-size: 13px;">{% trans "No options in this slot." %}</p>
+                {% else %}
+                <!-- Rule Type -->
+                <div class="rule-type-toggle">
+                    <label>{% trans "Rule type:" %}</label>
+                    <button type="button"
+                            class="rule-type-btn active"
+                            data-source-slot="{{ source_slot.pk }}"
+                            data-target-slot="{{ target_slot.pk }}"
+                            data-rule-type="requires"
+                            data-action="set-rule-type">
+                        <i class="fas fa-check-circle"></i> {% trans "Requires" %}
+                    </button>
+                    <button type="button"
+                            class="rule-type-btn"
+                            data-source-slot="{{ source_slot.pk }}"
+                            data-target-slot="{{ target_slot.pk }}"
+                            data-rule-type="excludes"
+                            data-action="set-rule-type">
+                        <i class="fas fa-ban"></i> {% trans "Excludes" %}
+                    </button>
+                </div>
+
+                <!-- Target Options Grid -->
+                <div class="target-options-grid" id="target-grid-{{ source_slot.pk }}-{{ target_slot.pk }}">
+                    {% for target_option in target_slot.options.all %}
+                    <label class="target-option-card" for="cb-{{ source_slot.pk }}-{{ target_slot.pk }}-{{ target_option.pk }}">
+                        <input type="checkbox"
+                               id="cb-{{ source_slot.pk }}-{{ target_slot.pk }}-{{ target_option.pk }}"
+                               value="{{ target_option.pk }}"
+                               data-source-slot="{{ source_slot.pk }}"
+                               data-target-slot="{{ target_slot.pk }}">
+                        <div>
+                            <div class="option-name">
+                                {{ target_option.option_product.name }}
+                                {% if target_option.option_variant %}<span style="color: var(--body-quiet-color);">({{ target_option.option_variant.name }})</span>{% endif %}
+                            </div>
+                            <div class="option-sku">{{ target_option.option_product.sku|default:"-" }}</div>
+                            {% if target_option.compatibility_tags %}
+                            <div class="option-tags">
+                                {% for tag in target_option.compatibility_tags %}
+                                <span class="tag">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <!-- Save Button Per Target Slot -->
+                <div class="rule-actions">
+                    <button type="button" class="button default"
+                            data-action="save-rule" data-source-slot="{{ source_slot.pk }}" data-target-slot="{{ target_slot.pk }}"
+                            id="save-btn-{{ source_slot.pk }}-{{ target_slot.pk }}">
+                        <i class="fas fa-save"></i> {% trans "Save Rule" %}
+                    </button>
+                    <button type="button" class="button"
+                            data-action="delete-rule" data-source-slot="{{ source_slot.pk }}" data-target-slot="{{ target_slot.pk }}"
+                            id="delete-btn-{{ source_slot.pk }}-{{ target_slot.pk }}"
+                            style="display: none;">
+                        <i class="fas fa-trash"></i> {% trans "Remove Rule" %}
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- Existing Rules Summary -->
+    <div class="rules-summary">
+        <h3><i class="fas fa-list-check"></i> {% trans "Current Rules" %} ({{ rules|length }})</h3>
+        {% if rules %}
+        <table class="rules-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Source Option" %}</th>
+                    <th>{% trans "Rule" %}</th>
+                    <th>{% trans "Target Slot" %}</th>
+                    <th>{% trans "Compatible Options" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rule in rules %}
+                <tr>
+                    <td>
+                        <strong>{{ rule.source_option.option_product.name }}</strong>
+                        {% if rule.source_option.option_variant %}<br><span style="color: var(--body-quiet-color);">({{ rule.source_option.option_variant.name }})</span>{% endif %}
+                        <br><span style="font-size: 11px; color: var(--body-quiet-color);">{% trans "in" %} {{ rule.source_option.slot.name }}</span>
+                    </td>
+                    <td>
+                        <span class="rule-badge {{ rule.rule_type }}">
+                            {% if rule.rule_type == 'requires' %}
+                            <i class="fas fa-check-circle"></i> {% trans "Requires" %}
+                            {% else %}
+                            <i class="fas fa-ban"></i> {% trans "Excludes" %}
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>{% if rule.target_slot.icon %}<i class="{{ rule.target_slot.icon }}"></i> {% endif %}{{ rule.target_slot.name }}</td>
+                    <td>
+                        {% for opt in rule.compatible_options.all %}
+                        <span style="display: inline-block; padding: 2px 8px; margin: 2px; background: var(--darkened-bg); border-radius: 3px; font-size: 12px;">
+                            {{ opt.option_product.name }}{% if opt.option_variant %} ({{ opt.option_variant.name }}){% endif %}
+                        </span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_rule">
+                            <input type="hidden" name="rule_id" value="{{ rule.pk }}">
+                            <button type="submit" class="button" style="padding: 4px 10px; font-size: 12px;"
+                                    data-confirm="{% trans 'Delete this rule?' %}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state" style="padding: 24px;">
+            <i class="fas fa-check-double" style="font-size: 32px;"></i>
+            <p style="margin: 8px 0 0;">{% trans "No compatibility rules defined yet." %}</p>
+            <p style="font-size: 13px; margin-top: 4px;">{% trans "Select a source option above to create rules, or use 'Generate from Tags' for automatic rule creation." %}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {% endif %}
+</div>
+
+<script type="application/json" id="compatibility-matrix-config">
+{
+    "productId": {{ product.pk }},
+    "strings": {
+        "savingRule": "{% trans 'Saving rule...' %}",
+        "ruleSaved": "{% trans 'Rule saved successfully.' %}",
+        "options": "{% trans 'options' %}",
+        "failedToSave": "{% trans 'Failed to save rule.' %}",
+        "errorSaving": "{% trans 'Error saving rule.' %}",
+        "removeRuleConfirm": "{% trans 'Remove this compatibility rule?' %}",
+        "deletingRule": "{% trans 'Deleting rule...' %}",
+        "ruleRemoved": "{% trans 'Rule removed.' %}"
+    }
+}
+</script>
+<script src="{% static 'catalog/admin/js/configurator_compatibility_matrix.js' %}"></script>
+{% endblock %}

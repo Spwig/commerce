@@ -1,0 +1,142 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/* ============================================
+   ReturnRequest Change Form — Variant C
+   Scoped under .returnrequest-change-form
+   ============================================ */
+
+/* --- Dashboard Header --- */
+.returnrequest-change-form .dashboard-header-info h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--body-fg);
+}
+
+.returnrequest-change-form .dashboard-header .dashboard-stats-grid {
+    width: 100%;
+}
+
+/* --- Status Badges --- */
+.returnrequest-change-form .rr-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.returnrequest-change-form .rr-status-badge.pending {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+.returnrequest-change-form .rr-status-badge.approved {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.returnrequest-change-form .rr-status-badge.rejected {
+    background: var(--error-bg);
+    color: var(--error-fg);
+}
+
+.returnrequest-change-form .rr-status-badge.label_sent {
+    background: #f0e6ff;
+    color: #7c3aed;
+}
+
+.returnrequest-change-form .rr-status-badge.in_transit {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.returnrequest-change-form .rr-status-badge.received {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+.returnrequest-change-form .rr-status-badge.inspected {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.returnrequest-change-form .rr-status-badge.completed {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.returnrequest-change-form .rr-status-badge.cancelled {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+/* --- Form Cards --- */
+.returnrequest-change-form .form-card {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+/* --- Add Mode Header --- */
+.returnrequest-change-form .add-mode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: var(--darkened-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+}
+
+.returnrequest-change-form .add-mode-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--body-fg);
+}
+
+.returnrequest-change-form .add-mode-header .header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* --- Checkbox --- */
+.returnrequest-change-form .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.returnrequest-change-form .checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .returnrequest-change-form .add-mode-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+
+    .returnrequest-change-form .form-card {
+        padding: 16px;
+    }
+}

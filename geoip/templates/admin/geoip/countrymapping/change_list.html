@@ -1,0 +1,129 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block title %}{% trans "Country Mappings" %} | {{ site_title|default:_("Site Admin") }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+    <link rel="stylesheet" href="{% static 'geoip/admin/css/countrymapping.css' %}">
+{% endblock %}
+
+{# Replace Django's object-tools with our custom header + filters #}
+{% block object-tools %}
+    <!-- Header -->
+    <div class="change-list-header">
+        <div class="change-list-header-top">
+            <div class="change-list-header-text">
+                <h1>
+                    <i class="fas fa-flag"></i>
+                    {% trans "Country Mappings" %}
+                </h1>
+                <p class="subtitle">{% trans "Configure country-specific settings for currency, language, and tax" %}</p>
+            </div>
+            <div class="change-list-header-actions">
+                <a href="{% url 'admin:geoip_countrymapping_add' %}" class="button default">
+                    <i class="fas fa-plus"></i> {% trans "Add Country" %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-side Filter Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Country name or code...' %}">
+            </div>
+
+            <!-- Active Status -->
+            <div class="filter-field">
+                <label for="filter-active">
+                    <i class="fas fa-toggle-on"></i> {% trans "Active" %}
+                </label>
+                <select id="filter-active">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "Active" %}</option>
+                    <option value="no">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- EU Member -->
+            <div class="filter-field">
+                <label for="filter-eu">
+                    <i class="fas fa-globe-europe"></i> {% trans "EU Member" %}
+                </label>
+                <select id="filter-eu">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "EU Member" %}</option>
+                    <option value="no">{% trans "Non-EU" %}</option>
+                </select>
+            </div>
+
+            <!-- Currency -->
+            <div class="filter-field">
+                <label for="filter-currency">
+                    <i class="fas fa-coins"></i> {% trans "Currency" %}
+                </label>
+                <input type="text" id="filter-currency" placeholder="{% trans 'Currency code (e.g., EUR)' %}" maxlength="3" class="filter-uppercase">
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Countries" %}</h2>
+        <span class="results-count" id="results-count-info">
+            <i class="fas fa-flag"></i>
+            <span id="results-count">0</span> {% trans "countries" %}
+        </span>
+    </div>
+{% endblock %}
+
+{# Hide Django's default search — we have our own #}
+{% block search %}{% endblock %}
+
+{# Hide Django's filter sidebar — we have our own #}
+{% block filters %}{% endblock %}
+
+{# Override content to append our script after Django's changelist (sub-block overrides above still apply) #}
+{% block content %}
+{{ block.super }}
+    <!-- GeoIP translations for JS -->
+    <script type="application/json" id="geoip-translations">
+    {
+        "label_search": "{% trans 'Search' %}",
+        "label_active_f": "{% trans 'Active' %}",
+        "label_eu": "{% trans 'EU' %}",
+        "label_currency": "{% trans 'Currency' %}",
+        "label_active": "{% trans 'Active:' %}"
+    }
+    </script>
+
+    <script src="{% static 'geoip/admin/js/geoip-admin.js' %}"></script>
+{% endblock %}

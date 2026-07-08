@@ -1,0 +1,132 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Stock Movements" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-exchange-alt"></i>
+                {% trans "Stock Movements" %}
+            </h1>
+            <p class="subtitle">{% trans "Audit trail of all inventory changes across warehouses" %}</p>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messagelist">
+                <div class="{{ message.tags }}">{{ message }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Filter Tabs -->
+    <div class="admin-tabs">
+        <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if not request.GET.movement_type %}active{% endif %}"
+           data-filter="all">
+            <i class="fas fa-th"></i>
+            <span class="label">{% trans "All" %}<br>({{ all_count }})</span>
+        </a>
+        <a href="?movement_type=adjustment{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.movement_type == 'adjustment' %}active{% endif %}"
+           data-filter="adjustment">
+            <i class="fas fa-sliders-h"></i>
+            <span class="label">{% trans "Adjustments" %}<br>({{ adjustment_count }})</span>
+        </a>
+        <a href="?movement_type=allocation{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.movement_type == 'allocation' %}active{% endif %}"
+           data-filter="allocation">
+            <i class="fas fa-clipboard-check"></i>
+            <span class="label">{% trans "Allocations" %}<br>({{ allocation_count }})</span>
+        </a>
+        <a href="?movement_type=fulfillment{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.movement_type == 'fulfillment' %}active{% endif %}"
+           data-filter="fulfillment">
+            <i class="fas fa-truck"></i>
+            <span class="label">{% trans "Fulfillments" %}<br>({{ fulfillment_count }})</span>
+        </a>
+        <a href="?movement_type=return{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+           class="admin-tab-btn {% if request.GET.movement_type == 'return' %}active{% endif %}"
+           data-filter="return">
+            <i class="fas fa-undo"></i>
+            <span class="label">{% trans "Returns" %}<br>({{ return_count }})</span>
+        </a>
+    </div>
+
+    <!-- Search -->
+    <div class="announcements-toolbar">
+        <div class="toolbar-right">
+            <div class="search-bar">
+                <form method="get" action="" class="search-form">
+                    {% for key, value in request.GET.items %}
+                        {% if key != 'q' %}
+                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endif %}
+                    {% endfor %}
+                    <input type="text"
+                           name="q"
+                           value="{{ request.GET.q }}"
+                           placeholder="{% trans 'Search by product, SKU, or order number...' %}"
+                           class="search-input"
+                           id="movement-search">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    {% if cl.result_list %}
+        <div class="results-info">
+            <h2>{% trans "Stock Movements" %}</h2>
+            <span class="results-count">
+                <i class="fas fa-exchange-alt"></i>
+                {{ cl.result_count }} {% trans "movement" %}{{ cl.result_count|pluralize }}
+            </span>
+        </div>
+
+        <div id="movement-results" class="list-row-cards">
+            {% for movement in cl.result_list %}
+                {% include "admin/catalog/stockmovement/partials/stockmovement_cards.html" with movement=movement %}
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if cl.result_count > cl.list_per_page %}
+        <div class="pagination-container">
+            <p class="paginator">
+                <span class="small quiet">{{ cl.result_count }} {% trans "movements" %}</span>
+            </p>
+            {% if cl.multi_page %}
+                <p class="paginator">
+                    {% if cl.page_num > 0 %}
+                        <a href="?p={{ cl.page_num|add:'-1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Previous" %}</a>
+                    {% endif %}
+                    <span class="this-page">{% trans "Page" %} {{ cl.page_num|add:'1' }} {% trans "of" %} {{ cl.paginator.num_pages }}</span>
+                    {% if cl.page_num < cl.paginator.num_pages|add:'-1' %}
+                        <a href="?p={{ cl.page_num|add:'1' }}{% for key, value in request.GET.items %}{% if key != 'p' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{% trans "Next" %}</a>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="list-row-card" style="text-align: center; padding: 40px; color: var(--body-quiet-color);">
+            <div style="font-size: 48px; margin-bottom: 16px;">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <p style="font-size: 16px; margin: 0;">{% trans "No stock movements found." %}</p>
+            <p style="font-size: 14px; margin-top: 10px;">
+                {% trans "Stock movements are created automatically when inventory changes occur." %}
+            </p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

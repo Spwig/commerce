@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/wizard-base.css' %}">
+<link rel="stylesheet" href="{% static 'setup_wizard/admin/css/base_wizard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="setup-wizard-container">
+    {% block wizard_content %}
+    {% endblock %}
+</div>
+{% endblock %}

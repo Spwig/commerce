@@ -1,0 +1,85 @@
+{% extends 'page_builder/base.html' %}
+{% load static %}
+
+{% block title %}{{ page.meta_title|default:page.title }}{% endblock %}
+
+{% block body_class %}page-{{ page.page_type }} page-{{ page.slug }}{% if page.template_variant %} variant-{{ page.template_variant }}{% endif %}{% endblock %}
+
+{% block extra_css %}
+    <!-- Page-specific CSS from design system -->
+    {% if page.theme %}
+        <!-- Theme-specific styles -->
+        <style>
+        :root {
+            {% for key, value in page.theme.color_scheme.items %}
+            --theme-{{ key }}: {{ value }};
+            {% endfor %}
+        }
+        </style>
+    {% endif %}
+
+    <!-- Custom page CSS -->
+    {% if page.style_overrides %}
+        <style>
+        .page-{{ page.slug }} {
+            {% for property, value in page.style_overrides.items %}
+            {{ property }}: {{ value }};
+            {% endfor %}
+        }
+        </style>
+    {% endif %}
+
+    <!-- Preview mode styles -->
+    {% if is_preview %}
+    <link rel="stylesheet" href="{% static 'page_builder/css/preview-banner.css' %}" media="all">
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    {% if not is_maintenance %}
+        <!-- Preview mode indicator (before header so it's at very top) -->
+        {% if is_preview %}
+        <div class="preview-banner">
+            <i class="fas fa-eye"></i> Preview Mode - This page is not yet published
+        </div>
+        {% endif %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <!-- Page content elements -->
+    {% load element_tags %}
+    {% for element in elements %}
+        {% render_element element %}
+    {% empty %}
+        <!-- Empty state for pages with no elements -->
+        <div class="container section">
+            <div class="empty-state">
+                <div class="empty-state__icon">📄</div>
+                <h2 class="empty-state__title">This page is under construction</h2>
+                <p class="empty-state__text">Content is being added to this page. Please check back soon!</p>
+                <a href="/" class="btn btn--primary">Return Home</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <!-- Page-specific JavaScript -->
+    {% if page.page_type == 'product' and product %}
+    <script src="{% static 'page_builder/js/product-page.js' %}" defer></script>
+    {% endif %}
+
+    {% if page.page_type == 'home' %}
+    <script src="{% static 'page_builder/js/home-page.js' %}" defer></script>
+    {% endif %}
+
+    {% if page.layout_config.custom_js %}
+    <script nonce="{{ request.csp_nonce }}">{{ page.layout_config.custom_js|safe }}</script>
+    {% endif %}
+
+    {% if capture_mode %}
+    <script src="{% static 'page_builder/js/page-thumbnail-capture.js' %}"></script>
+    {% endif %}
+{% endblock %}

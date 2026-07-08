@@ -1,0 +1,166 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static admin_list %}
+
+{% block title %}{% trans "Loyalty Campaigns" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'loyalty/admin/css/loyaltycampaign_list.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+<script src="{% static 'loyalty/admin/js/campaign_list.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% if cl.formset and cl.formset.errors %}
+        <p class="errornote">
+            {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+        </p>
+        {{ cl.formset.management_form }}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-bullhorn"></i>
+                {% trans "Loyalty Campaigns" %}
+            </h1>
+            <p class="subtitle">{% trans "Automate point awards, notifications, and member engagement" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'loyalty:campaign_wizard' %}" class="button primary change-list-action-button">
+                <i class="fas fa-magic"></i> {% trans "Create Campaign" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filters-panel" class="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filter Campaigns" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+                <span class="filters-toggle-text">{% trans "Toggle Filters" %}</span>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields">
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text"
+                       id="filter-search"
+                       placeholder="{% trans 'Campaign name or description...' %}"
+                       autocomplete="off">
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="draft">{% trans "Draft" %}</option>
+                    <option value="active">{% trans "Active" %}</option>
+                    <option value="paused">{% trans "Paused" %}</option>
+                    <option value="ended">{% trans "Ended" %}</option>
+                    <option value="archived">{% trans "Archived" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-type">
+                    <i class="fas fa-cogs"></i> {% trans "Campaign Type" %}
+                </label>
+                <select id="filter-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="trigger_based">{% trans "Trigger-Based" %}</option>
+                    <option value="scheduled">{% trans "Scheduled" %}</option>
+                    <option value="manual">{% trans "Manual" %}</option>
+                    <option value="behavioral">{% trans "Behavioral" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-trigger">
+                    <i class="fas fa-bolt"></i> {% trans "Trigger Event" %}
+                </label>
+                <select id="filter-trigger">
+                    <option value="">{% trans "All Events" %}</option>
+                    <option value="order_placed">{% trans "Order Placed" %}</option>
+                    <option value="customer_signup">{% trans "Customer Signup" %}</option>
+                    <option value="birthday">{% trans "Birthday" %}</option>
+                    <option value="anniversary">{% trans "Anniversary" %}</option>
+                    <option value="first_purchase">{% trans "First Purchase" %}</option>
+                    <option value="tier_promoted">{% trans "Tier Promoted" %}</option>
+                    <option value="referral_converted">{% trans "Referral Converted" %}</option>
+                    <option value="review_submitted">{% trans "Review Submitted" %}</option>
+                    <option value="no_purchase_90d">{% trans "Inactive 90 Days" %}</option>
+                    <option value="points_expiring">{% trans "Points Expiring" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-journey">
+                    <i class="fas fa-route"></i> {% trans "Journey" %}
+                </label>
+                <select id="filter-journey">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="yes">{% trans "Journey Campaigns" %}</option>
+                    <option value="no">{% trans "Single-Step" %}</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filter-order">
+                    <i class="fas fa-sort"></i> {% trans "Order By" %}
+                </label>
+                <select id="filter-order">
+                    <option value="-created_at">{% trans "Newest First" %}</option>
+                    <option value="created_at">{% trans "Oldest First" %}</option>
+                    <option value="name">{% trans "Name (A-Z)" %}</option>
+                    <option value="-name">{% trans "Name (Z-A)" %}</option>
+                    <option value="-total_triggered">{% trans "Most Triggered" %}</option>
+                    <option value="-last_triggered_at">{% trans "Recently Active" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button button-secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear" %}
+                </button>
+            </div>
+            <div class="active-filters" id="active-filters"></div>
+        </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="filter-results-summary">
+        <span id="results-count">{{ cl.result_count }}</span>
+        {% blocktranslate count counter=cl.result_count %}campaign found{% plural %}campaigns found{% endblocktranslate %}
+    </div>
+
+    <!-- Card-Based Results Container -->
+    <div id="results-container">
+        {% include "admin/loyalty/partials/campaign_cards.html" with campaigns=cl.result_list %}
+    </div>
+
+    {% block pagination %}{% pagination cl %}{% endblock %}
+
+    <script type="application/json" id="loyalty-campaign-i18n">{"confirmActivate": "{% trans 'Are you sure you want to activate this campaign?' %}", "confirmPause": "{% trans 'Are you sure you want to pause this campaign?' %}", "errorOccurred": "{% trans 'An error occurred.' %}", "retryError": "{% trans 'An error occurred. Please try again.' %}"}</script>
+    <div id="list-filter-config"
+         data-filter-url="{% url 'loyalty:filter_campaigns' %}"
+         data-results-container="results-container"
+         data-results-count="results-count"
+         class="hidden"></div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Search Analytics" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'search/css/search-admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        
+        <h1><span class="fas fa-search"></span>
+            {% trans "Search Analytics" %}</h1>
+        <div class="dashboard-actions">
+            <a href="{% url 'search_admin:export_analytics' %}?date_from={{ date_from|default:'' }}&date_to={{ date_to|default:'' }}"
+               class="btn btn--sm btn--outline">
+                <i class="fas fa-download"></i> {% trans "Export CSV" %}
+            </a>
+        </div>
+    </div>
+    <div class="search-analytics-dashboard">
+        <!-- Stats Cards -->
+        <div class="dashboard-stats-grid" id="dashboard-stats">
+            <div class="dashboard-stat-card">
+                <div class="stat-card__icon"><i class="fas fa-search"></i></div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" data-stat="total_searches">--</span>
+                    <span class="stat-card__label">{% trans "Total Searches" %}</span>
+                </div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="stat-card__icon"><i class="fas fa-fingerprint"></i></div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" data-stat="unique_queries">--</span>
+                    <span class="stat-card__label">{% trans "Unique Queries" %}</span>
+                </div>
+            </div>
+            <div class="dashboard-stat-card stat-card--warning">
+                <div class="stat-card__icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" data-stat="zero_result_rate">--%</span>
+                    <span class="stat-card__label">{% trans "Zero Result Rate" %}</span>
+                </div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="stat-card__icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" data-stat="avg_response_time_ms">--ms</span>
+                    <span class="stat-card__label">{% trans "Avg Response Time" %}</span>
+                </div>
+            </div>
+            <div class="dashboard-stat-card stat-card--success">
+                <div class="stat-card__icon"><i class="fas fa-mouse-pointer"></i></div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" data-stat="click_through_rate">--%</span>
+                    <span class="stat-card__label">{% trans "Click-Through Rate" %}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Panel -->
+        <div class="filters-panel">
+            <form id="analytics-filters" class="filters-form">
+                <div class="filter-group">
+                    <label for="date_from">{% trans "From" %}</label>
+                    <input type="date" id="date_from" name="date_from" class="form-input">
+                </div>
+                <div class="filter-group">
+                    <label for="date_to">{% trans "To" %}</label>
+                    <input type="date" id="date_to" name="date_to" class="form-input">
+                </div>
+                <div class="filter-group">
+                    <label for="engine">{% trans "Engine" %}</label>
+                    <select id="engine" name="engine" class="form-select">
+                        <option value="">{% trans "All Engines" %}</option>
+                        {% for engine in search_engines %}
+                        <option value="{{ engine.slug }}">{{ engine.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="search">{% trans "Search Query" %}</label>
+                    <input type="text" id="search" name="search" class="form-input"
+                        placeholder="{% trans 'Filter by query...' %}">
+                </div>
+                <div class="filter-group filter-group--checkbox">
+                    <label>
+                        <input type="checkbox" id="zero_results" name="zero_results" value="true">
+                        {% trans "Zero results only" %}
+                    </label>
+                </div>
+                <button type="submit" class="btn btn--primary">{% trans "Apply" %}</button>
+            </form>
+        </div>
+
+        <!-- Results Container -->
+        <div class="results-container" id="query-results">
+            <div class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i> {% trans "Loading..." %}
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/json" id="search-analytics-data">
+{
+    "dashboardDataUrl": "{% url 'search_admin:dashboard_data' %}",
+    "analyticsFilterUrl": "{% url 'search_admin:analytics_filter' %}"
+}
+</script>
+<script src="{% static 'search/admin/js/search-analytics.js' %}"></script>
+{% endblock %}

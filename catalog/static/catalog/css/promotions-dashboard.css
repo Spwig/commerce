@@ -1,0 +1,74 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Promotions Dashboard - Promotion-Specific Styles
+ *
+ * Uses dashboard components and list-row-card classes from admin-base.css
+ * This file contains only promotion-specific styles that extend base functionality
+ */
+
+/* ==================== Dashboard Stat Card Icon Colors ==================== */
+/* These extend the base .dashboard-stat-card with promotion-specific icon colors */
+
+.dashboard-stat-card .icon.total {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.dashboard-stat-card .icon.active {
+    background: var(--success-bg);
+    color: var(--success-fg);
+}
+
+.dashboard-stat-card .icon.scheduled {
+    background: var(--info-bg, var(--primary-bg));
+    color: var(--info-fg, var(--primary));
+}
+
+.dashboard-stat-card .icon.expired {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+}
+
+/* ==================== Empty State Card ==================== */
+/* Extends list-row-card for empty state display */
+
+.list-row-card.empty-state-card {
+    text-align: center;
+    padding: 60px 40px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--body-quiet-color);
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+    color: var(--body-quiet-color);
+}
+
+.empty-state-title {
+    font-size: 16px;
+    margin: 0;
+    color: var(--body-fg);
+}
+
+.empty-state-subtitle {
+    font-size: 14px;
+    margin-top: 10px;
+    color: var(--body-quiet-color);
+}
+
+/* ==================== Responsive Adjustments ==================== */
+
+@media (max-width: 768px) {
+    .list-row-card.empty-state-card {
+        padding: 40px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 36px;
+    }
+}

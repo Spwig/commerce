@@ -1,0 +1,160 @@
+{% load i18n element_tags merchant_trans %}
+{% mtrans "Search products, categories..." as default_search_placeholder %}
+{% mtrans "Search" as default_search_label %}
+{% mtrans "No results found. Try a different search term." as default_empty_message %}
+{# Search Element #}
+<section class="search search--{{ element.content.input_size|default:'md' }} search--{{ element.content.input_style|default:'default' }}{% if element.content.full_width %} search--full-width{% endif %}{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+         {% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+         {% hover_animation_attrs element %}
+         style="{% base_styles element %}"
+         data-search-element>
+
+    <div class="search__container">
+        <form class="search__form{% if element.content.button_position == 'inside' %} search__form--button-inside{% endif %}"
+              action="{{ element.content.results_page_url|default:'/search/' }}"
+              method="get"
+              role="search"
+              {% if element.content.submit_action == 'autocomplete_only' %}data-prevent-submit="true"{% endif %}
+              {% if element.content.submit_action == 'inline' %}data-inline-results="true"{% endif %}>
+
+            <div class="search__input-wrapper"
+                 style="{% if element.content.input_background %}--search-input-bg: {{ element.content.input_background }};{% endif %}{% if element.content.input_text_color %}--search-input-color: {{ element.content.input_text_color }};{% endif %}{% if element.content.input_border_color %}--search-input-border: {{ element.content.input_border_color }};{% endif %}{% if element.content.input_focus_border_color %}--search-input-focus-border: {{ element.content.input_focus_border_color }};{% endif %}">
+
+                <input type="search"
+                       name="{{ element.content.query_param|default:'q' }}"
+                       class="search__input"
+                       placeholder="{{ element.content.placeholder|default:default_search_placeholder }}"
+                       aria-label="{{ element.content.aria_label|default:default_search_label }}"
+                       autocomplete="off"
+                       {% if element.content.autocomplete_enabled %}
+                       data-search-autocomplete
+                       data-search-element-id="{{ element.id }}"
+                       data-search-use-global="{{ element.content.use_global_settings|yesno:'true,false' }}"
+                       {% if not element.content.use_global_settings %}
+                       data-search-min-length="{{ element.content.min_query_length|default:2 }}"
+                       data-search-debounce="{{ element.content.debounce_ms|default:300 }}"
+                       data-search-max-results="{{ element.content.max_results|default:8 }}"
+                       {% endif %}
+                       data-search-products="{{ element.content.search_products|yesno:'true,false' }}"
+                       data-search-categories="{{ element.content.search_categories|yesno:'true,false' }}"
+                       data-search-brands="{{ element.content.search_brands|yesno:'true,false' }}"
+                       data-search-blog="{{ element.content.search_blog_posts|yesno:'true,false' }}"
+                       data-search-thumbnails="{{ element.content.show_thumbnails|yesno:'true,false' }}"
+                       data-search-prices="{{ element.content.show_prices|yesno:'true,false' }}"
+                       data-search-sku="{{ element.content.show_sku|yesno:'true,false' }}"
+                       data-search-stock="{{ element.content.show_stock_status|yesno:'true,false' }}"
+                       data-search-count="{{ element.content.show_product_count|yesno:'true,false' }}"
+                       data-search-view-all="{{ element.content.show_view_all_link|yesno:'true,false' }}"
+                       data-search-submit-action="{{ element.content.submit_action|default:'redirect' }}"
+                       data-search-results-url="{{ element.content.results_page_url|default:'/search/' }}"
+                       {% endif %}>
+
+                {% if element.content.show_button and element.content.button_position == 'inside' %}
+                <button type="submit"
+                        class="search__button search__button--inside search__button--{{ element.content.button_style|default:'primary' }}"
+                        style="{% if element.content.button_background %}--search-btn-bg: {{ element.content.button_background }};{% endif %}{% if element.content.button_text_color %}--search-btn-color: {{ element.content.button_text_color }};{% endif %}{% if element.content.button_hover_background %}--search-btn-hover-bg: {{ element.content.button_hover_background }};{% endif %}"
+                        aria-label="{% mtrans 'Submit search' %}">
+                    {% if element.content.button_icon and element.content.button_icon != 'none' %}
+                    <i class="fas {{ element.content.button_icon }}"></i>
+                    {% endif %}
+                    {% if element.content.button_text %}
+                    <span>{{ element.content.button_text }}</span>
+                    {% endif %}
+                </button>
+                {% endif %}
+            </div>
+
+            {% if element.content.show_button and element.content.button_position == 'outside' %}
+            <button type="submit"
+                    class="search__button search__button--outside search__button--{{ element.content.button_style|default:'primary' }}"
+                    style="{% if element.content.button_background %}--search-btn-bg: {{ element.content.button_background }};{% endif %}{% if element.content.button_text_color %}--search-btn-color: {{ element.content.button_text_color }};{% endif %}{% if element.content.button_hover_background %}--search-btn-hover-bg: {{ element.content.button_hover_background }};{% endif %}"
+                    aria-label="{% mtrans 'Submit search' %}">
+                {% if element.content.button_icon and element.content.button_icon != 'none' %}
+                <i class="fas {{ element.content.button_icon }}"></i>
+                {% endif %}
+                {% if element.content.button_text %}
+                <span>{{ element.content.button_text }}</span>
+                {% endif %}
+            </button>
+            {% endif %}
+        </form>
+
+        {# Autocomplete dropdown container - populated by JS #}
+        {% if element.content.autocomplete_enabled %}
+        <div class="search__dropdown"
+             style="{% if element.content.dropdown_background %}--search-dropdown-bg: {{ element.content.dropdown_background }};{% endif %}{% if element.content.dropdown_border_color %}--search-dropdown-border: {{ element.content.dropdown_border_color }};{% endif %}{% if element.content.dropdown_item_hover %}--search-dropdown-hover: {{ element.content.dropdown_item_hover }};{% endif %}"
+             role="listbox"
+             aria-label="{% mtrans 'Search suggestions' %}"
+             hidden>
+        </div>
+        {% endif %}
+
+        {# Inline results container - populated by JS when submit_action is 'inline' #}
+        {% if element.content.submit_action == 'inline' %}
+        <div class="search__results search__results--{{ element.content.inline_layout|default:'grid' }} search__results--cols-{{ element.content.inline_columns|default:'4' }} search__results--{{ element.content.inline_card_style|default:'default' }}"
+             style="{% if element.content.inline_background %}--search-results-bg: {{ element.content.inline_background }};{% endif %}"
+             data-inline-results-container
+             data-inline-layout="{{ element.content.inline_layout|default:'grid' }}"
+             data-inline-columns="{{ element.content.inline_columns|default:'4' }}"
+             data-inline-max-results="{{ element.content.inline_max_results|default:12 }}"
+             data-inline-show-filters="{{ element.content.inline_show_filters|yesno:'true,false' }}"
+             data-inline-show-pagination="{{ element.content.inline_show_pagination|yesno:'true,false' }}"
+             data-inline-empty-message="{{ element.content.inline_empty_message|default:default_empty_message }}"
+             hidden>
+
+            <div class="search__results-header">
+                <span class="search__results-count"></span>
+                <a class="search__results-view-all" href="{{ element.content.results_page_url|default:'/search/' }}">
+                    {% mtrans "View all results" %}
+                </a>
+            </div>
+
+            {% if element.content.inline_show_filters %}
+            <div class="search__results-filters" role="tablist">
+                <button class="search__results-filter search__results-filter--active"
+                        data-filter-type="all"
+                        role="tab"
+                        aria-selected="true">
+                    {% mtrans "All" %}
+                </button>
+                {% if element.content.search_products %}
+                <button class="search__results-filter" data-filter-type="products" role="tab" aria-selected="false">
+                    {% mtrans "Products" %}
+                </button>
+                {% endif %}
+                {% if element.content.search_categories %}
+                <button class="search__results-filter" data-filter-type="categories" role="tab" aria-selected="false">
+                    {% mtrans "Categories" %}
+                </button>
+                {% endif %}
+                {% if element.content.search_brands %}
+                <button class="search__results-filter" data-filter-type="brands" role="tab" aria-selected="false">
+                    {% mtrans "Brands" %}
+                </button>
+                {% endif %}
+                {% if element.content.search_blog_posts %}
+                <button class="search__results-filter" data-filter-type="blog_posts" role="tab" aria-selected="false">
+                    {% mtrans "Blog" %}
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="search__results-grid"></div>
+
+            <div class="search__results-empty" hidden>
+                <i class="fas fa-search"></i>
+                <p>{{ element.content.inline_empty_message|default:default_empty_message }}</p>
+            </div>
+
+            {% if element.content.inline_show_pagination %}
+            <div class="search__results-pagination" hidden>
+                <button class="search__results-load-more btn btn--secondary">
+                    {% mtrans "Load more" %}
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>

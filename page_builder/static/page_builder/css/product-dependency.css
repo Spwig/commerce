@@ -1,0 +1,95 @@
+/* Product Dependency Notices — storefront */
+
+.product-dependency-notice {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: var(--border-radius, 8px);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.product-dependency-notice > i {
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    margin-top: 0.15rem;
+}
+
+.product-dependency-notice__content p {
+    margin: 0 0 0.25rem;
+}
+
+.product-dependency-notice__content p:last-child {
+    margin-bottom: 0;
+}
+
+.product-dependency-notice__content a {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Required (hard block) — warning style */
+.product-dependency-notice--required {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    color: #6d4c00;
+}
+
+.product-dependency-notice--required > i {
+    color: #f9a825;
+}
+
+.product-dependency-notice--required a {
+    color: #e65100;
+}
+
+/* Recommends (soft suggestion) — info style */
+.product-dependency-notice--recommends {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    color: #0d47a1;
+}
+
+.product-dependency-notice--recommends > i {
+    color: #1976d2;
+}
+
+.product-dependency-notice--recommends a {
+    color: #1565c0;
+}
+
+/* Disabled add-to-cart button */
+.btn--add-to-cart:disabled,
+.btn--add-to-cart[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .product-dependency-notice--required {
+        background: rgba(255, 248, 225, 0.08);
+        border-color: rgba(255, 224, 130, 0.3);
+        color: #ffe082;
+    }
+    .product-dependency-notice--required > i {
+        color: #ffca28;
+    }
+    .product-dependency-notice--required a {
+        color: #ffb74d;
+    }
+
+    .product-dependency-notice--recommends {
+        background: rgba(227, 242, 253, 0.08);
+        border-color: rgba(144, 202, 249, 0.3);
+        color: #90caf9;
+    }
+    .product-dependency-notice--recommends > i {
+        color: #64b5f6;
+    }
+    .product-dependency-notice--recommends a {
+        color: #42a5f5;
+    }
+}

@@ -1,0 +1,90 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Confirm Template Deletion" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/css/template-list.css' %}">
+<link rel="stylesheet" href="{% static 'email_system/admin/css/template_delete_confirm.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="delete-confirm-container">
+    <div class="confirm-card">
+        <div class="confirm-header">
+            <div class="confirm-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <h1 class="confirm-title">{% trans "Confirm Template Deletion" %}</h1>
+            <p class="confirm-subtitle">
+                {% trans "Are you sure you want to delete this template?" %}
+            </p>
+        </div>
+
+        <div class="template-info">
+            <div class="template-info-row">
+                <span class="template-info-label">{% trans "Template Type" %}</span>
+                <span class="template-info-value">{{ template.get_template_type_display }}</span>
+            </div>
+            <div class="template-info-row">
+                <span class="template-info-label">{% trans "Language" %}</span>
+                <span class="template-info-value">{{ template.get_language_code_display }}</span>
+            </div>
+            <div class="template-info-row">
+                <span class="template-info-label">{% trans "Status" %}</span>
+                <span class="template-info-value">
+                    {% if template.is_active %}
+                        <i class="fas fa-check-circle icon-active"></i> {% trans "Active" %}
+                    {% else %}
+                        <i class="fas fa-times-circle icon-inactive"></i> {% trans "Inactive" %}
+                    {% endif %}
+                </span>
+            </div>
+            <div class="template-info-row">
+                <span class="template-info-label">{% trans "Translations" %}</span>
+                <span class="template-info-value">{{ template.translations.count }}</span>
+            </div>
+        </div>
+
+        {% if warnings %}
+        <div class="warnings-section">
+            {% for warning in warnings %}
+            <div class="warning-item">
+                <div class="warning-icon">!</div>
+                <div class="warning-message">{{ warning.message }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="safe-delete-notice">
+            <div class="safe-delete-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="safe-delete-message">
+                {% trans "This template can be safely deleted without affecting email sending." %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="{% url 'email_system:template_list' %}" class="btn-cancel">
+                <i class="fas fa-times"></i>
+                {% trans "Cancel" %}
+            </a>
+            <form method="post" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="btn-delete-confirm">
+                    <i class="fas fa-trash-alt"></i>
+                    {% trans "Delete Template" %}
+                </button>
+            </form>
+        </div>
+
+        <p class="delete-confirm-tip">
+            <i class="fas fa-lightbulb"></i>
+            {% trans "Tip: Consider deactivating this template instead of deleting it to preserve it for future use." %}
+        </p>
+    </div>
+</div>
+{% endblock %}

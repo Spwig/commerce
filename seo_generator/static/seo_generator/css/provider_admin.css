@@ -1,0 +1,183 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * SEO Generator Provider Admin Changelist Styles
+ */
+
+.provider-admin-container {
+    max-width: 1200px;
+}
+
+.change-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.change-list-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.change-list-header .subtitle {
+    color: var(--body-quiet-color);
+    margin: 0 0 4px 0;
+    font-size: 14px;
+}
+
+.change-list-stats-subtitle {
+    color: var(--body-quiet-color);
+    font-size: 13px;
+    margin: 0;
+}
+
+.stat-separator {
+    margin: 0 6px;
+}
+
+.change-list-action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+/* Provider Cards Grid */
+.provider-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.provider-account-card {
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.provider-account-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.provider-account-card.primary {
+    border-color: var(--primary);
+}
+
+.provider-account-card.inactive {
+    opacity: 0.7;
+}
+
+.provider-account-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 16px 0;
+}
+
+.card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--darkened-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--body-quiet-color);
+    font-size: 18px;
+}
+
+.card-badges {
+    display: flex;
+    gap: 6px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.badge-active {
+    background: var(--message-success-bg, #d4edda);
+    color: var(--success-fg, #155724);
+}
+
+.badge-inactive {
+    background: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+.provider-account-card .card-body {
+    padding: 12px 16px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: var(--body-fg);
+}
+
+.card-provider-type {
+    font-size: 13px;
+    color: var(--body-quiet-color);
+    margin: 0;
+}
+
+.provider-account-card .card-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.card-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--link-fg);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.card-action-link:hover {
+    text-decoration: underline;
+}
+
+/* Empty State */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--body-quiet-color);
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.empty-state h3 {
+    margin: 0 0 8px 0;
+    color: var(--body-fg);
+}
+
+.empty-state .btn {
+    margin-top: 16px;
+}

@@ -1,0 +1,183 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+/* Social Share Widget Styles */
+/* Token pattern: --theme-widget-social-share-{property} */
+
+.social-share-widget-title {
+    color: var(--theme-widget-social-share-title-color, var(--theme-color-text-muted, #6b7280));
+    font-size: var(--theme-widget-social-share-title-font-size, var(--theme-font-size-sm, 0.875rem));
+    font-weight: var(--theme-widget-social-share-title-font-weight, var(--theme-font-weight-medium, 500));
+    margin-bottom: var(--theme-widget-social-share-title-margin-bottom, var(--theme-space-3, 0.75rem));
+    margin-top: 0;
+}
+
+.social-share-widget {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--theme-widget-social-share-gap, var(--theme-space-2, 0.5rem));
+}
+
+.social-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--theme-widget-social-share-button-size, 2.25rem);
+    height: var(--theme-widget-social-share-button-size, 2.25rem);
+    background: var(--theme-widget-social-share-button-bg, var(--theme-color-surface, #f9fafb));
+    border: var(--theme-widget-social-share-button-border, 1px solid var(--theme-color-border, #e5e7eb));
+    border-radius: var(--theme-widget-social-share-button-radius, var(--theme-radius-full, 9999px));
+    cursor: pointer;
+    transition: all var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+    text-decoration: none;
+    padding: 0;
+}
+
+.social-share-btn:hover {
+    background: var(--theme-widget-social-share-button-hover-bg, var(--theme-color-surface-hover, rgba(0, 0, 0, 0.05)));
+    border: var(--theme-widget-social-share-button-hover-border, 1px solid var(--theme-color-primary, #3B82F6));
+}
+
+.social-share-btn:focus-visible {
+    outline: 2px solid var(--theme-color-primary, #3B82F6);
+    outline-offset: 2px;
+}
+
+.social-share-btn svg {
+    width: var(--theme-widget-social-share-icon-size, 1rem);
+    height: var(--theme-widget-social-share-icon-size, 1rem);
+    fill: currentColor;
+}
+
+.social-share-btn .social-share-icon {
+    display: inline-flex;
+    color: var(--theme-widget-social-share-icon-color, var(--theme-color-text-muted, #6b7280));
+    transition: color var(--theme-transition-duration-fast, 150ms) var(--theme-transition-easing-default, ease);
+}
+
+.social-share-btn:hover .social-share-icon {
+    color: var(--theme-widget-social-share-icon-hover-color, var(--theme-color-primary, #3B82F6));
+}
+
+/* Feedback state after sharing */
+.social-share-btn.shared .social-share-icon {
+    color: var(--theme-color-success, #10b981);
+}
+
+/* Placement modifiers */
+.social-share-placement-below_title {
+    margin-top: var(--theme-space-3, 0.75rem);
+}
+
+.social-share-placement-after_description {
+    margin-top: var(--theme-space-4, 1rem);
+}
+
+.social-share-placement-floating {
+    position: fixed;
+    bottom: var(--theme-space-6, 1.5rem);
+    right: var(--theme-space-6, 1.5rem);
+    z-index: var(--theme-z-sticky, 100);
+    background: var(--theme-color-surface, #fff);
+    padding: var(--theme-space-3, 0.75rem);
+    border-radius: var(--theme-radius-lg, 0.5rem);
+    box-shadow: var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+.social-share-placement-floating .social-share-widget {
+    flex-direction: column;
+}
+
+/* ===== Size Variants ===== */
+.social-share-widget.social-share-size-small .social-share-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+}
+.social-share-widget.social-share-size-small .social-share-btn svg {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+/* Medium is the default — no override needed */
+
+.social-share-widget.social-share-size-large .social-share-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+}
+.social-share-widget.social-share-size-large .social-share-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* ===== Layout Direction ===== */
+.social-share-widget.social-share-layout-vertical {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* ===== Button Style Variants ===== */
+/* Label element — hidden by default for icon_only */
+.social-share-label {
+    display: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: inherit;
+    white-space: nowrap;
+}
+
+/* icon_label: show label alongside icon, widen button */
+.social-share-widget.social-share-style-icon_label .social-share-btn {
+    width: auto;
+    padding: 0 0.75rem;
+    gap: 0.375rem;
+}
+.social-share-widget.social-share-style-icon_label .social-share-label {
+    display: inline;
+}
+
+/* label_only: show label, hide icon */
+.social-share-widget.social-share-style-label_only .social-share-btn {
+    width: auto;
+    padding: 0 0.75rem;
+}
+.social-share-widget.social-share-style-label_only .social-share-icon {
+    display: none;
+}
+.social-share-widget.social-share-style-label_only .social-share-label {
+    display: inline;
+}
+
+/* ===== Title Visibility ===== */
+.social-share-widget-title.social-share-title-hidden {
+    display: none;
+}
+
+/* ===== Mobile Visibility ===== */
+@media (max-width: 640px) {
+    .social-share-mobile-hide {
+        display: none !important;
+    }
+}
+
+@media (min-width: 641px) {
+    .social-share-mobile-only {
+        display: none !important;
+    }
+}
+
+/* ===== Mobile Responsive (default size adjustments) ===== */
+@media (max-width: 640px) {
+    .social-share-widget {
+        gap: var(--theme-space-1, 0.25rem);
+    }
+
+    /* Only shrink medium (default) size on mobile; explicit small/large respected */
+    .social-share-widget.social-share-size-medium .social-share-btn {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .social-share-placement-floating {
+        bottom: var(--theme-space-3, 0.75rem);
+        right: var(--theme-space-3, 0.75rem);
+    }
+}

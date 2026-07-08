@@ -1,0 +1,684 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Customer Analytics Dashboard Styles
+ * Consolidated styles for the unified customer analytics dashboard
+ * Uses CSS variables from Spwig theme system
+ */
+
+/* ============================================================================
+   Dashboard Tab Navigation
+   ============================================================================ */
+
+.dashboard-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--border-color, #dee2e6);
+}
+
+.dashboard-tab {
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: var(--body-quiet-color, #666);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.dashboard-tab:hover {
+    color: var(--primary, #007cba);
+    background: var(--hover-bg, rgba(0, 124, 186, 0.05));
+}
+
+.dashboard-tab.active {
+    color: var(--primary, #007cba);
+    border-bottom-color: var(--primary, #007cba);
+    background: transparent;
+}
+
+.dashboard-tab-content {
+    display: none;
+}
+
+.dashboard-tab-content.active {
+    display: block;
+}
+
+/* ============================================================================
+   Dashboard Section Base
+   ============================================================================ */
+
+.dashboard-section {
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-section h2,
+.dashboard-section h3 {
+    color: var(--body-fg, #333);
+    margin-top: 0;
+}
+
+.help-text {
+    color: var(--body-quiet-color, #666);
+    font-size: 14px;
+    margin: 5px 0 15px;
+}
+
+/* ============================================================================
+   Chart Containers
+   ============================================================================ */
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    margin: 20px 0;
+}
+
+/* ============================================================================
+   Chart Tabs (for cohort comparison)
+   ============================================================================ */
+
+.chart-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-color, #dee2e6);
+}
+
+.chart-tab {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: var(--body-quiet-color, #666);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.chart-tab:hover {
+    color: var(--primary, #007cba);
+}
+
+.chart-tab.active {
+    color: var(--primary, #007cba);
+    border-bottom-color: var(--primary, #007cba);
+}
+
+/* ============================================================================
+   Table Styles
+   ============================================================================ */
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
+
+.table {
+    background: var(--body-bg, #fff);
+    color: var(--body-fg, #333);
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background: var(--darkened-bg, #f8f9fa);
+    color: var(--body-fg, #333);
+    border-bottom: 2px solid var(--border-color, #dee2e6);
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.table td {
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+    padding: 12px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background: var(--darkened-bg, rgba(0, 0, 0, 0.02));
+}
+
+.table tbody tr:hover {
+    background: var(--hover-bg, rgba(0, 124, 186, 0.05));
+}
+
+/* ============================================================================
+   Cohort Table Enhancements
+   ============================================================================ */
+
+.cohort-table .value-highlight {
+    font-weight: 600;
+    color: var(--primary, #007cba);
+}
+
+.cohort-table .ltv-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--success-bg, #d4edda);
+    color: var(--success-fg, #155724);
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.cohort-table .text-muted {
+    color: var(--body-quiet-color, #666);
+    font-size: 12px;
+}
+
+.cohort-table .btn-icon {
+    padding: 5px 10px;
+    background: var(--primary, #007cba);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cohort-table .btn-icon:hover {
+    background: var(--primary-hover, #005a87);
+}
+
+/* ============================================================================
+   Segment Badges
+   ============================================================================ */
+
+.segment-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+/* ============================================================================
+   Retention Bar Visualization
+   ============================================================================ */
+
+.retention-bar {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.retention-fill {
+    position: absolute;
+    height: 100%;
+    background: linear-gradient(90deg, var(--success-fg, #28a745) 0%, var(--success-fg, #20c997) 100%);
+    transition: width 0.3s ease;
+}
+
+.retention-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+    z-index: 1;
+}
+
+/* ============================================================================
+   Modal Content Styles (structural modal classes from admin-base.css)
+   ============================================================================ */
+
+.retention-stats {
+    margin-top: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    padding: 10px;
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--body-quiet-color, #666);
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+    margin-left: 5px;
+}
+
+/* ============================================================================
+   Message Toast
+   ============================================================================ */
+
+.message-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background: var(--body-bg, #fff);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10001;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.message-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.message-toast.success {
+    border-left: 4px solid var(--success-fg, #28a745);
+}
+
+.message-toast.error {
+    border-left: 4px solid var(--error-fg, #dc3545);
+}
+
+.message-toast i {
+    font-size: 20px;
+}
+
+.message-toast.success i {
+    color: var(--success-fg, #28a745);
+}
+
+.message-toast.error i {
+    color: var(--error-fg, #dc3545);
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.empty-state {
+    padding: 40px;
+    text-align: center;
+    color: var(--body-quiet-color, #666);
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+/* ============================================================================
+   Retention Heatmap Styles
+   ============================================================================ */
+
+.heatmap-container {
+    margin: 20px 0;
+}
+
+.heatmap-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--body-quiet-color, #666);
+}
+
+.heatmap-loading i {
+    margin-right: 10px;
+}
+
+.heatmap-table {
+    font-size: 13px;
+}
+
+.heatmap-table th.heatmap-header {
+    text-align: center;
+    padding: 8px 12px;
+    min-width: 50px;
+}
+
+.heatmap-table .cohort-label {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.heatmap-cell {
+    text-align: center;
+    padding: 8px !important;
+    font-weight: 500;
+    transition: transform 0.2s ease;
+}
+
+.heatmap-cell:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.heatmap-excellent {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.heatmap-good {
+    background-color: #5cb85c;
+    color: #fff;
+}
+
+.heatmap-moderate {
+    background-color: #f0ad4e;
+    color: #333;
+}
+
+.heatmap-low {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+.heatmap-critical {
+    background-color: #c9302c;
+    color: #fff;
+}
+
+.heatmap-null {
+    background-color: var(--darkened-bg, #f8f9fa);
+    color: var(--body-quiet-color, #999);
+}
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+    font-size: 12px;
+    color: var(--body-quiet-color, #666);
+}
+
+.legend-gradient {
+    width: 150px;
+    height: 12px;
+    background: linear-gradient(90deg, #c9302c, #d9534f, #f0ad4e, #5cb85c, #28a745);
+    border-radius: 6px;
+}
+
+.legend-label {
+    font-weight: 500;
+}
+
+/* ============================================================================
+   Insights Panel Styles
+   ============================================================================ */
+
+.insights-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--darkened-bg, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #dee2e6);
+}
+
+.insights-panel h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: var(--body-fg, #333);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.insights-panel h3 i {
+    color: #f0ad4e;
+}
+
+.insights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.insight-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    background: var(--body-bg, #fff);
+    border-radius: 6px;
+    border-left: 4px solid var(--border-color, #dee2e6);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.insight-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.insight-card.insight-success {
+    border-left-color: #28a745;
+}
+
+.insight-card.insight-success .insight-icon {
+    color: #28a745;
+}
+
+.insight-card.insight-warning {
+    border-left-color: #f0ad4e;
+}
+
+.insight-card.insight-warning .insight-icon {
+    color: #f0ad4e;
+}
+
+.insight-card.insight-danger {
+    border-left-color: #dc3545;
+}
+
+.insight-card.insight-danger .insight-icon {
+    color: #dc3545;
+}
+
+.insight-card.insight-info {
+    border-left-color: #17a2b8;
+}
+
+.insight-card.insight-info .insight-icon {
+    color: #17a2b8;
+}
+
+.insight-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.insight-content {
+    flex-grow: 1;
+}
+
+.insight-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--body-fg, #333);
+}
+
+.insight-content p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--body-quiet-color, #666);
+    line-height: 1.5;
+}
+
+/* ============================================================================
+   Utility Classes (CSP-compliant replacements for inline styles)
+   ============================================================================ */
+
+.chart-container-fixed {
+    height: 350px;
+}
+
+.chart-container-large {
+    height: 400px;
+}
+
+.hidden-initial {
+    display: none;
+}
+
+/* Segment badge with dynamic color via data attribute + CSS custom property */
+.segment-badge[data-color] {
+    background-color: var(--segment-bg);
+}
+
+/* Retention fill bar uses CSS custom property for dynamic width */
+.retention-fill[data-width] {
+    width: var(--retention-width);
+}
+
+/* Deprecation notice box */
+.deprecation-notice {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    margin-bottom: 30px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.deprecation-notice i.deprecation-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.deprecation-notice p {
+    margin: 5px 0 0 0;
+}
+
+.deprecation-notice a {
+    color: #007cba;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .dashboard-tabs {
+        flex-wrap: wrap;
+    }
+
+    .dashboard-tab {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    .table-responsive {
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 4px;
+    }
+
+    .table {
+        min-width: 700px; /* Ensures horizontal scroll on small screens */
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .chart-tabs {
+        flex-wrap: wrap;
+    }
+
+    .chart-tab {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    /* Heatmap responsive */
+    .heatmap-table {
+        min-width: 600px;
+    }
+
+    .heatmap-cell {
+        padding: 6px !important;
+        font-size: 11px;
+    }
+
+    .heatmap-legend {
+        flex-wrap: wrap;
+    }
+
+    /* Insights responsive */
+    .insights-panel {
+        padding: 15px;
+    }
+
+    .insight-card {
+        padding: 12px;
+    }
+
+    .insight-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .insight-content h4 {
+        font-size: 13px;
+    }
+
+    .insight-content p {
+        font-size: 12px;
+    }
+}

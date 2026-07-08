@@ -1,0 +1,165 @@
+{% extends "page_builder/base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block title %}{{ msg.subject|truncatewords:8 }} — {% mtrans "My Messages" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/css/messages.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+            <ol class="breadcrumb__list">
+                <li class="breadcrumb__item">
+                    <a href="/" class="breadcrumb__link">{% mtrans 'Home' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:dashboard' %}" class="breadcrumb__link">{% mtrans 'My Account' %}</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a href="{% url 'accounts:message_list' %}" class="breadcrumb__link">{% mtrans 'My Messages' %}</a>
+                </li>
+                <li class="breadcrumb__item breadcrumb__item--active" aria-current="page">
+                    {{ msg.subject|truncatewords:6 }}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Message Thread -->
+<section class="section">
+    <div class="container">
+        <div class="message-thread-layout">
+            <!-- Thread column -->
+            <div class="message-thread-main">
+                <!-- Thread header -->
+                <div class="account-card message-thread-header-card">
+                    <h1 class="message-thread-subject">{{ msg.subject }}</h1>
+                    <div class="message-thread-meta">
+                        <span class="message-badge message-badge--{{ msg.status }}">
+                            {{ msg.get_status_display }}
+                        </span>
+                        <span class="message-type-tag">{{ msg.get_message_type_display }}</span>
+                        <span class="message-date">{{ msg.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                </div>
+
+                <!-- Customer's original message bubble -->
+                <div class="message-bubble message-bubble--customer">
+                    <div class="message-bubble__avatar message-bubble__avatar--customer">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="message-bubble__body">
+                        <div class="message-bubble__author">
+                            {% mtrans "You" %} — {{ msg.created_at|date:"M d, Y H:i" }}
+                        </div>
+                        <div class="message-bubble__text">{{ msg.message|linebreaks }}</div>
+                    </div>
+                </div>
+
+                <!-- Staff reply bubble (if exists) -->
+                {% if msg.reply_text %}
+                <div class="message-bubble message-bubble--staff">
+                    <div class="message-bubble__avatar message-bubble__avatar--staff">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="message-bubble__body">
+                        <div class="message-bubble__author">
+                            {% mtrans "Support Team" %}
+                            {% if msg.replied_at %} — {{ msg.replied_at|date:"M d, Y H:i" }}{% endif %}
+                        </div>
+                        <div class="message-bubble__text">{{ msg.reply_text|linebreaks }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Follow-up form -->
+                {% if follow_up_form %}
+                <div class="message-followup-form account-card">
+                    <h2 class="message-followup-form__title">
+                        <i class="fas fa-reply"></i> {% mtrans "Send a Follow-up" %}
+                    </h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="follow_up">
+                        <div class="form-group">
+                            <label class="form-label" for="id_message">
+                                {% mtrans "Your Message" %}
+                            </label>
+                            {{ follow_up_form.message }}
+                            {% if follow_up_form.message.errors %}
+                                <p class="form-error">{{ follow_up_form.message.errors.0 }}</p>
+                            {% endif %}
+                            <p class="form-help">
+                                <span class="char-count">0</span> / 5,000
+                            </p>
+                        </div>
+                        <button type="submit" class="btn btn--primary">
+                            <i class="fas fa-paper-plane"></i> {% mtrans "Send Follow-up" %}
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <!-- Django messages (success/error flash) -->
+                {% for msg_flash in messages %}
+                <div class="form-message form-message--{{ msg_flash.tags }}">
+                    {{ msg_flash }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Sidebar: metadata -->
+            <div class="message-thread-sidebar">
+                <div class="account-card">
+                    <h3 class="message-sidebar-section-title">
+                        <i class="fas fa-info-circle"></i> {% mtrans "Message Details" %}
+                    </h3>
+                    <dl class="message-meta-list">
+                        <dt>{% mtrans "Type" %}</dt>
+                        <dd>{{ msg.get_message_type_display }}</dd>
+                        <dt>{% mtrans "Status" %}</dt>
+                        <dd>{{ msg.get_status_display }}</dd>
+                        <dt>{% mtrans "Submitted" %}</dt>
+                        <dd>{{ msg.created_at|date:"M d, Y" }}</dd>
+                        {% if msg.reply_text %}
+                        <dt>{% mtrans "Replied" %}</dt>
+                        <dd>{{ msg.replied_at|date:"M d, Y" }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+
+                {% if msg.order %}
+                <div class="account-card">
+                    <h3 class="message-sidebar-section-title">
+                        <i class="fas fa-shopping-bag"></i> {% mtrans "Related Order" %}
+                    </h3>
+                    <span class="message-order-detail-link">
+                        <i class="fas fa-receipt"></i>
+                        {% mtrans "Order" %} #{{ msg.order.order_number }}
+                    </span>
+                </div>
+                {% endif %}
+
+                <a href="{% url 'accounts:message_list' %}" class="btn btn--outline btn--full">
+                    <i class="fas fa-arrow-left"></i> {% mtrans "Back to Messages" %}
+                </a>
+
+                <a href="{% url 'accounts:message_new' %}" class="btn btn--secondary btn--full">
+                    <i class="fas fa-plus"></i> {% mtrans "New Message" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'accounts/js/messages.js' %}" defer></script>
+{% endblock %}

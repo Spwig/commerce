@@ -1,0 +1,218 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Catalog - Stock Adjustment
+ *
+ * Description: Admin interface styles for stock_adjustment.html
+ * Template: catalog/templates/admin/catalog/stock_adjustment.html
+ * Extracted: 2026-02-14
+ *
+ * Dependencies:
+ * - core/static/core/admin/css/admin-base.css
+ *
+ * Notes:
+ * - Extracted during CSP hardening migration
+ * - Uses theme CSS variables for consistent theming
+ */
+
+.stock-adjustment-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .stock-adjustment-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        margin: -20px -20px 30px -20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .stock-adjustment-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 24px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .stock-adjustment-header p {
+        margin: 0;
+        opacity: 0.95;
+        font-size: 14px;
+    }
+
+    .form-card {
+        background: var(--body-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-card h2 {
+        margin: 0 0 20px 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--body-fg);
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 12px;
+    }
+
+    .form-row {
+        margin-bottom: 20px;
+    }
+
+    .form-row label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--body-fg);
+        font-size: 14px;
+    }
+
+    .form-row input[type="number"],
+    .form-row textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--body-bg);
+        color: var(--body-fg);
+        font-size: 14px;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .form-row input:focus,
+    .form-row textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row .helptext {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: var(--body-quiet-color);
+    }
+
+    .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .radio-option:hover {
+        border-color: var(--primary);
+        background: var(--darkened-bg);
+    }
+
+    .radio-option input[type="radio"] {
+        margin: 0;
+    }
+
+    .radio-option label {
+        margin: 0;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .stock-items-list {
+        max-height: 300px;
+        overflow-y: auto;
+        background: var(--darkened-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 16px;
+    }
+
+    .stock-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        background: var(--body-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+    }
+
+    .stock-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .stock-item-product {
+        font-weight: 600;
+        color: var(--body-fg);
+    }
+
+    .stock-item-warehouse {
+        color: var(--body-quiet-color);
+        font-size: 12px;
+        margin-top: 2px;
+    }
+
+    .stock-item-current {
+        color: var(--body-quiet-color);
+        font-size: 12px;
+    }
+
+    .submit-row {
+        display: flex;
+        gap: 12px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+        margin-top: 20px;
+    }
+
+    .submit-row button,
+    .submit-row a {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .submit-row button[type="submit"] {
+        background: var(--primary);
+        color: var(--primary-fg);
+        border: none;
+    }
+
+    .submit-row button[type="submit"]:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        opacity: 0.9;
+    }
+
+    .submit-row a.cancel {
+        background: var(--close-button-bg);
+        color: var(--body-fg);
+        border: 1px solid var(--border-color);
+    }
+
+    .submit-row a.cancel:hover {
+        background: var(--darkened-bg);
+    }

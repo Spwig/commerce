@@ -1,0 +1,759 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static humanize currency_tags admin_urls %}
+
+{% block title %}{% if original %}{{ original.user.get_full_name|default:original.user.username }} | {% trans "Customers" %}{% else %}{% trans "Add Customer" %} | {% trans "Customers" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'customers/css/customer_change_form.css' %}">
+<link rel="stylesheet" href="{% static 'orders/css/admin-orders.css' %}">
+<link rel="stylesheet" href="{% static 'custom_fields/css/custom_fields_admin.css' %}">
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script src="{% static 'customers/js/customer_change_form.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="customer-content"{% if original %} data-customer-id="{{ original.pk }}"{% endif %}>
+
+{% if original %}
+    {# Dashboard Header for Existing Customers #}
+    <div class="customer-dashboard">
+        <div class="dashboard-header">
+            <h1>
+                <i class="fas fa-user-circle"></i>
+                {{ original.user.get_full_name|default:original.user.username }}
+            </h1>
+
+            <div class="customer-meta">
+                <div class="customer-meta-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ original.user.email }}</span>
+                </div>
+                <div class="customer-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Registered" %}: {{ original.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if original.phone %}
+                <div class="customer-meta-item">
+                    <i class="fas fa-phone"></i>
+                    <span>{{ original.phone }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="customer-badges">
+                {% if original.is_guest_user %}
+                <span class="customer-badge guest">
+                    <i class="fas fa-user-clock"></i>
+                    {% trans "Guest" %}
+                </span>
+                {% endif %}
+
+                {% if original.is_vip_customer %}
+                <span class="customer-badge vip">
+                    <i class="fas fa-crown"></i>
+                    {% trans "VIP Customer" %}
+                </span>
+                {% endif %}
+
+                {% if original.is_at_risk %}
+                <span class="customer-badge at-risk">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% trans "At Risk" %}
+                </span>
+                {% endif %}
+
+                {% if original.user.affiliate_profile %}
+                <span class="customer-badge affiliate">
+                    <i class="fas fa-handshake"></i>
+                    {% trans "Affiliate" %}
+                </span>
+                {% endif %}
+
+                {% if original.user.loyalty_member %}
+                <span class="customer-badge loyalty">
+                    <i class="fas fa-award" {% if original.user.loyalty_member.current_tier.color %}data-color style="--tier-color: {{ original.user.loyalty_member.current_tier.color }}"{% endif %}></i>
+                    {% trans "Loyalty Member" %}{% if original.user.loyalty_member.current_tier %} - {{ original.user.loyalty_member.current_tier.name }}{% endif %}
+                </span>
+                {% endif %}
+
+                {% if comm_prefs and comm_prefs.email_marketing %}
+                <span class="customer-badge">
+                    <i class="fas fa-envelope-open-text"></i>
+                    {% trans "Marketing Emails" %}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {# Stats Cards - uses dashboard-stat-card from admin-base.css #}
+    <div class="dashboard-stats-grid">
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="value">{{ original.completed_orders_count }} / {{ original.total_orders }}</div>
+            <div class="label">{% trans "Completed / Total Orders" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="value">{{ original.total_spent|format_currency:site_settings.default_currency }}</div>
+            <div class="label">{% trans "Total Spent" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-chart-line"></i></div>
+            <div class="value">{{ original.average_order_value|format_currency:site_settings.default_currency }}</div>
+            <div class="label">{% trans "Average Order Value" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-gem"></i></div>
+            <div class="value">{{ original.lifetime_value|format_currency:site_settings.default_currency }}</div>
+            <div class="label">{% trans "Lifetime Value" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <div class="value">
+                {% if original.days_since_last_order %}
+                    {{ original.days_since_last_order }}
+                {% else %}
+                    -
+                {% endif %}
+            </div>
+            <div class="label">{% trans "Days Since Last Order" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-sync-alt"></i></div>
+            <div class="value">{{ original.purchase_frequency|floatformat:1 }}/mo</div>
+            <div class="label">{% trans "Purchase Frequency" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-shopping-basket"></i></div>
+            <div class="value">{{ original.abandoned_carts_count }}</div>
+            <div class="label">{% trans "Abandoned Carts" %}</div>
+        </div>
+
+        <div class="dashboard-stat-card">
+            <div class="icon"><i class="fas fa-heart"></i></div>
+            <div class="value">{{ original.wishlist_items_count }}</div>
+            <div class="label">{% trans "Wishlist Items" %}</div>
+        </div>
+    </div>
+
+{% endif %}
+
+{# Main Form #}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+{% csrf_token %}
+
+    {# Form Container with Sidebar #}
+    <div class="customer-form-container">
+        <div class="customer-main-form">
+            {% if original %}
+                {# Tabs Navigation #}
+                <div class="admin-tabs">
+                    <button type="button" class="admin-tab-btn active" data-tab="profile">
+                        <i class="fas fa-user"></i>
+                        <span class="label">{% trans "Profile & Contact" %}</span>
+                    </button>
+                    <button type="button" class="admin-tab-btn" data-tab="addresses">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="label">{% trans "Addresses" %}</span>
+                    </button>
+                    <button type="button" class="admin-tab-btn" data-tab="orders">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="label">{% trans "Order History" %}</span>
+                    </button>
+                    <button type="button" class="admin-tab-btn" data-tab="preferences">
+                        <i class="fas fa-cog"></i>
+                        <span class="label">{% trans "Preferences" %}</span>
+                    </button>
+                    {% if has_custom_fields %}
+                    <button type="button" class="admin-tab-btn" data-tab="custom-fields">
+                        <i class="fas fa-sliders-h"></i>
+                        <span class="label">{% trans "Custom Fields" %}</span>
+                    </button>
+                    {% endif %}
+                </div>
+
+                {# Tab Content #}
+                <div class="admin-tab-content active" id="tab-profile">
+                    <div class="module">
+                        <h2>{% trans "Customer Information" %}</h2>
+
+                        {# User Account Information Card #}
+                        <div class="user-info-card">
+                            <div class="user-info-header">
+                                <h3>
+                                    <i class="fas fa-user-circle"></i>
+                                    {% trans "User Account" %}
+                                </h3>
+                                <a href="{% url 'admin:auth_user_change' original.user.pk %}" class="button default">
+                                    <i class="fas fa-edit"></i> {% trans "Edit User Account" %}
+                                </a>
+                            </div>
+                            <div class="user-info-grid">
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "Username" %}</div>
+                                    <div class="user-info-value">{{ original.user.username }}</div>
+                                </div>
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "Email" %}</div>
+                                    <div class="user-info-value">{{ original.user.email }}</div>
+                                </div>
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "First Name" %}</div>
+                                    <div class="user-info-value">{{ original.user.first_name|default:"—" }}</div>
+                                </div>
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "Last Name" %}</div>
+                                    <div class="user-info-value">{{ original.user.last_name|default:"—" }}</div>
+                                </div>
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "Date Joined" %}</div>
+                                    <div class="user-info-value">{{ original.user.date_joined|date:"M d, Y" }}</div>
+                                </div>
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "Last Login" %}</div>
+                                    <div class="user-info-value">
+                                        {% if original.user.last_login %}
+                                            {{ original.user.last_login|date:"M d, Y H:i" }}
+                                        {% else %}
+                                            {% trans "Never" %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "Status" %}</div>
+                                    <div class="user-info-value">
+                                        {% if original.user.is_active %}
+                                            <span class="status-badge active">
+                                                <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge inactive">
+                                                <i class="fas fa-times-circle"></i> {% trans "Inactive" %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="user-info-item">
+                                    <div class="user-info-label">{% trans "Staff Status" %}</div>
+                                    <div class="user-info-value">
+                                        {% if original.user.is_staff %}
+                                            <span class="status-badge staff">
+                                                <i class="fas fa-user-shield"></i> {% trans "Staff" %}
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge">{% trans "Customer" %}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == "Customer Information" %}
+                                {% include "admin/includes/fieldset.html" with heading_level=3 %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Communication Preferences Summary Card (read-only, from CommunicationPreference model) #}
+                        {% if comm_prefs %}
+                        <div class="comm-prefs-summary-card">
+                            <h3><i class="fas fa-bell"></i> {% trans "Communication Preferences" %}</h3>
+                            <div class="comm-prefs-grid">
+                                <div class="comm-pref-item">
+                                    <span class="comm-pref-label">{% trans "Email" %}</span>
+                                    <span class="comm-pref-value {% if comm_prefs.email_enabled %}active{% endif %}">
+                                        {% if comm_prefs.email_enabled %}
+                                            <i class="fas fa-check-circle"></i> {% trans "Enabled" %}
+                                        {% else %}
+                                            <i class="fas fa-times-circle"></i> {% trans "Disabled" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="comm-pref-item">
+                                    <span class="comm-pref-label">{% trans "Marketing" %}</span>
+                                    <span class="comm-pref-value {% if comm_prefs.email_marketing %}active{% endif %}">
+                                        {% if comm_prefs.email_marketing %}
+                                            <i class="fas fa-check-circle"></i> {% trans "Opted In" %}
+                                        {% else %}
+                                            <i class="fas fa-times-circle"></i> {% trans "Opted Out" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="comm-pref-item">
+                                    <span class="comm-pref-label">{% trans "SMS" %}</span>
+                                    <span class="comm-pref-value {% if comm_prefs.sms_enabled %}active{% endif %}">
+                                        {% if comm_prefs.sms_enabled %}
+                                            <i class="fas fa-check-circle"></i> {% trans "Enabled" %}
+                                        {% else %}
+                                            <i class="fas fa-times-circle"></i> {% trans "Disabled" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="comm-pref-item">
+                                    <span class="comm-pref-label">{% trans "Verified" %}</span>
+                                    <span class="comm-pref-value {% if comm_prefs.email_verified %}active{% endif %}">
+                                        {% if comm_prefs.email_verified %}
+                                            <i class="fas fa-check-circle"></i> {% trans "Yes" %}
+                                        {% else %}
+                                            <i class="fas fa-times-circle"></i> {% trans "No" %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            <a href="{% url 'admin:accounts_communicationpreference_change' comm_prefs.pk %}" class="comm-prefs-manage-btn">
+                                <i class="fas fa-cog"></i> {% trans "Manage Communication Preferences" %}
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                {# Add Customer Form - Show all fields without tabs #}
+                <div class="module">
+                    <h2>{% trans "Add Customer" %}</h2>
+                    {% for fieldset in adminform %}
+                        {% include "admin/includes/fieldset.html" with heading_level=3 %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if original %}
+            <div class="admin-tab-content" id="tab-addresses">
+                <div class="module">
+                    <h2>{% trans "Customer Addresses" %}</h2>
+                    {% if addresses %}
+                    <div class="address-grid">
+                        {% for address in addresses %}
+                        <div class="address-card">
+                            <div class="address-card-header">
+                                <div class="address-type-badge address-type-{{ address.address_type }}">
+                                    <i class="fas {% if address.address_type == 'shipping' %}fa-shipping-fast{% elif address.address_type == 'billing' %}fa-file-invoice-dollar{% else %}fa-check-circle{% endif %}"></i>
+                                    {{ address.get_address_type_display }}
+                                </div>
+                                {% if address.is_default %}
+                                <span class="address-default-badge">
+                                    <i class="fas fa-star"></i> {% trans "Default" %}
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="address-card-body">
+                                <div class="address-name">{{ address.name }}</div>
+                                {% if address.company %}
+                                <div class="address-company">{{ address.company }}</div>
+                                {% endif %}
+                                <div class="address-lines">
+                                    <div>{{ address.address1 }}</div>
+                                    {% if address.address2 %}
+                                    <div>{{ address.address2 }}</div>
+                                    {% endif %}
+                                    <div>{{ address.city }}, {{ address.state }} {{ address.postal_code }}</div>
+                                    <div>{{ address.country }}</div>
+                                </div>
+                                {% if address.phone %}
+                                <div class="address-phone">
+                                    <i class="fas fa-phone"></i> {{ address.phone }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="address-card-footer">
+                                {% if address.order_count > 0 %}
+                                <div class="address-usage">
+                                    <i class="fas fa-box"></i>
+                                    {% blocktrans count counter=address.order_count %}
+                                        Used in {{ counter }} order
+                                    {% plural %}
+                                        Used in {{ counter }} orders
+                                    {% endblocktrans %}
+                                </div>
+                                {% else %}
+                                <div class="address-usage address-usage-none">
+                                    <i class="fas fa-info-circle"></i>
+                                    {% trans "Not yet used" %}
+                                </div>
+                                {% endif %}
+
+                                {% if address.version > 1 %}
+                                <div class="address-version-info">
+                                    <i class="fas fa-history"></i> {% trans "Version" %} {{ address.version }}
+                                    <a href="{% url 'admin:orders_address_changelist' %}?original_address={{ address.original_address_id|default:address.pk }}"
+                                       class="address-history-link"
+                                       title="{% trans 'View version history' %}">
+                                        {% trans "View history" %}
+                                    </a>
+                                </div>
+                                {% endif %}
+
+                                <div class="address-actions">
+                                    <a href="{% url 'admin:orders_address_change' address.pk %}"
+                                       class="address-action-btn address-action-edit"
+                                       title="{% trans 'Edit address' %}">
+                                        <i class="fas fa-edit"></i> {% trans "Edit" %}
+                                    </a>
+                                    {% if not address.is_default %}
+                                    <button type="button"
+                                            class="address-action-btn address-action-default"
+                                            data-address-id="{{ address.pk }}"
+                                            data-address-type="{{ address.address_type }}"
+                                            data-setting-msg="{% trans 'Setting...' %}"
+                                            data-error-msg="{% trans 'Failed to set address as default' %}"
+                                            data-error-occurred-msg="{% trans 'An error occurred while setting default address' %}"
+                                            title="{% trans 'Set as default' %}">
+                                        <i class="fas fa-star"></i> {% trans "Set Default" %}
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="empty-state-message">
+                            <h3>{% trans "No saved addresses" %}</h3>
+                            <p>{% trans "This customer hasn't saved any addresses yet" %}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="module-footer">
+                        <a href="{% url 'admin:orders_address_add' %}?user={{ original.user.pk }}" class="button default">
+                            <i class="fas fa-plus"></i> {% trans "Add Address" %}
+                        </a>
+                        {% if addresses %}
+                        <a href="{% url 'admin:orders_address_changelist' %}?user={{ original.user.pk }}" class="button">
+                            <i class="fas fa-list"></i> {% trans "View All Addresses" %}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-tab-content" id="tab-orders">
+                <div class="module">
+                    <h2>{% trans "Order History" %}</h2>
+                    {% if recent_orders %}
+                    <div class="orders-grid">
+                        {% for order in recent_orders %}
+                        <a href="{% url 'admin:orders_order_change' order.pk %}" class="order-card">
+                            <!-- Header Row: Order Number + Status Badge -->
+                            <div class="orders-card-header">
+                                <span class="order-number">#{{ order.order_number }}</span>
+                                <span class="order-status {{ order.status }}">{{ order.get_status_display }}</span>
+                            </div>
+
+                            <!-- Content Row: All order details -->
+                            <div class="orders-card-content">
+                                <!-- Product Thumbnails -->
+                                <div class="product-thumbnails">
+                                    {% for item in order.items.all|slice:":3" %}
+                                        <div class="product-thumbnail">
+                                            {% if item.product.images.first %}
+                                                <img src="{{ item.product.images.first.thumbnail_small }}" alt="{{ item.product.name }}">
+                                            {% else %}
+                                                <div class="product-thumbnail-placeholder">
+                                                    <i class="fas fa-box"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                    {% if order.items.count > 3 %}
+                                        <div class="more-items">
+                                            +{{ order.items.count|add:"-3" }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Item Count -->
+                                <div class="order-item-count">
+                                    <i class="fas fa-box"></i>
+                                    <span>{{ order.total_item_quantity }} {% if order.total_item_quantity == 1 %}{% trans "item" %}{% else %}{% trans "items" %}{% endif %}</span>
+                                </div>
+
+                                <!-- Shipping Location -->
+                                {% if order.shipping_city or order.shipping_country %}
+                                <div class="order-shipping-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>
+                                        {% if order.shipping_city %}{{ order.shipping_city }}{% endif %}{% if order.shipping_city and order.shipping_country %}, {% endif %}{% if order.shipping_country %}{{ order.shipping_country }}{% endif %}
+                                    </span>
+                                </div>
+                                {% endif %}
+
+                                <!-- Order Date / Tracking Number -->
+                                {% if order.status in 'shipped,delivered' and order.tracking_number %}
+                                    <span class="order-tracking">
+                                        <i class="fas fa-truck"></i>
+                                        {{ order.tracking_number }}
+                                    </span>
+                                {% else %}
+                                    <span class="order-date">
+                                        <i class="far fa-calendar"></i>
+                                        {{ order.created_at|date:"M d, Y" }}
+                                    </span>
+                                {% endif %}
+
+                                <!-- Order Total -->
+                                <span class="order-total">{{ order.total_amount.currency }} {{ order.total_amount.amount }}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="empty-state-message">
+                        {% trans "No orders yet" %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="admin-tab-content" id="tab-preferences">
+                <div class="module">
+                    <h2>{% trans "Dashboard Preferences" %}</h2>
+                    <div class="form-section-info">
+                        <p>
+                            {% trans "These preferences control the customer's dashboard appearance and layout when they log in to their account." %}
+                        </p>
+                    </div>
+                    {% for fieldset in adminform %}
+                        {% if fieldset.name == "Dashboard Preferences" or fieldset.name == "Theme Preferences" %}
+                            {% include "admin/includes/fieldset.html" with heading_level=3 %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if has_custom_fields %}
+            <div class="admin-tab-content" id="tab-custom-fields">
+                <div class="module">
+                    <h2><i class="fas fa-sliders-h"></i> {% trans "Custom Fields" %}</h2>
+                    {% include "admin/custom_fields/includes/custom_fields_tab.html" %}
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        {% if original %}
+        {# Mobile Sidebar Toggle Button #}
+        <button type="button" class="customer-sidebar-toggle" id="sidebar-toggle" aria-label="{% trans 'Toggle Sidebar' %}">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        {# Sidebar Backdrop #}
+        <div class="customer-sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        {# Sidebar #}
+        <div class="customer-sidebar" id="customer-sidebar">
+            {# Close Button for Mobile #}
+            <button type="button" class="customer-sidebar-close" id="sidebar-close" aria-label="{% trans 'Close Sidebar' %}">
+                <i class="fas fa-times"></i>
+            </button>
+
+            {# Customer Segment #}
+            {% if customer_segment %}
+            <div class="sidebar-card customer-segment-display{% if original.is_guest_user %} guest-segment{% endif %}" style="--segment-color: {{ customer_segment.color }};">
+                <div class="segment-name">
+                    {{ customer_segment.display_name }}{% if original.is_guest_user and customer_segment.name != 'guest' %} <span class="guest-modifier">({% trans "Guest" %})</span>{% endif %}
+                </div>
+                <div class="segment-description">
+                    {{ customer_segment.description }}
+                </div>
+                {% if original.is_guest_user %}
+                <div class="segment-cta">
+                    <i class="fas fa-lightbulb"></i> {% trans "Potential for higher LTV if converted to registered account" %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {# Quick Actions #}
+            <div class="sidebar-card">
+                <h3>
+                    <i class="fas fa-bolt"></i>
+                    {% trans "Quick Actions" %}
+                </h3>
+
+                <a href="{% url 'customers:dashboard' %}?customer_id={{ original.pk }}" class="quick-action-btn" target="_blank">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>{% trans "View Full Dashboard" %}</span>
+                </a>
+
+                {% if original.is_guest_user %}
+                <button type="button" id="send-account-invitation-btn" class="quick-action-btn primary"
+                        data-action-url="{% url 'customers:customer_profile_actions' object_id=original.pk %}"
+                        data-confirm-msg="{% trans 'Send an account registration invitation to this guest customer?' %}"
+                        data-sending-msg="{% trans 'Sending...' %}"
+                        data-success-msg="{% trans 'Invitation sent successfully!' %}"
+                        data-error-msg="{% trans 'Failed to send invitation' %}"
+                        data-sent-msg="{% trans 'Invitation Sent' %}"
+                        data-default-msg="{% trans 'Send Account Invitation' %}"
+                        data-error-occurred-msg="{% trans 'An error occurred' %}">
+                    <i class="fas fa-envelope"></i>
+                    <span>{% trans "Send Account Invitation" %}</span>
+                </button>
+                {% endif %}
+
+                {% if not original.user.affiliate_profile and not original.is_guest_user %}
+                <button type="button" id="convert-to-affiliate-btn" class="quick-action-btn secondary"
+                        data-action-url="{% url 'customers:customer_profile_actions' object_id=original.pk %}"
+                        data-confirm-msg="{% trans 'Are you sure you want to convert this customer to an affiliate?' %}"
+                        data-converting-msg="{% trans 'Converting...' %}"
+                        data-error-msg="{% trans 'Failed to convert to affiliate' %}"
+                        data-default-msg="{% trans 'Convert to Affiliate' %}"
+                        data-error-occurred-msg="{% trans 'An error occurred' %}">
+                    <i class="fas fa-handshake"></i>
+                    <span>{% trans "Convert to Affiliate" %}</span>
+                </button>
+                {% endif %}
+
+                <a href="{% url 'customers:customer_profile_actions' object_id=original.pk %}?action=export" class="quick-action-btn secondary">
+                    <i class="fas fa-download"></i>
+                    <span>{% trans "Export Customer Data" %}</span>
+                </a>
+            </div>
+
+            {# Additional Stats #}
+            {% if original.user.loyalty_member %}
+            <div class="sidebar-card">
+                <h3>
+                    <i class="fas fa-award"></i>
+                    {% trans "Loyalty Program" %}
+                </h3>
+                <div class="sidebar-card-content">
+                    <div class="sidebar-card-value">
+                        {{ original.user.loyalty_member.points_balance }}
+                    </div>
+                    <div class="sidebar-card-label">
+                        {% trans "Points Balance" %}
+                    </div>
+                    <a href="{% url 'admin:loyalty_loyaltymember_change' original.user.loyalty_member.pk %}" class="button default">
+                        {% trans "View Loyalty Details" %}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if original.user.affiliate_profile %}
+            <div class="sidebar-card">
+                <h3>
+                    <i class="fas fa-handshake"></i>
+                    {% trans "Affiliate Program" %}
+                </h3>
+                <div class="sidebar-card-content">
+                    <div class="sidebar-card-value-medium">
+                        {{ original.user.affiliate_profile.get_status_display }}
+                    </div>
+                    <div class="sidebar-card-label mb-1">
+                        {% trans "Status" %}
+                    </div>
+                    <a href="{% url 'admin:affiliate_affiliate_change' original.user.affiliate_profile.pk %}" class="button default">
+                        {% trans "View Affiliate Details" %}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Customer Notes #}
+            <div class="sidebar-card">
+                <h3>
+                    <i class="fas fa-sticky-note"></i>
+                    {% trans "Customer Notes" %}
+                </h3>
+
+                {# Add Note Form #}
+                <div class="sidebar-note-form">
+                    <form id="add-note-form" method="post" action="#"
+                          data-add-note-url="{% url 'customers:add_customer_note' %}"
+                          data-customer-id="{{ original.pk }}"
+                          data-error-msg="{% trans 'Failed to add note' %}"
+                          data-error-occurred-msg="{% trans 'An error occurred' %}">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <select id="note-type" name="note_type" required class="sidebar-form-input">
+                                <option value="general">{% trans "General" %}</option>
+                                <option value="support">{% trans "Support" %}</option>
+                                <option value="complaint">{% trans "Complaint" %}</option>
+                                <option value="compliment">{% trans "Compliment" %}</option>
+                                <option value="vip">{% trans "VIP" %}</option>
+                                <option value="follow_up">{% trans "Follow Up" %}</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="note-title" name="title" placeholder="{% trans 'Title' %}" required class="sidebar-form-input">
+                        </div>
+                        <div class="form-row">
+                            <textarea id="note-content" name="content" rows="3" placeholder="{% trans 'Note content' %}" required class="sidebar-form-input"></textarea>
+                        </div>
+                        <div class="form-row sidebar-form-row">
+                            <label class="sidebar-form-label">
+                                <input type="checkbox" id="note-follow-up" name="requires_follow_up">
+                                {% trans "Requires Follow Up" %}
+                            </label>
+                        </div>
+                        <button type="submit" class="button default button-full-width">
+                            <i class="fas fa-save"></i> {% trans "Save Note" %}
+                        </button>
+                    </form>
+                </div>
+
+                {# Recent Notes Display #}
+                {% if customer_notes %}
+                <div class="sidebar-notes-section">
+                    <h4 class="sidebar-notes-heading">{% trans "Recent Notes" %}</h4>
+                    {% for note in customer_notes|slice:":3" %}
+                    <div class="sidebar-note-item">
+                        <div class="sidebar-note-title">
+                            {{ note.title }}
+                            {% if note.requires_follow_up and not note.completed %}
+                            <span class="badge badge-warning">{% trans "Follow Up" %}</span>
+                            {% endif %}
+                        </div>
+                        <div class="sidebar-note-content">
+                            {{ note.content|truncatewords:15 }}
+                        </div>
+                        <div class="sidebar-note-meta">
+                            <i class="fas fa-user"></i> {{ note.created_by.get_full_name|default:note.created_by.username }}
+                            <span class="sidebar-note-meta-spacer"><i class="fas fa-clock"></i> {{ note.created_at|naturaltime }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Submit Buttons #}
+    <div class="submit-row customer-submit-row">
+        {% if original %}
+            <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" class="default" name="_continue">
+        {% else %}
+            <input type="submit" value="{% trans 'Save and add another' %}" name="_addanother">
+            <input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue">
+            <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+        {% endif %}
+        {% if original and show_delete_link %}
+            <p class="deletelink-box"><a href="{% url opts|admin_urlname:'delete' original.pk %}" class="deletelink">{% trans "Delete" %}</a></p>
+        {% endif %}
+    </div>
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% load i18n %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+
+<div class="list-row-cards">
+    {% for template in templates %}
+    <div class="list-row-card">
+        <div class="list-row-card-icon">
+            {% if template.logo and template.logo.webp_file %}
+                <img src="{{ template.logo.webp_file.url }}" alt="{% trans 'Logo' %}" class="img-logo">
+            {% elif template.logo and template.logo.original_file %}
+                <img src="{{ template.logo.original_file.url }}" alt="{% trans 'Logo' %}" class="img-logo">
+            {% else %}
+                <i class="fas fa-receipt text-primary icon-large"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:pos_app_receipttemplate_change' template.pk %}">
+                    {{ template.name }}
+                </a>
+            </h3>
+            <p class="list-row-card-subtitle">
+                {% if template.warehouse %}
+                    <i class="fas fa-store"></i> {{ template.warehouse.pos_display_name|default:template.warehouse.name }}
+                {% elif template.store_group %}
+                    <i class="fas fa-layer-group"></i> {{ template.store_group.name }} ({% trans "Group" %})
+                {% else %}
+                    <i class="fas fa-globe"></i> {% trans "Default Template" %}
+                {% endif %}
+            </p>
+
+            <div class="list-row-card-badges">
+                <span class="list-row-card-badge list-row-card-badge-primary">
+                    <i class="fas fa-ruler-horizontal"></i> {{ template.get_paper_width_display }}
+                </span>
+
+                {% if template.qr_enabled %}
+                    <span class="list-row-card-badge list-row-card-badge-success">
+                        <i class="fas fa-qrcode"></i> {% trans "QR Enabled" %}
+                    </span>
+                {% endif %}
+
+                {% if template.show_powered_by %}
+                    <span class="list-row-card-badge">
+                        <i class="fas fa-tag"></i> {% trans "Branded" %}
+                    </span>
+                {% endif %}
+
+                {% if not template.warehouse and not template.store_group %}
+                    <span class="list-row-card-badge list-row-card-badge-warning">
+                        <i class="fas fa-star"></i> {% trans "Default" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Header" %}</span>
+                    <span class="list-row-card-stat-value">{{ template.get_effective_header|truncatechars:20 }}</span>
+                </div>
+                {% if template.footer_text %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Footer" %}</span>
+                    <span class="list-row-card-stat-value">{{ template.footer_text|truncatechars:20 }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{% trans "Updated" %}: {{ template.updated_at|timesince }} {% trans "ago" %}</span>
+                </div>
+                {% if template.show_store_address %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{% trans "Shows address" %}</span>
+                </div>
+                {% endif %}
+                {% if template.show_cashier %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{% trans "Shows cashier" %}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:pos_app_receipttemplate_change' template.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit template' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'admin:pos_app_receipttemplate_delete' template.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Delete template' %}">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No receipt templates found." %}</p>
+        <p class="card-empty-state-subtitle">
+            {% trans "Create a template to customize your POS receipts." %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

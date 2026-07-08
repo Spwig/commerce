@@ -1,0 +1,137 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Email Outbox" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/admin/css/admin-base.css' %}">
+    <script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <h1>
+            <i class="fas fa-envelope"></i>
+            {% trans "Email Outbox" %}
+        </h1>
+        <p class="subtitle">{% trans "Track outgoing email delivery status" %}</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-card">
+        <h3><i class="fas fa-chart-bar"></i> {% trans "Overview" %}</h3>
+        <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-envelope"></i></div>
+                <div class="value">{{ total_emails|default:"0" }}</div>
+                <div class="label">{% trans "Total Emails" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-check"></i></div>
+                <div class="value">{{ sent_count|default:"0" }}</div>
+                <div class="label">{% trans "Sent" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="value">{{ failed_count|default:"0" }}</div>
+                <div class="label">{% trans "Failed" %}</div>
+            </div>
+            <div class="dashboard-stat-card">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <div class="value">{{ queued_count|default:"0" }}</div>
+                <div class="label">{% trans "Queued" %}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input type="text" id="filter-search" placeholder="{% trans 'Subject, to, or from email...' %}">
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-status">
+                    <i class="fas fa-flag"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-status">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    <option value="queued">{% trans "Queued" %}</option>
+                    <option value="sending">{% trans "Sending" %}</option>
+                    <option value="sent">{% trans "Sent" %}</option>
+                    <option value="failed">{% trans "Failed" %}</option>
+                    <option value="bounced">{% trans "Bounced" %}</option>
+                </select>
+            </div>
+
+            <!-- Template Type -->
+            <div class="filter-field">
+                <label for="filter-template-type">
+                    <i class="fas fa-file-alt"></i> {% trans "Template Type" %}
+                </label>
+                <select id="filter-template-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    {% for tt in template_types %}
+                    <option value="{{ tt }}">{{ tt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Emails" %}</h2>
+        <span class="results-count" id="results-count-info">
+            <i class="fas fa-envelope"></i>
+            <span id="results-count">{{ total_emails }}</span> {% trans "entries" %}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="outbox-results">
+        <div class="list-row-cards">
+            <div class="list-row-card loading-state">
+                <i class="fas fa-spinner fa-spin icon-size-24 mb-12"></i>
+                <p class="m-0">{% trans "Loading emails..." %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="list-filter-config"
+     data-filter-url="{% url 'email_system_admin:outbox_filter' %}"
+     data-results-container="outbox-results"
+     data-results-count="results-count"
+     class="email-hidden"></div>
+</div>
+{% endblock %}

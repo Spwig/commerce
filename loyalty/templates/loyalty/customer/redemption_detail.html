@@ -1,0 +1,177 @@
+{% extends "themes/base.html" %}
+{% load static i18n merchant_trans %}
+
+{% block title %}{% mtrans "Redemption Details" %} - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'loyalty/css/customer.css' %}">
+<link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="loyalty-dashboard">
+    <div class="container redemption-container">
+        {# Breadcrumb #}
+        <nav class="breadcrumb redemption-breadcrumb">
+            <a href="{% url 'loyalty:customer_dashboard' %}">{% mtrans "Loyalty Dashboard" %}</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>{% mtrans "Redemption Details" %}</span>
+        </nav>
+
+        {# Success Header #}
+        {% if redemption.status == 'pending' or redemption.status == 'confirmed' %}
+        <div class="redemption-success-header">
+            <i class="fas fa-check-circle redemption-success-icon"></i>
+            <h1 class="redemption-success-title">
+                {% mtrans "Redemption Successful!" %}
+            </h1>
+            <p class="redemption-success-message">
+                {% mtrans "Your reward has been processed. Details below." %}
+            </p>
+        </div>
+        {% endif %}
+
+        {# Redemption Details Card #}
+        <div class="dashboard-section redemption-section">
+            <h2 class="redemption-section-title">
+                {{ redemption.reward.name }}
+            </h2>
+
+            <div class="redemption-info-grid">
+                <div class="redemption-info-card">
+                    <div class="redemption-info-label">{% mtrans "Redemption Code" %}</div>
+                    <div class="redemption-info-value code">
+                        {{ redemption.redemption_code }}
+                    </div>
+                </div>
+
+                <div class="redemption-info-card">
+                    <div class="redemption-info-label">{% mtrans "Points Spent" %}</div>
+                    <div class="redemption-info-value">
+                        <i class="fas fa-star"></i> {{ redemption.points_spent }}
+                    </div>
+                </div>
+
+                <div class="redemption-info-card">
+                    <div class="redemption-info-label">{% mtrans "Status" %}</div>
+                    <div>
+                        <span class="status-badge status-{{ redemption.status }}">
+                            {{ redemption.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="redemption-info-card">
+                    <div class="redemption-info-label">{% mtrans "Redeemed On" %}</div>
+                    <div class="redemption-info-value date">
+                        {{ redemption.created_at|date:"M d, Y" }}
+                    </div>
+                </div>
+            </div>
+
+            {% if redemption.voucher_code %}
+            <div class="redemption-voucher-card">
+                <div class="redemption-voucher-header">
+                    <i class="fas fa-ticket-alt redemption-voucher-icon"></i>
+                    <div>
+                        <div class="redemption-voucher-label">{% mtrans "Your Voucher Code" %}</div>
+                        <div class="redemption-voucher-code">
+                            {{ redemption.voucher_code }}
+                        </div>
+                    </div>
+                </div>
+                <p class="redemption-voucher-description">
+                    {% mtrans "Use this code at checkout to claim your reward." %}
+                </p>
+            </div>
+            {% endif %}
+
+            {% if redemption.expires_at %}
+            <div class="redemption-expiry-card">
+                <div class="redemption-expiry-header">
+                    <i class="fas fa-clock"></i>
+                    <span>{% mtrans "Expires On" %}</span>
+                </div>
+                <div class="redemption-expiry-date">
+                    {{ redemption.expires_at|date:"F d, Y" }} {% mtrans "at" %} {{ redemption.expires_at|date:"g:i A" }}
+                </div>
+            </div>
+            {% endif %}
+
+            {# Timeline #}
+            <div class="redemption-timeline">
+                <h3 class="redemption-timeline-title">
+                    {% mtrans "Redemption Timeline" %}
+                </h3>
+
+                <div class="redemption-timeline-wrapper">
+                    {# Timeline line #}
+                    <div class="redemption-timeline-line"></div>
+
+                    {# Created #}
+                    <div class="redemption-timeline-item">
+                        <div class="redemption-timeline-dot success"></div>
+                        <div class="redemption-timeline-event-title">
+                            {% mtrans "Redemption Created" %}
+                        </div>
+                        <div class="redemption-timeline-event-date">
+                            {{ redemption.created_at|date:"M d, Y g:i A" }}
+                        </div>
+                    </div>
+
+                    {% if redemption.confirmed_at %}
+                    <div class="redemption-timeline-item">
+                        <div class="redemption-timeline-dot info"></div>
+                        <div class="redemption-timeline-event-title">
+                            {% mtrans "Confirmed" %}
+                        </div>
+                        <div class="redemption-timeline-event-date">
+                            {{ redemption.confirmed_at|date:"M d, Y g:i A" }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if redemption.fulfilled_at %}
+                    <div class="redemption-timeline-item">
+                        <div class="redemption-timeline-dot success"></div>
+                        <div class="redemption-timeline-event-title">
+                            {% mtrans "Fulfilled" %}
+                        </div>
+                        <div class="redemption-timeline-event-date">
+                            {{ redemption.fulfilled_at|date:"M d, Y g:i A" }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if redemption.cancelled_at %}
+                    <div class="redemption-timeline-item">
+                        <div class="redemption-timeline-dot error"></div>
+                        <div class="redemption-timeline-event-title">
+                            {% mtrans "Cancelled" %}
+                        </div>
+                        <div class="redemption-timeline-event-date">
+                            {{ redemption.cancelled_at|date:"M d, Y g:i A" }}
+                        </div>
+                        {% if redemption.cancellation_reason %}
+                        <div class="redemption-timeline-event-reason">
+                            {{ redemption.cancellation_reason }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Action Button #}
+        <div class="redemption-actions">
+            <a
+                href="{% url 'loyalty:customer_dashboard' %}"
+                class="redemption-btn-primary"
+            >
+                <i class="fas fa-home"></i> {% mtrans "Back to Dashboard" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

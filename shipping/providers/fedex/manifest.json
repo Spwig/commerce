@@ -1,0 +1,49 @@
+{
+  "name": "FedEx",
+  "version": "1.1.0",
+  "type": "shipping_provider",
+  "provider_key": "fedex",
+  "entry_point": "provider",
+  "class_name": "FedExProvider",
+  "description": "FedEx shipping integration with rate quotes, label generation, and tracking via FedEx Web Services API",
+  "author": "Spwig",
+  "author_details": {
+    "name": "Spwig",
+    "email": "support@spwig.com",
+    "website": "https://spwig.com"
+  },
+  "homepage_url": "https://www.fedex.com",
+  "support_url": "https://developer.fedex.com",
+  "min_platform_version": "1.0.0",
+  "capabilities": {
+    "rates": true,
+    "labels": true,
+    "tracking": true,
+    "international": true,
+    "returns": false,
+    "pickup": false,
+    "insurance": true,
+    "signature": true
+  },
+  "dependencies": {
+    "requests": ">=2.28.0",
+    "python-dateutil": ">=2.8.2"
+  },
+  "credential_schema": {
+    "api_key": {
+      "type": "text",
+      "label": "API Key (Client ID)",
+      "help_text": "Your FedEx API Key (Client ID) from the FedEx Developer Portal",
+      "required": true,
+      "placeholder": "Enter your FedEx API Key"
+    },
+    "api_secret": {
+      "type": "password",
+      "label": "API Secret (Client Secret)",
+      "help_text": "Your FedEx API Secret (Client Secret) from the FedEx Developer Portal",
+      "required": true,
+      "placeholder": "Enter your FedEx API Secret"
+    }
+  },
+  "signup_url": "https://developer.fedex.com/api/en-us/get-started.html"
+}

@@ -1,0 +1,241 @@
+{% extends "blog/blog_base.html" %}
+{% load i18n static merchant_trans %}
+
+{% block blog_title %}{% if search_query %}{% mtrans "Search results" %}{% else %}{% mtrans "Blog" %}{% endif %}{% endblock %}
+
+{% block blog_meta %}
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+<meta name="description" content="{% mtrans 'Latest articles and news' %} - {{ site_settings.site_name|default:'Shop' }}">
+<meta property="og:title" content="{% mtrans 'Blog' %} - {{ site_settings.site_name|default:'Shop' }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% endblock %}
+
+{% block blog_css %}
+<link rel="stylesheet" href="{% static 'blog/css/blog_list.css' %}">
+{% endblock %}
+
+{% block blog_breadcrumb %}
+<nav class="blog-breadcrumb" aria-label="{% mtrans 'Breadcrumb' %}">
+    <ol class="blog-breadcrumb__list">
+        <li class="blog-breadcrumb__item">
+            <a href="/" class="blog-breadcrumb__link">{% mtrans "Home" %}</a>
+        </li>
+        <li class="blog-breadcrumb__item blog-breadcrumb__item--active">{% mtrans "Blog" %}</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block blog_content %}
+<div class="blog-page-header">
+    {% if search_query %}
+        <h1 class="blog-page-header__title">{% blocktrans with query=search_query %}Search results for "{{ query }}"{% endblocktrans %}</h1>
+        <p class="blog-page-header__subtitle">{% blocktrans count count=page_obj.paginator.count %}{{ count }} result found{% plural %}{{ count }} results found{% endblocktrans %}</p>
+    {% else %}
+        <h1 class="blog-page-header__title">{% mtrans "Blog" %}</h1>
+    {% endif %}
+</div>
+
+<!-- Active filter chips -->
+{% if current_category or current_tag or search_query %}
+<div class="blog-filters">
+    {% if current_category %}
+        {% for cat in categories %}
+            {% if cat.slug == current_category %}
+            <span class="blog-filter-chip">
+                <i class="fas fa-folder"></i> {{ cat.name }}
+                <a href="{% url 'blog:list' %}" class="blog-filter-chip__remove" aria-label="{% mtrans 'Remove filter' %}">&times;</a>
+            </span>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if current_tag %}
+        {% for t in tags %}
+            {% if t.slug == current_tag %}
+            <span class="blog-filter-chip">
+                <i class="fas fa-tag"></i> {{ t.name }}
+                <a href="{% url 'blog:list' %}" class="blog-filter-chip__remove" aria-label="{% mtrans 'Remove filter' %}">&times;</a>
+            </span>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if search_query %}
+        <span class="blog-filter-chip">
+            <i class="fas fa-search"></i> {{ search_query }}
+            <a href="{% url 'blog:list' %}" class="blog-filter-chip__remove" aria-label="{% mtrans 'Clear search' %}">&times;</a>
+        </span>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Featured Posts Hero -->
+{% if featured_posts and not current_category and not current_tag and not search_query and not page_obj.has_previous %}
+<section class="blog-featured">
+    {% for post in featured_posts %}
+        {% if forloop.first %}
+        <div class="blog-featured__primary">
+            <article class="blog-card">
+                <a href="{{ post.get_absolute_url }}" class="blog-card__image-link">
+                    <div class="blog-card__image-wrapper">
+                        <span class="blog-featured__badge">{% mtrans "Featured" %}</span>
+                        {% if post.featured_image %}
+                            <img class="blog-card__image"
+                                 src="{{ post.featured_image.thumbnail_medium }}"
+                                 alt="{{ post.title }}"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="blog-card__image-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="blog-card__body">
+                    {% if post.category %}
+                        <a href="{% url 'blog:category' slug=post.category.slug %}" class="blog-card__category">{{ post.category.name }}</a>
+                    {% endif %}
+                    <h2 class="blog-card__title">
+                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                    </h2>
+                    {% if post.excerpt %}
+                        <p class="blog-card__excerpt">{{ post.excerpt }}</p>
+                    {% endif %}
+                    <div class="blog-card__meta">
+                        {% if post.published_at %}
+                            <span><i class="far fa-calendar"></i> {{ post.published_at|date:"M d, Y" }}</span>
+                        {% endif %}
+                        {% if blog_settings.show_reading_time and post.reading_time_minutes %}
+                            <span><i class="far fa-clock"></i> {{ post.reading_time_minutes }} {% mtrans "min read" %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% else %}
+        <div class="blog-featured__secondary">
+            <article class="blog-card">
+                <a href="{{ post.get_absolute_url }}" class="blog-card__image-link">
+                    <div class="blog-card__image-wrapper">
+                        {% if post.featured_image %}
+                            <img class="blog-card__image"
+                                 src="{{ post.featured_image.thumbnail_medium }}"
+                                 alt="{{ post.title }}"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="blog-card__image-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="blog-card__body">
+                    {% if post.category %}
+                        <a href="{% url 'blog:category' slug=post.category.slug %}" class="blog-card__category">{{ post.category.name }}</a>
+                    {% endif %}
+                    <h2 class="blog-card__title">
+                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                    </h2>
+                    <div class="blog-card__meta">
+                        {% if post.published_at %}
+                            <span><i class="far fa-calendar"></i> {{ post.published_at|date:"M d, Y" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% endif %}
+    {% endfor %}
+</section>
+{% endif %}
+
+<!-- Blog Posts Grid -->
+<section class="blog-grid">
+    {% for post in posts %}
+    <article class="blog-card">
+        <a href="{{ post.get_absolute_url }}" class="blog-card__image-link">
+            <div class="blog-card__image-wrapper">
+                {% if post.featured_image %}
+                    <img class="blog-card__image"
+                         src="{{ post.featured_image.thumbnail_medium }}"
+                         alt="{{ post.title }}"
+                         loading="lazy">
+                {% else %}
+                    <div class="blog-card__image-placeholder">
+                        <i class="fas fa-image"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </a>
+        <div class="blog-card__body">
+            {% if post.category %}
+                <a href="{% url 'blog:category' slug=post.category.slug %}" class="blog-card__category">{{ post.category.name }}</a>
+            {% endif %}
+            <h2 class="blog-card__title">
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+            </h2>
+            {% if post.excerpt %}
+                <p class="blog-card__excerpt">{{ post.excerpt|truncatewords:25 }}</p>
+            {% endif %}
+            <div class="blog-card__meta">
+                {% if post.published_at %}
+                    <span><i class="far fa-calendar"></i> {{ post.published_at|date:"M d, Y" }}</span>
+                {% endif %}
+                {% if blog_settings.show_reading_time and post.reading_time_minutes %}
+                    <span><i class="far fa-clock"></i> {{ post.reading_time_minutes }} {% mtrans "min read" %}</span>
+                {% endif %}
+                {% if blog_settings.show_view_count %}
+                    <span><i class="far fa-eye"></i> {{ post.view_count }}</span>
+                {% endif %}
+            </div>
+            <a href="{{ post.get_absolute_url }}" class="blog-card__read-more">
+                {% mtrans "Read more" %} <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </article>
+    {% empty %}
+    <div class="blog-grid__empty">
+        <i class="fas fa-newspaper"></i>
+        {% if search_query %}
+            <p>{% mtrans "No posts found matching your search." %}</p>
+        {% else %}
+            <p>{% mtrans "No posts published yet. Check back soon!" %}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</section>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav class="blog-pagination" aria-label="{% mtrans 'Blog pagination' %}">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+           class="blog-pagination__link blog-pagination__prev"
+           aria-label="{% mtrans 'Previous page' %}">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="blog-pagination__current" aria-current="page">{{ num }}</span>
+        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+            <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+               class="blog-pagination__link">{{ num }}</a>
+        {% elif num == 1 or num == page_obj.paginator.num_pages %}
+            <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+               class="blog-pagination__link">{{ num }}</a>
+        {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+            <span class="blog-pagination__ellipsis">&hellip;</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}"
+           class="blog-pagination__link blog-pagination__next"
+           aria-label="{% mtrans 'Next page' %}">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

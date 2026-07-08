@@ -1,0 +1,113 @@
+{% load i18n static merchant_trans %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ form.translated_title }}</title>
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'form_builder/css/form_frontend.css' %}">
+</head>
+<body>
+    <div class="form-container">
+        {% if preview_mode %}
+        <div class="preview-banner">
+            <div class="preview-banner-title">
+                <i class="fas fa-eye"></i> {% mtrans "Preview Mode" %}
+            </div>
+            <p class="preview-banner-info">
+                {% mtrans "Test your form's functionality here. Visual styling options are available when adding this form to a page using the Page Builder." %}
+            </p>
+        </div>
+        {% endif %}
+
+        <form id="form-{{ form.slug }}"
+              class="spwig-form{% if form.is_multi_step %} multi-step{% endif %}"
+              method="post"
+              action="{% url 'form_builder_api:form-submit' slug=form.slug %}"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.translated_title %}
+            <h1 class="form-title">{{ form.translated_title }}</h1>
+            {% endif %}
+
+            {% if form.translated_description %}
+            <p class="form-description">{{ form.translated_description }}</p>
+            {% endif %}
+
+            {% if form.is_multi_step %}
+                <!-- Multi-step progress indicator -->
+                <div class="form-progress">
+                    {% for step in form.steps.all %}
+                    <div class="progress-step" data-step="{{ step.order }}">
+                        <span class="step-number">{{ forloop.counter }}</span>
+                        <span class="step-title">{{ step.title }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Step sections -->
+                {% for step in form.steps.all %}
+                <div class="form-step{% if forloop.first %} active{% endif %}" data-step="{{ step.order }}">
+                    {% if step.title %}
+                    <h2 class="step-title">{{ step.translated_title }}</h2>
+                    {% endif %}
+                    {% if step.description %}
+                    <p class="step-description">{{ step.translated_description }}</p>
+                    {% endif %}
+
+                    {% for field in step.fields.all %}
+                        {% include "form_builder/fields/field.html" with field=field %}
+                    {% endfor %}
+
+                    <div class="step-navigation">
+                        {% if not forloop.first %}
+                        <button type="button" class="btn btn-secondary prev-step">
+                            {{ step.translated_back_button_text }}
+                        </button>
+                        {% endif %}
+                        {% if forloop.last %}
+                        <button type="submit" class="btn btn-primary">
+                            {{ form.translated_submit_button_text }}
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-primary next-step">
+                            {{ step.translated_next_button_text }}
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Single page form -->
+                <div class="form-fields">
+                    {% for field in form.fields.all %}
+                        {% include "form_builder/fields/field.html" with field=field %}
+                    {% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        {{ form.translated_submit_button_text }}
+                    </button>
+                </div>
+            {% endif %}
+
+            <!-- Honeypot field for spam protection -->
+            {% if form.spam_protection == 'honeypot' %}
+            <div class="hp-field">
+                <input type="text" name="website" autocomplete="off" tabindex="-1">
+            </div>
+            {% endif %}
+        </form>
+
+        <div class="form-messages">
+            <div class="success-message">{{ form.translated_success_message }}</div>
+            <div class="error-message">{{ form.translated_error_message }}</div>
+        </div>
+    </div>
+
+    <script src="{% static 'form_builder/js/form_renderer.js' %}"></script>
+</body>
+</html>

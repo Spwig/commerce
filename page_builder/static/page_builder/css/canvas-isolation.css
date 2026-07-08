@@ -1,0 +1,576 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/*
+ * Canvas Isolation CSS (LEGACY - Being Migrated)
+ *
+ * This file is being migrated to a new layered architecture:
+ * - layers.css: Layer declaration
+ * - canvas-reset.css: Admin isolation (canvas-reset layer)
+ * - builder/builder-canvas-chrome.css: Builder UI (builder-ui layer)
+ * - Dynamic CSS is wrapped in canvas-base/canvas-theme/canvas-brand layers
+ *
+ * Content element styling now comes from:
+ * - Theme CSS (via tokens.css with CSS variables)
+ * - base.css (typography, utilities)
+ * - Element-specific CSS (button.css, heading.css, etc.)
+ *
+ * This file will be removed once migration is complete.
+ */
+
+/* Define cascade layers - canvas layer has highest priority */
+@layer admin, canvas;
+
+/* =========================================
+   STRICT CANVAS ISOLATION
+   ========================================= */
+
+/* Reset ALL inherited theme styles within canvas */
+@layer canvas {
+  .pb-content-preview {
+    /* Selective reset instead of all:initial to preserve functionality */
+    /* all: initial; - removed to prevent breaking child functionality */
+
+    /* Re-establish basic box model */
+    display: block;
+    box-sizing: border-box;
+
+    /* Background and color from storefront theme
+       Uses theme variable with fallback, !important to ensure visibility */
+    background-color: var(--theme-color-background, #ffffff) !important;
+    color: var(--theme-color-text, #111827);
+
+    /* Standard font stack but allow theme override */
+    font-family: var(--theme-font-sans, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+    font-size: 16px;
+    line-height: 1.5;
+
+    /* Ensure proper text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Allow theme variables to cascade through */
+    /* Removed the CSS variable resets to enable theming */
+    /* Admin-specific variables still blocked by layer isolation */
+
+    /* Prevent admin theme transitions on container only */
+    transition: none !important;
+  }
+
+  /* Reset all children elements - box model only, allow theme cascade */
+  .pb-content-preview *,
+  .pb-content-preview *::before,
+  .pb-content-preview *::after {
+    /* Reset box model for all elements */
+    box-sizing: border-box;
+    /* Theme typography and colors cascade through from base.css/theme CSS */
+  }
+
+  /* Canvas container specific resets */
+  .canvas-container {
+    background: transparent !important;
+    padding: 40px;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+
+    /* Ensure no theme colors leak through */
+    color: initial !important;
+    border-color: initial !important;
+  }
+
+  .canvas-frame {
+    width: 100%;
+    max-width: 1200px;
+    /* Background from storefront theme - uses theme variable with white fallback
+       !important ensures this isn't overridden by other rules */
+    background-color: var(--theme-color-background, #ffffff) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    min-height: 600px;
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+/* =========================================
+   PAGE BUILDER ELEMENT STYLES (pb- prefix)
+   Layout-only styles. Theming comes from base.css/theme CSS.
+   ========================================= */
+
+/* Text Element - layout only, typography from theme */
+.pb-text-element {
+  display: block;
+  position: relative;
+}
+
+/* Heading Element - styles handled by heading.css element stylesheet */
+
+/* Button Element - styles handled by button.css element stylesheet */
+
+/* Image Element - layout only */
+.pb-image-element {
+  display: block;
+  position: relative;
+  max-width: 100%;
+}
+
+.pb-image-element img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Container Element - layout only */
+.pb-container-element {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+/* Form Elements */
+.pb-form-element {
+  display: block;
+  position: relative;
+  padding: 2rem;
+}
+
+.pb-form-element input,
+.pb-form-element textarea,
+.pb-form-element select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--theme-color-border, #e5e7eb);
+  border-radius: var(--theme-radius-md, 0.375rem);
+  font-size: 1rem;
+}
+
+.pb-form-element label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  color: var(--theme-color-text, #374151);
+}
+
+/* Product Grid Element */
+.pb-product-grid-element {
+  display: block;
+  position: relative;
+  padding: 2rem 1rem;
+}
+
+.pb-product-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+/* Gallery Element */
+.pb-gallery-element {
+  display: block;
+  position: relative;
+  padding: 2rem 1rem;
+}
+
+.pb-gallery-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+/* Block any theme-specific focus styles in canvas */
+.pb-content-preview *:focus {
+  outline: 2px solid #2563eb !important;
+  outline-offset: 2px !important;
+}
+
+/* =========================================
+   NO CSS VARIABLE BLOCKLIST NEEDED
+   Shop theme variables use theme-- prefix
+   Page builder uses pb-- prefix
+   Admin variables remain isolated automatically
+   ========================================= */
+
+/* Page builder custom variables - maintained for builder UI */
+.pb-content-preview,
+.pb-content-preview * {
+  --pb-bg-primary: #ffffff !important;
+  --pb-bg-secondary: #f9fafb !important;
+  --pb-bg-tertiary: #f3f4f6 !important;
+  --pb-text-primary: #111827 !important;
+  --pb-text-secondary: #6b7280 !important;
+  --pb-border-primary: #e5e7eb !important;
+  --pb-border-secondary: #d1d5db !important;
+  --pb-accent-primary: #3b82f6 !important;
+  --pb-success: #10b981 !important;
+  --pb-warning: #f59e0b !important;
+  --pb-error: #ef4444 !important;
+  --pb-shadow-sm: rgba(0, 0, 0, 0.05) !important;
+  --pb-shadow-md: rgba(0, 0, 0, 0.1) !important;
+  --pb-shadow-lg: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* =========================================
+   UTILITY CLASSES FOR CANVAS ELEMENTS
+   ========================================= */
+
+.pb-content-preview .pb-text-center { text-align: center; }
+.pb-content-preview .pb-text-left { text-align: left; }
+.pb-content-preview .pb-text-right { text-align: right; }
+
+.pb-content-preview .pb-mt-1 { margin-top: 0.25rem; }
+.pb-content-preview .pb-mt-2 { margin-top: 0.5rem; }
+.pb-content-preview .pb-mt-3 { margin-top: 0.75rem; }
+.pb-content-preview .pb-mt-4 { margin-top: 1rem; }
+
+.pb-content-preview .pb-mb-1 { margin-bottom: 0.25rem; }
+.pb-content-preview .pb-mb-2 { margin-bottom: 0.5rem; }
+.pb-content-preview .pb-mb-3 { margin-bottom: 0.75rem; }
+.pb-content-preview .pb-mb-4 { margin-bottom: 1rem; }
+
+.pb-content-preview .pb-p-1 { padding: 0.25rem; }
+.pb-content-preview .pb-p-2 { padding: 0.5rem; }
+.pb-content-preview .pb-p-3 { padding: 0.75rem; }
+.pb-content-preview .pb-p-4 { padding: 1rem; }
+
+/* =========================================
+   VISUAL BUILDER ELEMENT CONTROLS ISOLATION
+   ========================================= */
+
+/* Ensure element wrappers don't inherit theme styles */
+.pb-content-preview .element-wrapper {
+  background: transparent !important;
+  border: 1px solid #e5e7eb !important;
+  position: relative !important;
+  margin: 10px 0 !important;
+  padding: 15px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Remove margin/padding for element wrappers inside containers to prevent whitespace accumulation */
+.pb-content-preview .container-child-wrapper .element-wrapper {
+  margin: 0 !important;
+  padding: 8px !important;
+  line-height: normal !important;
+}
+
+/* Prevent line-height inheritance from admin theme */
+.pb-content-preview .container-child-wrapper {
+  line-height: normal !important;
+}
+
+.pb-content-preview .element-wrapper:hover {
+  background: rgba(59, 130, 246, 0.03) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Element controls styling - independent of theme */
+.pb-content-preview .element-controls {
+  position: absolute !important;
+  top: -12px !important;
+  right: 8px !important;
+  display: flex !important;
+  gap: 4px !important;
+  background: #ffffff !important;
+  padding: 4px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+  z-index: 100 !important;
+}
+
+.pb-content-preview .element-wrapper:hover > .element-controls {
+  opacity: 1 !important;
+}
+
+.pb-content-preview .element-controls .control-btn {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #4b5563 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-size: 14px !important;
+}
+
+.pb-content-preview .element-controls .control-btn:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.pb-content-preview .element-controls .edit-btn:hover {
+  background: #3b82f6 !important;
+  color: white !important;
+  border-color: #3b82f6 !important;
+}
+
+.pb-content-preview .element-controls .delete-btn:hover {
+  background: #ef4444 !important;
+  color: white !important;
+  border-color: #ef4444 !important;
+}
+
+.pb-content-preview .element-controls .move-btn:hover {
+  background: #10b981 !important;
+  color: white !important;
+  border-color: #10b981 !important;
+}
+
+.pb-content-preview .element-controls .duplicate-btn:hover {
+  background: #8b5cf6 !important;
+  color: white !important;
+  border-color: #8b5cf6 !important;
+}
+
+/* Element content should not be affected by theme */
+.pb-content-preview .element-content {
+  pointer-events: auto !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Selected element styling */
+.pb-content-preview .element-wrapper.selected {
+  border-color: #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.05) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Nested element hover states with consistent light theme and proper z-index hierarchy */
+.pb-content-preview .element-wrapper {
+  z-index: 1 !important;
+}
+
+.pb-content-preview .element-wrapper .element-wrapper {
+  z-index: 10 !important;
+}
+
+.pb-content-preview .element-wrapper .element-wrapper:hover {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.03) !important;
+}
+
+.pb-content-preview .element-wrapper .element-wrapper .element-wrapper {
+  z-index: 20 !important;
+}
+
+.pb-content-preview .element-wrapper .element-wrapper .element-wrapper:hover {
+  border-color: #f59e0b !important;
+  background: rgba(245, 158, 11, 0.03) !important;
+}
+
+.pb-content-preview .element-wrapper .element-wrapper .element-wrapper .element-wrapper {
+  z-index: 30 !important;
+}
+
+.pb-content-preview .element-wrapper .element-wrapper .element-wrapper .element-wrapper:hover {
+  border-color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.03) !important;
+}
+
+/* Drop zones within canvas - fixed colors for builder UI */
+.pb-content-preview .element-drop-zone {
+  background: #f9fafb !important;
+  border: 2px dashed #d1d5db !important;
+  color: #6b7280 !important;
+  padding: 20px !important;
+  text-align: center !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.pb-content-preview .element-drop-zone:hover {
+  border-color: #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.05) !important;
+}
+
+.pb-content-preview .element-drop-zone.drag-over {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Container drop zones (including modal popups) */
+.pb-content-preview .container-drop-zone {
+  position: relative !important;
+  z-index: 50 !important;
+  pointer-events: auto !important;
+}
+
+.pb-content-preview .container-drop-zone.drag-over {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-style: solid !important;
+  z-index: 100 !important;
+}
+
+/* Ensure modal builder drop zones are accessible during drag */
+.pb-content-preview .pb-modal-builder .container-drop-zone {
+  z-index: 100 !important;
+}
+
+/* Element type labels */
+.pb-content-preview .element-type-label {
+  position: absolute !important;
+  top: -8px !important;
+  left: 12px !important;
+  background: #3b82f6 !important;
+  color: white !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+  z-index: 101 !important;
+}
+
+.pb-content-preview .element-wrapper:hover > .element-type-label {
+  opacity: 1 !important;
+}
+
+/* Override any theme-specific focus styles */
+.pb-content-preview .element-wrapper:focus,
+.pb-content-preview .element-controls:focus,
+.pb-content-preview .control-btn:focus {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+/* =========================================
+   ANIMATION AND TRANSITION CONTROL
+   ========================================= */
+
+/* Allow transitions on UI controls for hover effects */
+.pb-content-preview .element-wrapper {
+  transition: all 0.2s ease !important;
+}
+
+.pb-content-preview .element-controls {
+  transition: opacity 0.2s ease !important;
+}
+
+.pb-content-preview .control-btn {
+  transition: all 0.2s ease !important;
+}
+
+/* Allow specific element transitions - buttons now handle their own transitions in button.css */
+
+/*
+ * IMPORTANT: Animations are now allowed globally
+ * Content elements can have animations via:
+ * - Animation classes from animations.css (e.g., .animate-fadeIn)
+ * - Inline animation styles set by JavaScript
+ * - CSS animation properties from stylesheets
+ *
+ * We only block transitions on the main container (.pb-content-preview)
+ * to prevent admin theme transition interference
+ */
+
+/* =========================================
+   TYPOGRAPHY RESET FOR CANVAS
+   ========================================= */
+
+.pb-content-preview {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/* Heading and typography styles now provided by base.css and theme CSS
+   Element-specific styles (hero, cta-banner) override via normal cascade */
+
+/* =========================================
+   OVERRIDE ADMIN COMPONENT STYLES
+   These styles counter admin-base.css !important rules
+   to allow theme variables to work properly
+   ========================================= */
+
+/* Card component - use theme variables instead of admin variables */
+.pb-content-preview .card {
+  background-color: var(--theme-color-surface, #ffffff) !important;
+  border: none !important;
+  border-radius: var(--theme-radius-lg, 0.5rem) !important;
+  padding: 0 !important; /* Let content control padding */
+  box-shadow: var(--theme-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05)) !important;
+  transition: box-shadow var(--theme-transition-duration-base, 0.2s) var(--theme-transition-easing-default, ease) !important;
+  transform: none !important;
+}
+
+.pb-content-preview .card:hover {
+  box-shadow: var(--theme-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1)) !important;
+  transform: none !important;
+}
+
+/* Form card specific - restore padding for form elements */
+.pb-content-preview .fb-form.card {
+  padding: var(--theme-space-6, 1.5rem) !important;
+}
+
+/* Alert component - use theme variables */
+.pb-content-preview .alert {
+  background-color: var(--theme-color-surface, #ffffff) !important;
+  border-radius: var(--theme-radius-md, 0.375rem) !important;
+  padding: var(--theme-space-4, 1rem) !important;
+}
+
+.pb-content-preview .alert--success {
+  background-color: var(--theme-color-success-bg, #ecfdf5) !important;
+  color: var(--theme-color-success, #059669) !important;
+  border: 1px solid var(--theme-color-success, #059669) !important;
+}
+
+.pb-content-preview .alert--error {
+  background-color: var(--theme-color-error-bg, #fef2f2) !important;
+  color: var(--theme-color-error, #dc2626) !important;
+  border: 1px solid var(--theme-color-error, #dc2626) !important;
+}
+
+/* Button component - styles now handled by button.css element stylesheet
+   Only override admin-specific issues here, let element CSS handle theming */
+.pb-content-preview .btn {
+  /* Reset any admin theme overrides - let button.css handle styling */
+  box-sizing: border-box;
+}
+
+/* Form inputs - use theme variables */
+.pb-content-preview .form-input,
+.pb-content-preview .form-select,
+.pb-content-preview .form-textarea {
+  background-color: var(--theme-color-surface, #ffffff) !important;
+  border: 1px solid var(--theme-color-border, #e5e7eb) !important;
+  border-radius: var(--theme-radius-md, 0.375rem) !important;
+  color: var(--theme-color-text, #111827) !important;
+  padding: var(--theme-space-2, 0.5rem) var(--theme-space-3, 0.75rem) !important;
+}
+
+.pb-content-preview .form-input:focus,
+.pb-content-preview .form-select:focus,
+.pb-content-preview .form-textarea:focus {
+  border-color: var(--theme-color-primary, #3b82f6) !important;
+  box-shadow: 0 0 0 3px var(--theme-color-primary-light, rgba(59, 130, 246, 0.1)) !important;
+  outline: none !important;
+}
+
+.pb-content-preview .form-label {
+  color: var(--theme-color-text, #111827) !important;
+  font-weight: var(--theme-font-weight-medium, 500) !important;
+}
+
+.pb-content-preview .form-help-text {
+  color: var(--theme-color-text-muted, #6b7280) !important;
+  font-size: var(--theme-font-size-sm, 0.875rem) !important;
+}

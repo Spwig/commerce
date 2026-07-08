@@ -1,0 +1,112 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spwig"
+version = "1.0.0rc1"
+description = "Spwig Self-Hosted eCommerce Platform"
+requires-python = ">=3.12"
+license = { text = "AGPL-3.0-or-later" }
+authors = [{ name = "Spwig contributors" }]
+readme = "README.md"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# Enable selected linting rules
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "DJ",  # flake8-django
+    "SIM", # flake8-simplify
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "DJ001",  # avoid null=True on string fields (we use it intentionally)
+    "B904",   # raise from None or raise from e
+    "B006",   # mutable default argument
+]
+
+# Per-file ignores
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # imported but unused
+"*/migrations/*" = ["E501", "N806", "DJ"]  # long lines, non-lowercase variable names
+"*/tests/*" = ["E501"]  # allow long test function names
+"manage.py" = ["E402"]  # module level import not at top of file
+
+# Import sorting configuration
+[tool.ruff.lint.isort]
+known-first-party = [
+    "core",
+    "catalog",
+    "orders",
+    "cart",
+    "shipping",
+    "payment_providers",
+    "accounts",
+    "page_builder",
+    "design",
+    "blog",
+    "affiliate",
+    "referrals",
+    "pos_app",
+    "pos_api",
+    "media_library",
+    "custom_fields",
+    "ci_reporting",
+    "email_system",
+    "sms_system",
+    "translation_service",
+    "help_content",
+    "enterprise_sso",
+]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false  # Gradual typing - don't require all functions typed yet
+check_untyped_defs = true
+ignore_missing_imports = true
+show_error_codes = true
+pretty = true
+
+# Exclude certain paths
+exclude = [
+    "migrations/",
+    "shop_venv/",
+    "staticfiles/",
+    "node_modules/",
+]
+
+# Stricter checking for new ci_reporting app
+[[tool.mypy.overrides]]
+module = "ci_reporting.*"
+disallow_untyped_defs = true
+disallow_any_unimported = false
+
+# Relaxed checking for tests
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+ignore_errors = false
+
+# Django stubs
+[[tool.mypy.overrides]]
+module = "django.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "rest_framework.*"
+ignore_missing_imports = true

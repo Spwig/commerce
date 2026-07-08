@@ -1,0 +1,276 @@
+{% load i18n static form_builder_tags element_tags merchant_trans %}
+{% mtrans "Back" as default_back %}
+{% mtrans "Submit" as default_submit %}
+{% mtrans "Next" as default_next %}
+{# Form Element - Integrated with Form Builder #}
+
+{% get_form_data element.content.form_slug as form_data %}
+
+{% if form_data %}
+<section class="fb-form-section section{% if element.content.custom_class %} {{ element.content.custom_class }}{% endif %}"
+data-element-id="{{ element.id }}"
+{% if element.content.id %}id="{{ element.content.id }}"{% endif %}
+{% hover_animation_attrs element %}
+style="{% base_styles element %}">
+    <div class="container container--narrow">
+        {# Form Title #}
+        {% if element.content.show_title and form_data.title %}
+        <h2 class="fb-form__title section-header__title text-center"
+            style="{% if element.content.title_typography %}{{ element.content.title_typography }};{% endif %}{% if element.content.title_color %}color: {{ element.content.title_color }};{% endif %}{% if element.content.title_shadow %}text-shadow: {{ element.content.title_shadow }};{% endif %}">{{ form_data.title }}</h2>
+        {% endif %}
+
+        {# Form Description #}
+        {% if element.content.show_description and form_data.description %}
+        <p class="fb-form__description section-header__subtitle text-center mb-8"
+           style="{% if element.content.description_typography %}{{ element.content.description_typography }};{% endif %}{% if element.content.description_color %}color: {{ element.content.description_color }};{% endif %}{% if element.content.description_shadow %}text-shadow: {{ element.content.description_shadow }};{% endif %}">{{ form_data.description }}</p>
+        {% endif %}
+
+        {# Form Container #}
+        <div class="fb-form-container"
+             id="fb-form-{{ element.id }}"
+             data-form-slug="{{ form_data.slug }}"
+             data-form-id="{{ form_data.id }}"
+             data-multi-step="{{ form_data.is_multi_step|yesno:'true,false' }}"
+             data-spam-protection="{{ form_data.spam_protection }}"
+             data-save-partial="{{ form_data.save_partial_responses|yesno:'true,false' }}"
+        >
+            {# Step Indicator (for multi-step forms) - All types rendered for live preview switching #}
+            {% if form_data.is_multi_step %}
+            <div class="fb-form__step-indicator fb-form__step-indicator--{{ element.content.step_indicator_style|default:'numbered_circles' }}"
+                 style="{% if element.content.step_indicator_style == 'none' %}display: none;{% endif %}">
+
+                {# Progress Bar - hidden unless selected #}
+                <div class="fb-progress-bar"
+                     style="{% if element.content.step_indicator_style != 'progress_bar' %}display: none;{% endif %}
+                            height: {{ element.content.progress_bar_height|default:'8px' }};
+                            background-color: {{ element.content.progress_bar_bg_color|default:'#e5e7eb' }};
+                            border-radius: {{ element.content.progress_bar_radius|default:'4px' }};">
+                    <div class="fb-progress-bar__fill"
+                         style="width: {% widthratio 1 form_data.steps|length 100 %}%;
+                                background-color: {{ element.content.progress_bar_fill_color|default:'var(--theme-color-primary)' }};
+                                border-radius: {{ element.content.progress_bar_radius|default:'4px' }};
+                                height: 100%;"></div>
+                </div>
+                <div class="fb-progress-bar__text"
+                     style="{% if element.content.step_indicator_style != 'progress_bar' %}display: none;{% endif %}">
+                    {% mtrans "Step" %} <span class="fb-progress-bar__current">1</span> {% mtrans "of" %} <span class="fb-progress-bar__total">{{ form_data.steps|length }}</span>
+                </div>
+
+                {# Numbered Circles - hidden unless selected #}
+                <div class="fb-step-circles"
+                     style="{% if element.content.step_indicator_style != 'numbered_circles' and element.content.step_indicator_style %}display: none;{% endif %}">
+                    {% for step in form_data.steps %}
+                    <div class="fb-step-circle{% if forloop.first %} fb-step-circle--active{% endif %}"
+                         data-step="{{ step.order }}"
+                         data-inactive-bg="{{ element.content.circle_inactive_bg|default:'#e5e7eb' }}"
+                         data-inactive-text="{{ element.content.circle_inactive_text|default:'#6b7280' }}"
+                         data-active-bg="{{ element.content.circle_active_bg|default:'var(--theme-color-primary)' }}"
+                         data-active-text="{{ element.content.circle_active_text|default:'#ffffff' }}"
+                         data-completed-bg="{{ element.content.circle_completed_bg|default:'var(--theme-color-success)' }}"
+                         style="width: {{ element.content.circle_size|default:'40px' }};
+                                height: {{ element.content.circle_size|default:'40px' }};
+                                min-width: {{ element.content.circle_size|default:'40px' }};
+                                {% if forloop.first %}background-color: {{ element.content.circle_active_bg|default:'var(--theme-color-primary)' }}; color: {{ element.content.circle_active_text|default:'#ffffff' }};{% else %}background-color: {{ element.content.circle_inactive_bg|default:'#e5e7eb' }}; color: {{ element.content.circle_inactive_text|default:'#6b7280' }};{% endif %}
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;">
+                        <span class="fb-step-circle__number"
+                              style="{% if element.content.circle_number_typography %}{{ element.content.circle_number_typography }}{% endif %}">{{ forloop.counter }}</span>
+                        {% if element.content.show_step_titles %}
+                        <span class="fb-step-circle__label"
+                              style="{% if element.content.circle_label_typography %}{{ element.content.circle_label_typography }}{% endif %}">{{ step.title }}</span>
+                        {% endif %}
+                    </div>
+                    {% if not forloop.last %}
+                    <div class="fb-step-connector"
+                         style="background-color: {{ element.content.connector_color|default:'#e5e7eb' }};
+                                height: {{ element.content.connector_width|default:'2px' }};
+                                flex: 1;"></div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                {# Breadcrumb - hidden unless selected #}
+                <nav class="fb-breadcrumb"
+                     aria-label="{% mtrans 'Form progress' %}"
+                     style="{% if element.content.step_indicator_style != 'breadcrumb' %}display: none;{% endif %}
+                            background-color: {{ element.content.breadcrumb_bg_color|default:'#f3f4f6' }};
+                            padding: 0.75rem 1rem;
+                            border-radius: 0.375rem;
+                            display: {% if element.content.step_indicator_style == 'breadcrumb' %}flex{% else %}none{% endif %};
+                            flex-wrap: wrap;
+                            gap: 0.5rem;
+                            align-items: center;">
+                    {% for step in form_data.steps %}
+                    <span class="fb-breadcrumb__item{% if forloop.first %} fb-breadcrumb__item--active{% endif %}"
+                          data-step="{{ step.order }}"
+                          data-active-color="{{ element.content.breadcrumb_active_color|default:'var(--theme-color-primary)' }}"
+                          style="{% if element.content.breadcrumb_typography %}{{ element.content.breadcrumb_typography }};{% endif %}
+                                 {% if forloop.first %}color: {{ element.content.breadcrumb_active_color|default:'var(--theme-color-primary)' }}; font-weight: 600;{% endif %}">
+                        {{ step.title }}
+                    </span>
+                    {% if not forloop.last %}
+                    <span class="fb-breadcrumb__separator"
+                          style="color: {{ element.content.breadcrumb_separator_color|default:'#9ca3af' }};">/</span>
+                    {% endif %}
+                    {% endfor %}
+                </nav>
+
+                {# Steps Text - hidden unless selected #}
+                <div class="fb-steps-text"
+                     style="{% if element.content.step_indicator_style != 'steps_text' %}display: none;{% endif %}
+                            color: {{ element.content.steps_text_color|default:'#6b7280' }};
+                            {% if element.content.steps_text_typography %}{{ element.content.steps_text_typography }};{% endif %}
+                            text-align: center;
+                            padding: 0.5rem 0;">
+                    {% mtrans "Step" %} <span class="fb-steps-text__current">1</span> {% mtrans "of" %} <span class="fb-steps-text__total">{{ form_data.steps|length }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Main Form #}
+            <form class="fb-form card
+                         fb-form--{{ element.content.field_style|default:'outlined' }}
+                         fb-form--labels-{{ element.content.label_position|default:'above' }}
+                         fb-form--size-{{ element.content.field_size|default:'md' }}
+                         fb-form--spacing-{{ element.content.field_spacing|default:'normal' }}
+                         fb-form--validation-{{ element.content.validation_display|default:'below_field' }}
+                         {% if not element.content.show_required_indicator %}fb-form--hide-required{% endif %}
+                         {% if not element.content.show_help_text %}fb-form--hide-help{% endif %}"
+                  method="post"
+                  action="/api/form-builder/forms/{{ form_data.slug }}/submit/"
+                  novalidate
+                  data-validate-on="{{ element.content.validate_on|default:'blur' }}"
+                  data-validation-display="{{ element.content.validation_display|default:'below_field' }}"
+                  data-success-action="{{ element.content.success_action|default:'replace' }}"
+                  data-success-redirect="{{ element.content.success_redirect_url|default:'' }}"
+                  data-scroll-to-error="{{ element.content.scroll_to_error|yesno:'true,false' }}">
+
+                {% csrf_token %}
+
+                {# Honeypot for spam protection #}
+                {% if form_data.spam_protection == 'honeypot' %}
+                <div class="fb-honeypot" aria-hidden="true" style="position: absolute; left: -9999px;">
+                    <label for="fb_hp_{{ element.id }}">{% mtrans "Leave this empty" %}</label>
+                    <input type="text" name="fb_hp_field" id="fb_hp_{{ element.id }}" tabindex="-1" autocomplete="off">
+                </div>
+                {% endif %}
+
+                {# Error Summary (if using summary display) #}
+                {% if element.content.validation_display == 'summary' %}
+                <div class="fb-form__error-summary alert alert--error" style="display: none;" role="alert">
+                    <div class="alert__content">
+                        <i class="fas fa-exclamation-circle alert__icon"></i>
+                        <div class="fb-form__error-list"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Form Steps/Content #}
+                {% if form_data.is_multi_step %}
+                    {# Multi-step form #}
+                    {% for step in form_data.steps %}
+                    <div class="fb-form__step{% if forloop.first %} fb-form__step--active{% endif %}"
+                         data-step="{{ step.order }}"
+                         data-step-id="{{ step.id }}"
+                         {% if not forloop.first %}style="display: none;"{% endif %}>
+
+                        {# Step Title #}
+                        {% if element.content.show_step_titles and step.title %}
+                        <h3 class="fb-form__step-title">{{ step.title }}</h3>
+                        {% endif %}
+
+                        {# Step Description #}
+                        {% if element.content.show_step_descriptions and step.description %}
+                        <p class="fb-form__step-description">{{ step.description }}</p>
+                        {% endif %}
+
+                        {# Step Fields #}
+                        <div class="fb-form__fields">
+                            {% for field in form_data.fields %}
+                                {% if field.step_id == step.id %}
+                                    {% include "form_builder/partials/field.html" with field=field element=element %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {# Step Navigation #}
+                        <div class="fb-form__actions fb-form__actions--{{ element.content.button_alignment|default:'space-between' }}">
+                            {% if not forloop.first %}
+                            <button type="button"
+                                    class="fb-form__btn fb-form__btn--back btn btn--outline btn--{{ element.content.button_size|default:'md' }}{% if element.content.button_width == 'full' %} btn--full{% endif %}">
+                                {{ step.back_button_text|default:default_back }}
+                            </button>
+                            {% endif %}
+
+                            {% if forloop.last %}
+                            <button type="submit"
+                                    class="fb-form__btn fb-form__btn--submit btn btn--{{ element.content.button_style|default:'primary' }} btn--{{ element.content.button_size|default:'md' }}{% if element.content.button_width == 'full' %} btn--full{% endif %}"
+                                    {% if element.content.submit_button_loading %}data-loading-text="{% mtrans 'Submitting...' %}"{% endif %}>
+                                {{ form_data.submit_button_text|default:default_submit }}
+                            </button>
+                            {% else %}
+                            <button type="button"
+                                    class="fb-form__btn fb-form__btn--next btn btn--{{ element.content.button_style|default:'primary' }} btn--{{ element.content.button_size|default:'md' }}{% if element.content.button_width == 'full' %} btn--full{% endif %}">
+                                {{ step.next_button_text|default:default_next }}
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    {# Single-step form #}
+                    <div class="fb-form__fields">
+                        {% for field in form_data.fields %}
+                            {% include "form_builder/partials/field.html" with field=field element=element %}
+                        {% endfor %}
+                    </div>
+
+                    {# Submit Button #}
+                    <div class="fb-form__actions fb-form__actions--{{ element.content.button_alignment|default:'right' }}">
+                        <button type="submit"
+                                class="fb-form__btn fb-form__btn--submit btn btn--{{ element.content.button_style|default:'primary' }} btn--{{ element.content.button_size|default:'md' }}{% if element.content.button_width == 'full' %} btn--full{% endif %}"
+                                {% if element.content.submit_button_loading %}data-loading-text="{% mtrans 'Submitting...' %}"{% endif %}>
+                            {{ form_data.submit_button_text|default:default_submit }}
+                        </button>
+                    </div>
+                {% endif %}
+            </form>
+
+            {# Success Message (hidden initially) #}
+            <div class="fb-form__success alert alert--success" style="display: none;" role="status">
+                <div class="alert__content">
+                    <i class="fas fa-check-circle alert__icon"></i>
+                    <span class="fb-form__success-message">{{ form_data.success_message }}</span>
+                </div>
+            </div>
+
+            {# Error Message (hidden initially) #}
+            <div class="fb-form__error alert alert--error" style="display: none;" role="alert">
+                <div class="alert__content">
+                    <i class="fas fa-exclamation-circle alert__icon"></i>
+                    <span class="fb-form__error-message">{{ form_data.error_message }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Form data island - read by form-element.js loaded via config.json scripts #}
+<script type="application/json" id="fb-form-data-{{ element.id }}">{% form_data_json form_data %}</script>
+
+{% else %}
+{# No form selected - show placeholder #}
+<section class="fb-form-section fb-form-section--empty section" data-element-id="{{ element.id }}">
+    <div class="container container--narrow">
+        <div class="fb-form__placeholder card">
+            <div class="fb-form__placeholder-content">
+                <i class="fas fa-wpforms fb-form__placeholder-icon"></i>
+                <p class="fb-form__placeholder-text">{% mtrans "No form selected" %}</p>
+                <p class="fb-form__placeholder-hint">{% mtrans "Select a form from the Form Builder or create a new one in the element settings." %}</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}

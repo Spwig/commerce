@@ -1,0 +1,57 @@
+{% extends "page_builder/product/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Gallery Focus Product Template - 60/40 gallery-heavy with sticky info sidebar #}
+{# All product images shown in an editorial grid; ideal for jewelry, furniture, art #}
+
+{% block product_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-gallery-focus.css' %}">
+{% endblock %}
+
+{% block product_layout %}
+<section class="product-section product-section--gallery-focus">
+    <div class="container">
+        <div class="product-layout product-layout--gallery-focus">
+            {# Gallery takes 60% width — all images in an editorial grid #}
+            <div class="product-gallery-focus__gallery product-gallery-focus__gallery--cols-{{ template_options.gallery_columns|default:'2' }}">
+
+                {# Standard gallery partial for the hero image (provides zoom + lightbox support) #}
+                {% include "page_builder/product/_gallery.html" %}
+
+                {# Remaining images rendered as individual grid items #}
+                {% if images.count > 1 %}
+                {% for image in images %}
+                {% if not forloop.first %}
+                <div class="gallery-focus__item" data-lightbox-index="{{ forloop.counter0 }}">
+                    {% if image.media_asset.is_video %}
+                    <video class="gallery-focus__media" controls playsinline preload="metadata"
+                           poster="{{ image.media_asset.poster_url|default:'' }}">
+                        <source src="{{ image.media_asset.get_display_url }}" type="{{ image.media_asset.mime_type }}">
+                    </video>
+                    {% else %}
+                    <img src="{{ image.media_asset.get_display_url }}"
+                         data-zoom-src="{{ image.media_asset.get_original_url|default:image.media_asset.get_display_url }}"
+                         alt="{{ product.name }} - {{ forloop.counter }}"
+                         class="gallery-focus__image"
+                         loading="lazy">
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            {# Info sidebar takes 40% width, sticky on scroll #}
+            <div class="product-gallery-focus__sidebar {% if template_options.sticky_sidebar %}product-gallery-focus__sidebar--sticky{% endif %}">
+                {% include "page_builder/product/_info.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}
+
+{% block product_scripts %}
+<script src="{% static 'page_builder/js/product-gallery-focus.js' %}" defer></script>
+{% endblock %}

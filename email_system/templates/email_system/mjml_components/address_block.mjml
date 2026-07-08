@@ -1,0 +1,29 @@
+{# Address Block Component #}
+{# Usage: {% include 'email_system/mjml_components/address_block.mjml' with address=shipping_address title="Shipping Address" %} #}
+{# Theme tokens: Uses theme.color.text, theme.color.text_muted #}
+
+<mj-section padding="20px 0">
+  <mj-column>
+    <mj-text
+      font-size="16px"
+      font-weight="600"
+      color="{{ theme.color.text|default:'#1f2937' }}"
+      padding-bottom="10px"
+    >
+      {{ title }}
+    </mj-text>
+
+    <mj-text
+      font-size="14px"
+      color="{{ theme.color.text_muted|default:'#6b7280' }}"
+      line-height="1.6"
+    >
+      {% if address.name %}
+        <strong>{{ address.name }}</strong><br>
+      {% endif %}
+      {{ address.street }}<br>
+      {{ address.city }}, {{ address.state }} {{ address.postal_code }}<br>
+      {{ address.country }}
+    </mj-text>
+  </mj-column>
+</mj-section>

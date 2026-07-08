@@ -1,0 +1,129 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "OAuth Setup" %} | {{ site_settings.site_name|default:_('Site Admin') }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'email_system/css/oauth_setup.css' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:email_system_emailaccount_changelist' %}">{% trans 'Email Accounts' %}</a>
+    &rsaquo; {% trans 'Connect' %} {{ provider_name }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="oauth-setup-container">
+    <div class="oauth-card">
+        <h2>{% blocktrans %}Connect {{ provider_name }}{% endblocktrans %}</h2>
+
+        <div class="info-box">
+            <strong>{% trans "Before you begin:" %}</strong>
+            <ol class="step-list">
+                <li>{% trans "You need to have a Google Cloud Console project with Gmail API enabled" %}</li>
+                <li>{% trans "You need OAuth 2.0 client credentials (Client ID and Client Secret)" %}</li>
+                <li>{% trans "The redirect URI below must be added to your OAuth client's authorized redirect URIs" %}</li>
+            </ol>
+        </div>
+
+        <h3>{% trans "1. Configure Your Redirect URI" %}</h3>
+        <p>{% trans "Add this redirect URI to your Google Cloud Console OAuth client configuration:" %}</p>
+        <div class="redirect-uri-display">
+            {{ redirect_uri }}
+        </div>
+        <p class="help-text">
+            {% trans "Location: Google Cloud Console → APIs & Services → Credentials → Your OAuth Client → Authorized redirect URIs" %}
+        </p>
+
+        <h3>{% trans "2. Enter Your OAuth Credentials" %}</h3>
+        <form method="post" action="{% url 'email_system:oauth_initiate' provider_key %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="client_id">{% trans "Client ID" %} *</label>
+                <input
+                    type="text"
+                    id="client_id"
+                    name="client_id"
+                    required
+                    placeholder="123456789-abcdefghijk.apps.googleusercontent.com"
+                >
+                <div class="help-text">
+                    {% trans "Your OAuth 2.0 client ID from Google Cloud Console" %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="client_secret">{% trans "Client Secret" %} *</label>
+                <input
+                    type="password"
+                    id="client_secret"
+                    name="client_secret"
+                    required
+                    placeholder="{% trans 'Enter your client secret' %}"
+                >
+                <div class="help-text">
+                    {% trans "Your OAuth 2.0 client secret from Google Cloud Console" %}
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>{% trans "What happens next?" %}</strong>
+                <ol class="step-list">
+                    <li>{% trans "You'll be redirected to Google to authorize access" %}</li>
+                    <li>{% trans "Sign in with the Gmail account you want to use for sending emails" %}</li>
+                    <li>{% trans "Review and approve the requested permissions (send email only)" %}</li>
+                    <li>{% trans "You'll be redirected back and your account will be connected" %}</li>
+                </ol>
+            </div>
+
+            <div class="oauth-form-actions">
+                <button type="submit" class="btn-submit">
+                    {% trans "Connect Gmail Account" %}
+                </button>
+                <a href="{% url 'admin:email_system_emailaccount_changelist' %}" class="btn-cancel">
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="oauth-card">
+        <h2>{% trans "Need Help?" %}</h2>
+        <p>{% trans "If you haven't set up your Google OAuth credentials yet, follow these steps:" %}</p>
+        <ol class="step-list">
+            <li>
+                <strong>{% trans "Create a Google Cloud Project" %}</strong><br>
+                {% trans "Visit" %} <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a>
+                {% trans "and create a new project or select an existing one" %}
+            </li>
+            <li>
+                <strong>{% trans "Enable Gmail API" %}</strong><br>
+                {% trans "Go to APIs & Services → Library, search for 'Gmail API', and enable it" %}
+            </li>
+            <li>
+                <strong>{% trans "Configure OAuth Consent Screen" %}</strong><br>
+                {% trans "Go to APIs & Services → OAuth consent screen and configure your app details" %}
+            </li>
+            <li>
+                <strong>{% trans "Create OAuth Credentials" %}</strong><br>
+                {% trans "Go to APIs & Services → Credentials → Create Credentials → OAuth client ID" %}<br>
+                {% trans "Select 'Web application' and add the redirect URI shown above" %}
+            </li>
+            <li>
+                <strong>{% trans "Copy Credentials" %}</strong><br>
+                {% trans "Copy the Client ID and Client Secret and paste them in the form above" %}
+            </li>
+        </ol>
+        <p class="oauth-help-link">
+            <a href="https://developers.google.com/gmail/api/quickstart/python" target="_blank">
+                {% trans "View detailed setup guide →" %}
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

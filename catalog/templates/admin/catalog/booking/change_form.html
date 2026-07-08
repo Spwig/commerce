@@ -1,0 +1,561 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static %}
+
+{% block title %}{% if original %}{% trans "Booking" %} #{{ original.pk }} - {{ original.product.name }}{% else %}{% trans "Add Booking" %}{% endif %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/booking-changelist.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/css/booking_change_form.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'catalog/js/booking_change_form.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+{% if original %}
+{# ================================================================ #}
+{# EDIT MODE: Rich Dashboard                                        #}
+{# ================================================================ #}
+<div id="content-main" class="booking-change-form">
+    <a href="{% url 'admin:catalog_booking_changelist' %}" class="back-to-list">
+        <i class="fas fa-arrow-left"></i>
+        {% trans "Back to Bookings" %}
+    </a>
+
+    {# ---- Header ---- #}
+    <div class="booking-header">
+        <div class="booking-header-top">
+            <div class="booking-title">
+                <i class="fas fa-calendar-check"></i>
+                {% trans "Booking" %} #{{ original.pk }} &mdash; {{ original.product.name }}
+            </div>
+            <span class="booking-status-badge {{ original.status }}">
+                {{ original.get_status_display }}
+            </span>
+        </div>
+
+        <div class="booking-meta-grid">
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Date" %}</span>
+                <span class="meta-value">{{ original.start_datetime|date:"M d, Y" }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Time" %}</span>
+                <span class="meta-value">{{ original.start_datetime|date:"H:i" }} - {{ original.end_datetime|date:"H:i" }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Duration" %}</span>
+                <span class="meta-value">{{ original.duration_minutes }} {% trans "min" %}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Customer" %}</span>
+                <span class="meta-value">
+                    {% if original.customer_name %}
+                        {{ original.customer_name }}
+                    {% elif original.customer_email %}
+                        {{ original.customer_email }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </span>
+            </div>
+            {% if original.resource %}
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Resource" %}</span>
+                <span class="meta-value">{{ original.resource.name }}</span>
+            </div>
+            {% endif %}
+            {% if original.total_cost %}
+            <div class="meta-item">
+                <span class="meta-label">{% trans "Total Cost" %}</span>
+                <span class="meta-value text-primary">{{ original.total_cost }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {# ---- Quick Actions ---- #}
+        {% if not is_admin_read_only %}
+        <div class="quick-actions">
+            {% if can_confirm %}
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="confirm">
+                <button type="submit" class="action-btn success">
+                    <i class="fas fa-check-circle"></i>
+                    {% trans "Confirm Booking" %}
+                </button>
+            </form>
+            {% endif %}
+
+            {% if can_complete %}
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="complete">
+                <button type="submit" class="action-btn primary">
+                    <i class="fas fa-check-double"></i>
+                    {% trans "Mark Completed" %}
+                </button>
+            </form>
+            {% endif %}
+
+            {% if can_no_show %}
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="no_show">
+                <button type="submit" class="action-btn warning" data-confirm="{% trans 'Mark this booking as a no-show?' %}">
+                    <i class="fas fa-user-slash"></i>
+                    {% trans "No Show" %}
+                </button>
+            </form>
+            {% endif %}
+
+            {% if can_cancel %}
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="cancel">
+                <button type="submit" class="action-btn danger" data-confirm="{% trans 'Are you sure you want to cancel this booking?' %}">
+                    <i class="fas fa-times-circle"></i>
+                    {% trans "Cancel Booking" %}
+                </button>
+            </form>
+            {% endif %}
+
+            {% if ical_url %}
+            <a href="{{ ical_url }}" class="action-btn" download>
+                <i class="fas fa-calendar-alt"></i>
+                {% trans "Download iCal" %}
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    {# ---- Two Column Content ---- #}
+    <div class="booking-content">
+        {# ---- LEFT COLUMN ---- #}
+        <div class="left-column">
+
+            {# Booking Details #}
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h2>{% trans "Booking Details" %}</h2>
+                </div>
+
+                <div class="booking-info-grid">
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Product" %}</span>
+                        <span class="booking-info-value">
+                            {% if product_link %}
+                            <a href="{{ product_link }}">{{ original.product.name }}</a>
+                            {% else %}
+                            {{ original.product.name }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if original.resource %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Resource" %}</span>
+                        <span class="booking-info-value">{{ original.resource.name }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Date" %}</span>
+                        <span class="booking-info-value">{{ original.start_datetime|date:"l, M d, Y" }}</span>
+                    </div>
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Time" %}</span>
+                        <span class="booking-info-value">{{ original.start_datetime|date:"H:i" }} - {{ original.end_datetime|date:"H:i" }}</span>
+                    </div>
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Duration" %}</span>
+                        <span class="booking-info-value">{{ original.duration_minutes }} {% trans "minutes" %}</span>
+                    </div>
+                    {% if original.persons %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Persons" %}</span>
+                        <span class="booking-info-value">
+                            {% for ptype, count in original.persons.items %}
+                                {{ count }} {{ ptype }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Pricing #}
+            {% if original.total_cost or original.deposit_amount %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-dollar-sign"></i>
+                    <h2>{% trans "Pricing" %}</h2>
+                </div>
+
+                <div class="booking-info-grid">
+                    {% if original.total_cost %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Total Cost" %}</span>
+                        <span class="booking-info-value text-primary font-weight-semibold">{{ original.total_cost }}</span>
+                    </div>
+                    {% endif %}
+                    {% if original.deposit_amount %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Deposit" %}</span>
+                        <span class="booking-info-value">{{ original.deposit_amount }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {# Status Management #}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h2>{% trans "Status Management" %}</h2>
+                </div>
+
+                <div class="p-7">
+                    <div class="d-flex align-center gap-7 flex-wrap">
+                        <div>
+                            <span class="field-label mb-8">{% trans "Current Status" %}</span>
+                            <span class="booking-status-badge {{ original.status }}">
+                                {{ original.get_status_display }}
+                            </span>
+                        </div>
+
+                        {% if not is_admin_read_only %}
+                        {% if original.status == 'pending_confirmation' or original.status == 'confirmed' %}
+                        <form method="post" class="flex-1 d-flex align-end gap-3">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="change_status">
+                            <div class="flex-1">
+                                <label for="new_status" class="field-label mb-8">{% trans "Change To" %}</label>
+                                <select name="new_status" id="new_status" class="booking-form-input">
+                                    <option value="">{% trans "-- Select Status --" %}</option>
+                                    {% if original.status == 'pending_confirmation' %}
+                                    <option value="confirmed">{% trans "Confirmed" %}</option>
+                                    <option value="cancelled">{% trans "Cancelled" %}</option>
+                                    {% elif original.status == 'confirmed' %}
+                                    <option value="completed">{% trans "Completed" %}</option>
+                                    <option value="cancelled">{% trans "Cancelled" %}</option>
+                                    <option value="no_show">{% trans "No Show" %}</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <button type="submit" class="action-btn primary whitespace-nowrap">
+                                <i class="fas fa-sync-alt"></i>
+                                {% trans "Update" %}
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# Reschedule #}
+            {% if can_reschedule and not is_admin_read_only %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h2>{% trans "Reschedule" %}</h2>
+                    <button type="button" class="section-toggle" data-toggle="reschedule-panel">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div id="reschedule-panel" class="booking-hidden">
+                    <form method="post" id="reschedule-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="reschedule">
+
+                        <div class="reschedule-grid">
+                            <div class="reschedule-field">
+                                <label for="reschedule-date">{% trans "New Date" %}</label>
+                                <input type="date" id="reschedule-date" name="new_date"
+                                       value="{{ original.start_datetime|date:'Y-m-d' }}" required>
+                            </div>
+                            <div class="reschedule-field">
+                                <label for="reschedule-start">{% trans "Start Time" %}</label>
+                                <input type="time" id="reschedule-start" name="new_time_start"
+                                       value="{{ original.start_datetime|date:'H:i' }}" required>
+                            </div>
+                            <div class="reschedule-field">
+                                <label for="reschedule-end">{% trans "End Time" %}</label>
+                                <input type="time" id="reschedule-end" name="new_time_end"
+                                       value="{{ original.end_datetime|date:'H:i' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="reschedule-actions">
+                            <button type="button" class="action-btn" id="check-availability-btn"
+                                    data-check-url="{% url 'catalog_admin:booking_check_reschedule' original.pk %}">
+                                <i class="fas fa-search"></i>
+                                {% trans "Check Availability" %}
+                            </button>
+                            <button type="submit" class="action-btn primary" id="reschedule-submit-btn" disabled>
+                                <i class="fas fa-calendar-alt"></i>
+                                {% trans "Reschedule" %}
+                            </button>
+                        </div>
+
+                        <div id="reschedule-result" class="reschedule-result booking-hidden"></div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Cancellation Details #}
+            {% if original.status == 'cancelled' and original.cancellation_reason %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-ban"></i>
+                    <h2>{% trans "Cancellation" %}</h2>
+                </div>
+
+                <div class="booking-info-grid">
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Reason" %}</span>
+                        <span class="booking-info-value">{{ original.cancellation_reason }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Order Link #}
+            {% if order_link %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-receipt"></i>
+                    <h2>{% trans "Linked Order" %}</h2>
+                </div>
+
+                <div class="p-7">
+                    <a href="{{ order_link }}" class="booking-order-link">
+                        <i class="fas fa-external-link-alt"></i>
+                        {% trans "Order" %} #{{ original.order.order_number }}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {# ---- RIGHT COLUMN ---- #}
+        <div class="right-column">
+
+            {# Customer Info #}
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fas fa-user"></i>
+                    <h2>{% trans "Customer" %}</h2>
+                </div>
+
+                <div class="booking-info-grid">
+                    {% if original.customer_name %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Name" %}</span>
+                        <span class="booking-info-value">{{ original.customer_name }}</span>
+                    </div>
+                    {% endif %}
+                    {% if original.customer_email %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Email" %}</span>
+                        <span class="booking-info-value">
+                            <a href="mailto:{{ original.customer_email }}">{{ original.customer_email }}</a>
+                        </span>
+                    </div>
+                    {% endif %}
+                    {% if original.customer_phone %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Phone" %}</span>
+                        <span class="booking-info-value">{{ original.customer_phone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if original.customer_timezone %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Timezone" %}</span>
+                        <span class="booking-info-value">{{ original.customer_timezone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if original.customer_notes %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Notes" %}</span>
+                        <span class="booking-info-value">{{ original.customer_notes }}</span>
+                    </div>
+                    {% endif %}
+                    {% if original.customer %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Account" %}</span>
+                        <span class="booking-info-value">
+                            <a href="{% url 'admin:accounts_customerprofile_change' original.customer.pk %}">
+                                {% trans "View Profile" %} <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Notes #}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-sticky-note"></i>
+                    <h2>{% trans "Notes" %}</h2>
+                </div>
+
+                {% if not is_admin_read_only %}
+                <form method="post" class="add-note-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_note">
+                    <textarea name="note_text" class="note-textarea" placeholder="{% trans 'Add a note...' %}" rows="3" required></textarea>
+                    <div class="note-form-footer">
+                        <label class="note-visibility-label">
+                            <input type="checkbox" name="is_customer_visible" value="1">
+                            {% trans "Visible to customer" %}
+                        </label>
+                        <button type="submit" class="action-btn primary">
+                            <i class="fas fa-plus"></i>
+                            {% trans "Add Note" %}
+                        </button>
+                    </div>
+                </form>
+                {% endif %}
+
+                {% if booking_notes %}
+                <div class="notes-list">
+                    {% for note in booking_notes %}
+                    <div class="note-item note-type-{{ note.note_type }}">
+                        <div class="note-item-header">
+                            <span class="note-icon">
+                                {% if note.note_type == 'status_change' %}
+                                    <i class="fas fa-exchange-alt"></i>
+                                {% elif note.note_type == 'reschedule' %}
+                                    <i class="fas fa-calendar-alt"></i>
+                                {% elif note.note_type == 'email' %}
+                                    <i class="fas fa-envelope"></i>
+                                {% elif note.note_type == 'system' %}
+                                    <i class="fas fa-robot"></i>
+                                {% else %}
+                                    <i class="fas fa-sticky-note"></i>
+                                {% endif %}
+                            </span>
+                            <span class="note-author">
+                                {% if note.author %}{{ note.author.get_full_name|default:note.author.username }}{% else %}{% trans "System" %}{% endif %}
+                            </span>
+                            <span class="note-time">{{ note.created_at|date:"M d, Y H:i" }}</span>
+                            {% if note.is_customer_visible %}
+                            <span class="note-visibility-badge">
+                                <i class="fas fa-eye"></i> {% trans "Customer visible" %}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="note-item-body">{{ note.note }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-quiet p-7">{% trans "No notes yet." %}</p>
+                {% endif %}
+            </div>
+
+            {# Calendar Sync #}
+            {% if original.ical_uid %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-sync-alt"></i>
+                    <h2>{% trans "Calendar Sync" %}</h2>
+                </div>
+
+                <div class="booking-info-grid">
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "iCal UID" %}</span>
+                        <span class="booking-info-value booking-uid">{{ original.ical_uid }}</span>
+                    </div>
+                    {% if original.reminder_sent_at %}
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Reminder Sent" %}</span>
+                        <span class="booking-info-value">{{ original.reminder_sent_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if ical_url %}
+                <div class="p-7">
+                    <a href="{{ ical_url }}" class="action-btn" download>
+                        <i class="fas fa-download"></i>
+                        {% trans "Download .ics File" %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {# Recurring Info #}
+            {% if original.is_recurring %}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-redo"></i>
+                    <h2>{% trans "Recurring Booking" %}</h2>
+                </div>
+
+                <div class="booking-info-grid">
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Recurrence Group" %}</span>
+                        <span class="booking-info-value">{{ original.recurrence_group_id }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Timestamps #}
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <i class="fas fa-clock"></i>
+                    <h2>{% trans "Timestamps" %}</h2>
+                </div>
+
+                <div class="booking-info-grid">
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Created" %}</span>
+                        <span class="booking-info-value">{{ original.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                    <div class="booking-info-row">
+                        <span class="booking-info-label">{% trans "Last Updated" %}</span>
+                        <span class="booking-info-value">{{ original.updated_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Hidden Django form for processing #}
+<div class="d-none">{{ block.super }}</div>
+
+{% else %}
+{# ================================================================ #}
+{# ADD MODE: Clean Sequential Form                                  #}
+{# ================================================================ #}
+<div class="booking-change-form">
+    <div class="booking-add-header">
+        <a href="{% url 'admin:catalog_booking_changelist' %}" class="back-to-list">
+            <i class="fas fa-arrow-left"></i>
+            {% trans "Back to Bookings" %}
+        </a>
+        <h1>
+            <i class="fas fa-calendar-plus"></i>
+            {% trans "Create New Booking" %}
+        </h1>
+    </div>
+
+    <div class="booking-add-form">
+        {{ block.super }}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends "page_builder/checkout/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Multi-Step Checkout Template - One step per screen with progress bar #}
+
+{% block checkout_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/checkout-multi-step.css' %}">
+{% endblock %}
+
+{% block checkout_layout %}
+<div class="checkout-container checkout-container--multistep"
+     data-animation="{{ template_options.animation|default:'slide' }}">
+
+    {# ── Progress Bar ── #}
+    <div class="multistep__progress multistep__progress--{{ template_options.progress_bar_style|default:'steps' }}"
+         role="navigation" aria-label="{% mtrans 'Checkout progress' %}">
+        <ol class="multistep__progress-list">
+            {% comment %} Step 1: Contact {% endcomment %}
+            <li class="multistep__progress-item multistep__progress-item--active"
+                data-progress-step="contact">
+                {% if template_options.progress_bar_style == 'dots' %}
+                <span class="multistep__dot"></span>
+                {% else %}
+                <span class="multistep__step-number">1</span>
+                {% endif %}
+                <span class="multistep__step-label">{% mtrans 'Contact' %}</span>
+            </li>
+
+            {% comment %} Step 2: Shipping {% endcomment %}
+            <li class="multistep__progress-item" data-progress-step="shipping">
+                {% if template_options.progress_bar_style == 'dots' %}
+                <span class="multistep__dot"></span>
+                {% else %}
+                <span class="multistep__step-number">2</span>
+                {% endif %}
+                <span class="multistep__step-label">{% mtrans 'Shipping' %}</span>
+            </li>
+
+            {% comment %} Step 3: Shipping Method {% endcomment %}
+            <li class="multistep__progress-item" data-progress-step="shipping-method">
+                {% if template_options.progress_bar_style == 'dots' %}
+                <span class="multistep__dot"></span>
+                {% else %}
+                <span class="multistep__step-number">3</span>
+                {% endif %}
+                <span class="multistep__step-label">{% mtrans 'Delivery' %}</span>
+            </li>
+
+            {% comment %} Step 4: Payment {% endcomment %}
+            <li class="multistep__progress-item" data-progress-step="payment">
+                {% if template_options.progress_bar_style == 'dots' %}
+                <span class="multistep__dot"></span>
+                {% else %}
+                <span class="multistep__step-number">4</span>
+                {% endif %}
+                <span class="multistep__step-label">{% mtrans 'Payment' %}</span>
+            </li>
+
+            {% comment %} Step 5: Review {% endcomment %}
+            <li class="multistep__progress-item" data-progress-step="review">
+                {% if template_options.progress_bar_style == 'dots' %}
+                <span class="multistep__dot"></span>
+                {% else %}
+                <span class="multistep__step-number">5</span>
+                {% endif %}
+                <span class="multistep__step-label">{% mtrans 'Review' %}</span>
+            </li>
+        </ol>
+
+        {% if template_options.progress_bar_style == 'bar' %}
+        <div class="multistep__progress-track">
+            <div class="multistep__progress-fill" id="progress-fill"></div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ── Main Content Area ── #}
+    <div class="multistep__content">
+
+        {# ── Steps Column ── #}
+        <div class="multistep__steps" id="checkout-steps">
+
+            {# ── Step 1: Contact ── #}
+            <div class="multistep__step multistep__step--active" data-step="contact">
+                <h2 class="multistep__step-title">{% mtrans 'Contact Information' %}</h2>
+
+                {% if template_options.show_express_checkout %}
+                <div class="multistep__express-checkout" id="express-checkout">
+                    <p class="multistep__express-label">{% mtrans 'Express Checkout' %}</p>
+                    <div class="multistep__express-buttons" id="express-checkout-buttons">
+                        {# Populated by JS based on available express payment providers #}
+                    </div>
+                    <div class="multistep__divider">
+                        <span>{% mtrans 'or continue below' %}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% include "page_builder/checkout/_step_contact.html" %}
+
+                <div class="multistep__nav">
+                    <a href="{% url 'page_builder:cart' %}" class="btn btn--outline">
+                        <i class="fas fa-arrow-left"></i>
+                        {% mtrans 'Return to Cart' %}
+                    </a>
+                    <button type="button" class="btn btn--primary" data-action="continue-contact">
+                        {% mtrans 'Continue to Shipping' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            {# ── Step 2: Shipping Address ── #}
+            <div class="multistep__step" data-step="shipping" hidden>
+                <h2 class="multistep__step-title">{% mtrans 'Shipping Address' %}</h2>
+
+                {% include "page_builder/checkout/_step_shipping.html" %}
+
+                <div class="multistep__nav">
+                    <button type="button" class="btn btn--outline" data-action="back-shipping">
+                        <i class="fas fa-arrow-left"></i>
+                        {% mtrans 'Back' %}
+                    </button>
+                    <button type="button" class="btn btn--primary" data-action="continue-shipping">
+                        {% mtrans 'Continue to Delivery' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            {# ── Step 3: Shipping Method ── #}
+            <div class="multistep__step" data-step="shipping-method" hidden>
+                <h2 class="multistep__step-title">{% mtrans 'Shipping Method' %}</h2>
+
+                {% include "page_builder/checkout/_step_shipping_method.html" %}
+
+                <div class="multistep__nav">
+                    <button type="button" class="btn btn--outline" data-action="back-shipping-method">
+                        <i class="fas fa-arrow-left"></i>
+                        {% mtrans 'Back' %}
+                    </button>
+                    <button type="button" class="btn btn--primary" data-action="continue-shipping-method">
+                        {% mtrans 'Continue to Payment' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            {# ── Step 4: Payment ── #}
+            <div class="multistep__step" data-step="payment" hidden>
+                <h2 class="multistep__step-title">{% mtrans 'Payment' %}</h2>
+
+                {% include "page_builder/checkout/_step_payment.html" %}
+
+                {% if template_options.show_trust_badges and checkout_trust_badges %}
+                <div class="checkout-trust-badges">
+                    {% include "page_builder/includes/_trust_badges.html" with trust_badges=checkout_trust_badges %}
+                </div>
+                {% endif %}
+
+                <div class="multistep__nav">
+                    <button type="button" class="btn btn--outline" data-action="back-payment">
+                        <i class="fas fa-arrow-left"></i>
+                        {% mtrans 'Back' %}
+                    </button>
+                    <button type="button" class="btn btn--primary" data-action="continue-payment">
+                        {% mtrans 'Continue to Payment' %}
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            {# ── Step 5: Review & Complete Payment ── #}
+            <div class="multistep__step" data-step="review" hidden>
+                <h2 class="multistep__step-title">{% mtrans 'Review & Complete Payment' %}</h2>
+
+                {% include "page_builder/checkout/_step_review.html" %}
+
+                <div class="multistep__nav">
+                    <button type="button" class="btn btn--outline" data-action="back-review">
+                        <i class="fas fa-arrow-left"></i>
+                        {% mtrans 'Back' %}
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        {# ── Order Summary Sidebar ── #}
+        {% if template_options.show_order_summary_sidebar %}
+        <div class="multistep__sidebar">
+            {# Mobile toggle for order summary #}
+            <button type="button" class="multistep__summary-toggle" id="summary-toggle" aria-expanded="false">
+                <span class="multistep__summary-toggle-text">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% mtrans 'Show order summary' %}
+                </span>
+                <span id="summary-toggle-total"></span>
+                <i class="fas fa-chevron-down multistep__summary-chevron"></i>
+            </button>
+            {% include "page_builder/checkout/_order_summary.html" %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block checkout_scripts %}
+<script src="{% static 'page_builder/js/checkout.js' %}" defer></script>
+<script src="{% static 'page_builder/js/checkout-multi-step.js' %}" defer></script>
+{% endblock %}

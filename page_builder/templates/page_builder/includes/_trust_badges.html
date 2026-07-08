@@ -1,0 +1,7 @@
+{# Reusable trust badge renderer - pass trust_badges list via {% include ... with trust_badges=list %} #}
+{% for badge in trust_badges %}
+<div class="trust-badge">
+    <i class="{{ badge.icon }}"></i>
+    <span>{{ badge.text }}</span>
+</div>
+{% endfor %}

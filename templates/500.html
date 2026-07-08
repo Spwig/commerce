@@ -1,0 +1,30 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans 'Server Error' %} - {% trans 'Shop' %}</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'core/vendor/fontawesome/css/all.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'core/css/error-500.css' %}">
+</head>
+<body>
+    <div class="error-page">
+        <div class="error-page__icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h1 class="error-page__code">500</h1>
+        <h2 class="error-page__title">{% trans "Something Went Wrong" %}</h2>
+        <p class="error-page__text">
+            {% trans "We're experiencing some technical difficulties. Please try again later or contact support if the problem persists." %}
+        </p>
+        <a href="/" class="btn">
+            <i class="fas fa-home"></i>
+            {% trans 'Go to Homepage' %}
+        </a>
+    </div>
+</body>
+</html>

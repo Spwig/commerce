@@ -1,0 +1,181 @@
+{% extends "page_builder/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Change Billing Interval" %} - {{ subscription.store_name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm" aria-label="{% trans 'Breadcrumb' %}">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li><a href="{% url 'accounts:dashboard' %}" class="text-gray-700 hover:text-blue-600">{% trans "Account" %}</a></li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <a href="{% url 'accounts:hosting_detail' %}" class="text-gray-700 hover:text-blue-600">{% trans "Hosting Subscription" %}</a>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    <span class="text-gray-500">{% trans "Change Billing Interval" %}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Comparison Card -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar-alt text-blue-600 text-xl mr-3"></i>
+                        <h1 class="text-xl font-bold text-gray-900">{% trans "Change Billing Interval" %}</h1>
+                    </div>
+                </div>
+
+                <!-- Pricing Comparison -->
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <!-- Current Plan -->
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">{% trans "Current" %}</p>
+                            <p class="text-lg font-bold text-gray-900">{{ current_interval|title }}</p>
+                            {% if current_interval == 'monthly' %}
+                            <p class="text-sm text-gray-600 mt-1">&euro;{{ monthly_price }}/{% trans "month" %}</p>
+                            {% else %}
+                            <p class="text-sm text-gray-600 mt-1">&euro;{{ annual_monthly_equivalent|floatformat:2 }}/{% trans "month" %} {% trans "(billed annually)" %}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- New Plan -->
+                        <div class="border-2 border-blue-400 rounded-lg p-4 relative">
+                            <span class="absolute -top-2.5 left-3 px-2 py-0.5 bg-blue-600 text-white text-xs font-medium rounded-full">{% trans "Switching to" %}</span>
+                            <p class="text-xs font-medium text-blue-600 uppercase tracking-wider mb-2">{% trans "New" %}</p>
+                            <p class="text-lg font-bold text-gray-900">{{ new_interval|title }}</p>
+                            {% if new_interval == 'annual' %}
+                            <p class="text-sm text-gray-600 mt-1">&euro;{{ annual_monthly_equivalent|floatformat:2 }}/{% trans "month" %} {% trans "(billed annually)" %}</p>
+                            {% else %}
+                            <p class="text-sm text-gray-600 mt-1">&euro;{{ monthly_price }}/{% trans "month" %}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Switching to Annual -->
+                    {% if new_interval == 'annual' %}
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4 rounded">
+                        <div class="flex">
+                            <i class="fas fa-piggy-bank text-green-500 mt-0.5 mr-3"></i>
+                            <div>
+                                <p class="text-sm font-medium text-green-800">{% trans "Annual billing discount" %}</p>
+                                <p class="text-sm text-green-700 mt-1">
+                                    {% blocktrans with monthly=monthly_price monthly_equiv=annual_monthly_equivalent|floatformat:2 annual_total=annual_total savings=savings|floatformat:2 %}
+                                        Switch from &euro;{{ monthly }}/month to &euro;{{ monthly_equiv }}/month (billed &euro;{{ annual_total }} annually). Save &euro;{{ savings }} per year.
+                                    {% endblocktrans %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if charge_amount > 0 %}
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded">
+                        <div class="flex">
+                            <i class="fas fa-info-circle text-blue-400 mt-0.5 mr-3"></i>
+                            <p class="text-sm text-blue-700">
+                                {% blocktrans with charge=charge_amount|floatformat:2 credit=credit|floatformat:2 %}
+                                    You will be charged &euro;{{ charge }} today (annual rate minus &euro;{{ credit }} credit for your remaining monthly period).
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Switching to Monthly -->
+                    {% elif new_interval == 'monthly' %}
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded">
+                        <div class="flex">
+                            <i class="fas fa-calendar text-blue-400 mt-0.5 mr-3"></i>
+                            <p class="text-sm text-blue-700">
+                                {% blocktrans with monthly=monthly_price %}
+                                    Switch from annual to monthly billing (&euro;{{ monthly }}/month). This will take effect at your next renewal date.
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                {% blocktrans with interval=new_interval|title %}Switch to {{ interval }}{% endblocktrans %}
+                            </button>
+                            <a href="{% url 'accounts:hosting_detail' %}" class="inline-flex items-center justify-center px-6 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                {% trans "Keep Current" %}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Subscription Summary -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">{% trans "Your Subscription" %}</h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Store" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ subscription.store_name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Plan" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ subscription.hosted_plan.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Current Interval" %}</dt>
+                        <dd class="mt-1">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                {{ current_interval|title }}
+                            </span>
+                        </dd>
+                    </div>
+                    {% if new_interval == 'annual' and charge_amount > 0 %}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Due Today" %}</dt>
+                        <dd class="mt-1 text-lg font-bold text-blue-600">&euro;{{ charge_amount|floatformat:2 }}</dd>
+                    </div>
+                    {% elif new_interval == 'annual' %}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Annual Total" %}</dt>
+                        <dd class="mt-1 text-lg font-bold text-blue-600">&euro;{{ annual_total }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if savings %}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">{% trans "Annual Saving" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-green-600">&euro;{{ savings|floatformat:2 }}</dd>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-2">{% trans "Need help?" %}</h3>
+                    <p class="text-sm text-gray-600 mb-3">{% trans "Our support team is here to help with any questions about your hosting subscription." %}</p>
+                    <a href="mailto:support@spwig.com" class="text-sm text-blue-600 hover:text-blue-800">support@spwig.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

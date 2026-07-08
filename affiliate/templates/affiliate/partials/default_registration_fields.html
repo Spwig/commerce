@@ -1,0 +1,81 @@
+{% load i18n %}
+{# Default affiliate registration form fields #}
+{# Used when no custom form_builder form is configured #}
+
+{# Account creation fields - only shown for guests #}
+<div id="accountFields" class="{% if user.is_authenticated %}hidden{% endif %}">
+    <div class="affiliate-form-row">
+        <div class="affiliate-form-group half-width">
+            <label for="first_name">{% trans "First Name" context "form" %} <span class="required">*</span></label>
+            <input type="text" id="first_name" name="first_name"
+                   placeholder="{% trans 'Your first name' context 'placeholder' %}"
+                   {% if user.is_authenticated %}value="{{ user.first_name }}"{% endif %}>
+        </div>
+        <div class="affiliate-form-group half-width">
+            <label for="last_name">{% trans "Last Name" context "form" %} <span class="required">*</span></label>
+            <input type="text" id="last_name" name="last_name"
+                   placeholder="{% trans 'Your last name' context 'placeholder' %}"
+                   {% if user.is_authenticated %}value="{{ user.last_name }}"{% endif %}>
+        </div>
+    </div>
+
+    <div class="affiliate-form-group">
+        <label for="email">{% trans "Email Address" context "form" %} <span class="required">*</span></label>
+        <input type="email" id="email" name="email"
+               placeholder="{% trans 'Your email address' context 'placeholder' %}">
+        <small class="form-help">{% trans "This will be your login email." context "form" %}</small>
+    </div>
+
+    <div class="affiliate-form-group">
+        <label for="password">{% trans "Password" context "form" %} <span class="required">*</span></label>
+        <input type="password" id="password" name="password"
+               placeholder="{% trans 'Choose a secure password' context 'placeholder' %}"
+               minlength="8">
+        <small class="form-help">{% trans "Must be at least 8 characters long." context "form" %}</small>
+    </div>
+
+    <hr class="affiliate-form-divider">
+</div>
+
+{# Affiliate-specific fields #}
+<div class="affiliate-form-group">
+    <label for="payment_email">{% trans "Payment Email" context "form" %} <span class="required">*</span></label>
+    <input type="email" id="payment_email" name="payment_email" required
+           placeholder="{% trans 'Email for receiving payments' context 'placeholder' %}"
+           {% if user.is_authenticated %}value="{{ user.email }}"{% endif %}>
+    <small class="form-help">{% trans "This email will be used for payment notifications and payouts." context "form" %}</small>
+</div>
+
+<div class="affiliate-form-group">
+    <label for="payment_method">{% trans "Preferred Payment Method" context "form" %} <span class="required">*</span></label>
+    <select id="payment_method" name="payment_method" required>
+        <option value="">{% trans "Select payment method" context "form" %}</option>
+        <option value="paypal">PayPal</option>
+        <option value="bank_transfer">{% trans "Bank Transfer" context "form" %}</option>
+    </select>
+</div>
+
+<div class="affiliate-form-row">
+    <div class="affiliate-form-group half-width">
+        <label for="company_name">{% trans "Company Name" context "form" %}</label>
+        <input type="text" id="company_name" name="company_name"
+               placeholder="{% trans 'Optional - Your company name' context 'placeholder' %}">
+    </div>
+    <div class="affiliate-form-group half-width">
+        <label for="website">{% trans "Website" context "form" %}</label>
+        <input type="url" id="website" name="website"
+               placeholder="{% trans 'https://yourwebsite.com' context 'placeholder' %}">
+    </div>
+</div>
+
+<div class="affiliate-form-group">
+    <label for="how_heard">{% trans "How did you hear about us?" context "form" %}</label>
+    <select id="how_heard" name="how_heard">
+        <option value="">{% trans "-- Select --" context "form" %}</option>
+        <option value="search">{% trans "Search Engine" context "form" %}</option>
+        <option value="social">{% trans "Social Media" context "form" %}</option>
+        <option value="friend">{% trans "Friend/Colleague" context "form" %}</option>
+        <option value="blog">{% trans "Blog/Article" context "form" %}</option>
+        <option value="other">{% trans "Other" context "form" %}</option>
+    </select>
+</div>

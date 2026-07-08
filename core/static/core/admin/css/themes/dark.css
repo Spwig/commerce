@@ -1,0 +1,347 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/*
+ * Comprehensive Dark Theme for Spwig Admin
+ * Based on Dayyan's blog styling with complete CSS variable overrides
+ */
+
+/* CSS Variables for Dark Theme */
+html[data-theme="dark"] {
+    /* Brand palette */
+    --primary: #aa88ff;                     /* Purple accent from blog */
+    --secondary: #0c567b;                   /* Spwig blue but darker */
+    --accent: #8cf;                         /* Cyan accent from blog */
+    --primary-fg: #0d0d0d;                  /* Dark text on light backgrounds */
+
+    /* Text and body */
+    --body-fg: #e0e0e0;                     /* Light silver text */
+    --body-bg: #0d0d0d;                     /* Deep black background */
+    --body-quiet-color: #aaa;               /* Muted text */
+    --body-medium-color: #ccc;              /* Medium text */
+    --body-loud-color: #fff;                /* Bright white text */
+    --primary-text: #e0e0e0;                /* Same as body-fg */
+    --secondary-text: #aaa;                 /* Muted text */
+    --accent-text: #fff;                    /* Bright text for headers */
+    --muted-fg: #aaa;                       /* Muted foreground text */
+    --quiet-text: #aaa;                     /* Quiet text for inactive buttons */
+
+    /* Surfaces and backgrounds */
+    --primary-bg: #0d0d0d;                  /* Same as body-bg for consistency */
+    --secondary-bg: #1a1a1a;                /* Elevated surfaces */
+    --accent-bg: #121212;                   /* Card/container background */
+    --surface-bg: #121111;                  /* Surface backgrounds for theme toggle */
+    --darkened-bg: #1a1a1a;                 /* Elevated surfaces */
+    --selected-bg: #2a2a2a;                 /* Selected items */
+    --selected-row: #1e1e2a;                /* Selected table rows */
+    --selected-fg: #fff;                    /* Text color for selected items */
+    --preview-section-bg: #334155;          /* Section background for preview cards */
+
+    /* Borders, dividers, and shadows */
+    --hairline-color: #2a2a2a;              /* Subtle borders */
+    --border-color: #2a2a2a;                /* Main borders */
+    --divider-color: #2a2a2a;               /* Same as border-color */
+    --subtle-border: #1a1a1a;               /* Very subtle borders */
+    --shadow-light: rgba(255, 255, 255, 0.05);  /* Light shadow for dark theme */
+    --shadow-dark: rgba(0, 0, 0, 0.5);          /* Dark shadow for dark theme */
+    --gradient-accent: linear-gradient(135deg, #1a1a1a 0%, #aa88ff 100%);
+    --gradient-blue: linear-gradient(90deg, transparent, #8cf, transparent);
+
+    /* Header and breadcrumbs */
+    --header-color: #e0e0e0;
+    --header-branding-color: #aa88ff;       /* Purple branding */
+    --header-bg: #121212;                   /* Slightly lighter black */
+    --header-link-color: #e0e0e0;
+    --breadcrumbs-fg: #ccc;
+    --breadcrumbs-link-fg: #8cf;            /* Cyan links */
+    --breadcrumbs-bg: #1a1a1a;
+
+    /* Links */
+    --link-fg: #8cf;                        /* Cyan links */
+    --link-hover-color: #6ad;               /* Darker cyan on hover */
+    --link-selected-fg: #aa88ff;            /* Purple when selected */
+    --link-color: #8cf;                     /* Same as link-fg */
+    --link-hover: #6ad;                     /* Same as link-hover-color */
+    --blue-accent: #8cf;                    /* Cyan accent */
+    --blue-border: #2a4a5a;                 /* Dark blue border */
+    --blue-subtle: rgba(136, 204, 255, 0.08); /* Subtle blue background */
+
+    /* Buttons and actions */
+    --button-fg: #fff;
+    --button-bg: #4a7fb5;                   /* Brand blue buttons */
+    --button-hover-bg: #3a6a9a;             /* Darker brand blue hover */
+    --default-button-bg: #aa88ff;           /* Purple default buttons */
+    --default-button-hover-bg: #9977ee;     /* Darker purple hover */
+    --close-button-bg: #666;
+    --close-button-hover-bg: #888;
+    --delete-button-bg: #dc3545;
+    --delete-button-hover-bg: #c82333;
+    --object-tools-fg: #fff;
+    --object-tools-bg: #4a7fb5;
+    --object-tools-hover-bg: #3a6a9a;
+    --primary-color: #aa88ff;               /* Primary accent for utilities */
+    --primary-hover: #9977ee;               /* Primary hover for utilities */
+    --button-primary: #aa88ff;              /* Purple primary button */
+    --button-hover: #9977ee;                /* Darker purple hover */
+
+    /* Functional and message colors */
+    --error-fg: #ff6b6b;                    /* Bright red text */
+    --error-bg: #4a1a1a;                    /* Dark red background */
+    --message-success-bg: #1a4a1a;          /* Dark green */
+    --message-success-border: #2d6a2d;      /* Dark green border */
+    --message-warning-bg: #4a4a1a;          /* Dark yellow */
+    --message-warning-border: #6a6a2d;      /* Dark yellow border */
+    --message-error-bg: #4a1a1a;            /* Dark red */
+    --message-error-border: #6a2d2d;        /* Dark red border */
+    --message-info-bg: #1a3a4a;             /* Dark blue */
+    --message-info-border: #2d5a6a;         /* Dark blue border */
+    --success-color: #4caf50;               /* Green for success */
+    --success-bg: #1a4a1a;                  /* Dark green background */
+    --success-fg: #4caf50;                  /* Bright green text */
+    --warning-color: #ff9800;               /* Orange for warnings */
+    --warning-bg: #4a3a1a;                  /* Dark amber background */
+    --warning-fg: #ffb74d;                  /* Bright amber text */
+    --error-color: #ff6b6b;                 /* Same as error-fg */
+    --info-color: #00bcd4;                  /* Cyan for info */
+    --info-bg: #121212;                     /* Dark Background for info */
+    --info-fg: #8e8e8e;                     /* Silver text on info background */
+    --admin-info-bg: #1a3a4a;               /* Dark cyan background for info banners */
+    --admin-info: #00bcd4;                  /* Cyan accent for info banners */
+
+    /* Banner colors - MFA, Update, License */
+    --banner-warning-bg: linear-gradient(135deg, rgba(255, 193, 7, 0.12) 0%, rgba(255, 152, 0, 0.08) 100%);
+    --banner-warning-border: rgba(255, 152, 0, 0.25);
+    --banner-warning-icon: #ffb74d;         /* Softer amber icon */
+    --banner-warning-strong: #ffb74d;       /* Softer amber bold text */
+    --banner-info-bg: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(100, 181, 246, 0.06) 100%);
+    --banner-info-border: rgba(33, 150, 243, 0.25);
+    --banner-info-icon: #64b5f6;            /* Softer blue icon */
+    --banner-critical-bg: linear-gradient(135deg, rgba(255, 107, 53, 0.14) 0%, rgba(255, 68, 68, 0.10) 100%);
+    --banner-critical-border: rgba(255, 107, 53, 0.4);
+    --banner-critical-icon: #ff8a65;        /* Softer orange icon */
+    --banner-critical-strong: #ff8a65;      /* Softer orange bold text */
+    --banner-lockout-bg: linear-gradient(135deg, rgba(220, 53, 69, 0.14) 0%, rgba(200, 35, 51, 0.10) 100%);
+    --banner-lockout-border: rgba(220, 53, 69, 0.4);
+    --banner-lockout-icon: #ff6b6b;         /* Softer red icon */
+    --banner-lockout-strong: #ff6b6b;       /* Softer red bold text */
+    --banner-update-bg: linear-gradient(135deg, rgba(40, 167, 69, 0.10) 0%, rgba(46, 204, 113, 0.06) 100%);
+    --banner-update-border: rgba(40, 167, 69, 0.25);
+    --banner-update-icon: #66bb6a;          /* Softer green icon */
+    --banner-update-strong: #66bb6a;        /* Softer green bold text */
+    --banner-update-action-bg: #43a047;     /* Green button */
+    --banner-update-action-hover: #388e3c;  /* Darker green hover */
+    --banner-dismiss-hover-bg: rgba(255, 255, 255, 0.1);
+
+    /* Accents for components */
+    --purple-accent: #aa88ff;               /* Purple accent for theme toggle */
+
+    /* Logo backplates */
+    --logo-plate-light: #1b1f29;            /* Slightly lighter than dark bg for dark logos */
+    --logo-plate-dark: #e8e8e8;             /* Light plate for light logos on dark theme */
+    --logo-plate-border: rgba(255, 255, 255, 0.08); /* Subtle border */
+
+    /* Set color scheme for browser UI */
+    color-scheme: dark;
+
+    /* CKEditor 5 dark mode overrides */
+    --ck-color-text: #e0e0e0;
+    --ck-color-base-background: #0d0d0d;
+    --ck-color-base-foreground: #1a1a1a;
+    --ck-color-base-border: #2a2a2a;
+    --ck-color-base-text: #e0e0e0;
+    --ck-color-base-active-focus: #aa88ff;
+    --ck-color-focus-border: #aa88ff;
+    --ck-color-focus-outer-shadow: rgba(170, 136, 255, 0.2);
+    --ck-color-toolbar-background: #1a1a1a;
+    --ck-color-toolbar-border: #2a2a2a;
+    --ck-color-button-default-background: transparent;
+    --ck-color-button-default-hover-background: #2a2a2a;
+    --ck-color-button-default-active-background: #2a2a2a;
+    --ck-color-button-on-background: #2a2a2a;
+    --ck-color-button-on-hover-background: #333;
+    --ck-color-button-on-active-background: #333;
+    --ck-color-button-on-color: #aa88ff;
+    --ck-color-button-action-background: #aa88ff;
+    --ck-color-button-action-hover-background: #9977ee;
+    --ck-color-button-action-active-background: #8866dd;
+    --ck-color-button-action-text: #0d0d0d;
+    --ck-color-dropdown-panel-background: #0d0d0d;
+    --ck-color-dropdown-panel-border: #2a2a2a;
+    --ck-color-input-background: #0d0d0d;
+    --ck-color-input-border: #2a2a2a;
+    --ck-color-input-text: #e0e0e0;
+    --ck-color-input-disabled-background: #1a1a1a;
+    --ck-color-input-disabled-border: #2a2a2a;
+    --ck-color-input-disabled-text: #666;
+    --ck-color-list-background: #0d0d0d;
+    --ck-color-list-button-hover-background: #2a2a2a;
+    --ck-color-list-button-on-background: #aa88ff;
+    --ck-color-list-button-on-text: #0d0d0d;
+    --ck-color-panel-background: #1a1a1a;
+    --ck-color-panel-border: #2a2a2a;
+    --ck-color-dialog-background: #1a1a1a;
+    --ck-color-dialog-form-header-border: #2a2a2a;
+    --ck-color-labeled-field-label-background: #1a1a1a;
+    --ck-color-editable-blur-selection: rgba(170, 136, 255, 0.15);
+    --ck-color-widget-blurred-border: #2a2a2a;
+    --ck-color-widget-hover-border: #aa88ff;
+    --ck-color-table-focused-cell-background: rgba(170, 136, 255, 0.1);
+}
+
+/* CKEditor 5 element overrides for dark mode
+   Dialogs and balloons are appended to <body>, outside .ck-editor,
+   so they need explicit overrides in addition to CSS variables. */
+
+[data-theme="dark"] .ck.ck-dialog {
+    background: #1a1a1a !important;
+    color: #e0e0e0 !important;
+    border-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-dialog .ck-form__header {
+    border-bottom-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-dialog .ck-dialog__content {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-dialog .ck-dialog__actions {
+    border-top-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-balloon-panel {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-balloon-panel .ck-form__header {
+    border-bottom-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-balloon-panel .ck-form {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-input-text {
+    background: #0d0d0d !important;
+    color: #e0e0e0 !important;
+    border-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-input-text:focus,
+[data-theme="dark"] .ck.ck-input.ck-input_focused {
+    border-color: #aa88ff !important;
+    box-shadow: 0 0 0 2px rgba(170, 136, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .ck.ck-label {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-labeled-field-view__label {
+    background: #1a1a1a !important;
+    color: #aaa !important;
+}
+
+[data-theme="dark"] .ck.ck-toolbar {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-toolbar .ck-button {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-toolbar .ck-button:hover {
+    background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-toolbar .ck-button.ck-on {
+    background: #2a2a2a !important;
+    color: #aa88ff !important;
+}
+
+[data-theme="dark"] .ck.ck-editor__main > .ck-editor__editable {
+    background: #0d0d0d !important;
+    color: #e0e0e0 !important;
+    border-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-editor__editable.ck-focused {
+    border-color: #aa88ff !important;
+    box-shadow: 0 0 0 2px rgba(170, 136, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .ck.ck-editor__editable .ck-placeholder::before {
+    color: #aaa !important;
+}
+
+[data-theme="dark"] .ck.ck-dropdown__panel {
+    background: #0d0d0d !important;
+    border-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-list__item .ck-button {
+    color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .ck.ck-list__item .ck-button:hover {
+    background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-list__item .ck-button.ck-on {
+    background: #aa88ff !important;
+    color: #0d0d0d !important;
+}
+
+[data-theme="dark"] .ck.ck-icon {
+    color: inherit !important;
+}
+
+[data-theme="dark"] .ck.ck-toolbar__separator {
+    background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .ck.ck-sticky-panel__content {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+}
+
+/* CKEditor balloon arrow colors for dark mode */
+[data-theme="dark"] .ck.ck-balloon-panel[class*="arrow"]::before {
+    border-color: transparent transparent #2a2a2a transparent !important;
+}
+[data-theme="dark"] .ck.ck-balloon-panel[class*="arrow"]::after {
+    border-color: transparent transparent #1a1a1a transparent !important;
+}
+[data-theme="dark"] .ck.ck-balloon-panel_arrow_s::before {
+    border-color: #2a2a2a transparent transparent transparent !important;
+}
+[data-theme="dark"] .ck.ck-balloon-panel_arrow_s::after {
+    border-color: #1a1a1a transparent transparent transparent !important;
+}
+[data-theme="dark"] .ck.ck-balloon-panel_arrow_sw::before {
+    border-color: #2a2a2a transparent transparent transparent !important;
+}
+[data-theme="dark"] .ck.ck-balloon-panel_arrow_sw::after {
+    border-color: #1a1a1a transparent transparent transparent !important;
+}
+[data-theme="dark"] .ck.ck-balloon-panel_arrow_se::before {
+    border-color: #2a2a2a transparent transparent transparent !important;
+}
+[data-theme="dark"] .ck.ck-balloon-panel_arrow_se::after {
+    border-color: #1a1a1a transparent transparent transparent !important;
+}
+
+/* CKEditor word/character count bar */
+[data-theme="dark"] .ck.ck-word-count {
+    color: #aaa !important;
+}
+
+/* Hide CKEditor powered-by badge */
+[data-theme="dark"] .ck.ck-powered-by {
+    display: none !important;
+}

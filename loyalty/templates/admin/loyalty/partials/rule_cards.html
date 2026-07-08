@@ -1,0 +1,141 @@
+{% load i18n static %}
+
+<link rel="stylesheet" href="{% static 'core/admin/css/card-utilities.css' %}">
+<div class="list-row-cards">
+    {% for rule in rules %}
+    <div class="list-row-card">
+        <div class="list-row-card-checkbox">
+            <input type="checkbox" name="_selected_action" value="{{ rule.pk }}" class="action-select">
+        </div>
+
+        <div class="list-row-card-icon">
+            {% if rule.rule_type == 'spend' %}
+                <i class="fas fa-shopping-cart" class="text-primary"></i>
+            {% elif rule.rule_type == 'item' %}
+                <i class="fas fa-box" class="icon-info"></i>
+            {% elif rule.rule_type == 'action' %}
+                <i class="fas fa-bolt" class="icon-warning"></i>
+            {% elif rule.rule_type == 'event' %}
+                <i class="fas fa-calendar" class="icon-success"></i>
+            {% else %}
+                <i class="fas fa-circle" class="text-muted"></i>
+            {% endif %}
+        </div>
+
+        <div class="list-row-card-content">
+            <h3 class="list-row-card-title">
+                <a href="{% url 'admin:loyalty_loyaltyrule_change' rule.pk %}">
+                    {{ rule.name }}
+                </a>
+            </h3>
+            {% if rule.description %}
+            <p class="list-row-card-subtitle">
+                {{ rule.description|truncatechars:100 }}
+            </p>
+            {% endif %}
+
+            <div class="list-row-card-badges">
+                {% if rule.is_active %}
+                    <span class="list-row-card-badge success">
+                        <i class="fas fa-check-circle"></i> {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="list-row-card-badge"
+                          class="badge-muted">
+                        <i class="fas fa-pause-circle"></i> {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+
+                <span class="list-row-card-badge primary">
+                    <i class="fas {% if rule.rule_type == 'spend' %}fa-shopping-cart{% elif rule.rule_type == 'item' %}fa-box{% elif rule.rule_type == 'action' %}fa-bolt{% else %}fa-calendar{% endif %}"></i>
+                    {{ rule.get_rule_type_display }}
+                </span>
+
+                {% if rule.is_exclusive %}
+                    <span class="list-row-card-badge warning">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans "Exclusive" %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-stats">
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Points Rate" %}</span>
+                    <span class="list-row-card-stat-value">{{ rule.points_rate|floatformat:2 }}</span>
+                </div>
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Priority" %}</span>
+                    <span class="list-row-card-stat-value">{{ rule.priority }}</span>
+                </div>
+                {% if rule.min_order_amount %}
+                <div class="list-row-card-stat">
+                    <span class="list-row-card-stat-label">{% trans "Min Order" %}</span>
+                    <span class="list-row-card-stat-value">${{ rule.min_order_amount|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="list-row-card-meta">
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{% trans "Created" %}: {{ rule.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if rule.start_date or rule.end_date %}
+                <div class="list-row-card-meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>
+                        {% if rule.start_date and rule.end_date %}
+                            {{ rule.start_date|date:"M d, Y" }} - {{ rule.end_date|date:"M d, Y" }}
+                        {% elif rule.start_date %}
+                            {% trans "From" %}: {{ rule.start_date|date:"M d, Y" }}
+                        {% elif rule.end_date %}
+                            {% trans "Until" %}: {{ rule.end_date|date:"M d, Y" }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="list-row-card-actions">
+            <a href="{% url 'admin:loyalty_loyaltyrule_change' rule.pk %}"
+               class="list-row-card-action"
+               title="{% trans 'Edit rule' %}">
+                <i class="fas fa-edit"></i>
+            </a>
+            {% if rule.is_active %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="toggle-rule-status"
+                    data-pk="{{ rule.pk }}"
+                    data-activate="false"
+                    title="{% trans 'Deactivate rule' %}">
+                <i class="fas fa-pause"></i>
+            </button>
+            {% else %}
+            <button type="button"
+                    class="list-row-card-action"
+                    data-action="toggle-rule-status"
+                    data-pk="{{ rule.pk }}"
+                    data-activate="true"
+                    title="{% trans 'Activate rule' %}">
+                <i class="fas fa-play"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="list-row-card card-empty-state">
+        <div class="card-empty-state-icon">
+            <i class="fas fa-ruler"></i>
+        </div>
+        <p class="card-empty-state-title">{% trans "No loyalty rules found." %}</p>
+        <p class="card-empty-state-subtitle">
+            <a href="{% url 'admin:loyalty_loyaltyrule_add' %}"
+               class="text-link">
+                {% trans "Create your first rule" %}
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+</div>

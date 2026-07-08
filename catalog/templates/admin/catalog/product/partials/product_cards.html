@@ -1,0 +1,12 @@
+{% load i18n static %}
+{% if products %}
+    {% for product in products %}
+        {% include "admin/catalog/product/product_card.html" with product=product %}
+    {% endfor %}
+{% else %}
+    <div class="products-empty-state filtered-empty">
+        <i class="fas fa-search"></i>
+        <h2>{% trans "No Products Found" %}</h2>
+        <p>{% trans "No products match your current filters. Try adjusting or clearing filters." %}</p>
+    </div>
+{% endif %}

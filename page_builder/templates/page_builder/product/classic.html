@@ -1,0 +1,22 @@
+{% extends "page_builder/product/_base.html" %}
+{% load i18n static merchant_trans %}
+{# Classic Product Template - Gallery left (50%), Info right (50%) #}
+{# The familiar two-column layout used by major retailers #}
+
+{% block product_css %}
+<link rel="stylesheet" href="{% static 'page_builder/css/product-classic.css' %}">
+{% endblock %}
+
+{% block product_layout %}
+<section class="product-section">
+    <div class="container">
+        <div class="product-layout product-layout--classic">
+            {% include "page_builder/product/_gallery.html" %}
+            {% include "page_builder/product/_info.html" %}
+        </div>
+    </div>
+</section>
+
+{% include "page_builder/product/_tabs.html" %}
+{% include "page_builder/product/_related_products.html" %}
+{% endblock %}

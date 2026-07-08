@@ -1,0 +1,14 @@
+<div class="checkbox-group" role="group" aria-labelledby="label-{{ field.field_name }}">
+    {% for option in field.options %}
+    <div class="checkbox-item">
+        <input type="checkbox"
+               id="field-{{ field.field_name }}-{{ forloop.counter }}"
+               name="{{ field.field_name }}"
+               value="{{ option.value }}"
+               class="form-checkbox">
+        <label for="field-{{ field.field_name }}-{{ forloop.counter }}" class="checkbox-label">
+            {{ option.label }}
+        </label>
+    </div>
+    {% endfor %}
+</div>

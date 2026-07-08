@@ -1,0 +1,127 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Image Size Presets" %} | {{ site_settings.site_name }} | Spwig{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/admin-base.css' %}">
+<script src="{% static 'core/admin/js/admin-list-filters.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Header -->
+    <div class="change-list-header">
+        <div>
+            <h1>
+                <i class="fas fa-crop"></i>
+                {% trans "Image Size Presets" %}
+            </h1>
+            <p class="subtitle">{% trans "Define standard image dimensions for responsive design" %}</p>
+        </div>
+        <div class="change-list-header-actions">
+            <a href="{% url 'admin:media_library_imagesizepreset_add' %}" class="button primary change-list-action-button">
+                <i class="fas fa-plus"></i> {% trans "Add Preset" %}
+            </a>
+        </div>
+    </div>
+
+    {{ system_presets_note|safe }}
+
+    <!-- Filters Panel -->
+    <div class="filters-panel" id="filters-panel">
+        <div class="filters-panel-header">
+            <h3 class="filters-panel-title">
+                <i class="fas fa-filter"></i> {% trans "Filters" %}
+            </h3>
+            <button type="button" class="filters-toggle" data-action="toggle-filters">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="filters-panel-fields" id="filters-panel-fields">
+            <!-- Search -->
+            <div class="filter-field">
+                <label for="filter-search">
+                    <i class="fas fa-search"></i> {% trans "Search" %}
+                </label>
+                <input
+                    type="text"
+                    id="filter-search"
+                    placeholder="{% trans 'Search by name or description...' %}"
+                    value="">
+            </div>
+
+            <!-- Crop Mode -->
+            <div class="filter-field">
+                <label for="filter-crop-mode">
+                    <i class="fas fa-crop-alt"></i> {% trans "Crop Mode" %}
+                </label>
+                <select id="filter-crop-mode">
+                    <option value="">{% trans "All Modes" %}</option>
+                    {% for mode_value, mode_label in crop_modes %}
+                    <option value="{{ mode_value }}">{{ mode_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Status -->
+            <div class="filter-field">
+                <label for="filter-is-active">
+                    <i class="fas fa-toggle-on"></i> {% trans "Status" %}
+                </label>
+                <select id="filter-is-active">
+                    <option value="">{% trans "All" %}</option>
+                    <option value="true">{% trans "Active" %}</option>
+                    <option value="false">{% trans "Inactive" %}</option>
+                </select>
+            </div>
+
+            <!-- Preset Type -->
+            <div class="filter-field">
+                <label for="filter-preset-type">
+                    <i class="fas fa-tag"></i> {% trans "Type" %}
+                </label>
+                <select id="filter-preset-type">
+                    <option value="">{% trans "All Types" %}</option>
+                    <option value="system">{% trans "System Presets" %}</option>
+                    <option value="custom">{% trans "Custom Presets" %}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filters-panel-footer">
+            <div class="active-filters" id="active-filters"></div>
+            <div class="filters-panel-actions">
+                <button type="button" class="button" data-action="apply-filters">
+                    <i class="fas fa-check"></i> {% trans "Apply Filters" %}
+                </button>
+                <button type="button" class="button secondary" data-action="clear-filters">
+                    <i class="fas fa-times"></i> {% trans "Clear All" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Info -->
+    <div class="results-info">
+        <h2>{% trans "Presets" %}</h2>
+        <span class="results-count">
+            <i class="fas fa-crop"></i>
+            <span id="preset-count">{{ cl.result_count }}</span> {% trans "preset" %}{{ cl.result_count|pluralize }}
+        </span>
+    </div>
+
+    <!-- Results Container -->
+    <div id="preset-results">
+        {% include "admin/media_library/imagesizepreset/partials/preset_cards.html" with presets=cl.result_list %}
+    </div>
+
+    <div id="list-filter-config"
+     data-filter-url="{% url 'media_library_admin:imagesizepreset_filter' %}"
+     data-results-container="preset-results"
+     data-results-count="preset-count"
+     style="display:none;"></div>
+</div>
+{% endblock %}

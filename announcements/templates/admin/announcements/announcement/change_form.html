@@ -1,0 +1,220 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_urls %}
+
+{% block title %}
+{% if original %}{% trans "Edit Announcement" %}{% else %}{% trans "Add Announcement" %}{% endif %} | {{ site_settings.site_name }} | Spwig
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'core/admin/css/link_selector.css' %}">
+<link rel="stylesheet" href="{% static 'announcements/admin/css/announcements.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="announcements-form">
+
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+{% csrf_token %}
+
+{# Error summary #}
+{% if adminform.form.errors %}
+<div class="ann-errors">
+    <p><strong>{% trans "Please correct the errors below." %}</strong></p>
+    {{ adminform.form.non_field_errors }}
+</div>
+{% endif %}
+
+{# Two-column layout: main + sidebar #}
+<div class="ann-layout">
+
+    {# ─── Main Column ─── #}
+    <div class="ann-main">
+
+        {# Content Card #}
+        <div class="ann-card">
+            <div class="ann-card-header">
+                <i class="fas fa-edit"></i>
+                <h3>{% trans "Content" %}</h3>
+            </div>
+            <div class="ann-card-body">
+                <div class="ann-field">
+                    <label for="id_title">{% trans "Title" %} <span class="ann-required">*</span></label>
+                    {{ adminform.form.title }}
+                    {% if adminform.form.title.errors %}<div class="ann-field-error">{{ adminform.form.title.errors }}</div>{% endif %}
+                    <div class="ann-help">{% trans "Announcement headline — supports bold, italic, and font color." %}</div>
+                </div>
+                <div class="ann-field">
+                    <label for="id_body">{% trans "Body" %}</label>
+                    {{ adminform.form.body }}
+                    {% if adminform.form.body.errors %}<div class="ann-field-error">{{ adminform.form.body.errors }}</div>{% endif %}
+                    <div class="ann-help">{% trans "Optional detail text shown in the modal popup." %}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Link Card #}
+        <div class="ann-card">
+            <div class="ann-card-header">
+                <i class="fas fa-link"></i>
+                <h3>{% trans "Link" %}</h3>
+            </div>
+            <div class="ann-card-body">
+                <div class="ann-field">
+                    <label for="id_link_type">{% trans "Link Type" %}</label>
+                    {{ adminform.form.link_type }}
+                    {% if adminform.form.link_type.errors %}<div class="ann-field-error">{{ adminform.form.link_type.errors }}</div>{% endif %}
+                </div>
+
+                {# Hidden FK inputs — AdminLinkSelector sets their values via search #}
+                {{ adminform.form.product_reference }}
+                {{ adminform.form.category_reference }}
+                {{ adminform.form.blog_post_reference }}
+                {{ adminform.form.page_reference }}
+
+                {# Search-based link selector — JS injects UI here #}
+                <div id="link-search-container"></div>
+
+                {# Custom URL — shown only when link_type=custom_url #}
+                <div class="ann-field als-custom-url" id="ref-custom_url">
+                    <label for="id_custom_url">{% trans "Custom URL" %}</label>
+                    {{ adminform.form.custom_url }}
+                </div>
+
+                {# Link text + Modal toggle — inline row #}
+                <div class="ann-link-options" id="ann-link-options">
+                    <div class="ann-field ann-field-grow">
+                        <label for="id_link_text">{% trans "Button Text" %}</label>
+                        {{ adminform.form.link_text }}
+                        <div class="ann-help">{% trans "E.g. \"Shop Now\", \"Learn More\"" %}</div>
+                    </div>
+                    <div class="ann-field ann-field-toggle">
+                        <label class="ann-toggle-label">
+                            {{ adminform.form.show_modal }}
+                            <span>{% trans "Show Modal" %}</span>
+                        </label>
+                        <div class="ann-help">{% trans "Open details in a popup instead of navigating." %}</div>
+                    </div>
+                </div>
+            </div>
+
+            {# Initial data for edit mode — AdminLinkSelector reads this #}
+            <script type="application/json" id="link-selector-initial">
+            {% if original and original.link_type != 'none' and original.link_type != 'custom_url' %}
+                {% if original.product_reference %}{ "type": "product", "id": {{ original.product_reference_id }}, "name": "{{ original.product_reference|escapejs }}", "url": "{{ original.product_reference.get_absolute_url|escapejs }}" }{% elif original.category_reference %}{ "type": "category", "id": {{ original.category_reference_id }}, "name": "{{ original.category_reference|escapejs }}", "url": "{{ original.category_reference.get_absolute_url|escapejs }}" }{% elif original.blog_post_reference %}{ "type": "blog_post", "id": {{ original.blog_post_reference_id }}, "name": "{{ original.blog_post_reference|escapejs }}", "url": "{{ original.blog_post_reference.get_absolute_url|escapejs }}" }{% elif original.page_reference %}{ "type": "page", "id": {{ original.page_reference_id }}, "name": "{{ original.page_reference|escapejs }}", "url": "{{ original.page_reference.get_absolute_url|escapejs }}" }{% else %}{}{% endif %}
+            {% else %}{}{% endif %}
+            </script>
+        </div>
+
+    </div>
+
+    {# ─── Sidebar ─── #}
+    <div class="ann-sidebar">
+
+        {# Image Card (collapsible) #}
+        <div class="ann-card ann-card-collapsible" id="ann-image-card">
+            <div class="ann-card-header ann-card-toggle" data-target="ann-image-body">
+                <i class="fas fa-image"></i>
+                <h3>{% trans "Image" %}</h3>
+                <span class="ann-optional">{% trans "Optional" %}</span>
+                <i class="fas fa-chevron-down ann-chevron"></i>
+            </div>
+            <div class="ann-card-body ann-collapsible" id="ann-image-body">
+                <div class="ann-field">
+                    {{ adminform.form.image }}
+                    {% if adminform.form.image.errors %}<div class="ann-field-error">{{ adminform.form.image.errors }}</div>{% endif %}
+                    <div class="ann-help">{% trans "Image for the modal popup. Shown when a visitor clicks the announcement." %}</div>
+                </div>
+                <div class="ann-field">
+                    <label for="id_image_display_mode">{% trans "Display Mode" %}</label>
+                    {{ adminform.form.image_display_mode }}
+                </div>
+                <div class="ann-field" id="ann-overlay-opacity">
+                    <label for="id_image_overlay_opacity">{% trans "Overlay Opacity" %}</label>
+                    {{ adminform.form.image_overlay_opacity }}
+                    <div class="ann-help">{% trans "0 = transparent, 1 = opaque" %}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Status Card #}
+        <div class="ann-card ann-status-card">
+            <div class="ann-card-header">
+                <i class="fas fa-sliders-h"></i>
+                <h3>{% trans "Status" %}</h3>
+            </div>
+            <div class="ann-card-body">
+                <div class="ann-status-toggle">
+                    <label class="ann-switch">
+                        {{ adminform.form.is_enabled }}
+                        <span class="ann-switch-label">{% trans "Enabled" %}</span>
+                    </label>
+                </div>
+                <div class="ann-field">
+                    <label for="id_priority">{% trans "Priority" %}</label>
+                    {{ adminform.form.priority }}
+                    <div class="ann-help">{% trans "Lower = shown first" %}</div>
+                </div>
+                <div class="ann-field">
+                    <label for="id_expires_at">{% trans "Expires At" %}</label>
+                    {{ adminform.form.expires_at }}
+                    <div class="ann-help">{% trans "Leave blank for no expiry." %}</div>
+                </div>
+            </div>
+            {% if original %}
+            <div class="ann-card-footer">
+                <div class="ann-meta">
+                    <span><i class="fas fa-calendar-plus"></i> {% trans "Created" %}: {{ original.created_at|date:"M d, Y H:i" }}</span>
+                    <span><i class="fas fa-sync-alt"></i> {% trans "Updated" %}: {{ original.updated_at|date:"M d, Y H:i" }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {# Visibility Rules Card (collapsible) #}
+        <div class="ann-card ann-card-collapsible">
+            <div class="ann-card-header ann-card-toggle" data-target="ann-visibility-body">
+                <i class="fas fa-eye"></i>
+                <h3>{% trans "Visibility Rules" %}</h3>
+                <span class="ann-optional">{% trans "Advanced" %}</span>
+                <i class="fas fa-chevron-down ann-chevron"></i>
+            </div>
+            <div class="ann-card-body ann-collapsible" id="ann-visibility-body">
+                <div class="ann-help">{% trans "Restrict when this announcement is shown. Leave empty to show to everyone." %}</div>
+                <div class="ann-visibility-checks">
+                    {{ adminform.form.visibility_rules }}
+                </div>
+                <div class="ann-help">{% trans "Hold Ctrl / Cmd to select multiple." %}</div>
+            </div>
+        </div>
+
+        {# Actions Card #}
+        <div class="ann-card ann-actions-card">
+            <button type="submit" name="_save" class="ann-btn ann-btn-primary">
+                <i class="fas fa-check"></i> {% trans "Save" %}
+            </button>
+            <button type="submit" name="_continue" class="ann-btn ann-btn-secondary">
+                <i class="fas fa-save"></i> {% trans "Save & Continue" %}
+            </button>
+            {% if original %}
+            <button type="submit" name="_addanother" class="ann-btn ann-btn-tertiary">
+                <i class="fas fa-plus"></i> {% trans "Save & Add Another" %}
+            </button>
+            {% endif %}
+            {% if original and show_delete_link %}
+            <a href="{% url opts|admin_urlname:'delete' original.pk %}" class="ann-btn ann-btn-danger">
+                <i class="fas fa-trash"></i> {% trans "Delete" %}
+            </a>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+</form>
+</div>
+{% endblock %}

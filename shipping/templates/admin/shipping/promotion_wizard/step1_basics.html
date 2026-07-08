@@ -1,0 +1,156 @@
+{% extends "admin/shipping/promotion_wizard/base.html" %}
+{% load i18n static %}
+
+{% block wizard_content %}
+<div class="step-title">
+    <i class="fas fa-clipboard-list"></i> {% trans "Promotion Basics" %}
+</div>
+<p class="step-description">
+    {% trans "Define the name, type, and action for your shipping promotion. The promotion type determines how shipping costs are modified." %}
+</p>
+
+<form method="post" id="rule-basic-form" class="credentials-form">
+    {% csrf_token %}
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-tag"></i> {% trans "Promotion Details" %}
+        </h3>
+
+        <!-- Rule Name -->
+        <div class="form-group">
+            <label for="id_name">
+                {% trans "Promotion Name" %} <span class="required">*</span>
+            </label>
+            <input type="text"
+                   id="id_name"
+                   name="name"
+                   class="form-control"
+                   value="{{ rule_data.name|default:'' }}"
+                   required
+                   maxlength="200"
+                   placeholder="{% trans 'e.g., Free shipping over $50, 10% discount for heavy items' %}">
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "A descriptive name for this shipping promotion" %}
+            </p>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="id_description">{% trans "Description" %}</label>
+            <textarea id="id_description"
+                      name="description"
+                      class="form-control"
+                      rows="3"
+                      placeholder="{% trans 'Optional description of when this rule applies and what it does...' %}">{{ rule_data.description|default:'' }}</textarea>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Optional details about this promotion's purpose and conditions" %}
+            </p>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h3 class="form-section-title">
+            <i class="fas fa-cog"></i> {% trans "Promotion Action" %}
+        </h3>
+
+        <!-- Rule Type -->
+        <div class="form-group">
+            <label for="id_rule_type">
+                {% trans "Promotion Type" %} <span class="required">*</span>
+            </label>
+            <select id="id_rule_type" name="rule_type" class="form-control" required>
+                <option value="">{% trans "Select promotion type..." %}</option>
+                {% for type_value, type_display in rule_types %}
+                    <option value="{{ type_value }}" {% if rule_data.rule_type == type_value %}selected{% endif %}>
+                        {{ type_display }}
+                    </option>
+                {% endfor %}
+            </select>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "How this promotion modifies shipping costs" %}
+            </p>
+        </div>
+
+        <!-- Rule Type Descriptions -->
+        <div class="info-box" id="rule-type-info">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <strong>{% trans "Promotion Types:" %}</strong>
+                <ul class="promotion-wizard-info-list">
+                    <li><strong>{% trans "Free Shipping:" %}</strong> {% trans "Makes shipping completely free" %}</li>
+                    <li><strong>{% trans "Percentage Discount:" %}</strong> {% trans "Reduces cost by a percentage (0-100%)" %}</li>
+                    <li><strong>{% trans "Fixed Discount:" %}</strong> {% trans "Reduces cost by a fixed amount" %}</li>
+                    <li><strong>{% trans "Override Cost:" %}</strong> {% trans "Overrides shipping cost with a specific amount" %}</li>
+                    <li><strong>{% trans "Fixed Surcharge:" %}</strong> {% trans "Adds a fixed amount to shipping cost" %}</li>
+                    <li><strong>{% trans "Percentage Surcharge:" %}</strong> {% trans "Adds a percentage to shipping cost" %}</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Rule Value (shown/hidden based on rule type) -->
+        <div class="form-group promotion-wizard-hidden" id="rule-value-group">
+            <label for="id_rule_value">
+                <span id="rule-value-label">{% trans "Value" %}</span> <span class="required">*</span>
+            </label>
+            <input type="number"
+                   id="id_rule_value"
+                   name="rule_value"
+                   class="form-control"
+                   value="{{ rule_data.rule_value|default:'' }}"
+                   step="0.01"
+                   min="0"
+                   placeholder="0.00">
+            <p class="help-text" id="rule-value-help">
+                <i class="fas fa-info-circle"></i>
+                <span id="rule-value-help-text">{% trans "Enter the value for this promotion" %}</span>
+            </p>
+        </div>
+
+        <!-- Active Status -->
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox"
+                       id="id_is_active"
+                       name="is_active"
+                       {% if rule_data.is_active or not rule_data.name %}checked{% endif %}>
+                {% trans "Active" %}
+            </label>
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Only active promotions are evaluated during checkout" %}
+            </p>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block wizard_navigation %}
+<div class="nav-buttons">
+    <a href="{% url 'admin:shipping_shippingpromotion_changelist' %}" class="btn btn-secondary">
+        <i class="fas fa-times"></i> {% trans "Cancel" %}
+    </a>
+    <button type="submit" form="rule-basic-form" class="btn btn-primary">
+        {% trans "Next Step" %} <i class="fas fa-arrow-right"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block wizard_js %}
+<script type="application/json" id="promotion-wizard-step1-config">
+{
+    "i18n": {
+        "percentage": "{% trans 'Percentage' %}",
+        "enterPercentage": "{% trans 'Enter percentage (0-100)' %}",
+        "amount": "{% trans 'Amount' %}",
+        "enterAmount": "{% trans 'Enter fixed amount in your default currency' %}",
+        "shippingCost": "{% trans 'Shipping Cost' %}",
+        "enterShippingCost": "{% trans 'Enter the fixed shipping cost' %}"
+    }
+}
+</script>
+<script src="{% static 'shipping/js/promotion-wizard-step1.js' %}"></script>
+{% endblock %}

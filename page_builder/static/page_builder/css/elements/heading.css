@@ -1,0 +1,95 @@
+/* Copyright (c) 2025-2026 Spwig contributors. Licensed under AGPL-3.0. */
+
+/**
+ * Heading Element Styles
+ *
+ * Theme tokens provide defaults. Merchant overrides are applied as
+ * direct inline styles (color from color picker, typography from typography utility).
+ *
+ * Theme Element Tokens (from tokens.json):
+ *   --element-heading-h1-size through h6-size
+ *   --element-heading-color
+ *   --element-heading-line-height
+ */
+
+/* Base heading styles */
+.pb-heading {
+    color: var(--element-heading-color, var(--theme-color-text, #1f2937));
+    line-height: var(--element-heading-line-height, var(--theme-line-height-tight, 1.25));
+    margin: 0;
+    margin-bottom: var(--theme-space-4, 1rem);
+    font-weight: var(--theme-font-weight-bold, 700);
+}
+
+/* ==========================================================================
+   Tag-Specific Sizes (h1-h6)
+   These use element tokens that reference typography tokens
+   ========================================================================== */
+
+h1.pb-heading {
+    font-size: var(--element-heading-h1-size, var(--theme-font-size-4xl, 2.25rem));
+}
+
+h2.pb-heading {
+    font-size: var(--element-heading-h2-size, var(--theme-font-size-3xl, 1.875rem));
+}
+
+h3.pb-heading {
+    font-size: var(--element-heading-h3-size, var(--theme-font-size-2xl, 1.5rem));
+}
+
+h4.pb-heading {
+    font-size: var(--element-heading-h4-size, var(--theme-font-size-xl, 1.25rem));
+}
+
+h5.pb-heading {
+    font-size: var(--element-heading-h5-size, var(--theme-font-size-lg, 1.125rem));
+}
+
+h6.pb-heading {
+    font-size: var(--element-heading-h6-size, var(--theme-font-size-base, 1rem));
+}
+
+/* ==========================================================================
+   Text Alignment Modifiers
+   ========================================================================== */
+
+.pb-heading--left {
+    text-align: left;
+}
+
+.pb-heading--center {
+    text-align: center;
+}
+
+.pb-heading--right {
+    text-align: right;
+}
+
+/* ==========================================================================
+   Decorative Styles (Optional enhancements)
+   ========================================================================== */
+
+/* Underlined heading with theme-colored border */
+.pb-heading--underline {
+    padding-bottom: var(--theme-space-2, 0.5rem);
+    border-bottom: 2px solid var(--element-heading-color, var(--theme-color-primary, #2563eb));
+}
+
+/* Heading with left accent bar */
+.pb-heading--accent {
+    padding-left: var(--theme-space-4, 1rem);
+    border-left: 4px solid var(--theme-color-primary, #2563eb);
+}
+
+/* ==========================================================================
+   Mobile Responsive
+   ========================================================================== */
+
+/* Mobile: Reduce heading sizes with fluid typography */
+@media (max-width: 767px) {
+  h1.pb-heading { font-size: clamp(1.75rem, 5vw, 2.5rem); }
+  h2.pb-heading { font-size: clamp(1.5rem, 4vw, 2rem); }
+  h3.pb-heading { font-size: clamp(1.25rem, 3.5vw, 1.75rem); }
+  h4.pb-heading { font-size: clamp(1.125rem, 3vw, 1.5rem); }
+}
