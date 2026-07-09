@@ -1,0 +1,26 @@
+# CODEOWNERS — auto-assigns reviewers on pull requests.
+#
+# Owners listed here get automatically added as reviewers when a PR
+# touches their paths. Read the full syntax docs at
+# https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Change the handle below to your GitHub org/user handle (or a team
+# like @Spwig/core-maintainers) once the org's teams are set up.
+
+# Everything falls back to the core maintainer.
+*                       @Spwig/core-maintainers
+
+# Security-sensitive areas — extra reviewer pair worth it.
+/core/                  @Spwig/core-maintainers
+/accounts/              @Spwig/core-maintainers
+/admin_api/             @Spwig/core-maintainers
+/payment_providers/     @Spwig/core-maintainers
+/cart/                  @Spwig/core-maintainers
+
+# Infra: CI / build / release pipeline.
+/.github/               @Spwig/core-maintainers
+/Dockerfile             @Spwig/core-maintainers
+/docker-compose*.yml    @Spwig/core-maintainers
+
+# Docs — lightweight review is fine.
+*.md                    @Spwig/core-maintainers

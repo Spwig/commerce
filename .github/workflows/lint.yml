@@ -7,8 +7,14 @@ on:
     branches: [main]
 
 jobs:
+  # Lint jobs are advisory during the initial OSS release window.
+  # continue-on-error means the job still runs and its output is
+  # visible in the PR checks, but failures don't block merge. A
+  # codebase-wide ruff format + prettier --write pass is tracked as
+  # a follow-up before we flip these to blocking.
   ruff:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +33,7 @@ jobs:
 
   prettier:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
