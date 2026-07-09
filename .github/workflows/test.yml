@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        # pgvector/pgvector image = postgres 16 + pgvector extension
+        # pre-installed. core/models.py uses pgvector.django.VectorField
+        # for semantic-search embeddings, so migrations `CREATE EXTENSION
+        # vector` on first apply. The plain postgres:16 image doesn't
+        # have the .so, and migrations fail before any test runs.
+        image: pgvector/pgvector:pg16
         env:
           POSTGRES_USER: spwig
           POSTGRES_PASSWORD: spwig
@@ -49,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run Django tests (community edition + integration sandbox)
         env:
@@ -62,6 +67,11 @@ jobs:
           REDIS_HOST: localhost
           REDIS_PORT: 6379
           SECRET_KEY: ci-test-secret-key-not-for-production
+          # Test-only Fernet key. Email / SMS provider credential fields
+          # get symmetrically encrypted at rest — no default in settings
+          # means every send-service test fails at credential-write.
+          # Rotate freely; not tied to any real data.
+          EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
           SPWIG_TELEMETRY: "0"
         run: |
           pytest tests/community_edition/ tests/integration/test_sandbox.py -v

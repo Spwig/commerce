@@ -18,10 +18,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # gitleaks/gitleaks-action@v2 requires a paid GITLEAKS_LICENSE for
+      # organization accounts. Invoke the binary directly instead —
+      # gitleaks itself is fully open source. Config comes from
+      # .gitleaks.toml at the repo root (documented placeholder
+      # allowlists).
+      - name: Install gitleaks
+        run: |
+          curl -sL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz \
+            | tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
+
+      - name: gitleaks detect
+        run: gitleaks detect --config .gitleaks.toml --verbose
 
   pip-audit:
     name: pip-audit (Python deps)
