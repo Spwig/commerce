@@ -67,6 +67,11 @@ jobs:
           REDIS_HOST: localhost
           REDIS_PORT: 6379
           SECRET_KEY: ci-test-secret-key-not-for-production
+          # Test-only Fernet key. Email / SMS provider credential fields
+          # get symmetrically encrypted at rest — no default in settings
+          # means every send-service test fails at credential-write.
+          # Rotate freely; not tied to any real data.
+          EMAIL_ENCRYPTION_KEY: "wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk="
           SPWIG_TELEMETRY: "0"
         run: |
           pytest tests/community_edition/ tests/integration/test_sandbox.py -v
