@@ -65,14 +65,13 @@ upgrading is a key you paste into the admin.
 
 | | Community | Pro | Enterprise |
 |---|:---:|:---:|:---:|
-| Full e-commerce, themes, page builder, POS UI | ✓ | ✓ | ✓ |
-| Bring-your-own payment providers | ✓ | ✓ | ✓ |
-| Bring-your-own shipping providers | ✓ | ✓ | ✓ |
+| Full e-commerce platform (storefront, admin, checkout, orders) | ✓ | ✓ | ✓ |
+| Point-of-sale terminal, page builder, themes | ✓ | ✓ | ✓ |
+| Bring-your-own payment + shipping providers | ✓ | ✓ | ✓ |
 | Marketplace access (premium themes + integrations) | ✓ | ✓ | ✓ |
 | Spwig-hosted address autocomplete | Free · rate-limited | Higher limit | Highest limit |
 | Spwig-hosted GeoIP (visitor location) | Free · rate-limited | Higher limit | Highest limit |
 | Push notifications (iOS admin app) | Free · rate-limited | Higher limit | Highest limit |
-| Point-of-sale (POS terminal support) | – | ✓ | ✓ |
 | Hosted email gateway with warm IPs + DKIM | – | ✓ | ✓ |
 | Priority support | – | ✓ | ✓ |
 | Enterprise SSO (Azure AD, Okta) | – | – | ✓ |
@@ -171,12 +170,11 @@ round-trip, no key required. Upgrade later with `git pull` and
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Point of sale (Pro+)</h3>
-      <p>Full POS terminal for brick-and-mortar merchants:
-      barcode scanning, split payments, receipt printing, cash drawer
-      integration, customer-facing display, offline mode. Community
-      edition ships the code but the admin surface shows an upgrade
-      CTA — patch it out if you fork, that's fine.</p>
+      <h3>Point of sale</h3>
+      <p>Full POS terminal for brick-and-mortar merchants: barcode
+      scanning, split payments, receipt printing, cash drawer
+      integration, customer-facing display, offline mode. Included
+      in every edition — no upgrade required.</p>
     </td>
     <td width="50%" valign="top">
       <img src="https://spwig.com/images/screenshots/pos-terminal.webp" alt="POS terminal">

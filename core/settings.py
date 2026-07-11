@@ -185,8 +185,7 @@ MIDDLEWARE = [
     'core.middleware.account_status.AccountStatusMiddleware',  # Account status enforcement for hosted installations
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',  # Content-Security-Policy header
-    'pos_api.middleware.POSLicenseMiddleware',  # POS API license gate
-    'pos_app.community_gate.POSCommunityGateMiddleware',  # Redirect POS admin paths to upgrade CTA for Community edition
+    'pos_api.middleware.POSLicenseMiddleware',  # POS API sandbox-header injector (POS itself is universally enabled — no licence gate)
     'geoip.middleware.GeoIPMiddleware',  # GeoIP location resolution
     'catalog.middleware.RegionDetectionMiddleware',  # Sales region detection (requires GeoIPMiddleware)
     'management.middleware.ManagementAccessMiddleware',  # Management tools logging
@@ -1442,10 +1441,6 @@ CELERY_BEAT_SCHEDULE = {
         }
     },
     # POS License Validation (daily against update server)
-    'validate-pos-license': {
-        'task': 'pos_app.tasks.validate_pos_license',
-        'schedule': crontab(hour=6, minute=0),  # Daily at 6 AM
-    },
     # Booking Slot Reservation Cleanup
     'release-expired-booking-slot-reservations': {
         'task': 'catalog.release_expired_booking_slot_reservations',

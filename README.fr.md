@@ -75,7 +75,7 @@ défaut lorsque vous lancez `docker compose up` ; pour passer à une
 | Autocomplétion d'adresses hébergée par Spwig | Gratuit · limité | Limite supérieure | Limite maximale |
 | GeoIP hébergé par Spwig (localisation des visiteurs) | Gratuit · limité | Limite supérieure | Limite maximale |
 | Notifications push (application admin iOS) | Gratuit · limité | Limite supérieure | Limite maximale |
-| Point de vente (prise en charge du terminal POS) | – | ✓ | ✓ |
+| Point de vente (prise en charge du terminal POS) | ✓ | ✓ | ✓ |
 | Passerelle e-mail hébergée avec IP réputées + DKIM | – | ✓ | ✓ |
 | Support prioritaire | – | ✓ | ✓ |
 | SSO entreprise (Azure AD, Okta) | – | – | ✓ |
@@ -177,7 +177,7 @@ d'aller-retour avec un serveur de licences, aucune clé requise. Mettez
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Point de vente (Pro+)</h3>
+      <h3>Point de vente</h3>
       <p>Terminal POS complet pour les commerçants physiques :
       lecture de codes-barres, paiements fractionnés, impression de
       reçus, intégration du tiroir-caisse, écran face client, mode

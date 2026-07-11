@@ -430,89 +430,37 @@ class TestTamperReport:
 # POS License Validation
 # ============================================================
 
-@pytest.mark.django_db
 class TestPOSLicense:
-    """Test POS license validation system.
-
-    These tests exercise the legacy paid-POS licence code path via
-    ``UpdateServerConfig``. Under Community edition ``pos_license_is_valid()``
-    short-circuits to False before ever reaching that code, so each test
-    patches ``is_community()`` to False to isolate the paid-licence logic.
+    """
+    POS is universally enabled from v1.5.8 onward. The pos_license
+    helpers stay in place as no-op shims for backwards compatibility
+    with any admin UI or legacy client that still calls them.
     """
 
-    @pytest.fixture(autouse=True)
-    def _paid_pos_context(self):
-        """
-        Force both the Community and sandbox short-circuits to be inactive
-        so tests exercise the legacy paid-POS licence path in isolation.
-        A dev machine may have a Community/dev licence at LICENSE_PATH that
-        would otherwise flip either flag.
-        """
-        with patch("core.license.LicenseManager.is_community", return_value=False), \
-             patch("core.license.is_sandbox_mode", return_value=False):
-            yield
+    def test_pos_is_valid_regardless_of_edition(self):
+        from pos_app.license import pos_license_is_valid
+        assert pos_license_is_valid() is True
 
-    def test_no_key_returns_false(self):
-        """No POS key configured → invalid."""
-        from pos_app.license import pos_license_is_valid, clear_pos_license_cache
-        from component_updates.models import UpdateServerConfig
+    def test_get_status_reports_active(self):
+        from pos_app.license import get_pos_license_status
+        status = get_pos_license_status()
+        assert status['valid'] is True
+        assert status['status'] == 'active'
 
-        clear_pos_license_cache()
-        config = UpdateServerConfig.get_instance()
-        config.pos_license_key = ''
-        config.pos_license_status = 'not_configured'
-        config.save()
-
-        assert pos_license_is_valid() is False
-
-    def test_active_license_returns_true(self):
-        """Active locally-validated license → valid."""
-        from pos_app.license import pos_license_is_valid, clear_pos_license_cache
-        from component_updates.models import UpdateServerConfig
-        from django.utils import timezone
-
-        clear_pos_license_cache()
-        config = UpdateServerConfig.get_instance()
-        config.pos_license_key = 'POS-TEST-XXXX-XXXX-XXXX'
-        config.pos_license_status = 'active'
-        config.pos_license_validated_at = timezone.now()
-        config.pos_license_expires_at = timezone.now() + timezone.timedelta(days=365)
-        config.save()
-
-        with patch('pos_app.license._validate_against_server', return_value=True):
-            assert pos_license_is_valid() is True
-
-    def test_expired_beyond_grace_returns_false(self):
-        """Expired license beyond grace period → invalid."""
-        from pos_app.license import pos_license_is_valid, clear_pos_license_cache
-        from component_updates.models import UpdateServerConfig
-        from django.utils import timezone
-        from datetime import timedelta
-
-        clear_pos_license_cache()
-        config = UpdateServerConfig.get_instance()
-        config.pos_license_key = 'POS-TEST-XXXX-XXXX-XXXX'
-        config.pos_license_status = 'expired'
-        config.pos_license_validated_at = timezone.now() - timedelta(days=30)
-        config.pos_license_expires_at = timezone.now() - timedelta(days=20)
-        config.save()
-
-        with patch('pos_app.license._validate_against_server', return_value=False):
-            assert pos_license_is_valid() is False
-
-    def test_activate_validates_format(self):
-        """activate_pos_license rejects invalid format."""
+    def test_activate_pos_license_succeeds_for_any_input(self):
         from pos_app.license import activate_pos_license
-        result = activate_pos_license('invalid-key')
-        assert result['success'] is False
-        assert 'format' in result['message'].lower()
+        result = activate_pos_license('POS-1234-5678-9ABC-DEF0')
+        assert result['success'] is True
+        assert result['status'] == 'active'
 
-    def test_activate_accepts_valid_format(self):
-        """activate_pos_license accepts POS-XXXX-XXXX-XXXX-XXXX format."""
+    def test_activate_pos_license_ignores_invalid_looking_input(self):
+        """
+        A legacy client sending a malformed key still gets success — POS
+        is free, we don't gatekeep any more.
+        """
         from pos_app.license import activate_pos_license
-        with patch('pos_app.license._validate_against_server', return_value=True):
-            result = activate_pos_license('POS-ABCD-1234-EFGH-5678')
-            assert result['success'] is True
+        result = activate_pos_license('anything-at-all')
+        assert result['success'] is True
 
 
 # ============================================================

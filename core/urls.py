@@ -29,7 +29,6 @@ from core.api import currency_endpoints, translation_api
 from core.sandbox.views import tamper_report
 from core.error_reporting import views as error_reporting_views
 from pos_app import views as pos_views
-from pos_app.community_gate import pos_upgrade_required_view
 import accounts.urls
 
 # Health check endpoints (must be accessible without auth, before any middleware)
@@ -176,8 +175,6 @@ urlpatterns += [
     path('api/sync/', include('migration.sync.urls')),
     # POS Terminal SPA (non-i18n, standalone PWA interface)
     path('pos/', include('pos_app.urls')),
-    # POS upgrade CTA (shown to Community edition merchants navigating to POS)
-    path('pos-upgrade/', pos_upgrade_required_view, name='pos_upgrade'),
     # Digital Product Downloads (non-i18n, download links should work without language prefix)
     path('download/<str:token>/', download_digital_asset, name='digital_download'),
     # POS Public Receipt (non-i18n, receipt links from email/SMS should work without language prefix)

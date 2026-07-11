@@ -68,9 +68,11 @@ More background: [ARCHITECTURE.md](ARCHITECTURE.md).
   `LicenseManager.is_community()` /
   `is_hosted_service_available('geoip')` are the gates.
   Don't strip Pro-only code from the OSS build — keep it and gate.
-- **POS module.** `pos_app/` and `pos_api/` ship in the repo but the
-  admin surface renders an upgrade CTA under Community. See
-  `pos_app/community_gate.py`.
+- **POS module.** `pos_app/` and `pos_api/` ship in every edition
+  including Community. `pos_app/license.py` returns True for every
+  install as a no-op shim — Spwig no longer monetises POS as a
+  feature. Revenue comes from hosting, hosted-service tier limits,
+  the mail gateway, and support.
 
 ### When something is Pro-only
 
