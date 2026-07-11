@@ -72,7 +72,7 @@ yükseltme, yönetim paneline yapıştırdığınız bir anahtardır.
 | Spwig tarafından barındırılan adres otomatik tamamlama | Ücretsiz · hız sınırlı | Daha yüksek limit | En yüksek limit |
 | Spwig tarafından barındırılan GeoIP (ziyaretçi konumu) | Ücretsiz · hız sınırlı | Daha yüksek limit | En yüksek limit |
 | Push bildirimleri (iOS yönetim uygulaması) | Ücretsiz · hız sınırlı | Daha yüksek limit | En yüksek limit |
-| Satış noktası (POS terminal desteği) | – | ✓ | ✓ |
+| Satış noktası (POS terminal desteği) | ✓ | ✓ | ✓ |
 | Sıcak IP'ler + DKIM ile barındırılan e-posta ağ geçidi | – | ✓ | ✓ |
 | Öncelikli destek | – | ✓ | ✓ |
 | Kurumsal SSO (Azure AD, Okta) | – | – | ✓ |
@@ -170,12 +170,10 @@ gidiş dönüşü yok, anahtar gerekmez. Daha sonra `git pull` ve
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Satış noktası (Pro+)</h3>
+      <h3>Satış noktası</h3>
       <p>Fiziksel mağaza satıcıları için tam POS terminali:
       barkod tarama, bölünmüş ödemeler, fiş yazdırma, para çekmecesi
-      entegrasyonu, müşteriye dönük ekran, çevrimdışı mod. Community
-      sürümü kodu içerir ancak yönetim yüzeyi bir yükseltme
-      CTA'sı gösterir — fork'larsanız bunu çıkarabilirsiniz, sorun değil.</p>
+      entegrasyonu, müşteriye dönük ekran, çevrimdışı mod. Included in every edition — no upgrade required.</p>
     </td>
     <td width="50%" valign="top">
       <img src="https://spwig.com/images/screenshots/pos-terminal.webp" alt="POS terminal">

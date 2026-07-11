@@ -75,7 +75,7 @@ di amministrazione.
 | Autocompletamento indirizzi ospitato da Spwig | Gratuito · con limite di frequenza | Limite più alto | Limite massimo |
 | GeoIP ospitato da Spwig (posizione del visitatore) | Gratuito · con limite di frequenza | Limite più alto | Limite massimo |
 | Notifiche push (app admin iOS) | Gratuito · con limite di frequenza | Limite più alto | Limite massimo |
-| Punto vendita (supporto terminale POS) | – | ✓ | ✓ |
+| Punto vendita (supporto terminale POS) | ✓ | ✓ | ✓ |
 | Gateway email ospitato con IP caldi + DKIM | – | ✓ | ✓ |
 | Supporto prioritario | – | ✓ | ✓ |
 | SSO aziendale (Azure AD, Okta) | – | – | ✓ |
@@ -176,7 +176,7 @@ seguito con `git pull` e `docker compose build`.
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Punto vendita (Pro+)</h3>
+      <h3>Punto vendita</h3>
       <p>Terminale POS completo per i commercianti fisici: scansione di
       codici a barre, pagamenti divisi, stampa di ricevute, integrazione
       con cassetto contanti, display rivolto al cliente, modalità
