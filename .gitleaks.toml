@@ -49,6 +49,13 @@ regexes = [
   # header LOOKS like — merchants need to see this to identify a
   # correctly-formatted cert during SSL setup.
   '''-----BEGIN (?:RSA )?PRIVATE KEY-----''',
+
+  # CI-only Fernet key committed to .github/workflows/test.yml. Every
+  # send-service test needs settings.EMAIL_ENCRYPTION_KEY set or it
+  # errors at credential-write. This value never touches real merchant
+  # data — it exists only inside the ephemeral GitHub Actions runner
+  # and is rotated freely.
+  '''wFUuMXZIwn5s2SAAi1hd4b9Jl0cAzyHl8Z7_fNZKeHk=''',
 ]
 
 paths = [
@@ -58,4 +65,10 @@ paths = [
   '''help_content/topics/.*\.(?:md|html)''',
   '''locale/.*\.po''',
   '''translations/locale/.*\.po''',
+
+  # GitHub Actions workflow files may need to inline test-only secrets
+  # (Fernet keys, dummy API tokens, etc.). Real secrets always go
+  # through repo Actions secrets, never inline. Path-based allowlist
+  # is a belt-and-braces backstop on top of the specific regexes above.
+  '''\.github/workflows/.*\.ya?ml''',
 ]

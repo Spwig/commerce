@@ -64,7 +64,7 @@ Cùng một tệp nhị phân. Một tệp giấy phép có chữ ký sẽ bật
 | Tự động điền địa chỉ do Spwig lưu trữ | Miễn phí · giới hạn tần suất | Hạn mức cao hơn | Hạn mức cao nhất |
 | GeoIP do Spwig lưu trữ (vị trí khách truy cập) | Miễn phí · giới hạn tần suất | Hạn mức cao hơn | Hạn mức cao nhất |
 | Thông báo đẩy (ứng dụng quản trị iOS) | Miễn phí · giới hạn tần suất | Hạn mức cao hơn | Hạn mức cao nhất |
-| Điểm bán hàng (hỗ trợ terminal POS) | – | ✓ | ✓ |
+| Điểm bán hàng (hỗ trợ terminal POS) | ✓ | ✓ | ✓ |
 | Cổng email lưu trữ với IP làm ấm + DKIM | – | ✓ | ✓ |
 | Hỗ trợ ưu tiên | – | ✓ | ✓ |
 | SSO cấp doanh nghiệp (Azure AD, Okta) | – | – | ✓ |
@@ -146,7 +146,7 @@ Cửa hàng trước tại `http://localhost`, trang quản trị tại `http://
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Điểm bán hàng (Pro+)</h3>
+      <h3>Điểm bán hàng</h3>
       <p>Terminal POS đầy đủ dành cho các thương nhân có cửa hàng vật lý: quét mã vạch, thanh toán chia nhỏ, in hóa đơn, tích hợp ngăn kéo tiền, màn hình hướng về khách hàng, chế độ ngoại tuyến. Phiên bản Community vẫn chứa mã nguồn nhưng bề mặt quản trị hiển thị lời mời nâng cấp — hãy vá bỏ nếu bạn fork, không sao cả.</p>
     </td>
     <td width="50%" valign="top">

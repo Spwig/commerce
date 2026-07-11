@@ -75,7 +75,7 @@ en el administrador.
 | Autocompletado de direcciones alojado por Spwig | Gratis · con límite de uso | Límite mayor | Límite máximo |
 | GeoIP alojado por Spwig (ubicación del visitante) | Gratis · con límite de uso | Límite mayor | Límite máximo |
 | Notificaciones push (app de administración iOS) | Gratis · con límite de uso | Límite mayor | Límite máximo |
-| Punto de venta (soporte de terminal POS) | – | ✓ | ✓ |
+| Punto de venta (soporte de terminal POS) | ✓ | ✓ | ✓ |
 | Pasarela de correo alojada con IP calentadas + DKIM | – | ✓ | ✓ |
 | Soporte prioritario | – | ✓ | ✓ |
 | SSO empresarial (Azure AD, Okta) | – | – | ✓ |
@@ -179,7 +179,7 @@ a un servidor de licencias, sin clave requerida. Actualiza más tarde con
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Punto de venta (Pro+)</h3>
+      <h3>Punto de venta</h3>
       <p>Terminal POS completa para comerciantes con tienda física:
       escaneo de códigos de barras, pagos divididos, impresión de
       tickets, integración con cajón portamonedas, pantalla orientada al

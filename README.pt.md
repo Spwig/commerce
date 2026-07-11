@@ -74,7 +74,7 @@ de execução. A edição Community é o que você obtém por padrão ao rodar
 | Autocompletar de endereço hospedado pelo Spwig | Grátis · limitado por taxa | Limite maior | Limite máximo |
 | GeoIP hospedado pelo Spwig (localização do visitante) | Grátis · limitado por taxa | Limite maior | Limite máximo |
 | Notificações push (app admin iOS) | Grátis · limitado por taxa | Limite maior | Limite máximo |
-| Ponto de venda (suporte a terminal POS) | – | ✓ | ✓ |
+| Ponto de venda (suporte a terminal POS) | ✓ | ✓ | ✓ |
 | Gateway de e-mail hospedado com IPs aquecidos + DKIM | – | ✓ | ✓ |
 | Suporte prioritário | – | ✓ | ✓ |
 | SSO corporativo (Azure AD, Okta) | – | – | ✓ |
@@ -173,7 +173,7 @@ com `git pull` e `docker compose build`.
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Ponto de venda (Pro+)</h3>
+      <h3>Ponto de venda</h3>
       <p>Terminal POS completo para lojistas com loja física:
       leitura de código de barras, pagamentos divididos, impressão de
       cupom, integração com gaveta de dinheiro, display voltado para o

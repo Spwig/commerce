@@ -62,9 +62,7 @@ gehen möchten, erlaubt die Lizenz das ausdrücklich.
 ## Editionen
 
 Dieselbe Binärdatei. Eine signierte Lizenzdatei aktiviert Feature-Flags
-zur Laufzeit. Community erhalten Sie standardmäßig, wenn Sie
-`docker compose up` ausführen; ein Upgrade ist ein Schlüssel, den Sie
-in den Admin-Bereich einfügen.
+zur Laufzeit. Included in every edition — no upgrade required.
 
 | | Community | Pro | Enterprise |
 |---|:---:|:---:|:---:|
@@ -75,7 +73,7 @@ in den Admin-Bereich einfügen.
 | Von Spwig gehostete Adress-Autovervollständigung | Kostenlos · limitiert | Höheres Limit | Höchstes Limit |
 | Von Spwig gehostetes GeoIP (Besucherstandort) | Kostenlos · limitiert | Höheres Limit | Höchstes Limit |
 | Push-Benachrichtigungen (iOS-Admin-App) | Kostenlos · limitiert | Höheres Limit | Höchstes Limit |
-| Point-of-Sale (POS-Terminal-Unterstützung) | – | ✓ | ✓ |
+| Point-of-Sale (POS-Terminal-Unterstützung) | ✓ | ✓ | ✓ |
 | Gehostetes E-Mail-Gateway mit aufgewärmten IPs + DKIM | – | ✓ | ✓ |
 | Priorisierter Support | – | ✓ | ✓ |
 | Enterprise SSO (Azure AD, Okta) | – | – | ✓ |
@@ -176,7 +174,7 @@ aktualisieren mit `git pull` und `docker compose build`.
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Point of Sale (Pro+)</h3>
+      <h3>Point of Sale</h3>
       <p>Vollwertiges POS-Terminal für stationäre Händler:
       Barcode-Scannen, geteilte Zahlungen, Belegdruck, Kassenschubladen-
       Integration, Kundenanzeige, Offline-Modus. Die Community-Edition

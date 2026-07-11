@@ -72,7 +72,7 @@ peningkatan adalah kunci yang Anda tempelkan ke dalam admin.
 | Autocomplete alamat yang di-host Spwig | Gratis · dibatasi rate | Batas lebih tinggi | Batas tertinggi |
 | GeoIP yang di-host Spwig (lokasi pengunjung) | Gratis · dibatasi rate | Batas lebih tinggi | Batas tertinggi |
 | Push notification (aplikasi admin iOS) | Gratis · dibatasi rate | Batas lebih tinggi | Batas tertinggi |
-| Point-of-sale (dukungan terminal POS) | – | ✓ | ✓ |
+| Point-of-sale (dukungan terminal POS) | ✓ | ✓ | ✓ |
 | Gateway email hosted dengan IP hangat + DKIM | – | ✓ | ✓ |
 | Dukungan prioritas | – | ✓ | ✓ |
 | SSO Enterprise (Azure AD, Okta) | – | – | ✓ |
@@ -171,7 +171,7 @@ ke server lisensi, tanpa kunci yang diperlukan. Perbarui nanti dengan `git pull`
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>Point of sale (Pro+)</h3>
+      <h3>Point of sale</h3>
       <p>Terminal POS lengkap untuk merchant fisik:
       pemindaian barcode, pembayaran terpisah, pencetakan struk, integrasi
       cash drawer, tampilan menghadap pelanggan, mode offline. Edisi
