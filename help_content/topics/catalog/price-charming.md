@@ -10,7 +10,7 @@ keywords:
   - charm pricing
   - round prices
   - price endings
-  - 9.99
+  - "9.99"
   - price rounding
   - currency pricing
   - pricing strategy

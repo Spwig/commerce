@@ -93,8 +93,24 @@
     };
 
     // === Notification System ===
+    // Storefront-only toast. Uses `.toast` / `.toast--{type}` styles from
+    // page_builder/css/frontend-base.css. Do NOT delegate to AdminModal —
+    // that helper is only loaded in the admin bundle.
     window.showNotification = function(message, type = 'info') {
-        AdminModal.toast(message, type || 'info');
+        const notification = document.createElement('div');
+        notification.className = `toast toast--${type}`;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        requestAnimationFrame(() => {
+            notification.classList.add('toast--visible');
+        });
+
+        setTimeout(() => {
+            notification.classList.remove('toast--visible');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     };
 
     // === Add to Cart Functionality ===

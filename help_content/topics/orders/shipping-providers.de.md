@@ -1,165 +1,179 @@
 ---
-title: Versanddienstleister
+title: Versandpartner
 ---
 
-Versanddienstleister verbinden Ihren Shop mit Carrier-APIs für Echtzeit-Versandtarife, Etikettenerstellung und Paketverfolgung. Spwig unterstützt große Versandunternehmen weltweit und ermöglicht es Ihnen auch, manuelle Tariftabellen für Versandunternehmen ohne API-Integration einzurichten.
+Versandpartner verbinden Ihr Geschäft mit Carrier-APIs für Live-Versandkosten, Etiketten-Generierung und Paketverfolgung. Spwig unterstützt führende Carrier weltweit und ermöglicht auch die Einrichtung manueller Preislisten für Carrier ohne API-Integration.
 
-![Shipping providers](/static/core/admin/img/help/shipping-providers/provider-list.webp)
+![Versandpartner](/static/core/admin/img/help/shipping-providers/provider-list.webp)
 
-## Verfügbare Versandunternehmen
+## Verfügbare Carrier
 
-| Versandunternehmen | Regionen | Hauptfunktionen |
-|--------------------|----------|-----------------|
-| **FedEx** | Weltweit | Echtzeit-Tarife, Etikettendruck, Sendungsverfolgung, Mehrpaket |
-| **UPS** | Weltweit | Echtzeit-Tarife, Etikettendruck, Sendungsverfolgung, Adressvalidierung |
-| **USPS** | Vereinigte Staaten | Nationale und internationale Tarife, Sendungsverfolgung |
-| **NinjaVan** | Südostasien | Letzte-Meile-Zustellung, Nachnahme-Unterstützung |
-| **Canada Post** | Kanada | National und international, Paket- und Brieftarife |
-| **Australia Post** | Australien | National und international, Paket und Express |
+| Carrier | Regionen | Schlüsselmerkmale |
+|---------|---------|-------------|
+| **FedEx** | Global | Live-Kosten, Etiketten-Druck, Verfolgung, mehrere Pakete |
+| **UPS** | Global | Live-Kosten, Etiketten-Druck, Verfolgung, Adressvalidierung |
+| **USPS** | Vereinigte Staaten | Inländische und internationale Kosten, Verfolgung |
+| **NinjaVan** | Südostasien | Letzte Meile, Barzahlung bei Lieferung |
+| **Canada Post** | Kanada | Inländische und internationale, Paket- und Briefkosten |
+| **Australia Post** | Australien | Inländische und internationale, Paket- und Expresskosten |
 
-## Einen Versanddienstleister Verbinden
+## Verbindung zu einem Carrier
 
-Navigieren Sie zu **Einstellungen > Versanddienstleister** und klicken Sie auf **Anbieter Verbinden**, um den Einrichtungsassistenten zu starten.
+Navigieren Sie zu **Einstellungen > Versandpartner** und klicken Sie auf **Verbindung herstellen**, um den Einrichtungsführer zu starten.
 
-### Schritt 1: Anbieter Auswählen
-Wählen Sie aus den verfügbaren Versandunternehmen. Jede Karte zeigt die unterstützten Regionen und Funktionen des Versandunternehmens.
+### Schritt 1: Provider auswählen
 
-### Schritt 2: Einrichtungsanleitung
-Lesen Sie die versandunternehmensspezifische Einrichtungsanleitung:
-- Wie Sie ein Entwickler-/Geschäftskonto beim Versandunternehmen erstellen
-- Wo Sie Ihre API-Zugangsdaten finden
-- Erforderliche Kontoeinstellungen (z. B. Versendernummer, Zählernummer)
+Wählen Sie aus den verfügbaren Versandpartnern. Jede Karte zeigt die unterstützten Regionen und Merkmale des Providers an.
 
-### Schritt 3: Zugangsdaten Eingeben
-Geben Sie die API-Zugangsdaten für Ihr Versandunternehmenskonto ein. Die erforderlichen Felder variieren je nach Versandunternehmen:
-- **API-Schlüssel / Geheimschlüssel** — Authentifizierungsdaten
-- **Kontonummer** — Ihre Konto- oder Versendernummer beim Versandunternehmen
-- **Zählernummer** — Von einigen Versandunternehmen benötigt (z. B. FedEx)
-- **Sandbox-Modus** — Aktivieren, um mit der Sandbox-API des Versandunternehmens zu testen, bevor Sie live gehen
+### Schritt 2: Einrichtungsanweisungen
 
-### Schritt 4: Verbindung Testen
-Klicken Sie auf **Verbindung Testen**, um Ihre Zugangsdaten zu überprüfen. Der Assistent bestätigt:
+Überprüfen Sie den carrier-spezifischen Einrichtungsführer:
+- Wie Sie einen Entwickler/Geschäftsaccount bei dem Carrier erstellen
+- Wo Sie Ihre API-Anmeldeinformationen finden
+- Erforderliche Kontoeinstellungen (z. B. Shipper-Nummer, Meter-Nummer)
+
+### Schritt 3: Anmeldeinformationen eingeben
+
+Geben Sie die API-Anmeldeinformationen für Ihr Carrier-Konto ein. Die erforderlichen Felder variieren je nach Carrier:
+
+- **API-Schlüssel / Geheimnis** — Authentifizierungsanmeldeinformationen
+- **Kontonummer** — Ihre Carrier-Kontonummer oder Shipper-Nummer
+- **Meter-Nummer** — Erfordert von einigen Carriern (z. B. FedEx)
+- **Sandbox-Modus** — Aktivieren Sie diesen, um mit der Sandbox-API des Carriers zu testen, bevor Sie live gehen
+
+### Schritt 4: Verbindung testen
+
+Klicken Sie auf **Verbindung testen**, um Ihre Anmeldeinformationen zu überprüfen. Der Assistent bestätigt:
 - Die API-Authentifizierung ist erfolgreich
 - Die Kontoberechtigungen sind gültig
-- Tarifabfragen liefern erwartete Ergebnisse
+- Die Abfragen der Kosten liefern die erwarteten Ergebnisse
 
 ### Schritt 5: Konfigurieren und Speichern
-Schließen Sie die Einstellungen ab:
-- **Aktiv** — Versandunternehmen aktivieren oder deaktivieren
-- **Anzeigename** — Der Name, der Kunden an der Kasse angezeigt wird
-- **Ursprungsadresse** — Die Lager- oder Fulfillment-Adresse für Tarifberechnungen
+
+Finalisieren Sie die Einstellungen:
+- **Aktiv** — Aktivieren oder deaktivieren Sie den Carrier
+- **Anzeigename** — Der Name, der bei der Kasse den Kunden angezeigt wird
+- **Herkunftsadresse** — Der Lager- oder Fulfillment-Adresse für Kostenberechnungen
 
 ## Versandzonen
 
-Versandzonen definieren geografische Gebiete für Tarifberechnungen. Navigieren Sie zu **Einstellungen > Versandzonen**, um diese zu verwalten.
+Versandzonen definieren geografische Bereiche für Kostenberechnungen. Navigieren Sie zu **Einstellungen > Versandzonen**, um sie zu verwalten.
 
-### Eine Zone Erstellen
-1. Klicken Sie auf **+ Zone Hinzufügen**
-2. Geben Sie der Zone einen Namen (z. B. "Inland", "Europa", "Asien-Pazifik")
-3. Definieren Sie die Abdeckung der Zone mit einem oder mehreren der folgenden Kriterien:
-   - **Länder** — Wählen Sie bestimmte Länder aus
-   - **Bundesländer/Provinzen** — Beschränken Sie auf bestimmte Regionen innerhalb eines Landes
-   - **Postleitzahlenmuster** — Ordnen Sie Postleitzahlen mit Mustern zu (z. B. "90*" für den Raum Los Angeles)
-4. Legen Sie die **Priorität** fest — Wenn sich Zonen überschneiden, wird die Zone mit der höchsten Priorität verwendet
+### Zone erstellen
+
+1. Klicken Sie auf **+ Zone hinzufügen**
+2. Geben Sie der Zone einen Namen (z. B. "Inländisch", "Europa", "Asien-Pazifik")
+3. Definieren Sie den Bereich der Zone mit einer oder mehreren der folgenden Optionen:
+   - **Länder** — Wählen Sie spezifische Länder
+   - **Bundesländer/Provinzen** — Beschränken Sie sich auf spezifische Regionen innerhalb eines Landes
+   - **Postleitzahlpatterns** — Übereinstimmung mit Postleitzahlen/ZIP-Codes mithilfe von Mustern (z. B. "90*" für den Los Angeles-Bereich)
+4. Setzen Sie die **Priorität** — Wenn Zonen sich überschneiden, wird die Zone mit der höchsten Priorität verwendet
 
 ### Zonenzuordnung
-Wenn ein Kunde seine Lieferadresse an der Kasse eingibt, führt das System folgende Prüfungen durch:
-1. Zuerst Postleitzahlenmuster (am spezifischsten)
-2. Dann Bundesland/Provinz-Übereinstimmungen
-3. Dann Länder-Übereinstimmungen
-4. Verwendet die übereinstimmende Zone mit der höchsten Priorität
 
-## Versandregeln
+Wenn ein Kunde seine Versandadresse bei der Kasse eingibt, überprüft das System:
+1. Zuerst Postleitzahnpatterns (spezifischste)
+2. Dann Übereinstimmungen mit Bundesländern/Provinzen
+3. Dann Übereinstimmungen mit Ländern
+4. Verwendet die Zone mit der höchsten Priorität
 
-Versandregeln wenden bedingte Modifikatoren auf Versandtarife an. Navigieren Sie zu **Einstellungen > Versandregeln**, um diese zu konfigurieren.
+## Versandaktionen
 
-### Regeltypen
+Versandaktionen wenden bedingte Modifikatoren auf Versandkosten an. Navigieren Sie zu **Einstellungen > Versandaktionen**, um sie zu konfigurieren.
 
-| Regeltyp | Beschreibung |
-|----------|-------------|
-| **Rabatt %** | Reduziert den Versandtarif um einen Prozentsatz |
-| **Fester Rabatt** | Reduziert den Versandtarif um einen festen Betrag |
-| **Kosten Festlegen** | Überschreibt den Tarif mit einem bestimmten Betrag |
-| **Kostenloser Versand** | Setzt die Versandkosten auf null |
-| **Zuschlag %** | Fügt einen prozentualen Zuschlag zum Tarif hinzu |
-| **Fester Zuschlag** | Fügt einen festen Zuschlag zum Tarif hinzu |
+### Aktionstypen
+
+| Aktionstyp | Beschreibung |
+|-----------|-------------|
+| **Prozentualer Rabatt** | Reduziert die Versandkosten um einen bestimmten Prozentsatz |
+| **Fester Rabatt** | Reduziert die Versandkosten um einen festen Betrag |
+| **Kosten überschreiben** | Überschreibt die Kosten mit einem bestimmten Betrag |
+| **Kostenlos versenden** | Setzt die Versandkosten auf null |
+| **Prozentualer Aufschlag** | Fügt einem Prozentsatz der Kosten einen Aufschlag hinzu |
+| **Fester Aufschlag** | Fügt den Kosten einen festen Aufschlag hinzu |
 
 ### Bedingungen
-Jede Regel kann eine oder mehrere Bedingungen haben, die erfüllt sein müssen:
+
+Jede Aktion kann eine oder mehrere Bedingungen haben, die erfüllt werden müssen:
 
 | Bedingung | Beispiel |
 |-----------|---------|
-| **Warenkorbwert** | Kostenloser Versand bei Bestellungen über 100 $ |
-| **Gesamtgewicht** | Zuschlag für Bestellungen über 30 kg |
+| **Warenkorbwert** | Kostenlose Lieferung ab 100 $ |
+| **Gesamtgewicht** | Zusatzkosten für Bestellungen über 30 kg |
 | **Artikelanzahl** | Rabatt für Bestellungen mit 5+ Artikeln |
-| **Versandzone** | Regel nur auf Inlandslieferungen anwenden |
-| **Versandmethode** | Auf bestimmte Versandmethoden anwenden |
-| **Produkte** | Sondertarife für bestimmte Produkte |
-| **Kundengruppe** | VIP-Kunden erhalten kostenlosen Versand |
-| **Datumsbereich** | Versandaktionen für die Feiertage |
+| **Lieferzone** | Aktion nur für nationale Lieferungen anwenden |
+| **Liefermethode** | Auf bestimmte Versandmethoden anwenden |
+| **Produkte** | Sonderkonditionen für bestimmte Produkte |
+| **Kundengruppe** | VIP-Kunden erhalten kostenlose Lieferung |
+| **Zeitraum** | Feiertagslieferungsförderungen |
 
-### Regelpriorität
-- Regeln werden in Prioritätsreihenfolge ausgewertet (niedrigste Nummer zuerst)
-- **Weitere Regeln Stoppen** — Wenn aktiviert und diese Regel zutrifft, werden keine weiteren Regeln geprüft
-- Mehrere Regeln können gestapelt werden (z. B. eine 10%-Rabatt-Regel plus eine Regel für kostenlosen Versand ab einem bestimmten Schwellenwert)
+### Aktionenpriorität
 
-## Tariftabellen
+- Aktionen werden in Prioritätsreihenfolge bewertet (niedrigste Zahl zuerst)
+- **Weitere Aktionen stoppen** — Wenn aktiviert, wird bei Übereinstimmung dieser Aktion keine weitere Aktion geprüft
+- Mehrere Aktionen können sich叠加 (z. B. 10 % Rabattaktion plus kostenlose Lieferungsgrenze)
 
-Tariftabellen bieten gestaffelte Preise basierend auf Bestellattributen. Navigieren Sie zu **Einstellungen > Versand-Tariftabellen**, um diese zu konfigurieren.
+## Preislisten
 
-### Tabellentypen
-Erstellen Sie Tarifstufen basierend auf:
-- **Gewicht** — Preisstufen nach Gesamtgewicht der Bestellung (z. B. 0-1 kg = 5 $, 1-5 kg = 10 $)
-- **Bestellwert** — Preisstufen nach Warenkorb-Zwischensumme
-- **Menge** — Preisstufen nach Artikelanzahl
+Preislisten bieten Staffelpreise basierend auf Bestellattributen an. Navigieren Sie zu **Einstellungen > Versandpreislisten**, um sie zu konfigurieren.
 
-### Eine Tariftabelle Erstellen
-1. Klicken Sie auf **+ Tariftabelle Hinzufügen**
-2. Benennen Sie die Tabelle und wählen Sie den Stufentyp
-3. Fügen Sie Stufen mit Min/Max-Bereichen und Preisen hinzu
-4. Ordnen Sie die Tariftabelle einer Versandzone zu
+### Listenarten
 
-Tariftabellen sind nützlich, wenn Sie keine Carrier-API-Tarife verwenden und Ihre eigene Preisstruktur definieren möchten.
+Erstellen Sie Staffelstufen basierend auf:
+- **Gewicht** — Preisstufen basierend auf dem Gesamtgewicht der Bestellung (z. B. 0–1 kg = 5 $, 1–5 kg = 10 $)
+- **Bestellwert** — Preisstufen basierend auf dem Warenkorb-Subtotal
+- **Menge** — Preisstufen basierend auf der Artikelanzahl
 
-## Versandpakete
+### Preisliste erstellen
 
-Definieren Sie Standard-Verpackungsgrößen für genaue Tarifberechnungen. Navigieren Sie zu **Einstellungen > Versandpakete**.
+1. Klicken Sie auf **+ Preisliste hinzufügen**
+2. Benennen Sie die Liste und wählen Sie den Stufen-Typ aus
+3. Fügen Sie Stufen mit Min-/Max-Bereichen und Preisen hinzu
+4. Weisen Sie die Preisliste einer Lieferzone zu
 
-Für jeden Pakettyp legen Sie fest:
-- **Name** — Beschreibung (z. B. "Kleine Box", "Große Pauschale")
+Preislisten sind nützlich, wenn Sie keine API-Rate der Versandunternehmen verwenden und Ihre eigenen Preisstruktur definieren möchten.
+
+## Versandverpackungen
+
+Definieren Sie Standardverpackungsgrößen für genaue Preisberechnungen. Navigieren Sie zu **Einstellungen > Versandverpackungen**.
+
+Für jeden Verpackungstyp legen Sie fest:
+- **Name** — Beschreibung (z. B. „Kleine Box“, „Große Flachrate“)
 - **Abmessungen** — Länge, Breite, Höhe
-- **Maximalgewicht** — Maximales Gewicht, das das Paket aufnehmen kann
-- **Standard** — Dieses Paket verwenden, wenn keine spezifische Verpackung zugewiesen ist
+- **Maximalgewicht** — Maximales Gewicht, das die Verpackung tragen kann
+- **Standard** — Verwenden Sie diese Verpackung, wenn keine spezifische Verpackung zugewiesen ist
 
-Versandunternehmen verwenden Paketabmessungen für Berechnungen des Volumensgewichts, was die Versandtarife beeinflussen kann.
+Versandunternehmen verwenden die Verpackungsabmessungen für die dimensionsgewichtberechnung, was die Versandkosten beeinflussen kann.
 
-## Manuelle Versandunternehmen (Versandunternehmen-Vorlagen)
+## Manuelle Versandunternehmen (Versandvorlagen)
 
-Für Versandunternehmen ohne API-Integration erstellen Sie manuelle Versandunternehmen-Vorlagen:
-1. Navigieren Sie zu **Einstellungen > Versandunternehmen-Vorlagen**
-2. Klicken Sie auf **+ Vorlage Hinzufügen**
+Für Versandunternehmen ohne API-Integration können Sie manuelle Versandvorlagen erstellen:
+
+1. Navigieren Sie zu **Einstellungen > Versandvorlagen**
+2. Klicken Sie auf **+ Vorlage hinzufügen**
 3. Konfigurieren Sie:
-   - **Name des Versandunternehmens** — Anzeigename für die Kasse
-   - **Tracking-URL-Vorlage** — URL-Muster mit einem `{tracking_number}`-Platzhalter (z. B. `https://track.versand.de/?id={tracking_number}`)
-   - **Geschätzte Lieferzeit** — Lieferzeitrahmen, der den Kunden angezeigt wird
-4. Kombinieren Sie mit einer Tariftabelle für die Preisgestaltung
+   - **Name des Versandunternehmens** — Anzeigename im Checkout
+   - **Tracking-URL-Vorlage** — URL-Muster mit einem `{tracking_number}`-Platzhalter (z. B. `https://track.carrier.com/?id={tracking_number}`)
+   - **Geschätzte Lieferzeit** — Lieferzeitraum, der Kunden angezeigt wird
+4. Weisen Sie eine Preisliste für die Preisgestaltung zu
 
-Manuelle Versandunternehmen bieten Tracking-Links und Lieferschätzungen ohne Echtzeit-API-Integration.
+Manuelle Versandunternehmen bieten Tracking-Links und Lieferzeitschätzungen ohne Live-API-Integration an.
 
-## Multi-Warehouse-Versand
+## Mehrlager-Versand
 
-Wenn Sie mehrere Lager haben, kann der Versand von verschiedenen Standorten berechnet werden:
-- **Länderspezifisches Lager** — Ordnen Sie Lager bestimmten Ländern zu für kürzere Versandwege
-- **Rückfallkette** — Definieren Sie, welches Lager versendet, wenn das Hauptlager nicht vorrätig ist
-- **Produktbezogene Zuordnung** — Einige Produkte können nur aus bestimmten Lagern versendet werden
+Wenn Sie über mehrere Lager verfügen, kann der Versand von verschiedenen Ursprungsorten berechnet werden:
 
-Das System wählt automatisch das beste Lager basierend auf dem Standort des Kunden und der Produktverfügbarkeit aus.
+- **Lager für bestimmte Länder** — Weisen Sie Lager bestimmten Ländern zu, um kürzere Lieferwege zu ermöglichen
+- **Fallback-Kette** — Definieren Sie, welches Lager für den Versand verwendet wird, wenn das primäre Lager ausverkauft ist
+- **Pro-Produkt-Zuordnung** — Einige Produkte können nur von bestimmten Lagern versandt werden
+
+Das System wählt automatisch das beste Lager basierend auf der Kundenstandort und Produktverfügbarkeit.
 
 ## Tipps
 
-- Verbinden Sie Carrier-APIs für **Echtzeit-Tarife** wann immer möglich — sie sind genauer als Pauschal-Tariftabellen und passen sich an Gewicht, Abmessungen und Zielort an.
-- Erstellen Sie eine **"Restliche Welt"**-Versandzone als Auffanglösung für Länder, die nicht von spezifischen Zonen abgedeckt werden.
-- Nutzen Sie den Regeltyp **Kostenloser Versand** mit einer Warenkorbwert-Bedingung als Verkaufsanreiz (z. B. "Kostenloser Versand ab 75 $ Bestellwert").
-- Testen Sie die Versandtarifberechnungen mit verschiedenen Adressen und Warenkorbinhalten, bevor Sie live gehen.
-- Richten Sie **Versandunternehmen-Vorlagen** mit Tracking-URL-Vorlagen für lokale Versandunternehmen ein, die keine API-Integrationen haben — Kunden erhalten trotzdem Tracking-Links.
-- Verwenden Sie **Versandpakete**, um genaue Volumensgewicht-Preise von Versandunternehmen wie FedEx und UPS zu erhalten.
+- Verbinden Sie Versand-APIs für **Live-Raten**, wenn möglich — sie sind genauer als Flachrate-Tabellen und berücksichtigen Gewicht, Abmessungen und Zielort.
+- Erstellen Sie eine **„Rest der Welt“**-Lieferzone als Sammelkategorie für Länder, die nicht von spezifischen Zonen abgedeckt werden.
+- Verwenden Sie den **Kostenlosen Versand**-Aktionstyp mit einer Warenkorbwert-Bedingung als Verkaufsankurbelung (z. B. „Kostenloser Versand ab 75 $“).
+- Testen Sie die Versandkostenberechnung mit verschiedenen Adressen und Warenkorbinhalten, bevor Sie online gehen.
+- Richten Sie **Versandvorlagen** mit Tracking-URL-Vorlagen für lokale Versandunternehmen ein, die keine API-Integrationen haben — Kunden erhalten dennoch Tracking-Links.
+- Verwenden Sie **Versandverpackungen**, um genaue dimensionsgewichtspreise von Versandunternehmen wie FedEx und UPS zu erhalten.

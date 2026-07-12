@@ -6,11 +6,11 @@ Il prezzo attraente (chiamato anche prezzatura psicologica) regola automaticamen
 
 Spwig applica automaticamente le regole del prezzo attraente nel tuo negozio, per valuta, quindi devi impostare ogni regola solo una volta.
 
-## Come funziona il prezzo attraente
+## Funzionamento del prezzo attraente
 
-Quando viene calcolato il prezzo di un prodotto (compresi i prezzi dopo promozioni o sconti), Spwig verifica se esiste una regola attiva del prezzo attraente per quella valuta. Se esiste, il prezzo viene modificato prima di essere visualizzato ai clienti. La modifica si applica ai prezzi superiori al tuo limite minimo impostato.
+Quando viene calcolato il prezzo di un prodotto (compresi i prezzi dopo promozioni o sconti), Spwig verifica se esiste una regola attiva del prezzo attraente per quella valuta. Se esiste, il prezzo viene modificato prima di essere visualizzato ai clienti. La modifica si applica ai prezzi superiori al tuo limite minimo scelto.
 
-Puoi configurare regole separate per ciascuna valuta accettata dal tuo negozio. Ad esempio, potresti utilizzare terminazioni `.99` per USD, ma arrotondare al valore più vicino `¥10` per JPY.
+Puoi configurare regole separate per ciascuna valuta accettata dal tuo negozio. Ad esempio, potresti utilizzare terminazioni `.99` per USD ma arrotondare al valore più vicino `¥10` per JPY.
 
 ## Creare una regola del prezzo attraente
 
@@ -34,18 +34,18 @@ Solo una regola può esistere per valuta. Se devi modificare una regola, modific
 | **Attraente con terminazione .90** | $20.50 → $19.90 | Arrotondato ma comunque inferiore al dollaro successivo |
 | **Arrotonda verso il basso** | $19.50 → $19.00 | Negozio che preferisce numeri interi |
 | **Arrotonda verso l'alto** | $19.50 → $20.00 | Arrotondamento leggero per visualizzazioni pulite |
-| **Arrotonda al valore più vicino 5** | $23.00 → $25.00 | Mercati e retail ad alto traffico |
-| **Arrotonda al valore più vicino 10** | $23.00 → $20.00 | Oggetti a prezzo più elevato come elettrodomestici |
-| **Arrotonda al valore più vicino 100** | $1,234 → $1,200 | Oggetti ad alto valore come arredamento o elettronica |
+| **Arrotonda al valore più vicino 5** | $23.00 → $25.00 | Retail e mercati ad alto traffico |
+| **Arrotonda al valore più vicino 10** | $23.00 → $20.00 | Oggetti con prezzi più elevati come elettrodomestici |
+| **Arrotonda al valore più vicino 100** | $1,234 → $1,200 | Oggetti ad alto valore come mobili o elettronica |
 | **Terminazione personalizzata** | Qualsiasi — specificare di seguito | Quando il tuo brand utilizza una terminazione specifica come `.88` |
 
 ### Terminazioni personalizzate
 
-Se scegli **Terminazione personalizzata**, inserisci il valore della terminazione nel campo **Terminazione personalizzata**. Ad esempio, inserisci `0.88` per far sì che tutti i prezzi terminino con `.88` (comune in alcuni mercati asiatici).
+Se scegli **Terminazione personalizzata**, inserisci il valore della terminazione nel campo **Terminazione personalizzata**. Ad esempio, inserisci `0.88` per far sì che tutti i prezzi terminino in `.88` (comune in alcuni mercati asiatici).
 
 ## Limite minimo di prezzo
 
-Utilizza il campo **Limite minimo di prezzo** per saltare il prezzo attraente per gli articoli a basso prezzo in cui l'adattamento sembrerebbe strano. Ad esempio, impostando un limite di `5.00` i prodotti con un prezzo inferiore a $5 vengono visualizzati al loro prezzo calcolato effettivo senza alcun adattamento.
+Utilizza il campo **Limite minimo di prezzo** per saltare il prezzo attraente per gli articoli con prezzi molto bassi in cui l'adattamento sembrerebbe strano. Ad esempio, impostando un limite di `5.00` i prodotti con un prezzo inferiore a $5 vengono visualizzati al loro prezzo calcolato effettivo senza alcun adattamento.
 
 Lascialo a `0` per applicare il prezzo attraente a tutti i prezzi.
 

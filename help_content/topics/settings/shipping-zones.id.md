@@ -1,12 +1,12 @@
 ---
-title: Zones Pengiriman
+title: Zona Pengiriman
 ---
 
-Zones pengiriman mendefinisikan wilayah geografis untuk tarif pengiriman yang ditargetkan—kelompokkan negara, negara bagian, atau kode pos ke dalam zona, lalu kaitkan metode pengiriman ke zona tertentu untuk pengendalian tarif yang tepat. Zona menggunakan pencocokan berbasis prioritas ketika alamat memenuhi beberapa zona (zona dengan prioritas tertinggi menang). Sistem ini memungkinkan strategi penentuan harga yang canggih: kenakan biaya lebih tinggi untuk wilayah terpencil, tawarkan pengiriman gratis secara domestik, atau berikan tarif diskon untuk wilayah tertentu.
+Zona pengiriman mendefinisikan wilayah geografis untuk tarif pengiriman yang ditargetkan—kelompokkan negara, negara bagian, atau kode pos ke dalam zona, lalu kaitkan metode pengiriman ke zona tertentu untuk pengendalian tarif yang tepat. Zona menggunakan pencocokan berbasis prioritas ketika alamat memenuhi beberapa zona (prioritas tertinggi menang). Sistem ini memungkinkan strategi penentuan harga yang canggih: kenakan biaya lebih tinggi untuk area terpencil, tawarkan pengiriman gratis secara domestik, atau berikan tarif diskon untuk wilayah tertentu.
 
-Gunakan zona ketika Anda membutuhkan biaya pengiriman berbeda untuk wilayah geografis berbeda, dari pemisahan sederhana antara domestik vs internasional hingga harga bertingkat multi-wilayah yang kompleks.
+Gunakan zona ketika Anda memerlukan biaya pengiriman yang berbeda untuk wilayah geografis yang berbeda, dari pembagian sederhana antara domestik vs internasional hingga penentuan harga bertingkat multi-wilayah yang kompleks.
 
-## Memahami Zones Pengiriman
+## Memahami Zona Pengiriman
 
 **Apa Itu Zona**: Wilayah geografis yang diberi nama dan didefinisikan oleh pola kode negara, negara bagian/provinsi, dan kode pos.
 
@@ -22,32 +22,32 @@ Gunakan zona ketika Anda membutuhkan biaya pengiriman berbeda untuk wilayah geog
 - **Nama**: Identifier zona (contoh: "Domestik", "EU", "Wilayah Terpencil")
 - **Negara**: Daftar kode negara yang termasuk (kosong = semua negara)
 - **Negara Bagian/Provinsi**: Batasan negara bagian per negara (opsional)
-- **Pola Kode Pos**: Pola regex untuk cocokkan kode pos (opsional)
-- **Prioritas**: Angka lebih tinggi = prioritas lebih tinggi ketika beberapa zona cocok
+- **Pola Kode Pos**: Pola regex untuk pencocokan kode pos (opsional)
+- **Prioritas**: Angka yang lebih tinggi = prioritas yang lebih tinggi ketika beberapa zona cocok
 
 ---
 
-## Logika Cocok Zona
+## Logika Pemilihan Zona
 
-Zona menggunakan **penyempitan bertahap** untuk cocokkan alamat:
+Zona menggunakan **penyempitan bertahap** untuk cocok dengan alamat:
 
-### Tingkat 1: Cocok Negara
+### Tingkat 1: Pencocokan Negara
 
 **Daftar negara kosong** → Zona cocok dengan SEMUA negara
 
-**Daftar negara disediakan** → Negara alamat harus ada dalam daftar
+**Daftar negara disediakan** → Negara alamat harus berada dalam daftar
 
 Contoh:
 ```
 Zona: "Domestik"
 Negara: ["US"]
-→ Cocok: Alamat AS apa pun
+→ Cocok: Setiap alamat AS
 → Tidak cocok: Kanada, Inggris, dll.
 ```
 
-### Tingkat 2: Cocok Negara Bagian/Provinsi
+### Tingkat 2: Pencocokan Negara Bagian/Provinsi
 
-**Tidak ada negara bagian yang didefinisikan** → Zona cocok dengan SEMUA negara bagian dalam negara yang diizinkan
+**Tidak ada negara bagian yang didefinisikan** → Zona cocok dengan SEMUA negara bagian di negara yang diizinkan
 
 **Negara bagian didefinisikan untuk negara tertentu** → Negara bagian alamat harus cocok
 
@@ -60,9 +60,9 @@ Negara Bagian: {"US": ["CA", "OR", "WA"]}
 → Tidak cocok: New York, Texas, dll.
 ```
 
-### Tingkat 3: Cocok Kode Pos
+### Tingkat 3: Pencocokan Kode Pos
 
-**Tidak ada pola yang didefinisikan** → Zona cocok dengan SEMUA kode pos dalam negara yang diizinkan/negara bagian
+**Tidak ada pola yang didefinisikan** → Zona cocok dengan SEMUA kode pos di negara yang diizinkan/negara bagian
 
 **Pola didefinisikan** → Kode pos alamat harus cocok dengan setidaknya satu pola
 
@@ -88,13 +88,13 @@ Pola Kode Pos: ["^90[0-9]{3}$", "^91[0-9]{3}$"]
 Ketika beberapa zona cocok dengan alamat, **prioritas** menentukan zona mana yang berlaku:
 
 **Bagaimana Prioritas Bekerja**:
-- Angka lebih tinggi = prioritas lebih tinggi
+- Angka yang lebih tinggi = prioritas yang lebih tinggi
 - Jika alamat cocok dengan zona dengan prioritas 100 dan 50, prioritas 100 menang
 - Hanya metode pengiriman dari zona pemenang yang tersedia
 
 **Kasus Penggunaan**:
 
-**Skenario 1: Zona Spesifik Mengatasi Zona Umum**
+**Skenario 1: Spesifik Mengatasi Umum**
 ```
 Zona A: "Wilayah Terpencil Alaska"
   Negara: ["US"]
@@ -132,20 +132,20 @@ Alamat: New York, NY 10001
 
 ---
 
-## Membuat Zones Pengiriman
+## Membuat Zona Pengiriman
 
 **Alur Kerja Langkah Demi Langkah**:
 
 1. **Navigasi ke Zona**
-   - Pergi ke Pengaturan > Pengiriman > Zones Pengiriman
-   - Klik "Tambahkan Zone Pengiriman"
+   - Pergi ke Pengaturan > Pengiriman > Zona Pengiriman
+   - Klik "Tambah Zona Pengiriman"
 
 2. **Konfigurasi Dasar**
-   - **Nama**: Identifier deskriptif (contoh: "Uni Eropa", "West Coast", "Wilayah Terpencil")
-   - **Prioritas**: Tetapkan tingkat penting relatif (100 untuk spesifik, 50 untuk umum, 1 untuk fallback)
+   - **Nama**: Identifier deskriptif (misalnya, "Uni Eropa", "West Coast", "Wilayah Terpencil")
+   - **Prioritas**: Tetapkan tingkat kepentingan relatif (100 untuk spesifik, 50 untuk umum, 1 untuk fallback)
    - **Aktif**: Toggle untuk mengaktifkan/menonaktifkan
 
-3. **Definisikan Cakupan Geografis**
+3. **Tentukan Cakupan Geografis**
 
    **Opsi A: Semua Negara** (biarkan daftar negara kosong)
    - Zona cocok dengan setiap alamat secara global
@@ -164,15 +164,15 @@ Alamat: New York, NY 10001
    **Opsi D: Pola Kode Pos** (lanjutan)
    - Masukkan pola regex (satu per baris)
    - Uji pola dengan kode pos contoh
-   - Klik "Validasi Pola" untuk memeriksa sintaksis
+   - Klik "Validasi Pola" untuk memeriksa sintaks
 
-4. **Kaitkan ke Metode Pengiriman**
-   - Metode dapat dikaitkan saat mengedit metode (tidak dalam konfigurasi zona)
-   - Atau kaitkan zona ke metode yang ada: Edit Metode → Zones Pengiriman → Pilih zona
+4. **Kaitkan dengan Metode Pengiriman**
+   - Metode dapat dikaitkan saat mengedit metode (bukan dalam konfigurasi zona)
+   - Atau kaitkan zona ke metode yang sudah ada: Edit Metode → Zona Pengiriman → Pilih zona
 
-5. **Setel Prioritas Tampilan**
-   - Zona dengan prioritas lebih tinggi mengatasi zona dengan prioritas lebih rendah ketika beberapa cocok
-   - Direkomendasikan: Zona spesifik (100), Zona Regional (50), Zona Default (1)
+5. **Tetapkan Prioritas Tampilan**
+   - Zona dengan prioritas lebih tinggi akan menggantikan zona dengan prioritas lebih rendah ketika beberapa zona cocok
+   - Direkomendasikan: Zona spesifik (100), Zona regional (50), Zona default (1)
 
 6. **Aktifkan Zona**
    - Toggle "Aktif" = Ya
@@ -182,7 +182,7 @@ Alamat: New York, NY 10001
 
 ## Konfigurasi Zona Umum
 
-### Konfigurasi 1: Domestik vs Internasional
+### Pengaturan 1: Domestik vs Internasional
 
 **Tujuan**: Tarif berbeda untuk domestik vs semua negara lain.
 
@@ -202,9 +202,9 @@ Zona 2: "Internasional"
 
 ---
 
-### Konfigurasi 2: Internasional Multi-Wilayah
+### Pengaturan 2: Internasional Multi-Region
 
-**Tujuan**: Tarif berbeda untuk EU, Amerika Utara, Asia, Rest of World.
+**Tujuan**: Tarif berbeda untuk EU, Amerika Utara, Asia, dan Wilayah Lainnya.
 
 ```
 Zona 1: "Uni Eropa"
@@ -219,27 +219,27 @@ Zona 3: "Asia Pasifik"
   Negara: [AU, CN, HK, IN, JP, KR, NZ, SG, TH, TW]
   Prioritas: 100
 
-Zona 4: "Rest of World"
+Zona 4: "Wilayah Lainnya"
   Negara: [Biarkan kosong]
   Prioritas: 1
 ```
 
 **Metode Pengiriman**:
-- "Pengiriman EU" → Zona EU
+- "Pengiriman Eropa" → Zona Eropa
 - "Pengiriman Amerika Utara" → Zona Amerika Utara
 - "Pengiriman Asia Pasifik" → Zona Asia Pasifik
-- "Standar Internasional" → Zona Rest of World
+- "Standar Internasional" → Zona Wilayah Lainnya
 
 ---
 
-### Konfigurasi 3: Biaya Tambahan Wilayah Terpencil
+### Pengaturan 3: Tambahan Wilayah Terpencil
 
-**Tujuan**: Tambahkan biaya tambahan untuk kode pos terpencil dalam zona domestik.
+**Tujuan**: Tambahkan tambahan untuk kode pos terpencil dalam zona domestik.
 
 ```
 Zona 1: "Domestik Terpencil"
   Negara: [US]
-  Pola Kode Pos: ["^99[0-9]{3}$", "^96[7-9][0-9]{2}$"]  # Alaska, Hawaii
+  Pola Pos: ["^99[0-9]{3}$", "^96[7-9][0-9]{2}$"]  # Alaska, Hawaii
   Prioritas: 100
 
 Zona 2: "Domestik Standar"
@@ -253,9 +253,9 @@ Zona 2: "Domestik Standar"
 
 ---
 
-### Konfigurasi 4: Zona Berdasarkan Negara Bagian
+### Pengaturan 4: Zona Berdasarkan Negara Bagian
 
-**Tujuan**: Tarif berbeda untuk setiap wilayah AS.
+**Tujuan**: Tarif berbeda untuk setiap wilayah di AS.
 
 ```
 Zona 1: "West Coast"
@@ -278,7 +278,7 @@ Zona 4: "South"
   Negara Bagian: {"US": ["TX", "FL", "GA", "NC", "SC"]}
   Prioritas: 100
 
-Zona 5: "Negara Bagian Lain di AS"
+Zona 5: "Negara Bagian Lainnya di AS"
   Negara: [US]
   Prioritas: 50
 ```
@@ -287,11 +287,11 @@ Zona 5: "Negara Bagian Lain di AS"
 
 ## Contoh Pola Kode Pos
 
-Kode pos menggunakan **regex** (ekspresi reguler) untuk cocokkan pola:
+Kode pos menggunakan **regex** (ekspresi reguler) untuk pencocokan pola:
 
 ### Amerika Serikat (Kode ZIP)
 
-**Format**: 5 digit (contoh: 90210)
+**Format**: 5 digit (misalnya, 90210)
 
 ```
 California (90000-96199):  ^9[0-6][0-9]{3}$
@@ -304,174 +304,17 @@ Alaska (99500-99999):      ^99[5-9][0-9]{2}$
 
 **Format**: A1A 1A1 (huruf-angka-huruf spasi angka-huruf-angka)
 
-```
+
 Semua kode pos Kanada:  ^[A-Z][0-9][A-Z] [0-9][A-Z][0-9]$
-Ontario (K, L, M, N, P):    ^[KLMNP][0-9][A-Z] [0-9][A-Z][0-9]$\nQuebec (G, H, J):           ^[GHJ][0-9][A-Z] [0-9][A-Z][0-9]$\n```
-
-### Inggris Raya (Kode Pos)
-
-**Format**: AA1A 1AA atau A1A 1AA
-
-```
-London (E, EC, N, NW, SE, SW, W, WC):  ^(E|EC|N|NW|SE|SW|W|WC)[0-9]{1,2}
-Manchester (M):                        ^M[0-9]{1,2}
-Birmingham (B):                        ^B[0-9]{1,2}
-```
-
-### Australia (Kode Pos)
-
-**Format**: 4 digit (contoh: 2000)
-
-```
-New South Wales (1000-2999):  ^[12][0-9]{3}$
-Victoria (3000-3999, 8000-8999):  ^[38][0-9]{3}$
-Queensland (4000-4999, 9000-9999):  ^[49][0-9]{3}$
-```
-
-### Pengujian Pola
-
-**Sebelum menyimpan pola**, uji dengan kode pos yang diketahui:
-
-1. Masukkan pola: `^90[0-9]{3}$`
-2. Masukkan uji: "90210" → Harus cocok
-3. Masukkan uji: "10001" → Harus TIDAK cocok
-4. Masukkan uji: "9021" → Harus TIDAK cocok (hanya 4 digit)
-
-Gunakan pengujian regex online (regex101.com) untuk memvalidasi pola yang kompleks.
-
----
-
-## Ringkasan Cakupan Zona
-
-Zona menampilkan **ringkasan cakupan** dalam tampilan daftar admin yang menunjukkan apa yang termasuk:
-
-**Contoh**:
-- "Semua negara" → Tidak ada pembatasan negara
-- "US, CA, MX" → 3 negara
-- "US (CA, OR, WA)" → US dengan 3 negara bagian
-- "US (90xxx-91xxx)" → US dengan pola kode pos
-
-**Gunakan Ringkasan Untuk**:
-- Memverifikasi cepat cakupan zona tanpa membuka
-- Menemukan tumpang tindih atau celah dalam cakupan
-- Memeriksa konfigurasi zona secara sekilas
-
----
-
-## Mengaitkan Zona ke Metode Pengiriman
-
-Zona dan metode memiliki **relasi banyak-ke-banyak**:
-
-**Dari Sisi Metode** (Direkomendasikan):
-1. Edit Metode Pengiriman
-2. Gulir ke bagian "Zona Pengiriman"
-3. Pilih zona yang berlaku (multi-pilih)
-4. Simpan metode
-
-**Dari Sisi Zona**:
-- Zona tidak secara langsung terkait dengan metode
-- Pengaitan selalu dilakukan dari konfigurasi metode
-
-**Perilaku Metode-Zona**:
-
-**Tidak ada zona yang terkait** → Metode tersedia untuk SEMUA alamat
-
-**Zona terkait** → Metode hanya tersedia jika alamat pelanggan cocok dengan setidaknya satu zona yang terkait
-
-**Contoh**:
-```
-Metode: "Standar Domestik"
-Zona Terkait: ["USA Domestik"]
-→ Hanya ditampilkan untuk alamat AS
-
-Metode: "Ekspres Internasional"
-Zona Terkait: ["EU", "Asia Pasifik", "Rest of World"]
-→ Ditampilkan untuk semua alamat non-AS
-```
-
----
-
-## Pengujian Cocok Zona
-
-Sebelum diluncurkan, uji konfigurasi zona:
-
-1. **Buat Pesanan Uji**
-   - Gunakan alamat di berbagai zona
-   - Verifikasi cocok zona yang benar
-
-2. **Periksa Resolusi Prioritas**
-   - Gunakan alamat yang cocok dengan beberapa zona
-   - Verifikasi zona dengan prioritas tertinggi menang
-   - Konfirmasi metode pengiriman yang diharapkan muncul
-
-3. **Uji Kasus Batas**
-   - Kode pos batas (contoh: 90999 vs 91000)
-   - Batas negara bagian
-   - Alamat internasional dengan kode pos serupa
-
-4. **Gunakan Alat Pratinjau Zona** (jika tersedia)
-   - Masukkan alamat uji
-   - Lihat zona mana yang cocok
-   - Lihat resolusi prioritas
-
----
-
-## Penyelesaian Masalah
-
-**Masalah 1: Tidak ada metode pengiriman yang tersedia saat checkout**
-
-**Penyebab**:
-- Alamat pelanggan tidak cocok dengan zona apa pun
-- Semua metode terkait dengan zona yang tidak cocok
-- Tidak ada metode yang ada tanpa pembatasan zona
-
-**Solusi**:
-- Buat zona fallback (semua negara, prioritas 1)
-- ATAU hapus pembatasan zona dari setidaknya satu metode
-- Periksa pola negara/negara bagian/kode pos zona
-
----
-
-**Masalah 2: Cocok zona yang salah**
-
-**Penyebab**:
-- Zona dengan prioritas lebih rendah dipilih meskipun zona dengan prioritas lebih tinggi cocok
-- Kesalahan sintaksis pola kode pos (pola gagal secara diam-diam)
-- Ketidakcocokan kode negara bagian (CA vs California)
-
-**Solusi**:
-- Periksa nilai prioritas (angka lebih tinggi = prioritas lebih tinggi)
-- Uji pola kode pos dengan validasi regex
-- Gunakan kode negara bagian 2 huruf (CA, bukan California)
-
----
-
-**Masalah 3: Metode yang tidak diharapkan ditampilkan**
-
-**Penyebab**:
-- Metode tidak memiliki zona yang terkait (tersedia di semua alamat)
-- Beberapa zona cocok, zona yang tidak diharapkan memiliki prioritas lebih tinggi
-- Cakupan zona tumpang tindih secara tidak sengaja
-
-**Solusi**:
-- Periksa zona yang terkait dengan metode
-- Periksa prioritas zona yang cocok
-- Audit ringkasan cakupan zona untuk tumpang tindih
-
----
-
-## Tips
 
 - **Mulai dengan 2 zona** - Domestik dan Internasional, perluas saat diperlukan
-- **Gunakan prioritas dengan bijak** - Zona spesifik 100, zona regional 50, zona fallback 1
-- **Uji pola kode pos secara menyeluruh** - Kesalahan regex gagal secara diam-diam, menyebabkan zona tidak cocok
+- **Gunakan prioritas dengan bijak** - Zona spesifik 100, regional 50, fallback 1
+- **Uji pola pos dengan menyeluruh** - Kesalahan regex gagal secara diam-diam, menyebabkan zona tidak cocok
 - **Dokumentasikan logika zona** - Tambahkan catatan ke deskripsi zona untuk menjelaskan niat cakupan
-- **Hindari zona berlebihan** - Terlalu banyak zona mempersulit konfigurasi; gunakan aturan pengiriman untuk skenario kompleks
-- **Gunakan kode negara bagian, bukan nama** - "CA" bukan "California", "NY" bukan "New York"
+- **Hindari zona berlebihan** - Terlalu banyak zona mempersulit konfigurasi; gunakan promosi pengiriman untuk skenario kompleks
+- **Gunakan kode negara, bukan nama** - "CA" bukan "California", "NY" bukan "New York"
 - **Buat zona fallback** - Semua negara, prioritas 1, memastikan setidaknya satu opsi pengiriman selalu tersedia
 - **Pantau kinerja zona** - Jika banyak pelanggan melihat "tidak ada pengiriman yang tersedia", audit cakupan zona
-- **Perbarui zona untuk wilayah baru** - Tambahkan negara ke zona EU ketika negara anggota baru bergabung
-- **Gunakan nama deskriptif** - "EU (Tanpa UK)" lebih baik daripada "Zona 3"
-- **Uji dengan alamat nyata** - Gunakan alamat pelanggan yang sebenarnya selama pengujian, bukan alamat yang dibuat-buat
-
-Ingat: Pertahankan semua format markdown, jalur gambar, blok kode, dan istilah teknis secara tepat seperti yang ditunjukkan dalam aturan preservasi.
+- **Perbarui zona untuk wilayah baru** - Tambahkan negara ke zona EU saat anggota baru bergabung
+- **Gunakan nama yang deskriptif** - "EU (Excluding UK)" lebih baik daripada "Zone 3"
+- **Uji dengan alamat nyata** - Gunakan alamat pelanggan yang sebenarnya saat pengujian, bukan alamat yang dibuat-buat
