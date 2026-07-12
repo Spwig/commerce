@@ -65,5 +65,5 @@ Conservez tous les formats markdown, les chemins d'image, les blocs de code et l
 - Fixez un seuil minimum si vous vendez des articles à faible coût (moins de 5 $) afin qu'un article à 3,50 $ ne descende pas jusqu'à 2,99 $.
 - Vérifiez vos prix après avoir activé une nouvelle règle en consultant un produit sur le site de vente — les prix charmés s'affichent en temps réel.
 - Le Yen japonais et les monnaies à nombres entiers similaires fonctionnent le mieux avec **Arrondir au plus proche 10** ou **Arrondir au plus proche 100**, car les finales décimales semblent inhabituelles.
-- Le tarif charmé est appliqué après toutes les remises et promotions, donc vos prix de vente apparaîtront également charmés à moins que vous ne décochiez **Appliquer aux prix de vente**.
+- Le tarif charmé est appliqué après toutes les remises et promotions, donc vos prix de vente apparaîtront également charmés à moins que vous ne décochez **Appliquer aux prix de vente**.
 - Vous pouvez avoir différents types de règles pour différentes monnaies, ce qui est utile si vous vendez dans plusieurs marchés avec des conventions de tarification différentes.

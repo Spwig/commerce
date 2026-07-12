@@ -251,6 +251,62 @@ class TestRecalculateTotalsCurrency:
         assert str(session.total_amount.currency) == 'EUR'
 
 
+@pytest.fixture
+def usd_default_site(db):
+    """SiteSettings with USD as default currency (opposite of the cart currency in these tests)."""
+    from core.models import SiteSettings
+    from django.contrib.sites.models import Site
+    Site.objects.get_or_create(id=1, defaults={'domain': 'localhost', 'name': 'Test'})
+    settings, _ = SiteSettings.objects.get_or_create(
+        pk=1,
+        defaults={
+            'site_name': 'Test Store',
+            'admin_email': 'admin@test.spwig.com',
+            'default_currency': 'USD',
+            'default_language': 'en',
+        }
+    )
+    if settings.default_currency != 'USD':
+        SiteSettings.objects.filter(pk=settings.pk).update(default_currency='USD')
+        settings.refresh_from_db()
+    return settings
+
+
+@pytest.mark.django_db
+class TestCartDiscountEmptyZeroCurrency:
+    """Regression tests: empty voucher/gift-card sets must return zero in the
+    cart's currency, not the site default. Prevents the 500 seen on fashion demo
+    (site default USD, products EUR) when adding to cart with no vouchers applied.
+    """
+
+    def test_voucher_discount_amount_empty_uses_cart_currency(self, usd_default_site):
+        cart = CartFactory(user=None, session_key='discount_ccy_1', currency='EUR')
+        assert str(cart.voucher_discount_amount.currency) == 'EUR'
+
+    def test_gift_card_discount_amount_empty_uses_cart_currency(self, usd_default_site):
+        cart = CartFactory(user=None, session_key='discount_ccy_2', currency='EUR')
+        assert str(cart.gift_card_discount_amount.currency) == 'EUR'
+
+    def test_total_savings_empty_uses_cart_currency(self, usd_default_site):
+        cart = CartFactory(user=None, session_key='discount_ccy_3', currency='EUR')
+        assert str(cart.total_savings.currency) == 'EUR'
+
+    def test_recalculate_gift_card_discounts_no_currency_mismatch(
+        self, usd_default_site, eur_product_no_tracking
+    ):
+        """This is the exact 500 from fashion.demos.spwig.com — site USD, product EUR,
+        no vouchers/gift cards applied. recalculate_gift_card_discounts must not raise.
+        """
+        cart = CartFactory(user=None, session_key='discount_ccy_4', currency='EUR')
+        CartService.add_item(
+            cart=cart,
+            product_id=eur_product_no_tracking.id,
+            quantity=1,
+        )
+        # This subtracts total_amount - voucher_discount_amount internally.
+        cart.recalculate_gift_card_discounts()
+
+
 # ============================================================
 # Phase 4: Mini-cart API formatting
 # ============================================================

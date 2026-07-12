@@ -2,13 +2,13 @@
 title: Versandmethoden
 ---
 
-Versandmethoden sind die für Kunden sichtbaren Lieferoptionen, die am Checkout angezeigt werden – jede Methode berechnet die Versandkosten mit unterschiedlichen Preisstrategien. Spwig unterstützt 7 Methodentypen, die von einfachen Flachraten bis hin zu komplexen, von Transportunternehmen berechneten Echtzeitpreisen reichen. Methoden können anhand von Mindest-/Höchstbestellwert, Gewicht und geografischen Zonen eingeschränkt werden. Kunden wählen ihre bevorzugte Methode am Checkout aus, und die berechneten Kosten werden ihrem Bestellgesamtbetrag hinzugefügt.
+Versandmethoden sind die für Kunden sichtbaren Lieferoptionen, die beim Checkout angezeigt werden – jede Methode berechnet die Versandkosten mithilfe unterschiedlicher Preisgestaltungsstrategien. Spwig unterstützt 7 Methodentypen, die von einfachen Flachraten bis hin zu komplexen, von Versandpartnern berechneten Echtzeitpreisen reichen. Methoden können anhand von Mindest-/Höchstbestellwert, Gewicht und geografischen Zonen eingeschränkt werden. Kunden wählen während des Checkouts ihre bevorzugte Methode aus, und die berechneten Kosten werden ihrem Bestellgesamtbetrag hinzugefügt.
 
-Verwenden Sie diese Anleitung, um Versandmethoden zu konfigurieren, die Ihrem Geschäftsmodell entsprechen, von einfachen Flachratenversand bis hin zu komplexen, zonenbasierten Stufenpreisen.
+Verwenden Sie diesen Leitfaden, um Versandmethoden zu konfigurieren, die Ihrem Geschäftsmodell entsprechen, von grundlegenden Flachratenversand bis hin zu komplexen, auf Zonen basierenden Stufenpreisen.
 
-## Typen von Versandmethoden
+## Typen der Versandmethoden
 
-Spwig bietet 7 Typen von Versandmethoden an, jede mit unterschiedlicher Kostenberechnungslogik:
+Spwig bietet 7 Typen von Versandmethoden an, wobei jeder Typ eine andere Kostenberechnungslogik verwendet:
 
 ### Flachratenversand
 
@@ -17,13 +17,13 @@ Spwig bietet 7 Typen von Versandmethoden an, jede mit unterschiedlicher Kostenbe
 **Wann verwenden**: 
 - Einfache Geschäfte mit vorhersehbaren Versandkosten
 - Ein Produkttyp (ähnliche Größe/Gewicht)
-- Nur nationale Versandoptionen mit Standard-Transportunternehmen-Preisen
-- Freiversand-Aktionen (verwenden Sie dies mit Versandregeln)
+- Nur nationale Versandoptionen mit Standardversandkosten
+- Freiversand-Aktionen (verwenden Sie dies mit Versandaktionen)
 
 **Konfiguration**: 
-- Setzen Sie **Methodentyp** = Flachraten
+- Setzen Sie **Methodentyp** = Flachratenversand
 - Geben Sie den **Fixen Preis** ein (z. B. 9,99 $)
-- Optional: Setzen Sie Mindest-/Höchstbestellwert-Einschränkungen
+- Optional: Legen Sie Mindest-/Höchstbestellwert-Einschränkungen fest
 
 **Beispiel**: "Standardversand - 9,99 $" für alle nationalen Bestellungen.
 
@@ -31,20 +31,20 @@ Spwig bietet 7 Typen von Versandmethoden an, jede mit unterschiedlicher Kostenbe
 
 ### Freiversand
 
-**Was es ist**: Versandoption mit Null Kosten (keine Gebühren für den Kunden).
+**Was es ist**: Versandoption mit Null Kosten (keine Gebühr für den Kunden).
 
 **Wann verwenden**: 
-- Freiverschiffsaktionen
+- Freiversand-Aktionen
 - Hochwertige Bestellungen (kombinieren Sie dies mit Mindestbestellwert)
 - Alternative zum lokalen Abholen
-- Vorteile für Loyalitätsprogramme
+- Vorteile von Treueprogrammen
 
 **Konfiguration**: 
 - Setzen Sie **Methodentyp** = Freiversand
-- Optional: Setzen Sie **Mindestbestellwert** (z. B. Freiversand ab 50 $)
-- Funktioniert gut mit Versandregeln für bedingten Freiversand
+- Optional: Legen Sie **Mindestbestellwert** fest (z. B. Freiversand ab 50 $)
+- Funktioniert gut mit Versandaktionen für bedingten Freiversand
 
-**Beispiel**: "Freiversand ab Bestellwert von 50 $" mit min_order_value = 50 $.
+**Beispiel**: "Freiversand für Bestellungen über 50 $" mit min_order_value = 50 $.
 
 ---
 
@@ -54,21 +54,21 @@ Spwig bietet 7 Typen von Versandmethoden an, jede mit unterschiedlicher Kostenbe
 
 **Wann verwenden**: 
 - Produkte mit variierenden Gewichten (Bücher, Hardware, Lebensmittel)
-- Gewichtsbasierte Preismodelle von Transportunternehmen
+- Gewichtsbasierte Versandkostenmodelle der Versandpartner
 - Vorhersehbare Gewichts-Kosten-Verhältnisse
 
 **Konfiguration**: 
 1. Setzen Sie **Methodentyp** = Gewichtsbasiert
-2. Erstellen Sie eine **Versandpreistabelle** mit basis_type = "gewicht"
-3. Fügen Sie **Versandpreistufen** hinzu (z. B. 0-5kg = 10 $, 5-10kg = 15 $, 10-20kg = 25 $)
+2. Erstellen Sie eine **Versandkosten-Tabelle** mit basis_type = "gewicht"
+3. Fügen Sie **Versandkosten-Stufen** hinzu (z. B. 0-5 kg = 10 $, 5-10 kg = 15 $, 10-20 kg = 25 $)
 4. Optional: Einschränkung auf bestimmte Zonen
 
 **Beispiel**: 
 ```
-0-2kg: 8 $
-2-5kg: 12 $
-5-10kg: 18 $
-10kg+: 25 $
+0-2 kg: 8 $
+2-5 kg: 12 $
+5-10 kg: 18 $
+10 kg+: 25 $
 ```
 
 **Funktionsweise**: Der Warenkorb berechnet das Gesamtgewicht → findet die passende Stufe → gibt die Stufenrate zurück.
@@ -81,388 +81,390 @@ Spwig bietet 7 Typen von Versandmethoden an, jede mit unterschiedlicher Kostenbe
 
 **Wann verwenden**: 
 - Versandkosten korrelieren mit dem Bestellwert
-- Höherer Warenkorbwert fördern (niedrigerer Preis pro Dollar bei höheren Stufen)
-- Einfache Alternative zum gewichtsbasierten für ähnliche Preise
+- Höhere Warenkorbwerte fördern (niedrigere Rate pro Dollar bei höheren Stufen)
+- Einfache Alternative zum Gewichtsbasierten für ähnliche Preise
 
 **Konfiguration**: 
 1. Setzen Sie **Methodentyp** = Preisbasiert
-2. Erstellen Sie eine **Versandpreistabelle** mit basis_type = "preis"
-3. Fügen Sie **Versandpreistufen** hinzu (z. B. 0-50 $ = 9,99 $, 50-100 $ = 14,99 $, 100+ = 19,99 $)
+2. Erstellen Sie eine **Versandkosten-Tabelle** mit basis_type = "preis"
+3. Fügen Sie **Versandkosten-Stufen** hinzu (z. B. 0-50 $ = 9,99 $, 50-100 $ = 14,99 $, 100+ $ = 19,99 $)
 
 **Beispiel**: 
 ```
 0-25 $: 6,99 $
 25-75 $: 9,99 $
 75-150 $: 12,99 $
-150+: Frei
+150+ $: Frei
 ```
 
 **Funktionsweise**: Der Warenkorb berechnet den Subtotal → findet die passende Stufe → gibt die Stufenrate zurück.
 
 ---
 
-### Echtzeit-Transportunternehmen-Preise
+### Echtzeit-Versandkosten
 
-**Was es ist**: Live-Raten, die von Transportunternehmen-APIs (FedEx, UPS, DHL) am Checkout abgerufen werden.
+**Was es ist**: Live-Raten, die von Versandpartner-APIs (FedEx, UPS, DHL) beim Checkout abgerufen werden.
 
 **Wann verwenden**: 
 - Variable Versandkosten je nach Zielort
-- Mehrere Transportunternehmensoptionen für Kunden
-- Genauere Transportunternehmen-Preise ohne manuelle Raten-Tabellen
+- Mehrere Versandoptionen für Kunden
+- Genauere Versandkosten ohne manuelle Ratenlisten
 - Internationale Versandoptionen mit komplexen Preisen
 
 **Konfiguration**: 
 1. Setzen Sie **Methodentyp** = Echtzeit
-2. Erstellen Sie ein **Provider-Konto** (Einstellungen > Versand > Provider-Konten)
-3. Geben Sie die Transportunternehmen-API-Anmeldeinformationen ein (Kontonummer, API-Schlüssel, Geheimnis)
-4. Verknüpfen Sie das Provider-Konto mit der Versandmethode
-5. Optional: Fügen Sie eine Mark-up-Prozent oder einen Fix-Preis hinzu
+2. Erstellen Sie ein **Anbieterkonto** (Einstellungen > Versand > Anbieterkonten)
+3. Geben Sie die API-Anmeldeinformationen des Versandpartners ein (Kontonummer, API-Schlüssel, Geheimnis)
+4. Verknüpfen Sie das Anbieterkonto mit der Versandmethode
+5. Optional: Fügen Sie eine Mark-up-Prozent oder einen festen Mark-up hinzu
 
 **Voraussetzungen**: 
-- Aktives Provider-Konto (FedEx, UPS, DHL, usw.)
-- API-Anmeldeinformationen vom Provider
-- Definierte Versandverpackungen (für die Berechnung des dimensionalen Gewichts)
+- Aktives Versandkonto (FedEx, UPS, DHL usw.)
+- API-Anmeldeinformationen vom Versandpartner
+- Definierte Versandverpackungen (für die Berechnung des Volumengewichts)
 
-**Beispiel**: Die Methode "FedEx Ground" ruft Live-FedEx-Raten basierend auf Warenkorb-Gewicht, Abmessungen und Zielort am Checkout ab.
 
-**Funktionsweise**: 
-1. Der Kunde gibt die Adresse am Checkout ein
-2. Das System ruft die Transportunternehmen-API mit Ursprungs- und Zielort, Verpackungsabmessungen und Gewicht ab
-3. Der Transportunternehmen gibt den Preis zurück
-4. Optional wird eine Mark-up angewendet
-5. Der Preis wird dem Kunden angezeigt
+**Beispiel**: Die Methode "FedEx Ground" ruft live FedEx-Preise basierend auf dem Warenkorb-Gewicht, den Abmessungen und dem Zielort zur Kasse ab.
+
+**Funktionsweise**:
+1. Der Kunde gibt seine Adresse zur Kasse ein
+2. Das System ruft die API des Versandunternehmers mit Ursprung, Zielort, Paketabmessungen und Gewicht auf
+3. Das Versandunternehmen gibt ein Preisangebot zurück
+4. Optional wird eine Aufschlagsspanne angewendet
+5. Das Angebot wird dem Kunden angezeigt
 
 ---
 
-### Lokales Abholen
+### Lokale Abholung
 
-**Was es ist**: Der Kunde holt die Bestellung an einem physischen Standort ab (keine Lieferkosten).
+**Was es ist**: Der Kunde holt die Bestellung an einem physischen Standort ab (keine Versandkosten).
 
-**Wann verwenden**: 
+**Wann verwenden**:
 - Einzelhandelsgeschäfte, die Abholung anbieten
 - Lagerhaus-Abholoptionen
 - Veranstaltungen oder Marktstände
-- Eliminieren Sie Versandkosten für lokale Kunden
+- Versandkosten für lokale Kunden eliminieren
 
-**Konfiguration**: 
-1. Setzen Sie **Methodentyp** = Lokales Abholen
-2. Erstellen Sie eine **Standort** (Einstellungen > Versand > Standorte)
-   - Geben Sie die Adresse, Betriebszeiten und Abholkapazität ein
-3. Verknüpfen Sie Standort(e) mit der Methode
-4. Optional: Setzen Sie die Abholvorbereitungszeit (z. B. "Bereit in 2 Stunden")
+**Konfiguration**:
+1. Setze **Methode-Typ** = Lokale Abholung
+2. Erstelle **Standort** (Einstellungen > Versand > Standorte)
+   - Setze Adresse, Betriebszeiten, Abholkapazität
+3. Verknüpfe Standort(e) mit der Methode
+4. Optional: Setze die Vorbereitungszeit für die Abholung (z. B. "In 2 Stunden bereit")
 
-**Kundenerlebnis**: 
-- Wählt "Lokales Abholen" am Checkout aus
-- Wählt den Abholort aus (wenn mehrere vorhanden)
-- Wählt den Abholtermin basierend auf der Verfügbarkeit
+**Kundenerlebnis**:
+- Wählt "Lokale Abholung" zur Kasse
+- Wählt den Abholstandort (wenn mehrere vorhanden sind)
+- Wählt Datum/Zeit basierend auf der Verfügbarkeit
 - Erhält eine Benachrichtigung, wenn die Bestellung bereit ist
 
-**Beispiel**: "Abholen im Geschäft - Kostenlos" mit 3 Einzelhandelsstandorten, bereit innerhalb von 24 Stunden.
+**Beispiel**: "Abholung im Geschäft - Kostenlos" mit 3 Einzelhandelsgeschäften, bereit innerhalb von 24 Stunden.
 
 ---
 
-### Tabellebasiert
+### Tabellenbasierte Versandkosten
 
-**Was es ist**: Flexibler Stufenpreis basierend auf Gewicht, Preis oder Menge mit erweiterten Zonen-Zielsetzungen.
+**Was es ist**: Flexibles, gestaffeltes Preismodell basierend auf Gewicht, Preis oder Menge mit erweiterten Zonen-Targeting.
 
-**Wann verwenden**: 
-- Komplexe Preise (unterschiedliche Raten je nach Zone und Gewicht)
-- Mehr Kontrolle als bei Gewichts- oder Preisbasiert allein
+**Wann verwenden**:
+- Komplexe Preisgestaltung (unterschiedliche Preise pro Zone und Gewicht)
+- Mehr Kontrolle als bei Gewichts- oder preisbasierten Methoden
 - Mehrere Preisfaktoren (z. B. Gewicht + Zielort + Menge)
 
-**Konfiguration**: 
-1. Setzen Sie **Methodentyp** = Tabellebasiert
-2. Erstellen Sie eine **Versandpreistabelle**
-3. Definieren Sie **basis_type**: Gewicht, Preis oder Menge
-4. Fügen Sie **Versandpreistufen** mit Min-/Max-Werten hinzu
-5. Optional: Einschränkung der Stufen auf bestimmte Zonen oder Länder
+**Konfiguration**:
+1. Setze **Methode-Typ** = Tabellenbasiert
+2. Erstelle **Versandkosten-Tabelle**
+3. Definiere **Basis-Typ**: Gewicht, Preis oder Menge
+4. Füge **Versandkosten-Stufen** mit Min-/Max-Werten hinzu
+5. Optional: Beschränke Stufen auf bestimmte Zonen oder Länder
 
-**Unterschied zu Gewicht/Preisbasiert**: Tabellebasiert unterstützt geografische Einschränkungen pro Stufe, was unterschiedliche Raten für dasselbe Gewicht/Preis in verschiedenen Zonen ermöglicht.
+**Unterschied zu Gewicht-/Preisbasiert**: Tabellenbasierte Versandkosten unterstützen geografische Einschränkungen pro Stufe, was unterschiedliche Preise für dasselbe Gewicht/Preis in verschiedenen Zonen ermöglicht.
 
-**Beispiel**: 
+**Beispiel**:
 ```
-Zone A (Domestisch):
-  0-5kg: 10 $
-  5-10kg: 15 $
+Zone A (Inland):
+  0-5kg: $10
+  5-10kg: $15
 
 Zone B (Entfernt):
-  0-5kg: 18 $
-  5-10kg: 25 $
+  0-5kg: $18
+  5-10kg: $25
 ```
 
-**Funktionsweise**: Der Warenkorb berechnet den Basiswert (Gewicht/Preis/Menge) → findet die passende Stufe für den Kunden-Zone → gibt die Stufenrate zurück.
+**Funktionsweise**: Der Warenkorb berechnet den Basiswert (Gewicht/Preis/Menge) → findet die passende Stufe für die Zone des Kunden → gibt die Stufenrate zurück.
 
 ---
 
-## Konfiguration von Versandmethoden
+## Konfiguration der Versandmethode
 
 Alle Versandmethoden teilen sich diese allgemeinen Einstellungen:
 
 ### Grundlegende Einstellungen
 
-- **Name**: Interner Bezeichner (nicht für Kunden sichtbar)
-- **Anzeigename**: Für Kunden sichtbarer Name am Checkout (z. B. "Standardversand", "Expresslieferung")
-- **Beschreibung**: Optionaler Hilfetext, der am Checkout angezeigt wird (z. B. "Lieferung in 3-5 Werktagen")
-- **Methodentyp**: Einer der 7 Typen oben
+- **Name**: Interner Bezeichner (wird Kunden nicht angezeigt)
+- **Anzeigename**: Kundenfreundlicher Name zur Kasse (z. B. "Standardversand", "Expresslieferung")
+- **Beschreibung**: Optionaler Hilfetext zur Kasse (z. B. "Lieferung in 3-5 Werktagen")
+- **Methode-Typ**: Einer der 7 Typen oben
 - **Aktiv**: Schalter zum Aktivieren/Deaktivieren der Methode ohne Löschen
 
 ### Kosten-Einstellungen
 
-- **Fixer Preis**: Nur für Flachratenmethoden
-- **Preistabelle**: Für gewichtsbasierte, preisbasierte, tabellebasierte Methoden
-- **Provider-Konto**: Für Echtzeit-Transportunternehmen-Methoden
+- **Fixkosten**: Nur für Flachrate-Methoden
+- **Kostentabelle**: Für gewichtsbasierte, preisbasierte und tabellenbasierte Methoden
+- **Provider-Konto**: Für Echtzeit-Versandunternehmen-Methoden
 - **Steuerklasse**: Steuer auf Versandkosten anwenden (wenn zutreffend)
 
 ### Einschränkungen
 
-**Bestellwert-Einschränkungen**: 
-- **Mindestbestellwert**: Methode nur verfügbar, wenn Warenkorb-Subtotal ≥ Betrag (z. B. Freiversand ab 50 $)
-- **Höchstbestellwert**: Methode verborgen, wenn Warenkorb-Subtotal > Betrag (z. B. Flachraten nur für Bestellungen unter 100 $)
+**Bestellwert-Einschränkungen**:
+- **Mindestbestellwert**: Methode nur verfügbar, wenn der Warenkorb-Subtotal ≥ Betrag (z. B. kostenlose Lieferung ab $50)
+- **Höchstbestellwert**: Methode verborgen, wenn der Warenkorb-Subtotal > Betrag (z. B. Flachrate nur für Bestellungen unter $100)
 
-**Gewichtseinschränkungen**: 
-- **Mindestgewicht**: Methode nur verfügbar, wenn Warenkorb-Gewicht ≥ Betrag
-- **Höchstgewicht**: Methode verborgen, wenn Warenkorb-Gewicht > Betrag (häufig bei leichten Versandoptionen)
+**Gewichtseinschränkungen**:
+- **Mindestgewicht**: Methode nur verfügbar, wenn das Warenkorb-Gewicht ≥ Betrag
+- **Maximalgewicht**: Methode verborgen, wenn das Warenkorb-Gewicht > Betrag (häufig bei leichten Versandoptionen)
 
-**Geografische Einschränkungen**: 
-- **Versandzonen**: Verknüpfen Sie die Methode mit bestimmten Zonen (national, international, regional)
+**Geografische Einschränkungen**:
+- **Versandzonen**: Verknüpfe Methode mit bestimmten Zonen (inländisch, international, regional)
 - Leere Zonen = für alle Adressen verfügbar
 - Mehrere Zonen = für jede passende Zone verfügbar
 
 ### Erweiterte Einstellungen
 
-- **Priorität**: Anzeige-Reihenfolge am Checkout (niedrigere Zahl = höher in der Liste)
+- **Priorität**: Anzeigereihenfolge zur Kasse (kleinere Zahl = höher in der Liste)
 - **Bearbeitungsgebühr**: Zusätzliche Flachgebühr, die zur berechneten Kosten hinzugefügt wird
-- **Freiversand-Schwellenwert**: Setzt den Kosten automatisch auf 0 $, wenn Warenkorb-Subtotal ≥ Schwellenwert (Alternative zu min_order_value)
+- **Freiversand-Schwellenwert**: Setze Kosten automatisch auf $0, wenn der Warenkorb-Subtotal ≥ Schwellenwert (Alternative zu min_order_value)
 
 ---
 
-## Erstellen einer Versandmethode
+## Versandmethode erstellen
 
 **Schritt-für-Schritt-Arbeitsablauf**:
 
-1. **Navigieren Sie zu Versandmethoden**
-   - Gehen Sie zu Einstellungen > Warenkorb > Versandmethoden
-   - Klicken Sie auf "Versandmethode hinzufügen"
+1. **Navigiere zu Versandmethoden**
+   - Gehe zu Einstellungen > Warenkorb > Versandmethoden
+   - Klicke auf "Versandmethode hinzufügen"
 
-2. **Wählen Sie Methodentyp**
-   - Wählen Sie den passenden Typ basierend auf Ihrer Preisstrategie
-   - Der Typ bestimmt die verfügbaren Kostenkonfigurationsfelder
 
-3. **Konfigurieren Sie Grundinformationen**
-   - Name: Interner Bezug (z. B. "domestic_ground")
-   - Anzeigename: Für Kunden sichtbar (z. B. "Groundversand")
+2. **Methode auswählen**
+   - Wählen Sie die passende Methode basierend auf Ihrer Preisstrategie
+   - Die Methode bestimmt die verfügbaren Kostenkonfigurationsfelder
+
+3. **Basisinformationen konfigurieren**
+   - Name: Interne Referenz (z. B. "domestic_ground")
+   - Anzeigename: Kundenseitig (z. B. "Ground Shipping")
    - Beschreibung: Lieferzeitraum (z. B. "5-7 Werktagen")
 
-4. **Setzen Sie die Kostenberechnung**
-   - **Flachraten**: Geben Sie den Fixpreis ein
-   - **Gewicht/Preis/Tabellebasiert**: Erstellen Sie eine Preistabelle (siehe unten)
-   - **Echtzeit**: Verknüpfen Sie das Provider-Konto
-   - **Frei/Abholen**: Keine Kostenkonfiguration erforderlich
+4. **Kostenberechnung festlegen**
+   - **Flachrate**: Festen Preis eingeben
+   - **Gewicht/Preis/Tabelle**: Tabelle erstellen (siehe unten)
+   - **Echtzeit**: Anbieterkonto verknüpfen
+   - **Kostenlos/Abholung**: Keine Kostenkonfiguration erforderlich
 
-5. **Fügen Sie Einschränkungen hinzu (optional)**
+5. **Einschränkungen hinzufügen (optional)**
    - Mindest-/Höchstbestellwert
    - Mindest-/Höchstgewicht
    - Versandzonen
 
-6. **Setzen Sie die Priorität**
-   - Niedrigere Zahlen werden zuerst am Checkout angezeigt
-   - Empfohlene Reihenfolge: Frei (1), Lokales Abholen (2), Standard (3), Express (4)
+6. **Priorität festlegen**
+   - Niedrigere Zahlen werden zuerst im Checkout angezeigt
+   - Empfohlene Reihenfolge: Kostenlos (1), Lokale Abholung (2), Standard (3), Express (4)
 
-7. **Aktivieren Sie die Methode**
-   - Schalten Sie "Aktiv" = Ja
+7. **Methode aktivieren**
+   - Schalter "Aktiv" = Ja
    - Speichern
 
 ---
 
-## Erstellen von Preistabellen
+## Rate-Tabellen erstellen
 
-Für gewichtsbasierte, preisbasierte und tabellebasierte Methoden:
+Für gewichtsbasierte, preisbasierte und tabellenbasierte Methoden:
 
-**Schritt 1: Erstellen Sie eine Preistabelle**
-- Gehen Sie zu Einstellungen > Versand > Preistabellen
-- Klicken Sie auf "Preistabelle hinzufügen"
-- Setzen Sie **Name** (z. B. "Domestische Gewichtsstufen")
-- Setzen Sie **Basis-Typ**: Gewicht, Preis oder Menge
+**Schritt 1: Rate-Tabelle erstellen**
+- Gehe zu Einstellungen > Versand > Rate-Tabellen
+- Klicke auf "Rate-Tabelle hinzufügen"
+- Setze **Name** (z. B. "Domestic Weight Tiers")
+- Setze **Basis-Typ**: Gewicht, Preis oder Menge
 
-**Schritt 2: Fügen Sie Stufen hinzu**
-- Klicken Sie auf "Stufe hinzufügen"
-- Setzen Sie **Mindestwert** und **Höchstwert** (Bereich für Übereinstimmung)
-- Setzen Sie **Rate** (Kosten für diese Stufe)
+**Schritt 2: Tiers hinzufügen**
+- Klicke auf "Tier hinzufügen"
+- Setze **Mindestwert** und **Höchstwert** (Bereich für Übereinstimmung)
+- Setze **Rate** (Kosten für dieses Tier)
 - Optional: Einschränkung auf bestimmte Zonen oder Länder
-- Speichern Sie die Stufe
+- Speichere das Tier
 
-**Schritt 3: Wiederholen Sie für alle Stufen**
-- Decken Sie den gesamten Bereich ab (0 bis maximaler erwarteter Wert)
-- Stellen Sie sicher, dass keine Lücken vorhanden sind (z. B. 0-5, 5-10, 10-20, 20+)
-- Verwenden Sie `null` für den Höchstwert in der letzten Stufe (unbegrenzt)
+**Schritt 3: Für alle Tiers wiederholen**
+- Decke den gesamten Bereich ab (0 bis maximaler erwarteter Wert)
+- Stelle sicher, dass keine Lücken vorhanden sind (z. B. 0-5, 5-10, 10-20, 20+)
+- Verwende `null` für den Höchstwert im letzten Tier (unbegrenzt)
 
-**Schritt 4: Verknüpfen Sie mit der Versandmethode**
-- Bearbeiten Sie die Versandmethode
-- Wählen Sie die Preistabelle aus dem Dropdown aus
-- Speichern
+**Schritt 4: Mit der Versandmethode verknüpfen**
+- Bearbeite die Versandmethode
+- Wähle die Rate-Tabelle aus dem Dropdown aus
+- Speichere
 
-**Beispiel einer gewichtsbasierten Tabelle**: 
+**Beispiel einer gewichtsbasierten Tabelle**:
 ```
-Name: Domestische Gewichtsstufen
+Name: Domestic Weight Tiers
 Basis: Gewicht
 
-Stufen:
-1. Min: 0g, Max: 2000g, Rate: 8 $
-2. Min: 2000g, Max: 5000g, Rate: 12 $
-3. Min: 5000g, Max: 10000g, Rate: 18 $
-4. Min: 10000g, Max: null, Rate: 25 $
+Tiers:
+1. Min: 0g, Max: 2000g, Rate: $8
+2. Min: 2000g, Max: 5000g, Rate: $12
+3. Min: 5000g, Max: 10000g, Rate: $18
+4. Min: 10000g, Max: null, Rate: $25
 ```
 
 ---
 
 ## Typische Versand-Szenarien
 
-### Szenario 1: Grundlegender nationaler Versand
+### Szenario 1: Grundlegender Inlandsversand
 
-**Ziel**: Einfacher Flachraten von 9,99 $ für alle nationalen Bestellungen.
+**Ziel**: Einfache Flachrate von $9,99 für alle Inlandsbestellungen.
 
-**Lösung**: 
-- Methodentyp: Flachraten
-- Fixer Preis: 9,99 $
-- Versandzone: "Domestisch" (nur Ihr Land)
-
----
-
-### Szenario 2: Freiversand ab 50 $ Bestellwert
-
-**Ziel**: Höheren Warenkorbwert mit Freiverschiffs-Schwellenwert fördern.
-
-**Lösungsoption A** (Empfohlen): 
-- Methodentyp: Freiversand
-- Mindestbestellwert: 50 $
-- Anzeigename: "Freiversand (Bestellungen ab 50 $)"
-
-**Lösungsoption B** (Mit Regeln): 
-- Methodentyp: Flachraten
-- Fixer Preis: 9,99 $
-- Erstellen Sie eine Versandregel:
-  - Bedingung: Warenkorbwert ≥ 50 $
-  - Aktion: Kosten auf 0 $ setzen
+**Lösung**:
+- Methode-Typ: Flachrate
+- Fixer Preis: $9,99
+- Versandzone: "Domestic" (nur Ihr Land)
 
 ---
 
-### Szenario 3: Gewichtsbasiert national + international
+### Szenario 2: Kostenloser Versand ab $50
 
-**Ziel**: Unterschiedliche Raten für national und international basierend auf Gewicht.
+**Ziel**: Höhere Warenkorbwerte durch einen kostenlosen Versandsschwellenwert fördern.
 
-**Lösung**: 
-1. Erstellen Sie 2 Zonen: "Domestisch", "International"
-2. Erstellen Sie 2 Preistabellen: "Domestische Gewicht", "Internationale Gewicht"
-3. Erstellen Sie 2 Methoden:
-   - "Domestischer Versand" → verknüpft mit der Domestischen Zone + Domestische Gewicht-Tabelle
-   - "Internationaler Versand" → verknüpft mit der Internationalen Zone + Internationale Gewicht-Tabelle
+**Lösungsoption A** (Empfohlen):
+- Methode-Typ: Kostenloser Versand
+- Mindestbestellwert: $50
+- Anzeigename: "Kostenloser Versand (Bestellungen $50+)")
 
----
-
-### Szenario 4: Mehrere Transportunternehmensoptionen
-
-**Ziel**: Kunden können zwischen FedEx Ground, FedEx Express, UPS Ground wählen.
-
-**Lösung**: 
-1. Erstellen Sie ein Provider-Konto für die FedEx-API
-2. Erstellen Sie ein Provider-Konto für die UPS-API
-3. Erstellen Sie 3 Echtzeitmethoden:
-   - "FedEx Ground" → FedEx-Provider, Service-Code = "FEDEX_GROUND"
-   - "FedEx Express" → FedEx-Provider, Service-Code = "FEDEX_EXPRESS"
-   - "UPS Ground" → UPS-Provider, Service-Code = "UPS_GROUND"
-4. Alle 3 Methoden fragen die Transportunternehmen-API am Checkout ab und zeigen Live-Raten an
+**Lösungsoption B** (Mit Regeln):
+- Methode-Typ: Flachrate
+- Fixer Preis: $9,99
+- Erstelle einen Versandrabatt:
+  - Bedingung: Warenkorbwert ≥ $50
+  - Aktion: Kosten auf $0 setzen
 
 ---
 
-### Szenario 5: Lokales Abholen + Lieferung
+### Szenario 3: Gewichtsbasiert Inland + International
 
-**Ziel**: Einzelhandelsgeschäft bietet sowohl Abholen als auch Lieferoptionen an.
+**Ziel**: Unterschiedliche Preise für Inland und International basierend auf Gewicht.
 
-**Lösung**: 
-1. Erstellen Sie Standort: "Hauptgeschäft" mit Adresse, Stunden und Vorbereitungszeit
-2. Erstellen Sie 2 Methoden:
-   - "Lokales Abholen" → Lokales Abholen-Typ, verknüpft mit Hauptgeschäft-Position
-   - "Standardlieferung" → Flachraten 9,99 $
-3. Kunden sehen beide Optionen am Checkout
+**Lösung**:
+1. Erstelle 2 Zonen: "Domestic", "International"
+2. Erstelle 2 Rate-Tabellen: "Domestic Weight", "International Weight"
+3. Erstelle 2 Methoden:
+   - "Domestic Shipping" → verknüpft mit Domestic-Zone + Domestic Weight-Tabelle
+   - "International Shipping" → verknüpft mit International-Zone + International Weight-Tabelle
 
 ---
 
-## Testen von Versandmethoden
+### Szenario 4: Mehrere Versandoptionen
+
+**Ziel**: Kunden können zwischen FedEx Ground, FedEx Express und UPS Ground wählen.
+
+**Lösung**:
+1. Erstelle Anbieterkonto für FedEx API
+2. Erstelle Anbieterkonto für UPS API
+3. Erstelle 3 Echtzeitmethoden:
+   - "FedEx Ground" → FedEx-Anbieter, Dienstcode = "FEDEX_GROUND"
+   - "FedEx Express" → FedEx-Anbieter, Dienstcode = "FEDEX_EXPRESS"
+   - "UPS Ground" → UPS-Anbieter, Dienstcode = "UPS_GROUND"
+4. Alle 3 Methoden fragen die Anbieter-APIs beim Checkout ab und zeigen Live-Raten an
+
+---
+
+### Szenario 5: Lokale Abholung + Lieferung
+
+**Ziel**: Ein Einzelhandelsgeschäft bietet sowohl Abholung als auch Lieferoptionen an.
+
+**Lösung**:
+1. Erstelle Standort: "Main Store" mit Adresse, Öffnungszeiten und Vorbereitungszeit
+2. Erstelle 2 Methoden:
+   - "Local Pickup" → Lokale Abholung, verknüpft mit Main Store-Position
+   - "Standard Delivery" → Flachrate $9,99
+3. Kunden sehen beide Optionen beim Checkout
+
+---
+
+## Versandmethoden testen
 
 Bevor Sie online gehen, testen Sie alle Methoden:
 
-1. **Erstellen Sie einen Test-Warenkorb**
-   - Fügen Sie Produkte mit unterschiedlichen Gewichten/Preisen hinzu
-   - Gehen Sie zum Checkout
 
-2. **Testen Sie jede Methode**
-   - Geben Sie Adressen in verschiedenen Zonen ein
-   - Stellen Sie sicher, dass die richtigen Methoden angezeigt werden
-   - Prüfen Sie, ob die berechneten Kosten den Erwartungen entsprechen
+1. **Testwagen erstellen**
+   - Produkte mit unterschiedlichen Gewichten/Preisen hinzufügen
+   - Zum Checkout weitergehen
 
-3. **Testen Sie Einschränkungen**
-   - Fügen Sie Artikel hinzu, bis der Mindestbestellwert erreicht ist → prüfen Sie, ob Freiversand angezeigt wird
-   - Fügen Sie schwere Artikel hinzu → prüfen Sie, ob die gewichtsbasierten Stufen funktionieren
-   - Testen Sie Zonen-Einschränkungen → prüfen Sie, ob Methoden für ausgeschlossene Zonen verborgen sind
+2. **Jede Methode testen**
+   - Adressen in verschiedenen Zonen eingeben
+   - Überprüfen, ob die richtigen Methoden angezeigt werden
+   - Prüfen, ob die berechneten Kosten den Erwartungen entsprechen
 
-4. **Testen Sie Echtzeitmethoden** (wenn zutreffend)
-   - Verwenden Sie Test-Anmeldeinformationen des Providers
-   - Prüfen Sie, ob die Raten erfolgreich zurückgegeben werden
-   - Prüfen Sie die Genauigkeit der Raten im Vergleich zur Website des Transportunternehmens
+3. **Einschränkungen testen**
+   - Artikel hinzufügen, bis der Mindestbestellwert erreicht ist → überprüfen, ob kostenlose Lieferung angezeigt wird
+   - Schwere Artikel hinzufügen → überprüfen, ob die gewichtsbasierten Stufen funktionieren
+   - Zonenbeschränkungen testen → überprüfen, ob Methoden für ausgeschlossene Zonen ausgeblendet werden
+
+4. **Echtzeit-Methoden testen** (falls zutreffend)
+   - Test-Anmeldeinformationen des Versanddienstes verwenden
+   - Überprüfen, ob die Preise erfolgreich zurückgegeben werden
+   - Prüfen, ob die Preise mit der Website des Versanddienstes übereinstimmen
 
 ---
 
 ## Problembehandlung
 
-**Problem 1: Methode wird am Checkout nicht angezeigt**
+**Problem 1: Methode erscheint nicht beim Checkout**
 
-**Ursachen**: 
+**Ursachen**:
 - Methode ist inaktiv
-- Warenkorb erfüllt nicht Mindest-/Höchstbestellwert
-- Warenkorb erfüllt nicht Mindest-/Höchstgewicht
-- Kundenadresse entspricht keiner verknüpften Zone
-- Keine Preistabelle-Stufen decken Warenkorb-Gewicht/Preis ab
+- Warenkorb erfüllt nicht den Mindest-/Höchstbestellwert
+- Warenkorb erfüllt nicht das Mindest-/Höchstgewicht
+- Kundenadresse stimmt nicht mit einer verknüpften Zone überein
+- Keine Preistabelle-Stufen decken das Gewicht/Preis des Warenkorbs ab
 
-**Lösung**: Prüfen Sie Einschränkungen, prüfen Sie den Aktivstatus, stellen Sie sicher, dass Zonen/Stufen den Kundenfall abdecken.
+**Lösung**: Einschränkungen prüfen, aktiven Status überprüfen, sicherstellen, dass Zonen/Stufen den Kundenfall abdecken.
 
 ---
 
-**Problem 2: Echtzeit-Raten fehlschlagen**
+**Problem 2: Echtzeit-Preise fehlschlagen**
 
-**Ursachen**: 
+**Ursachen**:
 - Ungültige API-Anmeldeinformationen
-- Inaktives Provider-Konto
-- Keine definierten Versandverpackungen (Transportunternehmen benötigt Abmessungen)
+- Konto des Anbieters ist inaktiv
+- Keine Versandverpackungen definiert (der Anbieter benötigt Abmessungen)
 - Ursprungsadresse nicht festgelegt
-- Transportunternehmen-API ist nicht verfügbar
+- API des Versanddienstes ist nicht erreichbar
 
-**Lösung**: Testen Sie die Verbindung zum Provider, prüfen Sie die Anmeldeinformationen, stellen Sie sicher, dass Verpackungen konfiguriert sind, prüfen Sie die Ursprungsadresse in den Einstellungen.
+**Lösung**: Verbindung zum Anbieter testen, Anmeldeinformationen überprüfen, sicherstellen, dass Verpackungen konfiguriert sind, Ursprungsadresse in den Einstellungen prüfen.
 
 ---
 
-**Problem 3: Falsch berechnete Kosten**
+**Problem 3: Falscher Kostenbetrag berechnet**
 
-**Ursachen**: 
+**Ursachen**:
 - Preistabelle-Stufen haben Lücken oder Überschneidungen
-- Min-/Max-Werte der Stufen sind in falschen Einheiten (Gramm vs. kg)
-- Bearbeitungsgebühr wurde unerwartet hinzugefügt
-- Versandregel verändert die Kosten
+- Mindest-/Höchstwerte der Stufen sind in falschen Einheiten (Gramm vs. kg)
+- Versandkosten werden unerwartet hinzugefügt
+- Versandregel verändert den Kostenbetrag
 
-**Lösung**: Prüfen Sie die Preistabelle-Stufen, prüfen Sie die Einheiten, prüfen Sie die Priorität der Versandregeln.
+**Lösung**: Preistabelle-Stufen überprüfen, Einheiten prüfen, Versandaktionen-Priorität überprüfen.
 
 ---
 
 ## Tipps
 
-- **Beginnen Sie einfach** - Verwenden Sie Flachraten für die erste Methode, fügen Sie Komplexität bei Bedarf hinzu
-- **Testen Sie gründlich** - Stellen Sie sicher, dass alle Methoden in der Testumgebung funktionieren, bevor Sie sie in der Produktion aktivieren
-- **Verwenden Sie beschreibende Namen** - "Standardversand (5-7 Tage)" ist besser als "Methode 1"
-- **Setzen Sie realistische Lieferzeiten** - Unter-Promisen, über-Liefern für Kundenzufriedenheit
-- **Bieten Sie Abholung an, wenn möglich** - Reduziert Versandkosten, verbessert Kundennutzbarkeit
-- **Überwachen Sie die Zuverlässigkeit der Transportunternehmen-API** - Haben Sie eine Flachraten-Alternative, wenn Echtzeit-Raten fehlschlagen
-- **Verwenden Sie Zonen für internationale Lieferungen** - Unterschiedliche Raten je nach Region verhindern Verluste an teuren Zielorten
-- **Kombinieren Sie mit Versandregeln** - Regeln fügen bedingte Logik hinzu (Freiverschiffsaktionen, Zuschläge für abgelegene Gebiete)
-- **Begrenzen Sie die Methoden** - 2-4 Optionen am Checkout verhindern Entscheidungsparalyse
-- **Aktualisieren Sie die Preistabellen saisonal** - Transportunternehmen-Raten ändern sich, prüfen Sie jährlich
-- **Verwenden Sie Priorität sinnvoll** - Setzen Sie kostenlose/teurere Optionen zuerst, teure Optionen zuletzt
-
+- **Einfach beginnen** - Verwenden Sie zuerst eine Flachrate für die erste Methode, fügen Sie Komplexität bei Bedarf hinzu
+- **Gründlich testen** - Überprüfen Sie, ob alle Methoden im Testumfeld funktionieren, bevor Sie sie im Produktionsumfeld aktivieren
+- **Beschreibende Namen verwenden** - "Standardversand (5-7 Tage)" ist besser als "Methode 1"
+- **Realistische Lieferzeiten festlegen** - Unterversprechen und Übertreffen für Kundenzufriedenheit
+- **Abholung anbieten, wenn möglich** - Reduziert Versandkosten und verbessert die Kundennachricht
+- **Überwachen Sie die Zuverlässigkeit der Versand-API** - Verwenden Sie eine Flachrate als Ausweichlösung, wenn Echtzeit-Raten fehlschlagen
+- **Zonen für internationale Lieferungen verwenden** - Unterschiedliche Preise nach Region verhindern Verluste an teuren Zielorten
+- **Mit Versandaktionen kombinieren** - Regeln fügen bedingte Logik hinzu (kostenlose Versandaktionen, Gebühren für abgelegene Gebiete)
+- **Methoden begrenzen** - 2-4 Optionen am Checkout verhindern Entscheidungsparalyse
+- **Rate-Tabellen saisonal aktualisieren** - Versandkosten ändern sich, prüfen Sie jährlich
+- **Priorität sinnvoll verwenden** - Kostenlose/ungeldige Optionen zuerst, teure Optionen zuletzt platzieren

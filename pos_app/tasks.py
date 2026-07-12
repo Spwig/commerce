@@ -131,7 +131,7 @@ def update_splash_screen_for_reader_override(self, reader_pk: str):
 # Parked Cart Cleanup
 # ─────────────────────────────────────────────────────────────────────────────
 
-@shared_task
+@shared_task(name='pos_app.cleanup_expired_parked_carts', ignore_result=True)
 def cleanup_expired_parked_carts():
     """Delete parked carts that have passed their expires_at time."""
     from django.utils import timezone
