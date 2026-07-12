@@ -2,9 +2,9 @@
 title: Metodi di spedizione
 ---
 
-I metodi di spedizione sono le opzioni di consegna rivolte ai clienti che vengono visualizzate al momento del checkout - ogni metodo calcola i costi di spedizione utilizzando diverse strategie di prezzo. Spwig supporta 7 tipi di metodi, che vanno da semplici tariffe fisse a complessi calcoli in tempo reale effettuati dai carrier. I metodi possono essere limitati in base al valore minimo/massimo dell'ordine, al peso e alle zone geografiche. I clienti selezionano il metodo preferito al momento del checkout, e il costo calcolato viene aggiunto al totale dell'ordine.
+I metodi di spedizione sono le opzioni di consegna rivolte ai clienti, visualizzate al momento del checkout—ogni metodo calcola i costi di spedizione utilizzando diverse strategie di prezzo. Spwig supporta 7 tipi di metodo, che vanno da semplici tariffe fisse a complessi prezzi in tempo reale calcolati dai carrier. I metodi possono essere limitati in base al valore minimo/massimo dell'ordine, al peso e alle zone geografiche. I clienti selezionano il metodo preferito al momento del checkout, e il costo calcolato viene aggiunto al totale dell'ordine.
 
-Utilizza questa guida per configurare metodi di spedizione che si adattano al tuo modello aziendale, da una semplice spedizione a tariffa fissa a una complessa tariffa a livelli basata su zone.
+Utilizza questa guida per configurare metodi di spedizione che si adattino al tuo modello aziendale, dai semplici metodi a tariffa fissa ai complessi metodi basati su zone con tariffe a livelli.
 
 ## Tipi di metodi di spedizione
 
@@ -18,12 +18,12 @@ Spwig fornisce 7 tipi di metodi di spedizione, ciascuno con una logica diversa p
 - Negozio semplice con costi di spedizione prevedibili
 - Un solo tipo di prodotto (dimensioni/peso simili)
 - Spedizione nazionale con tariffe standard dei carrier
-- Promozioni di spedizione gratuita (utilizzare con le regole di spedizione)
+- Promozioni di spedizione gratuita (utilizzare con promozioni di spedizione)
 
 **Configurazione**:
 - Imposta **Tipo di metodo** = Tariffa fissa
 - Inserisci **Costo fisso** (es. $9.99)
-- Opzionale: Imposta le restrizioni sul valore minimo/massimo dell'ordine
+- Opzionale: Imposta i limiti di valore minimo/massimo dell'ordine
 
 **Esempio**: "Spedizione standard - $9.99" per tutti gli ordini nazionali.
 
@@ -42,7 +42,7 @@ Spwig fornisce 7 tipi di metodi di spedizione, ciascuno con una logica diversa p
 **Configurazione**:
 - Imposta **Tipo di metodo** = Spedizione gratuita
 - Opzionale: Imposta **Valore minimo dell'ordine** (es. gratuita per ordini superiori a $50)
-- Funziona bene con le regole di spedizione per la spedizione gratuita condizionata
+- Funziona bene con le promozioni di spedizione per la spedizione gratuita condizionata
 
 **Esempio**: "Spedizione gratuita per ordini superiori a $50" con min_order_value = $50.
 
@@ -59,8 +59,8 @@ Spwig fornisce 7 tipi di metodi di spedizione, ciascuno con una logica diversa p
 
 **Configurazione**:
 1. Imposta **Tipo di metodo** = Basato sul peso
-2. Crea **Tabella tariffa di spedizione** con basis_type = "weight"
-3. Aggiungi **Livelli di tariffa di spedizione** (es. 0-5kg = $10, 5-10kg = $15, 10-20kg = $25)
+2. Crea **Tabella delle tariffe di spedizione** con basis_type = "weight"
+3. Aggiungi **Livelli di tariffe di spedizione** (es. 0-5kg = $10, 5-10kg = $15, 10-20kg = $25)
 4. Opzionale: Limitare a specifiche zone
 
 **Esempio**:
@@ -77,17 +77,17 @@ Spwig fornisce 7 tipi di metodi di spedizione, ciascuno con una logica diversa p
 
 ### Spedizione basata sul prezzo
 
-**Cos'è**: Il costo viene calcolato da una tabella a livelli basata sul totale del carrello.
+**Cos'è**: Il costo viene calcolato da una tabella a livelli basata sul sottototale del carrello.
 
 **Quando utilizzarlo**:
 - I costi di spedizione sono correlati al valore dell'ordine
-- Incentivare un valore del carrello più alto (ridurre la tariffa per dollaro a livelli più alti)
+- Incentivare un valore del carrello più alto (tariffa più bassa per dollaro a livelli più alti)
 - Alternativa semplice alla spedizione basata sul peso per prodotti con prezzo simile
 
 **Configurazione**:
 1. Imposta **Tipo di metodo** = Basato sul prezzo
-2. Crea **Tabella tariffa di spedizione** con basis_type = "price"
-3. Aggiungi **Livelli di tariffa di spedizione** (es. $0-$50 = $9.99, $50-$100 = $14.99, $100+ = $19.99)
+2. Crea **Tabella delle tariffe di spedizione** con basis_type = "price"
+3. Aggiungi **Livelli di tariffe di spedizione** (es. $0-$50 = $9.99, $50-$100 = $14.99, $100+ = $19.99)
 
 **Esempio**:
 ```
@@ -97,91 +97,91 @@ $75-$150: $12.99
 $150+: Gratuita
 ```
 
-**Come funziona**: Il carrello calcola il totale → trova il livello corrispondente → restituisce la tariffa del livello.
+**Come funziona**: Il carrello calcola il sottototale → trova il livello corrispondente → restituisce la tariffa del livello.
 
 ---
 
-### Tariffe in tempo reale dei carrier
+### Tariffe di spedizione in tempo reale
 
 **Cos'è**: Tariffe in tempo reale ottenute da API dei carrier (FedEx, UPS, DHL) al momento del checkout.
 
 **Quando utilizzarlo**:
 - Costi di spedizione variabili in base alla destinazione
-- Opzioni multiple di carrier per i clienti
+- Opzioni di diversi carrier per i clienti
 - Prezzi dei carrier precisi senza tabelle di tariffe manuali
 - Spedizione internazionale con prezzi complessi
 
 **Configurazione**:
-1. Imposta **Tipo di metodo** = Reale in tempo reale
-2. Crea **Account fornitore** (Impostazioni > Spedizione > Account fornitori)
+1. Imposta **Tipo di metodo** = In tempo reale
+2. Crea **Account del provider** (Impostazioni > Spedizione > Account dei provider)
 3. Inserisci le credenziali API del carrier (numero di account, chiave API, segreto)
-4. Collega l'account fornitore al metodo di spedizione
-5. Opzionale: Aggiungi un percentuale di markup o un markup fisso
+4. Collega l'account del provider al metodo di spedizione
+5. Opzionale: Aggiungi un margine percentuale o un margine fisso
 
 **Requisiti**:
 - Account attivo del carrier (FedEx, UPS, DHL, ecc.)
-- Credenziali API ottenute dal carrier
+- Credenziali API del carrier
 - Pacchetti di spedizione definiti (per il calcolo del peso dimensionale)
 
 **Esempio**: Il metodo "FedEx Ground" recupera le tariffe live di FedEx in base al peso del carrello, alle dimensioni e alla destinazione al momento del checkout.
 
-**Come funziona**:
+**Come Funziona**:
 1. Il cliente inserisce l'indirizzo al momento del checkout
-2. Il sistema chiama l'API del carrier con origine, destinazione, dimensioni del pacchetto e peso
+2. Il sistema chiama l'API del carrier con origine, destinazione, dimensioni del pacco e peso
 3. Il carrier restituisce l'offerta di prezzo
-4. Eventuale markup applicato
+4. Applicazione opzionale di markup
 5. La tariffa viene visualizzata al cliente
 
 ---
 
-### Ritiro in loco
+### Ritiro in Locale
 
-**Cos'è**: Il cliente ritira l'ordine in un'ubicazione fisica (nessun costo di consegna).
+**Cos'è**: Il cliente ritira l'ordine in un'ubicazione fisica (nessun costo di spedizione).
 
-**Quando utilizzarlo**:
+**Quando Usarlo**:
 - Negozio al dettaglio che offre il ritiro
 - Opzioni di ritiro presso il magazzino
-- Eventi o bancarelle di mercato
+- Eventi o bancarelle
 - Eliminare i costi di spedizione per i clienti locali
 
 **Configurazione**:
-1. Imposta **Tipo di metodo** = Ritiro in loco
+1. Imposta **Tipo di Metodo** = Ritiro in Locale
 2. Crea **Ubicazione** (Impostazioni > Spedizione > Ubicazioni)
-   - Imposta l'indirizzo, gli orari di apertura, la capacità di ritiro
+   - Imposta indirizzo, orari di apertura, capacità di ritiro
 3. Collega l'ubicazione (o le ubicazioni) al metodo
 4. Opzionale: Imposta il tempo di preparazione del ritiro (es. "Pronto in 2 ore")
 
-**Esperienza del cliente**:
-- Seleziona "Ritiro in loco" al momento del checkout
+**Esperienza del Cliente**:
+- Seleziona "Ritiro in Locale" al momento del checkout
 - Scegli l'ubicazione di ritiro (se ce ne sono più di una)
 - Scegli la data/ora di ritiro in base alla disponibilità
 - Riceve una notifica quando l'ordine è pronto
 
-**Esempio**: "Ritiro in negozio - Gratuito" con 3 ubicazioni retail, pronti entro 24 ore.
+**Esempio**: "Ritiro in Negozio - Gratuito" con 3 ubicazioni retail, pronti entro 24 ore.
 
 ---
 
-### Spedizione a tariffa tabellare
+### Spedizione a Tabelle
 
-**Cos'è**: Tariffa a livelli flessibile basata su peso, prezzo o quantità con mira avanzata sulle zone.
+**Cos'è**: Prezzo flessibile a livelli basato su peso, prezzo o quantità con targeting avanzato per zone.
 
-**Quando utilizzarlo**:
-- Prezzi complessi (diverse tariffe per zona E peso)
-- Bisogno di un controllo maggiore rispetto alla spedizione basata su peso o prezzo
+**Quando Usarlo**:
+- Prezzi complessi (diverse tariffe per zona E PESO)
+- Bisogno di un controllo maggiore rispetto a solo peso o prezzo
 - Più fattori di prezzo (es. peso + destinazione + quantità)
 
 **Configurazione**:
-1. Imposta **Tipo di metodo** = Tariffa tabellare
-2. Crea **Tabella tariffa di spedizione**
+1. Imposta **Tipo di Metodo** = Spedizione a Tabelle
+2. Crea **Tabella di Tariffa di Spedizione**
 3. Definisci **basis_type**: peso, prezzo o quantità
-4. Aggiungi **Livelli di tariffa di spedizione** con valori min/max
-5. Opzionale: Limitare i livelli a specifiche zone o paesi
+4. Aggiungi **Livelli di Tariffa di Spedizione** con valori minimi/massimi
+5. Opzionale: Limita i livelli a specifiche zone o paesi
 
-**Differenza rispetto a peso/prezzo basato**: La tariffa tabellare supporta le restrizioni geografiche per livello, permettendo tariffe diverse per lo stesso peso/prezzo in diverse zone.
+**Differenza rispetto a Peso/Prezzo**: La tariffa a tabella supporta le restrizioni geografiche per livello, permettendo tariffe diverse per lo stesso peso/prezzo in diverse zone.
 
 **Esempio**:
 ```
-Zona A (Nazionale):
+Zona A (Domestica):
   0-5kg: $10
   5-10kg: $15
 
@@ -190,120 +190,120 @@ Zona B (Rimota):
   5-10kg: $25
 ```
 
-**Come funziona**: Il carrello calcola il valore di base (peso/prezzo/quantità) → trova il livello corrispondente per la zona del cliente → restituisce la tariffa del livello.
+**Come Funziona**: Il carrello calcola il valore di base (peso/prezzo/quantità) → trova il livello corrispondente per la zona del cliente → restituisce la tariffa del livello.
 
 ---
 
-## Configurazione del metodo di spedizione
+## Configurazione del Metodo di Spedizione
 
 Tutti i metodi di spedizione condividono queste impostazioni comuni:
 
-### Impostazioni di base
+### Impostazioni di Base
 
 - **Nome**: Identificatore interno (non mostrato ai clienti)
-- **Nome visualizzato**: Nome rivolto ai clienti al momento del checkout (es. "Spedizione standard", "Spedizione espressa")
+- **Nome Visualizzato**: Nome rivolto al cliente al momento del checkout (es. "Spedizione Standard", "Spedizione Espressa")
 - **Descrizione**: Testo di aiuto opzionale mostrato al momento del checkout (es. "Consegna in 3-5 giorni lavorativi")
-- **Tipo di metodo**: Uno dei 7 tipi sopra
+- **Tipo di Metodo**: Uno dei 7 tipi sopra
 - **Attivo**: Interruttore per abilitare/disabilitare il metodo senza eliminarlo
 
-### Impostazioni dei costi
+### Impostazioni di Costo
 
-- **Costo fisso**: Solo per i metodi a tariffa fissa
-- **Tabella tariffa**: Per i metodi basati su peso, prezzo, tariffa tabellare
-- **Account fornitore**: Per i metodi in tempo reale dei carrier
-- **Classe fiscale**: Applica l'imposta al costo di spedizione (se applicabile)
+- **Costo Fisso**: Solo per i metodi a tariffa fissa
+- **Tabella di Tariffa**: Per i metodi basati su peso, prezzo o tariffa a tabella
+- **Account Fornitore**: Per i metodi di spedizione in tempo reale con carrier
+- **Classe di Imposta**: Applica l'IVA al costo di spedizione (se applicabile)
 
 ### Restrizioni
 
-**Restrizioni sul valore dell'ordine**:
-- **Valore minimo dell'ordine**: Il metodo è disponibile solo se il totale del carrello ≥ importo (es. spedizione gratuita per ordini superiori a $50)
-- **Valore massimo dell'ordine**: Il metodo è nascosto se il totale del carrello > importo (es. tariffa fissa solo per ordini inferiori a $100)
+**Restrizioni sul Valore dell'Ordine**:
+- **Valore Minimo dell'Ordine**: Il metodo è disponibile solo se il totale del carrello è ≥ importo (es. spedizione gratuita per ordini superiori a $50)
+- **Valore Massimo dell'Ordine**: Il metodo è nascosto se il totale del carrello > importo (es. tariffa fissa solo per ordini inferiori a $100)
 
-**Restrizioni sul peso**:
-- **Peso minimo**: Il metodo è disponibile solo se il peso del carrello ≥ importo
-- **Peso massimo**: Il metodo è nascosto se il peso del carrello > importo (comune per opzioni di spedizione leggere)
+**Restrizioni sul Peso**:
+- **Peso Minimo**: Il metodo è disponibile solo se il peso del carrello ≥ importo
+- **Peso Massimo**: Il metodo è nascosto se il peso del carrello > importo (comune per opzioni di spedizione per oggetti leggeri)
 
-**Restrizioni geografiche**:
-- **Zone di spedizione**: Collega il metodo a specifiche zone (nazionali, internazionali, regionali)
+**Restrizioni Geografiche**:
+- **Zone di Spedizione**: Collega il metodo a specifiche zone (domestiche, internazionali, regionali)
 - Zone vuote = disponibile per tutti gli indirizzi
-- Multiple zone = disponibile per qualsiasi zona corrispondente
+- Più zone = disponibile per qualsiasi zona corrispondente
 
-### Impostazioni avanzate
+### Impostazioni Avanzate
 
-- **Priorità**: Ordine di visualizzazione al momento del checkout (numero più basso = più alto nell'elenco)
-- **Tariffa di gestione**: Tariffa aggiuntiva fissa aggiunta al costo calcolato
-- **Limite per spedizione gratuita**: Imposta automaticamente il costo a $0 se il totale del carrello ≥ limite (alternativa al min_order_value)
+- **Priorità**: Ordine di visualizzazione al momento del checkout (numero più basso = più alto nella lista)
+- **Tariffa di Gestione**: Tariffa aggiuntiva fissa aggiunta al costo calcolato
+- **Limite per Spedizione Gratuita**: Imposta automaticamente il costo a $0 se il totale del carrello ≥ limite (alternativa al min_order_value)
 
 ---
 
-## Creare un metodo di spedizione
+## Creare un Metodo di Spedizione
 
-**Flusso di lavoro passo-passo**:
+**Flusso di Lavoro Passo Passo**:
 
-1. **Naviga ai metodi di spedizione**
-   - Vai a Impostazioni > Carrello > Metodi di spedizione
-   - Clicca su "Aggiungi metodo di spedizione"
+1. **Naviga verso i Metodi di Spedizione**
+   - Vai a Impostazioni > Carrello > Metodi di Spedizione
+   - Clicca su "Aggiungi Metodo di Spedizione"
 
-2. **Scegli il tipo di metodo**
-   - Seleziona il tipo appropriato in base alla tua strategia di prezzo
+2. **Scegliere il Tipo di Metodo**
+   - Selezionare il tipo appropriato in base alla strategia di prezzo
    - Il tipo determina i campi disponibili per la configurazione dei costi
 
-3. **Configura le informazioni di base**
+3. **Configurare le Informazioni di Base**
    - Nome: Riferimento interno (es. "domestic_ground")
-   - Nome visualizzato: Rivolto ai clienti (es. "Spedizione terrestre")
+   - Nome Visualizzato: Orientato al cliente (es. "Spedizione Standard")
    - Descrizione: Intervallo di consegna (es. "5-7 giorni lavorativi")
 
-4. **Imposta il calcolo dei costi**
-   - **Tariffa fissa**: Inserisci il costo fisso
-   - **Peso/Prezzo/Tariffa tabellare**: Crea una tabella tariffa (vedi di seguito)
-   - **Reale in tempo reale**: Collega l'account fornitore
-   - **Gratuito/Ritiro**: Nessuna configurazione di costo necessaria
+4. **Impostare il Calcolo dei Costi**
+   - **Tariffa Fissa**: Inserire un costo fisso
+   - **Peso/Prezzo/Tabella di Tariffa**: Creare una tabella di tariffa (vedi di seguito)
+   - **In Tempo Reale**: Collegare l'account del fornitore
+   - **Gratuito/Ritiro in Locale**: Nessuna configurazione dei costi necessaria
 
-5. **Aggiungi restrizioni (opzionale)**
+5. **Aggiungere Restrizioni (Opzionale)**
    - Valore minimo/massimo dell'ordine
    - Peso minimo/massimo
    - Zone di spedizione
 
-6. **Imposta la priorità**
-   - I numeri più bassi appaiono prima al momento del checkout
-   - Ordine consigliato: Gratuito (1), Ritiro in loco (2), Standard (3), Espresso (4)
+6. **Impostare la Priorità**
+   - I numeri più bassi appaiono per primi durante il checkout
+   - Ordine consigliato: Gratuito (1), Ritiro in Locale (2), Standard (3), Espresso (4)
 
-7. **Attiva il metodo**
-   - Imposta "Attivo" = Sì
+7. **Attivare il Metodo**
+   - Attiva il toggle "Attivo" = Sì
    - Salva
 
 ---
 
-## Creare tabelle tariffarie
+## Creare Tabelle di Tariffa
 
-Per i metodi basati su peso, prezzo e tariffa tabellare:
+Per i metodi basati sul peso, sul prezzo e sulle tabelle di tariffa:
 
-**Passo 1: Creare una tabella tariffa**
-- Vai a Impostazioni > Spedizione > Tabelle tariffarie
-- Clicca su "Aggiungi tabella tariffa"
-- Imposta **Nome** (es. "Livelli di peso nazionali")
-- Imposta **Tipo di base**: peso, prezzo o quantità
+**Passo 1: Creare una Tabella di Tariffa**
+- Vai a Impostazioni > Spedizione > Tabelle di Tariffa
+- Fare clic su "Aggiungi Tabella di Tariffa"
+- Impostare **Nome** (es. "Domestic Weight Tiers")
+- Impostare **Tipo di Base**: peso, prezzo o quantità
 
-**Passo 2: Aggiungere livelli**
-- Clicca su "Aggiungi livello"
-- Imposta **Valore minimo** e **Valore massimo** (intervallo per il matching)
-- Imposta **Tariffa** (costo per questo livello)
+**Passo 2: Aggiungere Livelli**
+- Fare clic su "Aggiungi Livello"
+- Impostare **Valore Minimo** e **Valore Massimo** (intervallo per il matching)
+- Impostare **Tariffa** (costo per questo livello)
 - Opzionale: Limitare a specifiche zone o paesi
 - Salva il livello
 
-**Passo 3: Ripetere per tutti i livelli**
-- Coprire l'intervallo completo (da 0 al valore massimo previsto)
+**Passo 3: Ripetere per Tutti i Livelli**
+- Coprire l'intero intervallo (da 0 al valore massimo previsto)
 - Assicurarsi che non ci siano lacune (es. 0-5, 5-10, 10-20, 20+)
-- Utilizzare `null` per il valore massimo nel livello finale (illimitato)
+- Usare `null` per il valore massimo nell'ultimo livello (illimitato)
 
-**Passo 4: Collegare alla tabella di spedizione**
-- Modifica il metodo di spedizione
-- Seleziona la tabella tariffa dal menu a discesa
+**Passo 4: Collegare al Metodo di Spedizione**
+- Modificare il metodo di spedizione
+- Selezionare la tabella di tariffa dal menu a discesa
 - Salva
 
-**Esempio di tabella basata su peso**:
+**Esempio di Tabella basata sul Peso**:
 ```
-Nome: Livelli di peso nazionali
+Nome: Domestic Weight Tiers
 Base: Peso
 
 Livelli:
@@ -315,153 +315,153 @@ Livelli:
 
 ---
 
-## Scenario di spedizione comuni
+## Scenario di Spedizione Comuni
 
-### Scenario 1: Spedizione nazionale di base
+### Scenario 1: Spedizione Domestica di Base
 
-**Obiettivo**: Tariffa fissa di $9.99 per tutti gli ordini nazionali.
+**Obiettivo**: Tariffa fissa di $9.99 per tutti gli ordini domestici.
 
 **Soluzione**:
-- Tipo di metodo: Tariffa fissa
-- Costo fisso: $9.99
-- Zona di spedizione: "Nazionale" (solo il tuo paese)
+- Tipo di Metodo: Tariffa Fissa
+- Costo Fisso: $9.99
+- Zona di Spedizione: "Domestico" (solo il tuo paese)
 
 ---
 
-### Scenario 2: Spedizione gratuita per ordini superiori a $50
+### Scenario 2: Spedizione Gratuita per Ordini di $50
 
-**Obiettivo**: Incentivare un valore del carrello più alto con un limite per la spedizione gratuita.
+**Obiettivo**: Incentivare valori del carrello più elevati con un limite per la spedizione gratuita.
 
-**Opzione di soluzione A** (consigliata):
-- Tipo di metodo: Spedizione gratuita
-- Valore minimo dell'ordine: $50
-- Nome visualizzato: "Spedizione gratuita (Ordini $50+)")
+**Opzione di Soluzione A** (Raccomandata):
+- Tipo di Metodo: Spedizione Gratuita
+- Valore Minimo dell'Ordine: $50
+- Nome Visualizzato: "Spedizione Gratuita (Ordini $50+)")
 
-**Opzione di soluzione B** (Utilizzando le regole):
-- Tipo di metodo: Tariffa fissa
-- Costo fisso: $9.99
-- Crea regola di spedizione:
+**Opzione di Soluzione B** (Utilizzando le Regole):
+- Tipo di Metodo: Tariffa Fissa
+- Costo Fisso: $9.99
+- Creare una Promozione di Spedizione:
   - Condizione: Valore del carrello ≥ $50
-  - Azione: Imposta il costo a $0
+  - Azione: Impostare il costo a $0
 
 ---
 
-### Scenario 3: Spedizione basata su peso nazionale + internazionale
+### Scenario 3: Spedizione basata sul Peso per Domestico + Internazionale
 
-**Obiettivo**: Diverse tariffe per nazionale rispetto all'internazionale basate sul peso.
+**Obiettivo**: Diverse tariffe per domestico rispetto all'internazionale basate sul peso.
 
 **Soluzione**:
-1. Crea 2 zone: "Nazionale", "Internazionale"
-2. Crea 2 tabelle tariffarie: "Tariffe di peso nazionali", "Tariffe di peso internazionali"
-3. Crea 2 metodi:
-   - "Spedizione nazionale" → collega alla zona nazionale + tabella tariffa nazionale
-   - "Spedizione internazionale" → collega alla zona internazionale + tabella tariffa internazionale
+1. Creare 2 zone: "Domestico", "Internazionale"
+2. Creare 2 tabelle di tariffa: "Domestic Weight", "International Weight"
+3. Creare 2 metodi:
+   - "Spedizione Domestica" → collegato alla zona Domestica + tabella di tariffa Domestica
+   - "Spedizione Internazionale" → collegato alla zona Internazionale + tabella di tariffa Internazionale
 
 ---
 
-### Scenario 4: Opzioni multiple di carrier
+### Scenario 4: Opzioni di Più Fornitori
 
 **Obiettivo**: Consentire ai clienti di scegliere tra FedEx Ground, FedEx Express, UPS Ground.
 
 **Soluzione**:
-1. Crea account fornitore per l'API FedEx
-2. Crea account fornitore per l'API UPS
-3. Crea 3 metodi in tempo reale:
-   - "FedEx Ground" → fornitore FedEx, codice servizio = "FEDEX_GROUND"
-   - "FedEx Express" → fornitore FedEx, codice servizio = "FEDEX_EXPRESS"
-   - "UPS Ground" → fornitore UPS, codice servizio = "UPS_GROUND"
-4. Tutti e 3 i metodi interrogano le API dei carrier al momento del checkout e visualizzano le tariffe in tempo reale
+1. Creare un Account Fornitore per l'API di FedEx
+2. Creare un Account Fornitore per l'API di UPS
+3. Creare 3 metodi in tempo reale:
+   - "FedEx Ground" → Fornitore FedEx, codice servizio = "FEDEX_GROUND"
+   - "FedEx Express" → Fornitore FedEx, codice servizio = "FEDEX_EXPRESS"
+   - "UPS Ground" → Fornitore UPS, codice servizio = "UPS_GROUND"
+4. Tutti e 3 i metodi interrogano le API dei fornitori durante il checkout e mostrano le tariffe in tempo reale
 
 ---
 
-### Scenario 5: Ritiro in loco + consegna
+### Scenario 5: Ritiro in Locale + Spedizione
 
-**Obiettivo**: Il negozio al dettaglio offre sia opzioni di ritiro che di consegna.
+**Obiettivo**: Il negozio al dettaglio offre sia l'opzione di ritiro in loco che di spedizione.
 
 **Soluzione**:
-1. Crea ubicazione: "Negozio principale" con indirizzo, orari, tempo di preparazione
-2. Crea 2 metodi:
-   - "Ritiro in loco" → tipo Ritiro in loco, collega all'ubicazione principale
-   - "Consegna standard" → tariffa fissa $9.99
-3. I clienti vedono entrambe le opzioni al momento del checkout
+1. Creare una Posizione: "Main Store" con indirizzo, orari e tempo di preparazione
+2. Creare 2 metodi:
+   - "Ritiro in Locale" → Tipo Ritiro in Locale, collegato alla posizione Main Store
+   - "Spedizione Standard" → Tariffa Fissa $9.99
+3. I clienti vedranno entrambe le opzioni durante il checkout
 
 ---
 
-## Test dei metodi di spedizione
+## Testare i Metodi di Spedizione
 
-Prima di andare online, testa tutti i metodi:
+Prima di andare online, testare tutti i metodi:
 
-1. **Crea un carrello di test**
+1. **Crea Carrello di Test**
    - Aggiungi prodotti con diversi pesi/prezzi
    - Procedi al checkout
 
-2. **Testa ogni metodo**
+2. **Testa Ogni Metodo**
    - Inserisci indirizzi in diverse zone
    - Verifica che i metodi corretti appaiano
    - Controlla che i costi calcolati corrispondano alle aspettative
 
-3. **Testa le restrizioni**
+3. **Testa le Restrizioni**
    - Aggiungi articoli fino a raggiungere il valore minimo dell'ordine → verifica che la spedizione gratuita appaia
    - Aggiungi articoli pesanti → verifica che i livelli basati sul peso funzionino
-   - Testa le restrizioni delle zone → verifica che i metodi siano nascosti per le zone escluse
+   - Testa le restrizioni per le zone → verifica che i metodi siano nascosti per le zone escluse
 
-4. **Testa i metodi in tempo reale** (se applicabile)
-   - Utilizza credenziali di test del fornitore
-   - Verifica che le tariffe siano restituite correttamente
-   - Controlla l'accuratezza delle tariffe rispetto al sito web del fornitore
+4. **Testa i Metodi in Tempo Reale** (se applicabile)
+   - Usa le credenziali di test del carrier
+   - Verifica che i tassi siano restituiti con successo
+   - Controlla l'accuratezza dei tassi rispetto al sito web del carrier
 
 ---
 
-## Risoluzione dei problemi
+## Risoluzione dei Problemi
 
-**Problema 1: Il metodo non appare al momento del checkout**
+**Problema 1: Metodo non visualizzato al checkout**
 
 **Causa**:
 - Il metodo non è attivo
 - Il carrello non soddisfa il valore minimo/massimo dell'ordine
 - Il carrello non soddisfa il peso minimo/massimo
 - L'indirizzo del cliente non corrisponde a nessuna zona collegata
-- Nessun livello della tabella tariffa copre il peso/prezzo del carrello
+- Non ci sono livelli della tabella dei tassi che coprono il peso/prezzo del carrello
 
 **Soluzione**: Controlla le restrizioni, verifica lo stato attivo, assicurati che le zone/livelli coprano la situazione del cliente.
 
 ---
 
-**Problema 2: Le tariffe in tempo reale non funzionano**
+**Problema 2: Tassi in tempo reale non funzionanti**
 
 **Causa**:
 - Credenziali API non valide
-- Account fornitore non attivo
+- Account del provider non attivo
 - Nessun pacchetto di spedizione definito (il carrier necessita delle dimensioni)
 - Indirizzo di origine non impostato
 - API del carrier non disponibile
 
-**Soluzione**: Testa la connessione del fornitore, verifica le credenziali, assicurati che i pacchetti siano configurati, controlla l'indirizzo di origine nelle impostazioni.
+**Soluzione**: Testa la connessione al provider, verifica le credenziali, assicurati che i pacchetti siano configurati, controlla l'indirizzo di origine nelle impostazioni.
 
 ---
 
 **Problema 3: Costo calcolato errato**
 
 **Causa**:
-- Livelli della tabella tariffa con lacune o sovrapposizioni
-- Valori min/max dei livelli in unità errate (grammi vs kg)
-- Tariffa di gestione aggiunta inaspettatamente
-- Regola di spedizione che modifica il costo
+- I livelli della tabella dei tassi hanno lacune o sovrapposizioni
+- I valori minimo/massimo dei livelli sono in unità errate (grammi vs kg)
+- Una tariffa aggiuntiva è stata aggiunta inaspettatamente
+- Una regola di spedizione sta modificando il costo
 
-**Soluzione**: Rivedi i livelli della tabella tariffa, verifica le unità, controlla la priorità delle regole di spedizione.
+**Soluzione**: Rivedi i livelli della tabella dei tassi, verifica le unità, controlla la priorità delle promozioni di spedizione.
 
 ---
 
 ## Consigli
 
-- **Inizia semplice** - Utilizza una tariffa fissa per il primo metodo, aggiungi complessità quando necessario
+- **Inizia semplice** - Usa un tasso fisso per il primo metodo, aggiungi complessità quando necessario
 - **Testa accuratamente** - Verifica che tutti i metodi funzionino in ambiente di staging prima di abilitarli in produzione
-- **Utilizza nomi descrittivi** - "Spedizione standard (5-7 giorni)" è meglio di "Metodo 1"
-- **Imposta tempi di consegna realistici** - Sotto-prometti, sopra-consegna per la soddisfazione del cliente
-- **Offri il ritiro se possibile** - Riduce i costi di spedizione, migliora la convenienza per i clienti
-- **Monitora l'affidabilità delle API dei carrier** - Hai un'alternativa a tariffa fissa se le tariffe in tempo reale falliscono
-- **Utilizza le zone per la spedizione internazionale** - Diverse tariffe per regione evitano perdite su destinazioni costose
-- **Combina con le regole di spedizione** - Le regole aggiungono logica condizionale (promozioni di spedizione gratuita, sovrapprezzi per aree remote)
-- **Mantieni i metodi limitati** - 2-4 opzioni al momento del checkout evitano la paralisi decisionale
-- **Aggiorna le tabelle tariffarie stagionalmente** - Le tariffe dei carrier cambiano, rivedi annualmente
-- **Utilizza la priorità con saggezza** - Metti le opzioni gratuite/cheap in alto, le opzioni costose in fondo
+- **Usa nomi descrittivi** - "Spedizione Standard (5-7 giorni)" è meglio di "Metodo 1"
+- **Imposta tempi di consegna realistici** - Sotto-prometti e supera per la soddisfazione del cliente
+- **Offri la ritirata se possibile** - Riduce i costi di spedizione e migliora la convenienza per il cliente
+- **Monitora l'affidabilità dell'API del carrier** - Usa un'opzione a tasso fisso come fallback se i tassi in tempo reale falliscono
+- **Usa le zone per l'internazionale** - Diverse tariffe per regione evitano perdite su destinazioni costose
+- **Combina con promozioni di spedizione** - Le regole aggiungono logica condizionale (promozioni di spedizione gratuite, sovrapprezzi per aree remote)
+- **Mantieni i metodi limitati** - 2-4 opzioni al checkout evitano la paralisi decisionale
+- **Aggiorna le tabelle dei tassi stagionalmente** - I tassi dei carrier cambiano, rivedi annualmente
+- **Usa la priorità con saggezza** - Metti le opzioni gratuite/cheap in alto, le opzioni costose in fondo

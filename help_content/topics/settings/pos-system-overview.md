@@ -7,14 +7,14 @@ keywords:
   - pos system
   - point of sale
   - spwig pos
-  - pos licensing
+  - pos editions
   - pos dashboard
   - terminal management
   - retail pos
   - pos overview
   - pos setup
   - pos getting started
-  - pos activation
+  - pos included
   - pos configuration
   - pos architecture
   - offline pos
@@ -28,7 +28,7 @@ related:
 published: true
 ---
 
-The Spwig POS system transforms your store into a complete retail solution with modern point-of-sale terminals. Deploy unlimited terminals across unlimited locations for a flat €499/year licensing fee. Each terminal is a Progressive Web App (PWA) that works offline, syncs automatically, and integrates seamlessly with your inventory, customer data, and payment processing. Manage everything from the admin dashboard—terminal configuration, shift reconciliation, receipt customization, and hardware integration.
+The Spwig POS system transforms your store into a complete retail solution with modern point-of-sale terminals. It's included in every edition — Community, Pro, and Enterprise — with unlimited terminals across unlimited locations at no additional cost. Each terminal is a Progressive Web App (PWA) that works offline, syncs automatically, and integrates seamlessly with your inventory, customer data, and payment processing. Manage everything from the admin dashboard—terminal configuration, shift reconciliation, receipt customization, and hardware integration.
 
 Use the POS system when you have physical retail locations, pop-up shops, trade shows, or any environment where customers purchase in person rather than online.
 
@@ -48,23 +48,18 @@ Spwig POS is a fully-integrated point-of-sale system designed for merchants who 
 - **Shift Management** - Cash reconciliation with opening/closing counts and discrepancy tracking
 - **Multi-Location Ready** - Store groups with settings inheritance for franchise and regional management
 
-## Licensing and Activation
+## Editions
 
-**Flat Rate Pricing**: €499 per year covers unlimited terminals at unlimited locations. No per-terminal fees, no transaction fees, no hidden costs.
+POS is included in every Spwig edition — Community, Pro, and Enterprise — as of Spwig 1.5.8. There is no separate POS licence, no activation step, and no per-terminal fee.
 
-**License Format**: `POS-XXXX-XXXX-XXXX-XXXX` (provided after purchase)
-
-**Activation**: Enter your license key in **Settings > POS Licensing**. The system validates with Spwig's licensing server and enables all POS features immediately. Licenses include a 14-day grace period after expiration to allow for payment processing delays.
-
-**What You Get**:
+**What's included in every edition**:
 - Unlimited terminal registrations
 - Unlimited staff assignments
 - All POS features (shifts, cash management, receipt customization, customer displays)
-- Payment provider integrations (Stripe Terminal and extensible provider system)
+- Payment provider integrations (Stripe Terminal and other supported providers)
 - Hardware integration support
-- Updates and bug fixes during license period
 
-No POS features are accessible without a valid license—the terminal pairing interface, shift management, and POS admin pages all require activation.
+Merchants running Spwig-hosted stores or paying for a Pro/Enterprise licence get higher limits on the optional Spwig-hosted services (GeoIP, geocoder, push notifications) and priority support, but the POS feature set itself is identical across editions.
 
 ## System Architecture
 
@@ -91,21 +86,15 @@ No POS features are accessible without a valid license—the terminal pairing in
 
 ## Getting Started Workflow
 
-Follow these 5 steps to deploy your first POS terminal:
+Follow these 4 steps to deploy your first POS terminal. For a complete step-by-step checklist including staff setup, payment providers, and running your first sale, see [Getting Started with POS](getting-started-with-pos).
 
-**Step 1: Activate POS License**
-- Navigate to **Settings > POS Licensing**
-- Enter your license key (`POS-XXXX-XXXX-XXXX-XXXX`)
-- Validate license (requires internet connection)
-- Confirm activation
-
-**Step 2: Create Warehouse**
+**Step 1: Create Warehouse**
 - Navigate to **Catalog > Warehouses**
 - Create warehouse representing your retail location
 - Configure address and contact information
 - This warehouse will track physical inventory for POS sales
 
-**Step 3: Register Terminal**
+**Step 2: Register Terminal**
 - Navigate to **POS > Terminals**
 - Click **+ Add Terminal**
 - Set terminal name (e.g., "Main Register", "Checkout 1")
@@ -113,13 +102,13 @@ Follow these 5 steps to deploy your first POS terminal:
 - Configure hardware settings (printer, scanner, cash drawer)
 - Save to generate 8-character pairing code
 
-**Step 4: Assign Staff**
+**Step 3: Assign Staff**
 - In terminal configuration, scroll to **Assigned Users**
 - Select staff members authorized to use this terminal
 - Only assigned users can log into the terminal
 - Users must have appropriate POS permissions in their staff role
 
-**Step 5: Pair Device**
+**Step 4: Pair Device**
 - On your terminal device (tablet/computer), navigate to `/pos/` URL
 - Enter the 8-character pairing code from Step 3
 - Terminal downloads configuration and syncs initial data
@@ -167,7 +156,7 @@ Access these admin pages to manage all aspects of your POS deployment:
 - System overview and quick stats
 - Recent terminal activity
 - Active shifts summary
-- License status and expiration date
+- Hosted-service usage tiles (GeoIP, geocoder, push — see [Spwig Hosted Services](hosted-services))
 
 **Terminal Management** (`/admin/pos_app/posterminal/`)
 - Register and configure terminals

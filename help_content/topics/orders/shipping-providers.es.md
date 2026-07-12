@@ -2,164 +2,178 @@
 title: Proveedores de Envío
 ---
 
-Los proveedores de envío conectan tu tienda con las API de los transportistas para obtener tarifas de envío en tiempo real, generación de etiquetas y seguimiento de paquetes. Spwig admite los principales transportistas a nivel mundial y también permite configurar tablas de tarifas manuales para transportistas sin integración API.
+Los proveedores de envío conectan tu tienda con las APIs de transportistas para obtener tarifas de envío en vivo, generación de etiquetas y seguimiento de paquetes. Spwig admite transportistas principales en todo el mundo y también te permite configurar tablas de tarifas manuales para transportistas sin integración de API.
 
-![Shipping providers](/static/core/admin/img/help/shipping-providers/provider-list.webp)
+![Proveedores de envío](/static/core/admin/img/help/shipping-providers/provider-list.webp)
 
-## Transportistas Disponibles
+## Proveedores Disponibles
 
-| Transportista | Regiones | Características Principales |
-|---------------|----------|----------------------------|
-| **FedEx** | Global | Tarifas en tiempo real, impresión de etiquetas, seguimiento, multipaquete |
-| **UPS** | Global | Tarifas en tiempo real, impresión de etiquetas, seguimiento, validación de direcciones |
+| Proveedor | Regiones | Características Clave |
+|---------|---------|-------------|
+| **FedEx** | Global | Tarifas en vivo, impresión de etiquetas, seguimiento, múltiples paquetes |
+| **UPS** | Global | Tarifas en vivo, impresión de etiquetas, seguimiento, validación de direcciones |
 | **USPS** | Estados Unidos | Tarifas nacionales e internacionales, seguimiento |
-| **NinjaVan** | Sudeste Asiático | Entrega de última milla, soporte de contra reembolso |
-| **Canada Post** | Canadá | Nacional e internacional, tarifas de paquetes y cartas |
-| **Australia Post** | Australia | Nacional e internacional, paquetes y express |
+| **NinjaVan** | Sudeste Asiático | Entrega de último milla, soporte de pago en efectivo |
+| **Canada Post** | Canadá | Nacionales e internacionales, tarifas de paquetes y cartas |
+| **Australia Post** | Australia | Nacionales e internacionales, paquetes y express |
 
-## Conectar un Transportista
+## Conectar un Proveedor
 
 Navega a **Configuración > Proveedores de Envío** y haz clic en **Conectar Proveedor** para iniciar el asistente de configuración.
 
 ### Paso 1: Seleccionar Proveedor
-Elige entre los transportistas disponibles. Cada tarjeta muestra las regiones y funcionalidades admitidas por el transportista.
+
+Elige entre los proveedores de envío disponibles. Cada tarjeta muestra las regiones y características admitidas por el proveedor.
 
 ### Paso 2: Instrucciones de Configuración
-Revisa la guía de configuración específica del transportista:
-- Cómo crear una cuenta de desarrollador/empresa con el transportista
+
+Revisa la guía de configuración específica del proveedor:
+- Cómo crear una cuenta de desarrollador/empresa con el proveedor
 - Dónde encontrar tus credenciales de API
-- Configuraciones de cuenta requeridas (p. ej., número de remitente, número de medidor)
+- Configuraciones de cuenta requeridas (por ejemplo, número de remitente, número de medidor)
 
-### Paso 3: Introducir Credenciales
-Introduce las credenciales de API de tu cuenta de transportista. Los campos requeridos varían según el transportista:
-- **Clave API / Secreto** — Credenciales de autenticación
-- **Número de Cuenta** — Tu número de cuenta o de remitente del transportista
-- **Número de Medidor** — Requerido por algunos transportistas (p. ej., FedEx)
-- **Modo Sandbox** — Actívalo para probar con la API de pruebas del transportista antes de pasar a producción
+### Paso 3: Ingresar Credenciales
 
-### Paso 4: Probar Conexión
+Ingresa las credenciales de API de tu cuenta del proveedor. Los campos requeridos varían según el proveedor:
+
+- **Clave de API / Secreto** — Credenciales de autenticación
+- **Número de Cuenta** — Tu número de cuenta o de remitente del proveedor
+- **Número de Medidor** — Requerido por algunos proveedores (por ejemplo, FedEx)
+- **Modo de Entorno de Prueba** — Actívalo para probar con la API de entorno de prueba del proveedor antes de ir en vivo
+
+### Paso 4: Probar la Conexión
+
 Haz clic en **Probar Conexión** para verificar tus credenciales. El asistente confirma:
-- La autenticación de la API es exitosa
-- Los permisos de la cuenta son válidos
-- Las consultas de tarifas devuelven resultados esperados
+- La autenticación de la API tiene éxito
+- Las permisos de la cuenta son válidos
+- Las consultas de tarifa devuelven resultados esperados
 
 ### Paso 5: Configurar y Guardar
+
 Finaliza la configuración:
-- **Activo** — Activar o desactivar el transportista
-- **Nombre para Mostrar** — El nombre que se muestra a los clientes en el proceso de compra
-- **Dirección de Origen** — La dirección del almacén o centro de distribución para el cálculo de tarifas
+- **Activo** — Habilitar o deshabilitar el proveedor
+- **Nombre de Visualización** — El nombre mostrado a los clientes en la caja de pago
+- **Dirección de Origen** — La dirección del almacén o de cumplimiento para cálculos de tarifa
 
 ## Zonas de Envío
 
-Las zonas de envío definen áreas geográficas para el cálculo de tarifas. Navega a **Configuración > Zonas de Envío** para gestionarlas.
+Las zonas de envío definen áreas geográficas para cálculos de tarifa. Navega a **Configuración > Zonas de Envío** para gestionarlas.
 
 ### Crear una Zona
-1. Haz clic en **+ Añadir Zona**
-2. Dale un nombre a la zona (p. ej., "Nacional", "Europa", "Asia Pacífico")
+
+1. Haz clic en **+ Agregar Zona**
+2. Asigna un nombre a la zona (por ejemplo, "Nacional", "Europa", "Asia Pacífico")
 3. Define la cobertura de la zona usando una o más de:
    - **Países** — Selecciona países específicos
    - **Estados/Provincias** — Limita a regiones específicas dentro de un país
-   - **Patrones de Código Postal** — Coincide códigos postales usando patrones (p. ej., "90*" para el área de Los Ángeles)
-4. Establece la **Prioridad** — Cuando las zonas se superponen, se usa la zona de mayor prioridad
+   - **Patrones de Códigos Postales** — Coincide con códigos postales/ZIP usando patrones (por ejemplo, "90*" para el área de Los Ángeles)
+4. Establece la **Prioridad** — Cuando las zonas se superponen, se usa la zona con mayor prioridad
 
 ### Coincidencia de Zonas
-Cuando un cliente introduce su dirección de envío en el proceso de compra, el sistema:
-1. Verifica primero los patrones de código postal (más específico)
-2. Luego las coincidencias de estado/provincia
-3. Luego las coincidencias de país
-4. Usa la zona coincidente de mayor prioridad
 
-## Reglas de Envío
+Cuando un cliente ingresa su dirección de envío en la caja de pago, el sistema:
+1. Verifica primero los patrones de códigos postales (más específicos)
+2. Luego coincidencias de estado/provincia
+3. Luego coincidencias de país
+4. Usa la zona con mayor prioridad coincidente
 
-Las reglas de envío aplican modificadores condicionales a las tarifas de envío. Navega a **Configuración > Reglas de Envío** para configurarlas.
+## Promociones de Envío
 
-### Tipos de Reglas
+Las promociones de envío aplican modificadores condicionales a las tarifas de envío. Navega a **Configuración > Promociones de Envío** para configurarlas.
 
-| Tipo de Regla | Descripción |
-|---------------|-------------|
+### Tipos de Promoción
+
+| Tipo de Promoción | Descripción |
+|-----------|-------------|
 | **Descuento %** | Reduce la tarifa de envío en un porcentaje |
 | **Descuento Fijo** | Reduce la tarifa de envío en una cantidad fija |
-| **Establecer Costo** | Reemplaza la tarifa con una cantidad específica |
-| **Envío Gratuito** | Establece el costo de envío en cero |
-| **Recargo %** | Añade un recargo porcentual a la tarifa |
+| **Sobrescribir Costo** | Sobrescribe la tarifa con una cantidad específica |
+| **Envío Gratis** | Establece el costo de envío en cero |
+| **Recargo %** | Añade un recargo en porcentaje a la tarifa |
 | **Recargo Fijo** | Añade un recargo fijo a la tarifa |
 
 ### Condiciones
-Cada regla puede tener una o más condiciones que deben cumplirse:
+
+Cada promoción puede tener una o más condiciones que deben cumplirse:
 
 | Condición | Ejemplo |
 |-----------|---------|
-| **Valor del Carrito** | Envío gratuito en pedidos superiores a $100 |
-| **Peso Total** | Recargo para pedidos de más de 30 kg |
-| **Cantidad de Artículos** | Descuento para pedidos con más de 5 artículos |
-| **Zona de Envío** | Aplicar regla solo a envíos nacionales |
-| **Método de Envío** | Aplicar a métodos específicos del transportista |
+| **Valor del carrito** | Envío gratis en pedidos superiores a $100 |
+| **Peso total** | Recargo para pedidos superiores a 30 kg |
+| **Cantidad de artículos** | Descuento para pedidos con 5 o más artículos |
+| **Zona de envío** | Aplicar promoción solo a envíos nacionales |
+| **Método de envío** | Aplicar a métodos específicos de transportista |
 | **Productos** | Tarifas especiales para productos específicos |
-| **Grupo de Clientes** | Los clientes VIP obtienen envío gratuito |
-| **Rango de Fechas** | Promociones de envío en temporada de fiestas |
+| **Grupo de clientes** | Los clientes VIP obtienen envío gratis |
+| **Rango de fechas** | Promociones de envío de temporada |
 
-### Prioridad de Reglas
-- Las reglas se evalúan en orden de prioridad (el número más bajo primero)
-- **Detener Reglas Adicionales** — Cuando está activado, si esta regla coincide, no se verifican más reglas
-- Múltiples reglas pueden acumularse (p. ej., una regla de descuento del 10% más una regla de umbral de envío gratuito)
+### Prioridad de promoción
 
-## Tablas de Tarifas
+- Las promociones se evalúan en orden de prioridad (el número más bajo primero)
+- **Detener promociones adicionales** — Cuando está habilitado, si esta promoción coincide, no se verificarán más promociones
+- Se pueden aplicar múltiples promociones (por ejemplo, una promoción de descuento del 10% más una promoción de umbral de envío gratis)
 
-Las tablas de tarifas proporcionan precios escalonados basados en atributos del pedido. Navega a **Configuración > Tablas de Tarifas de Envío** para configurarlas.
+## Tablas de tarifas
 
-### Tipos de Tablas
-Crea niveles de tarifa basados en:
-- **Peso** — Niveles de precio por peso total del pedido (p. ej., 0-1 kg = $5, 1-5 kg = $10)
-- **Valor del Pedido** — Niveles de precio por subtotal del carrito
-- **Cantidad** — Niveles de precio por número de artículos
+Las tablas de tarifas ofrecen precios escalonados basados en atributos del pedido. Navegue a **Configuración > Tablas de tarifas de envío** para configurarlas.
 
-### Crear una Tabla de Tarifas
-1. Haz clic en **+ Añadir Tabla de Tarifas**
-2. Nombra la tabla y selecciona el tipo de nivel
-3. Añade niveles con rangos mínimo/máximo y precios
-4. Asigna la tabla de tarifas a una zona de envío
+### Tipos de tabla
 
-Las tablas de tarifas son útiles cuando no utilizas tarifas de API del transportista y deseas definir tu propia estructura de precios.
+Cree niveles de tarifas basados en:
+- **Peso** — Niveles de precios según el peso total del pedido (por ejemplo, 0-1 kg = $5, 1-5 kg = $10)
+- **Valor del pedido** — Niveles de precios según el subtotal del carrito
+- **Cantidad** — Niveles de precios según la cantidad de artículos
 
-## Paquetes de Envío
+### Crear una tabla de tarifas
 
-Define tamaños de empaque estándar para cálculos de tarifas precisos. Navega a **Configuración > Paquetes de Envío**.
+1. Haga clic en **+ Agregar tabla de tarifas**
+2. Nombre la tabla y seleccione el tipo de nivel
+3. Agregue niveles con rangos mínimos/máximos y precios
+4. Asigne la tabla de tarifas a una zona de envío
 
-Para cada tipo de paquete, establece:
-- **Nombre** — Descripción (p. ej., "Caja Pequeña", "Tarifa Plana Grande")
-- **Dimensiones** — Largo, ancho, alto
-- **Peso Máximo** — Peso máximo que puede contener el paquete
-- **Predeterminado** — Usar este paquete cuando no se asigna un empaque específico
+Las tablas de tarifas son útiles cuando no utiliza tarifas de API de transportistas y desea definir su propia estructura de precios.
 
-Los transportistas utilizan las dimensiones del paquete para cálculos de peso dimensional, lo que puede afectar las tarifas de envío.
+## Paquetes de envío
 
-## Transportistas Manuales (Preajustes de Transportista)
+Defina tamaños estándar de empaque para cálculos precisos de tarifas. Navegue a **Configuración > Paquetes de envío**.
 
-Para transportistas sin integración API, crea preajustes de transportista manuales:
-1. Navega a **Configuración > Preajustes de Transportista**
-2. Haz clic en **+ Añadir Preajuste**
-3. Configura:
-   - **Nombre del Transportista** — Nombre para mostrar en el proceso de compra
-   - **Plantilla de URL de Seguimiento** — Patrón de URL con un marcador `{tracking_number}` (p. ej., `https://track.transportista.com/?id={tracking_number}`)
-   - **Entrega Estimada** — Rango de tiempo de entrega para mostrar a los clientes
-4. Combina con una tabla de tarifas para los precios
+Para cada tipo de paquete, establezca:
+- **Nombre** — Descripción (por ejemplo, "Caja pequeña", "Gran tarifa plana")
+- **Dimensiones** — Longitud, ancho, altura
+- **Peso máximo** — Peso máximo que puede contener el paquete
+- **Predeterminado** — Use este paquete cuando no se asigne empaque específico
 
-Los transportistas manuales proporcionan enlaces de seguimiento y estimaciones de entrega sin integración API en tiempo real.
+Los transportistas usan las dimensiones del paquete para calcular el peso dimensional, lo cual puede afectar las tarifas de envío.
 
-## Envío Multi-Almacén
+## Transportistas manuales (presets de transportista)
 
-Si tienes múltiples almacenes, el envío puede calcularse desde diferentes orígenes:
-- **Almacén por País** — Asigna almacenes a países específicos para distancias de envío más cortas
-- **Cadena de Respaldo** — Define qué almacén envía cuando el almacén principal no tiene stock
-- **Asignación por Producto** — Algunos productos pueden enviarse solo desde almacenes específicos
+Para transportistas sin integración de API, cree presets de transportista manuales:
+
+1. Navegue a **Configuración > Presets de transportista**
+2. Haga clic en **+ Agregar preset**
+3. Configure:
+   - **Nombre del transportista** — Nombre de visualización en el proceso de pago
+   - **Plantilla de URL de seguimiento** — Patrón de URL con un marcador de posición {número de seguimiento} (por ejemplo, `https://track.carrier.com/?id={tracking_number}`)
+   - **Tiempo estimado de entrega** — Rango de tiempo de entrega a mostrar a los clientes
+4. Asocie una tabla de tarifas para el precio
+
+Los transportistas manuales proporcionan enlaces de seguimiento y estimaciones de entrega sin integración de API en vivo.
+
+## Envío de múltiples almacenes
+
+Si tiene múltiples almacenes, el envío puede calcularse desde diferentes orígenes:
+
+- **Almacén específico por país** — Asigne almacenes a países específicos para distancias de envío más cortas
+- **Cadena de respaldo** — Defina qué almacén envía cuando el almacén principal esté agotado
+- **Asignación por producto** — Algunos productos solo se envían desde almacenes específicos
 
 El sistema selecciona automáticamente el mejor almacén según la ubicación del cliente y la disponibilidad del producto.
 
 ## Consejos
 
-- Conecta las API de los transportistas para obtener **tarifas en tiempo real** siempre que sea posible — son más precisas que las tablas de tarifas planas y se ajustan según peso, dimensiones y destino.
-- Crea una zona de envío **"Resto del Mundo"** como opción general para países no cubiertos por zonas específicas.
-- Usa el tipo de regla **Envío Gratuito** con una condición de valor del carrito como incentivo de ventas (p. ej., "Envío gratuito en pedidos superiores a $75").
-- Prueba los cálculos de tarifas de envío con diferentes direcciones y contenidos del carrito antes de pasar a producción.
-- Configura **Preajustes de Transportista** con plantillas de URL de seguimiento para los transportistas locales que no tengan integraciones API — los clientes seguirán recibiendo enlaces de seguimiento.
-- Usa **Paquetes de Envío** para obtener precios precisos de peso dimensional de transportistas como FedEx y UPS.
+- Conecte APIs de transportistas para **tarifas en vivo** siempre que sea posible — son más precisas que tablas de tarifas planas y ajustan según el peso, dimensiones y destino.
+- Cree una **zona de envío "Resto del mundo"** como un contenedor para países no cubiertos por zonas específicas.
+- Use el tipo de promoción **Envío gratis** con una condición de valor del carrito como incentivo de ventas (por ejemplo, "Envío gratis en pedidos superiores a $75").
+- Pruebe los cálculos de tarifas de envío con diferentes direcciones y contenidos de carrito antes de lanzar.
+- Configure **Presets de transportista** con plantillas de URL de seguimiento para cualquier transportista local que no tenga integraciones de API — los clientes aún obtienen enlaces de seguimiento.
+- Use **Paquetes de envío** para obtener precios de peso dimensional precisos de transportistas como FedEx y UPS.

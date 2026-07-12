@@ -18,8 +18,8 @@ Sie können separate Regeln für jede Währung einrichten, die Ihr Geschäft akz
 2. Klicken Sie auf **+ Preis-Charm-Regel hinzufügen**
 3. Wählen Sie die **Währung** aus, für die diese Regel gilt (z. B. `USD`, `EUR`, `NZD`)
 4. Wählen Sie eine **Regelart** (siehe die Tabelle unten)
-5. Optional können Sie einen **Mindestpreisschwellenwert** festlegen, um sehr niedrige Preise auszuschließen
-6. Aktivieren Sie **Auf Verkaufspreise anwenden**, wenn Sie auch bei Angeboten Preis-Charm verwenden möchten
+5. Legen Sie optional einen **Mindestpreisschwellenwert** fest, um sehr niedrige Preise auszuschließen
+6. Aktivieren Sie **Auf Verkaufspreise anwenden**, wenn Sie auch bei Angeboten Preis-Charm anwenden möchten
 7. Stellen Sie sicher, dass **Aktiv** aktiviert ist
 8. Klicken Sie auf **Speichern**
 
@@ -41,13 +41,13 @@ Nur eine Regel kann pro Währung existieren. Wenn Sie eine Regel ändern möchte
 
 ### Benutzerdefinierte Endungen
 
-Wenn Sie **Benutzerdefinierte Endung** auswählen, geben Sie den Endwert im Feld **Benutzerdefinierte Endung** ein. Zum Beispiel können Sie `0,88` eingeben, um alle Preise so zu gestalten, dass sie auf `.88` enden (häufig in einigen asiatischen Märkten).
+Wenn Sie **Benutzerdefinierte Endung** auswählen, geben Sie den Endwert im Feld **Benutzerdefinierte Endung** ein. Zum Beispiel geben Sie `0,88` ein, um alle Preise so zu gestalten, dass sie auf `.88` enden (häufig in einigen asiatischen Märkten).
 
 ## Mindestpreisschwellenwert
 
-Verwenden Sie das Feld **Mindestpreisschwellenwert**, um Preis-Charm für sehr günstige Artikel zu überspringen, bei denen die Anpassung ungewöhnlich wirken würde. Zum Beispiel bedeutet ein Schwellenwert von `5,00`, dass Artikel unter 5 $ mit ihrem tatsächlichen berechneten Preis ohne Preis-Charm angezeigt werden.
+Verwenden Sie das Feld **Mindestpreisschwellenwert**, um Preis-Charm für sehr günstige Artikel zu überspringen, bei denen die Anpassung ungewöhnlich wirken würde. Zum Beispiel bedeutet ein Schwellenwert von `5,00`, dass Artikel unter 5 $ mit ihrem tatsächlichen berechneten Preis angezeigt werden, ohne Preis-Charm.
 
-Lassen Sie es bei `0` stehen, um Preis-Charm auf alle Preise anzuwenden.
+Lassen Sie es auf `0` stehen, um Preis-Charm auf alle Preise anzuwenden.
 
 ## Verkaufspreise
 
@@ -59,11 +59,11 @@ Um Preis-Charm vorübergehend zu stoppen, ohne die Regel zu löschen, deaktivier
 
 ## Tipps
 
-Erhalten Sie alle Markdown-Formatierung, Bildpfade, Codeblöcke und technischen Begriffe beibehalten.
+Behalten Sie alle Markdown-Formatierung, Bildpfade, Codeblöcke und technischen Begriffe bei.
 
-- Beginnen Sie mit Endungen wie .99, wenn Sie unsicher sind – dies ist die am weitesten verbreitete psychologische Preistaktik und funktioniert gut für die meisten Produkttypen.
+- Beginnen Sie mit Endungen wie .99, wenn Sie unsicher sind – dies ist die am weitesten verbreitete psychologische Preisgestaltungsstrategie und funktioniert gut für die meisten Produkttypen.
 - Legen Sie ein Minimum fest, wenn Sie günstige Artikel (unter $5) verkaufen, damit ein Artikel zum Preis von 3,50 $ nicht auf 2,99 $ abgerundet wird.
-- Überprüfen Sie Ihre Preise nach der Aktivierung einer neuen Regel, indem Sie ein Produkt auf der Verkaufsseite ansehen – abgerundete Preise werden in Echtzeit angezeigt.
-- Japanische Yen und ähnliche Währungen mit ganzzahligen Beträgen funktionieren am besten mit **Auf Rundung auf die nächste 10** oder **Auf Rundung auf die nächste 100**, da Dezimalendungen ungewöhnlich wirken.
-- Die Preiserkennung wird nach allen Rabatten und Promotionen angewendet, daher werden auch Ihre Verkaufspreise ebenfalls abgerundet, es sei denn, Sie deaktivieren **Auf Verkaufspreise anwenden**.
+- Überprüfen Sie Ihre Preise nach der Aktivierung einer neuen Regel, indem Sie ein Produkt auf der Verkaufsseite ansehen – die abgerundeten Preise werden in Echtzeit angezeigt.
+- Japanische Yen und ähnliche Währungen mit ganzzahligen Werten funktionieren am besten mit **Auf Rundung auf die nächste 10** oder **Auf Rundung auf die nächste 100**, da Dezimalendungen ungewöhnlich wirken.
+- Die Preisabstufung wird nach allen Rabatten und Promotionen angewendet, daher werden auch Ihre Verkaufspreise abgestuft angezeigt, es sei denn, Sie deaktivieren **Auf Verkaufspreise anwenden**.
 - Sie können für verschiedene Währungen unterschiedliche Regeltypen haben, was nützlich ist, wenn Sie in mehrere Märkte mit unterschiedlichen Preiskonventionen verkaufen.

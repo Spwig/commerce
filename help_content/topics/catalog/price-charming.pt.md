@@ -2,7 +2,7 @@
 title: Regras de Preço Atraente
 ---
 
-Preço atraente (também chamado de precificação psicológica) ajusta automaticamente os preços dos seus produtos para terminarem em dígitos específicos que parecem mais atraentes para os clientes. Por exemplo, em vez de exibir um preço de $20,00, o preço atraente pode mostrar $19,99 — uma técnica amplamente utilizada que faz com que os preços pareçam menores à primeira vista.
+Preço atraente (também chamado de precificação psicológica) ajusta automaticamente os preços dos seus produtos para terminarem em dígitos específicos que parecem mais atraentes para os clientes. Por exemplo, em vez de exibir um preço de $20,00, o preço atraente pode mostrar $19,99 — uma técnica amplamente usada que faz com que os preços pareçam menores à primeira vista.
 
 O Spwig aplica as regras de preço atraente automaticamente em toda a sua loja, por moeda, então você só precisa definir cada regra uma vez.
 
@@ -34,7 +34,7 @@ Apenas uma regra pode existir por moeda. Se você precisar alterar uma regra, ed
 | **Atraente com terminação .90** | $20,50 → $19,90 | Arredondado, mas ainda abaixo do próximo dólar |
 | **Arredondar para baixo** | $19,50 → $19,00 | Lojas que preferem números inteiros |
 | **Arredondar para cima** | $19,50 → $20,00 | Arredondar um pouco para exibições limpas |
-| **Arredondar para o múltiplo de 5 mais próximo** | $23,00 → $25,00 | Varejo e mercados de alto tráfego |
+| **Arredondar para o múltiplo de 5 mais próximo** | $23,00 → $25,00 | Varejo de alto tráfego e mercados |
 | **Arredondar para o múltiplo de 10 mais próximo** | $23,00 → $20,00 | Itens de preço mais alto, como eletrodomésticos |
 | **Arredondar para o múltiplo de 100 mais próximo** | $1.234 → $1.200 | Itens de alto valor, como móveis ou eletrônicos |
 | **Terminação personalizada** | Qualquer uma — especifique abaixo | Quando sua marca usa uma terminação específica, como `.88` |
@@ -51,7 +51,7 @@ Deixe-o em `0` para aplicar o preço atraente a todos os preços.
 
 ## Preços de venda
 
-Por padrão, o preço atraente é aplicado tanto aos preços regulares quanto aos preços de venda. Se você quiser que os preços de venda exibam seus valores calculados exatos (útil para precificação promocional limitada no tempo, onde os valores exatos importam), desmarque **Aplicar a Preços de Venda**.
+Por padrão, o preço atraente é aplicado tanto aos preços regulares quanto aos de venda. Se você quiser que os preços de venda exibam seus valores calculados exatos (útil para precificação promocional limitada no tempo, onde os valores exatos importam), desmarque **Aplicar a Preços de Venda**.
 
 ## Desativando uma regra
 
@@ -65,5 +65,5 @@ Preserve todos os formatos markdown, caminhos de imagem, blocos de código e ter
 - Defina um limite mínimo se vender itens de baixo custo (abaixo de $5) para que um item de $3,50 não caia para $2,99.
 - Verifique seus preços após habilitar uma nova regra visualizando um produto no site de vendas — os preços encantados são exibidos em tempo real.
 - O Yen Japonês e moedas semelhantes com números inteiros funcionam melhor com **Arredondar para o múltiplo de 10** ou **Arredondar para o múltiplo de 100**, pois terminações decimais parecem incomuns.
-- O encantamento de preços é aplicado após todos os descontos e promoções, portanto, seus preços de venda também aparecerão encantados, a menos que desmarque **Aplicar a Preços de Venda**.
+- A encantação de preços é aplicada após todos os descontos e promoções, portanto, seus preços de venda também aparecerão encantados, a menos que desmarque **Aplicar a Preços de Venda**.
 - Você pode ter tipos de regras diferentes para diferentes moedas, o que é útil se vender para múltiplos mercados com convenções de precificação diferentes.
