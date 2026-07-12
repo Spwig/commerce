@@ -5,6 +5,101 @@ All notable changes to the Spwig eCommerce Platform will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.9] - 2026-07-12
+
+### Fixed
+
+- **Storefront add-to-cart threw a 500 on every click.** The refactored
+  `frontend-utils.js` delegated `showNotification()` to
+  `AdminModal.toast()`, but `AdminModal` only loads in the admin bundle
+  — so every storefront success/error notification threw
+  `ReferenceError`. Restored the inline DOM toast (the `.toast` /
+  `.toast--{type}` styles already live in `frontend-base.css`).
+- **Guest wishlist state hit `WishlistViewSet.product_ids` and got
+  401.** The endpoint required authentication, but `product-card.js`
+  hits it on every storefront page — including for guests — to paint
+  heart-button state. Gated the action with `AllowAny` and
+  short-circuit to `{'wishlisted': {}}` for unauthenticated requests,
+  so guests no longer see a 401 spinning on every page load.
+- **Admin help search endpoint returned 500 for any query.** The
+  search endpoint stopped tolerating unquoted numeric YAML in help
+  frontmatter — the price-charming topic listed `9.99` as an unquoted
+  keyword, which parsed as float and crashed
+  `[k.lower() for k in topic.keywords]` under
+  `/api/core/help/topics/search/`. Coerced keyword iteration to `str`
+  at read time in both the classic search action and the
+  semantic-search chunker; the runtime fix protects deployments that
+  already have the bad float persisted, and the next `sync_help` on
+  restart rewrites the row from the corrected markdown.
+- **Admin-only toast leaked into storefront context.** Related to the
+  first fix — the notification helper is now correctly isolated per
+  surface.
+
+### Added
+
+- **Merchant-facing help content backfilled** for surfaces that
+  shipped in recent releases without corresponding help topics:
+  - Voucher CSV/XLSX import wizard (from 1.5.5)
+  - Hosted-services free tier — admin dashboard tile, quota banner,
+    over-limit fallback behaviour
+  - POS-related topics that were still pointing at the removed
+    upgrade page (1.5.8)
+- **Hourly cleanup of expired POS parked carts.** The
+  `cleanup_expired_parked_carts` task existed in `pos_app/tasks.py`
+  but was never in `CELERY_BEAT_SCHEDULE`, so expired parked carts
+  accumulated indefinitely. Now runs hourly at `:15` with a 55-minute
+  expiry. Expired carts (default TTL `now() + 24h`, `restored_at IS
+  NULL`) are swept within an hour of their expiration. **Requires
+  celery-beat restart to pick up the new schedule** — the
+  installer / upgrader handles this automatically; source-form
+  operators may need to `docker compose restart celery_beat`.
+
+## [1.5.8] - 2026-07-11
+
+### Changed
+
+- **Point-of-sale is now included in every edition.** POS was previously a
+  paid module gated at runtime by a signed licence entitlement — Community
+  installs saw an upgrade CTA in place of the POS admin, API endpoints
+  returned 403, and a daily beat task validated a POS licence key against
+  the update server. Starting with this release, POS is a first-class part
+  of the platform for every merchant. Spwig's commercial offering moves
+  entirely to Spwig-operated infrastructure — hosting on `*.myspwig.com`,
+  higher hosted-service tier limits (GeoIP, geocoder, push), the hosted
+  email gateway, and priority support. No merchant action required.
+  Community merchants clicking the "POS is a Pro feature" CTA — the CTA is
+  gone, POS just works. Pro/Enterprise merchants: nothing changes for you,
+  POS keeps working as before.
+
+### Removed
+
+- `pos_app/community_gate.py` middleware + upgrade view.
+- `templates/pos/upgrade_required.html` upgrade splash template.
+- Community-gate middleware registration in `core/settings.py`.
+- Daily `validate-pos-license` Celery beat schedule.
+- `pos_upgrade_required_view` URL registration in `core/urls.py`.
+- `and not is_community_edition` guard on the POS admin menu.
+
+### Simplified
+
+- `pos_app/license.py` reduced to no-op shims. `pos_license_is_valid()`
+  always returns `True`; `get_pos_license_status`, `activate_pos_license`,
+  and `clear_pos_license_cache` keep their old signatures so any admin UI
+  or older client that calls them still works.
+
+### Fixed
+
+- Re-signed `core/data/community_licence.json` with `pos_module: true` in
+  the entitlements block.
+
+### Documentation
+
+- README editions table + features grid updated (POS row folded into
+  "Point-of-sale terminal, page builder, themes | ✓ | ✓ | ✓"; "(Pro+)"
+  tag removed).
+- 16 translated READMEs updated with the same structural changes.
+- `CLAUDE.md` editions section rewritten to reflect the new positioning.
+
 ## [1.5.7] - 2026-07-05
 
 ### Fixed

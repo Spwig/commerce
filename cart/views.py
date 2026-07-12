@@ -610,9 +610,15 @@ class WishlistViewSet(HeadlessAPIMixin, viewsets.ModelViewSet):
         serializer = self.get_serializer(wishlist)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], url_path='product-ids')
+    @action(detail=False, methods=['get'], url_path='product-ids', permission_classes=[AllowAny])
     def product_ids(self, request):
-        """Return wishlisted product IDs with their wishlist item IDs for the current user's default wishlist"""
+        """Return wishlisted product IDs with their wishlist item IDs for the current user's default wishlist.
+
+        Called on every storefront page to render heart-button state, so guests
+        must get a valid empty response rather than a 401.
+        """
+        if not request.user.is_authenticated:
+            return Response({'wishlisted': {}})
         wishlist = WishlistService.get_or_create_default_wishlist(request.user)
         items = wishlist.items.values_list('id', 'product_id')
         wishlisted = {str(product_id): item_id for item_id, product_id in items}

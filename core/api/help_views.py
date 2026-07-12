@@ -191,9 +191,11 @@ class HelpTopicViewSet(viewsets.ReadOnlyModelViewSet):
                 if term in title:
                     score += 10
 
-            # Check keywords (medium weight)
+            # Check keywords (medium weight). Coerce to str: authored YAML
+            # frontmatter can yield non-string values (e.g. an unquoted 9.99
+            # parses as float), which would otherwise crash .lower().
             if topic.keywords:
-                keywords = [k.lower() for k in topic.keywords]
+                keywords = [str(k).lower() for k in topic.keywords if k is not None]
                 for term in search_terms:
                     for keyword in keywords:
                         if term in keyword:
