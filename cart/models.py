@@ -230,27 +230,44 @@ class Cart(DesignMixin):
 
     @property
     def total_amount(self):
-        """Total cart value before voucher discounts (excludes bundle component items)"""
+        """Total cart value before voucher discounts (excludes bundle component items).
+
+        The `currency` fallback ensures an empty cart returns Money(0, cart_currency)
+        rather than Money(0, site_default_currency), so downstream arithmetic against
+        item-priced Money values doesn't crash when the two disagree.
+        """
         from core.utils import safe_money_sum
-        return safe_money_sum((item.total_price for item in self.items.all() if item.parent_bundle_id is None))
+        return safe_money_sum(
+            (item.total_price for item in self.items.all() if item.parent_bundle_id is None),
+            currency=self.effective_currency,
+        )
 
     @property
     def total_savings(self):
         """Total savings from product discounts (not voucher discounts, excludes bundle components)"""
         from core.utils import safe_money_sum
-        return safe_money_sum((item.savings for item in self.items.all() if item.parent_bundle_id is None))
+        return safe_money_sum(
+            (item.savings for item in self.items.all() if item.parent_bundle_id is None),
+            currency=self.effective_currency,
+        )
 
     @property
     def voucher_discount_amount(self):
         """Total discount from applied vouchers"""
         from core.utils import safe_money_sum
-        return safe_money_sum((voucher.discount_amount for voucher in self.applied_vouchers.all()))
+        return safe_money_sum(
+            (voucher.discount_amount for voucher in self.applied_vouchers.all()),
+            currency=self.effective_currency,
+        )
 
     @property
     def gift_card_discount_amount(self):
         """Total discount from applied gift cards"""
         from core.utils import safe_money_sum
-        return safe_money_sum((gift_card.discount_amount for gift_card in self.applied_gift_cards.all()))
+        return safe_money_sum(
+            (gift_card.discount_amount for gift_card in self.applied_gift_cards.all()),
+            currency=self.effective_currency,
+        )
 
     @property
     def final_amount(self):
@@ -635,31 +652,33 @@ class Cart(DesignMixin):
             # Exclude sale items if required
             if voucher.exclude_sale_items:
                 eligible_amount = safe_money_sum(
-                    item.total_price for item in self.items.all()
-                    if item.savings == Money(0, item.savings.currency)
+                    (item.total_price for item in self.items.all()
+                     if item.savings == Money(0, item.savings.currency)),
+                    currency=self.effective_currency,
                 )
 
         elif voucher.application_scope == 'products':
             # Only specific products eligible
             eligible_products = voucher.eligible_products.all()
             eligible_amount = safe_money_sum(
-                item.total_price for item in self.items.all()
-                if item.product in eligible_products and
-                (not voucher.exclude_sale_items or item.savings == Money(0, item.savings.currency))
+                (item.total_price for item in self.items.all()
+                 if item.product in eligible_products and
+                 (not voucher.exclude_sale_items or item.savings == Money(0, item.savings.currency))),
+                currency=self.effective_currency,
             )
 
         elif voucher.application_scope == 'categories':
             # Only specific categories eligible
             eligible_categories = voucher.eligible_categories.all()
             eligible_amount = safe_money_sum(
-                item.total_price for item in self.items.all()
-                if item.product.category in eligible_categories and
-                (not voucher.exclude_sale_items or item.savings == Money(0, item.savings.currency))
+                (item.total_price for item in self.items.all()
+                 if item.product.category in eligible_categories and
+                 (not voucher.exclude_sale_items or item.savings == Money(0, item.savings.currency))),
+                currency=self.effective_currency,
             )
 
         else:
-            from core.utils import get_default_currency
-            eligible_amount = Money(0, get_default_currency())
+            eligible_amount = Money(0, self.effective_currency)
 
         return eligible_amount
     

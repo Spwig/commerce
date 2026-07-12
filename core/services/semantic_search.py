@@ -66,7 +66,7 @@ class TextChunker:
             List of chunk dictionaries with metadata
         """
         chunks = []
-        keywords_lower = [k.lower() for k in (keywords or [])]
+        keywords_lower = [str(k).lower() for k in (keywords or []) if k is not None]
 
         # First chunk: title + beginning of content
         title_text = f"{title}\n\n"
