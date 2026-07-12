@@ -1241,6 +1241,19 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'referrals.cleanup_old_events',
         'schedule': crontab(hour=4, minute=0, day_of_week=0),  # Weekly on Sunday at 4 AM
     },
+    # POS
+    'cleanup-expired-parked-carts': {
+        # ParkedCart.expires_at defaults to now() + 24h at creation. Sweep
+        # hourly at :15 so expired carts don't linger past their TTL by
+        # more than an hour. Cleanup only touches carts that were never
+        # restored (`restored_at IS NULL`) — resumed carts are cleared by
+        # the checkout flow itself.
+        'task': 'pos_app.cleanup_expired_parked_carts',
+        'schedule': crontab(minute=15),  # Hourly at :15 UTC
+        'options': {
+            'expires': 3300.0,  # Skip if not picked up within 55 min
+        },
+    },
     # License Refresh
     'refresh-license': {
         'task': 'component_updates.refresh_license',
